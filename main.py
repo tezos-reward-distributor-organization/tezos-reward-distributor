@@ -146,33 +146,40 @@ class ConsumerThread(threading.Thread):
 
     def run(self):
         while True:
-            # wait until a reward is present
-            reward_item = payments_queue.get(True)
-            pymnt_addr = reward_item["address"]
-            pymnt_amnt = reward_item["reward"]
-            pymnt_cycle = reward_item["cycle"]
-            cmd = COMM_TRANSFER.format(pymnt_amnt, pymnt_addr)
+            try:
+                # wait until a reward is present
+                reward_item = payments_queue.get(True)
 
-            # execute client
-            process = subprocess.Popen(cmd, shell=True,stdout=subprocess.PIPE)
-            process.wait()
+                pymnt_addr = reward_item["address"]
+                pymnt_amnt = reward_item["reward"]
+                pymnt_cycle = reward_item["cycle"]
 
-            if process.returncode == 0:
-                pymt_log = PAYMNETS_DIR + "/" + str(pymnt_cycle) + "/" + pymnt_addr + '.txt'
+                cmd = COMM_TRANSFER.format(pymnt_amnt, pymnt_addr)
 
-                # check and create required directories
-                if not os.path.exists(os.path.dirname(pymt_log)):
-                    os.makedirs(os.path.dirname(pymt_log))
+                logging.debug("Reward attempt for cycle %s address %s amount %f tz", reward_item["cycle"],reward_item["address"], reward_item["reward"])
 
-                # create empty payment log file
-                with open(pymt_log, 'w') as f:
-                    f.write('')
+                # execute client
+                process = subprocess.Popen(cmd, shell=True,stdout=subprocess.PIPE)
+                process.wait()
 
-                logging.info("Reward paid for cycle %s address %s amount %f tz", reward_item["cycle"],
-                             reward_item["address"], reward_item["reward"])
-            else:
-                logging.warning("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",
-                                reward_item["cycle"], reward_item["address"], reward_item["reward"])
+                if process.returncode == 0:
+                    pymt_log = PAYMNETS_DIR + "/" + str(pymnt_cycle) + "/" + pymnt_addr + '.txt'
+
+                    # check and create required directories
+                    if not os.path.exists(os.path.dirname(pymt_log)):
+                        os.makedirs(os.path.dirname(pymt_log))
+
+                    # create empty payment log file
+                    with open(pymt_log, 'w') as f:
+                        f.write('')
+
+                    logging.info("Reward paid for cycle %s address %s amount %f tz", reward_item["cycle"],
+                                 reward_item["address"], reward_item["reward"])
+                else:
+                    logging.warning("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",
+                                    reward_item["cycle"], reward_item["address"], reward_item["reward"])
+            except Exception as e:
+                logging.error("Error at reward payment", e)
 
         return
 
