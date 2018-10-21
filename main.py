@@ -21,7 +21,7 @@ BAKING_ADDRESS = "tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP"
 NB_CONSUMERS = 1
 COMM_TRANSFER = "~/zeronet.sh client transfer {} from zeronetme2 to {} --fee 0"
 MAX_DEPTH = 2
-PAYMNETS_DIR = "~/payments/"
+PAYMNETS_DIR = os.path.expanduser("~/payments/")
 
 # network parameters
 REWARDS_SPLIT_API_URL = 'http://zeronet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'
@@ -154,7 +154,7 @@ class ConsumerThread(threading.Thread):
             cmd = COMM_TRANSFER.format(pymnt_amnt, pymnt_addr)
 
             # execute client
-            process = subprocess.Popen(cmd, shell=True)
+            process = subprocess.Popen(cmd, shell=True,stdout=subprocess.PIPE)
             process.wait()
 
             if process.returncode == 0:
