@@ -103,7 +103,7 @@ class ProducerThread(threading.Thread):
                     time.sleep(60 * 3)
             # end of payment cycle check
             else:
-                nb_blocks_remaining = current_cycle * BLOCKS_PER_CYCLE - current_level
+                nb_blocks_remaining = (current_cycle+1) * BLOCKS_PER_CYCLE - current_level
 
                 # wait until current cycle ends
                 time.sleep(nb_blocks_remaining * BLOCK_TIME_IN_SEC)
