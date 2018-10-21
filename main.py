@@ -55,7 +55,7 @@ class ProducerThread(threading.Thread):
             current_cycle = self.level_to_cycle(current_level)
 
             # payments should not pass beyond last released reward cycle
-            if payment_cycle <= current_cycle - CYCLE_PYMNT_OFFSET
+            if payment_cycle <= current_cycle - CYCLE_PYMNT_OFFSET:
                 if not payments_queue.full():
                     try:
 
