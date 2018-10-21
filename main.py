@@ -33,14 +33,14 @@ payments_queue = queue.Queue(BUF_SIZE)
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(threadName)-9s %(message)s', )
 
 class ProducerThread(threading.Thread):
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
-        super(ProducerThread, self).__init__()
-        self.target = target
-        self.name = name
+	def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
+		super(ProducerThread, self).__init__()
+		self.target = target
+		self.name = name
 
-        logging.debug('Producer started')
+		logging.debug('Producer started')
 
-    def run(self):
+	def run(self):
 		current_cycle = self.get_current_cycle()
 		initial_payment_cycle = current_cycle - MAX_DEPTH - CYCLE_PYMNT_OFFSET
 		payment_cycle = initial_payment_cycle
