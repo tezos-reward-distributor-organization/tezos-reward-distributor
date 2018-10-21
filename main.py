@@ -25,7 +25,7 @@ PAYMNETS_DIR="~/payments/"
 
 # network parameters
 REWARDS_SPLIT_API_URL='http://zeronet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'
-HEAD_API_URL='http://api1.tzscan.io/v2/head'
+HEAD_API_URL='http://zeronet-api.tzscan.io/v2/head'
 BLOCKS_PER_CYCLE = 128 
 BLOCK_TIME_IN_SEC = 60
 
