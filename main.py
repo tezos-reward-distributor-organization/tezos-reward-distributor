@@ -37,16 +37,16 @@ class ProducerThread(threading.Thread):
 		super(ProducerThread, self).__init__()
 		self.target = target
 		self.name = name
-
+		
 		logging.debug('Producer started')
-
+		
 	def run(self):
 		current_cycle = self.get_current_cycle()
 		initial_payment_cycle = current_cycle - MAX_DEPTH - CYCLE_PYMNT_OFFSET
 		payment_cycle = initial_payment_cycle
 		
-        while True:
-			
+		while True:
+		
 			# take a breath
 			time.sleep(10)
 			
@@ -57,18 +57,18 @@ class ProducerThread(threading.Thread):
 			if payment_cycle <= current_cycle - CYCLE_PYMNT_OFFSET
 				if not payments_queue.full():
 					try:
-						
+					
 						logging.info("Payment cycle is " + str(payment_cycle))
 						root = self.get_rewards_for_cycle_map(payment_cycle)
-
+						
 						delegate_staking_balance = int(root["delegate_staking_balance"])
 						blocks_rewards = int(root["blocks_rewards"])
 						endorsements_rewards = int(root["endorsements_rewards"])
 						fees = int(root["fees"])
 						total_rewards = blocks_rewards + endorsements_rewards + fees
-
+						
 						logging.info("Total rewards=" + str(total_rewards))
-
+						
 						delegators_balance = root["delegators_balance"]
 						for dbalance in delegators_balance:
 							address = dbalance[0]["tz"]
@@ -107,56 +107,52 @@ class ProducerThread(threading.Thread):
 				# wait until current cycle ends
 				time.sleep(nb_blocks_remaining*BLOCK_TIME_IN_SEC)
 				
-            
 		# end of endless loop
-        return
+		return
 		
-	
 	def level_to_cycle(self, level)
 		return floor(level / BLOCKS_PER_CYCLE)
-
-    def get_current_cycle(self):
-        return level_to_cycle(get_current_level())
-	
-    def get_current_level(self):
-        resp = requests.get(HEAD_API_URL)
-        if resp.status_code != 200:
-            # This means something went wrong.
-            raise Exception('GET /head/ {}'.format(resp.status_code))
-        root = resp.json()
-        current_level = int(root["level"])
-
-        return current_level
-	
 		
-
-    def get_rewards_for_cycle_map(self, cycle):
-        resp = requests.get(REWARDS_SPLIT_API_URL.format(BAKING_ADDRESS,cycle,0))
-        if resp.status_code != 200:
-            # This means something went wrong.
-            raise Exception('GET /tasks/ {}'.format(resp.status_code))
-        root = resp.json()
-        return root
-
-
+	def get_current_cycle(self):
+		return level_to_cycle(get_current_level())
+		
+	def get_current_level(self):
+		resp = requests.get(HEAD_API_URL)
+		if resp.status_code != 200:
+			# This means something went wrong.
+			raise Exception('GET /head/ {}'.format(resp.status_code))
+		root = resp.json()
+		current_level = int(root["level"])
+		
+		return current_level
+		
+		
+	def get_rewards_for_cycle_map(self, cycle):
+		resp = requests.get(REWARDS_SPLIT_API_URL.format(BAKING_ADDRESS,cycle,0))
+		if resp.status_code != 200:
+			# This means something went wrong.
+			raise Exception('GET /tasks/ {}'.format(resp.status_code))
+		root = resp.json()
+		return root
+		
 class ConsumerThread(threading.Thread):
     def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
-        super(ConsumerThread, self).__init__()
-        self.target = target
-        self.name = name
-        logging.debug('Consumer "%s" created',self.name)
-        return
-
-    def run(self):
-        while True:
-            # wait until a reward is present
-            reward_item = payments_queue.get(True)
-            cmd = COMM_TRANSFER.format(reward_item["reward"],reward_item["address"])
-            
+		super(ConsumerThread, self).__init__()
+		self.target = target
+		self.name = name
+		logging.debug('Consumer "%s" created',self.name)
+		return
+		
+	def run(self):
+		while True:
+			# wait until a reward is present
+			reward_item = payments_queue.get(True)
+			cmd = COMM_TRANSFER.format(reward_item["reward"],reward_item["address"])
+			
 			# execute client
 			process = subprocess.Popen(cmd, shell=True)
-            process.wait()
-            
+			process.wait()
+			
 			if process.returncode == 0
 				pymt_log=PAYMNETS_DIR+"/"+str(payment_cycle)+"/"+pymnt_addr+'.txt'
 				
@@ -167,21 +163,19 @@ class ConsumerThread(threading.Thread):
 				# create empty payment log file
 				with open(pymt_log, “w”) as f: 
 					f.write("”) 
-
+					
 				logging.info("Reward paid for cycle %s address %s amount %f tz",reward_item["cycle"], reward_item["address"], reward_item["reward"])
 			else:
 				logging.warn("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",reward_item["cycle"], reward_item["address"], reward_item["reward"])
 			
-        return
-
-
+		return
+		
 if __name__ == '__main__':
-    p = ProducerThread(name='producer')
-    p.start()
-
-    for i in range(NB_CONSUMERS):
-        c = ConsumerThread(name='consumer' + str(i))
-        time.sleep(1)
-        c.start()
-
-    time.sleep(2)
+	p = ProducerThread(name='producer')
+	p.start()
+	
+	for i in range(NB_CONSUMERS):
+		c = ConsumerThread(name='consumer' + str(i))
+		time.sleep(1)
+		c.start()
+	time.sleep(2)
