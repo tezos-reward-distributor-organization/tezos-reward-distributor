@@ -3,23 +3,37 @@ import queue
 import time
 from math import floor
 import logging
-
+import subprocess
 import requests
+import os
 
 BUF_SIZE = 50
 ONE_MILLION = 1000000
+
+# number of cycles network keeps rewards
 NB_FREEZE_CYCLE = 5
-BAKING_ADDRESS = "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"
-BLOCKS_PER_CYCLE = 4096
-NB_CONSUMERS = 4
+# number of cycles before network releases rewards
+CYCLE_PYMNT_OFFSET=NB_FREEZE_CYCLE+1
+# baker's 'tz' address, NOT A KT address
+BAKING_ADDRESS = "tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP"
+
+# execution parameters, possible to move to command line parameters
+NB_CONSUMERS =1
+COMM_TRANSFER="~/zeronet.sh client transfer {} from zeronetme2 to {} --fee 0"
+MAX_DEPTH=2
+PAYMNETS_DIR="~/payments/"
+
+# network parameters
+REWARDS_SPLIT_API_URL='http://zeronet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'
+HEAD_API_URL='http://api1.tzscan.io/v2/head'
+BLOCKS_PER_CYCLE = 128 
+BLOCK_TIME_IN_SEC = 60
+
 payments_queue = queue.Queue(BUF_SIZE)
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(threadName)-9s %(message)s', )
-
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(threadName)-9s %(message)s', )
 
 class ProducerThread(threading.Thread):
-    def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
         super(ProducerThread, self).__init__()
         self.target = target
         self.name = name
@@ -27,55 +41,97 @@ class ProducerThread(threading.Thread):
         logging.debug('Producer started')
 
     def run(self):
+		current_cycle = self.get_current_cycle()
+		initial_payment_cycle = current_cycle - MAX_DEPTH - CYCLE_PYMNT_OFFSET
+		payment_cycle = initial_payment_cycle
+		
         while True:
-            if not payments_queue.full():
-                try:
-                    current_cycle = self.get_current_cycle()
-                    payment_cycle = current_cycle - NB_FREEZE_CYCLE + 1
+			
+			# take a breath
+			time.sleep(10)
+			
+			current_level=self.get_current_level()
+			current_cycle=self.level_to_cycle(current_level)
+			
+			# payments should not pass beyond last released reward cycle
+			if payment_cycle <= current_cycle - CYCLE_PYMNT_OFFSET
+				if not payments_queue.full():
+					try:
+						
+						logging.info("Payment cycle is " + str(payment_cycle))
+						root = self.get_rewards_for_cycle_map(payment_cycle)
 
-                    logging.info("Payment cycle is " + str(payment_cycle))
-                    root = self.get_rewards_for_cycle_map(payment_cycle)
+						delegate_staking_balance = int(root["delegate_staking_balance"])
+						blocks_rewards = int(root["blocks_rewards"])
+						endorsements_rewards = int(root["endorsements_rewards"])
+						fees = int(root["fees"])
+						total_rewards = blocks_rewards + endorsements_rewards + fees
 
-                    delegate_staking_balance = int(root["delegate_staking_balance"])
-                    blocks_rewards = int(root["blocks_rewards"])
-                    endorsements_rewards = int(root["endorsements_rewards"])
-                    fees = int(root["fees"])
-                    total_rewards = blocks_rewards + endorsements_rewards + fees
+						logging.info("Total rewards=" + str(total_rewards))
 
-                    logging.info("Total rewards=" + str(total_rewards))
-
-                    delegators_balance = root["delegators_balance"]
-                    for dbalance in delegators_balance:
-                        address = dbalance[0]["tz"]
-                        balance = int(dbalance[1])
-                        share_rate = balance / delegate_staking_balance
-                        reward_share = round(total_rewards * share_rate / ONE_MILLION, 3)
-                        reward_item = {"cycle":payment_cycle,"address": address, "reward": reward_share}
-                        payments_queue.put(reward_item)
-
-                        logging.info(
-                            "Reward created for cycle %s address %s amount %f tz",reward_item["cycle"],reward_item["address"] , reward_item["reward"])
-
-                    time.sleep(60)
-                except Exception as e:
-                    logging.error("Error at reward calculation",e)
-                    time.sleep(10)
+						delegators_balance = root["delegators_balance"]
+						for dbalance in delegators_balance:
+							address = dbalance[0]["tz"]
+							balance = int(dbalance[1])
+							share_rate = balance / delegate_staking_balance
+							reward_share = round(total_rewards * share_rate / ONE_MILLION, 3)
+							reward_item = {"cycle":payment_cycle,"address": address, "reward": reward_share}
+							
+							
+							pymnt_addr=reward_item["address"]
+							pymt_log=PAYMNETS_DIR+"/"+str(payment_cycle)+"/"+pymnt_addr+'.txt'
+							
+								
+							if os.path.isfile(pymt_log)
+								logging.warn("Reward not created for cycle %s address %s amount %f tz : Reason payment log already present",reward_item["cycle"],pymnt_addr, reward_item["reward"])
+							else:
+								payments_queue.put(reward_item)
+								logging.info("Reward created for cycle %s address %s amount %f tz",reward_item["cycle"],pymnt_addr, reward_item["reward"])
+						
+						
+						# processing of cycle is done
+						logging.info("Reward creation done for cycle %s",payment_cycle)
+						payment_cycle=payment_cycle+1
+				 
+					except Exception as e:
+						logging.error("Error at reward calculation",e)
+					
+				# end of queue size check
+				else:
+					# wait a few minutes to let payments done
+					time.sleep(60*3)
+			# end of payment cycle check
+			else: 
+				nb_blocks_remaining=current_cycle*BLOCKS_PER_CYCLE-current_level
+				
+				# wait until current cycle ends
+				time.sleep(nb_blocks_remaining*BLOCK_TIME_IN_SEC)
+				
+            
+		# end of endless loop
         return
+		
+	
+	def level_to_cycle(self, level)
+		return floor(level / BLOCKS_PER_CYCLE)
 
     def get_current_cycle(self):
-        resp = requests.get('http://api1.tzscan.io/v2/head')
+        return level_to_cycle(get_current_level())
+	
+    def get_current_level(self):
+        resp = requests.get(HEAD_API_URL)
         if resp.status_code != 200:
             # This means something went wrong.
             raise Exception('GET /head/ {}'.format(resp.status_code))
         root = resp.json()
         current_level = int(root["level"])
-        current_cycle = floor(current_level / BLOCKS_PER_CYCLE)
 
-        return current_cycle
+        return current_level
+	
+		
 
     def get_rewards_for_cycle_map(self, cycle):
-        resp = requests.get(
-            'http://api4.tzscan.io/v1/rewards_split/' + BAKING_ADDRESS + '?cycle=' + str(cycle) + '&p=0')
+        resp = requests.get(REWARDS_SPLIT_API_URL.format(BAKING_ADDRESS,cycle,0))
         if resp.status_code != 200:
             # This means something went wrong.
             raise Exception('GET /tasks/ {}'.format(resp.status_code))
@@ -84,8 +140,7 @@ class ProducerThread(threading.Thread):
 
 
 class ConsumerThread(threading.Thread):
-    def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
         super(ConsumerThread, self).__init__()
         self.target = target
         self.name = name
@@ -96,10 +151,27 @@ class ConsumerThread(threading.Thread):
         while True:
             # wait until a reward is present
             reward_item = payments_queue.get(True)
-            time.sleep(60)
-            logging.info(
-                "Reward paid for cycle %s address %s amount %f tz",reward_item["cycle"], reward_item["address"], reward_item["reward"])
+            cmd = COMM_TRANSFER.format(reward_item["reward"],reward_item["address"])
+            
+			# execute client
+			process = subprocess.Popen(cmd, shell=True)
+            process.wait()
+            
+			if process.returncode == 0
+				pymt_log=PAYMNETS_DIR+"/"+str(payment_cycle)+"/"+pymnt_addr+'.txt'
+				
+				# check and create required directories
+				if not os.path.exists(os.path.dirname(pymt_log)):
+					os.makedirs(os.path.dirname(pymt_log))
+				
+				# create empty payment log file
+				with open(pymt_log, “w”) as f: 
+					f.write("”) 
 
+				logging.info("Reward paid for cycle %s address %s amount %f tz",reward_item["cycle"], reward_item["address"], reward_item["reward"])
+			else:
+				logging.warn("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",reward_item["cycle"], reward_item["address"], reward_item["reward"])
+			
         return
 
 
