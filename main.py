@@ -2,10 +2,10 @@ import threading
 import queue
 import time
 from math import floor
-import logging
 import subprocess
 import requests
 import os
+from logconfig import main_logger
 
 BUF_SIZE = 50
 ONE_MILLION = 1000000
@@ -30,8 +30,8 @@ BLOCKS_PER_CYCLE = 128
 BLOCK_TIME_IN_SEC = 60
 
 payments_queue = queue.Queue(BUF_SIZE)
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(threadName)-9s %(message)s', )
 
+logger = main_logger
 
 class ProducerThread(threading.Thread):
     def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
@@ -39,7 +39,7 @@ class ProducerThread(threading.Thread):
         self.target = target
         self.name = name
 
-        logging.debug('Producer started')
+        logger.debug('Producer started')
 
     def run(self):
         current_cycle = self.get_current_cycle()
@@ -59,7 +59,7 @@ class ProducerThread(threading.Thread):
                 if not payments_queue.full():
                     try:
 
-                        logging.info("Payment cycle is " + str(payment_cycle))
+                        logger.info("Payment cycle is " + str(payment_cycle))
                         root = self.get_rewards_for_cycle_map(payment_cycle)
 
                         delegate_staking_balance = int(root["delegate_staking_balance"])
@@ -68,7 +68,7 @@ class ProducerThread(threading.Thread):
                         fees = int(root["fees"])
                         total_rewards = blocks_rewards + endorsements_rewards + fees
 
-                        logging.info("Total rewards=" + str(total_rewards))
+                        logger.info("Total rewards=" + str(total_rewards))
 
                         delegators_balance = root["delegators_balance"]
                         for dbalance in delegators_balance:
@@ -82,28 +82,31 @@ class ProducerThread(threading.Thread):
                             pymt_log = PAYMNETS_DIR + "/" + str(payment_cycle) + "/" + pymnt_addr + '.txt'
 
                             if os.path.isfile(pymt_log):
-                                logging.warning(
+                                logger.warning(
                                     "Reward not created for cycle %s address %s amount %f tz : Reason payment log already present",
                                     reward_item["cycle"], pymnt_addr, reward_item["reward"])
                             else:
                                 payments_queue.put(reward_item)
-                                logging.info("Reward created for cycle %s address %s amount %f tz",
+                                logger.info("Reward created for cycle %s address %s amount %f tz",
                                              reward_item["cycle"], pymnt_addr, reward_item["reward"])
 
                         # processing of cycle is done
-                        logging.info("Reward creation done for cycle %s", payment_cycle)
+                        logger.info("Reward creation done for cycle %s", payment_cycle)
                         payment_cycle = payment_cycle + 1
 
                     except Exception as e:
-                        logging.error("Error at reward calculation", e)
+                        logger.error("Error at reward calculation", e)
 
                 # end of queue size check
                 else:
+                    logger.debug("Wait a few minutes, queue is full")
                     # wait a few minutes to let payments done
                     time.sleep(60 * 3)
             # end of payment cycle check
             else:
                 nb_blocks_remaining = (current_cycle+1) * BLOCKS_PER_CYCLE - current_level
+
+                logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
 
                 # wait until current cycle ends
                 time.sleep(nb_blocks_remaining * BLOCK_TIME_IN_SEC)
@@ -141,7 +144,7 @@ class ConsumerThread(threading.Thread):
         super(ConsumerThread, self).__init__()
         self.target = target
         self.name = name
-        logging.debug('Consumer "%s" created', self.name)
+        logger.debug('Consumer "%s" created', self.name)
         return
 
     def run(self):
@@ -156,7 +159,7 @@ class ConsumerThread(threading.Thread):
 
                 cmd = COMM_TRANSFER.format(pymnt_amnt, pymnt_addr)
 
-                logging.debug("Reward attempt for cycle %s address %s amount %f tz", reward_item["cycle"],reward_item["address"], reward_item["reward"])
+                logger.debug("Reward attempt for cycle %s address %s amount %f tz", reward_item["cycle"],reward_item["address"], reward_item["reward"])
 
                 # execute client
                 process = subprocess.Popen(cmd, shell=True,stdout=subprocess.PIPE)
@@ -173,13 +176,13 @@ class ConsumerThread(threading.Thread):
                     with open(pymt_log, 'w') as f:
                         f.write('')
 
-                    logging.info("Reward paid for cycle %s address %s amount %f tz", reward_item["cycle"],
+                    logger.info("Reward paid for cycle %s address %s amount %f tz", reward_item["cycle"],
                                  reward_item["address"], reward_item["reward"])
                 else:
-                    logging.warning("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",
+                    logger.warning("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",
                                     reward_item["cycle"], reward_item["address"], reward_item["reward"])
             except Exception as e:
-                logging.error("Error at reward payment", e)
+                logger.error("Error at reward payment", e)
 
         return
 
