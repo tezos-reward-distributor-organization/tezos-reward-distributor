@@ -159,7 +159,7 @@ class ConsumerThread(threading.Thread):
 
                 cmd = COMM_TRANSFER.format(pymnt_amnt, pymnt_addr)
 
-                logger.debug("Reward attempt for cycle %s address %s amount %f tz", reward_item["cycle"],reward_item["address"], reward_item["reward"])
+                logger.debug("Reward payment attempt for cycle %s address %s amount %f tz", reward_item["cycle"],reward_item["address"], reward_item["reward"])
 
                 # execute client
                 process = subprocess.Popen(cmd, shell=True,stdout=subprocess.PIPE)
