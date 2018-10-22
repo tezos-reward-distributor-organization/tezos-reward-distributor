@@ -27,7 +27,7 @@ PAYMNETS_DIR = os.path.expanduser("~/payments/")
 REWARDS_SPLIT_API_URL = 'http://zeronet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'
 HEAD_API_URL = 'http://zeronet-api.tzscan.io/v2/head'
 BLOCKS_PER_CYCLE = 128
-BLOCK_TIME_IN_SEC = 60
+BLOCK_TIME_IN_SEC = 20
 
 payments_queue = queue.Queue(BUF_SIZE)
 
