@@ -49,7 +49,7 @@ class PaymentCalculator:
 
         # 3- service fee is shared among founders according to founders_map ratios
         for address, ratio in self.founders_map.items():
-            pymnt_amnt = ratio * self.total_service_fee
+            pymnt_amnt = round(ratio * self.total_service_fee,6)
 
             pymnts.append({'payment': pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'F'})
 
@@ -61,7 +61,7 @@ class PaymentCalculator:
             total_sum = total_sum + payment['payment']
 
         # this must never return true
-        if total_sum - self.total_rewards > 0:
+        if total_sum - self.total_rewards > 1e-6:
             raise Exception("Calculated reward {} is grater than total reward {}".format(total_sum, self.total_rewards))
 
         return pymnts
