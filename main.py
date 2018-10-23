@@ -137,7 +137,7 @@ class ConsumerThread(threading.Thread):
 
                 cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
 
-                logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type {}", pymnt_cycle, pymnt_addr,
+                logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type %s", pymnt_cycle, pymnt_addr,
                              pymnt_amnt,type)
 
                 logger.debug("Reward payment command '{}'".format(cmd))
