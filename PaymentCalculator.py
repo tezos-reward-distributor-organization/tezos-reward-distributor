@@ -63,7 +63,7 @@ class PaymentCalculator:
             total_sum = total_sum + payment['payment']
 
         # this must never return true
-        if total_sum - self.total_rewards > 1e-6:
+        if total_sum - self.total_rewards > 5e-6:
             raise Exception("Calculated reward {} is grater than total reward {}".format(total_sum, self.total_rewards))
 
         return pymnts
