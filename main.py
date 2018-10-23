@@ -15,7 +15,7 @@ from TzScanRewardApi import TzScanRewardApi
 from TzScanRewardCalculator import TzScanRewardCalculator
 from logconfig import main_logger
 
-# execution parameters, possible to move to command line parameters
+
 NB_CONSUMERS = 1
 BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
@@ -139,6 +139,8 @@ class ConsumerThread(threading.Thread):
 
                 logger.debug("Reward payment attempt for cycle %s address %s amount %f tz", pymnt_cycle, pymnt_addr,
                              pymnt_amnt)
+
+                logger.debug("Reward payment command '{}'".format(cmd))
 
                 # execute client
                 process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
