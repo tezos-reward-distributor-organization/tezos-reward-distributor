@@ -37,12 +37,11 @@ class PaymentCalculator:
             delegators_total_ratio = delegators_total_ratio + ratio
             delegators_total_fee = delegators_total_fee + fee
 
-        # 2- calculate deposit owners payments
-        owners_ratio = 1 - delegators_total_ratio
+        # 2- calculate deposit owners payments. They share the remaining rewards according to their ratio (check config)
         owners_total_payment = 0
-        owners_total_reward = self.total_rewards - delegators_total_fee
+        owners_total_reward = self.total_rewards - (delegators_total_pymnt + delegators_total_fee)
         for address, ratio in self.owners_map.items():
-            owner_pymnt_amnt = self.floorf((owners_ratio * ratio) * owners_total_reward, 3)
+            owner_pymnt_amnt = self.floorf(ratio * owners_total_reward, 3)
             owners_total_payment = owners_total_payment + owner_pymnt_amnt
 
             pymnts.append({'payment': owner_pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'O'})
