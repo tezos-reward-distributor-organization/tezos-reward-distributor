@@ -1,3 +1,6 @@
+from math import ceil, floor
+
+
 class PaymentCalculator:
     def __init__(self, founders_map, owners_map, reward_list, total_rewards, service_fee_calculator, cycle):
         self.owners_map = owners_map
@@ -20,7 +23,7 @@ class PaymentCalculator:
             ktAddress = reward_item['address']
             ratio = reward_item['ratio']
 
-            pymnt_amnt = round(reward * (1 - self.fee_calc.calculate(ktAddress)), 3)
+            pymnt_amnt = self.floorf(reward * (1 - self.fee_calc.calculate(ktAddress)), 3)
 
             # this indicates, service fee is very low (e.g. 0) and pymnt_amnt is rounded up
             if pymnt_amnt - reward > 0:
@@ -39,7 +42,7 @@ class PaymentCalculator:
         owners_total_payment = 0
         owners_total_reward = self.total_rewards - delegators_total_fee
         for address, ratio in self.owners_map.items():
-            owner_pymnt_amnt = round((owners_ratio * ratio) * owners_total_reward, 3)
+            owner_pymnt_amnt = self.floorf((owners_ratio * ratio) * owners_total_reward, 3)
             owners_total_payment = owners_total_payment + owner_pymnt_amnt
 
             pymnts.append({'payment': owner_pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'O'})
@@ -49,7 +52,7 @@ class PaymentCalculator:
 
         # 3- service fee is shared among founders according to founders_map ratios
         for address, ratio in self.founders_map.items():
-            pymnt_amnt = round(ratio * self.total_service_fee,6)
+            pymnt_amnt = self.ceilf(ratio * self.total_service_fee, 6)
 
             pymnts.append({'payment': pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'F'})
 
@@ -65,3 +68,9 @@ class PaymentCalculator:
             raise Exception("Calculated reward {} is grater than total reward {}".format(total_sum, self.total_rewards))
 
         return pymnts
+
+    def ceilf(self, num, ndigits):
+        return ceil(num * 10 ** ndigits) / 10 ** ndigits
+
+    def floorf(self, num, ndigits):
+        return floor(num * 10 ** ndigits) / 10 ** ndigits
