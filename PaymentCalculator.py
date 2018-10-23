@@ -51,7 +51,7 @@ class PaymentCalculator:
 
         # 3- service fee is shared among founders according to founders_map ratios
         for address, ratio in self.founders_map.items():
-            pymnt_amnt = self.ceilf(ratio * self.total_service_fee, 6)
+            pymnt_amnt = self.floorf(ratio * self.total_service_fee, 6)
 
             pymnts.append({'payment': pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'F'})
 
@@ -62,8 +62,13 @@ class PaymentCalculator:
         for payment in pymnts:
             total_sum = total_sum + payment['payment']
 
+        # if there is a minor difference due to floor function; it is added to last payment
+        if self.total_rewards - total_sum > 1e-6:
+            last_payment = pymnts[-1] # last payment, probably one of the founders
+            last_payment['payment'] = last_payment['payment'] + (self.total_rewards - total_sum)
+
         # this must never return true
-        if total_sum - self.total_rewards > 5e-6:
+        if abs(total_sum - self.total_rewards) > 5e-6:
             raise Exception("Calculated reward {} is grater than total reward {}".format(total_sum, self.total_rewards))
 
         return pymnts
