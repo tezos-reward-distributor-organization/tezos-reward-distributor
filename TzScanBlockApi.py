@@ -2,9 +2,9 @@ import requests
 
 from BlockApi import BlockApi
 
-API = {'MAIN': {'HEAD_API_URL': 'https://api6.tzscan.io/v2/head'},
-       'ALPHA': {'HEAD_API_URL': 'http://alphanet-api.tzscan.io/v2/head'},
-       'ZERO': {'HEAD_API_URL': 'http://zeronet-api.tzscan.io/v2/head'}
+API = {'MAINNET': {'HEAD_API_URL': 'https://api6.tzscan.io/v2/head'},
+       'ALPHANET': {'HEAD_API_URL': 'http://alphanet-api.tzscan.io/v2/head'},
+       'ZERONET': {'HEAD_API_URL': 'http://zeronet-api.tzscan.io/v2/head'}
        }
 
 class TzScanBlockApi(BlockApi):

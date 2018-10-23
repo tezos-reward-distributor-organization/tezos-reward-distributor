@@ -2,9 +2,9 @@ import requests
 
 from RewardApi import RewardApi
 
-API = {'MAIN': {'REWARDS_SPLIT_API_URL': 'http://api4.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'},
-       'ALPHA': {'REWARDS_SPLIT_API_URL': 'http://alphanet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'},
-       'ZERO': {'REWARDS_SPLIT_API_URL': 'http://zeronet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'}
+API = {'MAINNET': {'REWARDS_SPLIT_API_URL': 'http://api4.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'},
+       'ALPHANET': {'REWARDS_SPLIT_API_URL': 'http://alphanet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'},
+       'ZERONET': {'REWARDS_SPLIT_API_URL': 'http://zeronet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'}
        }
 
 
