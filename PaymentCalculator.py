@@ -11,6 +11,14 @@ class PaymentCalculator:
         self.founders_map = founders_map
         self.total_service_fee = 0
 
+    #
+    # calculation details
+    #
+    # total reward = delegators reward + owners reward = delegators payment + delegators fee + owners payment
+    # delegators reward = delegators payment + delegators fee
+    # owners reward = owners payment = total reward - delegators reward
+    # founders reward = delegators fee = total reward - delegators reward
+    ####
     def calculate(self):
         pymnts = []
 
@@ -69,7 +77,7 @@ class PaymentCalculator:
 
         # this must never return true
         if abs(total_sum - self.total_rewards) > 5e-6:
-            raise Exception("Calculated reward {} is grater than total reward {}".format(total_sum, self.total_rewards))
+            raise Exception("Calculated reward {} is not equal total reward {}".format(total_sum, self.total_rewards))
 
         return pymnts
 
