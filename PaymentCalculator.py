@@ -1,4 +1,4 @@
-from math import ceil, floor
+from utils import floorf
 
 
 class PaymentCalculator:
@@ -31,7 +31,7 @@ class PaymentCalculator:
             ktAddress = reward_item['address']
             ratio = reward_item['ratio']
 
-            pymnt_amnt = self.floorf(reward * (1 - self.fee_calc.calculate(ktAddress)), 3)
+            pymnt_amnt = floorf(reward * (1 - self.fee_calc.calculate(ktAddress)), 3)
 
             # this indicates, service fee is very low (e.g. 0) and pymnt_amnt is rounded up
             if pymnt_amnt - reward > 0:
@@ -39,7 +39,8 @@ class PaymentCalculator:
 
             fee = (reward - pymnt_amnt)
 
-            pymnts.append({'payment': pymnt_amnt, 'fee': fee, 'address': ktAddress, 'cycle': self.cycle, 'type': 'D'})
+            pymnts.append({'payment': pymnt_amnt, 'fee': fee, 'reward': reward, 'address': ktAddress, 'ratio': ratio,
+                           'cycle': self.cycle, 'type': 'D'})
 
             delegators_total_pymnt = delegators_total_pymnt + pymnt_amnt
             delegators_total_ratio = delegators_total_ratio + ratio
@@ -49,19 +50,22 @@ class PaymentCalculator:
         owners_total_payment = 0
         owners_total_reward = self.total_rewards - (delegators_total_pymnt + delegators_total_fee)
         for address, ratio in self.owners_map.items():
-            owner_pymnt_amnt = self.floorf(ratio * owners_total_reward, 3)
+            owner_pymnt_amnt = floorf(ratio * owners_total_reward, 3)
             owners_total_payment = owners_total_payment + owner_pymnt_amnt
 
-            pymnts.append({'payment': owner_pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'O'})
+            pymnts.append({'payment': owner_pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'O',
+                           'ratio': ratio, 'reward': owner_pymnt_amnt})
 
         # move remaining rewards to service fee bucket
         self.total_service_fee = self.total_rewards - delegators_total_pymnt - owners_total_payment
 
         # 3- service fee is shared among founders according to founders_map ratios
         for address, ratio in self.founders_map.items():
-            pymnt_amnt = self.floorf(ratio * self.total_service_fee, 6)
+            pymnt_amnt = floorf(ratio * self.total_service_fee, 6)
 
-            pymnts.append({'payment': pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'F'})
+            pymnts.append(
+                {'payment': pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'F', 'ratio': ratio,
+                 'reward': pymnt_amnt})
 
         ###
         # sanity check
@@ -72,7 +76,7 @@ class PaymentCalculator:
 
         # if there is a minor difference due to floor function; it is added to last payment
         if self.total_rewards - total_sum > 1e-6:
-            last_payment = pymnts[-1] # last payment, probably one of the founders
+            last_payment = pymnts[-1]  # last payment, probably one of the founders
             last_payment['payment'] = last_payment['payment'] + (self.total_rewards - total_sum)
 
         # this must never return true
@@ -80,9 +84,3 @@ class PaymentCalculator:
             raise Exception("Calculated reward {} is not equal total reward {}".format(total_sum, self.total_rewards))
 
         return pymnts
-
-    def ceilf(self, num, ndigits):
-        return ceil(num * 10 ** ndigits) / 10 ** ndigits
-
-    def floorf(self, num, ndigits):
-        return floor(num * 10 ** ndigits) / 10 ** ndigits

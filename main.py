@@ -4,6 +4,7 @@ import queue
 import subprocess
 import threading
 import time
+import csv
 
 from BussinessConfiguration import founders_map, BAKING_ADDRESS, supporters_set, specials_map, STANDARD_FEE, owners_map
 from ClientConfiguration import COMM_TRANSFER
@@ -15,7 +16,6 @@ from TzScanRewardApi import TzScanRewardApi
 from TzScanRewardCalculator import TzScanRewardCalculator
 from logconfig import main_logger
 
-
 NB_CONSUMERS = 1
 BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
@@ -23,7 +23,7 @@ logger = main_logger
 
 
 class ProducerThread(threading.Thread):
-    def __init__(self, name, initial_payment_cycle, network_config, payments_dir):
+    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir):
         super(ProducerThread, self).__init__()
         self.name = name
         self.block_api = TzScanBlockApi(network_config)
@@ -31,6 +31,7 @@ class ProducerThread(threading.Thread):
         self.initial_payment_cycle = initial_payment_cycle
         self.nw_config = network_config
         self.payments_dir = payments_dir
+        self.reports_dir = reports_dir
 
         logger.debug('Producer started')
 
@@ -51,6 +52,10 @@ class ProducerThread(threading.Thread):
             current_level = self.block_api.get_current_level()
             current_cycle = self.block_api.level_to_cycle(current_level)
 
+            # create reports dir
+            if not os.path.exists(self.reports_dir):
+                os.makedirs(self.reports_dir)
+
             # payments should not pass beyond last released reward cycle
             if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1):
                 if not payments_queue.full():
@@ -69,26 +74,39 @@ class ProducerThread(threading.Thread):
                         payment_calc = PaymentCalculator(founders_map, owners_map, rewards, total_rewards,
                                                          self.fee_calc, payment_cycle)
                         payments = payment_calc.calculate()
-                        for payment_item in payments:
-                            address = payment_item["address"]
-                            payment = payment_item["payment"]
-                            fee = payment_item["fee"]
-                            type = payment_item["type"]
 
-                            pymt_log = payment_file_name(self.payments_dir, str(payment_cycle), address, type)
+                        report_file_path = self.reports_dir + '/' + str(payment_cycle) + '.csv'
+                        with open(report_file_path, 'w') as csvfile:
+                            csvwriter = csv.writer(csvfile, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                            # write headers and total rewards
+                            csvwriter.writerow(["address", "type", "ratio", total_rewards, "fee_rate", "payment", "fee"])
 
-                            if os.path.isfile(pymt_log):
-                                logger.warning(
-                                    "Reward not created for cycle %s address %s amount %f tz %s: Reason payment log already present",
-                                    payment_cycle, address, payment, type)
-                            else:
-                                payments_queue.put(payment_item)
-                                logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
-                                            payment_cycle, address, payment, fee, type)
+                            for payment_item in payments:
+                                address = payment_item["address"]
+                                payment = payment_item["payment"]
+                                fee = payment_item["fee"]
+                                type = payment_item["type"]
+                                ratio = payment_item["ratio"]
+                                reward = payment_item["reward"]
+                                fee_rate = self.fee_calc.calculate(address)
 
-                        # processing of cycle is done
-                        logger.info("Reward creation done for cycle %s", payment_cycle)
-                        payment_cycle = payment_cycle + 1
+                                # write row to csv file
+                                csvwriter.writerow([address, type, "{0:f}".format(ratio),"{0:f}".format(reward) , "{0:f}".format(fee_rate), "{0:f}".format(payment), "{0:f}".format(fee)])
+
+                                pymt_log = payment_file_name(self.payments_dir, str(payment_cycle), address, type)
+
+                                if os.path.isfile(pymt_log):
+                                    logger.warning(
+                                        "Reward not created for cycle %s address %s amount %f tz %s: Reason payment log already present",
+                                        payment_cycle, address, payment, type)
+                                else:
+                                    payments_queue.put(payment_item)
+                                    logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
+                                                payment_cycle, address, payment, fee, type)
+
+                            # processing of cycle is done
+                            logger.info("Reward creation done for cycle %s", payment_cycle)
+                            payment_cycle = payment_cycle + 1
 
                     except Exception as e:
                         logger.error("Error at reward calculation", e)
@@ -137,8 +155,9 @@ class ConsumerThread(threading.Thread):
 
                 cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
 
-                logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type %s", pymnt_cycle, pymnt_addr,
-                             pymnt_amnt,type)
+                logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type %s", pymnt_cycle,
+                             pymnt_addr,
+                             pymnt_amnt, type)
 
                 logger.debug("Reward payment command '{}'".format(cmd))
 
@@ -175,9 +194,10 @@ def main(args):
     network_config = network_config_map[args.network]
     key = args.key
     payments_dir = os.path.expanduser(args.payments_dir)
+    reports_dir = os.path.expanduser(args.reports_dir)
 
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
-                       payments_dir=payments_dir)
+                       payments_dir=payments_dir, reports_dir=reports_dir)
     p.start()
 
     for i in range(NB_CONSUMERS):
@@ -190,10 +210,11 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("key", help="baker's tzaddress or correspoding key name")
+    parser.add_argument("key", help="tezos address or alias to make payments")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
     parser.add_argument("-D", "--payments_dir", help="Directory to create payment logs", default='./payments')
+    parser.add_argument("-R", "--reports_dir", help="Directory to create reports", default='./reports')
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)",
                         type=int, default=0)
@@ -202,6 +223,7 @@ if __name__ == '__main__':
 
     logger.info("Tezos Reward Distributer is Starting")
     logger.info("Current network is {}".format(args.network))
+    logger.info("Baker addess is {}".format(BAKING_ADDRESS))
     logger.info("Keyname {}".format(args.key))
     logger.info("--------------------------------------------")
     logger.info("Author huseyinabanox@gmail.com")
