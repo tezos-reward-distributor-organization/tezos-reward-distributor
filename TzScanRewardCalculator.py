@@ -1,5 +1,5 @@
 from RewardCalculator import RewardCalculator
-from utils import ceilf
+from utils import ceilf, floorf
 
 ONE_MILLION = 1000000
 
@@ -28,7 +28,7 @@ class TzScanRewardCalculator(RewardCalculator):
         for dbalance in delegators_balance:
             address = dbalance[0]["tz"]
             balance = int(dbalance[1])
-            ratio = ceilf(balance / delegate_staking_balance, 4)
+            ratio = round(balance / delegate_staking_balance, 5)
             reward = (self.total_rewards * ratio)
             reward_item = {"address": address, "reward": reward, "ratio": ratio}
 

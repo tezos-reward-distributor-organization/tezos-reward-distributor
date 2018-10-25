@@ -65,7 +65,7 @@ class PaymentCalculator:
 
             pymnts.append(
                 {'payment': pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'F', 'ratio': ratio,
-                 'reward': pymnt_amnt})
+                 'reward': 0})
 
         ###
         # sanity check

@@ -5,6 +5,7 @@ import subprocess
 import threading
 import time
 import csv
+from enum import Enum
 
 from BussinessConfiguration import founders_map, BAKING_ADDRESS, supporters_set, specials_map, STANDARD_FEE, owners_map
 from ClientConfiguration import COMM_TRANSFER
@@ -22,8 +23,15 @@ payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
 
 
+class RunMode(Enum):
+    FOREVER = 1
+    PENDING = 2
+    ONETIME = 3
+
+EXIT_PAYMENT_TYPE="exit"
+
 class ProducerThread(threading.Thread):
-    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir):
+    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode):
         super(ProducerThread, self).__init__()
         self.name = name
         self.block_api = TzScanBlockApi(network_config)
@@ -32,6 +40,7 @@ class ProducerThread(threading.Thread):
         self.nw_config = network_config
         self.payments_dir = payments_dir
         self.reports_dir = reports_dir
+        self.run_mode = run_mode
 
         logger.debug('Producer started')
 
@@ -76,10 +85,11 @@ class ProducerThread(threading.Thread):
                         payments = payment_calc.calculate()
 
                         report_file_path = self.reports_dir + '/' + str(payment_cycle) + '.csv'
-                        with open(report_file_path, 'w') as csvfile:
-                            csvwriter = csv.writer(csvfile, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                        with open(report_file_path, 'w', newline='') as csvfile:
+                            csvwriter = csv.writer(csvfile, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                             # write headers and total rewards
-                            csvwriter.writerow(["address", "type", "ratio", total_rewards, "fee_rate", "payment", "fee"])
+                            csvwriter.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
+                            csvwriter.writerow([BAKING_ADDRESS, "B", 1.0, total_rewards, 0, total_rewards, 0])
 
                             for payment_item in payments:
                                 address = payment_item["address"]
@@ -91,7 +101,9 @@ class ProducerThread(threading.Thread):
                                 fee_rate = self.fee_calc.calculate(address)
 
                                 # write row to csv file
-                                csvwriter.writerow([address, type, "{0:f}".format(ratio),"{0:f}".format(reward) , "{0:f}".format(fee_rate), "{0:f}".format(payment), "{0:f}".format(fee)])
+                                csvwriter.writerow([address, type, "{0:f}".format(ratio), "{0:f}".format(reward),
+                                                    "{0:f}".format(fee_rate), "{0:f}".format(payment),
+                                                    "{0:f}".format(fee)])
 
                                 pymt_log = payment_file_name(self.payments_dir, str(payment_cycle), address, type)
 
@@ -108,6 +120,11 @@ class ProducerThread(threading.Thread):
                             logger.info("Reward creation done for cycle %s", payment_cycle)
                             payment_cycle = payment_cycle + 1
 
+                        # single run is done. Do not continue.
+                        if self.run_mode == RunMode.ONETIME:
+                            logger.info("Run mode ONETIME satisfied. Killing the thread ...")
+                            payments_queue.put(self.create_exit_payment())
+                            return
                     except Exception as e:
                         logger.error("Error at reward calculation", e)
 
@@ -118,6 +135,12 @@ class ProducerThread(threading.Thread):
                     time.sleep(60 * 3)
             # end of payment cycle check
             else:
+                # pending payments done. Do not wait any more.
+                if self.run_mode == RunMode.PENDING:
+                    logger.info("Run mode PENDING satisfied. Killing the thread ...")
+                    payments_queue.put(self.create_exit_payment())
+                    return
+
                 nb_blocks_remaining = (current_cycle + 1) * self.nw_config['BLOCKS_PER_CYCLE'] - current_level
 
                 logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
@@ -127,6 +150,9 @@ class ProducerThread(threading.Thread):
 
         # end of endless loop
         return
+
+    def create_exit_payment(self):
+        return {'payment': 0, 'fee': 0, 'address': 0, 'cycle': 0, 'type': EXIT_PAYMENT_TYPE, 'ratio': 0, 'reward': 0}
 
 
 class ConsumerThread(threading.Thread):
@@ -152,6 +178,10 @@ class ConsumerThread(threading.Thread):
                 pymnt_amnt = payment_item["payment"]
                 pymnt_cycle = payment_item["cycle"]
                 type = payment_item["type"]
+
+                if type == EXIT_PAYMENT_TYPE:
+                    logger.debug("Exit signal received. Killing the thread...")
+                    return
 
                 cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
 
@@ -195,9 +225,10 @@ def main(args):
     key = args.key
     payments_dir = os.path.expanduser(args.payments_dir)
     reports_dir = os.path.expanduser(args.reports_dir)
+    run_mode = RunMode(args.run_mode)
 
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
-                       payments_dir=payments_dir, reports_dir=reports_dir)
+                       payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode)
     p.start()
 
     for i in range(NB_CONSUMERS):
@@ -215,6 +246,9 @@ if __name__ == '__main__':
                         default='MAINNET')
     parser.add_argument("-D", "--payments_dir", help="Directory to create payment logs", default='./payments')
     parser.add_argument("-R", "--reports_dir", help="Directory to create reports", default='./reports')
+    parser.add_argument("-M", "--run_mode",
+                        help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
+                        default=1, choices=[1, 2, 3], type=int)
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)",
                         type=int, default=0)
