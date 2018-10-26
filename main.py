@@ -7,7 +7,7 @@ import time
 import csv
 from enum import Enum
 
-from BussinessConfiguration import founders_map, BAKING_ADDRESS, supporters_set, specials_map, STANDARD_FEE, owners_map
+from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from ClientConfiguration import COMM_TRANSFER
 from NetworkConfiguration import network_config_map
 from PaymentCalculator import PaymentCalculator
@@ -28,14 +28,20 @@ class RunMode(Enum):
     PENDING = 2
     ONETIME = 3
 
-EXIT_PAYMENT_TYPE="exit"
+
+EXIT_PAYMENT_TYPE = "exit"
+
 
 class ProducerThread(threading.Thread):
-    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode):
+    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode,
+                 service_fee_calc, owners_map, founders_map, baking_address):
         super(ProducerThread, self).__init__()
+        self.baking_address = baking_address
+        self.owners_map = owners_map
+        self.founders_map = founders_map
         self.name = name
         self.block_api = TzScanBlockApi(network_config)
-        self.fee_calc = ServiceFeeCalculator(supporters_set, specials_map, STANDARD_FEE)
+        self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
         self.nw_config = network_config
         self.payments_dir = payments_dir
@@ -72,15 +78,15 @@ class ProducerThread(threading.Thread):
 
                         logger.info("Payment cycle is " + str(payment_cycle))
 
-                        reward_api = TzScanRewardApi(self.nw_config, BAKING_ADDRESS)
+                        reward_api = TzScanRewardApi(self.nw_config, self.baking_address)
                         reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle)
-                        reward_calc = TzScanRewardCalculator(founders_map, reward_data)
+                        reward_calc = TzScanRewardCalculator(self.founders_map, reward_data)
                         rewards = reward_calc.calculate()
                         total_rewards = reward_calc.get_total_rewards()
 
                         logger.info("Total rewards=" + str(total_rewards))
 
-                        payment_calc = PaymentCalculator(founders_map, owners_map, rewards, total_rewards,
+                        payment_calc = PaymentCalculator(self.founders_map, self.owners_map, rewards, total_rewards,
                                                          self.fee_calc, payment_cycle)
                         payments = payment_calc.calculate()
 
@@ -89,7 +95,7 @@ class ProducerThread(threading.Thread):
                             csvwriter = csv.writer(csvfile, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                             # write headers and total rewards
                             csvwriter.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
-                            csvwriter.writerow([BAKING_ADDRESS, "B", 1.0, total_rewards, 0, total_rewards, 0])
+                            csvwriter.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
 
                             for payment_item in payments:
                                 address = payment_item["address"]
@@ -227,8 +233,15 @@ def main(args):
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
 
+    full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
+
+    service_fee_calc = ServiceFeeCalculator(supporters_set=full_supporters_set, specials_map=specials_map,
+                                            standard_fee=STANDARD_FEE)
+
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
-                       payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode)
+                       payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode,
+                       service_fee_calc=service_fee_calc, owners_map=owners_map, founders_map=founders_map,
+                       baking_address=BAKING_ADDRESS)
     p.start()
 
     for i in range(NB_CONSUMERS):
