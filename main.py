@@ -226,12 +226,22 @@ def payment_file_name(pymnt_dir, pymnt_cycle, pymnt_addr, pymnt_type):
     return pymnt_dir + "/" + pymnt_cycle + "/" + pymnt_addr + '_' + pymnt_type + '.txt'
 
 
+# all shares in the map must sum upto 1
+def validate_map_share_sum(map, map_name):
+    if sum(map.values()) != 1:
+        raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
+
+
+
 def main(args):
     network_config = network_config_map[args.network]
     key = args.key
     payments_dir = os.path.expanduser(args.payments_dir)
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
+
+    validate_map_share_sum(founders_map,"founders map")
+    validate_map_share_sum(owners_map,"owners map")
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
