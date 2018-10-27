@@ -9,7 +9,6 @@ import csv
 from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 from enum import Enum
 
-import gevent
 
 from LockFile import LockFile
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
