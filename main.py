@@ -20,7 +20,6 @@ from TzScanBlockApi import TzScanBlockApi
 from TzScanRewardApi import TzScanRewardApi
 from TzScanRewardCalculator import TzScanRewardCalculator
 from logconfig import main_logger
-from gevent.event import Event
 
 NB_CONSUMERS = 1
 BUF_SIZE = 50
