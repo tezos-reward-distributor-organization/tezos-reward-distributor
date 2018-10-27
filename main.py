@@ -259,7 +259,7 @@ def main(args):
 
     lock_file.lock()
 
-    for sig in (SIGABRT, SIGBREAK, SIGILL, SIGSEGV, SIGTERM):
+    for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM):
         signal.signal(sig, exit_gracefully)
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
