@@ -6,7 +6,7 @@ import subprocess
 import threading
 import time
 import csv
-from _signal import SIGABRT, SIGBREAK, SIGILL, SIGINT, SIGSEGV, SIGTERM
+from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 from enum import Enum
 
 import gevent
