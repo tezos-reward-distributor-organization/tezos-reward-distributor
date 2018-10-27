@@ -1,20 +1,17 @@
 import argparse
+import csv
 import os
 import queue
-import signal
 import subprocess
 import threading
 import time
-import csv
-from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 from enum import Enum
 
-
-from LockFile import LockFile
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from ClientConfiguration import COMM_TRANSFER
 from NetworkConfiguration import network_config_map
 from PaymentCalculator import PaymentCalculator
+from ProcessLifeCycle import ProcessLifeCycle
 from ServiceFeeCalculator import ServiceFeeCalculator
 from TzScanBlockApi import TzScanBlockApi
 from TzScanRewardApi import TzScanRewardApi
@@ -34,8 +31,8 @@ class RunMode(Enum):
 
 
 EXIT_PAYMENT_TYPE = "exit"
-lock_file = LockFile()
-runnig=True
+lifeCycle = ProcessLifeCycle()
+
 
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode,
@@ -64,14 +61,19 @@ class ProducerThread(threading.Thread):
         if self.initial_payment_cycle <= 0:
             payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
 
-
-        while runnig:
+        while lifeCycle.is_running():
 
             # take a breath
             time.sleep(10)
 
             current_level = self.block_api.get_current_level()
             current_cycle = self.block_api.level_to_cycle(current_level)
+
+            if os.path.isdir(payment_dir_c(self.payments_dir, payment_cycle)):
+                logger.warn("Payment directory for cycle {} is present. No payment will be run for the cycle".format(
+                    payment_cycle))
+                payment_cycle = payment_cycle + 1
+                continue
 
             # create reports dir
             if not os.path.exists(self.reports_dir):
@@ -151,16 +153,23 @@ class ProducerThread(threading.Thread):
                 if self.run_mode == RunMode.PENDING:
                     logger.info("Run mode PENDING satisfied. Killing the thread ...")
                     payments_queue.put(self.create_exit_payment())
-                    return
+                    break
 
                 nb_blocks_remaining = (current_cycle + 1) * self.nw_config['BLOCKS_PER_CYCLE'] - current_level
 
                 logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
 
                 # wait until current cycle ends
-                time.sleep(nb_blocks_remaining * self.nw_config['BLOCK_TIME_IN_SEC'])
+                for x in range(nb_blocks_remaining):
+                    time.sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
+
+                    # if shutting down, exit
+                    if not lifeCycle.is_running():
+                        payments_queue.put(self.create_exit_payment())
+                        break
 
         # end of endless loop
+        logger.info("Producer returning ...")
         return
 
     def create_exit_payment(self):
@@ -181,7 +190,7 @@ class ConsumerThread(threading.Thread):
         return
 
     def run(self):
-        while runnig:
+        while lifeCycle.is_running():
             try:
                 # wait until a reward is present
                 payment_item = payments_queue.get(True)
@@ -193,7 +202,7 @@ class ConsumerThread(threading.Thread):
 
                 if type == EXIT_PAYMENT_TYPE:
                     logger.debug("Exit signal received. Killing the thread...")
-                    return
+                    break
 
                 cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
 
@@ -224,11 +233,18 @@ class ConsumerThread(threading.Thread):
                                    pymnt_cycle, pymnt_addr, pymnt_amnt)
             except Exception as e:
                 logger.error("Error at reward payment", e)
+
+        logger.info("Consumer returning ...")
+
         return
 
 
 def payment_file_name(pymnt_dir, pymnt_cycle, pymnt_addr, pymnt_type):
-    return pymnt_dir + "/" + pymnt_cycle + "/" + pymnt_addr + '_' + pymnt_type + '.txt'
+    return payment_dir_c(pymnt_dir, pymnt_cycle) + "/" + pymnt_addr + '_' + pymnt_type + '.txt'
+
+
+def payment_dir_c(pymnt_dir, pymnt_cycle):
+    return pymnt_dir + "/" + pymnt_cycle
 
 
 # all shares in the map must sum upto 1
@@ -236,14 +252,6 @@ def validate_map_share_sum(map, map_name):
     if sum(map.values()) != 1:
         raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
 
-def exit_gracefully(signum, frame):
-    releaseLock()
-    logger.info("exiting {}".format(signum))
-    global runnig
-    runnig = False
-
-def releaseLock():
-    lock_file.release()
 
 def main(args):
     network_config = network_config_map[args.network]
@@ -252,13 +260,10 @@ def main(args):
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
 
-    validate_map_share_sum(founders_map,"founders map")
-    validate_map_share_sum(owners_map,"owners map")
+    validate_map_share_sum(founders_map, "founders map")
+    validate_map_share_sum(owners_map, "owners map")
 
-    lock_file.lock()
-
-    for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM):
-        signal.signal(sig, exit_gracefully)
+    lifeCycle.start()
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
@@ -277,9 +282,11 @@ def main(args):
         time.sleep(1)
         c.start()
     try:
-        while True : time.sleep(1000)
+        while True: time.sleep(1000)
     except KeyboardInterrupt  as e:
-        exit_gracefully(signal.SIGINT,None)
+        logger.info("Interrupted.")
+        lifeCycle.stop()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
