@@ -1,12 +1,17 @@
 import argparse
 import os
 import queue
+import signal
 import subprocess
 import threading
 import time
 import csv
+from _signal import SIGABRT, SIGBREAK, SIGILL, SIGINT, SIGSEGV, SIGTERM
 from enum import Enum
 
+import gevent
+
+from LockFile import LockFile
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from ClientConfiguration import COMM_TRANSFER
 from NetworkConfiguration import network_config_map
@@ -16,6 +21,7 @@ from TzScanBlockApi import TzScanBlockApi
 from TzScanRewardApi import TzScanRewardApi
 from TzScanRewardCalculator import TzScanRewardCalculator
 from logconfig import main_logger
+from gevent.event import Event
 
 NB_CONSUMERS = 1
 BUF_SIZE = 50
@@ -30,7 +36,8 @@ class RunMode(Enum):
 
 
 EXIT_PAYMENT_TYPE = "exit"
-
+lock_file = LockFile()
+runnig=True
 
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode,
@@ -59,7 +66,8 @@ class ProducerThread(threading.Thread):
         if self.initial_payment_cycle <= 0:
             payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
 
-        while True:
+
+        while runnig:
 
             # take a breath
             time.sleep(10)
@@ -175,7 +183,7 @@ class ConsumerThread(threading.Thread):
         return
 
     def run(self):
-        while True:
+        while runnig:
             try:
                 # wait until a reward is present
                 payment_item = payments_queue.get(True)
@@ -218,7 +226,6 @@ class ConsumerThread(threading.Thread):
                                    pymnt_cycle, pymnt_addr, pymnt_amnt)
             except Exception as e:
                 logger.error("Error at reward payment", e)
-
         return
 
 
@@ -231,7 +238,14 @@ def validate_map_share_sum(map, map_name):
     if sum(map.values()) != 1:
         raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
 
+def exit_gracefully(signum, frame):
+    releaseLock()
+    logger.info("exiting {}".format(signum))
+    global runnig
+    runnig = False
 
+def releaseLock():
+    lock_file.release()
 
 def main(args):
     network_config = network_config_map[args.network]
@@ -242,6 +256,11 @@ def main(args):
 
     validate_map_share_sum(founders_map,"founders map")
     validate_map_share_sum(owners_map,"owners map")
+
+    lock_file.lock()
+
+    for sig in (SIGABRT, SIGBREAK, SIGILL, SIGSEGV, SIGTERM):
+        signal.signal(sig, exit_gracefully)
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
@@ -259,8 +278,10 @@ def main(args):
                            transfer_command=COMM_TRANSFER.replace("%network%", network_config['NAME'].lower()))
         time.sleep(1)
         c.start()
-    time.sleep(2)
-
+    try:
+        while True : time.sleep(1000)
+    except KeyboardInterrupt  as e:
+        exit_gracefully(signal.SIGINT,None)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
