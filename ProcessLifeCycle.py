@@ -29,5 +29,5 @@ class ProcessLifeCycle:
         return self.running
 
     def stop_handler(self, signum, frame):
-        logger.info("Application stop handler called: {}",signum)
+        logger.info("Application stop handler called: {}".format(signum))
         self.stop()
