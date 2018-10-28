@@ -1,6 +1,5 @@
 import os
 import signal
-
 import errno
 import time
 
@@ -26,7 +25,7 @@ def pid_exists(pid):
         # to know that in a portable fashion.
         raise ValueError('invalid PID 0')
     try:
-        os.kill(pid, 0)
+        os.kill(pid, signal.SIGTERM)
     except OSError as err:
         if err.errno == errno.ESRCH:
             # ESRCH == No such process
