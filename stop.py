@@ -9,7 +9,7 @@ def main():
         pid = f.readline()
         pid = int(pid)
 
-    os.kill(pid, signal.SIGINT)
+    os.kill(pid, signal.SIGTERM)
 
 if __name__ == '__main__':
 

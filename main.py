@@ -244,7 +244,7 @@ def payment_file_name(pymnt_dir, pymnt_cycle, pymnt_addr, pymnt_type):
 
 
 def payment_dir_c(pymnt_dir, pymnt_cycle):
-    return pymnt_dir + "/" + pymnt_cycle
+    return pymnt_dir + "/" + str(pymnt_cycle)
 
 
 # all shares in the map must sum upto 1
