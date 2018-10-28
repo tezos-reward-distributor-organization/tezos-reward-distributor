@@ -42,9 +42,13 @@ def pid_exists(pid):
 
 def stop():
     pid = None
-    with open("./lock", 'rt') as f:
-        pid = f.readline()
-        pid = int(pid)
+    try:
+        with open("./lock", 'rt') as f:
+            pid = f.readline()
+            pid = int(pid)
+    except FileNotFoundError:
+        print("No lock file. No running process")
+        return
 
     os.kill(pid, signal.SIGTERM)
 
