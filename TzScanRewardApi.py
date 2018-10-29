@@ -1,10 +1,17 @@
+import random
+
 import requests
 
 from RewardApi import RewardApi
 
-API = {'MAINNET': {'REWARDS_SPLIT_API_URL': 'http://api4.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'},
-       'ALPHANET': {'REWARDS_SPLIT_API_URL': 'http://alphanet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'},
-       'ZERONET': {'REWARDS_SPLIT_API_URL': 'http://zeronet-api.tzscan.io/v1/rewards_split/{}?cycle={}&p={}'}
+api_mirror = random.randint(2, 5)  # 1 is over used and not reliable
+
+nb_delegators_call = 'nb_delegators/{}?cycle={}'
+rewards_split_call = 'rewards_split/{}?cycle={}&p={}&number={}'
+
+API = {'MAINNET': {'API_URL': 'http://api{}.tzscan.io/v1/'.format(api_mirror)},
+       'ALPHANET': {'API_URL': 'http://alphanet-api.tzscan.io/v1/'},
+       'ZERONET': {'API_URL': 'http://zeronet-api.tzscan.io/v1/'}
        }
 
 
@@ -19,8 +26,18 @@ class TzScanRewardApi(RewardApi):
 
         self.baking_address = baking_address
 
+    def get_nb_delegators(self, cycle):
+        resp = requests.get(self.api['API_URL'] + nb_delegators_call.format(self.baking_address, cycle))
+        if resp.status_code != 200:
+            # This means something went wrong.
+            raise Exception('GET /tasks/ {}'.format(resp.status_code))
+        root = resp.json()
+        return root
+
     def get_rewards_for_cycle_map(self, cycle):
-        resp = requests.get(self.api['REWARDS_SPLIT_API_URL'].format(self.baking_address, cycle, 0))
+        nb_delegators = self.get_nb_delegators(cycle)[0]
+        resp = requests.get(
+            self.api['API_URL'] + rewards_split_call.format(self.baking_address, cycle, 0, nb_delegators))
         if resp.status_code != 200:
             # This means something went wrong.
             raise Exception('GET /tasks/ {}'.format(resp.status_code))

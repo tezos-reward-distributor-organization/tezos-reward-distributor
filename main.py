@@ -271,7 +271,7 @@ def main(args):
         NB_CONSUMERS = 0
         reports_dir = "./dry"
 
-    lifeCycle.start()
+    lifeCycle.start(not args.dry_run)
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
@@ -314,7 +314,7 @@ if __name__ == '__main__':
                         default='MAINNET')
     parser.add_argument("-P", "--payments_dir", help="Directory to create payment logs", default='./payments')
     parser.add_argument("-T", "--reports_dir", help="Directory to create reports", default='./reports')
-    parser.add_argument("-D", "--dry_run", help="Run without doing any payments. Suitable for testing.",
+    parser.add_argument("-D", "--dry_run", help="Run without doing any payments. Suitable for testing. Does not require locking.",
                         action="store_true")
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
