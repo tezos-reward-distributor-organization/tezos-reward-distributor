@@ -76,7 +76,7 @@ class ProducerThread(threading.Thread):
                 continue
 
             # create reports dir
-            if not os.path.exists(self.reports_dir):
+            if self.reports_dir and not os.path.exists(self.reports_dir):
                 os.makedirs(self.reports_dir)
 
             # payments should not pass beyond last released reward cycle
@@ -155,6 +155,7 @@ class ProducerThread(threading.Thread):
                     payments_queue.put(self.create_exit_payment())
                     break
 
+                # calculate number of blocks until end of current cycle
                 nb_blocks_remaining = (current_cycle + 1) * self.nw_config['BLOCKS_PER_CYCLE'] - current_level
 
                 logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
@@ -263,12 +264,30 @@ def main(args):
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
 
+    # if in dry run mode, do not create consumers
+    # create reports in dry directory
+    if args.dry_run:
+        global NB_CONSUMERS
+        NB_CONSUMERS = 0
+        reports_dir = "./dry"
+
     lifeCycle.start()
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
     service_fee_calc = ServiceFeeCalculator(supporters_set=full_supporters_set, specials_map=specials_map,
                                             standard_fee=STANDARD_FEE)
+
+    if args.initial_cycle is None:
+        recent=None
+        if os.path.isdir(payments_dir):
+            files = sorted(os.listdir(payments_dir), key=lambda x: int(x))
+            recent = files[-1] if len(files) > 0 else None
+        # if payment logs exists set initial cycle to following cycle
+        # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
+        args.initial_cycle = 0 if recent is None else int(recent)+1
+
+        logger.info("initial_cycle set to {}".format(args.initial_cycle))
 
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
                        payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode,
@@ -293,14 +312,16 @@ if __name__ == '__main__':
     parser.add_argument("key", help="tezos address or alias to make payments")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
-    parser.add_argument("-D", "--payments_dir", help="Directory to create payment logs", default='./payments')
-    parser.add_argument("-R", "--reports_dir", help="Directory to create reports", default='./reports')
+    parser.add_argument("-P", "--payments_dir", help="Directory to create payment logs", default='./payments')
+    parser.add_argument("-T", "--reports_dir", help="Directory to create reports", default='./reports')
+    parser.add_argument("-D", "--dry_run", help="Run without doing any payments. Suitable for testing.",
+                        action="store_true")
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
                         default=1, choices=[1, 2, 3], type=int)
     parser.add_argument("-C", "--initial_cycle",
-                        help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)",
-                        type=int, default=0)
+                        help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). If not set application will continue from last payment made or last reward released.",
+                        type=int)
 
     args = parser.parse_args()
 
@@ -312,5 +333,7 @@ if __name__ == '__main__':
     logger.info("Author huseyinabanox@gmail.com")
     logger.info("Please leave author information")
     logger.info("--------------------------------------------")
-
+    if args.dry_run:
+        logger.info("DRY RUN MODE")
+        logger.info("--------------------------------------------")
     main(args)
