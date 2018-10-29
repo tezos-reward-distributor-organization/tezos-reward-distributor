@@ -10,7 +10,7 @@ founders_map={"KT18bVwvyLBR1GAM1rBoiHzEXVNtXb5C3vEU":0.5,"KT1PEZ91VnphKodWSfuvCc
 # deposit owners map of address and deposit ratio which must sum upto 1
 owners_map={"KT18bVwvyLBR1GAM1rBoiHzEXVNtXb5C3vEU":0.0849,"KT1PEZ91VnphKodWSfuvCcjXrA29zfHsgUxt":0.9151}
 # no fee customers, e.g. founders, supporters
-supporters_set={"KT1UvcepwoBxqRKRZ5fUKtX3bSxtDGk5Bdd5"}
+supporters_set={"KT1UvcepwoBxqRKRZ5fUKtX3bSxtDGk5Bdd5","KT1UUNd9qvNpwBZWJB4JJnRW6v3d2uqEnHrA"}
 # customers with special rates. map of KT address and baking fee
 specials_map={}
 
