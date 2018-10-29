@@ -17,10 +17,13 @@ class TzScanRewardCalculator(RewardCalculator):
 
         delegate_staking_balance = int(root["delegate_staking_balance"])
         blocks_rewards = int(root["blocks_rewards"])
+        future_blocks_rewards = int(root["future_blocks_rewards"])
         endorsements_rewards = int(root["endorsements_rewards"])
+        future_endorsements_rewards = int(root["future_endorsements_rewards"])
         fees = int(root["fees"])
 
-        self.total_rewards = (blocks_rewards + endorsements_rewards + fees) / ONE_MILLION
+        self.total_rewards = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
+                              future_endorsements_rewards + fees) / ONE_MILLION
 
         delegators_balance = root["delegators_balance"]
 

@@ -5,7 +5,10 @@ import queue
 import subprocess
 import threading
 import time
+from concurrent.futures import thread
 from enum import Enum
+
+import _thread
 
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from ClientConfiguration import COMM_TRANSFER
@@ -49,8 +52,16 @@ class ProducerThread(threading.Thread):
         self.payments_dir = payments_dir
         self.reports_dir = reports_dir
         self.run_mode = run_mode
+        self.exiting = False
 
         logger.debug('Producer started')
+
+    def exit(self):
+        if not self.exiting:
+            payments_queue.put(self.create_exit_payment())
+            self.exiting = True
+
+            _thread.interrupt_main()
 
     def run(self):
         current_cycle = self.block_api.get_current_cycle()
@@ -69,12 +80,6 @@ class ProducerThread(threading.Thread):
             current_level = self.block_api.get_current_level()
             current_cycle = self.block_api.level_to_cycle(current_level)
 
-            if os.path.isdir(payment_dir_c(self.payments_dir, payment_cycle)):
-                logger.warn("Payment directory for cycle {} is present. No payment will be run for the cycle".format(
-                    payment_cycle))
-                payment_cycle = payment_cycle + 1
-                continue
-
             # create reports dir
             if self.reports_dir and not os.path.exists(self.reports_dir):
                 os.makedirs(self.reports_dir)
@@ -92,58 +97,64 @@ class ProducerThread(threading.Thread):
                         rewards = reward_calc.calculate()
                         total_rewards = reward_calc.get_total_rewards()
 
-                        if total_rewards == 0:
-                            logger.info("Total rewards is zero skipping payment")
-                            payment_cycle = payment_cycle + 1
-                            continue
-                        else:
-                            logger.info("Total rewards=" + str(total_rewards))
+                        logger.info("Total rewards=" + str(total_rewards))
 
                         payment_calc = PaymentCalculator(self.founders_map, self.owners_map, rewards, total_rewards,
                                                          self.fee_calc, payment_cycle)
                         payments = payment_calc.calculate()
 
-                        report_file_path = self.reports_dir + '/' + str(payment_cycle) + '.csv'
-                        with open(report_file_path, 'w', newline='') as csvfile:
-                            csvwriter = csv.writer(csvfile, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                            # write headers and total rewards
-                            csvwriter.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
-                            csvwriter.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
+                        if os.path.isdir(payment_dir_c(self.payments_dir, payment_cycle)):
+                            logger.warn(
+                                "Payment directory for cycle {} is present. No payment will be run for the cycle".format(
+                                    payment_cycle))
+                            total_rewards = 0
 
-                            for payment_item in payments:
-                                address = payment_item["address"]
-                                payment = payment_item["payment"]
-                                fee = payment_item["fee"]
-                                type = payment_item["type"]
-                                ratio = payment_item["ratio"]
-                                reward = payment_item["reward"]
-                                fee_rate = self.fee_calc.calculate(address)
+                        if total_rewards > 0:
+                            report_file_path = self.reports_dir + '/' + str(payment_cycle) + '.csv'
 
-                                # write row to csv file
-                                csvwriter.writerow([address, type, "{0:f}".format(ratio), "{0:f}".format(reward),
-                                                    "{0:f}".format(fee_rate), "{0:f}".format(payment),
-                                                    "{0:f}".format(fee)])
+                            with open(report_file_path, 'w', newline='') as csvfile:
+                                csvwriter = csv.writer(csvfile, delimiter='\t', quotechar='"',
+                                                       quoting=csv.QUOTE_MINIMAL)
+                                # write headers and total rewards
+                                csvwriter.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
+                                csvwriter.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
 
-                                pymt_log = payment_file_name(self.payments_dir, str(payment_cycle), address, type)
+                                for payment_item in payments:
+                                    address = payment_item["address"]
+                                    payment = payment_item["payment"]
+                                    fee = payment_item["fee"]
+                                    type = payment_item["type"]
+                                    ratio = payment_item["ratio"]
+                                    reward = payment_item["reward"]
+                                    fee_rate = self.fee_calc.calculate(address)
 
-                                if os.path.isfile(pymt_log):
-                                    logger.warning(
-                                        "Reward not created for cycle %s address %s amount %f tz %s: Reason payment log already present",
-                                        payment_cycle, address, payment, type)
-                                else:
-                                    payments_queue.put(payment_item)
-                                    logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
-                                                payment_cycle, address, payment, fee, type)
+                                    # write row to csv file
+                                    csvwriter.writerow([address, type, "{0:f}".format(ratio), "{0:f}".format(reward),
+                                                        "{0:f}".format(fee_rate), "{0:f}".format(payment),
+                                                        "{0:f}".format(fee)])
 
-                            # processing of cycle is done
-                            logger.info("Reward creation done for cycle %s", payment_cycle)
-                            payment_cycle = payment_cycle + 1
+                                    pymt_log = payment_file_name(self.payments_dir, str(payment_cycle), address, type)
+
+                                    if os.path.isfile(pymt_log):
+                                        logger.warning(
+                                            "Reward not created for cycle %s address %s amount %f tz %s: Reason payment log already present",
+                                            payment_cycle, address, payment, type)
+                                    else:
+                                        payments_queue.put(payment_item)
+                                        logger.info(
+                                            "Reward created for cycle %s address %s amount %f fee %f tz type %s",
+                                            payment_cycle, address, payment, fee, type)
+
+                        # processing of cycle is done
+                        logger.info("Reward creation done for cycle %s", payment_cycle)
+                        payment_cycle = payment_cycle + 1
 
                         # single run is done. Do not continue.
                         if self.run_mode == RunMode.ONETIME:
                             logger.info("Run mode ONETIME satisfied. Killing the thread ...")
-                            payments_queue.put(self.create_exit_payment())
-                            return
+                            self.exit()
+                            break
+
                     except Exception as e:
                         logger.error("Error at reward calculation", e)
 
@@ -157,7 +168,7 @@ class ProducerThread(threading.Thread):
                 # pending payments done. Do not wait any more.
                 if self.run_mode == RunMode.PENDING:
                     logger.info("Run mode PENDING satisfied. Killing the thread ...")
-                    payments_queue.put(self.create_exit_payment())
+                    self.exit()
                     break
 
                 # calculate number of blocks until end of current cycle
@@ -176,6 +187,10 @@ class ProducerThread(threading.Thread):
 
         # end of endless loop
         logger.info("Producer returning ...")
+
+        # ensure consumer exits
+        self.exit()
+
         return
 
     def create_exit_payment(self):
@@ -196,7 +211,7 @@ class ConsumerThread(threading.Thread):
         return
 
     def run(self):
-        while lifeCycle.is_running():
+        while True:
             try:
                 # wait until a reward is present
                 payment_item = payments_queue.get(True)
@@ -210,19 +225,23 @@ class ConsumerThread(threading.Thread):
                     logger.debug("Exit signal received. Killing the thread...")
                     break
 
-                cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
+                if pymnt_amnt > 0:
+                    cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
 
-                logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type %s", pymnt_cycle,
-                             pymnt_addr,
-                             pymnt_amnt, type)
+                    logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type %s", pymnt_cycle,
+                                 pymnt_addr, pymnt_amnt, type)
 
-                logger.debug("Reward payment command '{}'".format(cmd))
+                    logger.debug("Reward payment command '{}'".format(cmd))
 
-                # execute client
-                process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-                process.wait()
+                    # execute client
+                    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+                    process.wait()
+                    return_code = process.returncode
+                else:
+                    logger.debug("Reward payment command not executed for %s because reward is 0", pymnt_addr)
+                    return_code = 0
 
-                if process.returncode == 0:
+                if return_code == 0:
                     pymt_log = payment_file_name(self.payments_dir, str(pymnt_cycle), pymnt_addr, type)
 
                     # check and create required directories
@@ -306,7 +325,7 @@ def main(args):
         time.sleep(1)
         c.start()
     try:
-        while True: time.sleep(1000)
+        while lifeCycle.is_running(): time.sleep(10)
     except KeyboardInterrupt  as e:
         logger.info("Interrupted.")
         lifeCycle.stop()
