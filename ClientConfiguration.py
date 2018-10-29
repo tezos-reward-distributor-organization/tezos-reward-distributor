@@ -7,4 +7,4 @@
 CLIENT_PATH = "~/%network%.sh client"
 
 # transfer command
-COMM_TRANSFER = CLIENT_PATH + " transfer {0:f} from {} to {} --fee 0"
+COMM_TRANSFER = CLIENT_PATH + " transfer {0:f} from {1} to {2} --fee 0"
