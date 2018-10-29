@@ -92,7 +92,12 @@ class ProducerThread(threading.Thread):
                         rewards = reward_calc.calculate()
                         total_rewards = reward_calc.get_total_rewards()
 
-                        logger.info("Total rewards=" + str(total_rewards))
+                        if total_rewards == 0:
+                            logger.info("Total rewards is zero skipping payment")
+                            payment_cycle = payment_cycle + 1
+                            continue
+                        else:
+                            logger.info("Total rewards=" + str(total_rewards))
 
                         payment_calc = PaymentCalculator(self.founders_map, self.owners_map, rewards, total_rewards,
                                                          self.fee_calc, payment_cycle)
@@ -279,13 +284,13 @@ def main(args):
                                             standard_fee=STANDARD_FEE)
 
     if args.initial_cycle is None:
-        recent=None
+        recent = None
         if os.path.isdir(payments_dir):
             files = sorted(os.listdir(payments_dir), key=lambda x: int(x))
             recent = files[-1] if len(files) > 0 else None
         # if payment logs exists set initial cycle to following cycle
         # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
-        args.initial_cycle = 0 if recent is None else int(recent)+1
+        args.initial_cycle = 0 if recent is None else int(recent) + 1
 
         logger.info("initial_cycle set to {}".format(args.initial_cycle))
 
@@ -314,7 +319,8 @@ if __name__ == '__main__':
                         default='MAINNET')
     parser.add_argument("-P", "--payments_dir", help="Directory to create payment logs", default='./payments')
     parser.add_argument("-T", "--reports_dir", help="Directory to create reports", default='./reports')
-    parser.add_argument("-D", "--dry_run", help="Run without doing any payments. Suitable for testing. Does not require locking.",
+    parser.add_argument("-D", "--dry_run",
+                        help="Run without doing any payments. Suitable for testing. Does not require locking.",
                         action="store_true")
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
