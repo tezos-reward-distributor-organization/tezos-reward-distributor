@@ -27,6 +27,7 @@ protocol = run_and_last_line(COMM_PROT)
 protocol = protocol.strip("]").strip().strip("\"")
 bytes = run_and_last_line(COMM_FORGE)
 signed = run_and_last_line(COMM_SIGN.format(bytes))
+signed=signed.replace("Signature:","").strip()
 applied = run_and_last_line(COMM_PREAPPLY.replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed).replace("%BRANCH%",hash))
 
 print("hash is {}".format(hash))
