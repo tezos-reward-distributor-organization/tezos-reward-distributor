@@ -23,4 +23,4 @@ COMM_FORGE = CLIENT_PATH + " rpc post http://" + NODE_URL + "/chains/main/blocks
 COMM_PREAPPLY = CLIENT_PATH + " rpc post http://" + NODE_URL + "/chains/main/blocks/head/helpers/preapply/operations with " + '\'[{"protocol": "%PROTOCOL%", "signature": "%SIGNATURE%","branch": "%BRANCH%", "contents": [ ' + content0 + ' ]}]\''
 COMM_COUNTER = CLIENT_PATH + " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter".format(NODE_URL,
                                                                                                               BAKING_ADDRESS)
-COMM_SIGN = " sign bytes 0x03{} for zeronetme2"
+COMM_SIGN = CLIENT_PATH +" sign bytes 0x03{} for zeronetme2"
