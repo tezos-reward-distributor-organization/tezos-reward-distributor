@@ -15,7 +15,7 @@ Usage:
 usage: main.py [-h] [-N {ZERONET,ALPHANET,MAINNET}] [-P PAYMENTS_DIR]
                [-T REPORTS_DIR] [-D] [-M {1,2,3}] [-C INITIAL_CYCLE]
                key
-
+<br/>
 positional arguments:
   key                   tezos address or alias to make payments
 
