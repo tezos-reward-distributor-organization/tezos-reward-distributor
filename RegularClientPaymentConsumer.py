@@ -10,14 +10,13 @@ logger = main_logger
 
 
 class RegularClientPaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, transfer_command, life_cycle, payments_queue):
+    def __init__(self, name, payments_dir, key_name, transfer_command, payments_queue):
         super(RegularClientPaymentConsumer, self).__init__()
 
         self.name = name
         self.payments_dir = payments_dir
         self.key_name = key_name
         self.transfer_command = transfer_command
-        self.life_cycle = life_cycle
         self.payments_queue = payments_queue
 
         logger.debug('Consumer "%s" created', self.name)

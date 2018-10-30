@@ -187,6 +187,7 @@ class ProducerThread(threading.Thread):
     def create_exit_payment(self):
         return {'payment': 0, 'fee': 0, 'address': 0, 'cycle': 0, 'type': EXIT_PAYMENT_TYPE, 'ratio': 0, 'reward': 0}
 
+
 # all shares in the map must sum upto 1
 def validate_map_share_sum(map, map_name):
     if sum(map.values()) != 1:
@@ -236,7 +237,8 @@ def main(args):
 
     for i in range(NB_CONSUMERS):
         c = RegularClientPaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
-                           transfer_command=COMM_TRANSFER.replace("%network%", network_config['NAME'].lower()))
+                                         transfer_command=COMM_TRANSFER.replace("%network%", network_config['NAME'].lower()),
+                                         payments_queue=payments_queue)
         time.sleep(1)
         c.start()
     try:
