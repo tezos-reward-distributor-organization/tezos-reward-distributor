@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT
+from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE
 from NetworkConfiguration import network_config_map
 
 
@@ -25,7 +25,9 @@ hash = run_and_last_line(COMM_HASH)
 counter = int(run_and_last_line(COMM_COUNTER))
 protocol = run_and_last_line(COMM_PROT)
 protocol = protocol.strip("]").strip().strip("\"")
+bytes = run_and_last_line(COMM_FORGE)
 
 print("hash is {}".format(hash))
 print("counter is {}".format(counter))
 print("protocol is {}".format(protocol))
+print("bytes is {}".format(bytes))
