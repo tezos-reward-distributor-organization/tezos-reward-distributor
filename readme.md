@@ -8,51 +8,13 @@ Design principals are:
 - Traceability: CSV payment reports with calculation details. Logs for traking application lifecycle.
 - Testability: Dry for seeing results witout making any modification. Support for development networks e.g. zeronet, alphanet.
 - Safety: Payment logs for avoiding multiple payments by mistake. Lock file for avoiding multiple instance running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
-
-
-Usage:
-
-usage: main.py [-h] [-N {ZERONET,ALPHANET,MAINNET}] [-P PAYMENTS_DIR]
-               [-T REPORTS_DIR] [-D] [-M {1,2,3}] [-C INITIAL_CYCLE]
-               key
-<br/>
-positional arguments:
-<br/>
-  key                   tezos address or alias to make payments
-<br/>
-<br/>
-optional arguments:
-<br/>
-  -h, --help            show this help message and exit
-  <br/>
-  -N {ZERONET,ALPHANET,MAINNET}, --network {ZERONET,ALPHANET,MAINNET}
-                        network name
-  <br/>                  
-  -P PAYMENTS_DIR, --payments_dir PAYMENTS_DIR
-                        Directory to create payment logs
-                        
-  <br/>
-  -T REPORTS_DIR, --reports_dir REPORTS_DIR
-                        Directory to create reports
-  <br/>
-  -D, --dry_run         Run without doing any payments. Suitable for testing.
-                        Does not require locking.
-  <br/>
-  -M {1,2,3}, --run_mode {1,2,3}
-                        Waiting decision after making pending payments. 1:
-                        default option. Run forever. 2: Run all pending
-                        payments and exit. 3: Run for one cycle and exit.
-                        Suitable to use with -C option.
-  <br/>
-  -C INITIAL_CYCLE, --initial_cycle INITIAL_CYCLE
-                        First cycle to start payment. For last released
-                        rewards, set to 0. Non-positive values are interpreted
-                        as : current cycle - abs(initial_cycle) -
-                        (NB_FREEZE_CYCLE+1). If not set application will
-                        continue from last payment made or last reward
-                        released.
                         
 How to Run:
+
+For list of parameters run:
+
+python main.py --help
+
 
 Most common use case is run in mainnet and start make payments from last released rewards or continue making payments from the cycle last payment is done. Just provide the address/alias to make payments from. 
 
