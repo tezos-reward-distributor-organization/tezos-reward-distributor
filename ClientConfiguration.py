@@ -14,11 +14,5 @@ SHELL_COMM_DISABLE_DISCLAIMER = "export TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=Y
 
 # transfer command
 COMM_TRANSFER = CLIENT_PATH + " transfer {0:f} from {1} to {2} --fee 0"
-<<<<<<< .mine
-COMM_TRANSFER = CLIENT_PATH + " transfer {} from {} to {} --fee 0"
 
-=======
-COMM_TRANSFER = CLIENT_PATH + " transfer {0:f} from {1} to {2} --fee 0"
-
->>>>>>> .theirs
 COMM_HASH = CLIENT_PATH + " rpc get http://{}/chains/main/blocks/head/hash".format(NODE_URL)

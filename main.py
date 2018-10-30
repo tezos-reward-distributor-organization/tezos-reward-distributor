@@ -1,24 +1,23 @@
+import _thread
 import argparse
 import csv
 import os
 import queue
-import subprocess
 import threading
 import time
-from concurrent.futures import thread
-from enum import Enum
-
-import _thread
 
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from ClientConfiguration import COMM_TRANSFER
+from Constants import RunMode, EXIT_PAYMENT_TYPE
 from NetworkConfiguration import network_config_map
 from PaymentCalculator import PaymentCalculator
 from ProcessLifeCycle import ProcessLifeCycle
+from RegularClientPaymentConsumer import RegularClientPaymentConsumer
 from ServiceFeeCalculator import ServiceFeeCalculator
 from TzScanBlockApi import TzScanBlockApi
 from TzScanRewardApi import TzScanRewardApi
 from TzScanRewardCalculator import TzScanRewardCalculator
+from Util import payment_file_name, payment_dir_c
 from logconfig import main_logger
 
 NB_CONSUMERS = 1
@@ -26,14 +25,6 @@ BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
 
-
-class RunMode(Enum):
-    FOREVER = 1
-    PENDING = 2
-    ONETIME = 3
-
-
-EXIT_PAYMENT_TYPE = "exit"
 lifeCycle = ProcessLifeCycle()
 
 
@@ -196,82 +187,6 @@ class ProducerThread(threading.Thread):
     def create_exit_payment(self):
         return {'payment': 0, 'fee': 0, 'address': 0, 'cycle': 0, 'type': EXIT_PAYMENT_TYPE, 'ratio': 0, 'reward': 0}
 
-
-class ConsumerThread(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, transfer_command):
-        super(ConsumerThread, self).__init__()
-
-        self.name = name
-        self.payments_dir = payments_dir
-        self.key_name = key_name
-        self.transfer_command = transfer_command
-
-        logger.debug('Consumer "%s" created', self.name)
-
-        return
-
-    def run(self):
-        while True:
-            try:
-                # wait until a reward is present
-                payment_item = payments_queue.get(True)
-
-                pymnt_addr = payment_item["address"]
-                pymnt_amnt = payment_item["payment"]
-                pymnt_cycle = payment_item["cycle"]
-                type = payment_item["type"]
-
-                if type == EXIT_PAYMENT_TYPE:
-                    logger.debug("Exit signal received. Killing the thread...")
-                    break
-
-                if pymnt_amnt > 0:
-                    cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
-
-                    logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type %s", pymnt_cycle,
-                                 pymnt_addr, pymnt_amnt, type)
-
-                    logger.debug("Reward payment command '{}'".format(cmd))
-
-                    # execute client
-                    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-                    process.wait()
-                    return_code = process.returncode
-                else:
-                    logger.debug("Reward payment command not executed for %s because reward is 0", pymnt_addr)
-                    return_code = 0
-
-                if return_code == 0:
-                    pymt_log = payment_file_name(self.payments_dir, str(pymnt_cycle), pymnt_addr, type)
-
-                    # check and create required directories
-                    if not os.path.exists(os.path.dirname(pymt_log)):
-                        os.makedirs(os.path.dirname(pymt_log))
-
-                    # create empty payment log file
-                    with open(pymt_log, 'w') as f:
-                        f.write('')
-
-                    logger.info("Reward paid for cycle %s address %s amount %f tz", pymnt_cycle, pymnt_addr, pymnt_amnt)
-                else:
-                    logger.warning("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",
-                                   pymnt_cycle, pymnt_addr, pymnt_amnt)
-            except Exception as e:
-                logger.error("Error at reward payment", e)
-
-        logger.info("Consumer returning ...")
-
-        return
-
-
-def payment_file_name(pymnt_dir, pymnt_cycle, pymnt_addr, pymnt_type):
-    return payment_dir_c(pymnt_dir, pymnt_cycle) + "/" + pymnt_addr + '_' + pymnt_type + '.txt'
-
-
-def payment_dir_c(pymnt_dir, pymnt_cycle):
-    return pymnt_dir + "/" + str(pymnt_cycle)
-
-
 # all shares in the map must sum upto 1
 def validate_map_share_sum(map, map_name):
     if sum(map.values()) != 1:
@@ -320,7 +235,7 @@ def main(args):
     p.start()
 
     for i in range(NB_CONSUMERS):
-        c = ConsumerThread(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
+        c = RegularClientPaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
                            transfer_command=COMM_TRANSFER.replace("%network%", network_config['NAME'].lower()))
         time.sleep(1)
         c.start()
