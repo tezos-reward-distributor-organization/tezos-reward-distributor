@@ -4,7 +4,7 @@ import subprocess
 from ClientConfiguration import COMM_HASH
 
 my_env = os.environ.copy()
-my_env.environ["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
+my_env["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
 
 from NetworkConfiguration import network_config_map
 
