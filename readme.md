@@ -33,13 +33,13 @@ Run in dry run mode in zeronet, make payments from cyle 30 and exit:
 python main.py -D -N ZERONET -C 30 -M 3 mytezospaymentaddress
 
 
-Bussiness Configuraion:
+<h2>Bussiness Configuraion:</h2>
 
 Bussiness configuration contains baker and delegator specific setting. Edit file BussinessConfiguration.py. Start by setting your baking address. Then set your delegation fee. If there are delegators with special rates, speciy them in specials_map. If your stake is owned by multiple parties speciy them in owners_map with ratios. If baker is run by multiple founders set them in founders_map.
 
 Thats all.
 
-Terms:
+<b>Terms:</b>
 
 - Reward : Coins rewarded by the network for the baking/endorsing operations.
 - Payment : Coins paid to delegators after excluding service fee.
