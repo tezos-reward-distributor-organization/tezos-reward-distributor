@@ -9,10 +9,10 @@ my_env["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
 from NetworkConfiguration import network_config_map
 
 network_config = network_config_map["ZERONET"]
-process = subprocess.Popen(COMM_HASH.replace("%network%", network_config['NAME'].lower()), shell=True, stdout=subprocess.PIPE,env=my_env)
+process = subprocess.Popen(COMM_HASH.replace("%network%", network_config['NAME'].lower()), shell=True, stdout=subprocess.PIPE,env=my_env,bufsize=1)
 
-while process.poll() is None:
-    output = process.stdout.readline()
-    print(output),
+with process.stdout:
+    for line in iter(process.stdout.readline, b''):
+        print(line)
 
 process.wait()
