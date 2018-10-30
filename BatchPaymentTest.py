@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from ClientConfiguration import COMM_HASH, COMM_COUNTER
+from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT
 from NetworkConfiguration import network_config_map
 
 
@@ -16,13 +16,16 @@ def run_and_last_line(cmd):
                                stdout=subprocess.PIPE, env=my_env, bufsize=1, universal_newlines=True)
     line = None
     for l in process.stdout:
-        line = l.strip("\"")
+        line = l.strip().strip("\"")
     process.wait()
     return line
 
 
 hash = run_and_last_line(COMM_HASH)
 counter = int(run_and_last_line(COMM_COUNTER))
+protocol = run_and_last_line(COMM_PROT)
+protocol = protocol.strip("]").strip().strip("\"")
 
 print("hash is {}".format(hash))
 print("counter is {}".format(counter))
+print("protocol is {}".format(protocol))
