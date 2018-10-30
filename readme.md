@@ -9,7 +9,7 @@ Design principals are:
 - Testability: Dry for seeing results witout making any modification. Support for development networks e.g. zeronet, alphanet.
 - Safety: Payment logs for avoiding multiple payments by mistake. Lock file for avoiding multiple instance running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
                         
-How to Run:
+<h2>How to Run:</h2>
 
 For list of parameters run:
 
