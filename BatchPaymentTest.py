@@ -2,7 +2,7 @@ import subprocess
 from subprocess import call
 from ClientConfiguration import COMM_HASH, SHELL_COMM_DISABLE_DISCLAIMER
 
-# call(SHELL_COMM_DISABLE_DISCLAIMER)
+call(SHELL_COMM_DISABLE_DISCLAIMER)
 from NetworkConfiguration import network_config_map
 
 network_config = network_config_map["ZERONET"]
