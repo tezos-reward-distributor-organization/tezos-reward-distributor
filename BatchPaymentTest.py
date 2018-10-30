@@ -10,7 +10,9 @@ def run_and_last_line(cmd):
     my_env["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
 
     network_config = network_config_map["ZERONET"]
-    process = subprocess.Popen(cmd.replace("%network%", network_config['NAME'].lower()), shell=True,
+    cmd = cmd.replace("%network%", network_config['NAME'].lower())
+    print(cmd)
+    process = subprocess.Popen(cmd, shell=True,
                                stdout=subprocess.PIPE, env=my_env, bufsize=1, universal_newlines=True)
     line = None
     for l in process.stdout:
