@@ -3,11 +3,11 @@ import subprocess
 
 import base58
 
-from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE, COMM_SIGN, COMM_PREAPPLY, COMM_INJECT
+from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE, COMM_SIGN, COMM_PREAPPLY, COMM_INJECT, \
+    CONTENT
 from NetworkConfiguration import network_config_map
 
 
-print()
 def run_and_last_line(cmd, print_flag=False):
     my_env = os.environ.copy()
     my_env["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
@@ -28,14 +28,16 @@ def run_and_last_line(cmd, print_flag=False):
 
 source="tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP"
 destionation="tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9"
+destionation2="KT1LrDLvDUrkXAEsHzkZLrWHPwnphgL1zSjc"
 amount=10000
+amount2=1000
 hash = run_and_last_line(COMM_HASH,True)
 print()
 print("hash is {}".format(hash))
 
 counter = int(run_and_last_line(COMM_COUNTER,True))
 print("counter is {}".format(counter))
-counter = counter + 1
+
 print()
 
 #protocol = run_and_last_line(COMM_PROT)
@@ -44,8 +46,12 @@ protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
 print()
 print("protocol is {}".format(protocol))
 print()
-
-bytes = run_and_last_line(COMM_FORGE.replace("%COUNTER%",str(counter)).replace("%BRANCH%",hash).replace("%SOURCE%",source).replace("%DESTINATION%",destionation).replace("%AMOUNT%",str(amount)),True)
+counter = counter + 1
+contant1=CONTENT.replace("%SOURCE%",source).replace("%DESTINATION%",destionation).replace("%AMOUNT%",str(amount)).replace("%COUNTER%",str(counter))
+counter = counter + 1
+contant2=CONTENT.replace("%SOURCE%",source).replace("%DESTINATION%",destionation2).replace("%AMOUNT%",str(amount2)).replace("%COUNTER%",str(counter))
+content=contant1+','+contant2
+bytes = run_and_last_line(COMM_FORGE.replace("%BRANCH%",hash).replace("%CONTENT%",content),True)
 print()
 print("bytes is {}".format(bytes))
 print()
@@ -56,7 +62,7 @@ print()
 print("signed is {}".format(signed))
 print()
 
-applied = run_and_last_line(COMM_PREAPPLY.replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed).replace("%BRANCH%",hash).replace("%COUNTER%",str(counter)).replace("%SOURCE%",source).replace("%DESTINATION%",destionation).replace("%AMOUNT%",str(amount)),True)
+applied = run_and_last_line(COMM_PREAPPLY.replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed).replace("%BRANCH%",hash).replace("%CONTENT%",content),True)
 print()
 print("applied is {}".format(applied))
 print()

@@ -27,9 +27,9 @@ protocol = 'ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK'
 
 # content2 = '{"kind":"transaction","source":"tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP","fee":"0","counter":"9836","gas_limit":"4000000","storage_limit":"600000","amount":"100000","destination":"tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9"}'
 # content22='{"kind":"transaction","source":"tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP","fee":"0","counter":"9836","gas_limit":"200","storage_limit":"0","amount":"100000","destination":"tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9"}'
-content2 = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit":"4000000","storage_limit":"600000","amount":"%AMOUNT%"}'
-forge_operations = '{"branch": "%BRANCH%","contents":[' + content2 + ']}'
-preapply_operations = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[' + content2 + '],"signature":"%SIGNATURE%"}]'
+CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit":"4000000","storage_limit":"600000","amount":"%AMOUNT%"}'
+forge_operations = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
+preapply_operations = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 
 COMM_FORGE = CLIENT_PATH + " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%CONTENT%'".replace("%NODE%",NODE_URL).replace('%CONTENT%',forge_operations)
 COMM_PREAPPLY = CLIENT_PATH + " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%CONTENT%'".replace("%NODE%",NODE_URL).replace('%CONTENT%',preapply_operations)
