@@ -26,6 +26,7 @@ counter = int(run_and_last_line(COMM_COUNTER))
 counter = counter + 1
 protocol = run_and_last_line(COMM_PROT)
 protocol = protocol.strip("]").strip().strip("\"")
+protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
 bytes = run_and_last_line(COMM_FORGE.replace("%COUNTER%",str(counter)))
 signed = run_and_last_line(COMM_SIGN.format(bytes))
 signed=signed.replace("Signature:","").strip()
