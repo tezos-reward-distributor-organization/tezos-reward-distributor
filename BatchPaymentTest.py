@@ -1,10 +1,13 @@
 import os
 import subprocess
 
+import base58
+
 from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE, COMM_SIGN, COMM_PREAPPLY
 from NetworkConfiguration import network_config_map
 
 
+print()
 def run_and_last_line(cmd, print_flag=False):
     my_env = os.environ.copy()
     my_env["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
@@ -59,7 +62,12 @@ print("applied is {}".format(applied))
 print()
 
 
-
+decoded=base58.b58decode(b'edsigtnNiJnMTHgUSbASAVbUFiG96whWqrzZ5tw4tsfCxJu55J9wQ1BkQjSncTYhapuwWgE5unpSBhcT5eenaj1fQZni3WvW3jD').hex()
+print("decoded is {}".format(decoded))
+decoded_edsig_signature=decoded.replace("09f5cd8612","")[:-8]
+print("decoded_edsig_signature is {}".format(decoded_edsig_signature))
+signed_operation_bytes=bytes+decoded_edsig_signature
+print("signed_operation_bytes is {}".format(signed_operation_bytes))
 
 
 
