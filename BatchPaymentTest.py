@@ -23,20 +23,43 @@ def run_and_last_line(cmd, print_flag=False):
     return line
 
 
-hash = run_and_last_line(COMM_HASH)
-counter = int(run_and_last_line(COMM_COUNTER))
-counter = counter + 1
-protocol = run_and_last_line(COMM_PROT)
-protocol = protocol.strip("]").strip().strip("\"")
-protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
-bytes = run_and_last_line(COMM_FORGE.replace("%COUNTER%",str(counter)).format("%BRANCH%",hash),True)
-signed = run_and_last_line(COMM_SIGN.format(bytes),True)
-signed=signed.replace("Signature:","").strip()
-applied = run_and_last_line(COMM_PREAPPLY.replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed).replace("%BRANCH%",hash).replace("%COUNTER%",str(counter)),True)
-
+source="tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP"
+destionation="tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9"
+amount=10000
+hash = run_and_last_line(COMM_HASH,True)
+print()
 print("hash is {}".format(hash))
+
+counter = int(run_and_last_line(COMM_COUNTER,True))
 print("counter is {}".format(counter))
+counter = counter + 1
+print()
+
+#protocol = run_and_last_line(COMM_PROT)
+#protocol = protocol.strip("]").strip().strip("\"")
+protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
+print()
 print("protocol is {}".format(protocol))
+print()
+
+bytes = run_and_last_line(COMM_FORGE.replace("%COUNTER%",str(counter)).format("%BRANCH%",hash).format("%SOURCE%",source).format("%DESTINATION%",destionation).replace("%AMOUNT%",amount),True)
+print()
 print("bytes is {}".format(bytes))
+print()
+
+signed = run_and_last_line(COMM_SIGN.replace("%BYTES%",bytes),True)
+signed=signed.replace("Signature:","").strip()
+print()
 print("signed is {}".format(signed))
+print()
+
+applied = run_and_last_line(COMM_PREAPPLY.replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed).replace("%BRANCH%",hash).replace("%COUNTER%",str(counter)),True)
+print()
 print("applied is {}".format(applied))
+print()
+
+
+
+
+
+
