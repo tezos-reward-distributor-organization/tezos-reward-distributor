@@ -5,7 +5,7 @@ from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE, 
 from NetworkConfiguration import network_config_map
 
 
-def run_and_last_line(cmd):
+def run_and_last_line(cmd, print_flag=False):
     my_env = os.environ.copy()
     my_env["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
 
@@ -17,6 +17,8 @@ def run_and_last_line(cmd):
     line = None
     for l in process.stdout:
         line = l.strip().strip("\"")
+        if print_flag:
+            print(line)
     process.wait()
     return line
 
@@ -30,7 +32,7 @@ protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
 bytes = run_and_last_line(COMM_FORGE.replace("%COUNTER%",str(counter)))
 signed = run_and_last_line(COMM_SIGN.format(bytes))
 signed=signed.replace("Signature:","").strip()
-applied = run_and_last_line(COMM_PREAPPLY.replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed).replace("%BRANCH%",hash).replace("%COUNTER%",str(counter)))
+applied = run_and_last_line(COMM_PREAPPLY.replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed).replace("%BRANCH%",hash).replace("%COUNTER%",str(counter)),True)
 
 print("hash is {}".format(hash))
 print("counter is {}".format(counter))
