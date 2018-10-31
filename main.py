@@ -5,6 +5,7 @@ import os
 import queue
 import threading
 import time
+import sys
 
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from ClientConfiguration import COMM_TRANSFER
@@ -249,6 +250,10 @@ def main(args):
 
 
 if __name__ == '__main__':
+
+    if sys.version_info[0] < 3:
+        raise Exception("Must be using Python 3")
+
     parser = argparse.ArgumentParser()
     parser.add_argument("key", help="tezos address or alias to make payments")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
