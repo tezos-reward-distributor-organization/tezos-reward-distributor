@@ -34,4 +34,4 @@ preapply_operations = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":
 COMM_FORGE = CLIENT_PATH + " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%CONTENT%'".replace("%NODE%",NODE_URL).replace('%CONTENT%',forge_operations)
 COMM_PREAPPLY = CLIENT_PATH + " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%CONTENT%'".replace("%NODE%",NODE_URL).replace('%CONTENT%',preapply_operations)
 
-COMM_INJECT=CLIENT_PATH + " rpc post http://%NODE%/injection/operation with %OPERATION_HASH%".replace("%NODE%",NODE_URL)
+COMM_INJECT=CLIENT_PATH + " rpc post http://%NODE%/injection/operation with '%OPERATION_HASH%'".replace("%NODE%",NODE_URL)
