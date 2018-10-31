@@ -42,7 +42,7 @@ print()
 print("protocol is {}".format(protocol))
 print()
 
-bytes = run_and_last_line(COMM_FORGE.replace("%COUNTER%",str(counter)).format("%BRANCH%",hash).format("%SOURCE%",source).format("%DESTINATION%",destionation).replace("%AMOUNT%",amount),True)
+bytes = run_and_last_line(COMM_FORGE.replace("%COUNTER%",str(counter)).replace("%BRANCH%",hash).replace("%SOURCE%",source).replace("%DESTINATION%",destionation).replace("%AMOUNT%",amount),True)
 print()
 print("bytes is {}".format(bytes))
 print()
