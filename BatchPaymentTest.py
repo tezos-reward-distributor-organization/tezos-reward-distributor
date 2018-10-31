@@ -3,7 +3,7 @@ import subprocess
 
 import base58
 
-from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE, COMM_SIGN, COMM_PREAPPLY
+from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE, COMM_SIGN, COMM_PREAPPLY, COMM_INJECT
 from NetworkConfiguration import network_config_map
 
 
@@ -70,4 +70,6 @@ signed_operation_bytes=bytes+decoded_edsig_signature
 print("signed_operation_bytes is {}".format(signed_operation_bytes))
 
 
+injected = run_and_last_line(COMM_INJECT.replace("%OPERATION_HASH%",signed_operation_bytes),True)
+print("injected is {}".format(injected))
 
