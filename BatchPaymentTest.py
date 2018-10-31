@@ -62,7 +62,9 @@ print("applied is {}".format(applied))
 print()
 
 
-decoded=base58.b58decode(b'edsigtnNiJnMTHgUSbASAVbUFiG96whWqrzZ5tw4tsfCxJu55J9wQ1BkQjSncTYhapuwWgE5unpSBhcT5eenaj1fQZni3WvW3jD').hex()
+#decoded=base58.b58decode(b'edsigtnNiJnMTHgUSbASAVbUFiG96whWqrzZ5tw4tsfCxJu55J9wQ1BkQjSncTYhapuwWgE5unpSBhcT5eenaj1fQZni3WvW3jD').hex()
+decoded=base58.b58decode(bytearray(signed)).hex()
+
 print("decoded is {}".format(decoded))
 decoded_edsig_signature=decoded.replace("09f5cd8612","")[:-8]
 print("decoded_edsig_signature is {}".format(decoded_edsig_signature))
