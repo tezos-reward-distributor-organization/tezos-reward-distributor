@@ -14,6 +14,7 @@ def send_request(cmd):
     process.wait()
 
     buffer = b''.join(bytes).decode('utf-8')
+    buffer.replace("[0m","")#color chars
     print("buffer is '{}'".format(buffer))
 
     process.wait()
