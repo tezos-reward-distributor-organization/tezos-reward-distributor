@@ -5,13 +5,14 @@ def send_request(cmd):
     # execute client
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 
-    buffer = ''
-    for line in process.stdout:
-        buffer = buffer + line
-
-    print(buffer)
+    bytes=[]
+    for b in process.stdout:
+        bytes.append(b)
 
     process.wait()
+
+    buffer = b''.join(bytes).decode('utf-8')
+    print(buffer)
 
     return buffer
 
