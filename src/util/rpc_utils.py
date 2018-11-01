@@ -14,7 +14,7 @@ def send_request(cmd):
     process.wait()
 
     buffer = b''.join(bytes).decode('utf-8')
-    print(buffer)
+    print("buffer is '{}'".format(buffer))
 
     process.wait()
 
@@ -32,7 +32,7 @@ def parse_response(client_response):
 
     response_str = client_response[idx:]
 
-    print(response_str)
+    print("response_str is '{}'".format(response_str))
 
     response_json = json.loads(response_str)
     return response_json
