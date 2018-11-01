@@ -14,7 +14,6 @@ def send_request(cmd):
     process.wait()
 
     buffer = b''.join(bytes).decode('utf-8')
-    buffer.replace("[0m","")#color chars
     print("buffer is '{}'".format(buffer))
 
     process.wait()
@@ -23,6 +22,7 @@ def send_request(cmd):
 
 def parse_response(client_response):
     # because of disclaimer header; find beginning of response
+    client_response=client_response.replace("[0m","")#color chars
     idx = client_response.find("{")
     if idx < 0:
         idx = client_response.find("[")
