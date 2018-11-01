@@ -2,7 +2,7 @@ import random
 
 import requests
 
-from RewardApi import RewardApi
+from api.reward_api import RewardApi
 
 api_mirror = random.randint(2, 5)  # 1 is over used and not reliable
 
@@ -15,10 +15,10 @@ API = {'MAINNET': {'API_URL': 'http://api{}.tzscan.io/v1/'.format(api_mirror)},
        }
 
 
-class TzScanRewardApi(RewardApi):
+class TzScanRewardApiImpl(RewardApi):
 
     def __init__(self, nw, baking_address):
-        super().__init__()
+        super(TzScanRewardApiImpl, self).__init__()
 
         self.api = API[nw['NAME']]
         if self.api is None:

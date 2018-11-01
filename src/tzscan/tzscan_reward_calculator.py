@@ -1,10 +1,9 @@
-from RewardCalculator import RewardCalculator
-from utils import ceilf, floorf
+from api.reward_calculator_api import RewardCalculatorApi
 
 ONE_MILLION = 1000000
 
 
-class TzScanRewardCalculator(RewardCalculator):
+class TzScanRewardCalculatorApi(RewardCalculatorApi):
     # reward_data : payment map returned from tzscan
     def __init__(self, founders_map, reward_data):
         super().__init__(founders_map)

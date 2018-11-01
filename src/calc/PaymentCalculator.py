@@ -1,4 +1,4 @@
-from utils import floorf
+from util.num_utils import floorf
 
 
 class PaymentCalculator:

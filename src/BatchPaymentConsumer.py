@@ -3,8 +3,8 @@ import subprocess
 import threading
 
 from Constants import EXIT_PAYMENT_TYPE
-from Util import payment_file_name
-from logconfig import main_logger
+from util.dir_utils import payment_file_name
+from log_config import main_logger
 
 logger = main_logger
 

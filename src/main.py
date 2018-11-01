@@ -11,15 +11,15 @@ from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map,
 from ClientConfiguration import COMM_TRANSFER
 from Constants import RunMode, EXIT_PAYMENT_TYPE
 from NetworkConfiguration import network_config_map
-from PaymentCalculator import PaymentCalculator
-from ProcessLifeCycle import ProcessLifeCycle
+from calc.PaymentCalculator import PaymentCalculator
+from util.process_life_cycle import ProcessLifeCycle
 from RegularClientPaymentConsumer import RegularClientPaymentConsumer
-from ServiceFeeCalculator import ServiceFeeCalculator
-from TzScanBlockApi import TzScanBlockApi
-from TzScanRewardApi import TzScanRewardApi
-from TzScanRewardCalculator import TzScanRewardCalculator
-from Util import payment_file_name, payment_dir_c
-from logconfig import main_logger
+from calc.ServiceFeeCalculator import ServiceFeeCalculator
+from tzscan.tzscan_block_api import TzScanBlockApiImpl
+from tzscan.tzscan_reward_api import TzScanRewardApiImpl
+from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
+from util.dir_utils import payment_file_name, payment_dir_c
+from log_config import main_logger
 
 NB_CONSUMERS = 1
 BUF_SIZE = 50
@@ -37,7 +37,7 @@ class ProducerThread(threading.Thread):
         self.owners_map = owners_map
         self.founders_map = founders_map
         self.name = name
-        self.block_api = TzScanBlockApi(network_config)
+        self.block_api = TzScanBlockApiImpl(network_config)
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
         self.nw_config = network_config
@@ -83,9 +83,9 @@ class ProducerThread(threading.Thread):
 
                         logger.info("Payment cycle is " + str(payment_cycle))
 
-                        reward_api = TzScanRewardApi(self.nw_config, self.baking_address)
+                        reward_api = TzScanRewardApiImpl(self.nw_config, self.baking_address)
                         reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle)
-                        reward_calc = TzScanRewardCalculator(self.founders_map, reward_data)
+                        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data)
                         rewards = reward_calc.calculate()
                         total_rewards = reward_calc.get_total_rewards()
 
