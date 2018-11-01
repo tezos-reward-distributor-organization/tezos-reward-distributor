@@ -1,7 +1,6 @@
 import os
-import subprocess
-
 import base58
+import subprocess
 
 from ClientConfiguration import COMM_HASH, COMM_COUNTER, COMM_PROT, COMM_FORGE, COMM_SIGN, COMM_PREAPPLY, COMM_INJECT, \
     CONTENT

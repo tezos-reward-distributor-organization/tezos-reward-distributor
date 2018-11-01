@@ -57,7 +57,6 @@ Warning:
 
 def strip_disclaimer(client_response):
 
-
     idx = client_response.find("{")
     if idx<0:
         idx = client_response.find("[")

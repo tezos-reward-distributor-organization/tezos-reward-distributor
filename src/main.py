@@ -11,9 +11,9 @@ from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map,
 from ClientConfiguration import COMM_TRANSFER
 from Constants import RunMode, EXIT_PAYMENT_TYPE
 from NetworkConfiguration import network_config_map
+from PaymentConsumer import PaymentConsumer
 from calc.PaymentCalculator import PaymentCalculator
 from util.process_life_cycle import ProcessLifeCycle
-from RegularClientPaymentConsumer import RegularClientPaymentConsumer
 from calc.ServiceFeeCalculator import ServiceFeeCalculator
 from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
@@ -31,7 +31,7 @@ lifeCycle = ProcessLifeCycle()
 
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode,
-                 service_fee_calc, owners_map, founders_map, baking_address):
+                 service_fee_calc, owners_map, founders_map, baking_address, batch):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
         self.owners_map = owners_map
@@ -45,6 +45,7 @@ class ProducerThread(threading.Thread):
         self.reports_dir = reports_dir
         self.run_mode = run_mode
         self.exiting = False
+        self.batch = batch
 
         logger.debug('Producer started')
 
@@ -111,6 +112,7 @@ class ProducerThread(threading.Thread):
                                 csvwriter.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
                                 csvwriter.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
 
+                                batch = []
                                 for payment_item in payments:
                                     address = payment_item["address"]
                                     payment = payment_item["payment"]
@@ -132,10 +134,16 @@ class ProducerThread(threading.Thread):
                                             "Reward not created for cycle %s address %s amount %f tz %s: Reason payment log already present",
                                             payment_cycle, address, payment, type)
                                     else:
-                                        payments_queue.put(payment_item)
                                         logger.info(
                                             "Reward created for cycle %s address %s amount %f fee %f tz type %s",
                                             payment_cycle, address, payment, fee, type)
+                                        if self.batch:
+                                            batch.append(payment_item)
+                                        else:
+                                            payments_queue.put([payment_item])
+
+                            if self.batch:
+                                payments_queue.put(batch)
 
                         # processing of cycle is done
                         logger.info("Reward creation done for cycle %s", payment_cycle)
@@ -237,9 +245,9 @@ def main(args):
     p.start()
 
     for i in range(NB_CONSUMERS):
-        c = RegularClientPaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
-                                         transfer_command=COMM_TRANSFER.replace("%network%", network_config['NAME'].lower()),
-                                         payments_queue=payments_queue)
+        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
+                            transfer_command=COMM_TRANSFER.replace("%network%", network_config['NAME'].lower()),
+                            payments_queue=payments_queue)
         time.sleep(1)
         c.start()
     try:
@@ -262,6 +270,9 @@ if __name__ == '__main__':
     parser.add_argument("-T", "--reports_dir", help="Directory to create reports", default='./reports')
     parser.add_argument("-D", "--dry_run",
                         help="Run without doing any payments. Suitable for testing. Does not require locking.",
+                        action="store_true")
+    parser.add_argument("-B", "--batch",
+                        help="Make batch payments.",
                         action="store_true")
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
