@@ -3,9 +3,9 @@ import argparse
 import csv
 import os
 import queue
+import sys
 import threading
 import time
-import sys
 
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from ClientConfiguration import COMM_TRANSFER
@@ -13,13 +13,13 @@ from Constants import RunMode, EXIT_PAYMENT_TYPE
 from NetworkConfiguration import network_config_map
 from PaymentConsumer import PaymentConsumer
 from calc.PaymentCalculator import PaymentCalculator
-from util.process_life_cycle import ProcessLifeCycle
 from calc.ServiceFeeCalculator import ServiceFeeCalculator
+from log_config import main_logger
 from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
 from util.dir_utils import payment_file_name, payment_dir_c
-from log_config import main_logger
+from util.process_life_cycle import ProcessLifeCycle
 
 NB_CONSUMERS = 1
 BUF_SIZE = 50
@@ -241,7 +241,7 @@ def main(args):
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
                        payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode,
                        service_fee_calc=service_fee_calc, owners_map=owners_map, founders_map=founders_map,
-                       baking_address=BAKING_ADDRESS)
+                       baking_address=BAKING_ADDRESS,batch=args.batch)
     p.start()
 
     for i in range(NB_CONSUMERS):
