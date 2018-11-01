@@ -11,15 +11,15 @@ logger = main_logger
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, transfer_command, payments_queue):
+    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr):
         super(PaymentConsumer, self).__init__()
 
         self.name = name
         self.payments_dir = payments_dir
         self.key_name = key_name
-        self.transfer_command = transfer_command
+        self.client_path = client_path
         self.payments_queue = payments_queue
-
+        self.node_addr = node_addr
         logger.debug('Consumer "%s" created', self.name)
 
         return
@@ -35,19 +35,20 @@ class PaymentConsumer(threading.Thread):
                     break
 
                 if len(payment_items) == 1:
-                    regular_payer = RegularPayer(self.transfer_command, self.key_name)
+                    regular_payer = RegularPayer(self.client_path, self.key_name)
                     return_code = regular_payer.pay(payment_items[0])
                 else:
-                    batch_payer = BatchPayer(self.transfer_command, self.key_name)
+                    batch_payer = BatchPayer(self.node_addr, self.client_path, self.key_name)
                     return_code = batch_payer.pay(payment_items[0])
 
                 for pymnt_itm in payment_items:
                     pymnt_cycle = pymnt_itm["cycle"]
                     pymnt_addr = pymnt_itm["address"]
                     pymnt_amnt = pymnt_itm["payment"]
+                    pymnt_type = pymnt_itm["type"]
 
                     if return_code:
-                        pymt_log = payment_file_name(self.payments_dir, str(pymnt_cycle), pymnt_addr, type)
+                        pymt_log = payment_file_name(self.payments_dir, str(pymnt_cycle), pymnt_addr, pymnt_type)
 
                         # check and create required directories
                         if not os.path.exists(os.path.dirname(pymt_log)):

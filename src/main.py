@@ -8,7 +8,7 @@ import threading
 import time
 
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
-from ClientConfiguration import COMM_TRANSFER
+from ClientConfiguration import COMM_TRANSFER, CLIENT_PATH
 from Constants import RunMode, EXIT_PAYMENT_TYPE
 from NetworkConfiguration import network_config_map
 from PaymentConsumer import PaymentConsumer
@@ -51,7 +51,7 @@ class ProducerThread(threading.Thread):
 
     def exit(self):
         if not self.exiting:
-            payments_queue.put(self.create_exit_payment())
+            payments_queue.put([self.create_exit_payment()])
             self.exiting = True
 
             _thread.interrupt_main()
@@ -182,7 +182,7 @@ class ProducerThread(threading.Thread):
 
                     # if shutting down, exit
                     if not lifeCycle.is_running():
-                        payments_queue.put(self.create_exit_payment())
+                        payments_queue.put([self.create_exit_payment()])
                         break
 
         # end of endless loop
@@ -209,6 +209,7 @@ def main(args):
     payments_dir = os.path.expanduser(args.payments_dir)
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
+    node_addr = args.node_addr
 
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
@@ -241,13 +242,13 @@ def main(args):
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
                        payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode,
                        service_fee_calc=service_fee_calc, owners_map=owners_map, founders_map=founders_map,
-                       baking_address=BAKING_ADDRESS,batch=args.batch)
+                       baking_address=BAKING_ADDRESS, batch=args.batch)
     p.start()
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
-                            transfer_command=COMM_TRANSFER.replace("%network%", network_config['NAME'].lower()),
-                            payments_queue=payments_queue)
+                            client_path=CLIENT_PATH.replace("%network%", network_config['NAME'].lower()),
+                            payments_queue=payments_queue, node_addr=node_addr)
         time.sleep(1)
         c.start()
     try:
@@ -268,6 +269,7 @@ if __name__ == '__main__':
                         default='MAINNET')
     parser.add_argument("-P", "--payments_dir", help="Directory to create payment logs", default='./payments')
     parser.add_argument("-T", "--reports_dir", help="Directory to create reports", default='./reports')
+    parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
                         help="Run without doing any payments. Suitable for testing. Does not require locking.",
                         action="store_true")

@@ -5,10 +5,11 @@ from log_config import main_logger
 logger = main_logger
 
 class RegularPayer():
-    def __init__(self,transfer_command,key_name):
+    def __init__(self,client_path,key_name):
         super(RegularPayer,self).__init__()
-        self.transfer_command = transfer_command
+        self.client_path = client_path
         self.key_name=key_name
+        self.transfer_command=self.client_path+" transfer {0:f} from {1} to {2} --fee 0"
 
     def pay(self,payment_item):
         pymnt_addr = payment_item["address"]
