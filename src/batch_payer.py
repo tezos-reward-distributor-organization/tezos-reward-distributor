@@ -11,7 +11,8 @@ COMM_HASH = "{} rpc get http://{}/chains/main/blocks/head/hash"
 COMM_PROT = "{} rpc get http://{}/protocols"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit":"4000000","storage_limit":"600000","amount":"%AMOUNT%"}'
-COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%CONTENT%'"
+FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
+COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
 COMM_SIGN = "{} sign bytes 0x03%BYTES% for {}"
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%CONTENT%'"
 COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
@@ -47,13 +48,15 @@ class BatchPayer():
         for payment_item in payment_items:
             pymnt_addr = payment_item["address"]
             pymnt_amnt = payment_item["payment"]
+            pymnt_amnt=pymnt_amnt*1e6 # expects in micro tezos
             counter = counter + 1
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", pymnt_addr) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter))
             content_list.append(content)
 
         contents_string = ",".join(content_list)
-        forge_command_str=self.comm_forge.replace("%BRANCH%", branch).replace("%CONTENT%", contents_string)
+        forge_json=FORGE_JSON.replace('%BRANCH%',branch).replace("%CONTENT%", contents_string)
+        forge_command_str=self.comm_forge.replace("%JSON%", forge_json)
         print("forge_command_str is |{}|".format(forge_command_str))
         bytes = parse_response(forge_command_str)
         signed = parse_response(self.comm_sign.replace("%BYTES%", bytes))
