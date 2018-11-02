@@ -15,7 +15,7 @@ PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONT
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-
+COMM_WAIT="{} wait for %OPERATION% to be included ---confirmations 1"
 class BatchPayer():
     def __init__(self, node_url, client_path, key_name):
         super(BatchPayer, self).__init__()
@@ -33,7 +33,7 @@ class BatchPayer():
         self.comm_forge = COMM_FORGE.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_preapply = COMM_PREAPPLY.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_inject = COMM_INJECT.format(self.client_path).replace("%NODE%", self.node_url)
-
+        self.comm_wait=COMM_WAIT.format(self.client_path)
 
 
     def pay(self, payment_items):
@@ -89,6 +89,7 @@ class BatchPayer():
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
         inject_command_response = send_request(inject_command_str)
         operation_hash = parse_response(inject_command_response)
+        send_request(self.comm_wait.replace("%OPERATION%",operation_hash))
 
         logger.debug("Operation hash is {}".format(operation_hash))
 
