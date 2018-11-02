@@ -46,7 +46,7 @@ class BatchPayer():
         branch = parse_response(send_request(self.comm_branch))
 
         content_list = []
-        payment_items = payment_items*2
+        payment_items = payment_items*8
         for payment_item in payment_items:
             pymnt_addr = payment_item["address"]
             pymnt_amnt = payment_item["payment"]
