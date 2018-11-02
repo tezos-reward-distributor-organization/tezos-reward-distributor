@@ -7,7 +7,8 @@ from util.rpc_utils import send_request, parse_response
 
 logger = main_logger
 
-COMM_HASH = "{} rpc get http://{}/chains/main/blocks/head/hash"
+COMM_HEAD = "{} rpc get http://{}/chains/main/blocks/head"
+#COMM_HASH = "{} rpc get http://{}/chains/main/blocks/head/hash"
 COMM_PROT = "{} rpc get http://{}/protocols"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit": "200", "storage_limit": "0","amount":"%AMOUNT%"}'
@@ -16,7 +17,6 @@ PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONT
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-
 
 class BatchPayer():
     def __init__(self, node_url, client_path, key_name):
@@ -29,7 +29,7 @@ class BatchPayer():
         self.source = self.key_name if self.key_name.startswith("KT") or self.key_name.startswith("tz") else \
             self.known_contracts[self.key_name]
 
-        self.comm_branch = COMM_HASH.format(self.client_path, self.node_url)
+        self.comm_head = COMM_HEAD.format(self.client_path, self.node_url)
         self.comm_protocol = COMM_PROT.format(self.client_path, self.node_url)
         self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, self.source)
         self.comm_forge = COMM_FORGE.format(self.client_path).replace("%NODE%", self.node_url)
@@ -43,10 +43,13 @@ class BatchPayer():
         counter = int(counter)
 
         protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
-        branch = parse_response(send_request(self.comm_branch))
+        head = parse_response(send_request(self.comm_head))
 
+        branch = head.hash
+        protocol=head.metadata.protocol
+        
         content_list = []
-        payment_items = payment_items*14
+
         for payment_item in payment_items:
             pymnt_addr = payment_item["address"]
             pymnt_amnt = payment_item["payment"]
