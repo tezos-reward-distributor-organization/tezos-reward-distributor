@@ -64,7 +64,10 @@ class BatchPayer():
             print("Error '{}'".format(forge_command_response))
             return False
 
-        bytes = parse_response(forge_command_str)
+        bytes = parse_response(forge_command_response)
+
+
+
         signed = parse_response(self.comm_sign.replace("%BYTES%", bytes))
         signed = signed.replace("Signature:", "").strip()
         applied = parse_response(self.comm_preapply.replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed)
