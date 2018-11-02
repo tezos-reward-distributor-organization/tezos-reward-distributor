@@ -60,7 +60,7 @@ class BatchPayer():
         forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
         print("forge_command_str is |{}|".format(forge_command_str))
         forge_command_response = send_request(forge_command_str)
-        if "Error:" in forge_command_response:
+        if "Error:" in forge_command_response or "Unexpected server answer" in forge_command_response:
             logger.error("Error '{}'".format(forge_command_response))
             return False
 
@@ -71,7 +71,7 @@ class BatchPayer():
         preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
         print("preapply_command_str is |{}|".format(preapply_command_str))
         preapply_command_response = send_request(preapply_command_str)
-        if "Error:" in preapply_command_response:
+        if "Error:" in preapply_command_response or "Unexpected server answer" in preapply_command_response:
             logger.error("Error '{}'".format(preapply_command_response))
             return False
 
