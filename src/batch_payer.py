@@ -2,7 +2,7 @@ import base58
 
 from BussinessConfiguration import BAKING_ADDRESS
 from log_config import main_logger
-from util.client_utils import client_list_known_contracts
+from util.client_utils import client_list_known_contracts, sign
 from util.rpc_utils import send_request, parse_response
 
 logger = main_logger
@@ -13,7 +13,6 @@ COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit":"4000000","storage_limit":"600000","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
-COMM_SIGN = "{} sign bytes 0x03%BYTES% for {}"
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%CONTENT%'"
 COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
 
@@ -29,7 +28,6 @@ class BatchPayer():
         self.comm_protocol = COMM_PROT.format(self.client_path, self.node_url)
         self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, BAKING_ADDRESS)
         self.comm_forge = COMM_FORGE.format(self.client_path).replace("%NODE%", self.node_url)
-        self.comm_sign = COMM_SIGN.format(self.client_path, self.key_name)
         self.comm_preapply = COMM_PREAPPLY.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_inject = COMM_INJECT.format(self.client_path).replace("%NODE%", self.node_url)
 
@@ -65,18 +63,9 @@ class BatchPayer():
             return False
 
         bytes = parse_response(forge_command_response)
+        signed_bytes = sign(self.client_path,bytes,self.key_name)
 
-        sign_command_str=self.comm_sign.replace("%BYTES%", bytes)
-        sign_command_response = send_request(sign_command_str)
-        if "Error:" in sign_command_response:
-            logger.error("Error '{}'".format(forge_command_response))
-            return False
-        signed = parse_response(sign_command_response)
-        signed = signed.replace("Signature:", "").strip()
-        applied = parse_response(self.comm_preapply.replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed)
-                                 .replace("%BRANCH%", branch).replace("%CONTENT%", contents_string))
-
-        decoded = base58.b58decode(signed).hex()
+        decoded = base58.b58decode(signed_bytes).hex()
         decoded_edsig_signature = decoded.replace("09f5cd8612", "")[:-8]
         signed_operation_bytes = bytes + decoded_edsig_signature
         injected = parse_response(self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes))
