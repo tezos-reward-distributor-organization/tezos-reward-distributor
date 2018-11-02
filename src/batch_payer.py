@@ -46,7 +46,7 @@ class BatchPayer():
         for payment_item in payment_items:
             pymnt_addr = payment_item["address"]
             pymnt_amnt = payment_item["payment"]
-            pymnt_amnt=int(pymnt_amnt*1e6) # expects in micro tezos
+            pymnt_amnt = int(pymnt_amnt * 1e6)  # expects in micro tezos
             counter = counter + 1
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", pymnt_addr) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter))
@@ -54,8 +54,8 @@ class BatchPayer():
 
         contents_string = ",".join(content_list)
 
-        forge_json=FORGE_JSON.replace('%BRANCH%',branch).replace("%CONTENT%", contents_string)
-        forge_command_str=self.comm_forge.replace("%JSON%", forge_json)
+        forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
+        forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
         print("forge_command_str is |{}|".format(forge_command_str))
         forge_command_response = send_request(forge_command_str)
         if "Error:" in forge_command_response:
@@ -63,12 +63,14 @@ class BatchPayer():
             return False
 
         bytes = parse_response(forge_command_response)
-        signed_bytes = sign(self.client_path,bytes,self.key_name)
+        signed_bytes = sign(self.client_path, bytes, self.key_name)
 
         decoded = base58.b58decode(signed_bytes).hex()
         decoded_edsig_signature = decoded.replace("09f5cd8612", "")[:-8]
         signed_operation_bytes = bytes + decoded_edsig_signature
-        injected = parse_response(self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes))
+        inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
+        inject_command_response = send_request(inject_command_str)
+        injected = parse_response(inject_command_response)
 
         return True
 
