@@ -1,7 +1,7 @@
 # baker's bussiness parameters
 
 # baker's 'tz' address, NOT A KT address
-BAKING_ADDRESS = "tz1UmPE44pqWrEgW8sTRs6ED1DgwF7k43ncQ"
+BAKING_ADDRESS = "tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP"
 
 # standard fee that is valid for everybody
 STANDARD_FEE=0.045
