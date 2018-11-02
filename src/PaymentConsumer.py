@@ -39,7 +39,7 @@ class PaymentConsumer(threading.Thread):
                     return_code = regular_payer.pay(payment_items[0])
                 else:
                     batch_payer = BatchPayer(self.node_addr, self.client_path, self.key_name)
-                    return_code = batch_payer.pay(payment_items[0])
+                    return_code = batch_payer.pay(payment_items)
 
                 for pymnt_itm in payment_items:
                     pymnt_cycle = pymnt_itm["cycle"]

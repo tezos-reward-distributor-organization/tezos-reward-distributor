@@ -42,9 +42,7 @@ class BatchPayer():
         branch = parse_response(send_request(self.comm_branch))
 
         content_list = []
-        print(payment_items)
         for payment_item in payment_items:
-            print(payment_item)
             pymnt_addr = payment_item["address"]
             pymnt_amnt = payment_item["payment"]
             counter = counter + 1
