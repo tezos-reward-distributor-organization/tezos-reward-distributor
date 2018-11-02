@@ -61,7 +61,7 @@ class BatchPayer():
         print("forge_command_str is |{}|".format(forge_command_str))
         forge_command_response = send_request(forge_command_str)
         if "Error:" in forge_command_response:
-            print("Error '{}'".format(forge_command_response))
+            logger.error("Error '{}'".format(forge_command_response))
             return False
 
         bytes = parse_response(forge_command_response)
