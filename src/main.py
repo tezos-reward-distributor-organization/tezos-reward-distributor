@@ -31,7 +31,7 @@ lifeCycle = ProcessLifeCycle()
 
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode,
-                 service_fee_calc, owners_map, founders_map, baking_address, batch):
+                 service_fee_calc, owners_map, founders_map, baking_address, batch, release_override):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
         self.owners_map = owners_map
@@ -46,7 +46,7 @@ class ProducerThread(threading.Thread):
         self.run_mode = run_mode
         self.exiting = False
         self.batch = batch
-
+        self.release_override = release_override
         logger.debug('Producer started')
 
     def exit(self):
@@ -63,7 +63,8 @@ class ProducerThread(threading.Thread):
 
         # if non-positive initial_payment_cycle, set initial_payment_cycle to 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
         if self.initial_payment_cycle <= 0:
-            payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
+            payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (
+                    self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
 
         while lifeCycle.is_running():
 
@@ -78,7 +79,7 @@ class ProducerThread(threading.Thread):
                 os.makedirs(self.reports_dir)
 
             # payments should not pass beyond last released reward cycle
-            if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1):
+            if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                 if not payments_queue.full():
                     try:
 
@@ -242,7 +243,7 @@ def main(args):
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
                        payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode,
                        service_fee_calc=service_fee_calc, owners_map=owners_map, founders_map=founders_map,
-                       baking_address=BAKING_ADDRESS, batch=args.batch)
+                       baking_address=BAKING_ADDRESS, batch=args.batch, release_override=args.release_override)
     p.start()
 
     for i in range(NB_CONSUMERS):
@@ -279,6 +280,10 @@ if __name__ == '__main__':
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
                         default=1, choices=[1, 2, 3], type=int)
+    parser.add_argument("-R", "--release_override",
+                        help="Override NB_FREEZE_CYCLE value. last released payment cycle will be (current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. For future payments give negative values. ",
+                        default=0, type=int)
+
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). If not set application will continue from last payment made or last reward released.",
                         type=int)

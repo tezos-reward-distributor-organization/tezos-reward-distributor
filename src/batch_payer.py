@@ -1,6 +1,5 @@
 import base58
 
-from BussinessConfiguration import BAKING_ADDRESS
 from log_config import main_logger
 from util.client_utils import client_list_known_contracts, sign
 from util.rpc_utils import send_request, parse_response
@@ -8,7 +7,6 @@ from util.rpc_utils import send_request, parse_response
 logger = main_logger
 
 COMM_HEAD = "{} rpc get http://{}/chains/main/blocks/head"
-#COMM_HASH = "{} rpc get http://{}/chains/main/blocks/head/hash"
 COMM_PROT = "{} rpc get http://{}/protocols"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit": "200", "storage_limit": "0","amount":"%AMOUNT%"}'
@@ -42,9 +40,7 @@ class BatchPayer():
         counter = parse_response(send_request(self.comm_counter))
         counter = int(counter)
 
-        protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
         head = parse_response(send_request(self.comm_head))
-
         branch = head["hash"]
         protocol=head["metadata"]["protocol"]
 
