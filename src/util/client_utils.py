@@ -32,6 +32,6 @@ def client_list_known_contracts(client_cmd):
             alias, pkh = line.split(":", maxsplit=1)
             dict[alias] = pkh
 
-    print("known contracts: {}",dict)
+    print("known contracts: {}".format(dict))
 
     return dict
