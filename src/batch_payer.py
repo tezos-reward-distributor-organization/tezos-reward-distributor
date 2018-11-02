@@ -59,7 +59,7 @@ class BatchPayer():
         forge_json=FORGE_JSON.replace('%BRANCH%',branch).replace("%CONTENT%", contents_string)
         forge_command_str=self.comm_forge.replace("%JSON%", forge_json)
         print("forge_command_str is |{}|".format(forge_command_str))
-        forge_command_response = send_request(self.comm_branch)
+        forge_command_response = send_request(forge_command_str)
         if "Error:" in forge_command_response:
             print("Error '{}'".format(forge_command_response))
             return False
