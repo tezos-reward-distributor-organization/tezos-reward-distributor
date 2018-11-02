@@ -38,6 +38,8 @@ class BatchPayer():
 
     def pay(self, payment_items):
         counter = parse_response(send_request(self.comm_counter))
+        counter = int(counter)
+        
         protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
         branch = parse_response(send_request(self.comm_branch))
 
