@@ -39,7 +39,7 @@ class BatchPayer():
     def pay(self, payment_items):
         counter = parse_response(send_request(self.comm_counter))
         counter = int(counter)
-        
+
         protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
         branch = parse_response(send_request(self.comm_branch))
 
@@ -53,7 +53,9 @@ class BatchPayer():
             content_list.append(content)
 
         contents_string = ",".join(content_list)
-        bytes = parse_response(self.comm_forge.replace("%BRANCH%", branch).replace("%CONTENT%", contents_string))
+        forge_command_str=self.comm_forge.replace("%BRANCH%", branch).replace("%CONTENT%", contents_string)
+        print("forge_command_str is |{}|".format(forge_command_str))
+        bytes = parse_response(forge_command_str)
         signed = parse_response(self.comm_sign.replace("%BYTES%", bytes))
         signed = signed.replace("Signature:", "").strip()
         applied = parse_response(self.comm_preapply.replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed)
