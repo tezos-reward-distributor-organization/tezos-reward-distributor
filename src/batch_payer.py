@@ -55,9 +55,15 @@ class BatchPayer():
             content_list.append(content)
 
         contents_string = ",".join(content_list)
+
         forge_json=FORGE_JSON.replace('%BRANCH%',branch).replace("%CONTENT%", contents_string)
         forge_command_str=self.comm_forge.replace("%JSON%", forge_json)
         print("forge_command_str is |{}|".format(forge_command_str))
+        forge_command_response = send_request(self.comm_branch)
+        if "Error:" in forge_command_response:
+            print("Error '{}'".format(forge_command_response))
+            return False
+
         bytes = parse_response(forge_command_str)
         signed = parse_response(self.comm_sign.replace("%BYTES%", bytes))
         signed = signed.replace("Signature:", "").strip()
