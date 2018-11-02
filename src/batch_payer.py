@@ -48,7 +48,7 @@ class BatchPayer():
         for payment_item in payment_items:
             pymnt_addr = payment_item["address"]
             pymnt_amnt = payment_item["payment"]
-            pymnt_amnt=pymnt_amnt*1e6 # expects in micro tezos
+            pymnt_amnt=int(pymnt_amnt*1e6) # expects in micro tezos
             counter = counter + 1
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", pymnt_addr) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter))
