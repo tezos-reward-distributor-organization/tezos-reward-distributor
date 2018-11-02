@@ -12,8 +12,9 @@ COMM_PROT = "{} rpc get http://{}/protocols"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit":"4000000","storage_limit":"600000","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
+PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
-COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%CONTENT%'"
+COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
 
 
@@ -65,12 +66,25 @@ class BatchPayer():
         bytes = parse_response(forge_command_response)
         signed_bytes = sign(self.client_path, bytes, self.key_name)
 
+        preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%",protocol).replace("%SIGNATURE%",signed_bytes)
+        preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
+        print("preapply_command_str is |{}|".format(preapply_command_str))
+        preapply_command_response = send_request(preapply_command_str)
+        if "Error:" in preapply_command_response:
+            logger.error("Error '{}'".format(preapply_command_response))
+            return False
+
+        # not necessary
+        #preapplied = parse_response(preapply_command_response)
+
         decoded = base58.b58decode(signed_bytes).hex()
         decoded_edsig_signature = decoded.replace("09f5cd8612", "")[:-8]
         signed_operation_bytes = bytes + decoded_edsig_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
         inject_command_response = send_request(inject_command_str)
-        injected = parse_response(inject_command_response)
+        operation_hash = parse_response(inject_command_response)
+
+        logger.debug("Operation hash is {}".format(operation_hash))
 
         return True
 
