@@ -1,6 +1,6 @@
 import json
 import subprocess
-
+import re
 
 def send_request(cmd):
 
@@ -21,8 +21,12 @@ def send_request(cmd):
     return buffer
 
 def parse_response(client_response):
+
+    # get rid of special chars, terminal sequences
+    ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+    client_response = ansi_escape.sub('', client_response)
+
     # because of disclaimer header; find beginning of response
-    client_response=client_response.replace("[0m","")#color chars
     idx = client_response.find("{")
     if idx < 0:
         idx = client_response.find("[")
