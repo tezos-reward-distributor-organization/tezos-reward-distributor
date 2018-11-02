@@ -51,6 +51,10 @@ class BatchPayer():
             pymnt_addr = payment_item["address"]
             pymnt_amnt = payment_item["payment"]
             pymnt_amnt = int(pymnt_amnt * 1e6)  # expects in micro tezos
+
+            if pymnt_amnt == 0:
+                continue
+
             counter = counter + 1
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", pymnt_addr) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter))
