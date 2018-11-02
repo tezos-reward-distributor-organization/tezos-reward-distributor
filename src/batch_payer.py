@@ -45,9 +45,9 @@ class BatchPayer():
         protocol = "ProtoALphaALphaALphaALphaALphaALphaALphaALphaDdp3zK"
         head = parse_response(send_request(self.comm_head))
 
-        branch = head.hash
-        protocol=head.metadata.protocol
-        
+        branch = head["hash"]
+        protocol=head["metadata"]["protocol"]
+
         content_list = []
 
         for payment_item in payment_items:
