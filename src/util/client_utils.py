@@ -28,7 +28,7 @@ def client_list_known_contracts(client_cmd):
     dict = {}
 
     for line in response.splitlines():
-        if ":" in line:
+        if ":" in line and "Warning" not in line[0:10]:
             alias, pkh = line.split(":", maxsplit=1)
             dict[alias] = pkh
 

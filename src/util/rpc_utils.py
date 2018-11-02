@@ -35,7 +35,7 @@ def parse_response(client_response):
     if idx < 0:
         raise Exception("Unknown client response format")
 
-    response_str = client_response[idx:]
+    response_str = client_response[idx:].strip()
 
     print("response_str is '{}'".format(response_str))
 
