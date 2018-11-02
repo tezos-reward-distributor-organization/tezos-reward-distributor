@@ -1,5 +1,5 @@
 import subprocess
-
+import re
 
 def send_request(cmd):
     # execute client
@@ -20,6 +20,11 @@ def send_request(cmd):
 def client_list_known_contracts(client_cmd):
     response = send_request(client_cmd + " list known contracts")
 
+    # get rid of special chars, terminal sequences
+    ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+    response = ansi_escape.sub('', response)
+
+
     dict = {}
 
     for line in response.splitlines():
@@ -27,6 +32,6 @@ def client_list_known_contracts(client_cmd):
             alias, pkh = line.split(":", maxsplit=1)
             dict[alias] = pkh
 
-    print(dict)
+    print("known contracts: {}",dict)
 
     return dict
