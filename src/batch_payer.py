@@ -25,16 +25,18 @@ class BatchPayer():
         self.node_url = node_url
         self.client_path = client_path
 
+        self.known_contracts = client_list_known_contracts(self.client_path)
+        self.source = self.key_name if self.key_name.startswith("KT") or self.key_name.startswith("tz") else \
+            self.known_contracts[self.key_name]
+
         self.comm_branch = COMM_HASH.format(self.client_path, self.node_url)
         self.comm_protocol = COMM_PROT.format(self.client_path, self.node_url)
-        self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, BAKING_ADDRESS)
+        self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, self.source)
         self.comm_forge = COMM_FORGE.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_preapply = COMM_PREAPPLY.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_inject = COMM_INJECT.format(self.client_path).replace("%NODE%", self.node_url)
 
-        self.known_contracts = client_list_known_contracts(self.client_path)
-        self.source = self.key_name if self.key_name.startswith("KT") or self.key_name.startswith("tz") else \
-            self.known_contracts[self.key_name]
+
 
     def pay(self, payment_items):
         counter = parse_response(send_request(self.comm_counter))
