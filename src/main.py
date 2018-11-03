@@ -8,7 +8,6 @@ import threading
 import time
 
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
-from ClientConfiguration import COMM_TRANSFER, CLIENT_PATH
 from Constants import RunMode, EXIT_PAYMENT_TYPE
 from NetworkConfiguration import network_config_map
 from PaymentConsumer import PaymentConsumer
@@ -18,6 +17,7 @@ from log_config import main_logger
 from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
+from util.client_utils import get_client_path
 from util.dir_utils import payment_file_name, payment_dir_c
 from util.process_life_cycle import ProcessLifeCycle
 
@@ -211,7 +211,7 @@ def main(args):
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
     node_addr = args.node_addr
-
+    client_path = get_client_path([x.strip() for x in args.search_paths.split(',')], args.docker, network_config)
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
 
@@ -248,8 +248,8 @@ def main(args):
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
-                            client_path=CLIENT_PATH.replace("%network%", network_config['NAME'].lower()),
-                            payments_queue=payments_queue, node_addr=node_addr)
+                            client_path=client_path, payments_queue=payments_queue, node_addr=node_addr,
+                            verbose=args.verbose)
         time.sleep(1)
         c.start()
     try:
@@ -277,13 +277,21 @@ if __name__ == '__main__':
     parser.add_argument("-B", "--batch",
                         help="Make batch payments.",
                         action="store_true")
+    parser.add_argument("-E", "--executable_dirs",
+                        help="Comma sepeated list of directories to search for client executable. Prefer single location when setting client directory. If -D is set, poin to location where docker script is found. Default value is given for minimum configuration effort.",
+                        default='~/,~/tezos')
+    parser.add_argument("-D", "--docker",
+                        help="Docker installation flag. When set, docker script location should be set in -E",
+                        action="store_true")
+    parser.add_argument("-V", "--verbose",
+                        help="Low level details.",
+                        action="store_true")
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
                         default=1, choices=[1, 2, 3], type=int)
     parser.add_argument("-R", "--release_override",
                         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be (current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. For future payments give negative values. ",
                         default=0, type=int)
-
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). If not set application will continue from last payment made or last reward released.",
                         type=int)
@@ -293,10 +301,11 @@ if __name__ == '__main__':
     logger.info("Tezos Reward Distributer is Starting")
     logger.info("Current network is {}".format(args.network))
     logger.info("Baker addess is {}".format(BAKING_ADDRESS))
-    logger.info("Keyname {}".format(args.key))
+    logger.info("Key name {}".format(args.key))
     logger.info("--------------------------------------------")
-    logger.info("Author huseyinabanox@gmail.com")
-    logger.info("Please leave author information")
+    logger.info("Copyright Hüseyin ABANOZ 2018")
+    logger.info("huseyinabanox@gmail.com")
+    logger.info("Please leave copyright information")
     logger.info("--------------------------------------------")
     if args.dry_run:
         logger.info("DRY RUN MODE")

@@ -11,7 +11,7 @@ logger = main_logger
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr):
+    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, verbose=None):
         super(PaymentConsumer, self).__init__()
 
         self.name = name
@@ -20,6 +20,8 @@ class PaymentConsumer(threading.Thread):
         self.client_path = client_path
         self.payments_queue = payments_queue
         self.node_addr = node_addr
+        self.verbose = verbose
+
         logger.debug('Consumer "%s" created', self.name)
 
         return
@@ -36,10 +38,10 @@ class PaymentConsumer(threading.Thread):
 
                 if len(payment_items) == 1:
                     regular_payer = RegularPayer(self.client_path, self.key_name)
-                    return_code = regular_payer.pay(payment_items[0])
+                    return_code = regular_payer.pay(payment_items[0],self.verbose)
                 else:
                     batch_payer = BatchPayer(self.node_addr, self.client_path, self.key_name)
-                    return_code = batch_payer.pay(payment_items)
+                    return_code = batch_payer.pay(payment_items,self.verbose)
 
                 for pymnt_itm in payment_items:
                     pymnt_cycle = pymnt_itm["cycle"]

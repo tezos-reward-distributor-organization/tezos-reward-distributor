@@ -1,8 +1,26 @@
 import subprocess
 import re
 
+import os
 
-def send_request(cmd):
+DOCKER_CLIENT_EXE = "%network%.sh client"
+REGULAR_CLIENT_EXE = "tezos-client"
+
+
+def get_client_path(search_paths, docker=None, network_config=None):
+    client_exe = REGULAR_CLIENT_EXE
+    if docker:
+        client_exe = DOCKER_CLIENT_EXE.replace("%network%", network_config['NAME'].lower())
+    for search_path in search_paths:
+        expanded_path = os.path.expanduser(search_path)
+        client_path = os.path.join(expanded_path, client_exe)
+        if os.path.isfile(client_path):
+            return client_path
+
+    raise Exception("Client executable not found. Review -E and -D parameters")
+
+
+def send_request(cmd, verbose=None):
     # execute client
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 
@@ -13,9 +31,17 @@ def send_request(cmd):
     process.wait()
 
     buffer = b''.join(bytes).decode('utf-8')
-    print(buffer)
+
+    if verbose:
+        print(buffer)
 
     return buffer
+
+
+def check_response(response):
+    if "Error:" in response or "Unexpected server answer" in response:
+        return False
+    return True
 
 
 def clear_terminal_chars(content):
@@ -25,7 +51,7 @@ def clear_terminal_chars(content):
     return result
 
 
-def client_list_known_contracts(client_cmd):
+def client_list_known_contracts(client_cmd, verbose=None):
     response = send_request(client_cmd + " list known contracts")
 
     response = clear_terminal_chars(response)
@@ -37,7 +63,8 @@ def client_list_known_contracts(client_cmd):
             alias, pkh = line.split(":", maxsplit=1)
             dict[alias.strip()] = pkh.strip()
 
-    print("known contracts: {}".format(dict))
+    if verbose:
+        print("known contracts: {}".format(dict))
 
     return dict
 
