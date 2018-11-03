@@ -211,7 +211,10 @@ def main(args):
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
     node_addr = args.node_addr
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config)
+
+    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config,
+                                  args.verbose)
+    logger.debug("Client command is {}".format(client_path))
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
 

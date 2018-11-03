@@ -3,7 +3,8 @@ import re
 
 import os
 
-DOCKER_CLIENT_EXE = "%network%.sh client"
+DOCKER_CLIENT_EXE = "%network%.sh"
+DOCKER_CLIENT_EXE_SUFFIX=" client"
 REGULAR_CLIENT_EXE = "tezos-client"
 
 
@@ -15,10 +16,10 @@ def get_client_path(search_paths, docker=None, network_config=None, verbose=None
         expanded_path = os.path.expanduser(search_path)
         client_path = os.path.join(expanded_path, client_exe)
         if os.path.isfile(client_path):
-            return client_path
+            return client_path+DOCKER_CLIENT_EXE_SUFFIX if docker else client_path
         if verbose: print("Not found {}".format(client_path))
 
-    raise Exception("Client executable not found. Review -E and -D parameters")
+    raise Exception("Client executable not found. Review --executable_dirs and --docker parameters")
 
 
 def send_request(cmd, verbose=None):

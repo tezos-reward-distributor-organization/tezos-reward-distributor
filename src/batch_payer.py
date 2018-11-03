@@ -64,7 +64,7 @@ class BatchPayer():
         contents_string = ",".join(content_list)
 
         # for the operations
-        logger.debug("Forging {} operations", len(content_list))
+        logger.debug("Forging {} operations".format(len(content_list)))
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
         if verbose: logger.debug("forge_command_str is |{}|".format(forge_command_str))
@@ -93,7 +93,7 @@ class BatchPayer():
         # preapplied = parse_response(preapply_command_response)
 
         # inject the operations
-        logger.debug("Injecting {} operations", len(content_list))
+        logger.debug("Injecting {} operations".format(len(content_list)))
         decoded = base58.b58decode(signed_bytes).hex()
         decoded_edsig_signature = decoded.replace("09f5cd8612", "")[:-8]
         signed_operation_bytes = bytes + decoded_edsig_signature
