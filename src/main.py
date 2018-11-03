@@ -211,7 +211,7 @@ def main(args):
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
     node_addr = args.node_addr
-    client_path = get_client_path([x.strip() for x in args.search_paths.split(',')], args.docker, network_config)
+    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config)
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
 
@@ -280,7 +280,7 @@ if __name__ == '__main__':
     parser.add_argument("-E", "--executable_dirs",
                         help="Comma sepeated list of directories to search for client executable. Prefer single location when setting client directory. If -D is set, poin to location where docker script is found. Default value is given for minimum configuration effort.",
                         default='~/,~/tezos')
-    parser.add_argument("-D", "--docker",
+    parser.add_argument("-d", "--docker",
                         help="Docker installation flag. When set, docker script location should be set in -E",
                         action="store_true")
     parser.add_argument("-V", "--verbose",
