@@ -1,12 +1,13 @@
 ## choose the right client path
 
 # regular client
-# CLIENT_PATH = "~/tezos/tezos-client"
+CLIENT_PATH = "~/tezos/tezos-client"
 
 # if docker images are used, %network% will be replaced by mainnet, zeronet, alphanet values
 from BussinessConfiguration import BAKING_ADDRESS
 
-CLIENT_PATH = "~/%network%.sh client"
+# CLIENT_PATH = "~/%network%.sh client"
+
 
 NODE_ADDR = "127.0.0.1"
 NODE_PORT = "8732"
