@@ -2,8 +2,8 @@ import os
 import threading
 
 from Constants import EXIT_PAYMENT_TYPE
-from batch_payer import BatchPayer
-from regular_payer import RegularPayer
+from pay.batch_payer import BatchPayer
+from pay.regular_payer import RegularPayer
 from util.dir_utils import payment_file_name
 from log_config import main_logger
 
@@ -11,7 +11,8 @@ logger = main_logger
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, verbose=None):
+    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, verbose=None,
+                 dry_run=None):
         super(PaymentConsumer, self).__init__()
 
         self.name = name
@@ -21,6 +22,7 @@ class PaymentConsumer(threading.Thread):
         self.payments_queue = payments_queue
         self.node_addr = node_addr
         self.verbose = verbose
+        self.dry_run = dry_run
 
         logger.debug('Consumer "%s" created', self.name)
 
@@ -38,12 +40,12 @@ class PaymentConsumer(threading.Thread):
 
                 if len(payment_items) == 1:
                     regular_payer = RegularPayer(self.client_path, self.key_name)
-                    return_code = regular_payer.pay(payment_items[0], self.verbose)
+                    return_code = regular_payer.pay(payment_items[0], self.verbose, dry_run=self.dry_run)
                 else:
                     batch_payer = BatchPayer(self.node_addr, self.client_path, self.key_name)
                     return_code = False
                     for attempt in range(3):
-                        return_code = batch_payer.pay(payment_items, self.verbose)
+                        return_code = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
                         if return_code: break
                         logger.debug("Batch payment attempt {} failed".format(attempt))
 

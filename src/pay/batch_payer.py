@@ -36,7 +36,7 @@ class BatchPayer():
         self.comm_inject = COMM_INJECT.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_wait = COMM_WAIT.format(self.client_path)
 
-    def pay(self, payment_items, verbose=None):
+    def pay(self, payment_items, verbose=None, dry_run=None):
         counter = parse_json_response(send_request(self.comm_counter, verbose))
         counter = int(counter)
 
@@ -91,6 +91,9 @@ class BatchPayer():
 
         # not necessary
         # preapplied = parse_response(preapply_command_response)
+
+        # if dry_run, skip injection
+        if dry_run: return True
 
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))

@@ -11,7 +11,7 @@ class RegularPayer():
         self.key_name = key_name
         self.transfer_command = self.client_path + " transfer {0:f} from {1} to {2} --fee 0"
 
-    def pay(self, payment_item, verbose=None):
+    def pay(self, payment_item, verbose=None, dry_run=None):
         pymnt_addr = payment_item["address"]
         pymnt_amnt = payment_item["payment"]
         pymnt_cycle = payment_item["cycle"]
@@ -22,6 +22,9 @@ class RegularPayer():
             return True
 
         cmd = self.transfer_command.format(pymnt_amnt, self.key_name, pymnt_addr)
+
+        # if dry run, add -D switch to trigger client --dry-run
+        if dry_run: cmd = cmd + " -D"
 
         logger.debug("Reward payment attempt for cycle %s address %s amount %f tz type %s", pymnt_cycle,
                      pymnt_addr, pymnt_amnt, type)

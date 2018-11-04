@@ -10,7 +10,7 @@ import time
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
 from Constants import RunMode, EXIT_PAYMENT_TYPE
 from NetworkConfiguration import network_config_map
-from PaymentConsumer import PaymentConsumer
+from pay.PaymentConsumer import PaymentConsumer
 from calc.PaymentCalculator import PaymentCalculator
 from calc.ServiceFeeCalculator import ServiceFeeCalculator
 from log_config import main_logger
@@ -218,14 +218,18 @@ def main(args):
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
 
+    dry_run = args.dry_run_no_payments or args.dry_run
+
     # if in dry run mode, do not create consumers
     # create reports in dry directory
-    if args.dry_run:
-        global NB_CONSUMERS
-        NB_CONSUMERS = 0
+    if dry_run:
         reports_dir = "./dry"
 
-    lifeCycle.start(not args.dry_run)
+    if args.dry_run_no_payments:
+        global NB_CONSUMERS
+        NB_CONSUMERS = 0
+
+    lifeCycle.start(not dry_run)
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
@@ -252,7 +256,7 @@ def main(args):
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
                             client_path=client_path, payments_queue=payments_queue, node_addr=node_addr,
-                            verbose=args.verbose)
+                            verbose=args.verbose, dry_run=dry_run)
         time.sleep(1)
         c.start()
     try:
@@ -275,6 +279,9 @@ if __name__ == '__main__':
     parser.add_argument("-T", "--reports_dir", help="Directory to create reports", default='./reports')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
+                        help="Run without injecting payments. Suitable for testing. Does not require locking.",
+                        action="store_true")
+    parser.add_argument("-Dn", "--dry_run_no_payments",
                         help="Run without doing any payments. Suitable for testing. Does not require locking.",
                         action="store_true")
     parser.add_argument("-B", "--batch",
