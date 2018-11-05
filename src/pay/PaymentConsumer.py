@@ -1,5 +1,7 @@
 import os
 import threading
+from random import randint
+from time import sleep
 
 from Constants import EXIT_PAYMENT_TYPE
 from pay.batch_payer import BatchPayer
@@ -44,10 +46,15 @@ class PaymentConsumer(threading.Thread):
                 else:
                     batch_payer = BatchPayer(self.node_addr, self.client_path, self.key_name)
                     return_code = False
-                    for attempt in range(3):
+                    max_try=3
+                    for attempt in range(max_try):
                         return_code = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
                         if return_code: break
                         logger.debug("Batch payment attempt {} failed".format(attempt))
+                        if attempt > max_try:
+                            slp_tm = randint(10, 50)
+                            logger.debug("Wait for {} seconds before trying again".format(slp_tm))
+                            sleep(slp_tm)
 
                 for pymnt_itm in payment_items:
                     pymnt_cycle = pymnt_itm["cycle"]
