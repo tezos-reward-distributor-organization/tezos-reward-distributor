@@ -68,6 +68,6 @@ class TzScanRewardApiImpl(RewardApi):
             nb_delegators_remaining = nb_delegators_remaining - MAX_PER_PAGE
             p = p + 1
 
-            root["delegators_balance"].expand(resp.json()["delegators_balance"])
+            root["delegators_balance"].extend(resp.json()["delegators_balance"])
 
         return root
