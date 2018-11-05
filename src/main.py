@@ -31,7 +31,7 @@ lifeCycle = ProcessLifeCycle()
 
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode,
-                 service_fee_calc, owners_map, founders_map, baking_address, batch, release_override):
+                 service_fee_calc, owners_map, founders_map, baking_address, batch, release_override, payment_offset):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
         self.owners_map = owners_map
@@ -47,6 +47,8 @@ class ProducerThread(threading.Thread):
         self.exiting = False
         self.batch = batch
         self.release_override = release_override
+        self.payment_offset = payment_offset
+
         logger.debug('Producer started')
 
     def exit(self):
@@ -174,6 +176,8 @@ class ProducerThread(threading.Thread):
 
                 # calculate number of blocks until end of current cycle
                 nb_blocks_remaining = (current_cycle + 1) * self.nw_config['BLOCKS_PER_CYCLE'] - current_level
+                # plus offset. cycle beginnigs may be busy, move payments forward
+                nb_blocks_remaining = nb_blocks_remaining + self.payment_offset
 
                 logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
 
@@ -211,6 +215,7 @@ def main(args):
     reports_dir = os.path.expanduser(args.reports_dir)
     run_mode = RunMode(args.run_mode)
     node_addr = args.node_addr
+    payment_offset = args.payment_offset
 
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config,
                                   args.verbose)
@@ -250,7 +255,8 @@ def main(args):
     p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
                        payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode,
                        service_fee_calc=service_fee_calc, owners_map=owners_map, founders_map=founders_map,
-                       baking_address=BAKING_ADDRESS, batch=args.batch, release_override=args.release_override)
+                       baking_address=BAKING_ADDRESS, batch=args.batch, release_override=args.release_override,
+                       payment_offset=payment_offset)
     p.start()
 
     for i in range(NB_CONSUMERS):
@@ -301,6 +307,9 @@ if __name__ == '__main__':
                         default=1, choices=[1, 2, 3], type=int)
     parser.add_argument("-R", "--release_override",
                         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be (current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. For future payments give negative values. ",
+                        default=0, type=int)
+    parser.add_argument("-O", "--payment_offset",
+                        help="Number of blocks to wait after a cycle starts before starting payments. This can be usefull because cycle beginnings may be bussy.",
                         default=0, type=int)
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). If not set application will continue from last payment made or last reward released.",
