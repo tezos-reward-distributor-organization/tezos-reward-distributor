@@ -45,6 +45,14 @@ def check_response(response):
         return False
     return True
 
+def get_operation_hash(client_response):
+    for line in client_response.splitlines():
+        if line.startswith("Operation hash"):
+            # example hash line
+            # Operation hash: oo8HjBGmZ4Pm7VUGbRPVV1i3k6CsuSsRtL1gPnwruXAj1Wd7fWW
+            # split using ':' and take second part then get rid of leading, trailing spaces
+            return line.split(":")[1].strip()
+    return "not-found"
 
 def clear_terminal_chars(content):
     # get rid of special chars, terminal sequences

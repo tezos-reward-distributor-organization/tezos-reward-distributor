@@ -1,3 +1,6 @@
+from random import randint
+from time import sleep
+
 import base58
 from log_config import main_logger
 from util.client_utils import client_list_known_contracts, sign, check_response, send_request
@@ -15,6 +18,8 @@ COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/op
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
 COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 1"
+
+MAX_TX_PER_BLOCK = 280
 
 
 class BatchPayer():
@@ -37,6 +42,53 @@ class BatchPayer():
         self.comm_wait = COMM_WAIT.format(self.client_path)
 
     def pay(self, payment_items, verbose=None, dry_run=None):
+        # split payments into lists of MAX_TX_PER_BLOCK or less size
+        # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
+        payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in
+                                range(0, len(payment_items), MAX_TX_PER_BLOCK)]
+
+        payment_logs = []
+        logger.debug("Payment will be done in {} batches".format(len(payment_items_chunks)))
+        for payment_items_chunk in payment_items_chunks:
+            logger.debug("Payment of a batch started")
+            payments_log = self.pay_single_batch_wrap(payment_items_chunk, verbose=verbose, dry_run=dry_run)
+            payment_logs.extend(payments_log)
+            logger.debug("Payment of a batch is complete")
+
+        return payment_logs
+
+    def pay_single_batch_wrap(self, payment_items, verbose=None, dry_run=None):
+
+        max_try = 3
+        return_code = False
+        operation_hash = ""
+
+        # due to unknown reasons, some times a batch fails to pre-apply
+        # trying after some time should be OK
+        for attempt in range(max_try):
+            return_code, operation_hash = self.pay_single_batch(payment_items, verbose, dry_run=dry_run)
+
+            # if successful, do not try anymore
+            if return_code: break
+
+            logger.debug("Batch payment attempt {} failed".format(attempt))
+
+            # But do not wait after last attempt
+            if attempt < max_try - 1:
+                self.wait_random()
+
+        for payment_item in payment_items:
+            payment_item["paid"] = return_code
+            payment_item["hash"] = operation_hash
+
+        return payment_items
+
+    def wait_random(self):
+        slp_tm = randint(10, 50)
+        logger.debug("Wait for {} seconds before trying again".format(slp_tm))
+        sleep(slp_tm)
+
+    def pay_single_batch(self, payment_items, verbose=None, dry_run=None):
         counter = parse_json_response(send_request(self.comm_counter, verbose))
         counter = int(counter)
 
@@ -71,7 +123,7 @@ class BatchPayer():
         forge_command_response = send_request(forge_command_str, verbose)
         if not check_response(forge_command_response):
             logger.error("Error in forge response '{}'".format(forge_command_response))
-            return False
+            return False, ""
 
         # sign the operations
         bytes = parse_json_response(forge_command_response)
@@ -87,13 +139,13 @@ class BatchPayer():
         preapply_command_response = send_request(preapply_command_str, verbose)
         if not check_response(preapply_command_response):
             logger.error("Error in preapply response '{}'".format(preapply_command_response))
-            return False
+            return False, ""
 
         # not necessary
         # preapplied = parse_response(preapply_command_response)
 
         # if dry_run, skip injection
-        if dry_run: return True
+        if dry_run: return True, ""
 
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
@@ -105,7 +157,7 @@ class BatchPayer():
         inject_command_response = send_request(inject_command_str, verbose)
         if not check_response(inject_command_response):
             logger.error("Error in inject response '{}'".format(inject_command_response))
-            return False
+            return False, ""
 
         operation_hash = parse_json_response(inject_command_response)
         logger.debug("Operation hash is {}".format(operation_hash))
@@ -115,7 +167,7 @@ class BatchPayer():
         send_request(self.comm_wait.replace("%OPERATION%", operation_hash), verbose)
         logger.debug("Operation {} is included".format(operation_hash))
 
-        return True
+        return True, operation_hash
 
 
 if __name__ == '__main__':

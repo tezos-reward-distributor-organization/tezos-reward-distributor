@@ -1,5 +1,5 @@
 from log_config import main_logger
-from util.client_utils import send_request, check_response
+from util.client_utils import send_request, check_response, get_operation_hash
 
 logger = main_logger
 
@@ -32,5 +32,12 @@ class RegularPayer():
         if verbose: logger.debug("Reward payment command '{}'".format(cmd))
 
         client_response = send_request(cmd, verbose)
+        response = check_response(client_response)
 
-        return check_response(client_response)
+        hash = ""
+        if response: hash = get_operation_hash(client_response)
+
+        payment_item['paid'] = response
+        payment_item['hash'] = hash
+
+        return payment_item

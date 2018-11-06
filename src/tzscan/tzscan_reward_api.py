@@ -38,25 +38,12 @@ class TzScanRewardApiImpl(RewardApi):
         return root
 
     def get_rewards_for_cycle_map(self, cycle):
+        #############
         nb_delegators = self.get_nb_delegators(cycle)[0]
         nb_delegators_remaining = nb_delegators
 
-        resp = requests.get(
-            self.api['API_URL'] + rewards_split_call.
-            format(self.baking_address, cycle, 0, min(MAX_PER_PAGE, nb_delegators_remaining)))
-
-        if resp.status_code != 200:
-            # This means something went wrong.
-            raise Exception('GET /tasks/ {}'.format(resp.status_code))
-        root = resp.json()
-
-        nb_delegators_remaining = nb_delegators_remaining - MAX_PER_PAGE
-
-        # page 0 is fetched in previous block.
-        # start with page 1 if there are any
-        # number of pages is ceil(nb_delegators / MAX_PER_PAGE)
-        # number of rows in a page at a time is min(MAX_PER_PAGE, nb_delegators_remaining)
-        p = 1
+        p = 0
+        root = {}
         while nb_delegators_remaining > 0:
             resp = requests.get(self.api['API_URL'] + rewards_split_call.
                                 format(self.baking_address, cycle, p, min(MAX_PER_PAGE, nb_delegators_remaining)))
@@ -65,9 +52,12 @@ class TzScanRewardApiImpl(RewardApi):
                 # This means something went wrong.
                 raise Exception('GET /tasks/ {}'.format(resp.status_code))
 
+            if p == 0:  # keep first result as basis; append 'delegators_balance' from other responses
+                root = resp.json()
+            else:  # only take 'delegators_balance' list and append to 'delegators_balance' list in root
+                root["delegators_balance"].extend(resp.json()["delegators_balance"])
+
             nb_delegators_remaining = nb_delegators_remaining - MAX_PER_PAGE
             p = p + 1
-
-            root["delegators_balance"].extend(resp.json()["delegators_balance"])
 
         return root
