@@ -4,6 +4,7 @@ from random import randint
 from time import sleep
 
 from Constants import EXIT_PAYMENT_TYPE
+from emails.email_manager import EmailManager
 from pay.batch_payer import BatchPayer
 from pay.regular_payer import RegularPayer
 from util.dir_utils import payment_file_name
@@ -25,6 +26,7 @@ class PaymentConsumer(threading.Thread):
         self.node_addr = node_addr
         self.verbose = verbose
         self.dry_run = dry_run
+        self.mm = EmailManager()
 
         logger.debug('Consumer "%s" created', self.name)
 
@@ -46,12 +48,12 @@ class PaymentConsumer(threading.Thread):
                 else:
                     batch_payer = BatchPayer(self.node_addr, self.client_path, self.key_name)
                     return_code = False
-                    max_try=3
+                    max_try = 3
                     for attempt in range(max_try):
                         return_code = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
                         if return_code: break
                         logger.debug("Batch payment attempt {} failed".format(attempt))
-                        if attempt > max_try:
+                        if attempt < max_try - 1:
                             slp_tm = randint(10, 50)
                             logger.debug("Wait for {} seconds before trying again".format(slp_tm))
                             sleep(slp_tm)
@@ -75,9 +77,13 @@ class PaymentConsumer(threading.Thread):
 
                         logger.info("Reward paid for cycle %s address %s amount %f tz", pymnt_cycle, pymnt_addr,
                                     pymnt_amnt)
+
+                        self.mm.send_payment_mail(pymnt_cycle, pymt_log)
                     else:
                         logger.warning("Reward NOT paid for cycle %s address %s amount %f tz: Reason client failed!",
                                        pymnt_cycle, pymnt_addr, pymnt_amnt)
+                        self.mm.send_payment_mail_fail(pymnt_cycle)
+                        
             except Exception as e:
                 logger.error("Error at reward payment", e)
 
