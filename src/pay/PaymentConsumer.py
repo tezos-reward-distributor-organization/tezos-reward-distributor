@@ -78,23 +78,25 @@ class PaymentConsumer(threading.Thread):
                         logger.warning("NO Reward paid for cycle %s address %s amount %f tz: Reason client failed!",
                                        pymnt_cycle, pymnt_addr, pymnt_amnt)
 
-                    report_file = payment_report_name(self.payments_dir, str(pymnt_cycle),
-                                                      "success" if nb_failed == 0 else 'failed_' + str(nb_failed))
-                    with open(report_file, "w") as f:
-                        csvwriter = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                        csvwriter.writerow(["address", "type", "payment", "hash", "paid"])
+                #
+                #create report file and send email
+                report_file = payment_report_name(self.payments_dir, str(pymnt_cycle),
+                                                  "success" if nb_failed == 0 else 'failed_' + str(nb_failed))
+                with open(report_file, "w") as f:
+                    csvwriter = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                    csvwriter.writerow(["address", "type", "payment", "hash", "paid"])
 
-                        for payment_item in payment_logs:
-                            address = payment_item["address"]
-                            type = payment_item["type"]
-                            payment = payment_item["payment"]
-                            hash = payment_item["hash"]
-                            paid = payment_item["paid"]
+                    for payment_item in payment_logs:
+                        address = payment_item["address"]
+                        type = payment_item["type"]
+                        payment = payment_item["payment"]
+                        hash = payment_item["hash"]
+                        paid = payment_item["paid"]
 
-                            # write row to csv file
-                            csvwriter.writerow([address, type, "{0:f}".format(payment), hash, "1" if paid else "0"])
+                        # write row to csv file
+                        csvwriter.writerow([address, type, "{0:f}".format(payment), hash, "1" if paid else "0"])
 
-                    self.mm.send_payment_mail(pymnt_cycle, report_file)
+                self.mm.send_payment_mail(pymnt_cycle, report_file)
             except Exception as e:
                 logger.error("Error at reward payment", e)
 
