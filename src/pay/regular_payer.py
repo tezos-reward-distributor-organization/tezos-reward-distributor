@@ -33,9 +33,7 @@ class RegularPayer():
 
         client_response = send_request(cmd, verbose)
         response = check_response(client_response)
-
-        hash = ""
-        if response: hash = get_operation_hash(client_response)
+        hash = get_operation_hash(client_response) if response else ""
 
         payment_item['paid'] = response
         payment_item['hash'] = hash
