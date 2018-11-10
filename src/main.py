@@ -206,10 +206,9 @@ class ProducerThread(threading.Thread):
         logger.info("Total rewards={}".format(total_rewards))
 
         if total_rewards == 0: return [], 0
-
-        payment_calc = PaymentCalculator(self.founders_map, self.owners_map, rewards, total_rewards,
-                                         self.fee_calc, payment_cycle)
-        payment_logs = payment_calc.calculate()
+        fm, om = self.founders_map, self.owners_map
+        pymnt_calc = PaymentCalculator(fm, om, rewards, total_rewards, self.fee_calc, payment_cycle)
+        payment_logs = pymnt_calc.calculate()
 
         return payment_logs, total_rewards
 
@@ -313,7 +312,8 @@ def main(config):
     if config.initial_cycle is None:
         recent = None
         if get_successful_payments_dir(payments_root):
-            files = sorted(os.listdir(get_successful_payments_dir(payments_root)), key=lambda x: int(os.path.splitext(x)[0]))
+            files = sorted(os.listdir(get_successful_payments_dir(payments_root)),
+                           key=lambda x: int(os.path.splitext(x)[0]))
             recent = files[-1] if len(files) > 0 else None
         # if payment logs exists set initial cycle to following cycle
         # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards

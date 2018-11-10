@@ -28,8 +28,8 @@ class PaymentRecord():
         return PaymentRecord(cycle, address, ratio, 0, reward, 0, 'O', payment)
 
     @staticmethod
-    def DelegatorInstance(cycle, address, ratio, reward, fee, payment):
-        return PaymentRecord(cycle, address, ratio, None, reward, fee, 'D', payment)
+    def DelegatorInstance(cycle, address, ratio, fee_rate, reward, fee, payment):
+        return PaymentRecord(cycle, address, ratio, fee_rate, reward, fee, 'D', payment)
 
     @staticmethod
     def ExitInstance():
