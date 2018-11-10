@@ -218,14 +218,14 @@ class ProducerThread(threading.Thread):
         return PaymentRecord.ExitInstance()
 
     def retry_failed_payments(self):
-        logger.info("Will try paying failed payments")
+        logger.info("retry_failed_payments started")
 
         # 1 - list csv files under payments/failed directory
         # absolute path of csv files found under payments_root/failed directory
         payment_reports_failed = [os.path.abspath(x) for x in
                                   os.listdir(os.path.join(self.payments_root, "failed")) if x.endswith('.csv')]
 
-        logger.debug("Trying failed payments : '{}".format(",".join(payment_reports_failed)))
+        logger.debug("Trying failed payments : '{}'".format(",".join(payment_reports_failed)))
 
         # 2- for each csv file with name csv_report.csv
         for payment_failed_report_file in payment_reports_failed:
@@ -312,8 +312,8 @@ def main(config):
 
     if config.initial_cycle is None:
         recent = None
-        if os.path.isdir(payments_root):
-            files = sorted(os.listdir(payments_root), key=lambda x: int(x))
+        if get_successful_payments_dir(payments_root):
+            files = sorted(os.listdir(get_successful_payments_dir(payments_root)), key=lambda x: int(os.path.splitext(x)[0]))
             recent = files[-1] if len(files) > 0 else None
         # if payment logs exists set initial cycle to following cycle
         # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
