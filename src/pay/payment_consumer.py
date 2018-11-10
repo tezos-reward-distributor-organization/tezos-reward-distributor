@@ -14,7 +14,7 @@ logger = main_logger
 def count_and_log_failed(payment_logs, pymnt_cycle):
     nb_failed = 0
     for pymnt_itm in payment_logs:
-        if pymnt_itm.status:
+        if pymnt_itm.paid:
             logger.info("Reward paid for cycle %s address %s amount %f tz type {}",
                         pymnt_cycle, pymnt_itm.address, pymnt_itm.payment, pymnt_itm.type)
         else:
