@@ -71,7 +71,7 @@ class ProducerThread(threading.Thread):
         # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
         if self.initial_payment_cycle <= 0:
             payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (
-                    self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
+                    self.nw_config['NB_FREEZE_CYCLE'] + 1)
 
         while lifeCycle.is_running():
 
