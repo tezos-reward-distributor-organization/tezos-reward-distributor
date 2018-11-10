@@ -1,3 +1,4 @@
+from model.payment_log import PaymentRecord
 from util.num_utils import floorf
 
 
@@ -27,23 +28,21 @@ class PaymentCalculator:
         delegators_total_ratio = 0
         delegators_total_fee = 0
         for reward_item in self.reward_list:
-            reward = reward_item['reward']
-            ktAddress = reward_item['address']
-            ratio = reward_item['ratio']
-
-            pymnt_amnt = floorf(reward * (1 - self.fee_calc.calculate(ktAddress)), 3)
+            # set fee rate
+            reward_item.fee_rate = self.fee_calc.calculate(reward_item.address)
+            pymnt_amnt = floorf(reward_item.reward * (1 - reward_item.fee_rate), 3)
 
             # this indicates, service fee is very low (e.g. 0) and pymnt_amnt is rounded up
-            if pymnt_amnt - reward > 0:
-                pymnt_amnt = reward
+            if pymnt_amnt - reward_item.reward > 0:
+                pymnt_amnt = reward_item.reward
 
-            fee = (reward - pymnt_amnt)
+            fee = (reward_item.reward - pymnt_amnt)
 
-            pymnts.append({'payment': pymnt_amnt, 'fee': fee, 'reward': reward, 'address': ktAddress, 'ratio': ratio,
-                           'cycle': self.cycle, 'type': 'D'})
+            pymnts.append(PaymentRecord.DelegatorInstance(self.cycle, reward_item.address, reward_item.ratio,
+                                                          reward_item.reward, fee, pymnt_amnt))
 
             delegators_total_pymnt = delegators_total_pymnt + pymnt_amnt
-            delegators_total_ratio = delegators_total_ratio + ratio
+            delegators_total_ratio = delegators_total_ratio + reward_item.ratio
             delegators_total_fee = delegators_total_fee + fee
 
         # 2- calculate deposit owners payments. They share the remaining rewards according to their ratio (check config)
@@ -53,8 +52,7 @@ class PaymentCalculator:
             owner_pymnt_amnt = floorf(ratio * owners_total_reward, 3)
             owners_total_payment = owners_total_payment + owner_pymnt_amnt
 
-            pymnts.append({'payment': owner_pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'O',
-                           'ratio': ratio, 'reward': owner_pymnt_amnt})
+            pymnts.append(PaymentRecord.OwnerInstance(self.cycle, address, ratio, owner_pymnt_amnt, owner_pymnt_amnt))
 
         # move remaining rewards to service fee bucket
         self.total_service_fee = self.total_rewards - delegators_total_pymnt - owners_total_payment
@@ -63,21 +61,19 @@ class PaymentCalculator:
         for address, ratio in self.founders_map.items():
             pymnt_amnt = floorf(ratio * self.total_service_fee, 6)
 
-            pymnts.append(
-                {'payment': pymnt_amnt, 'fee': 0, 'address': address, 'cycle': self.cycle, 'type': 'F', 'ratio': ratio,
-                 'reward': 0})
+            pymnts.append(PaymentRecord.FounderInstance(self.cycle, address, ratio, pymnt_amnt))
 
         ###
         # sanity check
         #####
         total_sum = 0
-        for payment in pymnts:
-            total_sum = total_sum + payment['payment']
+        for payment_log in pymnts:
+            total_sum = total_sum + payment_log.payment
 
         # if there is a minor difference due to floor function; it is added to last payment
         if self.total_rewards - total_sum > 1e-6:
-            last_payment = pymnts[-1]  # last payment, probably one of the founders
-            last_payment['payment'] = last_payment['payment'] + (self.total_rewards - total_sum)
+            last_payment_log = pymnts[-1]  # last payment, probably one of the founders
+            last_payment_log.payment = last_payment_log.payment + (self.total_rewards - total_sum)
 
         # this must never return true
         if abs(total_sum - self.total_rewards) > 5e-6:

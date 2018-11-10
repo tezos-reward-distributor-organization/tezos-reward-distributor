@@ -4,6 +4,7 @@ from math import ceil
 import math
 import requests
 
+import NetworkConfiguration
 from api.reward_api import RewardApi
 
 api_mirror = random.randint(2, 5)  # 1 is over used and not reliable
@@ -43,7 +44,11 @@ class TzScanRewardApiImpl(RewardApi):
         nb_delegators_remaining = nb_delegators
 
         p = 0
-        root = {}
+        root = {"delegate_staking_balance": 0, "delegators_nb": 0, "delegators_balance": [], "blocks_rewards": 0,
+                "endorsements_rewards": 0, "fees": 0, "future_blocks_rewards": 0, "future_endorsements_rewards": 0,
+                "gain_from_denounciation": 0, "lost_deposit_from_denounciation": 0, "lost_rewards_denounciation": 0,
+                "lost_fees_denounciation": 0}
+
         while nb_delegators_remaining > 0:
             resp = requests.get(self.api['API_URL'] + rewards_split_call.
                                 format(self.baking_address, cycle, p, min(MAX_PER_PAGE, nb_delegators_remaining)))
@@ -61,3 +66,10 @@ class TzScanRewardApiImpl(RewardApi):
             p = p + 1
 
         return root
+
+
+if __name__ == '__main__':
+    api = TzScanRewardApiImpl(NetworkConfiguration.network_config_map['ZERONET'],
+                              "tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP")
+    root = api.get_rewards_for_cycle_map(2539)
+    print(root)

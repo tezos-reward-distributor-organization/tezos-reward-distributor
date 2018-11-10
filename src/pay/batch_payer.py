@@ -17,7 +17,7 @@ PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONT
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 1"
+COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 5"
 
 MAX_TX_PER_BLOCK = 280
 
@@ -78,8 +78,8 @@ class BatchPayer():
                 self.wait_random()
 
         for payment_item in payment_items:
-            payment_item["paid"] = return_code
-            payment_item["hash"] = operation_hash
+            payment_item.paid = return_code
+            payment_item.hash = operation_hash
 
         return payment_items
 
@@ -88,7 +88,7 @@ class BatchPayer():
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
         sleep(slp_tm)
 
-    def pay_single_batch(self, payment_items, verbose=None, dry_run=None):
+    def pay_single_batch(self, payment_records, verbose=None, dry_run=None):
         counter = parse_json_response(send_request(self.comm_counter, verbose))
         counter = int(counter)
 
@@ -100,16 +100,14 @@ class BatchPayer():
 
         content_list = []
 
-        for payment_item in payment_items:
-            pymnt_addr = payment_item["address"]
-            pymnt_amnt = payment_item["payment"]
-            pymnt_amnt = int(pymnt_amnt * 1e6)  # expects in micro tezos
+        for payment_item in payment_records:
+            pymnt_amnt = int(payment_item.payment * 1e6)  # expects in micro tezos
 
             if pymnt_amnt == 0:
                 continue
 
             counter = counter + 1
-            content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", pymnt_addr) \
+            content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.address) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter))
             content_list.append(content)
 

@@ -1,4 +1,5 @@
 from api.reward_calculator_api import RewardCalculatorApi
+from model.payment_log import PaymentRecord
 
 ONE_MILLION = 1000000
 
@@ -6,11 +7,11 @@ ONE_MILLION = 1000000
 class TzScanRewardCalculatorApi(RewardCalculatorApi):
     # reward_data : payment map returned from tzscan
     def __init__(self, founders_map, reward_data):
-        super(TzScanRewardCalculatorApi,self).__init__(founders_map)
+        super(TzScanRewardCalculatorApi, self).__init__(founders_map)
         self.reward_data = reward_data
 
     ##
-    # return rewards    : list of reward items ({"address":address, "reward":reward})
+    # return rewards    : tuple (list of PaymentRecord objects, total rewards)
     def calculate(self):
         root = self.reward_data
 
@@ -32,8 +33,9 @@ class TzScanRewardCalculatorApi(RewardCalculatorApi):
             balance = int(dbalance[1])
             ratio = round(balance / delegate_staking_balance, 5)
             reward = (self.total_rewards * ratio)
-            reward_item = {"address": address, "reward": reward, "ratio": ratio}
+
+            reward_item = PaymentRecord(address=address, reward=reward, ratio=ratio)
 
             rewards.append(reward_item)
 
-        return rewards
+        return rewards, self.total_rewards

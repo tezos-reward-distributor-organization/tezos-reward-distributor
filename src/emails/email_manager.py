@@ -73,4 +73,4 @@ class EmailManager():
 
 if __name__ == '__main__':
     mm = EmailManager()
-    mm.send_payment_mail(32, "D:\dev_root\\tezos-reward-distributer\\requirements.txt")
+    mm.send_payment_mail(32, "D:\dev_root\\tezos-reward-distributer\\requirements.txt",0)

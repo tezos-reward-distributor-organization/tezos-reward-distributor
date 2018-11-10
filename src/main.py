@@ -8,17 +8,20 @@ import threading
 import time
 
 from BussinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
-from Constants import RunMode, EXIT_PAYMENT_TYPE
+from Constants import RunMode
 from NetworkConfiguration import network_config_map
-from pay.PaymentConsumer import PaymentConsumer
-from calc.PaymentCalculator import PaymentCalculator
-from calc.ServiceFeeCalculator import ServiceFeeCalculator
+from calc.payment_calculator import PaymentCalculator
+from calc.service_fee_calculator import ServiceFeeCalculator
 from log_config import main_logger
+from model.payment_log import PaymentRecord
+from pay.double_payment_check import check_past_payment
+from pay.payment_consumer import PaymentConsumer
 from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
 from util.client_utils import get_client_path
-from util.dir_utils import payment_file_name, payment_dir_c
+from util.dir_utils import PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, BUSY_FILE, remove_busy_file, get_payment_root, \
+    get_calculations_root, get_successful_payments_dir, get_failed_payments_dir, get_calculation_report_file
 from util.process_life_cycle import ProcessLifeCycle
 
 NB_CONSUMERS = 1
@@ -30,19 +33,20 @@ lifeCycle = ProcessLifeCycle()
 
 
 class ProducerThread(threading.Thread):
-    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, reports_dir, run_mode,
-                 service_fee_calc, owners_map, founders_map, baking_address, batch, release_override, payment_offset):
+    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
+                 service_fee_calc, deposit_owners_map, baker_founders_map, baking_address, batch, release_override,
+                 payment_offset):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
-        self.owners_map = owners_map
-        self.founders_map = founders_map
+        self.owners_map = deposit_owners_map
+        self.founders_map = baker_founders_map
         self.name = name
         self.block_api = TzScanBlockApiImpl(network_config)
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
         self.nw_config = network_config
-        self.payments_dir = payments_dir
-        self.reports_dir = reports_dir
+        self.payments_root = payments_dir
+        self.calculations_dir = calculations_dir
         self.run_mode = run_mode
         self.exiting = False
         self.batch = batch
@@ -63,7 +67,8 @@ class ProducerThread(threading.Thread):
 
         payment_cycle = self.initial_payment_cycle
 
-        # if non-positive initial_payment_cycle, set initial_payment_cycle to 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
+        # if non-positive initial_payment_cycle, set initial_payment_cycle to
+        # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
         if self.initial_payment_cycle <= 0:
             payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (
                     self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
@@ -71,14 +76,14 @@ class ProducerThread(threading.Thread):
         while lifeCycle.is_running():
 
             # take a breath
-            time.sleep(10)
+            time.sleep(5)
 
             current_level = self.block_api.get_current_level()
             current_cycle = self.block_api.level_to_cycle(current_level)
 
             # create reports dir
-            if self.reports_dir and not os.path.exists(self.reports_dir):
-                os.makedirs(self.reports_dir)
+            if self.calculations_dir and not os.path.exists(self.calculations_dir):
+                os.makedirs(self.calculations_dir)
 
             # payments should not pass beyond last released reward cycle
             if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
@@ -87,67 +92,30 @@ class ProducerThread(threading.Thread):
 
                         logger.info("Payment cycle is " + str(payment_cycle))
 
+                        # 1- get reward data
                         reward_api = TzScanRewardApiImpl(self.nw_config, self.baking_address)
                         reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle)
-                        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data)
-                        rewards = reward_calc.calculate()
-                        total_rewards = reward_calc.get_total_rewards()
 
-                        logger.info("Total rewards=" + str(total_rewards))
+                        # 2- make payment calculations from reward data
+                        pymnt_logs, total_rewards = self.make_payment_calculations(payment_cycle, reward_data)
 
-                        payment_calc = PaymentCalculator(self.founders_map, self.owners_map, rewards, total_rewards,
-                                                         self.fee_calc, payment_cycle)
-                        payments = payment_calc.calculate()
-
-                        if os.path.isdir(payment_dir_c(self.payments_dir, payment_cycle)):
-                            logger.warn(
-                                "Payment directory for cycle {} is present. No payment will be run for the cycle".format(
-                                    payment_cycle))
+                        # 3- check for past payment evidence for current cycle
+                        past_payment_state = check_past_payment(self.payments_root, payment_cycle)
+                        if total_rewards > 0 and past_payment_state:
+                            logger.warn(past_payment_state)
                             total_rewards = 0
 
+                        # 4- if total_rewards > 0, proceed with payment
                         if total_rewards > 0:
-                            report_file_path = self.reports_dir + '/' + str(payment_cycle) + '.csv'
+                            report_file_path = get_calculation_report_file(self.calculations_dir, payment_cycle)
 
-                            with open(report_file_path, 'w', newline='') as csvfile:
-                                csvwriter = csv.writer(csvfile, delimiter='\t', quotechar='"',
-                                                       quoting=csv.QUOTE_MINIMAL)
-                                # write headers and total rewards
-                                csvwriter.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
-                                csvwriter.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
+                            # 5- send to payment consumer
+                            payments_queue.put(pymnt_logs)
 
-                                batch = []
-                                for payment_item in payments:
-                                    address = payment_item["address"]
-                                    payment = payment_item["payment"]
-                                    fee = payment_item["fee"]
-                                    type = payment_item["type"]
-                                    ratio = payment_item["ratio"]
-                                    reward = payment_item["reward"]
-                                    fee_rate = self.fee_calc.calculate(address)
+                            # 6- create calculations report file. This file contains calculations details
+                            self.create_calculations_report(payment_cycle, pymnt_logs, report_file_path, total_rewards)
 
-                                    # write row to csv file
-                                    csvwriter.writerow([address, type, "{0:f}".format(ratio), "{0:f}".format(reward),
-                                                        "{0:f}".format(fee_rate), "{0:f}".format(payment),
-                                                        "{0:f}".format(fee)])
-
-                                    pymt_log = payment_file_name(self.payments_dir, str(payment_cycle), address, type)
-
-                                    if os.path.isfile(pymt_log):
-                                        logger.warning(
-                                            "Reward not created for cycle %s address %s amount %f tz %s: Reason payment log already present",
-                                            payment_cycle, address, payment, type)
-                                    else:
-                                        logger.info(
-                                            "Reward created for cycle %s address %s amount %f fee %f tz type %s",
-                                            payment_cycle, address, payment, fee, type)
-                                        if self.batch:
-                                            batch.append(payment_item)
-                                        else:
-                                            payments_queue.put([payment_item])
-
-                            if self.batch:
-                                payments_queue.put(batch)
-
+                        # 7- next cycle
                         # processing of cycle is done
                         logger.info("Reward creation done for cycle %s", payment_cycle)
                         payment_cycle = payment_cycle + 1
@@ -174,21 +142,19 @@ class ProducerThread(threading.Thread):
                     self.exit()
                     break
 
+                time.sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
+
+                self.retry_failed_payments()
+
                 # calculate number of blocks until end of current cycle
                 nb_blocks_remaining = (current_cycle + 1) * self.nw_config['BLOCKS_PER_CYCLE'] - current_level
-                # plus offset. cycle beginnigs may be busy, move payments forward
+                # plus offset. cycle beginnings may be busy, move payments forward
                 nb_blocks_remaining = nb_blocks_remaining + self.payment_offset
 
                 logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
 
                 # wait until current cycle ends
-                for x in range(nb_blocks_remaining):
-                    time.sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
-
-                    # if shutting down, exit
-                    if not lifeCycle.is_running():
-                        payments_queue.put([self.create_exit_payment()])
-                        break
+                self.waint_until_next_cycle(nb_blocks_remaining)
 
         # end of endless loop
         logger.info("Producer returning ...")
@@ -198,41 +164,144 @@ class ProducerThread(threading.Thread):
 
         return
 
-    def create_exit_payment(self):
-        return {'payment': 0, 'fee': 0, 'address': 0, 'cycle': 0, 'type': EXIT_PAYMENT_TYPE, 'ratio': 0, 'reward': 0}
+    def waint_until_next_cycle(self, nb_blocks_remaining):
+        for x in range(nb_blocks_remaining):
+            time.sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
+
+            # if shutting down, exit
+            if not lifeCycle.is_running():
+                payments_queue.put([self.create_exit_payment()])
+                break
+
+    def create_calculations_report(self, payment_cycle, payment_logs, report_file_path, total_rewards):
+        with open(report_file_path, 'w', newline='') as f:
+            writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            # write headers and total rewards
+            writer.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
+            writer.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
+
+            for pymnt_log in payment_logs:
+                # write row to csv file
+                writer.writerow([pymnt_log.address, pymnt_log.type,
+                                 "{0:f}".format(pymnt_log.ratio),
+                                 "{0:f}".format(pymnt_log.reward),
+                                 "{0:f}".format(pymnt_log.fee_rate),
+                                 "{0:f}".format(pymnt_log.payment),
+                                 "{0:f}".format(pymnt_log.fee)])
+
+                logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
+                            payment_cycle, pymnt_log.address, pymnt_log.payment, pymnt_log.fee,
+                            pymnt_log.type)
+
+    def make_payment_calculations(self, payment_cycle, reward_data):
+
+        if reward_data["delegators_nb"] == 0:
+            logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
+            return [], 0
+
+        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data)
+
+        rewards, total_rewards = reward_calc.calculate()
+
+        logger.info("Total rewards={}".format(total_rewards))
+
+        if total_rewards == 0: return [], 0
+
+        payment_calc = PaymentCalculator(self.founders_map, self.owners_map, rewards, total_rewards,
+                                         self.fee_calc, payment_cycle)
+        payment_logs = payment_calc.calculate()
+
+        return payment_logs, total_rewards
+
+    @staticmethod
+    def create_exit_payment():
+        return PaymentRecord.ExitInstance()
+
+    def retry_failed_payments(self):
+        logger.info("Will try paying failed payments")
+
+        # 1 - list csv files under payments/failed directory
+        # absolute path of csv files found under payments_root/failed directory
+        payment_reports_failed = [os.path.abspath(x) for x in
+                                  os.listdir(os.path.join(self.payments_root, "failed")) if x.endswith('.csv')]
+
+        logger.debug("Trying failed payments : '{}".format(",".join(payment_reports_failed)))
+
+        # 2- for each csv file with name csv_report.csv
+        for payment_failed_report_file in payment_reports_failed:
+            logger.debug("Working on failed payment file {}", payment_failed_report_file)
+
+            # 2.1 - if there is a file csv_report.csv under payments/done, it means payment is already done
+            if os.path.isfile(payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)):
+                # remove payments/failed/csv_report.csv
+                os.remove(payment_failed_report_file)
+                logger.debug("Payment for failed payment {} is already done. Removing.")
+
+                # remove payments/failed/csv_report.csv.BUSY
+                # if there is a busy failed payment report file, remove it.
+                remove_busy_file(payment_failed_report_file)
+
+                # do not double pay
+                continue
+
+            # 2.2 - if queue is full, wait for sometime
+            # make sure the queue is not full
+            while payments_queue.full():
+                logger.info("Payments queue is full. Wait a few minutes.")
+                time.sleep(60 * 3)
+
+            # 2.3 read payments/failed/csv_report.csv file into a list of dictionaries
+            with open(payment_failed_report_file) as f:
+                # read csv into list of dictionaries
+                dict_rows = [{key: value for key, value in row.items()} for row in
+                             csv.DictReader(f, skipinitialspace=True)]
+
+                batch = PaymentRecord.FromPaymentCSVDictRows(dict_rows)
+
+                # 2.4 put records into payment_queue. payment_consumer will make payments
+                payments_queue.put(batch)
+
+                # 2.5 rename payments/failed/csv_report.csv to payments/failed/csv_report.csv.BUSY
+                # mark the files as in use. we do not want it to be read again
+                # BUSY file will be removed, if successful payment is done
+                os.rename(payment_failed_report_file, payment_failed_report_file + BUSY_FILE)
 
 
-# all shares in the map must sum upto 1
-def validate_map_share_sum(map, map_name):
-    if sum(map.values()) != 1:
+# all shares in the map must sum up to 1
+def validate_map_share_sum(share_map, map_name):
+    if sum(share_map.values()) != 1:
         raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
 
 
-def main(args):
-    network_config = network_config_map[args.network]
-    key = args.key
-    payments_dir = os.path.expanduser(args.payments_dir)
-    reports_dir = os.path.expanduser(args.reports_dir)
-    run_mode = RunMode(args.run_mode)
-    node_addr = args.node_addr
-    payment_offset = args.payment_offset
+def main(config):
+    network_config = network_config_map[config.network]
+    key = config.key
 
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config,
-                                  args.verbose)
-    logger.debug("Client command is {}".format(client_path))
-    validate_map_share_sum(founders_map, "founders map")
-    validate_map_share_sum(owners_map, "owners map")
+    dry_run = config.dry_run_no_payments or config.dry_run
+    if config.dry_run_no_payments:
+        global NB_CONSUMERS
+        NB_CONSUMERS = 0
 
-    dry_run = args.dry_run_no_payments or args.dry_run
-
+    reports_dir = os.path.expanduser(config.reports_dir)
     # if in dry run mode, do not create consumers
     # create reports in dry directory
     if dry_run:
-        reports_dir = "./dry"
+        reports_dir = os.path.expanduser("./dry")
 
-    if args.dry_run_no_payments:
-        global NB_CONSUMERS
-        NB_CONSUMERS = 0
+    payments_root = get_payment_root(reports_dir, create=True)
+    calculations_root = get_calculations_root(reports_dir, create=True)
+    get_successful_payments_dir(payments_root, create=True)
+    get_failed_payments_dir(payments_root, create=True)
+
+    run_mode = RunMode(config.run_mode)
+    node_addr = config.node_addr
+    payment_offset = config.payment_offset
+
+    client_path = get_client_path([x.strip() for x in config.executable_dirs.split(',')], config.docker, network_config,
+                                  config.verbose)
+    logger.debug("Client command is {}".format(client_path))
+    validate_map_share_sum(founders_map, "founders map")
+    validate_map_share_sum(owners_map, "owners map")
 
     lifeCycle.start(not dry_run)
 
@@ -241,33 +310,33 @@ def main(args):
     service_fee_calc = ServiceFeeCalculator(supporters_set=full_supporters_set, specials_map=specials_map,
                                             standard_fee=STANDARD_FEE)
 
-    if args.initial_cycle is None:
+    if config.initial_cycle is None:
         recent = None
-        if os.path.isdir(payments_dir):
-            files = sorted(os.listdir(payments_dir), key=lambda x: int(x))
+        if os.path.isdir(payments_root):
+            files = sorted(os.listdir(payments_root), key=lambda x: int(x))
             recent = files[-1] if len(files) > 0 else None
         # if payment logs exists set initial cycle to following cycle
         # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
-        args.initial_cycle = 0 if recent is None else int(recent) + 1
+        config.initial_cycle = 0 if recent is None else int(recent) + 1
 
-        logger.info("initial_cycle set to {}".format(args.initial_cycle))
+        logger.info("initial_cycle set to {}".format(config.initial_cycle))
 
-    p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
-                       payments_dir=payments_dir, reports_dir=reports_dir, run_mode=run_mode,
-                       service_fee_calc=service_fee_calc, owners_map=owners_map, founders_map=founders_map,
-                       baking_address=BAKING_ADDRESS, batch=args.batch, release_override=args.release_override,
-                       payment_offset=payment_offset)
+    p = ProducerThread(name='producer', initial_payment_cycle=config.initial_cycle, network_config=network_config,
+                       payments_dir=payments_root, calculations_dir=calculations_root, run_mode=run_mode,
+                       service_fee_calc=service_fee_calc, deposit_owners_map=owners_map,
+                       baker_founders_map=founders_map, baking_address=BAKING_ADDRESS, batch=config.batch,
+                       release_override=config.release_override, payment_offset=payment_offset)
     p.start()
 
     for i in range(NB_CONSUMERS):
-        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_dir, key_name=key,
+        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=key,
                             client_path=client_path, payments_queue=payments_queue, node_addr=node_addr,
-                            verbose=args.verbose, dry_run=dry_run)
+                            verbose=config.verbose, dry_run=dry_run)
         time.sleep(1)
         c.start()
     try:
         while lifeCycle.is_running(): time.sleep(10)
-    except KeyboardInterrupt  as e:
+    except KeyboardInterrupt:
         logger.info("Interrupted.")
         lifeCycle.stop()
 
@@ -281,8 +350,7 @@ if __name__ == '__main__':
     parser.add_argument("key", help="tezos address or alias to make payments")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
-    parser.add_argument("-P", "--payments_dir", help="Directory to create payment logs", default='./payments')
-    parser.add_argument("-T", "--reports_dir", help="Directory to create reports", default='./reports')
+    parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='./reports')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
                         help="Run without injecting payments. Suitable for testing. Does not require locking.",
@@ -294,7 +362,9 @@ if __name__ == '__main__':
                         help="Make batch payments.",
                         action="store_true")
     parser.add_argument("-E", "--executable_dirs",
-                        help="Comma sepeated list of directories to search for client executable. Prefer single location when setting client directory. If -D is set, poin to location where docker script is found. Default value is given for minimum configuration effort.",
+                        help="Comma separated list of directories to search for client executable. Prefer single "
+                             "location when setting client directory. If -D is set, poin to location where docker "
+                             "script is found. Default value is given for minimum configuration effort.",
                         default='~/,~/tezos')
     parser.add_argument("-d", "--docker",
                         help="Docker installation flag. When set, docker script location should be set in -E",
@@ -303,23 +373,30 @@ if __name__ == '__main__':
                         help="Low level details.",
                         action="store_true")
     parser.add_argument("-M", "--run_mode",
-                        help="Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.",
+                        help="Waiting decision after making pending payments. 1: default option. Run forever. "
+                             "2: Run all pending payments and exit. 3: Run for one cycle and exit. "
+                             "Suitable to use with -C option.",
                         default=1, choices=[1, 2, 3], type=int)
     parser.add_argument("-R", "--release_override",
-                        help="Override NB_FREEZE_CYCLE value. last released payment cycle will be (current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. For future payments give negative values. ",
+                        help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
+                             "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
+                             "For future payments give negative values. ",
                         default=0, type=int)
     parser.add_argument("-O", "--payment_offset",
-                        help="Number of blocks to wait after a cycle starts before starting payments. This can be usefull because cycle beginnings may be bussy.",
+                        help="Number of blocks to wait after a cycle starts before starting payments. "
+                             "This can be useful because cycle beginnings may be bussy.",
                         default=0, type=int)
     parser.add_argument("-C", "--initial_cycle",
-                        help="First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). If not set application will continue from last payment made or last reward released.",
+                        help="First cycle to start payment. For last released rewards, set to 0. Non-positive values "
+                             "are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). "
+                             "If not set application will continue from last payment made or last reward released.",
                         type=int)
 
     args = parser.parse_args()
 
-    logger.info("Tezos Reward Distributer is Starting")
+    logger.info("Tezos Reward Distributor is Starting")
     logger.info("Current network is {}".format(args.network))
-    logger.info("Baker addess is {}".format(BAKING_ADDRESS))
+    logger.info("Baker address is {}".format(BAKING_ADDRESS))
     logger.info("Key name {}".format(args.key))
     logger.info("--------------------------------------------")
     logger.info("Copyright Hüseyin ABANOZ 2018")
