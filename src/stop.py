@@ -11,6 +11,7 @@ def main():
 
     time.sleep(1)
 
+
 # taken from https://stackoverflow.com/questions/568271/how-to-check-if-there-exists-a-process-with-a-given-pid-in-python
 def pid_exists(pid):
     """Check whether pid exists in the current process table.
@@ -40,6 +41,7 @@ def pid_exists(pid):
     else:
         return True
 
+
 def stop():
     pid = None
     try:
@@ -48,6 +50,9 @@ def stop():
             pid = int(pid)
     except FileNotFoundError:
         print("No lock file. No running process")
+        return
+    
+    if not pid_exists(pid):
         return
 
     os.kill(pid, signal.SIGTERM)
@@ -60,5 +65,4 @@ def stop():
 
 
 if __name__ == '__main__':
-
     main()
