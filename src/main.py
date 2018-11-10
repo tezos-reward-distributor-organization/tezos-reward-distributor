@@ -312,8 +312,8 @@ def main(config):
     if config.initial_cycle is None:
         recent = None
         if get_successful_payments_dir(payments_root):
-            files = sorted(os.listdir(get_successful_payments_dir(payments_root)),
-                           key=lambda x: int(os.path.splitext(x)[0]))
+            files = sorted([os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root)) ],
+                           key=lambda x: int(x))
             recent = files[-1] if len(files) > 0 else None
         # if payment logs exists set initial cycle to following cycle
         # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
