@@ -48,12 +48,12 @@ def stop():
         with open("./lock", 'rt') as f:
             pid = f.readline()
             pid = int(pid)
-        os.remove("./lock")
     except FileNotFoundError:
         print("No lock file. No running process")
         return
 
     if not pid_exists(pid):
+        os.remove("./lock")
         return
 
     os.kill(pid, signal.SIGTERM)
