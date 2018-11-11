@@ -222,7 +222,7 @@ class ProducerThread(threading.Thread):
         # 1 - list csv files under payments/failed directory
         # absolute path of csv files found under payments_root/failed directory
         payment_reports_failed = [os.path.abspath(x) for x in
-                                  os.listdir(os.path.join(self.payments_root, "failed")) if x.endswith('.csv')]
+                                  os.listdir(get_failed_payments_dir(self.payments_root)) if x.endswith('.csv')]
 
         logger.debug("Trying failed payments : '{}'".format(",".join(payment_reports_failed)))
 
