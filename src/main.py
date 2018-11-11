@@ -229,13 +229,13 @@ class ProducerThread(threading.Thread):
 
         # 2- for each csv file with name csv_report.csv
         for payment_failed_report_file in payment_reports_failed:
-            logger.debug("Working on failed payment file {}", payment_failed_report_file)
+            logger.debug("Working on failed payment file {}".format(payment_failed_report_file) )
 
             # 2.1 - if there is a file csv_report.csv under payments/done, it means payment is already done
             if os.path.isfile(payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)):
                 # remove payments/failed/csv_report.csv
                 os.remove(payment_failed_report_file)
-                logger.debug("Payment for failed payment {} is already done. Removing.")
+                logger.debug("Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
 
                 # remove payments/failed/csv_report.csv.BUSY
                 # if there is a busy failed payment report file, remove it.
