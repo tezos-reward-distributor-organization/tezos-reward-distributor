@@ -19,7 +19,7 @@ def get_client_path(search_paths, docker=None, network_config=None, verbose=None
             return client_path+DOCKER_CLIENT_EXE_SUFFIX if docker else client_path
         if verbose: print("Not found {}".format(client_path))
 
-    raise Exception("Client executable not found. Review --executable_dirs and --docker parameters")
+    raise Exception("Client executable not found. Review --executable_dirs, --docker and --network parameters")
 
 
 def send_request(cmd, verbose=None):

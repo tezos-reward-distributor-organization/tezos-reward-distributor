@@ -16,7 +16,7 @@ FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
-COMM_INJECT = "{} rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
+COMM_INJECT = "{} %LOG% rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
 COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 5"
 
 MAX_TX_PER_BLOCK = 280
@@ -151,6 +151,7 @@ class BatchPayer():
         decoded_edsig_signature = decoded.replace("09f5cd8612", "")[:-8]
         signed_operation_bytes = bytes + decoded_edsig_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
+        inject_command_str = inject_command_str.replace("%LOG%", "-l" if verbose else "")
         if verbose: logger.debug("inject_command_str is |{}|".format(inject_command_str))
         inject_command_response = send_request(inject_command_str, verbose)
         if not check_response(inject_command_response):
