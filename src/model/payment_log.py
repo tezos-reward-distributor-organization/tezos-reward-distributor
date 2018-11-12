@@ -44,6 +44,7 @@ class PaymentRecord():
     def FromPaymentCSVDictRows(rows, cycle):
         items = []
         for row in rows:
+            print(row)
             items.append(PaymentRecord.FromPaymentCSVDictRow(row, cycle))
 
         return items
