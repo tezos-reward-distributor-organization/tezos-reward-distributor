@@ -36,14 +36,14 @@ class PaymentRecord():
         return PaymentRecord(type=EXIT_PAYMENT_TYPE)
 
     @staticmethod
-    def FromPaymentCSVDictRow(row):
-        return PaymentRecord(row["cycle"], row["address"], row["ratio"], row["fee_rate"], row["reward"], row["fee"],
+    def FromPaymentCSVDictRow(row, cyle):
+        return PaymentRecord(cyle, row["address"], row["ratio"], row["fee_rate"], row["reward"], row["fee"],
                              row["type"], row["payment"], row["paid"], row["hash"])
 
     @staticmethod
-    def FromPaymentCSVDictRows(rows):
+    def FromPaymentCSVDictRows(rows, cycle):
         items = []
         for row in rows:
-            items.append(PaymentRecord.FromPaymentCSVDictRow(row))
+            items.append(PaymentRecord.FromPaymentCSVDictRow(row, cycle))
 
         return items

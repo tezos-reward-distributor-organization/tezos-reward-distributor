@@ -229,13 +229,14 @@ class ProducerThread(threading.Thread):
 
         # 2- for each csv file with name csv_report.csv
         for payment_failed_report_file in payment_reports_failed:
-            logger.debug("Working on failed payment file {}".format(payment_failed_report_file) )
+            logger.debug("Working on failed payment file {}".format(payment_failed_report_file))
 
             # 2.1 - if there is a file csv_report.csv under payments/done, it means payment is already done
             if os.path.isfile(payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)):
                 # remove payments/failed/csv_report.csv
                 os.remove(payment_failed_report_file)
-                logger.debug("Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
+                logger.debug(
+                    "Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
 
                 # remove payments/failed/csv_report.csv.BUSY
                 # if there is a busy failed payment report file, remove it.
@@ -250,13 +251,16 @@ class ProducerThread(threading.Thread):
                 logger.info("Payments queue is full. Wait a few minutes.")
                 time.sleep(60 * 3)
 
+            cycle = int(os.path.splitext(os.path.basename(payment_failed_report_file))[0])
+
+
             # 2.3 read payments/failed/csv_report.csv file into a list of dictionaries
             with open(payment_failed_report_file) as f:
                 # read csv into list of dictionaries
                 dict_rows = [{key: value for key, value in row.items()} for row in
                              csv.DictReader(f, skipinitialspace=True)]
 
-                batch = PaymentRecord.FromPaymentCSVDictRows(dict_rows)
+                batch = PaymentRecord.FromPaymentCSVDictRows(dict_rows, cycle)
 
                 # 2.4 put records into payment_queue. payment_consumer will make payments
                 payments_queue.put(batch)
