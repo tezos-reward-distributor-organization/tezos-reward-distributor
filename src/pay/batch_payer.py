@@ -148,7 +148,7 @@ class BatchPayer():
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
         decoded = base58.b58decode(signed_bytes).hex()
-        decoded_edsig_signature = decoded.replace("09f5cd8612", "")[:-8]
+        decoded_edsig_signature = decoded[10:][:-8]
         signed_operation_bytes = bytes + decoded_edsig_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
         inject_command_str = inject_command_str.replace("%LOG%", "-l" if verbose else "")
