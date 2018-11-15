@@ -23,6 +23,9 @@ def get_client_path(search_paths, docker=None, network_config=None, verbose=None
 
 
 def send_request(cmd, verbose=None):
+    if verbose:
+        print("Command is |{}|".format(cmd))
+
     # execute client
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 
@@ -35,7 +38,7 @@ def send_request(cmd, verbose=None):
     buffer = b''.join(bytes).decode('utf-8')
 
     if verbose:
-        print(buffer)
+        print("Answer is |{}|".format(buffer))
 
     return buffer
 

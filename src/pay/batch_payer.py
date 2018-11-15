@@ -9,7 +9,6 @@ from util.rpc_utils import parse_json_response
 logger = main_logger
 
 COMM_HEAD = "{} rpc get http://{}/chains/main/blocks/head"
-COMM_PROT = "{} rpc get http://{}/protocols"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit": "200", "storage_limit": "0","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
@@ -34,7 +33,6 @@ class BatchPayer():
             self.known_contracts[self.key_name]
 
         self.comm_head = COMM_HEAD.format(self.client_path, self.node_url)
-        self.comm_protocol = COMM_PROT.format(self.client_path, self.node_url)
         self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, self.source)
         self.comm_forge = COMM_FORGE.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_preapply = COMM_PREAPPLY.format(self.client_path).replace("%NODE%", self.node_url)
