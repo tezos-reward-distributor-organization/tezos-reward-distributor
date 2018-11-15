@@ -10,7 +10,7 @@ logger = main_logger
 
 COMM_HEAD = "{} rpc get http://{}/chains/main/blocks/head"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
-CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit": "200", "storage_limit": "0","amount":"%AMOUNT%"}'
+CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"10","counter":"%COUNTER%","gas_limit": "200", "storage_limit": "0","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
