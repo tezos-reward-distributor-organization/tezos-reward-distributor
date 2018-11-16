@@ -79,7 +79,7 @@ Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 python3 src/main.py -D -N ZERONET -C 30 -M 3 mytezospaymentaddress
 ```
 
-### Bussiness Configuration:
+### Business Configuration:
 
 Business configuration contains baker and delegator specific setting. Edit file BussinessConfiguration.py. Start by setting your baking address. Then set your delegation fee. If there are delegators with special rates, speciy them in specials_map. If your stake is owned by multiple parties specify them in owners_map with ratios. If baker is run by multiple founders set them in founders_map.
 
