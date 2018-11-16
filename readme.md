@@ -22,10 +22,10 @@ Features:
 
 ### Requirements and Setup:
 
-Python 3 is required. Download using git:
+Python 3 is required. Download the application repository using git clone:
 
 ```
-git clone https://github.com/habanoz/tezos-reward-distributer
+git clone https://github.com/habanoz/tezos-reward-distributor
 ```
 
 To install required modules, use pip with requirements.txt provided.
@@ -35,7 +35,7 @@ cd tezos-reward-distributer
 pip install -r requirements.txt
 ```
 
-To update to latest available version:
+Regulary check and upgrade to the latest available version:
 
 ```
 git pull
@@ -43,7 +43,7 @@ git pull
 
 ### How to Run:
 
-For a list of parameters run:
+For a list of parameters, run:
 
 ```
 python3 src/main.py --help
