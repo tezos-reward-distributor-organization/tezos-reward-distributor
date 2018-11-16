@@ -1,0 +1,14 @@
+[Unit]
+Description=Tezos Reward Distribution Software
+After=syslog.target network.target
+Documentation=https://github.com/habanoz/tezos-reward-distributer
+
+[Service]
+Type=simple
+WorkingDirectory=<ABS_PATH_TO_BASE>
+PIDFile=<ABS_PATH_TO_BASE>/lock
+ExecStart=python3 <ABS_PATH_TO_BASE>/src/main.py <OPTIONS>
+ExecStop=python3 <ABS_PATH_TO_BASE>/src/stop.py
+
+[Install]
+WantedBy=multi-user.target
