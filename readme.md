@@ -1,6 +1,6 @@
-## Tezos Reward Distributer
+## Tezos Reward Distributer 
 
-A software for distributing baking rewards with delegators.
+A software for distributing baking rewards with delegators. This is not a script but service which can run in background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively. 
 
 Design principals are: 
 
@@ -10,6 +10,14 @@ Design principals are:
 - Traceability: CSV payment reports with calculation details. Logs for traking application lifecycle.
 - Testability: Dry for seeing results witout making any modification. Support for development networks e.g. zeronet, alphanet.
 - Safety: Payment logs for avoiding multiple payments by mistake. Lock file for avoiding multiple instance running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
+
+Features:
+- Batch Payments
+- Email notifications
+- Re-attempt failed payments
+- Minimal configuration need, while having many configuration options.
+- Written in Python. Easy to modify to suit custom needs.
+
 
 ### Requirements and Setup:
 
