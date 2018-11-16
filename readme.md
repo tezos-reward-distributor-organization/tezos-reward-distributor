@@ -12,11 +12,12 @@ Design principals are:
 - Safety: Payment logs for avoiding multiple payments by mistake. Lock file for avoiding multiple instance running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
 
 Features:
+- Reward calculations based on tzscan API.
 - Batch Payments
 - Email notifications
 - Re-attempt failed payments
-- Minimal configuration need, while having many configuration options.
-- Written in Python. Easy to modify to suit custom needs.
+- Minimal configuration need, while having many configuration options
+- Written in Python. Easy to modify to suit custom needs
 
 
 ### Requirements and Setup:
