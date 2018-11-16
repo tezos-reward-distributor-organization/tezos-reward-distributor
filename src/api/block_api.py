@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from math import floor
 
+
 class BlockApi(ABC):
     def __init__(self,nw):
-        super().__init__()
+        super(BlockApi,self).__init__()
         self.nw = nw
 
     @abstractmethod

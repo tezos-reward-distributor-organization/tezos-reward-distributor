@@ -2,7 +2,7 @@ import random
 
 import requests
 
-from BlockApi import BlockApi
+from api.block_api import BlockApi
 
 api_mirror = random.randint(2, 5)  # 1 is over used and not reliable
 
@@ -12,10 +12,10 @@ API = {'MAINNET': {'HEAD_API_URL': 'https://api{}.tzscan.io/v2/head'.format(api_
        }
 
 
-class TzScanBlockApi(BlockApi):
+class TzScanBlockApiImpl(BlockApi):
 
     def __init__(self, nw):
-        super().__init__(nw)
+        super(TzScanBlockApiImpl, self).__init__(nw)
 
         self.api = API[nw['NAME']]
         if self.api is None:

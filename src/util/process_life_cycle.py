@@ -1,8 +1,8 @@
 import signal
 from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 
-from LockFile import LockFile
-from logconfig import main_logger
+from util.lock_file import LockFile
+from log_config import main_logger
 
 logger = main_logger
 
@@ -22,7 +22,10 @@ class ProcessLifeCycle:
         self.running = True
 
     def stop(self):
+        logger.info("--------------------------------------------------------")
+        logger.info("Sensitive operations are in progress!")
         logger.info("Please wait while the application is being shut down!")
+        logger.info("--------------------------------------------------------")
         if self.lock_taken:
             self.lock_file.release()
             logger.info("Lock file removed!")
