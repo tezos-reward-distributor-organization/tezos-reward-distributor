@@ -19,4 +19,3 @@ def check_past_payment(payments_root, payment_cycle):
             .format(payment_cycle, payment_file)
 
     return None # which means No past payment
-

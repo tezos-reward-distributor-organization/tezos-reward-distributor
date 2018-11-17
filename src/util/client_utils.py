@@ -7,6 +7,70 @@ DOCKER_CLIENT_EXE = "%network%.sh"
 DOCKER_CLIENT_EXE_SUFFIX=" client"
 REGULAR_CLIENT_EXE = "tezos-client"
 
+test_str="""
+Warning:
+  
+                           This is NOT the Tezos Mainnet.
+                        The Tezos Mainnet is not yet released.
+  
+              The node you are connecting to claims to be running on the
+                        Tezos Betanet EXPERIMENTAL NETWORK.
+      Betanet is a pre-release experimental network and comes with no warranty.
+              Use your fundraiser keys on this network AT YOUR OWN RISK.
+    All transactions happening on the Betanet are expected to be valid in the Mainnet.
+            If in doubt, we recommend that you wait for the Mainnet lunch.
+
+Error:
+  Rpc request failed:
+     - meth: POST
+     - uri: http://localhost:8732/chains/main/blocks/head/helpers/preapply/operations
+     - error: Oups! It looks like we forged an invalid HTTP request.
+                [ { "protocol": "PsYLVpVvgbLhAhoqAkMFUo6gudkJ9weNXhUYCiLDzcUpFpkk8Wt",
+    "branch": "BLh62ZiNsBiLnQZiuUsQzTdXkjWgeLAMryYJywV9z4wCZsjTL8h",
+    "contents":
+      [ { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT1PEZ91VnphKodWSfuvCcjXrA29zfHsgUxt", "fee": "0",
+          "counter": "316261", "gas_limit": "200", "storage_limit": "0",
+          "amount": "31431000" },
+        { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT1Ao8UXNJ9Dz71Wx3m8yzYNdnNQp2peqtMc", "fee": "0",
+          "counter": "316262", "gas_limit": "200", "storage_limit": "0",
+          "amount": "3117000" },
+        { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT18bVwvyLBR1GAM1rBoiHzEXVNtXb5C3vEU", "fee": "0",
+          "counter": "316263", "gas_limit": "200", "storage_limit": "0",
+          "amount": "2830000" },
+        { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT1HuhLZ3Rg45bRnSVssA6KEVXqbKbjzsmPH", "fee": "0",
+          "counter": "316264", "gas_limit": "200", "storage_limit": "0",
+          "amount": "1000" },
+        { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT18bVwvyLBR1GAM1rBoiHzEXVNtXb5C3vEU", "fee": "0",
+          "counter": "316265", "gas_limit": "200", "storage_limit": "0",
+          "amount": "40000" },
+        { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT1PEZ91VnphKodWSfuvCcjXrA29zfHsgUxt", "fee": "0",
+          "counter": "316266", "gas_limit": "200", "storage_limit": "0",
+          "amount": "431000" },
+        { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT18bVwvyLBR1GAM1rBoiHzEXVNtXb5C3vEU", "fee": "0",
+          "counter": "316267", "gas_limit": "200", "storage_limit": "0",
+          "amount": "75000" },
+        { "kind": "transaction",
+          "source": "tz1aZoYGSEoGpzWmitPaCJw6HQCkz5YSi1ow",
+          "destination": "KT1PEZ91VnphKodWSfuvCcjXrA29zfHsgUxt", "fee": "0",
+          "counter": "316268", "gas_limit": "200", "storage_limit": "0",
+          "amount": "75000" } ],
+    "signature":
+      "edsigtiGP1KZTXrjwbUtNB2FiLKLD4zttATB73XGpkPcvicfMnSo7wBgQiWDUKh9aaeLsQywNVGBRW8aTF8Jh9PmwkCn6BF6b" } ]
+"""
 
 def get_client_path(search_paths, docker=None, network_config=None, verbose=None):
     client_exe = REGULAR_CLIENT_EXE
@@ -44,9 +108,13 @@ def send_request(cmd, verbose=None):
 
 
 def check_response(response):
+    print(response)
     if "Error:" in response or "error" in response or "invalid" in response or "Unexpected server answer" in response:
         return False
     return True
+
+if __name__ == '__main__':
+    print(check_response(test_str))
 
 def get_operation_hash(client_response):
     for line in client_response.splitlines():
