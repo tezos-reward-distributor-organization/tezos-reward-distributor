@@ -1,4 +1,4 @@
-## Tezos Reward Distributor 
+## Tezos Reward Distributor : Run & Forget
 
 A software for distributing baking rewards with delegators. This is not a script but service which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively. 
 
