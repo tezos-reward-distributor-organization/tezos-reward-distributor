@@ -44,7 +44,7 @@ def send_request(cmd, verbose=None):
 
 
 def check_response(response):
-    if "Error:" in response or "Unexpected server answer" in response:
+    if "Error:" in response or "error" in response or "invalid" in response or "Unexpected server answer" in response:
         return False
     return True
 
