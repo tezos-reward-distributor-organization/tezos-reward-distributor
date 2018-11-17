@@ -133,7 +133,6 @@ class BatchPayer():
 
         if verbose: logger.debug("preapply_command_str is |{}|".format(preapply_command_str))
         preapply_command_response = send_request(preapply_command_str, verbose)
-        print(preapply_command_response)
         if not check_response(preapply_command_response):
             logger.error("Error in preapply response '{}'".format(preapply_command_response))
             return False, ""
