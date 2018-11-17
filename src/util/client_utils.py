@@ -91,7 +91,7 @@ def send_request(cmd, verbose=None):
         print("Command is |{}|".format(cmd))
 
     # execute client
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
     bytes = []
     for b in process.stdout:
