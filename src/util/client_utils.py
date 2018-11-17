@@ -108,13 +108,9 @@ def send_request(cmd, verbose=None):
 
 
 def check_response(response):
-    print(response)
     if "Error:" in response or "error" in response or "invalid" in response or "Unexpected server answer" in response:
         return False
     return True
-
-if __name__ == '__main__':
-    print(check_response(test_str))
 
 def get_operation_hash(client_response):
     for line in client_response.splitlines():
