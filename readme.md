@@ -31,7 +31,7 @@ git clone https://github.com/habanoz/tezos-reward-distributor
 To install required modules, use pip with requirements.txt provided.
 
 ```
-cd tezos-reward-distributer
+cd tezos-reward-distributor
 pip install -r requirements.txt
 ```
 
