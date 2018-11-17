@@ -56,6 +56,8 @@ class PaymentConsumer(threading.Thread):
                 # each log in the batch belongs to the same cycle
                 pymnt_cycle = payment_items[0].cycle
 
+                logger.info("Starting payments for cycle {}".format(pymnt_cycle))
+
                 # 2- select suitable payment script
                 # if len(payment_items) == 1:
                 # regular_payer = RegularPayer(self.client_path, self.key_name)

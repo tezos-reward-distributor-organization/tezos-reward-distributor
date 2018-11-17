@@ -60,17 +60,6 @@ class EmailManager():
 
         logger.debug("Report email sent for cycle {}.".format(cyle))
 
-    def send_payment_mail_fail(self, cyle):
-        if not self.email_sender:
-            return
-
-        self.email_sender.send("Payment Failed for Cycle {}".format(cyle),
-                               "Payment for cycle {} failed.".format(cyle),
-                               self.default["recipients"], [])
-
-        logger.debug("Report email sent for cycle {}.".format(cyle))
-
-
 if __name__ == '__main__':
     mm = EmailManager()
     mm.send_payment_mail(32, "D:\dev_root\\tezos-reward-distributer\\requirements.txt",0)
