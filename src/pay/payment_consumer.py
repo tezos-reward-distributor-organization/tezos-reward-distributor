@@ -78,7 +78,8 @@ class PaymentConsumer(threading.Thread):
                 if nb_failed == 0: self.clean_failed_payment_reports(pymnt_cycle)
 
                 # 7- send email
-                self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed)
+                if not self.dry_run:
+                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed)
 
             except Exception as e:
                 logger.error("Error at reward payment", e)
