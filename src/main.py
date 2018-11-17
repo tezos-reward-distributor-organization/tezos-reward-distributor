@@ -291,6 +291,11 @@ def main(config):
     # create reports in dry directory
     if dry_run:
         reports_dir = os.path.expanduser("./dry")
+        if os.path.isdir(reports_dir):
+            logger.info("Removing '{}'".format(reports_dir))
+            os.remove(reports_dir)
+        logger.info("Creating '{}'".format(reports_dir))
+        os.makedirs(reports_dir)
 
     payments_root = get_payment_root(reports_dir, create=True)
     calculations_root = get_calculations_root(reports_dir, create=True)
