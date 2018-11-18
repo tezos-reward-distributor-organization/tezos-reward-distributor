@@ -32,7 +32,7 @@ To install required modules, use pip with requirements.txt provided.
 
 ```
 cd tezos-reward-distributor
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Regulary check and upgrade to the latest available version:
