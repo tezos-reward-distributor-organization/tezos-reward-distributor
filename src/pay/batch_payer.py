@@ -19,6 +19,7 @@ COMM_INJECT = "{} %LOG% rpc post http://%NODE%/injection/operation with '\"%OPER
 COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 5"
 
 MAX_TX_PER_BLOCK = 280
+PKH_LENGHT = 36
 
 
 class BatchPayer():
@@ -29,8 +30,14 @@ class BatchPayer():
         self.client_path = client_path
 
         self.known_contracts = client_list_known_contracts(self.client_path)
-        self.source = self.key_name if self.key_name.startswith("KT") or self.key_name.startswith("tz") else \
-            self.known_contracts[self.key_name]
+
+        # key_name has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
+        if len(self.key_name) == PKH_LENGHT and (self.key_name.startswith("KT") or self.key_name.startswith("tz")):
+            self.source = self.key_name
+        elif self.key_name in self.known_contracts:
+            self.source = self.known_contracts[self.key_name]
+        else:
+            raise Exception("key_name cannot be translated into a PKH or alias: {}".format(self.key_name))
 
         self.comm_head = COMM_HEAD.format(self.client_path, self.node_url)
         self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, self.source)
