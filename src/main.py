@@ -253,7 +253,6 @@ class ProducerThread(threading.Thread):
 
             cycle = int(os.path.splitext(os.path.basename(payment_failed_report_file))[0])
 
-
             # 2.3 read payments/failed/csv_report.csv file into a list of dictionaries
             with open(payment_failed_report_file) as f:
                 # read csv into list of dictionaries
@@ -273,7 +272,7 @@ class ProducerThread(threading.Thread):
 
 # all shares in the map must sum up to 1
 def validate_map_share_sum(share_map, map_name):
-    if sum(share_map.values()) != 1:
+    if abs(1 - sum(share_map.values()) > 1e-4):  # a zero check actually
         raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
 
 
