@@ -12,12 +12,13 @@ COMM_HEAD = "{} rpc get http://{}/chains/main/blocks/head"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit": "200", "storage_limit": "0","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
+RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
+COMM_RUNOPS = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
 COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = "{} %LOG% rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
 COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 5"
-
 MAX_TX_PER_BLOCK = 280
 PKH_LENGHT = 36
 
@@ -118,7 +119,17 @@ class BatchPayer():
 
         contents_string = ",".join(content_list)
 
-        # for the operations
+        # run the operations
+        logger.debug("Running {} operations".format(len(content_list)))
+        forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
+        forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
+        if verbose: logger.debug("forge_command_str is |{}|".format(forge_command_str))
+        forge_command_response = send_request(forge_command_str, verbose)
+        if not check_response(forge_command_response):
+            logger.error("Error in forge response '{}'".format(forge_command_response))
+            return False, ""
+
+        # forge the operations
         logger.debug("Forging {} operations".format(len(content_list)))
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
