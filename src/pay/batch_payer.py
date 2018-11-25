@@ -121,12 +121,12 @@ class BatchPayer():
 
         # run the operations
         logger.debug("Running {} operations".format(len(content_list)))
-        forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
-        forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
-        if verbose: logger.debug("forge_command_str is |{}|".format(forge_command_str))
-        forge_command_response = send_request(forge_command_str, verbose)
-        if not check_response(forge_command_response):
-            logger.error("Error in forge response '{}'".format(forge_command_response))
+        runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
+        runops_command_str = self.comm_forge.replace("%JSON%", runops_json)
+        if verbose: logger.debug("runops_command_str is |{}|".format(runops_command_str))
+        runops_command_response = send_request(runops_command_str, verbose)
+        if not check_response(runops_command_response):
+            logger.error("Error in run_operation response '{}'".format(runops_command_response))
             return False, ""
 
         # forge the operations
