@@ -42,6 +42,7 @@ class BatchPayer():
 
         self.comm_head = COMM_HEAD.format(self.client_path, self.node_url)
         self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, self.source)
+        self.comm_runops = COMM_RUNOPS.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_forge = COMM_FORGE.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_preapply = COMM_PREAPPLY.format(self.client_path).replace("%NODE%", self.node_url)
         self.comm_inject = COMM_INJECT.format(self.client_path).replace("%NODE%", self.node_url)
@@ -122,7 +123,7 @@ class BatchPayer():
         # run the operations
         logger.debug("Running {} operations".format(len(content_list)))
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
-        runops_command_str = self.comm_forge.replace("%JSON%", runops_json)
+        runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
         if verbose: logger.debug("runops_command_str is |{}|".format(runops_command_str))
         runops_command_response = send_request(runops_command_str, verbose)
         if not check_response(runops_command_response):
