@@ -126,9 +126,9 @@ class BatchPayer():
 
         for payment_item in payment_records:
             pymnt_amnt = int(payment_item.payment * 1e6)  # expects in micro tezos
-            pymnt_amnt = max(pymnt_amnt - self.default_fee,0) # ensure not less than 0
+            pymnt_amnt = max(pymnt_amnt - int(self.default_fee),0) # ensure not less than 0
 
-            if pymnt_amnt < 1e-6: # zero check
+            if pymnt_amnt < 1e-3: # zero check
                 continue
 
             counter = counter + 1
