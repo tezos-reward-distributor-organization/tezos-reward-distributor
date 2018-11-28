@@ -137,6 +137,8 @@ class BatchPayer():
                                                                                                    self.storage_limit)
             content_list.append(content)
 
+            logger.info("Payment content: {}".format(content))
+
         contents_string = ",".join(content_list)
 
         # run the operations
