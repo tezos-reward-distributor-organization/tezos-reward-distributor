@@ -2,15 +2,17 @@ from random import randint
 from time import sleep
 
 import base58
+import os
 from log_config import main_logger
 from util.client_utils import client_list_known_contracts, sign, check_response, send_request
 from util.rpc_utils import parse_json_response
+import configparser
 
 logger = main_logger
 
 COMM_HEAD = "{} rpc get http://{}/chains/main/blocks/head"
 COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
-CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"0","counter":"%COUNTER%","gas_limit": "200", "storage_limit": "0","amount":"%AMOUNT%"}'
+CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit": "%gas_limit%", "storage_limit": "%storage_limit%","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
@@ -22,6 +24,9 @@ COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 5"
 MAX_TX_PER_BLOCK = 280
 PKH_LENGHT = 36
 
+FEE_INI = 'fee.ini'
+DUMMY_FEE = 1000
+
 
 class BatchPayer():
     def __init__(self, node_url, client_path, key_name):
@@ -29,6 +34,18 @@ class BatchPayer():
         self.key_name = key_name
         self.node_url = node_url
         self.client_path = client_path
+
+        config = configparser.ConfigParser()
+        if os.path.isfile(FEE_INI):
+            config.read(FEE_INI)
+        else:
+            logger.warn("File {} not found. Using default fee values".format(FEE_INI))
+
+        kttx = config['KTTX']
+        self.base = kttx['base']
+        self.gas_limit = kttx['gas_limit']
+        self.storage_limit = kttx['storage_limit']
+        self.default_fee = kttx['fee']
 
         self.known_contracts = client_list_known_contracts(self.client_path)
 
@@ -115,7 +132,9 @@ class BatchPayer():
 
             counter = counter + 1
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.address) \
-                .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter))
+                .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter)) \
+                .replace("%fee%", self.default_fee).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%",
+                                                                                                   self.storage_limit)
             content_list.append(content)
 
         contents_string = ",".join(content_list)
