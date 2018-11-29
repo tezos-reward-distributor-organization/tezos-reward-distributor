@@ -14,8 +14,8 @@ nb_delegators_call = 'nb_delegators/{}?cycle={}'
 rewards_split_call = 'rewards_split/{}?cycle={}&p={}&number={}'
 
 API = {'MAINNET': {'API_URL': 'http://api{}.tzscan.io/v1/'.format(api_mirror)},
-       'ALPHANET': {'API_URL': 'http://alphanet-api.tzscan.io/v1/'},
-       'ZERONET': {'API_URL': 'http://zeronet-api.tzscan.io/v1/'}
+       'ALPHANET': {'API_URL': 'http://api.alphanet.tzscan.io/v1/'},
+       'ZERONET': {'API_URL': 'http://api.zeronet.tzscan.io/v1/'}
        }
 
 
