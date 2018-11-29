@@ -117,6 +117,12 @@ journalctl --follow --unit=tezos-reward.service
 
 tezos-reward-distribute will create an email.ini file. Fill this file with your email configuration to send payment emails.
 
+### Fee Setup
+
+fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez. Check the link below to see effect of fee value of 1274.
+
+https://zeronet.tzscan.io/opCnDj8bpr5ACrbLSqy4BDCMsNiY8Y34bvnm2hj7MvcxaRiu5tu
+
 #### Terms:
 
 - Reward: Coins rewarded by the network for the baking/endorsing operations.
