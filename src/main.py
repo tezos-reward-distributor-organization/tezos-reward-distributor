@@ -7,7 +7,7 @@ import sys
 import threading
 import time
 
-from BusinessConfiguration import BAKING_ADDRESS, supporters_set, founders_map, owners_map, specials_map, STANDARD_FEE
+from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, supporters_set
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
 from calc.payment_calculator import PaymentCalculator
@@ -303,10 +303,16 @@ def main(config):
     client_path = get_client_path([x.strip() for x in config.executable_dirs.split(',')], config.docker, network_config,
                                   config.verbose)
     logger.debug("Client command is {}".format(client_path))
+
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
 
     lifeCycle.start(not dry_run)
+
+    global supporters_set
+
+    if not supporters_set: # empty sets are evaluated as dict
+        supporters_set=set()
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
