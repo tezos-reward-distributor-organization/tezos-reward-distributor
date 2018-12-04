@@ -72,11 +72,14 @@ class ProducerThread(threading.Thread):
         if self.initial_payment_cycle <= 0:
             payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (
                     self.nw_config['NB_FREEZE_CYCLE'] + 1)
+            logger.debug("Payment cycle is set to {}".format(payment_cycle))
 
         while lifeCycle.is_running():
 
             # take a breath
             time.sleep(5)
+
+            logger.debug("Trying payments for cycle {}".format(payment_cycle))
 
             current_level = self.block_api.get_current_level()
             current_cycle = self.block_api.level_to_cycle(current_level)
@@ -84,6 +87,9 @@ class ProducerThread(threading.Thread):
             # create reports dir
             if self.calculations_dir and not os.path.exists(self.calculations_dir):
                 os.makedirs(self.calculations_dir)
+
+            logger.debug("checking payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
+            logger.debug("checking {} <= {} - ({} + 1) - {}".format(payment_cycle,current_cycle,self.nw_config['NB_FREEZE_CYCLE'],self.release_override))
 
             # payments should not pass beyond last released reward cycle
             if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
@@ -136,6 +142,7 @@ class ProducerThread(threading.Thread):
                     time.sleep(60 * 3)
             # end of payment cycle check
             else:
+                logger.debug("No pending payments for cycle {}, current cycle is {}".format(payment_cycle,current_cycle))
                 # pending payments done. Do not wait any more.
                 if self.run_mode == RunMode.PENDING:
                     logger.info("Run mode PENDING satisfied. Killing the thread ...")
