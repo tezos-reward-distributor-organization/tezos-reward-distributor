@@ -48,3 +48,8 @@ class PaymentRecord():
             items.append(PaymentRecord.FromPaymentCSVDictRow(row, cycle))
 
         return items
+
+    def __str__(self):
+        return "cycle = {}, address={}, ratio={}, fee_rate={}, reward={}, fee={}, type={}, payment={}, paid={}, hash={}" \
+            .format(self.cycle, self.address, self.ratio, self.fee_rate, self.reward, self.fee, self.type, self.payment,
+                    self.paid, self.hash)

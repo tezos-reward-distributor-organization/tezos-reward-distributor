@@ -13,4 +13,5 @@ owners_map={"KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2":1.0}
 supporters_set={"KT1T4RgrQ986qp2ndZ2YTnxKVSSUrD2BoKFH","KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2"}
 # customers with special rates. map of KT address and baking fee
 specials_map={"KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad":0.01}
-
+# set of delegators to exclude from reward calculations, total reward is shared among remaining delegators
+excluded_delegators_set={"KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad"}

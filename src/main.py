@@ -7,7 +7,7 @@ import sys
 import threading
 import time
 
-from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, supporters_set
+from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, supporters_set, excluded_delegators_set
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
 from calc.payment_calculator import PaymentCalculator
@@ -35,11 +35,12 @@ lifeCycle = ProcessLifeCycle()
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, deposit_owners_map, baker_founders_map, baking_address, batch, release_override,
-                 payment_offset):
+                 payment_offset, excluded_delegators_set):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
         self.owners_map = deposit_owners_map
         self.founders_map = baker_founders_map
+        self.excluded_set = excluded_delegators_set
         self.name = name
         self.block_api = TzScanBlockApiImpl(network_config)
         self.fee_calc = service_fee_calc
@@ -88,8 +89,11 @@ class ProducerThread(threading.Thread):
             if self.calculations_dir and not os.path.exists(self.calculations_dir):
                 os.makedirs(self.calculations_dir)
 
-            logger.debug("checking payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
-            logger.debug("checking {} <= {} - ({} + 1) - {}".format(payment_cycle,current_cycle,self.nw_config['NB_FREEZE_CYCLE'],self.release_override))
+            logger.debug(
+                "checking payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
+            logger.debug("checking {} <= {} - ({} + 1) - {}".format(payment_cycle, current_cycle,
+                                                                    self.nw_config['NB_FREEZE_CYCLE'],
+                                                                    self.release_override))
 
             # payments should not pass beyond last released reward cycle
             if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
@@ -142,7 +146,8 @@ class ProducerThread(threading.Thread):
                     time.sleep(60 * 3)
             # end of payment cycle check
             else:
-                logger.debug("No pending payments for cycle {}, current cycle is {}".format(payment_cycle,current_cycle))
+                logger.debug(
+                    "No pending payments for cycle {}, current cycle is {}".format(payment_cycle, current_cycle))
                 # pending payments done. Do not wait any more.
                 if self.run_mode == RunMode.PENDING:
                     logger.info("Run mode PENDING satisfied. Killing the thread ...")
@@ -206,7 +211,7 @@ class ProducerThread(threading.Thread):
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data)
+        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, )
 
         rewards, total_rewards = reward_calc.calculate()
 
@@ -317,9 +322,13 @@ def main(config):
     lifeCycle.start(not dry_run)
 
     global supporters_set
+    global excluded_delegators_set
 
-    if not supporters_set: # empty sets are evaluated as dict
-        supporters_set=set()
+    if not supporters_set:  # empty sets are evaluated as dict
+        supporters_set = set()
+
+    if not excluded_delegators_set:  # empty sets are evaluated as dict
+        excluded_delegators_set = set()
 
     full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
 
@@ -342,7 +351,8 @@ def main(config):
                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=run_mode,
                        service_fee_calc=service_fee_calc, deposit_owners_map=owners_map,
                        baker_founders_map=founders_map, baking_address=BAKING_ADDRESS, batch=config.batch,
-                       release_override=config.release_override, payment_offset=payment_offset)
+                       release_override=config.release_override, payment_offset=payment_offset,
+                       excluded_delegators_set=excluded_delegators_set)
     p.start()
 
     for i in range(NB_CONSUMERS):
