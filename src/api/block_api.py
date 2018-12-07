@@ -3,12 +3,12 @@ from math import floor
 
 
 class BlockApi(ABC):
-    def __init__(self,nw):
-        super(BlockApi,self).__init__()
+    def __init__(self, nw):
+        super(BlockApi, self).__init__()
         self.nw = nw
 
     @abstractmethod
-    def get_current_level(self):
+    def get_current_level(self, verbose=False):
         pass
 
     def level_to_cycle(self, level):

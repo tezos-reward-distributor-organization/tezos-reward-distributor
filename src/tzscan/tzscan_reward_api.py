@@ -7,13 +7,16 @@ import requests
 import NetworkConfiguration
 from api.reward_api import RewardApi
 
-api_mirror = random.randint(1, 6)
+from log_config import main_logger
+
 MAX_PER_PAGE = 50
+
+logger = main_logger
 
 nb_delegators_call = 'nb_delegators/{}?cycle={}'
 rewards_split_call = 'rewards_split/{}?cycle={}&p={}&number={}'
 
-API = {'MAINNET': {'API_URL': 'http://api{}.tzscan.io/v1/'.format(api_mirror)},
+API = {'MAINNET': {'API_URL': 'http://api%MIRROR%.tzscan.io/v1/'},
        'ALPHANET': {'API_URL': 'http://api.alphanet.tzscan.io/v1/'},
        'ZERONET': {'API_URL': 'http://api.zeronet.tzscan.io/v1/'}
        }
@@ -30,17 +33,27 @@ class TzScanRewardApiImpl(RewardApi):
 
         self.baking_address = baking_address
 
-    def get_nb_delegators(self, cycle):
-        resp = requests.get(self.api['API_URL'] + nb_delegators_call.format(self.baking_address, cycle))
+    def get_nb_delegators(self, cycle, verbose=False):
+        uri = self.api['API_URL'].replace("%MIRROR%", str(random.randint(1, 6))) + nb_delegators_call.format(
+            self.baking_address, cycle)
+
+        if verbose:
+            logger.debug("Requesting {}".format(uri))
+
+        resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
             raise Exception('GET /tasks/ {}'.format(resp.status_code))
         root = resp.json()
+
+        if verbose:
+            logger.debug("Response from tzscan is {}".format(root))
+
         return root
 
-    def get_rewards_for_cycle_map(self, cycle):
+    def get_rewards_for_cycle_map(self, cycle, verbose=False):
         #############
-        nb_delegators = self.get_nb_delegators(cycle)[0]
+        nb_delegators = self.get_nb_delegators(cycle, verbose)[0]
         nb_delegators_remaining = nb_delegators
 
         p = 0
@@ -50,8 +63,16 @@ class TzScanRewardApiImpl(RewardApi):
                 "lost_fees_denounciation": 0}
 
         while nb_delegators_remaining > 0:
-            resp = requests.get(self.api['API_URL'] + rewards_split_call.
-                                format(self.baking_address, cycle, p, min(MAX_PER_PAGE, nb_delegators_remaining)))
+            uri = self.api['API_URL'].replace("%MIRROR%", str(random.randint(1, 6))) + rewards_split_call. \
+                format(self.baking_address, cycle, p, min(MAX_PER_PAGE, nb_delegators_remaining))
+
+            if verbose:
+                logger.debug("Requesting {}".format(uri))
+
+            resp = requests.get(uri)
+
+            if verbose:
+                logger.debug("Response from tzscan is {}".format(resp))
 
             if resp.status_code != 200:
                 # This means something went wrong.

@@ -36,7 +36,7 @@ lifeCycle = ProcessLifeCycle()
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, deposit_owners_map, baker_founders_map, baking_address, batch, release_override,
-                 payment_offset, excluded_delegators_set):
+                 payment_offset, excluded_delegators_set, verbose=False):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
         self.owners_map = deposit_owners_map
@@ -54,6 +54,7 @@ class ProducerThread(threading.Thread):
         self.batch = batch
         self.release_override = release_override
         self.payment_offset = payment_offset
+        self.verbose = verbose
 
         logger.debug('Producer started')
 
@@ -83,7 +84,7 @@ class ProducerThread(threading.Thread):
 
             logger.debug("Trying payments for cycle {}".format(payment_cycle))
 
-            current_level = self.block_api.get_current_level()
+            current_level = self.block_api.get_current_level(verbose=self.verbose)
             current_cycle = self.block_api.level_to_cycle(current_level)
 
             # create reports dir
@@ -353,7 +354,7 @@ def main(config):
                        service_fee_calc=service_fee_calc, deposit_owners_map=owners_map,
                        baker_founders_map=founders_map, baking_address=BAKING_ADDRESS, batch=config.batch,
                        release_override=config.release_override, payment_offset=payment_offset,
-                       excluded_delegators_set=excluded_delegators_set)
+                       excluded_delegators_set=excluded_delegators_set, verbose=config.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
