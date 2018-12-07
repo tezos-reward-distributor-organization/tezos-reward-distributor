@@ -1,7 +1,7 @@
 from api.reward_calculator_api import RewardCalculatorApi
 from model.payment_log import PaymentRecord
 
-from src.tzscan.tzscan_reward_api import TzScanRewardApiImpl
+from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 ONE_MILLION = 1000000
 
