@@ -34,7 +34,7 @@ class TzScanRewardApiImpl(RewardApi):
         self.baking_address = baking_address
 
     def get_nb_delegators(self, cycle, verbose=False):
-        uri = self.api['API_URL'].replace("%MIRROR%", str(random.randint(1, 6))) + nb_delegators_call.format(
+        uri = self.api['API_URL'].replace("%MIRROR%", str(self.rand_mirror())) + nb_delegators_call.format(
             self.baking_address, cycle)
 
         if verbose:
@@ -51,6 +51,14 @@ class TzScanRewardApiImpl(RewardApi):
 
         return root
 
+    def rand_mirror(self):
+        mirror = random.randint(1, 6)
+
+        if mirror == 4:# has problem lately
+            mirror = 3
+
+        return mirror
+
     def get_rewards_for_cycle_map(self, cycle, verbose=False):
         #############
         nb_delegators = self.get_nb_delegators(cycle, verbose)[0]
@@ -63,7 +71,7 @@ class TzScanRewardApiImpl(RewardApi):
                 "lost_fees_denounciation": 0}
 
         while nb_delegators_remaining > 0:
-            uri = self.api['API_URL'].replace("%MIRROR%", str(random.randint(1, 6))) + rewards_split_call. \
+            uri = self.api['API_URL'].replace("%MIRROR%", str(self.rand_mirror())) + rewards_split_call. \
                 format(self.baking_address, cycle, p, min(MAX_PER_PAGE, nb_delegators_remaining))
 
             if verbose:

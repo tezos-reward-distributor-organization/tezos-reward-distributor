@@ -23,7 +23,7 @@ class TzScanBlockApiImpl(BlockApi):
             raise Exception("Unknown network {}".format(nw))
 
     def get_current_level(self, verbose=False):
-        uri = self.api['HEAD_API_URL'].replace("%MIRROR%", str(random.randint(1, 6)))
+        uri = self.api['HEAD_API_URL'].replace("%MIRROR%", str(self.rand_mirror()))
 
         if verbose:
             logger.debug("Requesting {}".format(uri))
@@ -40,3 +40,11 @@ class TzScanBlockApiImpl(BlockApi):
         current_level = int(root["level"])
 
         return current_level
+
+    def rand_mirror(self):
+        mirror = random.randint(1, 6)
+
+        if mirror == 4:  # has problem lately
+            mirror = 3
+
+        return mirror
