@@ -7,7 +7,8 @@ import sys
 import threading
 import time
 
-from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, supporters_set, excluded_delegators_set
+from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, supporters_set
+from BusinessConfigurationX import excluded_delegators_set
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
 from calc.payment_calculator import PaymentCalculator

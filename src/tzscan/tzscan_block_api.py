@@ -4,7 +4,7 @@ import requests
 
 from api.block_api import BlockApi
 
-api_mirror = random.randint(2, 5)  # 1 is over used and not reliable
+api_mirror = random.randint(1, 6)
 
 API = {'MAINNET': {'HEAD_API_URL': 'https://api{}.tzscan.io/v2/head'.format(api_mirror)},
        'ALPHANET': {'HEAD_API_URL': 'http://api.alphanet.tzscan.io/v2/head'},

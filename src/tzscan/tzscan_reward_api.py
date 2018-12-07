@@ -7,7 +7,7 @@ import requests
 import NetworkConfiguration
 from api.reward_api import RewardApi
 
-api_mirror = random.randint(2, 5)  # 1 is over used and not reliable
+api_mirror = random.randint(1, 6)
 MAX_PER_PAGE = 50
 
 nb_delegators_call = 'nb_delegators/{}?cycle={}'
