@@ -2,6 +2,7 @@
 
 # baker's 'tz' address, NOT A KT address
 BAKING_ADDRESS = "tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP"
+BAKING_ADDRESS = "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"
 
 # standard fee that is valid for everybody
 STANDARD_FEE=0.045

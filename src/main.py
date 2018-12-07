@@ -92,8 +92,8 @@ class ProducerThread(threading.Thread):
                 os.makedirs(self.calculations_dir)
 
             logger.debug(
-                "checking payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
-            logger.debug("checking {} <= {} - ({} + 1) - {}".format(payment_cycle, current_cycle,
+                "Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
+            logger.debug("Checking for pending payments : checking {} <= {} - ({} + 1) - {}".format(payment_cycle, current_cycle,
                                                                     self.nw_config['NB_FREEZE_CYCLE'],
                                                                     self.release_override))
 
@@ -106,7 +106,7 @@ class ProducerThread(threading.Thread):
 
                         # 1- get reward data
                         reward_api = TzScanRewardApiImpl(self.nw_config, self.baking_address)
-                        reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle)
+                        reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle,verbose=self.verbose)
 
                         # 2- make payment calculations from reward data
                         pymnt_logs, total_rewards = self.make_payment_calculations(payment_cycle, reward_data)
@@ -213,7 +213,7 @@ class ProducerThread(threading.Thread):
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, )
+        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data,excluded_delegators_set )
 
         rewards, total_rewards = reward_calc.calculate()
 

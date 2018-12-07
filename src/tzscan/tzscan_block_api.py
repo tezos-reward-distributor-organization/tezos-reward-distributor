@@ -31,7 +31,7 @@ class TzScanBlockApiImpl(BlockApi):
         resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
-            raise Exception('GET /head/ {}'.format(resp.status_code))
+            raise Exception('GET {} {}'.format(uri, resp.status_code))
         root = resp.json()
 
         if verbose:

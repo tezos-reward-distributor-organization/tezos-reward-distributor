@@ -47,15 +47,15 @@ class BatchPayer():
         self.storage_limit = kttx['storage_limit']
         self.default_fee = kttx['fee']
 
-        self.known_contracts = client_list_known_contracts(self.client_path)
-
         # key_name has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
         if len(self.key_name) == PKH_LENGHT and (self.key_name.startswith("KT") or self.key_name.startswith("tz")):
             self.source = self.key_name
-        elif self.key_name in self.known_contracts:
-            self.source = self.known_contracts[self.key_name]
         else:
-            raise Exception("key_name cannot be translated into a PKH or alias: {}".format(self.key_name))
+            known_contracts = client_list_known_contracts(self.client_path)
+            if self.key_name in known_contracts:
+                self.source = known_contracts[self.key_name]
+            else:
+                raise Exception("key_name cannot be translated into a PKH or alias: {}".format(self.key_name))
 
         self.comm_head = COMM_HEAD.format(self.client_path, self.node_url)
         self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, self.source)
@@ -126,9 +126,9 @@ class BatchPayer():
 
         for payment_item in payment_records:
             pymnt_amnt = int(payment_item.payment * 1e6)  # expects in micro tezos
-            pymnt_amnt = max(pymnt_amnt - int(self.default_fee),0) # ensure not less than 0
+            pymnt_amnt = max(pymnt_amnt - int(self.default_fee), 0)  # ensure not less than 0
 
-            if pymnt_amnt < 1e-3: # zero check
+            if pymnt_amnt < 1e-3:  # zero check
                 continue
 
             counter = counter + 1

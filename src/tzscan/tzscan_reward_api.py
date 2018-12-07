@@ -43,7 +43,7 @@ class TzScanRewardApiImpl(RewardApi):
         resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
-            raise Exception('GET /tasks/ {}'.format(resp.status_code))
+            raise Exception('GET {} {}'.format(uri, resp.status_code))
         root = resp.json()
 
         if verbose:
@@ -76,7 +76,7 @@ class TzScanRewardApiImpl(RewardApi):
 
             if resp.status_code != 200:
                 # This means something went wrong.
-                raise Exception('GET /tasks/ {}'.format(resp.status_code))
+                raise Exception('GET {} {}'.format(uri, resp.status_code))
 
             if p == 0:  # keep first result as basis; append 'delegators_balance' from other responses
                 root = resp.json()
