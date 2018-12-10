@@ -150,11 +150,11 @@ class BatchPayer():
         runops_command_response = send_request(runops_command_str, verbose)
         if not check_response(runops_command_response):
             error_desc=parse_json_response(runops_command_response)
-            for content in runops_command_response["contents"]:
-                op_result = content["metadata"]["operation_result"]
-                if op_result["status"] == 'failed':
-                    error_desc = op_result["errors"]
-                    break
+            #for content in runops_command_response["contents"]:
+            #    op_result = content["metadata"]["operation_result"]
+            #    if op_result["status"] == 'failed':
+            #        error_desc = op_result["errors"]
+            #        break
             logger.error("Error in run_operation response '{}'".format(error_desc))
             return False, ""
 
