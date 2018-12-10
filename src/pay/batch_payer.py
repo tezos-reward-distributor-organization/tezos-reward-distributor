@@ -149,7 +149,7 @@ class BatchPayer():
         if verbose: logger.debug("runops_command_str is |{}|".format(runops_command_str))
         runops_command_response = send_request(runops_command_str, verbose)
         if not check_response(runops_command_response):
-            error_desc=runops_command_response
+            error_desc=parse_json_response(runops_command_response)
             for content in runops_command_response["contents"]:
                 op_result = content["metadata"]["operation_result"]
                 if op_result["status"] == 'failed':
