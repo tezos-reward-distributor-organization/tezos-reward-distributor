@@ -149,7 +149,7 @@ class BatchPayer():
         if verbose: logger.debug("runops_command_str is |{}|".format(runops_command_str))
         runops_command_response = send_request(runops_command_str, verbose)
         if not check_response(runops_command_response):
-            logger.error("Error in run_operation response '{}'".format(runops_command_response))
+            logger.error("Error in run_operation response '{}'".format(runops_command_response["contents"]["metadata"]["operation_result"]))
             return False, ""
 
         # forge the operations
