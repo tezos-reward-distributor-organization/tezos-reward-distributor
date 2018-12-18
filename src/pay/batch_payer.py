@@ -194,10 +194,10 @@ class BatchPayer():
         logger.debug("Injecting {} operations".format(len(content_list)))
         decoded = base58.b58decode(signed_bytes).hex()
 
-        if decoded.startswith("edsig"):# edsig signature
+        if signed_bytes.startswith("edsig"):# edsig signature
             decoded_edsig_signature = decoded[10:][:-8]  # first 5 bytes edsig, last 4 bytes checksum
             decoded_signature = decoded_edsig_signature
-        elif decoded.startswith("sig"): # generic signature
+        elif signed_bytes.startswith("sig"): # generic signature
             decoded_sig_signature = decoded[6:][:-8]  # first 3 bytes sig, last 4 bytes checksum
             decoded_signature = decoded_sig_signature
         else:
