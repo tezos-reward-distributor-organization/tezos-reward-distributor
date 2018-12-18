@@ -149,8 +149,8 @@ class BatchPayer():
         if verbose: logger.debug("runops_command_str is |{}|".format(runops_command_str))
         runops_command_response = send_request(runops_command_str, verbose)
         if not check_response(runops_command_response):
-            error_desc=parse_json_response(runops_command_response)
-            #for content in runops_command_response["contents"]:
+            error_desc = parse_json_response(runops_command_response)
+            # for content in runops_command_response["contents"]:
             #    op_result = content["metadata"]["operation_result"]
             #    if op_result["status"] == 'failed':
             #        error_desc = op_result["errors"]
@@ -193,8 +193,20 @@ class BatchPayer():
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
         decoded = base58.b58decode(signed_bytes).hex()
-        decoded_edsig_signature = decoded[10:][:-8]
-        signed_operation_bytes = bytes + decoded_edsig_signature
+
+        if decoded.startswith("edsig"):# edsig signature
+            decoded_edsig_signature = decoded[10:][:-8]  # first 5 bytes edsig, last 4 bytes checksum
+            decoded_signature = decoded_edsig_signature
+        elif decoded.startswith("sig"): # generic signature
+            decoded_sig_signature = decoded[6:][:-8]  # first 3 bytes sig, last 4 bytes checksum
+            decoded_signature = decoded_sig_signature
+        else:
+            raise Exception("Signature '{}' is not in expected format".format(signed_bytes))
+
+        if len(decoded_signature) != 128:  # must be 64 bytes
+            raise Exception("Signature '{}' length must be 64 but it is ".format(len(signed_bytes)))
+
+        signed_operation_bytes = bytes + decoded_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
         inject_command_str = inject_command_str.replace("%LOG%", "-l" if verbose else "")
         if verbose: logger.debug("inject_command_str is |{}|".format(inject_command_str))
