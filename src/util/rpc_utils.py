@@ -17,6 +17,6 @@ def parse_json_response(client_response, verbose=None):
 
     response_str = client_response[idx:].strip()
     if verbose:
-        print("response_str is '{}'".format(response_str))
+        print("parsed json response_str is '{}'".format(response_str))
 
     return json.loads(response_str)

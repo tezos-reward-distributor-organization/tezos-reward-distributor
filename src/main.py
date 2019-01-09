@@ -138,8 +138,8 @@ class ProducerThread(threading.Thread):
                             self.exit()
                             break
 
-                    except Exception as e:
-                        logger.error("Error at reward calculation", e)
+                    except Exception:
+                        logger.error("Error at reward calculation",  exc_info=True)
 
                 # end of queue size check
                 else:
