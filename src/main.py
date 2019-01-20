@@ -392,7 +392,7 @@ if __name__ == '__main__':
                         action="store_true")
     parser.add_argument("-E", "--executable_dirs",
                         help="Comma separated list of directories to search for client executable. Prefer single "
-                             "location when setting client directory. If -d is set, poin to location where docker "
+                             "location when setting client directory. If -d is set, point to location where docker "
                              "script is found. Default value is given for minimum configuration effort.",
                         default='~/,~/tezos')
     parser.add_argument("-d", "--docker",
