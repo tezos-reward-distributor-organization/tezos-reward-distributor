@@ -72,7 +72,7 @@ class TzScanRewardApiImpl(RewardApi):
 
         while nb_delegators_remaining > 0:
             uri = self.api['API_URL'].replace("%MIRROR%", str(self.rand_mirror())) + rewards_split_call. \
-                format(self.baking_address, cycle, p, min(MAX_PER_PAGE, nb_delegators_remaining))
+                format(self.baking_address, cycle, p, MAX_PER_PAGE)
 
             if verbose:
                 logger.debug("Requesting {}".format(uri))
@@ -91,7 +91,9 @@ class TzScanRewardApiImpl(RewardApi):
             else:  # only take 'delegators_balance' list and append to 'delegators_balance' list in root
                 root["delegators_balance"].extend(resp.json()["delegators_balance"])
 
-            nb_delegators_remaining = nb_delegators_remaining - MAX_PER_PAGE
+            nb_delegators_listed = len(resp.json()["delegators_balance"])
+
+            nb_delegators_remaining = nb_delegators_remaining - nb_delegators_listed
             p = p + 1
 
         return root
