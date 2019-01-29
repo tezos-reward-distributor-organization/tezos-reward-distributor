@@ -51,6 +51,13 @@ python3 src/main.py --help
 
 The most common use case is run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done. Just provide the address/alias to make payments from. 
 
+Please note that, if tezos signer is used, it is necessary to use the alias. Otherwise, the client will not know that it should use the signer.
+
+Also ensure that your payment address is public key is known before it can be used for payments. Please check reveal command in tezos cli interface.
+
+https://tezos.gitlab.io/master/api/cli-commands.html
+
+
 ```
 python3 src/main.py mytezospaymentaddress
 ```

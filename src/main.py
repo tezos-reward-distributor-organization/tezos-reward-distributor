@@ -93,9 +93,11 @@ class ProducerThread(threading.Thread):
 
             logger.debug(
                 "Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
-            logger.debug("Checking for pending payments : checking {} <= {} - ({} + 1) - {}".format(payment_cycle, current_cycle,
-                                                                    self.nw_config['NB_FREEZE_CYCLE'],
-                                                                    self.release_override))
+            logger.debug(
+                "Checking for pending payments : checking {} <= {} - ({} + 1) - {}".format(payment_cycle, current_cycle,
+                                                                                           self.nw_config[
+                                                                                               'NB_FREEZE_CYCLE'],
+                                                                                           self.release_override))
 
             # payments should not pass beyond last released reward cycle
             if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
@@ -106,7 +108,7 @@ class ProducerThread(threading.Thread):
 
                         # 1- get reward data
                         reward_api = TzScanRewardApiImpl(self.nw_config, self.baking_address)
-                        reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle,verbose=self.verbose)
+                        reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
 
                         # 2- make payment calculations from reward data
                         pymnt_logs, total_rewards = self.make_payment_calculations(payment_cycle, reward_data)
@@ -139,7 +141,7 @@ class ProducerThread(threading.Thread):
                             break
 
                     except Exception:
-                        logger.error("Error at reward calculation",  exc_info=True)
+                        logger.error("Error at reward calculation", exc_info=True)
 
                 # end of queue size check
                 else:
@@ -213,7 +215,7 @@ class ProducerThread(threading.Thread):
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data,excluded_delegators_set )
+        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, excluded_delegators_set)
 
         rewards, total_rewards = reward_calc.calculate()
 
@@ -376,7 +378,8 @@ if __name__ == '__main__':
         raise Exception("Must be using Python 3")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("key", help="tezos address or alias to make payments")
+    parser.add_argument("key", help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
+                                    "to sign for the address, it is necessary to use an alias.")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
     parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='./reports')
