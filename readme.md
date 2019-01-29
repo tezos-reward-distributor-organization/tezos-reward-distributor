@@ -49,40 +49,42 @@ For a list of parameters, run:
 python3 src/main.py --help
 ```
 
+The only mandatory parameter is <mytezospaymentaddress>. It can be a public key hash or a an alias. It is used to make payments from. 
+
 Please note that, if tezos signer is used, it is necessary to use the alias. Otherwise, the client will not know that it should use the signer.
 
-Also ensure that your payment address is public key is known before it can be used for payments. Please check reveal command in tezos cli interface.
+Also ensure that your payment address public key is known before it can be used for payments. Please check reveal command in tezos cli interface.
 
 https://tezos.gitlab.io/master/api/cli-commands.html
 
-The most common use case is run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done. Just provide the address/alias to make payments from. 
+The most common use case is run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done. 
 
 ```
-python3 src/main.py mytezospaymentaddress
+python3 src/main.py <mytezospaymentaddress>
 ```
 
 Make payments for a single cycle:
 
 ```
-python3 src/main.py -C 42 -M 3  mytezospaymentaddress
+python3 src/main.py -C 42 -M 3  <mytezospaymentaddress>
 ```
 
 Make pending payments and stop:
 
 ```
-python3 src/main.py -M 2  mytezospaymentaddress
+python3 src/main.py -M 2  <mytezospaymentaddress>
 ```
 
 Make pending payments beginning from a cycle and stop:
 
 ```
-python3 src/main.py -C 30 -M 2 mytezospaymentaddress
+python3 src/main.py -C 30 -M 2 <mytezospaymentaddress>
 ```
 
 Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 
 ```
-python3 src/main.py -D -N ZERONET -C 30 -M 3 mytezospaymentaddress
+python3 src/main.py -D -N ZERONET -C 30 -M 3 <mytezospaymentaddress>
 ```
 
 ### Business Configuration:
