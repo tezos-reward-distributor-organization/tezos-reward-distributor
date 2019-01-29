@@ -294,7 +294,7 @@ def validate_map_share_sum(share_map, map_name):
 
 def main(config):
     network_config = network_config_map[config.network]
-    key = config.key
+    key = config.paymentaddress
 
     dry_run = config.dry_run_no_payments or config.dry_run
     if config.dry_run_no_payments:
@@ -378,7 +378,7 @@ if __name__ == '__main__':
         raise Exception("Must be using Python 3")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("key", help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
+    parser.add_argument("paymentaddress", help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
                                     "to sign for the address, it is necessary to use an alias.")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
@@ -429,7 +429,7 @@ if __name__ == '__main__':
     logger.info("Tezos Reward Distributor is Starting")
     logger.info("Current network is {}".format(args.network))
     logger.info("Baker address is {}".format(BAKING_ADDRESS))
-    logger.info("Key name {}".format(args.key))
+    logger.info("Payment address is {}".format(args.paymentaddress))
     logger.info("--------------------------------------------")
     logger.info("Copyright Hüseyin ABANOZ 2018")
     logger.info("huseyinabanox@gmail.com")

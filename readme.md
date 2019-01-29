@@ -49,7 +49,7 @@ For a list of parameters, run:
 python3 src/main.py --help
 ```
 
-The only mandatory parameter is mytezospaymentaddress. It can be a public key hash or a an alias. It is used to make payments from. 
+The only mandatory parameter is 'paymentaddress'. It can be a public key hash or a an alias. It is used to make payments from.
 
 Please note that, if tezos signer is used, it is necessary to use the alias. Otherwise, the client will not know that it should use the signer.
 
@@ -60,31 +60,31 @@ https://tezos.gitlab.io/master/api/cli-commands.html
 The most common use case is run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done. 
 
 ```
-python3 src/main.py <mytezospaymentaddress>
+python3 src/main.py <paymentaddress>
 ```
 
 Make payments for a single cycle:
 
 ```
-python3 src/main.py -C 42 -M 3  <mytezospaymentaddress>
+python3 src/main.py -C 42 -M 3  <paymentaddress>
 ```
 
 Make pending payments and stop:
 
 ```
-python3 src/main.py -M 2  <mytezospaymentaddress>
+python3 src/main.py -M 2  <paymentaddress>
 ```
 
 Make pending payments beginning from a cycle and stop:
 
 ```
-python3 src/main.py -C 30 -M 2 <mytezospaymentaddress>
+python3 src/main.py -C 30 -M 2 <paymentaddress>
 ```
 
 Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 
 ```
-python3 src/main.py -D -N ZERONET -C 30 -M 3 <mytezospaymentaddress>
+python3 src/main.py -D -N ZERONET -C 30 -M 3 <paymentaddress>
 ```
 
 ### Business Configuration:
@@ -99,7 +99,7 @@ Thats all.
 It is possible to add tezos-reward-distributer as a Linux service. It can run in the background. In order to set up the service run following command:
 
 ```
-sudo python3 service_add.py mytezospaymentaddress
+sudo python3 service_add.py paymentaddress
 ```
 
 It will create a service file and use it to enable the service. Once enabled use following commands to start/stop the service.
