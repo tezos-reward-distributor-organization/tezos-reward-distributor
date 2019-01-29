@@ -49,7 +49,7 @@ For a list of parameters, run:
 python3 src/main.py --help
 ```
 
-The only mandatory parameter is <mytezospaymentaddress>. It can be a public key hash or a an alias. It is used to make payments from. 
+The only mandatory parameter is mytezospaymentaddress. It can be a public key hash or a an alias. It is used to make payments from. 
 
 Please note that, if tezos signer is used, it is necessary to use the alias. Otherwise, the client will not know that it should use the signer.
 
