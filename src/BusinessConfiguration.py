@@ -5,6 +5,10 @@ BAKING_ADDRESS = "tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP"
 
 # standard fee that is valid for everybody
 STANDARD_FEE=0.045
+
+# Minimum delegation amount (in Tez)
+MIN_DELEGATION_AMT=1000
+
 # founders that shares the profits. map of founder payment address and share of the profit. Shares should sum up to 1.
 founders_map={"tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9":1.0}
 # deposit owners map of address and deposit ratio which must sum up to 1
