@@ -1,16 +1,18 @@
 from api.reward_calculator_api import RewardCalculatorApi
 from model.payment_log import PaymentRecord
-
+from log_config import main_logger
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
-ONE_MILLION = 1000000
+MUTEZ = 1000000
 
 
 class TzScanRewardCalculatorApi(RewardCalculatorApi):
     # reward_data : payment map returned from tzscan
-    def __init__(self, founders_map, reward_data, excluded_set):
+    def __init__(self, founders_map, reward_data, min_delegation_amt, excluded_set):
         super(TzScanRewardCalculatorApi, self).__init__(founders_map, excluded_set)
         self.reward_data = reward_data
+        self.min_delegation_amt_mutez = min_delegation_amt * MUTEZ
+        self.logger = main_logger
 
     ##
     # return rewards    : tuple (list of PaymentRecord objects, total rewards)
@@ -25,7 +27,7 @@ class TzScanRewardCalculatorApi(RewardCalculatorApi):
         fees = int(root["fees"])
 
         self.total_rewards = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
-                              future_endorsements_rewards + fees) / ONE_MILLION
+                              future_endorsements_rewards + fees) / MUTEZ
 
         delegators_balance = root["delegators_balance"]
 
@@ -47,6 +49,12 @@ class TzScanRewardCalculatorApi(RewardCalculatorApi):
         for dbalance in effective_delegators_balance:
             address = dbalance[0]["tz"]
             balance = int(dbalance[1])
+
+            # Skip those that did not delegate minimum amount
+            if balance < self.min_delegation_amt_mutez:
+                self.logger.debug("Skipping '{}': Low delegation amount ({:.6f})".format(address, (balance / MUTEZ)))
+                continue
+
             ratio = round(balance / effective_delegate_staking_balance, 5)
             reward = (self.total_rewards * ratio)
 
