@@ -130,8 +130,9 @@ class BatchPayer():
 
             if self.delegator_pays_xfer_fee:
                 pymnt_amnt = max(pymnt_amnt - int(self.default_fee), 0)  # ensure not less than 0
-                if pymnt_amnt < 1e-3:  # zero check
-                    continue
+
+            if pymnt_amnt < 1e-3:  # zero check
+                continue
 
             counter = counter + 1
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.address) \
