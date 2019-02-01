@@ -7,7 +7,7 @@ import sys
 import threading
 import time
 
-from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, supporters_set
+from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, MIN_DELEGATION_AMT, supporters_set
 from BusinessConfigurationX import excluded_delegators_set
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
@@ -36,12 +36,13 @@ lifeCycle = ProcessLifeCycle()
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, deposit_owners_map, baker_founders_map, baking_address, batch, release_override,
-                 payment_offset, excluded_delegators_set, verbose=False):
+                 payment_offset, excluded_delegators_set, min_delegation_amt, verbose=False):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
         self.owners_map = deposit_owners_map
         self.founders_map = baker_founders_map
         self.excluded_set = excluded_delegators_set
+        self.min_delegation_amt = min_delegation_amt
         self.name = name
         self.block_api = TzScanBlockApiImpl(network_config)
         self.fee_calc = service_fee_calc
@@ -215,7 +216,7 @@ class ProducerThread(threading.Thread):
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, excluded_delegators_set)
+        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, self.min_delegation_amt, excluded_delegators_set)
 
         rewards, total_rewards = reward_calc.calculate()
 
@@ -357,7 +358,7 @@ def main(config):
                        service_fee_calc=service_fee_calc, deposit_owners_map=owners_map,
                        baker_founders_map=founders_map, baking_address=BAKING_ADDRESS, batch=config.batch,
                        release_override=config.release_override, payment_offset=payment_offset,
-                       excluded_delegators_set=excluded_delegators_set, verbose=config.verbose)
+                       excluded_delegators_set=excluded_delegators_set, min_delegation_amt=MIN_DELEGATION_AMT, verbose=config.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
