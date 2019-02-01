@@ -29,13 +29,19 @@ class PaymentCalculator:
         for ri in self.reward_list:
             # set fee rate
             fee_rate = self.fee_calc.calculate(ri.address)
-            pymnt_amnt = floorf(ri.reward * (1 - fee_rate), 3)
 
-            # this indicates, service fee is very low (e.g. 0) and pymnt_amnt is rounded up
-            if pymnt_amnt - ri.reward > 0:
+            # special case where baker fee == 0.0
+            if fee_rate == 0.0:
                 pymnt_amnt = ri.reward
+                fee = 0.0
+            else:
+                pymnt_amnt = floorf(ri.reward * (1 - fee_rate), 3)
 
-            fee = (ri.reward - pymnt_amnt)
+                # this indicates, service fee is very low (e.g. 0) and pymnt_amnt is rounded up
+                if pymnt_amnt - ri.reward > 0:
+                    pymnt_amnt = ri.reward
+
+                fee = (ri.reward - pymnt_amnt)
 
             pr = PaymentRecord.DelegatorInstance(self.cycle, ri.address, ri.ratio, fee_rate, ri.reward, fee, pymnt_amnt)
             pymnts.append(pr)
