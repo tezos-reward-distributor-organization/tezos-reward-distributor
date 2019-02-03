@@ -3,13 +3,14 @@ from util.num_utils import floorf
 
 
 class PaymentCalculator:
-    def __init__(self, founders_map, owners_map, reward_list, total_rewards, service_fee_calculator, cycle):
+    def __init__(self, founders_map, owners_map, reward_list, total_rewards, service_fee_calculator, cycle, rounding_command):
         self.owners_map = owners_map
         self.total_rewards = total_rewards
         self.cycle = cycle
         self.fee_calc = service_fee_calculator
         self.reward_list = reward_list
         self.founders_map = founders_map
+        self.rounding_command = rounding_command
 
     #
     # calculation details
@@ -29,7 +30,7 @@ class PaymentCalculator:
         for ri in self.reward_list:
             # set fee rate
             fee_rate = self.fee_calc.calculate(ri.address)
-            pymnt_amnt = floorf(ri.reward * (1 - fee_rate), 3)
+            pymnt_amnt = self.rounding_command.round(ri.reward * (1 - fee_rate))
 
             # this indicates, service fee is very low (e.g. 0) and pymnt_amnt is rounded up
             if pymnt_amnt - ri.reward > 0:
@@ -53,7 +54,7 @@ class PaymentCalculator:
         if len(self.owners_map) > 0:
             no_owners = False
             for address, ratio in self.owners_map.items():
-                owner_pymnt_amnt = floorf(ratio * owners_total_reward, 3)
+                owner_pymnt_amnt = self.rounding_command.round(ratio * owners_total_reward)
                 owners_total_pymnt = owners_total_pymnt + owner_pymnt_amnt
                 pymnts.append(PaymentRecord.OwnerInstance(self.cycle, address, ratio, owner_pymnt_amnt, owner_pymnt_amnt))
 
@@ -71,6 +72,8 @@ class PaymentCalculator:
         if len(self.founders_map) > 0:
             no_founders = False
             for address, ratio in self.founders_map.items():
+                # founder pymnt is rounded to scale 6 regardless of the settings.
+                # because we allow difference between total_sum and self.total_rewards be less than 5e-6
                 founder_pymnt_amnt = floorf(ratio * founders_total_reward, 6)
                 pymnts.append(PaymentRecord.FounderInstance(self.cycle, address, ratio, founder_pymnt_amnt))
 

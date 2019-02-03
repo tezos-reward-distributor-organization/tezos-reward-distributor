@@ -8,7 +8,7 @@ import threading
 import time
 
 from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, MIN_DELEGATION_AMT, supporters_set
-from BusinessConfigurationX import excluded_delegators_set
+from BusinessConfigurationX import excluded_delegators_set, pymnt_scale
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
 from calc.payment_calculator import PaymentCalculator
@@ -24,6 +24,7 @@ from util.client_utils import get_client_path
 from util.dir_utils import PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, BUSY_FILE, remove_busy_file, get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir, get_calculation_report_file
 from util.process_life_cycle import ProcessLifeCycle
+from util.rounding_command import RoundingCommand
 
 NB_CONSUMERS = 1
 BUF_SIZE = 50
@@ -224,7 +225,8 @@ class ProducerThread(threading.Thread):
 
         if total_rewards == 0: return [], 0
         fm, om = self.founders_map, self.owners_map
-        pymnt_calc = PaymentCalculator(fm, om, rewards, total_rewards, self.fee_calc, payment_cycle)
+        rouding_command = RoundingCommand(pymnt_scale)
+        pymnt_calc = PaymentCalculator(fm, om, rewards, total_rewards, self.fee_calc, payment_cycle, rouding_command)
         payment_logs = pymnt_calc.calculate()
 
         return payment_logs, total_rewards
