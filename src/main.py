@@ -23,6 +23,7 @@ from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
 from util.client_utils import get_client_path
 from util.dir_utils import PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, BUSY_FILE, remove_busy_file, get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir, get_calculation_report_file
+from util.fee_validator import FeeValidator
 from util.process_life_cycle import ProcessLifeCycle
 from util.rounding_command import RoundingCommand
 
@@ -297,6 +298,9 @@ def validate_map_share_sum(share_map, map_name):
             raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
 
 
+def validate_standard_fee(fee):
+    FeeValidator("standard_fee").validate(fee)
+
 def main(config):
     network_config = network_config_map[config.network]
     key = config.paymentaddress
@@ -327,6 +331,7 @@ def main(config):
 
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
+    validate_standard_fee(STANDARD_FEE)
 
     lifeCycle.start(not dry_run)
 
