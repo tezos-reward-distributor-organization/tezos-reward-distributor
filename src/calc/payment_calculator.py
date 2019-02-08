@@ -30,7 +30,7 @@ class PaymentCalculator:
         for ri in self.reward_list:
             # set fee rate
             fee_rate = self.fee_calc.calculate(ri.address)
-            pymnt_amnt = self.rounding_command.round(ri.reward * (1 - fee_rate))
+            pymnt_amnt = self.rounding_command.roundDown(ri.reward * (1 - fee_rate))
 
             # this indicates, service fee is very low (e.g. 0) and pymnt_amnt is rounded up
             if pymnt_amnt - ri.reward > 0:
@@ -54,7 +54,7 @@ class PaymentCalculator:
         if len(self.owners_map) > 0:
             no_owners = False
             for address, ratio in self.owners_map.items():
-                owner_pymnt_amnt = self.rounding_command.round(ratio * owners_total_reward)
+                owner_pymnt_amnt = self.rounding_command.roundDown(ratio * owners_total_reward)
                 owners_total_pymnt = owners_total_pymnt + owner_pymnt_amnt
                 pymnts.append(PaymentRecord.OwnerInstance(self.cycle, address, ratio, owner_pymnt_amnt, owner_pymnt_amnt))
 

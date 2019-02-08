@@ -2,17 +2,19 @@ from api.reward_calculator_api import RewardCalculatorApi
 from model.payment_log import PaymentRecord
 from log_config import main_logger
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
+from util.rounding_command import RoundingCommand
 
 MUTEZ = 1000000
 
 
 class TzScanRewardCalculatorApi(RewardCalculatorApi):
     # reward_data : payment map returned from tzscan
-    def __init__(self, founders_map, reward_data, min_delegation_amt, excluded_set):
+    def __init__(self, founders_map, reward_data, min_delegation_amt, excluded_set, rc=RoundingCommand(None)):
         super(TzScanRewardCalculatorApi, self).__init__(founders_map, excluded_set)
         self.reward_data = reward_data
         self.min_delegation_amt_mutez = min_delegation_amt * MUTEZ
         self.logger = main_logger
+        self.rc = rc
 
     ##
     # return rewards    : tuple (list of PaymentRecord objects, total rewards)
@@ -55,7 +57,7 @@ class TzScanRewardCalculatorApi(RewardCalculatorApi):
                 self.logger.debug("Skipping '{}': Low delegation amount ({:.6f})".format(address, (balance / MUTEZ)))
                 continue
 
-            ratio = round(balance / effective_delegate_staking_balance, 5)
+            ratio = self.rc.round(balance / effective_delegate_staking_balance)
             reward = (self.total_rewards * ratio)
 
             reward_item = PaymentRecord(address=address, reward=reward, ratio=ratio)

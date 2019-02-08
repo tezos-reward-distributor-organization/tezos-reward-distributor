@@ -8,7 +8,7 @@ import threading
 import time
 
 from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, MIN_DELEGATION_AMT, supporters_set
-from BusinessConfigurationX import excluded_delegators_set, pymnt_scale
+from BusinessConfigurationX import excluded_delegators_set, pymnt_scale, prcnt_scale
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
 from calc.payment_calculator import PaymentCalculator
@@ -217,7 +217,8 @@ class ProducerThread(threading.Thread):
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, self.min_delegation_amt, excluded_delegators_set)
+        rc=RoundingCommand (prcnt_scale)
+        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, self.min_delegation_amt, excluded_delegators_set, rc)
 
         rewards, total_rewards = reward_calc.calculate()
 
