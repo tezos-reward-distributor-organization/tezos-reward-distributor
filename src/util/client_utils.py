@@ -155,4 +155,4 @@ def sign(client_cmd, bytes, key_name):
         if "Signature" in line:
             return line.strip("Signature:").strip()
 
-    raise Exception("Signature not found in response ''".format(response))
+    raise Exception("Signature not found in response '{}'".format(response))
