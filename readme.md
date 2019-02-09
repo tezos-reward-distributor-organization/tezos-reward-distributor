@@ -133,6 +133,11 @@ https://zeronet.tzscan.io/opCnDj8bpr5ACrbLSqy4BDCMsNiY8Y34bvnm2hj7MvcxaRiu5tu
 
 `delegator_pays_xfer_fee` - Set this to 'true' if you want the transaction fee to be deducted from the delegator's reward. Set this to 'false' if the baker will pay the transfer fee.
 
+### Contribution
+Please refer to contributions guide on wiki pages.
+
+https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Contribute
+
 #### Terms:
 
 - Reward: Coins rewarded by the network for the baking/endorsing operations.
