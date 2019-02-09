@@ -173,7 +173,7 @@ class BatchPayer():
 
         # sign the operations
         bytes = parse_json_response(forge_command_response, verbose=verbose)
-        signed_bytes = sign(self.client_path, bytes, self.key_name)
+        signed_bytes = sign(self.client_path, bytes, self.key_name, verbose=verbose)
 
         # pre-apply operations
         logger.debug("Preapplying the operations")

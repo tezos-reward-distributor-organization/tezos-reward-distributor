@@ -4,10 +4,10 @@ import re
 import os
 
 DOCKER_CLIENT_EXE = "%network%.sh"
-DOCKER_CLIENT_EXE_SUFFIX=" client"
+DOCKER_CLIENT_EXE_SUFFIX = " client"
 REGULAR_CLIENT_EXE = "tezos-client"
 
-test_str="""
+test_str = """
 Warning:
   
                            This is NOT the Tezos Mainnet.
@@ -72,6 +72,7 @@ Error:
       "edsigtiGP1KZTXrjwbUtNB2FiLKLD4zttATB73XGpkPcvicfMnSo7wBgQiWDUKh9aaeLsQywNVGBRW8aTF8Jh9PmwkCn6BF6b" } ]
 """
 
+
 def get_client_path(search_paths, docker=None, network_config=None, verbose=None):
     client_exe = REGULAR_CLIENT_EXE
     if docker:
@@ -80,7 +81,7 @@ def get_client_path(search_paths, docker=None, network_config=None, verbose=None
         expanded_path = os.path.expanduser(search_path)
         client_path = os.path.join(expanded_path, client_exe)
         if os.path.isfile(client_path):
-            return client_path+DOCKER_CLIENT_EXE_SUFFIX if docker else client_path
+            return client_path + DOCKER_CLIENT_EXE_SUFFIX if docker else client_path
         if verbose: print("Not found {}".format(client_path))
 
     raise Exception("Client executable not found. Review --executable_dirs, --docker and --network parameters")
@@ -91,7 +92,7 @@ def send_request(cmd, verbose=None):
         print("Command is |{}|".format(cmd))
 
     # execute client
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     bytes = []
     for b in process.stdout:
@@ -112,6 +113,7 @@ def check_response(response):
         return False
     return True
 
+
 def get_operation_hash(client_response):
     for line in client_response.splitlines():
         if line.startswith("Operation hash"):
@@ -120,6 +122,7 @@ def get_operation_hash(client_response):
             # split using ':' and take second part then get rid of leading, trailing spaces
             return line.split(":")[1].strip()
     return "not-found"
+
 
 def clear_terminal_chars(content):
     # get rid of special chars, terminal sequences
@@ -146,8 +149,8 @@ def client_list_known_contracts(client_cmd, verbose=None):
     return dict
 
 
-def sign(client_cmd, bytes, key_name):
-    response = send_request(client_cmd + " sign bytes 0x03{} for {}".format(bytes, key_name))
+def sign(client_cmd, bytes, key_name, verbose=None):
+    response = send_request(client_cmd + " sign bytes 0x03{} for {}".format(bytes, key_name), verbose)
 
     response = clear_terminal_chars(response)
 
