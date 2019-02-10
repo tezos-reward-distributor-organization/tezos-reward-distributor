@@ -173,7 +173,7 @@ class AppYamlConfParser(YamlConfParser):
 
         if not self.__validate_non_negative_int(conf_obj[scale_name]):
             raise Exception("Invalid value:'{}'. {} parameter value must be an non negative integer or None. ".
-                            format(conf_obj[MIN_DELEGATION_AMT], MIN_DELEGATION_AMT))
+                            format(conf_obj[scale_name], scale_name))
 
     def __validate_non_negative_int(self, param_value):
         try:

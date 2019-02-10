@@ -7,12 +7,12 @@ import sys
 import threading
 import time
 
-from BusinessConfiguration import BAKING_ADDRESS, founders_map, owners_map, specials_map, STANDARD_FEE, MIN_DELEGATION_AMT, supporters_set
-from BusinessConfigurationX import excluded_delegators_set, pymnt_scale, prcnt_scale
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
 from calc.payment_calculator import PaymentCalculator
 from calc.service_fee_calculator import ServiceFeeCalculator
+from config.config_parser import ConfigParser
+from config.yaml_app_conf_parser import AppYamlConfParser
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from pay.double_payment_check import check_past_payment
@@ -23,7 +23,6 @@ from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
 from util.client_utils import get_client_path
 from util.dir_utils import PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, BUSY_FILE, remove_busy_file, get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir, get_calculation_report_file
-from util.fee_validator import FeeValidator
 from util.process_life_cycle import ProcessLifeCycle
 from util.rounding_command import RoundingCommand
 
@@ -38,12 +37,12 @@ lifeCycle = ProcessLifeCycle()
 class ProducerThread(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, deposit_owners_map, baker_founders_map, baking_address, batch, release_override,
-                 payment_offset, excluded_delegators_set, min_delegation_amt, verbose=False):
+                 payment_offset, excluded_delegators_set, min_delegation_amt, pymnt_scale, prcnt_scale, verbose=False):
         super(ProducerThread, self).__init__()
         self.baking_address = baking_address
         self.owners_map = deposit_owners_map
         self.founders_map = baker_founders_map
-        self.excluded_set = excluded_delegators_set
+        self.excluded_delegators_set = excluded_delegators_set
         self.min_delegation_amt = min_delegation_amt
         self.name = name
         self.block_api = TzScanBlockApiImpl(network_config)
@@ -58,7 +57,8 @@ class ProducerThread(threading.Thread):
         self.release_override = release_override
         self.payment_offset = payment_offset
         self.verbose = verbose
-
+        self.pymnt_scale = pymnt_scale
+        self.prcnt_scale = prcnt_scale
         logger.debug('Producer started')
 
     def exit(self):
@@ -218,8 +218,9 @@ class ProducerThread(threading.Thread):
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
-        rc=RoundingCommand (prcnt_scale)
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, self.min_delegation_amt, excluded_delegators_set, rc)
+        rc = RoundingCommand(self.prcnt_scale)
+        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, self.min_delegation_amt,
+                                                self.excluded_delegators_set, rc)
 
         rewards, total_rewards = reward_calc.calculate()
 
@@ -227,7 +228,7 @@ class ProducerThread(threading.Thread):
 
         if total_rewards == 0: return [], 0
         fm, om = self.founders_map, self.owners_map
-        rouding_command = RoundingCommand(pymnt_scale)
+        rouding_command = RoundingCommand(self.pymnt_scale)
         pymnt_calc = PaymentCalculator(fm, om, rewards, total_rewards, self.fee_calc, payment_cycle, rouding_command)
         payment_logs = pymnt_calc.calculate()
 
@@ -299,56 +300,72 @@ def validate_release_override(release_override):
         raise Exception("You cannot pay for cycles for which baking rights are not revealed.")
 
 
-def main(config):
-    network_config = network_config_map[config.network]
-    key = config.paymentaddress
+def main(args):
+    config_dir = os.path.expanduser(args.config_dir)
+    # create reports dir
+    if config_dir and not os.path.exists(config_dir):
+        os.makedirs(config_dir)
 
-    dry_run = config.dry_run_no_payments or config.dry_run
-    if config.dry_run_no_payments:
+    config_file = None
+    for file in os.listdir(config_dir):
+        if file.endswith(".yaml"):
+            config_file = file
+
+    if config_file is None:
+        raise Exception(
+            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
+
+    config_file_path = os.path.join(config_dir, config_file)
+    logger.info("Loading configuration file {}".format(config_file_path))
+    managers = {'tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889': 'tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889'}
+
+    known_contracts = {}
+
+    parser = AppYamlConfParser(ConfigParser.load_file(config_file_path), known_contracts, managers)
+    parser.parse()
+    parser.validate()
+    cfg = parser.get_conf_obj()
+    baking_address = cfg['baking_address']
+    payment_address = cfg['payment_address']
+    logger.info("BAKING ADDRESS is {}".format(baking_address))
+    logger.info("PAYMENT ADDRESS is {}".format(payment_address))
+
+    dry_run = args.dry_run_no_payments or args.dry_run
+    if args.dry_run_no_payments:
         global NB_CONSUMERS
         NB_CONSUMERS = 0
 
-    reports_dir = os.path.expanduser(config.reports_dir)
+    reports_dir = os.path.expanduser(args.reports_dir)
     # if in dry run mode, do not create consumers
     # create reports in dry directory
     if dry_run:
         reports_dir = os.path.expanduser("./dry")
+
+    reports_dir = os.path.join(reports_dir, )
 
     payments_root = get_payment_root(reports_dir, create=True)
     calculations_root = get_calculations_root(reports_dir, create=True)
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 
-    run_mode = RunMode(config.run_mode)
-    node_addr = config.node_addr
-    payment_offset = config.payment_offset
-
-    client_path = get_client_path([x.strip() for x in config.executable_dirs.split(',')], config.docker, network_config,
-                                  config.verbose)
+    run_mode = RunMode(args.run_mode)
+    node_addr = args.node_addr
+    payment_offset = args.payment_offset
+    network_config = network_config_map[args.network]
+    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config,
+                                  args.verbose)
     logger.debug("Client command is {}".format(client_path))
 
-    validate_map_share_sum(founders_map, "founders map")
-    validate_map_share_sum(owners_map, "owners map")
-    validate_standard_fee(STANDARD_FEE)
-    validate_release_override(config.release_override)
+    validate_release_override(args.release_override)
 
     lifeCycle.start(not dry_run)
 
-    global supporters_set
-    global excluded_delegators_set
+    full_supporters_set = cfg['supporters_set'] | set(cfg['founders_map'].keys()) | set(cfg['owners_map'].keys())
 
-    if not supporters_set:  # empty sets are evaluated as dict
-        supporters_set = set()
+    service_fee_calc = ServiceFeeCalculator(supporters_set=full_supporters_set, specials_map=cfg['specials_map'],
+                                            standard_fee=cfg['service_fee'])
 
-    if not excluded_delegators_set:  # empty sets are evaluated as dict
-        excluded_delegators_set = set()
-
-    full_supporters_set = supporters_set | set(founders_map.keys()) | set(owners_map.keys())
-
-    service_fee_calc = ServiceFeeCalculator(supporters_set=full_supporters_set, specials_map=specials_map,
-                                            standard_fee=STANDARD_FEE)
-
-    if config.initial_cycle is None:
+    if args.initial_cycle is None:
         recent = None
         if get_successful_payments_dir(payments_root):
             files = sorted([os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))],
@@ -356,22 +373,25 @@ def main(config):
             recent = files[-1] if len(files) > 0 else None
         # if payment logs exists set initial cycle to following cycle
         # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
-        config.initial_cycle = 0 if recent is None else int(recent) + 1
+        args.initial_cycle = 0 if recent is None else int(recent) + 1
 
-        logger.info("initial_cycle set to {}".format(config.initial_cycle))
+        logger.info("initial_cycle set to {}".format(args.initial_cycle))
 
-    p = ProducerThread(name='producer', initial_payment_cycle=config.initial_cycle, network_config=network_config,
+    p = ProducerThread(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=run_mode,
-                       service_fee_calc=service_fee_calc, deposit_owners_map=owners_map,
-                       baker_founders_map=founders_map, baking_address=BAKING_ADDRESS, batch=config.batch,
-                       release_override=config.release_override, payment_offset=payment_offset,
-                       excluded_delegators_set=excluded_delegators_set, min_delegation_amt=MIN_DELEGATION_AMT, verbose=config.verbose)
+                       service_fee_calc=service_fee_calc, deposit_owners_map=cfg['owners_map'],
+                       baker_founders_map=cfg['founders_map'], baking_address=baking_address, batch=args.batch,
+                       release_override=args.release_override, payment_offset=payment_offset,
+                       excluded_delegators_set=cfg['excluded_delegators_set'],
+                       min_delegation_amt=cfg['min_delegation_amt'], pymnt_scale=cfg['pymnt_scale'],
+                       prcnt_scale=cfg['prcnt_scale'],
+                       verbose=args.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
-        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=key,
+        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=node_addr,
-                            verbose=config.verbose, dry_run=dry_run)
+                            verbose=args.verbose, dry_run=dry_run)
         time.sleep(1)
         c.start()
     try:
@@ -387,11 +407,10 @@ if __name__ == '__main__':
         raise Exception("Must be using Python 3")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("paymentaddress", help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
-                                    "to sign for the address, it is necessary to use an alias.")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
-    parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='./reports')
+    parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
+    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
                         help="Run without injecting payments. Suitable for testing. Does not require locking.",
@@ -436,9 +455,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     logger.info("Tezos Reward Distributor is Starting")
-    logger.info("Current network is {}".format(args.network))
-    logger.info("Baker address is {}".format(BAKING_ADDRESS))
-    logger.info("Payment address is {}".format(args.paymentaddress))
     logger.info("--------------------------------------------")
     logger.info("Copyright Hüseyin ABANOZ 2018")
     logger.info("huseyinabanox@gmail.com")

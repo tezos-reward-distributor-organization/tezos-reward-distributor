@@ -19,7 +19,7 @@ class ConfigParser(ABC):
     @staticmethod
     def load_file(conf_file_path):
         with open(conf_file_path, 'r') as file:
-            return file.readlines()
+            return file.read()
 
     def set_conf_obj(self, conf_obj):
         self.conf_obj = conf_obj
