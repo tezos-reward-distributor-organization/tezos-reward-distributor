@@ -4,23 +4,23 @@ from time import sleep
 import base58
 import os
 from log_config import main_logger
-from util.client_utils import client_list_known_contracts, sign, check_response, send_request
+from util.client_utils import check_response
 from util.rpc_utils import parse_json_response
 import configparser
 
 logger = main_logger
 
-COMM_HEAD = "{} rpc get http://{}/chains/main/blocks/head"
-COMM_COUNTER = "{} rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
+COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
+COMM_COUNTER = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit": "%gas_limit%", "storage_limit": "%storage_limit%","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
-COMM_FORGE = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
-COMM_RUNOPS = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
-COMM_PREAPPLY = "{} rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
-COMM_INJECT = "{} %LOG% rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-COMM_WAIT = "{} wait for %OPERATION% to be included ---confirmations 5"
+COMM_FORGE = " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
+COMM_RUNOPS = " rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
+COMM_PREAPPLY = " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
+COMM_INJECT = " %LOG% rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
+COMM_WAIT = " wait for %OPERATION% to be included ---confirmations 5"
 MAX_TX_PER_BLOCK = 280
 PKH_LENGHT = 36
 
@@ -29,11 +29,11 @@ DUMMY_FEE = 1000
 
 
 class BatchPayer():
-    def __init__(self, node_url, client_path, key_name):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr):
         super(BatchPayer, self).__init__()
-        self.key_name = key_name
+        self.pymnt_addr = pymnt_addr
         self.node_url = node_url
-        self.client_path = client_path
+        self.wllt_clnt_mngr = wllt_clnt_mngr
 
         config = configparser.ConfigParser()
         if os.path.isfile(FEE_INI):
@@ -46,25 +46,27 @@ class BatchPayer():
         self.gas_limit = kttx['gas_limit']
         self.storage_limit = kttx['storage_limit']
         self.default_fee = kttx['fee']
-        self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee', fallback=True) # Must use getboolean otherwise parses as string
+        self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee',
+                                                         fallback=True)  # Must use getboolean otherwise parses as string
 
-        # key_name has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
-        if len(self.key_name) == PKH_LENGHT and (self.key_name.startswith("KT") or self.key_name.startswith("tz")):
-            self.source = self.key_name
+        # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
+        if len(self.pymnt_addr) == PKH_LENGHT and (
+                self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")):
+            self.source = self.pymnt_addr
         else:
-            known_contracts = client_list_known_contracts(self.client_path)
-            if self.key_name in known_contracts:
-                self.source = known_contracts[self.key_name]
+            known_contracts = self.wllt_clnt_mngr.client_list_known_contracts()
+            if self.pymnt_addr in known_contracts:
+                self.source = known_contracts[self.pymnt_addr]
             else:
-                raise Exception("key_name cannot be translated into a PKH or alias: {}".format(self.key_name))
+                raise Exception("pymnt_addr cannot be translated into a PKH or alias: {}".format(self.pymnt_addr))
 
-        self.comm_head = COMM_HEAD.format(self.client_path, self.node_url)
-        self.comm_counter = COMM_COUNTER.format(self.client_path, self.node_url, self.source)
-        self.comm_runops = COMM_RUNOPS.format(self.client_path).replace("%NODE%", self.node_url)
-        self.comm_forge = COMM_FORGE.format(self.client_path).replace("%NODE%", self.node_url)
-        self.comm_preapply = COMM_PREAPPLY.format(self.client_path).replace("%NODE%", self.node_url)
-        self.comm_inject = COMM_INJECT.format(self.client_path).replace("%NODE%", self.node_url)
-        self.comm_wait = COMM_WAIT.format(self.client_path)
+        self.comm_head = COMM_HEAD.format(self.node_url)
+        self.comm_counter = COMM_COUNTER.format(self.node_url, self.source)
+        self.comm_runops = COMM_RUNOPS.format().replace("%NODE%", self.node_url)
+        self.comm_forge = COMM_FORGE.format().replace("%NODE%", self.node_url)
+        self.comm_preapply = COMM_PREAPPLY.format().replace("%NODE%", self.node_url)
+        self.comm_inject = COMM_INJECT.format().replace("%NODE%", self.node_url)
+        self.comm_wait = COMM_WAIT.format()
 
     def pay(self, payment_items, verbose=None, dry_run=None):
         # split payments into lists of MAX_TX_PER_BLOCK or less size
@@ -114,10 +116,10 @@ class BatchPayer():
         sleep(slp_tm)
 
     def pay_single_batch(self, payment_records, verbose=None, dry_run=None):
-        counter = parse_json_response(send_request(self.comm_counter, verbose))
+        counter = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_counter))
         counter = int(counter)
 
-        head = parse_json_response(send_request(self.comm_head, verbose))
+        head = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_head))
         branch = head["hash"]
         protocol = head["metadata"]["protocol"]
 
@@ -150,7 +152,7 @@ class BatchPayer():
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
         if verbose: logger.debug("runops_command_str is |{}|".format(runops_command_str))
-        runops_command_response = send_request(runops_command_str, verbose)
+        runops_command_response = self.wllt_clnt_mngr.send_request(runops_command_str)
         if not check_response(runops_command_response):
             error_desc = parse_json_response(runops_command_response)
             # for content in runops_command_response["contents"]:
@@ -166,14 +168,14 @@ class BatchPayer():
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
         if verbose: logger.debug("forge_command_str is |{}|".format(forge_command_str))
-        forge_command_response = send_request(forge_command_str, verbose)
+        forge_command_response = self.wllt_clnt_mngr.send_request(forge_command_str)
         if not check_response(forge_command_response):
             logger.error("Error in forge response '{}'".format(forge_command_response))
             return False, ""
 
         # sign the operations
         bytes = parse_json_response(forge_command_response, verbose=verbose)
-        signed_bytes = sign(self.client_path, bytes, self.key_name, verbose=verbose)
+        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.pymnt_addr, verbose=verbose)
 
         # pre-apply operations
         logger.debug("Preapplying the operations")
@@ -182,7 +184,7 @@ class BatchPayer():
         preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
 
         if verbose: logger.debug("preapply_command_str is |{}|".format(preapply_command_str))
-        preapply_command_response = send_request(preapply_command_str, verbose)
+        preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
         if not check_response(preapply_command_response):
             logger.error("Error in preapply response '{}'".format(preapply_command_response))
             return False, ""
@@ -213,7 +215,7 @@ class BatchPayer():
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
         inject_command_str = inject_command_str.replace("%LOG%", "-l" if verbose else "")
         if verbose: logger.debug("inject_command_str is |{}|".format(inject_command_str))
-        inject_command_response = send_request(inject_command_str, verbose)
+        inject_command_response = self.wllt_clnt_mngr.send_request(inject_command_str)
         if not check_response(inject_command_response):
             logger.error("Error in inject response '{}'".format(inject_command_response))
             return False, ""
@@ -223,7 +225,7 @@ class BatchPayer():
 
         # wait for inclusion
         logger.debug("Waiting for operation {} to be included".format(operation_hash))
-        send_request(self.comm_wait.replace("%OPERATION%", operation_hash), verbose)
+        self.wllt_clnt_mngr.send_request(self.comm_wait.replace("%OPERATION%", operation_hash))
         logger.debug("Operation {} is included".format(operation_hash))
 
         return True, operation_hash

@@ -19,10 +19,9 @@ PKH_LENGHT = 36
 
 
 class AppYamlConfParser(YamlConfParser):
-    def __init__(self, yaml_text, known_contracts, managers, verbose=None) -> None:
+    def __init__(self, yaml_text, wllt_clnt_mngr, verbose=None) -> None:
         super().__init__(yaml_text, verbose)
-        self.known_contracts = known_contracts
-        self.managers = managers
+        self.wllt_clnt_mngr = wllt_clnt_mngr
 
     def parse(self):
         yaml_conf_dict = super().parse()
@@ -99,14 +98,14 @@ class AppYamlConfParser(YamlConfParser):
         if len(pymnt_addr) == PKH_LENGHT and (pymnt_addr.startswith("KT") or pymnt_addr.startswith("tz")):
             conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
             conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
-            conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.managers[pymnt_addr]
+            conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)
         else:
-            if pymnt_addr in self.known_contracts:
-                pkh = self.known_contracts[pymnt_addr]
+            if pymnt_addr in self.wllt_clnt_mngr.get_known_contacts_by_alias():
+                pkh = self.wllt_clnt_mngr.get_known_contact_by_alias(pymnt_addr)
 
                 conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KTALS if pkh.startswith("KT") else AddrType.TZALS
                 conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pkh
-                conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.managers[pkh]
+                conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pkh)
 
             else:
                 raise Exception("Payment Address ({}) cannot be translated into a PKH or alias".format(pymnt_addr))

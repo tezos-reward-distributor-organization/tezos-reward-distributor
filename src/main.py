@@ -11,8 +11,10 @@ from Constants import RunMode
 from NetworkConfiguration import network_config_map
 from calc.payment_calculator import PaymentCalculator
 from calc.service_fee_calculator import ServiceFeeCalculator
+from cli.wallet_client_manager import WalletClientManager
 from config.config_parser import ConfigParser
 from config.yaml_app_conf_parser import AppYamlConfParser
+from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from pay.double_payment_check import check_past_payment
@@ -306,6 +308,11 @@ def main(args):
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
+    network_config = network_config_map[args.network]
+    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config,
+                                  args.verbose)
+    logger.debug("Client command is {}".format(client_path))
+
     config_file = None
     for file in os.listdir(config_dir):
         if file.endswith(".yaml"):
@@ -315,13 +322,27 @@ def main(args):
         raise Exception(
             "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
 
+    master_config_file_path = os.path.join(config_dir, "master.yaml")
     config_file_path = os.path.join(config_dir, config_file)
     logger.info("Loading configuration file {}".format(config_file_path))
-    managers = {'tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889': 'tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889'}
 
-    known_contracts = {}
+    master_cfg={}
+    if os.path.isfile(master_config_file_path):
+        master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
+        master_cfg = master_parser.parse()
 
-    parser = AppYamlConfParser(ConfigParser.load_file(config_file_path), known_contracts, managers)
+    managers = None
+    contracts_by_alias = None
+    addresses_by_pkh = None
+    if 'managers' in master_cfg:
+        managers = master_cfg['managers']
+    if 'contracts_by_alias' in master_cfg:
+        contracts_by_alias = master_cfg['contracts_by_alias']
+    if 'addresses_by_pkh' in master_cfg:
+        addresses_by_pkh = master_cfg['addresses_by_pkh']
+
+    wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers)
+    parser = AppYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr)
     parser.parse()
     parser.validate()
     cfg = parser.get_conf_obj()
@@ -351,10 +372,6 @@ def main(args):
     run_mode = RunMode(args.run_mode)
     node_addr = args.node_addr
     payment_offset = args.payment_offset
-    network_config = network_config_map[args.network]
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config,
-                                  args.verbose)
-    logger.debug("Client command is {}".format(client_path))
 
     validate_release_override(args.release_override)
 
@@ -391,7 +408,7 @@ def main(args):
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=node_addr,
-                            verbose=args.verbose, dry_run=dry_run)
+                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run)
         time.sleep(1)
         c.start()
     try:
