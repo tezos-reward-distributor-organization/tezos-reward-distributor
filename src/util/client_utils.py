@@ -131,20 +131,91 @@ def clear_terminal_chars(content):
     return result
 
 
-def client_list_known_contracts(client_cmd, verbose=None):
-    response = send_request(client_cmd + " list known contracts")
+def get_manager_for_contract(client_cmd, pkh, verbose):
+    response = send_request(client_cmd + " get manager for " + pkh, verbose)
 
     response = clear_terminal_chars(response)
 
+    return dict
+
+
+def parse_get_manager_for_contract_response(response, verbose=None):
+    manager = None
+    for line in response.splitlines():
+        line = line.strip()
+        if line.startswith("tz"):
+            line = line.replace(" (", ':')
+            manager, alias_plus = line.split(":", maxsplit=1)
+            break
+
+    if verbose:
+        print("Manager address is : {}".format(manager))
+
+    return manager
+
+
+def client_generate_address_dict(client_cmd, verbose: None):
+    contr_dict = client_list_known_contracts(client_cmd, verbose)
+    addr_dict = client_list_known_addresses(client_cmd, verbose)
+
+    for alias, pkh in contr_dict.items():
+        if pkh.startswith("KT"):
+            manager = get_manager_for_contract(client_cmd, pkh, verbose)
+            manager_sk = addr_dict[manager]['sk']
+            addr_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk, "manager": manager}
+
+
+def client_list_known_contracts(client_cmd, verbose=None):
+    response = send_request(client_cmd + " list known contracts", verbose)
+
+    response = clear_terminal_chars(response)
+
+    dict = parse_client_list_known_contracts_response(response, verbose)
+
+    return dict
+
+
+def parse_client_list_known_contracts_response(response, verbose=None):
+    dict = {}
+    for line in response.splitlines():
+        line = line.strip()
+        if ":" in line and not_indicator_line(line):
+            alias, pkh = line.split(":", maxsplit=1)
+            dict[alias.strip()] = pkh.strip()
+    if verbose:
+        print("known contracts: {}".format(dict))
+    return dict
+
+
+def client_list_known_addresses(client_cmd, verbose=None):
+    response = send_request(client_cmd + " list known addresses", verbose)
+
+    response = clear_terminal_chars(response)
+
+    dict = parse_list_known_addresses_response(response, verbose)
+
+    return dict
+
+
+def not_indicator_line(line):
+    return "Warning" not in line[0:15] and "Disclaimer" not in line[0:15]
+
+
+def parse_list_known_addresses_response(response, verbose=None):
     dict = {}
 
     for line in response.splitlines():
-        if ":" in line and "Warning" not in line[0:10]:
-            alias, pkh = line.split(":", maxsplit=1)
-            dict[alias.strip()] = pkh.strip()
-
+        line = line.strip()
+        if ":" in line and not_indicator_line(line):
+            alias, pkh_plus_braces = line.split(":", maxsplit=1)
+            pkh_plus_braces = pkh_plus_braces.replace(' (', ':')
+            pkh, sk_section = pkh_plus_braces.split(":", maxsplit=1)
+            sk_known = "sk known" in sk_section
+            pkh = pkh.strip()
+            alias = alias.strip()
+            dict[pkh] = {"pkh": pkh, "originated": False, "alias": alias, "sk": sk_known, "manager": pkh}
     if verbose:
-        print("known contracts: {}".format(dict))
+        print("known addresses: {}".format(dict))
 
     return dict
 

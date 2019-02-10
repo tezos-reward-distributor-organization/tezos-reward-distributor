@@ -291,17 +291,6 @@ class ProducerThread(threading.Thread):
                 os.rename(payment_failed_report_file, payment_failed_report_file + BUSY_FILE)
 
 
-# all shares in the map must sum up to 1
-def validate_map_share_sum(share_map, map_name):
-    if len(share_map) > 0:
-        if abs(1 - sum(share_map.values()) > 1e-4):  # a zero check actually
-            raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
-
-
-def validate_standard_fee(fee):
-    FeeValidator("standard_fee").validate(fee)
-
-
 def validate_release_override(release_override):
     if not release_override:
         pass
