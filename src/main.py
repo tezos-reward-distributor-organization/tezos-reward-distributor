@@ -301,6 +301,15 @@ def validate_map_share_sum(share_map, map_name):
 def validate_standard_fee(fee):
     FeeValidator("standard_fee").validate(fee)
 
+
+def validate_release_override(release_override):
+    if not release_override:
+        pass
+
+    if release_override < -11:
+        raise Exception("You cannot pay for cycles for which baking rights are not revealed.")
+
+
 def main(config):
     network_config = network_config_map[config.network]
     key = config.paymentaddress
@@ -332,6 +341,7 @@ def main(config):
     validate_map_share_sum(founders_map, "founders map")
     validate_map_share_sum(owners_map, "owners map")
     validate_standard_fee(STANDARD_FEE)
+    validate_release_override(config.release_override)
 
     lifeCycle.start(not dry_run)
 
@@ -422,7 +432,7 @@ if __name__ == '__main__':
     parser.add_argument("-R", "--release_override",
                         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
                              "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
-                             "For future payments give negative values. ",
+                             "For future payments give negative values. Valid range is [-11,)",
                         default=0, type=int)
     parser.add_argument("-O", "--payment_offset",
                         help="Number of blocks to wait after a cycle starts before starting payments. "
