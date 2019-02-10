@@ -1,0 +1,12 @@
+version : 1.0
+baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+payment_address : kt1Pay
+service_fee : 4.5
+founders_map : {}
+owners_map : {}
+prcnt_scale : {}
+pymnt_scale : {}
+specials_map : {}
+supporters_set : {}
+min_delegation_amt : 0
+excluded_delegators_set : {}
