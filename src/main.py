@@ -1,5 +1,6 @@
 import argparse
 import argparse
+import json
 import os
 import queue
 import sys
@@ -21,6 +22,8 @@ from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
 
+LINER = "--------------------------------------------"
+
 NB_CONSUMERS = 1
 BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
@@ -29,42 +32,28 @@ logger = main_logger
 life_cycle = ProcessLifeCycle()
 
 
-def validate_release_override(release_override):
-    if not release_override:
-        pass
-
-    if release_override < -11:
-        raise Exception("You cannot pay for cycles for which baking rights are not revealed.")
-
-
 def main(args):
+    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__,indent=1)))
+
+    # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
-    # create reports dir
+
+    # create configuration directory if it is not present
+    # so that user can easily put his configuration there
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
-    network_config = network_config_map[args.network]
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, network_config,
-                                  args.verbose)
-    logger.debug("Client command is {}".format(client_path))
-
-    config_file = None
-    for file in os.listdir(config_dir):
-        if file.endswith(".yaml"):
-            config_file = file
-
-    if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
-
+    # 2- Load master configuration file if it is present
     master_config_file_path = os.path.join(config_dir, "master.yaml")
-    config_file_path = os.path.join(config_dir, config_file)
-    logger.info("Loading configuration file {}".format(config_file_path))
 
     master_cfg = {}
     if os.path.isfile(master_config_file_path):
+        logger.info("Loading master configuration file {}".format(master_config_file_path))
+
         master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
         master_cfg = master_parser.parse()
+    else:
+        logger.info("master configuration file not present.")
 
     managers = None
     contracts_by_alias = None
@@ -76,24 +65,48 @@ def main(args):
     if 'addresses_by_pkh' in master_cfg:
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
+    # 3-
+
+    # 4- get client path
+    network_config = network_config_map[args.network]
+    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
+                                  args.docker, network_config,
+                                  args.verbose)
+
+    logger.debug("Tezos client path is {}".format(client_path))
+
+    # 5- load baking configuration file
+    config_file_path = get_baking_configuration_file(config_dir)
+
+    logger.info("Loading baking configuration file {}".format(config_file_path))
+
     wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers)
+
     parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr)
     parser.parse()
     parser.validate()
     parser.process()
     cfg_dict = parser.get_conf_obj()
+
+    # dictionary to BakingConf object, for a bit of type safety
     cfg = BakingConf(cfg_dict, master_cfg)
+
+    logger.info("Baking Configuration {}".format(cfg))
+
     baking_address = cfg.get_baking_address()
     payment_address = cfg.get_payment_address()
-
+    logger.info(LINER)
     logger.info("BAKING ADDRESS is {}".format(baking_address))
     logger.info("PAYMENT ADDRESS is {}".format(payment_address))
+    logger.info(LINER)
 
+    # 6- is it a dry run
     dry_run = args.dry_run_no_payments or args.dry_run
     if args.dry_run_no_payments:
         global NB_CONSUMERS
         NB_CONSUMERS = 0
 
+    # 7- get reporting directories
     reports_dir = os.path.expanduser(args.reports_dir)
     # if in dry run mode, do not create consumers
     # create reports in dry directory
@@ -107,14 +120,10 @@ def main(args):
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 
-    run_mode = RunMode(args.run_mode)
-    node_addr = args.node_addr
-    payment_offset = args.payment_offset
-
-    validate_release_override(args.release_override)
-
+    # 8- start the life cycle
     life_cycle.start(not dry_run)
 
+    # 9- service fee calculator
     srvc_fee_calc = ServiceFeeCalculator(cfg.get_full_supporters_set(), cfg.get_specials_map(), cfg.get_service_fee())
 
     if args.initial_cycle is None:
@@ -126,23 +135,40 @@ def main(args):
         logger.info("initial_cycle set to {}".format(args.initial_cycle))
 
     p = PaymentProducer(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
-                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=run_mode,
+                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                         service_fee_calc=srvc_fee_calc, batch=args.batch, release_override=args.release_override,
-                        payment_offset=payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
+                        payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, verbose=args.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
-                            client_path=client_path, payments_queue=payments_queue, node_addr=node_addr,
+                            client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                             wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run)
         time.sleep(1)
         c.start()
+
+        logger.info("Application start completed")
+        logger.info(LINER)
     try:
         while life_cycle.is_running(): time.sleep(10)
     except KeyboardInterrupt:
         logger.info("Interrupted.")
         life_cycle.stop()
+
+
+def get_baking_configuration_file(config_dir):
+    config_file = None
+    for file in os.listdir(config_dir):
+        if file.endswith(".yaml") and not file.startswith("master"):
+            if config_file:
+                raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format(config_file, file))
+            config_file = file
+    if config_file is None:
+        raise Exception(
+            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
+
+    return os.path.join(config_dir, config_file)
 
 
 def get_latest_report_file(payments_root):
@@ -154,6 +180,14 @@ def get_latest_report_file(payments_root):
     return recent
 
 
+class ReleaseOverrideAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not -11 <= values:
+            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
+
+        setattr(namespace, "realase_override", values)
+
+
 if __name__ == '__main__':
 
     if sys.version_info[0] < 3:
@@ -163,7 +197,7 @@ if __name__ == '__main__':
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
     parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
-    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
+    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='.')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
                         help="Run without injecting payments. Suitable for testing. Does not require locking.",
@@ -194,7 +228,7 @@ if __name__ == '__main__':
                         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
                              "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
                              "For future payments give negative values. Valid range is [-11,)",
-                        default=0, type=int)
+                        default=0, type=int, action=ReleaseOverrideAction)
     parser.add_argument("-O", "--payment_offset",
                         help="Number of blocks to wait after a cycle starts before starting payments. "
                              "This can be useful because cycle beginnings may be bussy.",
@@ -208,12 +242,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     logger.info("Tezos Reward Distributor is Starting")
-    logger.info("--------------------------------------------")
-    logger.info("Copyright Hüseyin ABANOZ 2018")
+    logger.info(LINER)
+    logger.info("Copyright Hüseyin ABANOZ 2019")
     logger.info("huseyinabanox@gmail.com")
     logger.info("Please leave copyright information")
-    logger.info("--------------------------------------------")
+    logger.info(LINER)
     if args.dry_run:
         logger.info("DRY RUN MODE")
-        logger.info("--------------------------------------------")
+        logger.info(LINER)
     main(args)

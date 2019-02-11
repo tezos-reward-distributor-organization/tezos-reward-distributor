@@ -1,6 +1,9 @@
+import json
+
 from config.yaml_baking_conf_parser import SERVICE_FEE, OWNERS_MAP, FOUNDERS_MAP, BAKING_ADDRESS, PAYMENT_ADDRESS, \
     PYMNT_SCALE, PRCNT_SCALE, EXCLUDED_DELEGATORS_SET, SPECIALS_MAP, SUPPORTERS_SET, FULL_SUPPORTERS_SET, \
     MIN_DELEGATION_AMT
+from model.custom_json_encoder import CustomJsonEncoder
 
 
 class BakingConf:
@@ -53,3 +56,7 @@ class BakingConf:
 
     def get_min_delegation_amount(self):
         return self.get_attribute(MIN_DELEGATION_AMT)
+
+    def __repr__(self) -> str:
+        return json.dumps(self.__dict__, cls=CustomJsonEncoder, indent=1)
+

@@ -20,9 +20,12 @@ from util.dir_utils import get_calculation_report_file, get_failed_payments_dir,
 from util.rounding_command import RoundingCommand
 
 logger = main_logger
+
+
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
-                 service_fee_calc, batch, release_override, payment_offset, baking_cfg, payments_queue, life_cycle, verbose=False):
+                 service_fee_calc, batch, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
+                 verbose=False):
         super(PaymentProducer, self).__init__()
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
@@ -83,13 +86,11 @@ class PaymentProducer(threading.Thread):
             if self.calculations_dir and not os.path.exists(self.calculations_dir):
                 os.makedirs(self.calculations_dir)
 
+            logger.debug("Checking for pending payments : payment_cycle <= "
+                         "current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
             logger.debug(
-                "Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
-            logger.debug(
-                "Checking for pending payments : checking {} <= {} - ({} + 1) - {}".format(payment_cycle, current_cycle,
-                                                                                           self.nw_config[
-                                                                                               'NB_FREEZE_CYCLE'],
-                                                                                           self.release_override))
+                "Checking for pending payments : checking {} <= {} - ({} + 1) - {}".
+                    format(payment_cycle, current_cycle, self.nw_config['NB_FREEZE_CYCLE'], self.release_override))
 
             # payments should not pass beyond last released reward cycle
             if payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
