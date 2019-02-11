@@ -25,7 +25,7 @@ logger = main_logger
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, batch, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 verbose=False):
+                 dry_run, verbose=False):
         super(PaymentProducer, self).__init__()
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
@@ -50,7 +50,7 @@ class PaymentProducer(threading.Thread):
         self.verbose = verbose
         self.payments_queue = payments_queue
         self.life_cycle = life_cycle
-
+        self.dry_run = dry_run
         logger.debug('Producer started')
 
     def exit(self):
@@ -108,7 +108,7 @@ class PaymentProducer(threading.Thread):
 
                         # 3- check for past payment evidence for current cycle
                         past_payment_state = check_past_payment(self.payments_root, payment_cycle)
-                        if total_rewards > 0 and past_payment_state:
+                        if not self.dry_run and total_rewards > 0 and past_payment_state:
                             logger.warn(past_payment_state)
                             total_rewards = 0
 

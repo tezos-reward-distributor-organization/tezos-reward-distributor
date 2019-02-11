@@ -146,7 +146,7 @@ class BakingYamlConfParser(YamlConfParser):
         addr_validator = AddressValidator(SPECIALS_MAP)
         for key, value in conf_obj[SPECIALS_MAP].items():
             addr_validator.validate(key)
-            FeeValidator(key).validate(value)
+            FeeValidator("specials_map:"+key).validate(value)
 
     def __validate_address_set(self, conf_obj, set_name):
         if set_name not in conf_obj:

@@ -33,7 +33,7 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__,indent=1)))
+    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -100,7 +100,7 @@ def main(args):
     logger.info("PAYMENT ADDRESS is {}".format(payment_address))
     logger.info(LINER)
 
-    # 6- is it a dry run
+    # 6- is it a reports run
     dry_run = args.dry_run_no_payments or args.dry_run
     if args.dry_run_no_payments:
         global NB_CONSUMERS
@@ -108,12 +108,12 @@ def main(args):
 
     # 7- get reporting directories
     reports_dir = os.path.expanduser(args.reports_dir)
-    # if in dry run mode, do not create consumers
-    # create reports in dry directory
+    # if in reports run mode, do not create consumers
+    # create reports in reports directory
     if dry_run:
-        reports_dir = os.path.expanduser("./dry")
+        reports_dir = os.path.expanduser("./reports")
 
-    reports_dir = os.path.join(reports_dir, )
+    reports_dir = os.path.join(reports_dir, baking_address)
 
     payments_root = get_payment_root(reports_dir, create=True)
     calculations_root = get_calculations_root(reports_dir, create=True)
@@ -138,7 +138,7 @@ def main(args):
                         payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                         service_fee_calc=srvc_fee_calc, batch=args.batch, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
-                        payments_queue=payments_queue, verbose=args.verbose)
+                        payments_queue=payments_queue, dry_run=dry_run, verbose=args.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
@@ -162,7 +162,9 @@ def get_baking_configuration_file(config_dir):
     for file in os.listdir(config_dir):
         if file.endswith(".yaml") and not file.startswith("master"):
             if config_file:
-                raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format(config_file, file))
+                raise Exception(
+                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
+                        config_file, file))
             config_file = file
     if config_file is None:
         raise Exception(
@@ -197,7 +199,7 @@ if __name__ == '__main__':
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
     parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
-    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='.')
+    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
                         help="Run without injecting payments. Suitable for testing. Does not require locking.",
