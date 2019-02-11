@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from config.addr_type import AddrType
-from config.yaml_app_conf_parser import AppYamlConfParser
+from config.yaml_baking_conf_parser import BakingYamlConfParser
 
 
 class TestYamlAppConfParser(TestCase):
@@ -16,7 +16,7 @@ class TestYamlAppConfParser(TestCase):
         """
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = AppYamlConfParser(data_fine, dict(), managers)
+        cnf_prsr = BakingYamlConfParser(data_fine, dict(), managers)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -40,7 +40,7 @@ class TestYamlAppConfParser(TestCase):
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = AppYamlConfParser(data_no_founders, dict(), managers_map)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, dict(), managers_map)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -72,7 +72,7 @@ class TestYamlAppConfParser(TestCase):
 
         known_contracts = {'ktPay': 'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
 
-        cnf_prsr = AppYamlConfParser(data_no_founders, known_contracts, managers_map)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, known_contracts, managers_map)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -105,7 +105,7 @@ class TestYamlAppConfParser(TestCase):
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
                     'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = AppYamlConfParser(data_fine, dict(), managers)
+        cnf_prsr = BakingYamlConfParser(data_fine, dict(), managers)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -137,7 +137,7 @@ class TestYamlAppConfParser(TestCase):
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
                     'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = AppYamlConfParser(data_fine, dict(), managers)
+        cnf_prsr = BakingYamlConfParser(data_fine, dict(), managers)
         cnf_prsr.parse()
         cnf_prsr.validate()
 

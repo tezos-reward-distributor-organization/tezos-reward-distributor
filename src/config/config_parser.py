@@ -16,6 +16,10 @@ class ConfigParser(ABC):
     def validate(self):
         pass
 
+    @abstractmethod
+    def process(self):
+        pass
+
     @staticmethod
     def load_file(conf_file_path):
         with open(conf_file_path, 'r') as file:

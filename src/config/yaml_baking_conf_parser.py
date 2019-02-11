@@ -14,11 +14,13 @@ SPECIALS_MAP = 'specials_map'
 SUPPORTERS_SET = 'supporters_set'
 PAYMENT_ADDRESS = 'payment_address'
 MIN_DELEGATION_AMT = 'min_delegation_amt'
+### extensions
+FULL_SUPPORTERS_SET = "full_supporters_set"
 
 PKH_LENGHT = 36
 
 
-class AppYamlConfParser(YamlConfParser):
+class BakingYamlConfParser(YamlConfParser):
     def __init__(self, yaml_text, wllt_clnt_mngr, verbose=None) -> None:
         super().__init__(yaml_text, verbose)
         self.wllt_clnt_mngr = wllt_clnt_mngr
@@ -41,6 +43,12 @@ class AppYamlConfParser(YamlConfParser):
         self.__validate_scale(conf_obj, PYMNT_SCALE)
         self.__validate_scale(conf_obj, PRCNT_SCALE)
 
+    def process(self):
+        conf_obj = self.get_conf_obj()
+        conf_obj[SERVICE_FEE] = conf_obj[SERVICE_FEE] / 100.0
+        conf_obj[(FULL_SUPPORTERS_SET)] = conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(
+            conf_obj[OWNERS_MAP].keys())
+
     def __validate_share_map(self, conf_obj, map_name):
         """
         all shares in the map must sum up to 1
@@ -53,7 +61,7 @@ class AppYamlConfParser(YamlConfParser):
             conf_obj[map_name] = dict()
             return
 
-        if isinstance(conf_obj[map_name],str) and conf_obj[map_name].lower() == 'none':
+        if isinstance(conf_obj[map_name], str) and conf_obj[map_name].lower() == 'none':
             conf_obj[map_name] = dict()
             return
 
@@ -84,10 +92,9 @@ class AppYamlConfParser(YamlConfParser):
             conf_obj[MIN_DELEGATION_AMT] = 0
             return
 
-        if not self.__validate_non_negative_int(conf_obj[MIN_DELEGATION_AMT] ):
+        if not self.__validate_non_negative_int(conf_obj[MIN_DELEGATION_AMT]):
             raise Exception("Invalid value:'{}'. {} parameter value must be an non negative integer".
                             format(conf_obj[MIN_DELEGATION_AMT], MIN_DELEGATION_AMT))
-
 
     def __validate_payment_address(self, conf_obj):
         pymnt_addr = conf_obj[(PAYMENT_ADDRESS)]
@@ -129,7 +136,7 @@ class AppYamlConfParser(YamlConfParser):
             conf_obj[SPECIALS_MAP] = dict()
             return
 
-        if isinstance(conf_obj[SPECIALS_MAP],str) and conf_obj[SPECIALS_MAP].lower() == 'none':
+        if isinstance(conf_obj[SPECIALS_MAP], str) and conf_obj[SPECIALS_MAP].lower() == 'none':
             conf_obj[SPECIALS_MAP] = dict()
             return
 
@@ -146,7 +153,7 @@ class AppYamlConfParser(YamlConfParser):
             conf_obj[set_name] = set()
             return
 
-        if isinstance(conf_obj[set_name],str) and conf_obj[set_name].lower() == 'none':
+        if isinstance(conf_obj[set_name], str) and conf_obj[set_name].lower() == 'none':
             conf_obj[set_name] = set()
             return
 
@@ -163,7 +170,7 @@ class AppYamlConfParser(YamlConfParser):
             conf_obj[scale_name] = None
             return
 
-        if isinstance(conf_obj[scale_name],str) and conf_obj[scale_name].lower() == 'none':
+        if isinstance(conf_obj[scale_name], str) and conf_obj[scale_name].lower() == 'none':
             conf_obj[scale_name] = None
             return
 

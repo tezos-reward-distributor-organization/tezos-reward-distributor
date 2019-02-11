@@ -14,3 +14,6 @@ class YamlConfParser(ConfigParser):
 
     def validate(self):
         return True
+
+    def process(self):
+        pass
