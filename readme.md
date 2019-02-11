@@ -1,5 +1,17 @@
 ## Tezos Reward Distributor : Run & Forget
 
+DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
+
+### Version 3
+
+Version 3 comes with some major modifications. Configuration is moved to YAML files. Reports are stored under a directory named with baking address and default reporting directory is moved to user home. 
+
+In order to mitigate migration process users, Version 3 comes with a migration script (migrate.py) to copy old reports and generate a new configration file from BusinessConfig(X).py.
+
+Stay tuned!
+
+### Tezos Reward Distributor
+
 A software for distributing baking rewards with delegators. This is not a script but service which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively. 
 
 Design principals are: 
