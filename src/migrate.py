@@ -21,7 +21,7 @@ logger = main_logger
 def main(args):
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
-    # 1- find where configuration is
+    # find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
 
     # create configuration directory if it is not present
@@ -29,9 +29,7 @@ def main(args):
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
-    master_cfg = {}
-
-    # 5- load baking configuration file
+    # load baking configuration file
     config_file_path = os.path.join(config_dir, BAKING_ADDRESS + ".yaml")
 
     logger.info("Creating baking configuration file {}".format(config_file_path))
@@ -52,6 +50,10 @@ def main(args):
     bkg_cfg_dict['min_delegation_amt'] = MIN_DELEGATION_AMT
     bkg_cfg_dict['excluded_delegators_set'] = excluded_delegators_set
 
+    if args.verbose:
+        dump = yaml.dump(bkg_cfg_dict, default_flow_style=False)
+        logger.info("Generated yaml configuration {}".format(dump))
+
     with open(config_file_path, 'w') as outfile:
         yaml.dump(bkg_cfg_dict, outfile, default_flow_style=False)
 
@@ -69,17 +71,22 @@ def main(args):
     successful_payments_dir = get_successful_payments_dir(payments_root, create=True)
     failed_payments_dir = get_failed_payments_dir(payments_root, create=True)
 
-    copy_files(legacy_successful_payments_dir, successful_payments_dir)
-    copy_files(legacy_failed_payments_dir, failed_payments_dir)
-    copy_files(legacy_calculations_root, calculations_root)
+    logger.info("Copy success logs")
+    copy_files(legacy_successful_payments_dir, successful_payments_dir, args.verbose)
+    logger.info("Copy fail logs")
+    copy_files(legacy_failed_payments_dir, failed_payments_dir, args.verbose)
+    logger.info("Copy calculation logs")
+    copy_files(legacy_calculations_root, calculations_root, args.verbose)
 
 
-def copy_files(src, dest):
+def copy_files(src, dest, verbose):
     src_files = os.listdir(src)
     for file_name in src_files:
         full_file_name = os.path.join(src, file_name)
         if (os.path.isfile(full_file_name)):
             shutil.copy(full_file_name, dest)
+            if verbose:
+                logger.info("Copied file from {} to {}".format(full_file_name,dest))
 
 
 if __name__ == '__main__':
@@ -97,10 +104,10 @@ if __name__ == '__main__':
     parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
     parser.add_argument("-V", "--verbose",
                         help="Low level details.",
-                        action="store_true")
+                        action="store_true", default=True)
     args = parser.parse_args()
 
-    logger.info("Tezos Reward Distributor is Starting")
+    logger.info("Tezos Reward Distributor Migration Tool V2->V3 is Starting")
     logger.info(LINER)
     logger.info("Copyright Hüseyin ABANOZ 2019")
     logger.info("huseyinabanox@gmail.com")

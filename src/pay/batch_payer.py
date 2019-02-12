@@ -54,7 +54,7 @@ class BatchPayer():
                 self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")):
             self.source = self.pymnt_addr
         else:
-            known_contracts = self.wllt_clnt_mngr.client_list_known_contracts()
+            known_contracts = self.wllt_clnt_mngr.get_known_contacts_by_alias()
             if self.pymnt_addr in known_contracts:
                 self.source = known_contracts[self.pymnt_addr]
             else:

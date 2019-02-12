@@ -41,6 +41,11 @@ class PaymentRecord():
                              row["type"], row["payment"], row["paid"], row["hash"])
 
     @staticmethod
+    def ManualInstance(address, payment):
+        return PaymentRecord('manual', address,None, None, payment, 0, 'M', payment)
+
+
+    @staticmethod
     def FromPaymentCSVDictRows(rows, cycle):
         items = []
         for row in rows:

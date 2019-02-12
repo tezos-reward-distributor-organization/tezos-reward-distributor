@@ -24,7 +24,7 @@ logger = main_logger
 
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
-                 service_fee_calc, batch, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
+                 service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
                  dry_run, verbose=False):
         super(PaymentProducer, self).__init__()
         self.baking_address = baking_cfg.get_baking_address()
@@ -44,7 +44,7 @@ class PaymentProducer(threading.Thread):
         self.calculations_dir = calculations_dir
         self.run_mode = run_mode
         self.exiting = False
-        self.batch = batch
+
         self.release_override = release_override
         self.payment_offset = payment_offset
         self.verbose = verbose

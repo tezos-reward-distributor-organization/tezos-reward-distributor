@@ -60,7 +60,7 @@ class WalletClientManager(SimpleClientManager):
         self.address_dict = {}
 
         if self.contr_dict_by_alias is None:
-            self.contr_dict_by_alias = self.list_known_contracts_by_alias()
+            self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         if self.addr_dict_by_pkh is None:
             self.addr_dict_by_pkh = self.list_known_addresses_by_pkh()
@@ -77,16 +77,16 @@ class WalletClientManager(SimpleClientManager):
                 self.address_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk,
                                           "manager": manager}
 
-    def list_known_contracts_by_alias(self):
+    def __list_known_contracts_by_alias(self):
         response = self.send_request(" list known contracts")
 
         response = clear_terminal_chars(response)
 
-        dict = self.parse_client_list_known_contracts_response(response)
+        dict = self.parse_list_known_contracts_response(response)
 
         return dict
 
-    def parse_client_list_known_contracts_response(self, response):
+    def parse_list_known_contracts_response(self, response):
         dict = {}
         for line in response.splitlines():
             line = line.strip()
@@ -110,14 +110,14 @@ class WalletClientManager(SimpleClientManager):
     def get_known_contact_by_alias(self, alias):
 
         if self.contr_dict_by_alias is None:
-            self.contr_dict_by_alias = self.list_known_contracts_by_alias()
+            self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         return self.contr_dict_by_alias[alias]
 
     def get_known_contacts_by_alias(self):
 
         if self.contr_dict_by_alias is None:
-            self.contr_dict_by_alias = self.list_known_contracts_by_alias()
+            self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         return self.contr_dict_by_alias
 
