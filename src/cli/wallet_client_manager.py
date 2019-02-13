@@ -63,7 +63,7 @@ class WalletClientManager(SimpleClientManager):
             self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         if self.addr_dict_by_pkh is None:
-            self.addr_dict_by_pkh = self.list_known_addresses_by_pkh()
+            self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
 
         for pkh, dict_alias_sk in self.addr_dict_by_pkh.items():
             self.address_dict[pkh] = {"pkh": pkh, "originated": False, "alias": dict_alias_sk['alias'],
@@ -82,46 +82,52 @@ class WalletClientManager(SimpleClientManager):
 
         response = clear_terminal_chars(response)
 
-        dict = self.parse_list_known_contracts_response(response)
+        dict = self.__parse_list_known_contracts_response(response)
 
         return dict
 
-    def parse_list_known_contracts_response(self, response):
-        dict = {}
-        for line in response.splitlines():
-            line = line.strip()
-            if ":" in line and not_indicator_line(line):
-                alias, pkh = line.split(":", maxsplit=1)
-                dict[alias.strip()] = pkh.strip()
-        if self.verbose:
-            print("known contracts: {}".format(dict))
-        return dict
 
-    def list_known_addresses_by_pkh(self):
+
+    def __list_known_addresses_by_pkh(self):
 
         response = self.send_request(" list known addresses")
 
         response = clear_terminal_chars(response)
 
-        dict = self.parse_list_known_addresses_response(response)
+        dict = self.__parse_list_known_addresses_response(response)
 
         return dict
 
-    def get_known_contact_by_alias(self, alias):
+    def get_known_contract_by_alias(self, alias):
 
         if self.contr_dict_by_alias is None:
             self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         return self.contr_dict_by_alias[alias]
 
-    def get_known_contacts_by_alias(self):
+    def get_known_contracts_by_alias(self):
 
         if self.contr_dict_by_alias is None:
             self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         return self.contr_dict_by_alias
 
-    def parse_list_known_addresses_response(self, response):
+    def get_known_addr_by_pkh(self, pkh):
+
+        if self.addr_dict_by_pkh is None:
+            self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
+
+        return self.contr_dict_by_alias[pkh]
+
+    def get_known_addrs_by_pkh(self):
+
+        if self.addr_dict_by_pkh is None:
+            self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
+
+        return self.addr_dict_by_pkh
+
+
+    def __parse_list_known_addresses_response(self, response):
         dict = {}
 
         for line in response.splitlines():
@@ -138,4 +144,15 @@ class WalletClientManager(SimpleClientManager):
         if self.verbose:
             print("known addresses: {}".format(dict))
 
+        return dict
+
+    def __parse_list_known_contracts_response(self, response):
+        dict = {}
+        for line in response.splitlines():
+            line = line.strip()
+            if ":" in line and not_indicator_line(line):
+                alias, pkh = line.split(":", maxsplit=1)
+                dict[alias.strip()] = pkh.strip()
+        if self.verbose:
+            print("known contracts: {}".format(dict))
         return dict

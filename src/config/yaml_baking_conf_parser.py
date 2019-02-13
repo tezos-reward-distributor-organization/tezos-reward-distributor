@@ -93,12 +93,16 @@ class BakingYamlConfParser(YamlConfParser):
             raise Exception("Payment address must be set")
 
         if len(pymnt_addr) == PKH_LENGHT and (pymnt_addr.startswith("KT") or pymnt_addr.startswith("tz")):
+            addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pymnt_addr)
+            if not addr_obj['sk']:
+                raise Exception("No secret key for Address Obj {}".format(addr_obj))
+            
             conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
             conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
             conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)
         else:
-            if pymnt_addr in self.wllt_clnt_mngr.get_known_contacts_by_alias():
-                pkh = self.wllt_clnt_mngr.get_known_contact_by_alias(pymnt_addr)
+            if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
+                pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
 
                 conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KTALS if pkh.startswith("KT") else AddrType.TZALS
                 conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pkh
