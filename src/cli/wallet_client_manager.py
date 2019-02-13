@@ -103,6 +103,9 @@ class WalletClientManager(SimpleClientManager):
         if self.contr_dict_by_alias is None:
             self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
+        if alias not in self.contr_dict_by_alias:
+            raise Exception("Alias {} is not imported to client. Import it first.".format(alias))
+
         return self.contr_dict_by_alias[alias]
 
     def get_known_contracts_by_alias(self):
@@ -117,10 +120,10 @@ class WalletClientManager(SimpleClientManager):
         if self.addr_dict_by_pkh is None:
             self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
 
-        if pkh not in self.contr_dict_by_alias:
+        if pkh not in self.addr_dict_by_pkh:
             raise Exception("Address {} is not imported to client. Import it first.".format(pkh))
 
-        return self.contr_dict_by_alias[pkh]
+        return self.addr_dict_by_pkh[pkh]
 
     def get_known_addrs_by_pkh(self):
 
