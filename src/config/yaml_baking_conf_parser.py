@@ -104,12 +104,17 @@ class BakingYamlConfParser(YamlConfParser):
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
 
+                addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pymnt_addr)
+                if not addr_obj['sk']:
+                    raise Exception("No secret key for Address Obj {} with alias {}".format(addr_obj, pymnt_addr))
+
                 conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KTALS if pkh.startswith("KT") else AddrType.TZALS
                 conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pkh
                 conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pkh)
 
             else:
-                raise Exception("Payment Address ({}) cannot be translated into a PKH or alias".format(pymnt_addr))
+                raise Exception("Payment Address ({}) cannot be translated into a PKH or alias. "
+                                "If it is an alias import it first. ".format(pymnt_addr))
 
     def __validate_baking_address(self, baking_address):
 
