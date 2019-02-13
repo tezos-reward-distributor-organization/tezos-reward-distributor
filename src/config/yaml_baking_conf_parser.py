@@ -96,7 +96,7 @@ class BakingYamlConfParser(YamlConfParser):
             addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pymnt_addr)
             if not addr_obj['sk']:
                 raise Exception("No secret key for Address Obj {}".format(addr_obj))
-            
+
             conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
             conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
             conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)

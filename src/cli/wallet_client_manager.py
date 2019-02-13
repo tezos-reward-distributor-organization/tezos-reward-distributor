@@ -117,6 +117,9 @@ class WalletClientManager(SimpleClientManager):
         if self.addr_dict_by_pkh is None:
             self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
 
+        if pkh not in self.contr_dict_by_alias:
+            raise Exception("Address {} is not imported to client. Import it first.".format(pkh))
+
         return self.contr_dict_by_alias[pkh]
 
     def get_known_addrs_by_pkh(self):
