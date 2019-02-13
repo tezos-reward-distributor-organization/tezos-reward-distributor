@@ -1,8 +1,21 @@
 import json
 
-from config.yaml_baking_conf_parser import SERVICE_FEE, OWNERS_MAP, FOUNDERS_MAP, BAKING_ADDRESS, PAYMENT_ADDRESS, \
-    PYMNT_SCALE, PRCNT_SCALE, EXCLUDED_DELEGATORS_SET, SPECIALS_MAP, SUPPORTERS_SET, FULL_SUPPORTERS_SET, \
-    MIN_DELEGATION_AMT
+
+SERVICE_FEE = 'service_fee'
+OWNERS_MAP = 'owners_map'
+FOUNDERS_MAP = 'founders_map'
+BAKING_ADDRESS = 'baking_address'
+PRCNT_SCALE = "prcnt_scale"
+PYMNT_SCALE = "pymnt_scale"
+EXCLUDED_DELEGATORS_SET = "excluded_delegators_set"
+SPECIALS_MAP = 'specials_map'
+SUPPORTERS_SET = 'supporters_set'
+PAYMENT_ADDRESS = 'payment_address'
+MIN_DELEGATION_AMT = 'min_delegation_amt'
+DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
+### extensions
+FULL_SUPPORTERS_SET = "full_supporters_set"
+
 from model.custom_json_encoder import CustomJsonEncoder
 
 
@@ -56,6 +69,10 @@ class BakingConf:
 
     def get_min_delegation_amount(self):
         return self.get_attribute(MIN_DELEGATION_AMT)
+
+    def get_delegator_pays_xfer_fee(self):
+        return self.get_attribute(DELEGATOR_PAYS_XFER_FEE)
+
 
     def __repr__(self) -> str:
         return json.dumps(self.__dict__, cls=CustomJsonEncoder, indent=1)

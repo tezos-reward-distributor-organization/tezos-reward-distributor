@@ -10,3 +10,4 @@ specials_map : {}
 supporters_set : {}
 min_delegation_amt : 0
 excluded_delegators_set : {}
+delegator_pays_xfer_fee : True

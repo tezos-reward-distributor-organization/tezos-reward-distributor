@@ -1,21 +1,10 @@
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
+from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, EXCLUDED_DELEGATORS_SET, \
+    PYMNT_SCALE, PRCNT_SCALE, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
+    DELEGATOR_PAYS_XFER_FEE
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
-
-SERVICE_FEE = 'service_fee'
-OWNERS_MAP = 'owners_map'
-FOUNDERS_MAP = 'founders_map'
-BAKING_ADDRESS = 'baking_address'
-PRCNT_SCALE = "prcnt_scale"
-PYMNT_SCALE = "pymnt_scale"
-EXCLUDED_DELEGATORS_SET = "excluded_delegators_set"
-SPECIALS_MAP = 'specials_map'
-SUPPORTERS_SET = 'supporters_set'
-PAYMENT_ADDRESS = 'payment_address'
-MIN_DELEGATION_AMT = 'min_delegation_amt'
-### extensions
-FULL_SUPPORTERS_SET = "full_supporters_set"
 
 PKH_LENGHT = 36
 
@@ -42,6 +31,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.__validate_specials_map(conf_obj)
         self.__validate_scale(conf_obj, PYMNT_SCALE)
         self.__validate_scale(conf_obj, PRCNT_SCALE)
+        self.__parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE)
 
     def process(self):
         conf_obj = self.get_conf_obj()
@@ -146,7 +136,7 @@ class BakingYamlConfParser(YamlConfParser):
         addr_validator = AddressValidator(SPECIALS_MAP)
         for key, value in conf_obj[SPECIALS_MAP].items():
             addr_validator.validate(key)
-            FeeValidator("specials_map:"+key).validate(value)
+            FeeValidator("specials_map:" + key).validate(value)
 
     def __validate_address_set(self, conf_obj, set_name):
         if set_name not in conf_obj:
@@ -193,3 +183,17 @@ class BakingYamlConfParser(YamlConfParser):
             return False
 
         return True
+
+    def __parse_bool(self, conf_obj, param_name):
+
+        if param_name not in conf_obj:
+            conf_obj[param_name] = False
+
+        # already a bool value
+        if type(conf_obj[param_name]) == type(False):
+            return
+
+        if isinstance(conf_obj[param_name], str) and "true" == conf_obj[param_name].lower():
+            conf_obj[param_name] = True
+        else:
+            conf_obj[param_name] = False
