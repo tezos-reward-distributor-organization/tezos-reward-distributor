@@ -2,6 +2,7 @@ import random
 
 import requests
 from api.block_api import BlockApi
+from exception.tzscan import TzScanException
 
 from log_config import main_logger
 
@@ -31,7 +32,7 @@ class TzScanBlockApiImpl(BlockApi):
         resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
-            raise Exception('GET {} {}'.format(uri, resp.status_code))
+            raise TzScanException('GET {} {}'.format(uri, resp.status_code))
         root = resp.json()
 
         if verbose:

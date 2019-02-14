@@ -1,5 +1,6 @@
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
+from exception.configuration import ConfigurationException
 from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, EXCLUDED_DELEGATORS_SET, \
     PYMNT_SCALE, PRCNT_SCALE, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE
@@ -36,8 +37,8 @@ class BakingYamlConfParser(YamlConfParser):
     def process(self):
         conf_obj = self.get_conf_obj()
         conf_obj[SERVICE_FEE] = conf_obj[SERVICE_FEE] / 100.0
-        conf_obj[(FULL_SUPPORTERS_SET)] = conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(
-            conf_obj[OWNERS_MAP].keys())
+        conf_obj[(FULL_SUPPORTERS_SET)] = \
+            conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(conf_obj[OWNERS_MAP].keys())
 
     def __validate_share_map(self, conf_obj, map_name):
         """
@@ -67,13 +68,13 @@ class BakingYamlConfParser(YamlConfParser):
         if len(share_map) > 0:
             try:
                 if abs(1 - sum(share_map.values()) > 1e-4):  # a zero check actually
-                    raise Exception("Map '{}' shares does not sum up to 1!".format(map_name))
+                    raise ConfigurationException("Map '{}' shares does not sum up to 1!".format(map_name))
             except TypeError:
-                raise Exception("Map '{}' values must be number!".format(map_name))
+                raise ConfigurationException("Map '{}' values must be number!".format(map_name))
 
     def __validate_service_fee(self, conf_obj):
         if SERVICE_FEE not in conf_obj:
-            raise Exception("Service fee is not set")
+            raise ConfigurationException("Service fee is not set")
 
         FeeValidator(SERVICE_FEE).validate(conf_obj[(SERVICE_FEE)])
 
@@ -83,14 +84,14 @@ class BakingYamlConfParser(YamlConfParser):
             return
 
         if not self.__validate_non_negative_int(conf_obj[MIN_DELEGATION_AMT]):
-            raise Exception("Invalid value:'{}'. {} parameter value must be an non negative integer".
-                            format(conf_obj[MIN_DELEGATION_AMT], MIN_DELEGATION_AMT))
+            raise ConfigurationException("Invalid value:'{}'. {} parameter value must be an non negative integer".
+                                         format(conf_obj[MIN_DELEGATION_AMT], MIN_DELEGATION_AMT))
 
     def __validate_payment_address(self, conf_obj):
         pymnt_addr = conf_obj[(PAYMENT_ADDRESS)]
 
         if not pymnt_addr:
-            raise Exception("Payment address must be set")
+            raise ConfigurationException("Payment address must be set")
 
         if len(pymnt_addr) == PKH_LENGHT and (pymnt_addr.startswith("KT") or pymnt_addr.startswith("tz")):
 
@@ -114,24 +115,24 @@ class BakingYamlConfParser(YamlConfParser):
                 conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pkh)
 
             else:
-                raise Exception("Payment Address ({}) cannot be translated into a PKH or alias. "
-                                "If it is an alias import it first. ".format(pymnt_addr))
+                raise ConfigurationException("Payment Address ({}) cannot be translated into a PKH or alias. "
+                                             "If it is an alias import it first. ".format(pymnt_addr))
 
     def check_sk(self, addr_obj, pkh):
         if not addr_obj['sk']:
-            raise Exception("No secret key for Address Obj {} with PKH {}".format(addr_obj, pkh))
+            raise ConfigurationException("No secret key for Address Obj {} with PKH {}".format(addr_obj, pkh))
 
     def __validate_baking_address(self, baking_address):
 
         if not baking_address:
-            raise Exception("Baking address must be set")
+            raise ConfigurationException("Baking address must be set")
 
         # key_name must has a length of 36 and starts with tz or KT, an alias is not expected
         if len(baking_address) == PKH_LENGHT:
             if not baking_address.startswith("tz"):
-                raise Exception("Baking address must be a valid tz address")
+                raise ConfigurationException("Baking address must be a valid tz address")
         else:
-            raise Exception("Baking address length must be {}".format(PKH_LENGHT))
+            raise ConfigurationException("Baking address length must be {}".format(PKH_LENGHT))
 
         pass
 
@@ -182,8 +183,9 @@ class BakingYamlConfParser(YamlConfParser):
             return
 
         if not self.__validate_non_negative_int(conf_obj[scale_name]):
-            raise Exception("Invalid value:'{}'. {} parameter value must be an non negative integer or None. ".
-                            format(conf_obj[scale_name], scale_name))
+            raise ConfigurationException(
+                "Invalid value:'{}'. {} parameter value must be an non negative integer or None. ".
+                format(conf_obj[scale_name], scale_name))
 
     def __validate_non_negative_int(self, param_value):
         try:

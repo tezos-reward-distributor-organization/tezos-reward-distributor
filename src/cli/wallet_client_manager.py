@@ -1,4 +1,5 @@
 from cli.simple_client_manager import SimpleClientManager
+from exception.client import ClientException
 from util.address_validator import AddressValidator
 from util.client_utils import clear_terminal_chars, not_indicator_line
 
@@ -34,7 +35,7 @@ class WalletClientManager(SimpleClientManager):
         try:
             AddressValidator("manager").validate(manager)
         except Exception as e:
-            raise Exception("Invalid response from client '{}'".format(response), e)
+            raise ClientException("Invalid response from client '{}'".format(response), e)
         self.managers[pkh] = manager
 
         return manager
@@ -64,7 +65,7 @@ class WalletClientManager(SimpleClientManager):
             self.generate_address_dict()
 
         if pkh not in self.address_dict:
-            raise Exception("Address(PKH) {} is not imported to client. Import it first.".format(pkh))
+            raise ClientException("Address(PKH) {} is not imported to client. Import it first.".format(pkh))
 
         return self.address_dict[pkh]
 
@@ -117,7 +118,7 @@ class WalletClientManager(SimpleClientManager):
             self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         if alias not in self.contr_dict_by_alias:
-            raise Exception("Alias {} is not imported to client. Import it first.".format(alias))
+            raise ClientException("Alias {} is not imported to client. Import it first.".format(alias))
 
         return self.contr_dict_by_alias[alias]
 
@@ -134,7 +135,7 @@ class WalletClientManager(SimpleClientManager):
             self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
 
         if pkh not in self.addr_dict_by_pkh:
-            raise Exception("Address(PKH) {} is not imported to client. Import it first.".format(pkh))
+            raise ClientException("Address(PKH) {} is not imported to client. Import it first.".format(pkh))
 
         return self.addr_dict_by_pkh[pkh]
 

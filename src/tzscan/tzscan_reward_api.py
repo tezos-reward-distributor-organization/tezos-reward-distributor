@@ -1,11 +1,9 @@
 import random
-from math import ceil
-
-import math
 import requests
 
 import NetworkConfiguration
 from api.reward_api import RewardApi
+from exception.tzscan import TzScanException
 
 from log_config import main_logger
 
@@ -29,7 +27,7 @@ class TzScanRewardApiImpl(RewardApi):
 
         self.api = API[nw['NAME']]
         if self.api is None:
-            raise Exception("Unknown network {}".format(nw))
+            raise TzScanException("Unknown network {}".format(nw))
 
         self.baking_address = baking_address
 
@@ -43,7 +41,7 @@ class TzScanRewardApiImpl(RewardApi):
         resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
-            raise Exception('GET {} {}'.format(uri, resp.status_code))
+            raise TzScanException('GET {} {}'.format(uri, resp.status_code))
         root = resp.json()
 
         if verbose:
@@ -84,7 +82,7 @@ class TzScanRewardApiImpl(RewardApi):
 
             if resp.status_code != 200:
                 # This means something went wrong.
-                raise Exception('GET {} {}'.format(uri, resp.status_code))
+                raise TzScanException('GET {} {}'.format(uri, resp.status_code))
 
             if p == 0:  # keep first result as basis; append 'delegators_balance' from other responses
                 root = resp.json()

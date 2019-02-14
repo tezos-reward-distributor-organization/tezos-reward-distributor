@@ -1,5 +1,6 @@
 import subprocess
 
+from exception.client import ClientException
 from util.client_utils import clear_terminal_chars
 
 
@@ -39,4 +40,4 @@ class SimpleClientManager:
             if "Signature" in line:
                 return line.strip("Signature:").strip()
 
-        raise Exception("Signature not found in response '{}'. Signed with {}".format(response.replace('\n'), 'key_name'))
+        raise ClientException("Signature not found in response '{}'. Signed with {}".format(response.replace('\n'), 'key_name'))
