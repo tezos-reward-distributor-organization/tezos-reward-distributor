@@ -60,8 +60,11 @@ class BatchPayer():
             else:
                 raise Exception("pymnt_addr cannot be translated into a PKH or alias: {}".format(self.pymnt_addr))
 
-        self.source = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.source)['manager']
-        logger.debug("Payment source is {}".format(self.source))
+        self.manager = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.source)['manager']
+        self.manager_alias = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.source)['alias']
+
+        logger.debug("Payment address is {}".format(self.source))
+        logger.debug("Signing address is {}, manager alias is {}".format(self.manager, self.manager_alias))
 
         self.comm_head = COMM_HEAD.format(self.node_url)
         self.comm_counter = COMM_COUNTER.format(self.node_url, self.source)
@@ -178,7 +181,7 @@ class BatchPayer():
 
         # sign the operations
         bytes = parse_json_response(forge_command_response, verbose=verbose)
-        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.pymnt_addr)
+        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager_alias)
 
         # pre-apply operations
         logger.debug("Preapplying the operations")
