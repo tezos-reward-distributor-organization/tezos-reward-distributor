@@ -63,7 +63,7 @@ class WalletClientManager(SimpleClientManager):
         if not self.address_dict:
             self.generate_address_dict()
 
-        if pkh not in self.contr_dict_by_alias:
+        if pkh not in self.address_dict:
             raise Exception("Address(PKH) {} is not imported to client. Import it first.".format(pkh))
 
         return self.address_dict[pkh]
