@@ -1,5 +1,6 @@
 from cli.simple_client_manager import SimpleClientManager
 from exception.client import ClientException
+from exception.configuration import ConfigurationException
 from util.address_validator import AddressValidator
 from util.client_utils import clear_terminal_chars, not_indicator_line
 
@@ -88,6 +89,9 @@ class WalletClientManager(SimpleClientManager):
         for alias, pkh in self.contr_dict_by_alias.items():
             if pkh.startswith("KT"):
                 manager = self.get_manager_for_contract(pkh)
+                if manager not in self.addr_dict_by_pkh:
+                    raise ConfigurationException("Manager pkh {} not found in known addresses".format(manager))
+
                 manager_sk = self.addr_dict_by_pkh[manager]['sk']
 
                 self.address_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk,
