@@ -93,7 +93,8 @@ class BakingYamlConfParser(YamlConfParser):
             raise Exception("Payment address must be set")
 
         if len(pymnt_addr) == PKH_LENGHT and (pymnt_addr.startswith("KT") or pymnt_addr.startswith("tz")):
-            addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pymnt_addr)
+
+            addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pymnt_addr)
 
             self.check_sk(addr_obj, pymnt_addr)
 
@@ -104,10 +105,7 @@ class BakingYamlConfParser(YamlConfParser):
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
 
-                if self.wllt_clnt_mngr.has_known_addr_by_pkh(pkh):
-                    addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pkh)
-                else:
-                    addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
+                addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
 
                 self.check_sk(addr_obj, pkh)
 
