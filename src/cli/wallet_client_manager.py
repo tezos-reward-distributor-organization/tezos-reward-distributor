@@ -34,7 +34,7 @@ class WalletClientManager(SimpleClientManager):
         try:
             AddressValidator("manager").validate(manager)
         except Exception as e:
-            raise Exception("Invalid response from client '{}'".format(response),e)
+            raise Exception("Invalid response from client '{}'".format(response), e)
         self.managers[pkh] = manager
 
         return manager
@@ -52,6 +52,21 @@ class WalletClientManager(SimpleClientManager):
             print("Manager address is : {}".format(manager))
 
         return manager
+
+    def get_addr_dict(self):
+        if not self.address_dict:
+            self.generate_address_dict()
+
+        return self.address_dict
+
+    def get_addr_dict_by_pkh(self, pkh):
+        if not self.address_dict:
+            self.generate_address_dict()
+
+        if pkh not in self.contr_dict_by_alias:
+            raise Exception("Address(PKH) {} is not imported to client. Import it first.".format(pkh))
+
+        return self.address_dict[pkh]
 
     def generate_address_dict(self):
         if self.address_dict is not None:
@@ -82,11 +97,9 @@ class WalletClientManager(SimpleClientManager):
 
         response = clear_terminal_chars(response)
 
-        dict = self.__parse_list_known_contracts_response(response)
+        dict = self.parse_list_known_contracts_response(response)
 
         return dict
-
-
 
     def __list_known_addresses_by_pkh(self):
 
@@ -125,13 +138,19 @@ class WalletClientManager(SimpleClientManager):
 
         return self.addr_dict_by_pkh[pkh]
 
+    def has_known_addr_by_pkh(self, pkh):
+
+        if self.addr_dict_by_pkh is None:
+            self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
+
+        return pkh in self.addr_dict_by_pkh
+
     def get_known_addrs_by_pkh(self):
 
         if self.addr_dict_by_pkh is None:
             self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
 
         return self.addr_dict_by_pkh
-
 
     def parse_list_known_addresses_response(self, response):
         dict = {}
@@ -144,8 +163,8 @@ class WalletClientManager(SimpleClientManager):
                 if ':' in pkh_plus_braces:
                     pkh, sk_section = pkh_plus_braces.split(":", maxsplit=1)
                 else:
-                    pkh=pkh_plus_braces.strip()
-                    sk_section=""
+                    pkh = pkh_plus_braces.strip()
+                    sk_section = ""
                 sk_known = "sk known" in sk_section
                 pkh = pkh.strip()
                 alias = alias.strip()
@@ -156,7 +175,7 @@ class WalletClientManager(SimpleClientManager):
 
         return dict
 
-    def __parse_list_known_contracts_response(self, response):
+    def parse_list_known_contracts_response(self, response):
         dict = {}
         for line in response.splitlines():
             line = line.strip()

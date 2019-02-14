@@ -94,8 +94,8 @@ class BakingYamlConfParser(YamlConfParser):
 
         if len(pymnt_addr) == PKH_LENGHT and (pymnt_addr.startswith("KT") or pymnt_addr.startswith("tz")):
             addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pymnt_addr)
-            if not addr_obj['sk']:
-                raise Exception("No secret key for Address Obj {}".format(addr_obj))
+
+            self.check_sk(addr_obj, pymnt_addr)
 
             conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
             conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
@@ -104,10 +104,12 @@ class BakingYamlConfParser(YamlConfParser):
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
 
-                addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pkh)
+                if self.wllt_clnt_mngr.has_known_addr_by_pkh(pkh):
+                    addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pkh)
+                else:
+                    addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
 
-                if not addr_obj['sk']:
-                    raise Exception("No secret key for Address Obj {} with alias {}".format(addr_obj, pymnt_addr))
+                self.check_sk(addr_obj, pkh)
 
                 conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KTALS if pkh.startswith("KT") else AddrType.TZALS
                 conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pkh
@@ -116,6 +118,10 @@ class BakingYamlConfParser(YamlConfParser):
             else:
                 raise Exception("Payment Address ({}) cannot be translated into a PKH or alias. "
                                 "If it is an alias import it first. ".format(pymnt_addr))
+
+    def check_sk(self, addr_obj, pkh):
+        if not addr_obj['sk']:
+            raise Exception("No secret key for Address Obj {} with PKH {}".format(addr_obj, pkh))
 
     def __validate_baking_address(self, baking_address):
 
