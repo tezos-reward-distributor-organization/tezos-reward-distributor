@@ -39,4 +39,4 @@ class SimpleClientManager:
             if "Signature" in line:
                 return line.strip("Signature:").strip()
 
-        raise Exception("Signature not found in response '{}'".format(response.replace('\n', '')))
+        raise Exception("Signature not found in response '{}'. Signed with {}".format(response.replace('\n'), 'key_name'))

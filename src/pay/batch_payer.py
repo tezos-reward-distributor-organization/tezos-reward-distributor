@@ -61,7 +61,7 @@ class BatchPayer():
                 raise Exception("pymnt_addr cannot be translated into a PKH or alias: {}".format(self.pymnt_addr))
 
         self.manager = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.source)['manager']
-        self.manager_alias = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.source)['alias']
+        self.manager_alias = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.manager)['alias']
 
         logger.debug("Payment address is {}".format(self.source))
         logger.debug("Signing address is {}, manager alias is {}".format(self.manager, self.manager_alias))
