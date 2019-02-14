@@ -56,7 +56,8 @@ class BatchPayer():
         else:
             known_contracts = self.wllt_clnt_mngr.get_known_contracts_by_alias()
             if self.pymnt_addr in known_contracts:
-                self.source = known_contracts[self.pymnt_addr]
+                self.source = known_contracts[self.pymnt_addr]['manager']
+                logger.debug("Payment source is {}".format(self.source))
             else:
                 raise Exception("pymnt_addr cannot be translated into a PKH or alias: {}".format(self.pymnt_addr))
 
