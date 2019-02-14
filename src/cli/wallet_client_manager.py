@@ -121,7 +121,7 @@ class WalletClientManager(SimpleClientManager):
             self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
 
         if pkh not in self.addr_dict_by_pkh:
-            raise Exception("Address {} is not imported to client. Import it first.".format(pkh))
+            raise Exception("Address(PKH) {} is not imported to client. Import it first.".format(pkh))
 
         return self.addr_dict_by_pkh[pkh]
 

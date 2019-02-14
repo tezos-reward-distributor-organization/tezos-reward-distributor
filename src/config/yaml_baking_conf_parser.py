@@ -104,7 +104,8 @@ class BakingYamlConfParser(YamlConfParser):
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
 
-                addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pymnt_addr)
+                addr_obj = self.wllt_clnt_mngr.get_known_addr_by_pkh(pkh)
+
                 if not addr_obj['sk']:
                     raise Exception("No secret key for Address Obj {} with alias {}".format(addr_obj, pymnt_addr))
 
