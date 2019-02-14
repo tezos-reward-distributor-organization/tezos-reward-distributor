@@ -94,7 +94,7 @@ class WalletClientManager(SimpleClientManager):
 
         response = clear_terminal_chars(response)
 
-        dict = self.__parse_list_known_addresses_response(response)
+        dict = self.parse_list_known_addresses_response(response)
 
         return dict
 
@@ -133,7 +133,7 @@ class WalletClientManager(SimpleClientManager):
         return self.addr_dict_by_pkh
 
 
-    def __parse_list_known_addresses_response(self, response):
+    def parse_list_known_addresses_response(self, response):
         dict = {}
 
         for line in response.splitlines():
@@ -141,7 +141,11 @@ class WalletClientManager(SimpleClientManager):
             if ":" in line and not_indicator_line(line):
                 alias, pkh_plus_braces = line.split(":", maxsplit=1)
                 pkh_plus_braces = pkh_plus_braces.replace(' (', ':')
-                pkh, sk_section = pkh_plus_braces.split(":", maxsplit=1)
+                if ':' in pkh_plus_braces:
+                    pkh, sk_section = pkh_plus_braces.split(":", maxsplit=1)
+                else:
+                    pkh=pkh_plus_braces.strip()
+                    sk_section=""
                 sk_known = "sk known" in sk_section
                 pkh = pkh.strip()
                 alias = alias.strip()
