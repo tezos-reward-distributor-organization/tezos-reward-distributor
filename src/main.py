@@ -80,7 +80,7 @@ def main(args):
 
     logger.info("Loading baking configuration file {}".format(config_file_path))
 
-    wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers)
+    wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers,verbose=args.verbose)
 
     parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr)
     parser.parse()
