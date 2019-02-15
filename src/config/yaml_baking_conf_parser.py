@@ -24,7 +24,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.__validate_share_map(conf_obj, FOUNDERS_MAP)
         self.__validate_share_map(conf_obj, OWNERS_MAP)
         self.__validate_service_fee(conf_obj)
-        self.__validate_baking_address(conf_obj[BAKING_ADDRESS])
+        self.__validate_baking_address(conf_obj)
         self.__validate_payment_address(conf_obj)
         self.__validate_min_delegation_amt(conf_obj)
         self.__validate_address_set(conf_obj, SUPPORTERS_SET)
@@ -88,6 +88,9 @@ class BakingYamlConfParser(YamlConfParser):
                                          format(conf_obj[MIN_DELEGATION_AMT], MIN_DELEGATION_AMT))
 
     def __validate_payment_address(self, conf_obj):
+        if PAYMENT_ADDRESS not in conf_obj or not conf_obj[PAYMENT_ADDRESS]:
+            raise ConfigurationException("Payment address must be set")
+
         pymnt_addr = conf_obj[(PAYMENT_ADDRESS)]
 
         if not pymnt_addr:
@@ -122,10 +125,11 @@ class BakingYamlConfParser(YamlConfParser):
         if not addr_obj['sk']:
             raise ConfigurationException("No secret key for Address Obj {} with PKH {}".format(addr_obj, pkh))
 
-    def __validate_baking_address(self, baking_address):
-
-        if not baking_address:
+    def __validate_baking_address(self, conf_obj):
+        if BAKING_ADDRESS not in conf_obj or not conf_obj[BAKING_ADDRESS]:
             raise ConfigurationException("Baking address must be set")
+
+        baking_address= conf_obj[BAKING_ADDRESS]
 
         # key_name must has a length of 36 and starts with tz or KT, an alias is not expected
         if len(baking_address) == PKH_LENGHT:
