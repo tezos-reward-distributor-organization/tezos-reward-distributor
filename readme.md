@@ -8,7 +8,10 @@ Version 3 comes with some major modifications. Configuration is moved to YAML fi
 
 In order to mitigate migration process users, Version 3 comes with a migration script (migrate.py) to copy old reports and generate a new configration file from BusinessConfig(X).py.
 
-Stay tuned!
+For more information, you can see our wiki page:
+
+https://github.com/habanoz/tezos-reward-distributor/wiki/Migration-to-V3
+
 
 ### Tezos Reward Distributor
 
@@ -69,7 +72,7 @@ Also ensure that your payment address public key is known before it can be used 
 
 https://tezos.gitlab.io/master/api/cli-commands.html
 
-The most common use case is run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done. 
+The most common use case is to run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done. 
 
 ```
 python3 src/main.py <paymentaddress>
@@ -99,12 +102,18 @@ Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 python3 src/main.py -D -N ZERONET -C 30 -M 3 <paymentaddress>
 ```
 
-### Business Configuration:
+### Baking Configuration:
 
-Business configuration contains baker and delegator specific setting. Edit file BusinessConfiguration.py. Start by setting your baking address. Then set your delegation fee. If there are delegators with special rates, speciy them in specials_map. If your stake is owned by multiple parties specify them in owners_map with ratios. If baker is run by multiple founders set them in founders_map.
+Each baker has its own policy. A payment system should be flexable enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. Baking address is used as name to the configuraion file. This is the application is designed to support payments for multiple bakers. For multiple baker support wait a litle bit more.  
 
-Thats all.
+For example configuration please see tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml file. 
 
+Available configuration parameters are:
+- baking_address : Address of the baker. It must be an implicit account (tz1). No alias is allowed.
+- payment_address : This is the address where payments will done. An address can only be used for payments if it satifies following criteria:
+  - Public key of the address must be revealed. See tezos command line interface on how to run reveal command on tezos client. If an address is registered as delegate, there is no need to run reveal command.
+  - Secret key of the address must be known. If the payment address is an implicit address (tz), its secret key must be imported. If payment address is an originated address (KT), secret key of the manager address must be imported.
+  - If secret key is encrypted, tezos-signer must be used to sign payments. 
 
 ### Linux Service
 
@@ -143,7 +152,6 @@ fee.ini file contains details about transaction fees. Currently the fee value sp
 
 https://zeronet.tzscan.io/opCnDj8bpr5ACrbLSqy4BDCMsNiY8Y34bvnm2hj7MvcxaRiu5tu
 
-`delegator_pays_xfer_fee` - Set this to 'true' if you want the transaction fee to be deducted from the delegator's reward. Set this to 'false' if the baker will pay the transfer fee.
 
 ### Contributions
 Please refer to contributions guide on wiki pages.
