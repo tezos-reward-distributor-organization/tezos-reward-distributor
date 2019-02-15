@@ -37,8 +37,8 @@ class BakingYamlConfParser(YamlConfParser):
     def process(self):
         conf_obj = self.get_conf_obj()
         conf_obj[SERVICE_FEE] = conf_obj[SERVICE_FEE] / 100.0
-        conf_obj[(FULL_SUPPORTERS_SET)] = \
-            conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(conf_obj[OWNERS_MAP].keys())
+        conf_obj[FULL_SUPPORTERS_SET] = set(
+            conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(conf_obj[OWNERS_MAP].keys()))
 
     def __validate_share_map(self, conf_obj, map_name):
         """
@@ -129,7 +129,7 @@ class BakingYamlConfParser(YamlConfParser):
         if BAKING_ADDRESS not in conf_obj or not conf_obj[BAKING_ADDRESS]:
             raise ConfigurationException("Baking address must be set")
 
-        baking_address= conf_obj[BAKING_ADDRESS]
+        baking_address = conf_obj[BAKING_ADDRESS]
 
         # key_name must has a length of 36 and starts with tz or KT, an alias is not expected
         if len(baking_address) == PKH_LENGHT:
@@ -166,7 +166,8 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[set_name] = set()
             return
 
-        if not conf_obj[set_name]:  # empty sets are evaluated as dict
+        # empty sets are evaluated as dict
+        if not conf_obj[set_name] and (isinstance(conf_obj[set_name], dict) or isinstance(conf_obj[set_name], list)):
             conf_obj[set_name] = set()
             return
 
@@ -189,7 +190,7 @@ class BakingYamlConfParser(YamlConfParser):
         if not self.__validate_non_negative_int(conf_obj[scale_name]):
             raise ConfigurationException(
                 "Invalid value:'{}'. {} parameter value must be an non negative integer or None. ".
-                format(conf_obj[scale_name], scale_name))
+                    format(conf_obj[scale_name], scale_name))
 
     def __validate_non_negative_int(self, param_value):
         try:
