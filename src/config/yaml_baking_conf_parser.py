@@ -32,7 +32,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.__validate_specials_map(conf_obj)
         self.__validate_scale(conf_obj, PYMNT_SCALE)
         self.__validate_scale(conf_obj, PRCNT_SCALE)
-        self.__parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE)
+        self.__parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
 
     def process(self):
         conf_obj = self.get_conf_obj()
@@ -205,10 +205,11 @@ class BakingYamlConfParser(YamlConfParser):
 
         return True
 
-    def __parse_bool(self, conf_obj, param_name):
+    def __parse_bool(self, conf_obj, param_name, default):
 
         if param_name not in conf_obj:
-            conf_obj[param_name] = False
+            conf_obj[param_name] = default
+            return
 
         # already a bool value
         if type(conf_obj[param_name]) == type(False):
