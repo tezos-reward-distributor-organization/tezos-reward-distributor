@@ -5,6 +5,7 @@ import os
 import queue
 import sys
 import time
+from datetime import datetime
 
 from Constants import RunMode
 from NetworkConfiguration import network_config_map
@@ -66,6 +67,25 @@ def main(args):
     if 'addresses_by_pkh' in master_cfg:
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
+    # 3- load payments file
+    payments_file = os.path.expanduser(args.payments_file)
+    if not os.path.isfile(payments_file):
+        raise Exception("payments_file ({}) does not exist.".format(payments_file))
+
+    with open(payments_file, 'r') as file:
+        payment_lines = file.readlines()
+
+    payments_dict = {}
+    for line in payment_lines:
+        pkh, amt = line.split(":")
+        pkh = pkh.strip()
+        amt = float(amt.strip())
+
+        payments_dict[pkh] = amt
+
+    if not payments_dict:
+        raise Exception("No payments to process")
+
     # 4- get client path
     network_config = network_config_map[args.network]
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
@@ -101,12 +121,19 @@ def main(args):
         time.sleep(1)
         c.start()
 
+    base_name_no_ext = os.path.basename(payments_file)
+    base_name_no_ext = os.path.splitext(base_name_no_ext)[0]
+    now = datetime.now()
+    now_str = now.strftime("%Y%m%d%H%M%S")
+    file_name = base_name_no_ext + "_" + now_str
+
     payment_items = []
-    for key, value in args.payments_dict.items():
-        payment_items.append(PaymentRecord.ManualInstance(key, value))
+    for key, value in payments_dict.items():
+        payment_items.append(PaymentRecord.ManualInstance(file_name, key, value))
 
     payments_queue.put(payment_items)
     payments_queue.put([PaymentRecord.ExitInstance()])
+
 
 def get_baking_configuration_file(config_dir):
     config_file = None
@@ -150,19 +177,15 @@ if __name__ == '__main__':
     parser.add_argument("paymentaddress",
                         help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
                              "to sign for the address, it is necessary to use an alias.")
-    parser.add_argument("payments_dict", type=json.loads,
-                        help="Dictionary of payments in JSON format containing payment data as payee:payment_amount. "
-                             "Example input (Note that double quotes are escaped): "
-                             "{\\\"tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc\\\":12.5, "
-                             "\\\"KT1PaXuhDRWwNT9hMDCphS3b9o4vTQgPnLjh\\\":3.234, \\\"kt_or_tz_alias\\\":12}")
+    parser.add_argument("payments_file", help="File of payment lines. Each line should contain PKH:amount. "
+                                              "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33")
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
     parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
     parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
-                        help="Run without injecting payments. Suitable for testing. Does not require locking.",
-                        action="store_true", default=True)
+                        help="Run without injecting payments. Suitable for testing. Does not require locking.", default=True)
     parser.add_argument("-E", "--executable_dirs",
                         help="Comma separated list of directories to search for client executable. Prefer single "
                              "location when setting client directory. If -d is set, point to location where tezos docker "
