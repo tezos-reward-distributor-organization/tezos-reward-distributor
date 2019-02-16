@@ -25,8 +25,8 @@ def count_and_log_failed(payment_logs, pymnt_cycle):
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr, verbose=None,
-                 dry_run=None):
+    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
+                 verbose=None, dry_run=None, delegator_pays_xfer_fee=True):
         super(PaymentConsumer, self).__init__()
 
         self.name = name
@@ -38,7 +38,8 @@ class PaymentConsumer(threading.Thread):
         self.verbose = verbose
         self.dry_run = dry_run
         self.mm = EmailManager()
-        self.wllt_clnt_mngr=wllt_clnt_mngr
+        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
 
         logger.debug('Consumer "%s" created', self.name)
 
@@ -65,7 +66,7 @@ class PaymentConsumer(threading.Thread):
                 # payment_log = regular_payer.pay(payment_items[0], self.verbose, dry_run=self.dry_run)
                 # payment_logs = [payment_log]
 
-                batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr)
+                batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr, self.delegator_pays_xfer_fee)
 
                 # 3- do the payment
                 payment_logs = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)

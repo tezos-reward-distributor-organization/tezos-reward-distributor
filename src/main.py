@@ -144,7 +144,7 @@ def main(args):
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run)
+                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run, delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee())
         time.sleep(1)
         c.start()
 

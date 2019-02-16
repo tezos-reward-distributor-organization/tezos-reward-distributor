@@ -29,7 +29,7 @@ DUMMY_FEE = 1000
 
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_xfer_fee):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
@@ -46,8 +46,17 @@ class BatchPayer():
         self.gas_limit = kttx['gas_limit']
         self.storage_limit = kttx['storage_limit']
         self.default_fee = kttx['fee']
+
+        # section below is left to make sure no one using legacy configuration option
         self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee',
                                                          fallback=True)  # Must use getboolean otherwise parses as string
+
+        if not self.delegator_pays_xfer_fee:
+            raise Exception("delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
+
+        self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
+
+        logger.debug("Transfer fee is paid by {}".format("Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
 
         # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
         if len(self.pymnt_addr) == PKH_LENGHT and (

@@ -117,7 +117,8 @@ def main(args):
         c = PaymentConsumer(name='manual_payment_consumer', payments_dir=payments_root,
                             key_name=args.paymentaddress,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run)
+                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
+                            delegator_pays_xfer_fee=False)
         time.sleep(1)
         c.start()
 
@@ -185,7 +186,8 @@ if __name__ == '__main__':
     parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
     parser.add_argument("-D", "--dry_run",
-                        help="Run without injecting payments. Suitable for testing. Does not require locking.", default=True)
+                        help="Run without injecting payments. Suitable for testing. Does not require locking.",
+                        default=True)
     parser.add_argument("-E", "--executable_dirs",
                         help="Comma separated list of directories to search for client executable. Prefer single "
                              "location when setting client directory. If -d is set, point to location where tezos docker "
