@@ -7,8 +7,8 @@ Documentation=https://github.com/habanoz/tezos-reward-distributor
 Type=simple
 WorkingDirectory=<ABS_PATH_TO_BASE>
 PIDFile=<ABS_PATH_TO_BASE>/lock
-ExecStart=python3 <ABS_PATH_TO_BASE>/src/main.py <OPTIONS>
-ExecStop=python3 <ABS_PATH_TO_BASE>/src/stop.py
+ExecStart=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/main.py <OPTIONS>
+ExecStop=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/stop.py
 
 [Install]
 WantedBy=multi-user.target
