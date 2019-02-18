@@ -52,9 +52,6 @@ class TzScanRewardApiImpl(RewardApi):
     def rand_mirror(self):
         mirror = random.randint(1, 6)
 
-        if mirror == 4:# has problem lately
-            mirror = 3
-
         return mirror
 
     def get_rewards_for_cycle_map(self, cycle, verbose=False):

@@ -73,7 +73,7 @@ def test_tzscan_reward_calculator():
         "tz1YRewYxRtxk57gTbaj5wANdSRmhwEf77Bz")
     reward_list = tzScanRewardApi.get_rewards_for_cycle_map(250)
 
-    tzscanRewardCalculator = TzScanRewardCalculatorApi(set(), reward_list, set())
+    tzscanRewardCalculator = TzScanRewardCalculatorApi(set(), reward_list, 0, set())
     rewards, total_rewards = tzscanRewardCalculator.calculate()
     i = 0
     reward_sum = 0
