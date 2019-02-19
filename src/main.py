@@ -187,7 +187,7 @@ class ReleaseOverrideAction(argparse.Action):
         if not -11 <= values:
             parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
 
-        setattr(namespace, "realase_override", values)
+        setattr(namespace, "release_override", values)
 
 
 if __name__ == '__main__':
