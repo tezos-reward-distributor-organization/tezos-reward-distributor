@@ -126,11 +126,14 @@ Available configuration parameters are:
 
 ### Linux Service
 
-It is possible to add tezos-reward-distributer as a Linux service. It can run in the background. In order to set up the service run following command:
+It is possible to add tezos-reward-distributer as a Linux service. It can run in the background. In order to set up the service with default configuration arguments, run the following command:
 
 ```
-sudo python3 service_add.py paymentaddress
+sudo python3 service_add.py
 ```
+
+Note: If you do not want to use the default arguments, append any arguments you wish to change after service_add.py. They will be appended to main.py call.
+
 
 It will create a service file and use it to enable the service. Once enabled use following commands to start/stop the service.
 
