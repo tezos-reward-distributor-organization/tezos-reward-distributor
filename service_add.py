@@ -14,6 +14,7 @@ def main():
 
     with open(path_template, 'r') as template_file:
         content = template_file.read()
+        content = content.replace("<USER>", os.getlogin())
         content = content.replace("<PYTHON_PATH>", python_executable)
         content = content.replace("<ABS_PATH_TO_BASE>", dir_path)
         content = content.replace("<OPTIONS>", ' '.join(sys.argv[1:]))

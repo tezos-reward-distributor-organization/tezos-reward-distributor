@@ -5,6 +5,7 @@ Documentation=https://github.com/habanoz/tezos-reward-distributor
 
 [Service]
 Type=simple
+User=<USER>
 WorkingDirectory=<ABS_PATH_TO_BASE>
 PIDFile=<ABS_PATH_TO_BASE>/lock
 ExecStart=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/main.py <OPTIONS>
