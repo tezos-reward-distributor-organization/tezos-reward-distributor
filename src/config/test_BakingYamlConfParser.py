@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from cli.wallet_client_manager import WalletClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 
@@ -15,8 +16,19 @@ class TestYamlAppConfParser(TestCase):
         service_fee : 4.53  
         """
 
-        managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = BakingYamlConfParser(data_fine, dict(), managers)
+        managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
+                    'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
+        contr_dict_by_alias = {}
+        addr_dict_by_pkh = {
+            "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
+                                                     "alias": "main1", "sk": True,
+                                                     "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}}
+
+        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias, managers=managers)
+        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager)
+
+
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -40,7 +52,18 @@ class TestYamlAppConfParser(TestCase):
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = BakingYamlConfParser(data_no_founders, dict(), managers_map)
+
+
+        contr_dict_by_alias = {}
+        addr_dict_by_pkh = {
+            "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
+                                                     "alias": "main1", "sk": True,
+                                                     "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}}
+
+        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager)
+
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -70,9 +93,17 @@ class TestYamlAppConfParser(TestCase):
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
                         'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
 
-        known_contracts = {'ktPay': 'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
+        contr_dict_by_alias = {'ktPay': 'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
+        addr_dict_by_pkh = {
+            "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
+                                                     "alias": "ktPay", "sk": True,
+                                                     "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}}
 
-        cnf_prsr = BakingYamlConfParser(data_no_founders, known_contracts, managers_map)
+        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager)
+
+
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -105,7 +136,15 @@ class TestYamlAppConfParser(TestCase):
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
                     'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = BakingYamlConfParser(data_fine, dict(), managers)
+        contr_dict_by_alias = {}
+        addr_dict_by_pkh = {
+            "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
+                                                     "alias": "main1", "sk": True,
+                                                     "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}}
+
+        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias, managers=managers)
+        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -135,9 +174,23 @@ class TestYamlAppConfParser(TestCase):
         excluded_delegators_set : {}
         """
 
+
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
                     'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        cnf_prsr = BakingYamlConfParser(data_fine, dict(), managers)
+
+        contr_dict_by_alias = {}
+        addr_dict_by_pkh = {
+            "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
+                                                     "alias": "main1", "sk": True,
+                                                     "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"},
+            "KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": True,
+                                                     "alias": "kt1", "sk": True,
+                                                     "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}
+        }
+
+        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias, managers=managers)
+        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
