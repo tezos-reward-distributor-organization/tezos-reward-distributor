@@ -51,11 +51,11 @@ def main(args):
     bkg_cfg_dict['excluded_delegators_set'] = excluded_delegators_set
 
     if args.verbose:
-        dump = yaml.dump(bkg_cfg_dict, default_flow_style=False)
+        dump = yaml.dump(bkg_cfg_dict, default_flow_style=True)
         logger.info("Generated yaml configuration {}".format(dump))
 
     with open(config_file_path, 'w') as outfile:
-        yaml.dump(bkg_cfg_dict, outfile, default_flow_style=False)
+        yaml.dump(bkg_cfg_dict, outfile, default_flow_style=True)
 
     legacy_reports_dir = os.path.expanduser(args.legacy_reports_dir)
     legacy_payments_root = get_payment_root(legacy_reports_dir, create=False)
@@ -71,12 +71,16 @@ def main(args):
     successful_payments_dir = get_successful_payments_dir(payments_root, create=True)
     failed_payments_dir = get_failed_payments_dir(payments_root, create=True)
 
-    logger.info("Copy success logs")
-    copy_files(legacy_successful_payments_dir, successful_payments_dir, args.verbose)
-    logger.info("Copy fail logs")
-    copy_files(legacy_failed_payments_dir, failed_payments_dir, args.verbose)
-    logger.info("Copy calculation logs")
-    copy_files(legacy_calculations_root, calculations_root, args.verbose)
+    if os.path.isdir(legacy_successful_payments_dir):
+        logger.info("Copy success logs")
+        copy_files(legacy_successful_payments_dir, successful_payments_dir, args.verbose)
+
+    if os.path.isdir(legacy_failed_payments_dir):
+        logger.info("Copy fail logs")
+        copy_files(legacy_failed_payments_dir, failed_payments_dir, args.verbose)
+    if os.path.isdir(legacy_calculations_root):
+        logger.info("Copy calculation logs")
+        copy_files(legacy_calculations_root, calculations_root, args.verbose)
 
 
 def copy_files(src, dest, verbose):
