@@ -1,15 +1,12 @@
-from util.fee_validator import FeeValidator
-
-
 class ServiceFeeCalculator:
     def __init__(self, supporters_set, specials_map, standard_fee):
         self.supporters_set = supporters_set
-        self.specials_map = specials_map
-        self.standard_fee = standard_fee
+        self.specials_map = {}
 
-        for address, fee in self.specials_map.items():
-            fee_validator = FeeValidator(address)
-            fee_validator.validate(fee)
+        self.standard_fee = standard_fee / 100.0
+
+        for addr, ratio in specials_map.items():
+            self.specials_map[addr] = ratio / 100.0
 
     def calculate(self, ktAddress):
         service_fee = self.standard_fee

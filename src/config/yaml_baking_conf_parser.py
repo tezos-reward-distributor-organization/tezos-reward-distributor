@@ -39,7 +39,7 @@ class BakingYamlConfParser(YamlConfParser):
 
     def process(self):
         conf_obj = self.get_conf_obj()
-        conf_obj[SERVICE_FEE] = conf_obj[SERVICE_FEE] / 100.0
+
         conf_obj[FULL_SUPPORTERS_SET] = set(
             conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(conf_obj[OWNERS_MAP].keys()))
 
