@@ -1,10 +1,11 @@
 from unittest import TestCase
 
+import NetworkConfiguration
 from cli.wallet_client_manager import WalletClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 
-
+network={'NAME': 'MAINNET'}
 class TestYamlAppConfParser(TestCase):
     def test_validate(self):
         data_fine = """
@@ -26,7 +27,7 @@ class TestYamlAppConfParser(TestCase):
 
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
                                                     contr_dict_by_alias=contr_dict_by_alias, managers=managers)
-        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager)
+        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager, network_config=network)
 
 
         cnf_prsr.parse()
@@ -62,7 +63,7 @@ class TestYamlAppConfParser(TestCase):
 
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
                                                     contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
-        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager,network_config=network)
 
         cnf_prsr.parse()
         cnf_prsr.validate()
@@ -101,7 +102,7 @@ class TestYamlAppConfParser(TestCase):
 
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
                                                     contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
-        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager,network_config=network)
 
 
         cnf_prsr.parse()
@@ -144,7 +145,7 @@ class TestYamlAppConfParser(TestCase):
 
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
                                                     contr_dict_by_alias=contr_dict_by_alias, managers=managers)
-        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager)
+        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager,network_config=network)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
@@ -190,7 +191,7 @@ class TestYamlAppConfParser(TestCase):
 
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
                                                     contr_dict_by_alias=contr_dict_by_alias, managers=managers)
-        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager)
+        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager,network_config=network)
         cnf_prsr.parse()
         cnf_prsr.validate()
 
