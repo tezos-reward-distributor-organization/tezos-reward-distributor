@@ -1,8 +1,6 @@
-from calc.calculate_phase_base import CalculatePhaseBase
+from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
 from model.reward_log import RewardLog
 from util.rounding_command import RoundingCommand
-
-MUTEZ = 1e+6
 
 
 class CalculatePhase1(CalculatePhaseBase):
@@ -10,13 +8,14 @@ class CalculatePhase1(CalculatePhaseBase):
     At phase 1, share of the excluded delegators remains in the staking balance. Remaining rewards are distributed among other delegators.
     """
 
-    def __init__(self, excluded_set, prcnt_rm=RoundingCommand(None)) -> None:
+    def __init__(self, excluded_set, min_delegation_amount=None, prcnt_rm=RoundingCommand(None)) -> None:
         """
         :param excluded_set: set of address to exclude from rewards. Excluded rewards will leave at staking balance. Total reward will be updated.
         :param prcnt_rm: RoundingCommand object for percentage calculations. Since this is the first layer in calculations RoundingCommand(None) is recommended to avoid rounding.
         """
         super().__init__()
 
+        self.min_delegation_amount = min_delegation_amount
         self.prcnt_rm = prcnt_rm
         self.excluded_set = excluded_set
         self.phase = 1
@@ -39,7 +38,11 @@ class CalculatePhase1(CalculatePhaseBase):
         for rl0 in reward_data0:
             total_balance += rl0.balance
             if rl0.address in self.excluded_set:
-                rl0.skip(desc="Excluded at phase1", phase=self.phase)
+                rl0.skip(desc=BY_CONFIGURATION, phase=self.phase)
+                rewards.append(rl0)
+                total_balance_excluded += rl0.balance
+            elif self.min_delegation_amount is not None and rl0.balance < self.min_delegation_amount:
+                rl0.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 rewards.append(rl0)
                 total_balance_excluded += rl0.balance
             else:
@@ -66,7 +69,7 @@ class CalculatePhase1(CalculatePhaseBase):
             if rl0.address in self.excluded_set:
                 total_excluded_ratio += rl0.ratio
             else:
-                rewards.append(RewardLog(rl0, rl0.ratio))# not upto date anymore
+                rewards.append(RewardLog(rl0, rl0.ratio))  # not upto date anymore
         # We need to distribute excluded ratios among remaining records
         # a,b,c,d -> b*(1+(a/1-a)), c*(1+(a/1-a)), d*(1+ (a/1-a)) -> (1+(a/1-a))*(b,c,d)
         # calculate 1+(a/1-a)

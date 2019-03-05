@@ -1,11 +1,8 @@
-import random
 import requests
 
-import NetworkConfiguration
-from api.reward_api import RewardApi
 from exception.tzscan import TzScanException
-
 from log_config import main_logger
+from thirdparty.tzscan.tzscan_utility import rand_mirror
 
 MAX_PER_PAGE = 50
 
@@ -20,10 +17,10 @@ API = {'MAINNET': {'API_URL': 'http://api%MIRROR%.tzscan.io/v1/'},
        }
 
 
-class TzScanRewardApiImpl(RewardApi):
+class TzScanRewardProviderHelper:
 
     def __init__(self, nw, baking_address):
-        super(TzScanRewardApiImpl, self).__init__()
+        super(TzScanRewardProviderHelper, self).__init__()
 
         self.api = API[nw['NAME']]
         if self.api is None:
@@ -31,8 +28,8 @@ class TzScanRewardApiImpl(RewardApi):
 
         self.baking_address = baking_address
 
-    def get_nb_delegators(self, cycle, verbose=False):
-        uri = self.api['API_URL'].replace("%MIRROR%", str(self.rand_mirror())) + nb_delegators_call.format(
+    def __get_nb_delegators(self, cycle, verbose=False):
+        uri = self.api['API_URL'].replace("%MIRROR%", str(rand_mirror())) + nb_delegators_call.format(
             self.baking_address, cycle)
 
         if verbose:
@@ -49,18 +46,10 @@ class TzScanRewardApiImpl(RewardApi):
 
         return root
 
-    def rand_mirror(self):
-        mirror = random.randint(1, 6)
 
-        # mirror 4 not working
-        if mirror == 4:
-            mirror = 3
-
-        return mirror
-
-    def get_rewards_for_cycle_map(self, cycle, verbose=False):
+    def get_rewards_for_cycle(self, cycle, verbose=False):
         #############
-        nb_delegators = self.get_nb_delegators(cycle, verbose)[0]
+        nb_delegators = self.__get_nb_delegators(cycle, verbose)[0]
         nb_delegators_remaining = nb_delegators
 
         p = 0
@@ -70,7 +59,7 @@ class TzScanRewardApiImpl(RewardApi):
                 "lost_fees_denounciation": 0}
 
         while nb_delegators_remaining > 0:
-            uri = self.api['API_URL'].replace("%MIRROR%", str(self.rand_mirror())) + rewards_split_call. \
+            uri = self.api['API_URL'].replace("%MIRROR%", str(rand_mirror())) + rewards_split_call. \
                 format(self.baking_address, cycle, p, MAX_PER_PAGE)
 
             if verbose:
@@ -96,10 +85,3 @@ class TzScanRewardApiImpl(RewardApi):
             p = p + 1
 
         return root
-
-
-if __name__ == '__main__':
-    api = TzScanRewardApiImpl(NetworkConfiguration.network_config_map['ZERONET'],
-                              "tz1YZReTLamLhyPLGSALa4TbMhjjgnSi2cqP")
-    root = api.get_rewards_for_cycle_map(2539)
-    print(root)

@@ -2,13 +2,13 @@ from unittest import TestCase
 
 from calc.calculate_phase0_tzscan import CalculatePhase0
 from model import reward_log
-from tzscan.tzscan_reward_api import TzScanRewardApiImpl
+from thirdparty.tzscan.tzscan_reward_provider_helper import TzScanRewardProviderHelper
 
 
 class TestCalculatePhase0(TestCase):
 
     def test_calculate(self):
-        reward_api = TzScanRewardApiImpl({"NAME": "MAINNET"}, "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj")
+        reward_api = TzScanRewardProviderHelper({"NAME": "MAINNET"}, "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj")
         raw_reward_data = reward_api.get_rewards_for_cycle_map(43)
 
         phase0 = CalculatePhase0()
@@ -27,7 +27,7 @@ class TestCalculatePhase0(TestCase):
             delegator_balance = delegators_balances[i]
             delegator_balance_amount = delegator_balance[1]
 
-            #ratio must be equal to stake/total staking balance
+            # ratio must be equal to stake/total staking balance
             self.assertEqual(int(delegator_balance_amount) / staking_balance, reward_data[i].ratio0)
 
         # last one is owners record

@@ -1,26 +1,23 @@
-import csv
-import threading
-
 import _thread
-
+import csv
+import os
+import threading
 import time
 
-import os
-
 from Constants import RunMode
-from calc.payment_calculator import PaymentCalculator
+from calc.phased_payment_calculator import PahsedPaymentCalculator
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from pay.double_payment_check import check_past_payment
-from tzscan.tzscan_block_api import TzScanBlockApiImpl
-from tzscan.tzscan_reward_api import TzScanRewardApiImpl
-from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
+from thirdparty.tzscan.tzscan_block_api import TzScanBlockApiImpl
+from thirdparty.tzscan.tzscan_reward_provider import TzScanRewardProvider
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
 from util.rounding_command import RoundingCommand
 
 logger = main_logger
 
+MUTEZ=1e+6
 
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
@@ -31,7 +28,7 @@ class PaymentProducer(threading.Thread):
         self.owners_map = baking_cfg.get_owners_map()
         self.founders_map = baking_cfg.get_founders_map()
         self.excluded_delegators_set = baking_cfg.get_excluded_delegators_set()
-        self.min_delegation_amt = baking_cfg.get_min_delegation_amount()
+        self.min_delegation_amt_in_mutez = baking_cfg.get_min_delegation_amount()*MUTEZ
         self.pymnt_scale = baking_cfg.get_payment_scale()
         self.prcnt_scale = baking_cfg.get_percentage_scale()
 
@@ -100,27 +97,34 @@ class PaymentProducer(threading.Thread):
                         logger.info("Payment cycle is " + str(payment_cycle))
 
                         # 1- get reward data
-                        reward_api = TzScanRewardApiImpl(self.nw_config, self.baking_address)
-                        reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
+                        reward_provider = TzScanRewardProvider(self.nw_config, self.baking_address)
+                        reward_provider_model = reward_provider.provide_for_cycle(payment_cycle, self.verbose)
 
-                        # 2- make payment calculations from reward data
-                        pymnt_logs, total_rewards = self.make_payment_calculations(payment_cycle, reward_data)
+                        # 2- calculate rewards
+                        prcnt_rm = RoundingCommand(self.prcnt_scale)
+                        pymnt_rm = RoundingCommand(self.pymnt_scale)
+                        self.payment_dest_dict = {}
+                        payment_calc = PahsedPaymentCalculator(self.founders_map, self.owners_map,
+                                                               self.payment_dest_dict,
+                                                               self.fee_calc, payment_cycle, prcnt_rm, pymnt_rm,
+                                                               self.min_delegation_amt_in_mutez)
+                        reward_logs, total_amount = payment_calc.calculate(reward_provider_model)
 
                         # 3- check for past payment evidence for current cycle
                         past_payment_state = check_past_payment(self.payments_root, payment_cycle)
-                        if not self.dry_run and total_rewards > 0 and past_payment_state:
+                        if not self.dry_run and total_amount > 0 and past_payment_state:
                             logger.warn(past_payment_state)
-                            total_rewards = 0
+                            total_amount = 0
 
                         # 4- if total_rewards > 0, proceed with payment
-                        if total_rewards > 0:
+                        if total_amount > 0:
                             report_file_path = get_calculation_report_file(self.calculations_dir, payment_cycle)
 
                             # 5- send to payment consumer
-                            self.payments_queue.put(pymnt_logs)
+                            self.payments_queue.put(reward_logs)
 
                             # 6- create calculations report file. This file contains calculations details
-                            self.create_calculations_report(payment_cycle, pymnt_logs, report_file_path, total_rewards)
+                            self.create_calculations_report(payment_cycle, reward_logs, report_file_path, total_amount)
 
                         # 7- next cycle
                         # processing of cycle is done
@@ -201,28 +205,6 @@ class PaymentProducer(threading.Thread):
                 logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
                             payment_cycle, pymnt_log.address, pymnt_log.payment, pymnt_log.fee,
                             pymnt_log.type)
-
-    def make_payment_calculations(self, payment_cycle, reward_data):
-
-        if reward_data["delegators_nb"] == 0:
-            logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
-            return [], 0
-
-        rc = RoundingCommand(self.prcnt_scale)
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, self.min_delegation_amt,
-                                                self.excluded_delegators_set, rc)
-
-        rewards, total_rewards = reward_calc.calculate()
-
-        logger.info("Total rewards={}".format(total_rewards))
-
-        if total_rewards == 0: return [], 0
-        fm, om = self.founders_map, self.owners_map
-        rouding_command = RoundingCommand(self.pymnt_scale)
-        pymnt_calc = PaymentCalculator(fm, om, rewards, total_rewards, self.fee_calc, payment_cycle, rouding_command)
-        payment_logs = pymnt_calc.calculate()
-
-        return payment_logs, total_rewards
 
     @staticmethod
     def create_exit_payment():

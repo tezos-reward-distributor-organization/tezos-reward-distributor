@@ -1,6 +1,5 @@
-from calc.calculate_phase_base import CalculatePhaseBase
+from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
 from model.payment_log import PaymentRecord
-from model.reward_log import RewardLog
 from util.rounding_command import RoundingCommand
 
 MUTEZ = 1e+6
@@ -11,9 +10,10 @@ class CalculatePhase2(CalculatePhaseBase):
     At phase 2, share of the excluded delegators are distributed among other delegators. Total reward distributed remains the same.
     """
 
-    def __init__(self, excluded_set, prcnt_rm=RoundingCommand(None)) -> None:
+    def __init__(self, excluded_set, min_delegation_amount=None, prcnt_rm=RoundingCommand(None)) -> None:
         super().__init__()
 
+        self.min_delegation_amount = min_delegation_amount
         self.prcnt_rm = prcnt_rm
         self.excluded_set = excluded_set
         self.phase = 2
@@ -42,12 +42,15 @@ class CalculatePhase2(CalculatePhaseBase):
             total_balance += rl1.balance
 
             if rl1.address in self.excluded_set:
-                rl1.skip(desc="Skipped at phase 2", phase=self.phase)
+                rl1.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 rewards.append(rl1)
-
+                total_balance_excluded += rl1.balance
+            elif self.min_delegation_amount is not None and rl1.balance < self.min_delegation_amount:
+                rl1.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
+                rewards.append(rl1)
                 total_balance_excluded += rl1.balance
             else:
-                # -1 will be replaced with actual ratio, read below
+                # ratio2 will be replaced with actual ratio, read below
                 rewards.append(rl1)
 
         new_total_balance = total_balance - total_balance_excluded
@@ -57,26 +60,4 @@ class CalculatePhase2(CalculatePhaseBase):
             rl2.ratio2 = self.prcnt_rm.round(rl2.balance / new_total_balance)
 
         # total reward amount remains the same
-        return rewards, total_amount
-
-    def old_method(self, reward_data, total_amount):
-        total_excluded_ratio = 0.0
-        rewards = []
-        # calculate how rewards will be distributed
-        for pr in reward_data:
-            if pr.address in self.excluded_set:
-                total_excluded_ratio += pr.ratio
-            else:
-                rewards.append(PaymentRecord(address=pr.address, ratio=pr.ratio, type=pr.type))
-
-        # We need to distribute excluded ratios among remaining records
-        # a,b,c,d -> b*(1+(a/1-a)), c*(1+(a/1-a)), d*(1+ (a/1-a)) -> (1+(a/1-a))*(b,c,d)
-
-        # calculate 1+(a/1-a)
-        multiplier = 1 + total_excluded_ratio / (1 - total_excluded_ratio)
-
-        # for each record, calculate new ratio
-        for pr in rewards:
-            pr.ratio = self.prcnt_rm.round(pr.ratio * multiplier)
-
         return rewards, total_amount

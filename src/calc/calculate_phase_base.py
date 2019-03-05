@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 import itertools
 
+BY_CONFIGURATION = "Excluded by configuration"
+BY_MIN_DELEGATION = "Excluded by min delegation"
 
 class CalculatePhaseBase(ABC):
 

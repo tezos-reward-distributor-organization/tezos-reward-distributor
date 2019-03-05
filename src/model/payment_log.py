@@ -2,18 +2,20 @@ from Constants import EXIT_PAYMENT_TYPE
 
 
 class PaymentRecord():
-    def __init__(self, cycle=None, address=None, ratio=None, fee_rate=None, reward=None, fee=None, type=None,
-                 payment=None, paid=False, hash=""):
+    def __init__(self, cycle=None, address=None, ratio=None, fee_ratio=None, reward=None, fee=None, type=None,
+                 payment=None, paid=False, hash="", pay=True, fee_rate=None):
         self.cycle = cycle
         self.address = address
         self.ratio = ratio
         self.fee_rate = fee_rate
+        self.fee_ratio = fee_ratio
         self.reward = reward
         self.fee = fee
         self.type = type
         self.payment = payment
         self.paid = paid
         self.hash = hash
+        self.pay = pay
 
     @staticmethod
     def BakerInstance(cycle, address, reward):
@@ -53,7 +55,11 @@ class PaymentRecord():
 
         return items
 
+    @staticmethod
+    def owners_key():
+        return "OWNERS"
+
     def __str__(self):
-        return "cycle = {}, address={}, ratio={}, fee_rate={}, reward={}, fee={}, type={}, payment={}, paid={}, hash={}" \
+        return "cycle = {}, address={}, ratio={}, fee_rate={}, reward={}, fee={}, type={}, payment={}, paid={}, hash={} pay={}" \
             .format(self.cycle, self.address, self.ratio, self.fee_rate, self.reward, self.fee, self.type, self.payment,
-                    self.paid, self.hash)
+                    self.paid, self.hash, self.pay)

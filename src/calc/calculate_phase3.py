@@ -1,4 +1,4 @@
-from calc.calculate_phase_base import CalculatePhaseBase
+from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
 from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
 from util.rounding_command import RoundingCommand
 
@@ -12,9 +12,11 @@ class CalculatePhase3(CalculatePhaseBase):
     Fee rates are set at this stage.
     """
 
-    def __init__(self, service_fee_calculator, excluded_set, prcnt_rm=RoundingCommand(None)) -> None:
+    def __init__(self, service_fee_calculator, excluded_set, min_delegation_amount=None,
+                 prcnt_rm=RoundingCommand(None)) -> None:
         super().__init__()
 
+        self.min_delegation_amount = min_delegation_amount
         self.excluded_set = excluded_set
         self.prcnt_rm = prcnt_rm
         self.fee_calc = service_fee_calculator
@@ -32,9 +34,12 @@ class CalculatePhase3(CalculatePhaseBase):
         # exclude requested items
         for rl2 in self.filterskipped(reward_data2):
             if rl2.address in self.excluded_set:
-                rl2.skip(desc="Skipped at phase 3", phase=self.phase)
+                rl2.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 rewards.append(rl2)
-
+                total_excluded_ratio += rl2.ratio2
+            elif self.min_delegation_amount is not None and rl2.balance < self.min_delegation_amount:
+                rl2.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
+                rewards.append(rl2)
                 total_excluded_ratio += rl2.ratio2
             else:
                 rewards.append(rl2)

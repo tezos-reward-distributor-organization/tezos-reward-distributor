@@ -4,7 +4,7 @@ from exception.configuration import ConfigurationException
 from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, EXCLUDED_DELEGATORS_SET, \
     PYMNT_SCALE, PRCNT_SCALE, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE
-from tzscan.tzscan_block_api import TzScanBlockApiImpl
+from thirdparty.tzscan.tzscan_block_api import TzScanBlockApiImpl
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 

@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
 
-class RewardApi(ABC):
+class RewardProviderApi(ABC):
     def __init__(self):
         super().__init__()
 
     @abstractmethod
-    def get_rewards_for_cycle_map(self, cycle, verbose=False):
+    def provide_for_cycle(self, cycle, verbose=False):
         pass

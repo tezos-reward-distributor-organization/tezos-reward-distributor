@@ -1,6 +1,5 @@
 from unittest import TestCase
 
-import NetworkConfiguration
 from cli.wallet_client_manager import WalletClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
