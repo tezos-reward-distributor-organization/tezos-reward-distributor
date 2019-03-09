@@ -52,7 +52,8 @@ class BatchPayer():
                                                          fallback=True)  # Must use getboolean otherwise parses as string
 
         if not self.delegator_pays_xfer_fee:
-            raise Exception("delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
+            raise Exception(
+                "delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
 
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
 
@@ -224,8 +225,10 @@ class BatchPayer():
             raise Exception("Signature '{}' is not in expected format".format(signed_bytes))
 
         if len(decoded_signature) != 128:  # must be 64 bytes
-            raise Exception(
+            # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
+            logger.warn(
                 "Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
+            return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
