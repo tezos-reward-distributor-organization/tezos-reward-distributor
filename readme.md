@@ -2,16 +2,6 @@
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
 
-### Version 3
-
-Version 3 comes with some major modifications. Configuration is moved to YAML files. Reports are stored under a directory named with baking address and default reporting directory is moved to user home. 
-
-In order to mitigate migration process users, Version 3 comes with a migration script (migrate.py) to copy old reports and generate a new configration file from BusinessConfig(X).py.
-
-For more information, you can see our wiki page:
-
-https://github.com/habanoz/tezos-reward-distributor/wiki/Migration-to-V3
-
 
 ### Tezos Reward Distributor
 
@@ -64,49 +54,43 @@ For a list of parameters, run:
 python3 src/main.py --help
 ```
 
-The only mandatory parameter is 'paymentaddress'. It can be a public key hash or a an alias. It is used to make payments from.
-
-Please note that, if tezos signer is used, it is necessary to use the alias. Otherwise, the client will not know that it should use the signer.
-
-Also ensure that your payment address public key is known before it can be used for payments. Please check reveal command in tezos cli interface.
-
-https://tezos.gitlab.io/master/api/cli-commands.html
-
 The most common use case is to run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done. 
 
 ```
-python3 src/main.py <paymentaddress>
+python3 src/main.py
 ```
 
 Make payments for a single cycle:
 
 ```
-python3 src/main.py -C 42 -M 3  <paymentaddress>
+python3 src/main.py -C 42 -M 3 
 ```
 
 Make pending payments and stop:
 
 ```
-python3 src/main.py -M 2  <paymentaddress>
+python3 src/main.py -M 2
 ```
 
 Make pending payments beginning from a cycle and stop:
 
 ```
-python3 src/main.py -C 30 -M 2 <paymentaddress>
+python3 src/main.py -C 30 -M 2
 ```
 
 Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 
 ```
-python3 src/main.py -D -N ZERONET -C 30 -M 3 <paymentaddress>
+python3 src/main.py -D -N ZERONET -C 30 -M 3
 ```
 
 ### Baking Configuration:
 
-Each baker has its own policy. A payment system should be flexable enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. Baking address is used as name to the configuraion file. This is the application is designed to support payments for multiple bakers. For multiple baker support wait a litle bit more.  
+Each baker has its own policy. A payment system should be flexable enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. 
 
-For example configuration please see tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml file. 
+By default configuration files are kept under ~/pymnt/cfg directory. Configuration directory can be changed with "-f" configuration option. Name of a configuration file should be the baker's address (e.g. tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).  
+
+For example configuration, please see tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml file in repository home directory. You can start by renaming and copying the example file to configuration directory. 
 
 Available configuration parameters are:
 - baking_address : Address of the baker. It must be an implicit account (tz1). No alias is allowed.
@@ -122,7 +106,7 @@ Available configuration parameters are:
  - pymnt_scale : This parameter is used to set scaling for payment calculations. A payment amount is rounded down according to this scale. For example if payment amount is 3.45678 and pymnt_scale is 3, actual payment amount will be 3.456. If you want to turn rounding off set this value to None.
  - prcnt_scale : This parameter is used to set scaling for percentage calculations. A percentage amount is rounded down according to this scale. For example if a delegator owns 4.123456 % of total rewards and prcnt_scale is 4, actual reward percentage will be 4.1234. If you want to turn rounding off set this value to None.
  - delegator_pays_xfer_fee : Default value is true. If set to false, transfer fee for each payment is paid by the delegate. Otherwise, transfer fee is deducted from the delegator reward.
- 
+
 
 ### Linux Service
 
