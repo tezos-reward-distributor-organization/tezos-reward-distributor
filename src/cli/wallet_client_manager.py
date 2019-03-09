@@ -90,9 +90,10 @@ class WalletClientManager(SimpleClientManager):
             if pkh.startswith("KT"):
                 manager = self.get_manager_for_contract(pkh)
                 if manager not in self.addr_dict_by_pkh:
-                    raise ConfigurationException("Manager pkh {} not found in known addresses".format(manager))
-
-                manager_sk = self.addr_dict_by_pkh[manager]['sk']
+                    # raise ConfigurationException("Manager pkh {} not found in known addresses".format(manager))
+                    manager_sk = None
+                else:
+                    manager_sk = self.addr_dict_by_pkh[manager]['sk']
 
                 self.address_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk,
                                           "manager": manager}
