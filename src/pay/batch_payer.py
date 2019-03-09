@@ -246,6 +246,3 @@ class BatchPayer():
 
         return True, operation_hash
 
-
-if __name__ == '__main__':
-    payer = BatchPayer("127.0.0.1:8273", "~/zeronet.sh client", "mybaker")

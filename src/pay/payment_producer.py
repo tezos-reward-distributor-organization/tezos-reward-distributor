@@ -8,6 +8,7 @@ from Constants import RunMode
 from calc.phased_payment_calculator import PahsedPaymentCalculator
 from log_config import main_logger
 from model.payment_log import PaymentRecord
+from model.rules_model import RulesModel
 from pay.double_payment_check import check_past_payment
 from thirdparty.tzscan.tzscan_block_api import TzScanBlockApiImpl
 from thirdparty.tzscan.tzscan_reward_provider import TzScanRewardProvider
@@ -17,18 +18,19 @@ from util.rounding_command import RoundingCommand
 
 logger = main_logger
 
-MUTEZ=1e+6
+MUTEZ = 1e+6
+
 
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
                  dry_run, verbose=False):
         super(PaymentProducer, self).__init__()
+        self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(),baking_cfg.get_excluded_set_toe(),baking_cfg.get_excluded_set_tof(),baking_cfg.get_dest_map())
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
         self.founders_map = baking_cfg.get_founders_map()
-        self.excluded_delegators_set = baking_cfg.get_excluded_delegators_set()
-        self.min_delegation_amt_in_mutez = baking_cfg.get_min_delegation_amount()*MUTEZ
+        self.min_delegation_amt_in_mutez = baking_cfg.get_min_delegation_amount() * MUTEZ
         self.pymnt_scale = baking_cfg.get_payment_scale()
         self.prcnt_scale = baking_cfg.get_percentage_scale()
 
@@ -103,11 +105,10 @@ class PaymentProducer(threading.Thread):
                         # 2- calculate rewards
                         prcnt_rm = RoundingCommand(self.prcnt_scale)
                         pymnt_rm = RoundingCommand(self.pymnt_scale)
-                        self.payment_dest_dict = {}
+
                         payment_calc = PahsedPaymentCalculator(self.founders_map, self.owners_map,
-                                                               self.payment_dest_dict,
                                                                self.fee_calc, payment_cycle, prcnt_rm, pymnt_rm,
-                                                               self.min_delegation_amt_in_mutez)
+                                                               self.min_delegation_amt_in_mutez, self.rules_model)
                         reward_logs, total_amount = payment_calc.calculate(reward_provider_model)
 
                         # 3- check for past payment evidence for current cycle

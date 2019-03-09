@@ -1,4 +1,5 @@
 from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
+from model.baking_conf import MIN_DELEGATION_KEY
 from model.payment_log import PaymentRecord
 from util.rounding_command import RoundingCommand
 
@@ -45,7 +46,7 @@ class CalculatePhase2(CalculatePhaseBase):
                 rl1.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 rewards.append(rl1)
                 total_balance_excluded += rl1.balance
-            elif self.min_delegation_amount is not None and rl1.balance < self.min_delegation_amount:
+            elif MIN_DELEGATION_KEY in self.excluded_set and rl1.balance < self.min_delegation_amount:
                 rl1.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 rewards.append(rl1)
                 total_balance_excluded += rl1.balance

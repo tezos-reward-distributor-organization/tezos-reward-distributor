@@ -34,13 +34,15 @@ class CalculatePhase4(CalculatePhaseBase):
                     rl4 = RewardLog(addr, TYPE_FOUNDER, 0)
                     # new ratio is parent ratio * ratio of the founder
                     rl4.ratio4 = self.prcnt_rm.round(ratio * rl3.ratio3)
+                    rl4.parent = rl3
                     rewards.append(rl4)
 
             elif rl3.type == TYPE_OWNERS_PARENT:
                 for addr, ratio in self.owners_map.items():
-                    rl4 = RewardLog(addr, TYPE_OWNER, 0)
+                    rl4 = RewardLog(addr, TYPE_OWNER, ratio * rl3.balance)
                     # new ratio is parent ratio * ratio of the owner
                     rl4.ratio4 = self.prcnt_rm.round(ratio * rl3.ratio3)
+                    rl4.parent = rl3
                     rewards.append(rl4)
             else:
                 rl3.ratio4 = rl3.ratio3

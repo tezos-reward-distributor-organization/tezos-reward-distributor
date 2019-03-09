@@ -19,6 +19,7 @@ class RewardLog:
         super().__init__()
         self.balance = balance
         self.address = address
+        self.pymntaddress = address
         self.type = type
         self.desc = ""
         self.skipped = False
@@ -31,9 +32,11 @@ class RewardLog:
         self.ratio5 = None
 
     @staticmethod
-    def RewardLog5(addr, type, ratio5):
-        rl5 = RewardLog(addr, type, None)
-        rl5.ratio5 = ratio5
+    def RewardLog5(addr, parents):
+        total_balance = sum([rl4.balance for rl4 in parents])
+        rl5 = RewardLog(addr, TYPE_MERGED, total_balance)
+        rl5.parents = parents
+        rl5.ratio5 = sum([rl4.ratio4 for rl4 in parents])
 
         return rl5
 
@@ -47,9 +50,13 @@ class RewardLog:
 
         return self
 
+    def __repr__(self) -> str:
+        return "address: %s, type: %s, balance: %s, disabled:%s" % (self.address, self.type, self.balance, self.skipped)
+
 
 def cmp(rl1, rl2):
-    types={TYPE_DELEGATOR:5,TYPE_OWNER:4,TYPE_FOUNDER:3,TYPE_OWNERS_PARENT:2,TYPE_FOUNDERS_PARENT:1,TYPE_MERGED:0}
+    types = {TYPE_DELEGATOR: 5, TYPE_OWNER: 4, TYPE_FOUNDER: 3, TYPE_OWNERS_PARENT: 2, TYPE_FOUNDERS_PARENT: 1,
+             TYPE_MERGED: 0}
     if rl1.skipped == rl2.skipped:
         if rl1.type == rl2.type:
             if rl1.balance == rl2.balance:
