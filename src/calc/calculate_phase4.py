@@ -36,6 +36,8 @@ class CalculatePhase4(CalculatePhaseBase):
                     rl4 = RewardLog(addr, TYPE_FOUNDER, 0)
                     # new ratio is parent ratio * ratio of the founder
                     rl4.ratio4 = self.prcnt_rm.round(ratio * rl3.ratio3)
+                    rl4.service_fee_ratio = 0
+                    rl4.service_fee_rate = 0
                     rl4.parent = rl3
                     rewards.append(rl4)
 
@@ -48,6 +50,8 @@ class CalculatePhase4(CalculatePhaseBase):
                     rl4 = RewardLog(addr, TYPE_OWNER, ratio * rl3.balance)
                     # new ratio is parent ratio * ratio of the owner
                     rl4.ratio4 = self.prcnt_rm.round(ratio * rl3.ratio3)
+                    rl4.service_fee_ratio = 0
+                    rl4.service_fee_rate = 0
                     rl4.parent = rl3
                     rewards.append(rl4)
 

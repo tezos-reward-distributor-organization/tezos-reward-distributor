@@ -1,7 +1,7 @@
 import functools
 
 from calc.calculate_phase_base import CalculatePhaseBase
-from model.reward_log import RewardLog, cmp, TYPE_FOUNDER, TYPE_OWNER, TYPE_MERGED, TYPE_DELEGATOR
+from model.reward_log import RewardLog, cmp, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from util.rounding_command import RoundingCommand
 
 MUTEZ = 1e+6
@@ -28,7 +28,7 @@ class CalculatePhaseFinal(CalculatePhaseBase):
         for rl in rewards:
             rl.ratio = rl.ratio5
             rl.amount = self.rm_pymnt.round(rl.ratio * total_amount)
-            rl.payable = rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_MERGED, TYPE_DELEGATOR]
+            rl.payable = rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR]
             rl.cycle = self.cycle
             rl.service_fee_amount = self.rm_pymnt.round(rl.service_fee_ratio * total_amount)
 

@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from calc.calculate_phase4 import CalculatePhase4
-from calc.service_fee_calculator import ServiceFeeCalculator
 from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT, TYPE_OWNER, TYPE_OWNERS_PARENT, TYPE_FOUNDER
 
 

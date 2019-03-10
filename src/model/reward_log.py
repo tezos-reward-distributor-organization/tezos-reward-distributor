@@ -5,7 +5,9 @@ TYPE_FOUNDER = "F"
 TYPE_OWNER = "O"
 TYPE_OWNERS_PARENT = "OWNERS_PARENT"
 TYPE_FOUNDERS_PARENT = "FOUNDERS_PARENT"
-TYPE_MERGED = "MERGED"
+
+
+# TYPE_MERGED = "MERGED"
 
 
 class RunMode(Enum):
@@ -31,16 +33,6 @@ class RewardLog:
         self.ratio4 = None
         self.ratio5 = None
 
-    # convenience constructor for level 5
-    @staticmethod
-    def RewardLog5(addr, parents):
-        total_balance = sum([rl4.balance for rl4 in parents])
-        rl5 = RewardLog(addr, TYPE_MERGED, total_balance)
-        rl5.parents = parents
-        rl5.ratio5 = sum([rl4.ratio4 for rl4 in parents])
-
-        return rl5
-
     def skip(self, desc, phase):
         if self.skipped:
             return
@@ -56,8 +48,7 @@ class RewardLog:
 
 
 def cmp(rl1, rl2):
-    types = {TYPE_DELEGATOR: 5, TYPE_OWNER: 4, TYPE_FOUNDER: 3, TYPE_OWNERS_PARENT: 2, TYPE_FOUNDERS_PARENT: 1,
-             TYPE_MERGED: 0}
+    types = {TYPE_DELEGATOR: 5, TYPE_OWNER: 4, TYPE_FOUNDER: 3, TYPE_OWNERS_PARENT: 2, TYPE_FOUNDERS_PARENT: 1}
     if rl1.skipped == rl2.skipped:
         if rl1.type == rl2.type:
             if rl1.balance == rl2.balance:

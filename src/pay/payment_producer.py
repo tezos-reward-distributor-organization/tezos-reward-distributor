@@ -5,7 +5,7 @@ import threading
 import time
 
 from Constants import RunMode
-from calc.phased_payment_calculator import PahsedPaymentCalculator
+from calc.phased_payment_calculator import PhasedPaymentCalculator
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from model.rules_model import RulesModel
@@ -106,7 +106,7 @@ class PaymentProducer(threading.Thread):
                         prcnt_rm = RoundingCommand(self.prcnt_scale)
                         pymnt_rm = RoundingCommand(self.pymnt_scale)
 
-                        payment_calc = PahsedPaymentCalculator(self.founders_map, self.owners_map,
+                        payment_calc = PhasedPaymentCalculator(self.founders_map, self.owners_map,
                                                                self.fee_calc, payment_cycle, prcnt_rm, pymnt_rm,
                                                                self.min_delegation_amt_in_mutez, self.rules_model)
                         reward_logs, total_amount = payment_calc.calculate(reward_provider_model)
@@ -195,16 +195,19 @@ class PaymentProducer(threading.Thread):
             writer.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
 
             for pymnt_log in payment_logs:
+                if pymnt_log.skipped:
+                    continue
+
                 # write row to csv file
                 writer.writerow([pymnt_log.address, pymnt_log.type,
                                  "{0:f}".format(pymnt_log.ratio),
-                                 "{0:f}".format(pymnt_log.reward),
-                                 "{0:f}".format(pymnt_log.fee_rate),
-                                 "{0:f}".format(pymnt_log.payment),
-                                 "{0:f}".format(pymnt_log.fee)])
+                                 "{0:f}".format(pymnt_log.service_fee_amount+pymnt_log.amount),
+                                 "{0:f}".format(pymnt_log.service_fee_rate),
+                                 "{0:f}".format(pymnt_log.amount),
+                                 "{0:f}".format(pymnt_log.service_fee_amount)])
 
                 logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
-                            payment_cycle, pymnt_log.address, pymnt_log.payment, pymnt_log.fee,
+                            payment_cycle, pymnt_log.address, pymnt_log.amount, pymnt_log.service_fee_rate,
                             pymnt_log.type)
 
     @staticmethod

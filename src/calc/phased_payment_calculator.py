@@ -5,17 +5,19 @@ from calc.calculate_phase3 import CalculatePhase3
 from calc.calculate_phase4 import CalculatePhase4
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase_final import CalculatePhaseFinal
-from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, TYPE_MERGED
+from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT
+
+MINOR_DIFF = 1e-6
 
 
-class PahsedPaymentCalculator:
+class PhasedPaymentCalculator:
     """
     -- Phase0 : Provider Phase
     -- Phase1 : Total Rewards Phase
     -- Phase2 : Ratios Phase
     -- Phase3 : Founders Phase
     -- Phase4 : Split Phase
-    -- Phase5 : Merge Phase
+    -- Phase5 : Mapping Phase
     -- Phase Last : Payment Phase
     """
 
@@ -76,14 +78,9 @@ class PahsedPaymentCalculator:
         phase5 = CalculatePhase5(self.rules_model.dest_map)
         rwrd_logs, total_rwrd_amnt = phase5.calculate(rwrd_logs, total_rwrd_amnt)
 
-        merged_test_dict = {rl.ratio5: sum([prl.ratio4 for prl in rl.parents]) for rl in rwrd_logs if
-                            rl.type == TYPE_MERGED}
-        for ratio5, parents_total_ratio4 in merged_test_dict.items():
-            assert ratio5 == parents_total_ratio4
-
         phase_last = CalculatePhaseFinal(self.cycle, self.pymnt_rm)
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert sum([rl.amount for rl in rwrd_logs if not rl.skipped]) == total_rwrd_amnt
+        assert abs(total_rwrd_amnt - sum([rl.amount for rl in rwrd_logs if not rl.skipped])) < MINOR_DIFF
 
         return rwrd_logs, total_rwrd_amnt
