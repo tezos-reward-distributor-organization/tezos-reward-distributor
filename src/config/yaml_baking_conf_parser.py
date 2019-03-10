@@ -70,6 +70,10 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[map_name] = dict()
             return
 
+        if not conf_obj[map_name]:
+            conf_obj[map_name] = dict()
+            return
+
         if isinstance(conf_obj[map_name], str) and conf_obj[map_name].lower() == 'none':
             conf_obj[map_name] = dict()
             return

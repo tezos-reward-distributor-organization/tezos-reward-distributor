@@ -11,6 +11,7 @@ class CalculatePhase5(CalculatePhaseBase):
     At stage 5, merge payments.
     Set pymntaddress for each payment. By default, address and payment address have the same value.
     Some delegators may request payments to be done to a different address. Payment address change is done at this phase.
+    Payments to the same destination are merged.
     """
 
     def __init__(self, addr_dest_dict) -> None:
