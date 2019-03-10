@@ -8,6 +8,8 @@ MUTEZ = 1e+6
 
 class CalculatePhase3(CalculatePhaseBase):
     """
+    -- Phase3 : Founders Phase --
+
     At stage 3, Founders record is created. Founders record is later on splitted into founder records, for each founder.
     If any address is excluded at this stage, its reward is given to founders.
     Fee rates are set at this stage.

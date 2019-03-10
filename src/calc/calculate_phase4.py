@@ -7,6 +7,8 @@ MUTEZ = 1e+6
 
 class CalculatePhase4(CalculatePhaseBase):
     """
+    -- Phase4 : Split Phase --
+
     At stage 4, Founders_parent and owners_parent records are split into founder and owner records.
 
     If there are 2 owner definition in owners_map, owners_parent record from phase3 will have two phase4 children.

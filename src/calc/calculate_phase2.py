@@ -8,6 +8,8 @@ MUTEZ = 1e+6
 
 class CalculatePhase2(CalculatePhaseBase):
     """
+    -- Phase2 : Ratios Phase --
+
     At phase 2, share of the excluded delegators are distributed among other delegators. Total reward distributed remains the same.
     """
 

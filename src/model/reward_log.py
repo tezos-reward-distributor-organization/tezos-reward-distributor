@@ -31,6 +31,7 @@ class RewardLog:
         self.ratio4 = None
         self.ratio5 = None
 
+    # convenience constructor for level 5
     @staticmethod
     def RewardLog5(addr, parents):
         total_balance = sum([rl4.balance for rl4 in parents])

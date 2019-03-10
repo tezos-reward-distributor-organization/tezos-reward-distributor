@@ -8,6 +8,8 @@ MUTEZ = 1e+6
 
 class CalculatePhase5(CalculatePhaseBase):
     """
+    -- Phase5 : Merge Phase --
+
     At stage 5, merge payments.
     Set pymntaddress for each payment. By default, address and payment address have the same value.
     Some delegators may request payments to be done to a different address. Payment address change is done at this phase.

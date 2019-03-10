@@ -6,7 +6,9 @@ from util.rounding_command import RoundingCommand
 
 class CalculatePhase1(CalculatePhaseBase):
     """
-    At phase 1, share of the excluded delegators remains in the staking balance. Remaining rewards are distributed among other delegators.
+    -- Phase1 : Total Rewards Phase --
+
+    At phase 1, share of the excluded delegators remains in the staking Balance. Remaining rewards are distributed among other delegators.
     """
 
     def __init__(self, excluded_set, min_delegation_amount=None, prcnt_rm=RoundingCommand(None)) -> None:

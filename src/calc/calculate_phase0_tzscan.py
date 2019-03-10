@@ -8,6 +8,8 @@ MUTEZ = 1e+6
 
 class CalculatePhase0(CalculatePhaseBase):
     """
+    -- Phase0 : Provider Phase --
+
     Calculate ratios for each delegator based on tz scan data. @see calculate function.
     """
 
