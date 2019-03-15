@@ -140,8 +140,7 @@ Please refer to contributions guide on wiki pages.
 
 https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Contribute
 
-#### Terms:
+### Funding
 
-- Reward: Coins rewarded by the network for the baking/endorsing operations.
-- Payment: Coins paid to delegators after excluding service fee.
-- freeze cycle: number of cycles rewards are kept frozen by the tezos network. Can be given negative values to let the application make future payments.
+TRD is an open source project and will stay like this. It is not funded by any organization. A grant request is rejected by Tezos Foundation. However, I will try to continue to enhance the software and support the community.
+
