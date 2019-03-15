@@ -84,30 +84,12 @@ Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 python3 src/main.py -D -N ZERONET -C 30 -M 3
 ```
 
-### Baking Configuration:
+### Baker Configuration:
 
-Each baker has its own policy. A payment system should be flexable enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. 
+Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. 
 
-By default configuration files are kept under ~/pymnt/cfg directory. Configuration directory can be changed with "-f" configuration option. Name of a configuration file should be the baker's address (e.g. tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).  
-
-For example configuration, please see tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml file in repository home directory. You can start by renaming and copying the example file to configuration directory. 
-
-Available configuration parameters are:
-- baking_address : Address of the baker. It must be an implicit account (tz1). No alias is allowed.
-- payment_address : This is the address where payments will done. A PKH or alias of implicit or originated account is accepted. An address can only be used for payments if it satifies following criteria:
-  - Public key of the address must be revealed. See tezos command line interface on how to run reveal command on tezos client. If an address is registered as delegate, there is no need to run reveal command.
-  - Secret key of the address must be known. If the payment address is an implicit address (tz), its secret key must be imported. If payment address is an originated address (KT), secret key of the manager address must be imported.
-  - If secret key is encrypted, tezos-signer must be used to sign payments. For instructions on how to use signer refer to related wikipage: https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-use-tezos-signer
-  - Use of unencrypted secret key is also possible. Unencrypted secret key can be obtained from tezbox web wallet. An unencrypted secret key can be imported to client using the command: `tezos-client import secret key <alias> unencrypted:edskXXXXX`
- - owners_map : A dictionary of PKH and ratio ( decimal in range [0-1]) pairs. Each item in this dict represents PKH of each balance owner and his ratio of the amount he owned in the total baking balance. Implicit or originated addresses are accepted. It is important that sum of all ratios equals to 1. This map is optional if owner do not want to be paid for baking rewards, in this case service fee remains in baking balance.
- - founders_map : A dictionary of PKH and ratio (decimal in range [0-1]) pairs. Each item in this dict represents PKH of each founder and his ratio of the shares coming from service fees. Implicit or originated addresses are accepted. It is important that sum of all ratios equals to 1. This map is optional if founders do not want to be paid from service fees, in this case service fee remains in baking balance.
- - service_fee : A decimal in range [0-100]. This is evaluated as a percentage value. If this value is set to 5, 5% of baking rewards is kept as service fee.
- - supporters_set : A set of PKH values. Each PKH represents a supporter of the baker. Supporters are not charged with service fee. Founders and balance owners are natural supporters, they are not needed to be added. 
- - specials_map : A dictionary of PKH and fee (decimal in range [0-100] ) pairs. This dictionary can be used to set special service fee values for desired delegators.
- - pymnt_scale : This parameter is used to set scaling for payment calculations. A payment amount is rounded down according to this scale. For example if payment amount is 3.45678 and pymnt_scale is 3, actual payment amount will be 3.456. If you want to turn rounding off set this value to None.
- - prcnt_scale : This parameter is used to set scaling for percentage calculations. A percentage amount is rounded down according to this scale. For example if a delegator owns 4.123456 % of total rewards and prcnt_scale is 4, actual reward percentage will be 4.1234. If you want to turn rounding off set this value to None.
- - delegator_pays_xfer_fee : Default value is true. If set to false, transfer fee for each payment is paid by the delegate. Otherwise, transfer fee is deducted from the delegator reward.
-
+An example configuration file is present in the repository. For more information on configuration details please see our wiki page:
+https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
 
 ### Linux Service
 
