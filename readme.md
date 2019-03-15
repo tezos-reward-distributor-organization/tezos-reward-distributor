@@ -14,7 +14,7 @@ Design principals are:
 - Covering different use cases: supporters, special rates, future payments, security deposit owned by multiple parties, fee sharing among founders. Choose which cycle to pay and when to stop the application.
 - Traceability: CSV payment reports with calculation details. Logs for traking application lifecycle.
 - Testability: Dry for seeing results witout making any modification. Support for development networks e.g. zeronet, alphanet.
-- Safety: Payment logs for avoiding multiple payments by mistake. Lock file for avoiding multiple instances running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
+- Safety: Payment logs for avoiding double payments by mistake. Lock file for avoiding multiple instances running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
 
 Features:
 - Reward calculations based on tzscan API.
@@ -90,6 +90,9 @@ Each baker has its own configuration and policy. A payment system should be flex
 
 An example configuration file is present in the repository. For more information on configuration details please see our wiki page:
 https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
+
+TRD is designed to work as a deamon. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
+https://github.com/habanoz/tezos-reward-distributor/wiki/Payment-Address
 
 ### Linux Service
 
