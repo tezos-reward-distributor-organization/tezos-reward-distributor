@@ -3,6 +3,7 @@ import threading
 import os
 
 from Constants import EXIT_PAYMENT_TYPE
+from calc.calculate_phase5 import CalculatePhase5
 from emails.email_manager import EmailManager
 from log_config import main_logger
 from pay.batch_payer import BatchPayer
@@ -26,9 +27,10 @@ def count_and_log_failed(payment_logs, pymnt_cycle):
 
 class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
-                 verbose=None, dry_run=None, delegator_pays_xfer_fee=True):
+                 verbose=None, dry_run=None, delegator_pays_xfer_fee=True, dest_map=None):
         super(PaymentConsumer, self).__init__()
 
+        self.dest_map = dest_map if dest_map else {}
         self.name = name
         self.payments_dir = payments_dir
         self.key_name = key_name
@@ -66,7 +68,11 @@ class PaymentConsumer(threading.Thread):
                 # payment_log = regular_payer.pay(payment_items[0], self.verbose, dry_run=self.dry_run)
                 # payment_logs = [payment_log]
 
-                batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr, self.delegator_pays_xfer_fee)
+                phase5 = CalculatePhase5(self.dest_map)
+                payment_items, _ = phase5.calculate(payment_items, None)
+
+                batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
+                                         self.delegator_pays_xfer_fee)
 
                 # 3- do the payment
                 payment_logs = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)

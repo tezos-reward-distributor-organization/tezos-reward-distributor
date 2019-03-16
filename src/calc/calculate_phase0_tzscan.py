@@ -48,7 +48,8 @@ class CalculatePhase0(CalculatePhaseBase):
 
             ratio = self.prcnt_rm.round(balance / delegate_staking_balance)
             reward_item = RewardLog(address=address, type=reward_log.TYPE_DELEGATOR, balance=balance)
-            reward_item.ratio0 = ratio
+            reward_item.ratio = ratio
+            reward_item.ratio0 = reward_item.ratio
 
             ratio_sum += ratio
 
@@ -56,7 +57,8 @@ class CalculatePhase0(CalculatePhaseBase):
 
         owners_rl = RewardLog(address=reward_log.TYPE_OWNERS_PARENT, type=reward_log.TYPE_OWNERS_PARENT,
                               balance=delegate_staking_balance - total_delegator_balance)
-        owners_rl.ratio0 = (1 - ratio_sum)
+        owners_rl.ratio = (1 - ratio_sum)
+        owners_rl.ratio0 = owners_rl.ratio
 
         reward_logs.append(owners_rl)
 

@@ -1,3 +1,5 @@
+import functools
+
 from calc.calculate_phase0_tzscan import CalculatePhase0
 from calc.calculate_phase1 import CalculatePhase1
 from calc.calculate_phase2 import CalculatePhase2
@@ -5,7 +7,7 @@ from calc.calculate_phase3 import CalculatePhase3
 from calc.calculate_phase4 import CalculatePhase4
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase_final import CalculatePhaseFinal
-from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT
+from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_skip_type_balance, cmp_by_type_balance
 
 MINOR_DIFF = 1e-6
 
@@ -75,11 +77,16 @@ class PhasedPaymentCalculator:
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
 
         # prepare phase 5
-        phase5 = CalculatePhase5(self.rules_model.dest_map)
-        rwrd_logs, total_rwrd_amnt = phase5.calculate(rwrd_logs, total_rwrd_amnt)
+        # phase5 = CalculatePhase5(self.rules_model.dest_map)
+        # rwrd_logs, total_rwrd_amnt = phase5.calculate(rwrd_logs, total_rwrd_amnt)
+
+        for rl in rwrd_logs:
+            rl.ratio = rl.ratio4
 
         phase_last = CalculatePhaseFinal(self.cycle, self.pymnt_rm)
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(rwrd_logs, total_rwrd_amnt)
+
+        rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
         assert abs(total_rwrd_amnt - sum([rl.amount for rl in rwrd_logs if not rl.skipped])) < MINOR_DIFF
 

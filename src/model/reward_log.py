@@ -5,6 +5,7 @@ TYPE_FOUNDER = "F"
 TYPE_OWNER = "O"
 TYPE_OWNERS_PARENT = "OWNERS_PARENT"
 TYPE_FOUNDERS_PARENT = "FOUNDERS_PARENT"
+TYPE_MERGED = "M"
 
 
 # TYPE_MERGED = "MERGED"
@@ -25,13 +26,20 @@ class RewardLog:
         self.type = type
         self.desc = ""
         self.skipped = False
-        self.skippedatphase = None
-        self.ratio0 = None
-        self.ratio1 = None
-        self.ratio2 = None
-        self.ratio3 = None
-        self.ratio4 = None
-        self.ratio5 = None
+        self.skippedatphase = 0
+        self.ratio0 = 0
+        self.ratio1 = 0
+        self.ratio2 = 0
+        self.ratio3 = 0
+        self.ratio4 = 0
+        self.ratio5 = 0
+        self.ratio = 0
+
+        self.service_fee_amount = 0
+        self.service_fee_rate = 0
+        self.service_fee_ratio = 0
+        self.amount = 0
+        self.parents = None
 
     def skip(self, desc, phase):
         if self.skipped:
@@ -47,10 +55,15 @@ class RewardLog:
         return "address: %s, type: %s, balance: %s, disabled:%s" % (self.address, self.type, self.balance, self.skipped)
 
 
-def cmp(rl1, rl2):
-    types = {TYPE_DELEGATOR: 5, TYPE_OWNER: 4, TYPE_FOUNDER: 3, TYPE_OWNERS_PARENT: 2, TYPE_FOUNDERS_PARENT: 1}
+def cmp_by_skip_type_balance(rl1, rl2):
+    types = {TYPE_DELEGATOR: 5, TYPE_OWNER: 4, TYPE_FOUNDER: 3, TYPE_OWNERS_PARENT: 2, TYPE_FOUNDERS_PARENT: 1,
+             TYPE_MERGED: 0}
     if rl1.skipped == rl2.skipped:
         if rl1.type == rl2.type:
+            if rl1.balance is None:
+                return 1
+            if rl2.balance is None:
+                return -1
             if rl1.balance == rl2.balance:
                 return 1
             else:
@@ -62,3 +75,20 @@ def cmp(rl1, rl2):
             return 1
         else:
             return -1
+
+
+def cmp_by_type_balance(rl1, rl2):
+    types = {TYPE_DELEGATOR: 5, TYPE_OWNER: 4, TYPE_FOUNDER: 3, TYPE_OWNERS_PARENT: 2, TYPE_FOUNDERS_PARENT: 1,
+             TYPE_MERGED: 0}
+
+    if rl1.type == rl2.type:
+        if rl1.balance is None:
+            return 1
+        if rl2.balance is None:
+            return -1
+        if rl1.balance == rl2.balance:
+            return 1
+        else:
+            return rl2.balance - rl1.balance
+    else:
+        return types[rl2.type] - types[rl1.type]

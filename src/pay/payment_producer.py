@@ -26,7 +26,8 @@ class PaymentProducer(threading.Thread):
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
                  dry_run, verbose=False):
         super(PaymentProducer, self).__init__()
-        self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(),baking_cfg.get_excluded_set_toe(),baking_cfg.get_excluded_set_tof(),baking_cfg.get_dest_map())
+        self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
+                                      baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
         self.founders_map = baking_cfg.get_founders_map()
@@ -191,24 +192,25 @@ class PaymentProducer(threading.Thread):
         with open(report_file_path, 'w', newline='') as f:
             writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
-            writer.writerow(["address", "type", "ratio", "reward", "fee_rate", "payment", "fee"])
+            writer.writerow(["address", "type", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate"])
             writer.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
 
             for pymnt_log in payment_logs:
-                if pymnt_log.skipped:
-                    continue
-
                 # write row to csv file
                 writer.writerow([pymnt_log.address, pymnt_log.type,
                                  "{0:f}".format(pymnt_log.ratio),
-                                 "{0:f}".format(pymnt_log.service_fee_amount+pymnt_log.amount),
-                                 "{0:f}".format(pymnt_log.service_fee_rate),
+                                 "{0:f}".format(pymnt_log.service_fee_ratio),
                                  "{0:f}".format(pymnt_log.amount),
-                                 "{0:f}".format(pymnt_log.service_fee_amount)])
+                                 "{0:f}".format(pymnt_log.service_fee_amount),
+                                 "{0:f}".format(pymnt_log.service_fee_rate)])
 
-                logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
-                            payment_cycle, pymnt_log.address, pymnt_log.amount, pymnt_log.service_fee_rate,
-                            pymnt_log.type)
+                logger.info(
+                    "Reward created for cycle %s, address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
+                        .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
+                                pymnt_log.amount / MUTEZ,
+                                pymnt_log.service_fee_amount / MUTEZ, pymnt_log.service_fee_rate),
+                    payment_cycle, pymnt_log.address, pymnt_log.type, pymnt_log.skipped, pymnt_log.skippedatphase,
+                    pymnt_log.desc)
 
     @staticmethod
     def create_exit_payment():

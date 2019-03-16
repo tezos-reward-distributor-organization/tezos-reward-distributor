@@ -1,7 +1,5 @@
-import functools
-
 from calc.calculate_phase_base import CalculatePhaseBase
-from model.reward_log import RewardLog, cmp, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
+from model.reward_log import TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from util.rounding_command import RoundingCommand
 
 MUTEZ = 1e+6
@@ -26,7 +24,6 @@ class CalculatePhaseFinal(CalculatePhaseBase):
         # generate new rewards, rewards with the same address are merged
         new_rewards = []
         for rl in rewards:
-            rl.ratio = rl.ratio5
             rl.amount = self.rm_pymnt.round(rl.ratio * total_amount)
             rl.payable = rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR]
             rl.cycle = self.cycle
@@ -36,7 +33,5 @@ class CalculatePhaseFinal(CalculatePhaseBase):
 
         # add skipped rewards
         new_rewards.extend(skipped_rewards)
-
-        new_rewards.sort(key=functools.cmp_to_key(cmp))
 
         return new_rewards, total_amount

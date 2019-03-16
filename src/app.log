@@ -1,0 +1,387 @@
+2019-03-02 00:29:19,747 - main - INFO - MainThread - Tezos Reward Distributor is Starting
+2019-03-02 00:29:19,747 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:29:19,747 - main - INFO - MainThread - Copyright Hüseyin ABANOZ 2019
+2019-03-02 00:29:19,748 - main - INFO - MainThread - huseyinabanox@gmail.com
+2019-03-02 00:29:19,748 - main - INFO - MainThread - Please leave copyright information
+2019-03-02 00:29:19,748 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:29:19,748 - main - INFO - MainThread - Arguments Configuration = {
+ "network": "MAINNET",
+ "reports_dir": "~/pymnt/reports",
+ "config_dir": "~/pymnt/cfg",
+ "node_addr": "127.0.0.1:8732",
+ "dry_run": false,
+ "dry_run_no_payments": false,
+ "executable_dirs": "~/,~/tezos",
+ "docker": false,
+ "verbose": false,
+ "run_mode": 1,
+ "release_override": 0,
+ "payment_offset": 0,
+ "initial_cycle": null
+}
+2019-03-02 00:29:19,749 - main - INFO - MainThread - Loading master configuration file C:\Users\7624/pymnt/cfg\master.yaml
+2019-03-02 00:29:38,971 - main - INFO - MainThread - Tezos Reward Distributor is Starting
+2019-03-02 00:29:38,971 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:29:38,971 - main - INFO - MainThread - Copyright Hüseyin ABANOZ 2019
+2019-03-02 00:29:38,971 - main - INFO - MainThread - huseyinabanox@gmail.com
+2019-03-02 00:29:38,971 - main - INFO - MainThread - Please leave copyright information
+2019-03-02 00:29:38,971 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:29:38,971 - main - INFO - MainThread - Arguments Configuration = {
+ "network": "MAINNET",
+ "reports_dir": "~/pymnt/reports",
+ "config_dir": "~/pymnt/cfg",
+ "node_addr": "127.0.0.1:8732",
+ "dry_run": false,
+ "dry_run_no_payments": false,
+ "executable_dirs": "~/,~/tezos",
+ "docker": true,
+ "verbose": false,
+ "run_mode": 1,
+ "release_override": 0,
+ "payment_offset": 0,
+ "initial_cycle": null
+}
+2019-03-02 00:29:38,971 - main - INFO - MainThread - Loading master configuration file C:\Users\7624/pymnt/cfg\master.yaml
+2019-03-02 00:29:38,971 - main - DEBUG - MainThread - Tezos client path is C:\Users\7624/mainnet.sh client
+2019-03-02 00:30:09,530 - main - INFO - MainThread - Tezos Reward Distributor is Starting
+2019-03-02 00:30:09,530 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:30:09,530 - main - INFO - MainThread - Copyright Hüseyin ABANOZ 2019
+2019-03-02 00:30:09,530 - main - INFO - MainThread - huseyinabanox@gmail.com
+2019-03-02 00:30:09,530 - main - INFO - MainThread - Please leave copyright information
+2019-03-02 00:30:09,530 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:30:09,534 - main - INFO - MainThread - Arguments Configuration = {
+ "network": "MAINNET",
+ "reports_dir": "~/pymnt/reports",
+ "config_dir": "~/pymnt/cfg",
+ "node_addr": "127.0.0.1:8732",
+ "dry_run": false,
+ "dry_run_no_payments": false,
+ "executable_dirs": "~/,~/tezos",
+ "docker": true,
+ "verbose": false,
+ "run_mode": 1,
+ "release_override": 0,
+ "payment_offset": 0,
+ "initial_cycle": null
+}
+2019-03-02 00:30:25,262 - main - INFO - MainThread - Loading master configuration file C:\Users\7624/pymnt/cfg\master.yaml
+2019-03-02 00:30:25,331 - main - DEBUG - MainThread - Tezos client path is C:\Users\7624/mainnet.sh client
+2019-03-02 00:30:25,331 - main - INFO - MainThread - Loading baking configuration file C:\Users\7624/pymnt/cfg\tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj.yaml
+2019-03-02 00:33:39,843 - main - INFO - MainThread - Tezos Reward Distributor is Starting
+2019-03-02 00:33:39,843 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:33:39,843 - main - INFO - MainThread - Copyright Hüseyin ABANOZ 2019
+2019-03-02 00:33:39,843 - main - INFO - MainThread - huseyinabanox@gmail.com
+2019-03-02 00:33:39,843 - main - INFO - MainThread - Please leave copyright information
+2019-03-02 00:33:39,843 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:33:39,844 - main - INFO - MainThread - Arguments Configuration = {
+ "network": "MAINNET",
+ "reports_dir": "~/pymnt/reports",
+ "config_dir": "~/pymnt/cfg",
+ "node_addr": "127.0.0.1:8732",
+ "dry_run": false,
+ "dry_run_no_payments": false,
+ "executable_dirs": "~/,~/tezos",
+ "docker": true,
+ "verbose": false,
+ "run_mode": 1,
+ "release_override": 0,
+ "payment_offset": 0,
+ "initial_cycle": null
+}
+2019-03-02 00:33:39,844 - main - INFO - MainThread - Loading master configuration file C:\Users\7624/pymnt/cfg\master.yaml
+2019-03-02 00:33:39,844 - main - DEBUG - MainThread - Tezos client path is C:\Users\7624/mainnet.sh client
+2019-03-02 00:33:39,844 - main - INFO - MainThread - Loading baking configuration file C:\Users\7624/pymnt/cfg\tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj.yaml
+2019-03-02 00:33:39,844 - main - INFO - MainThread - Baking Configuration {
+ "master_dict": {
+  "version": 2.0,
+  "managers": {
+   "KT1EVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy": "tz1YWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane",
+   "KT1eVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy": "tz1yWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane"
+  },
+  "addresses_by_pkh": {
+   "tz1YWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane": {
+    "alias": "mainnetme",
+    "sk": true
+   },
+   "tz3WXYtyDUNL91qfiCJtVUX746QpNv5i5ve5": {
+    "alias": "alphanet1",
+    "sk": true
+   },
+   "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik": {
+    "alias": "alphanet2",
+    "sk": true
+   }
+  },
+  "contracts_by_alias": {
+   "pk1": "KT1EVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy"
+  }
+ },
+ "cfg_dict": {
+  "baking_address": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "excluded_delegators_set": [
+   "KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad"
+  ],
+  "founders_map": {
+   "tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9": 1.0
+  },
+  "min_delegation_amt": 1000,
+  "owners_map": {
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2": 1.0
+  },
+  "payment_address": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "prcnt_scale": 5,
+  "pymnt_scale": 3,
+  "service_fee": 0.045,
+  "specials_map": {
+   "KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad": 1.0
+  },
+  "supporters_set": [
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2",
+   "KT1T4RgrQ986qp2ndZ2YTnxKVSSUrD2BoKFH"
+  ],
+  "version": "1.0",
+  "payment_address_type": "TZ",
+  "payment_address_pkh": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "payment_address_manager": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "delegator_pays_xfer_fee": true,
+  "full_supporters_set": [
+   "tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9",
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2",
+   "KT1T4RgrQ986qp2ndZ2YTnxKVSSUrD2BoKFH"
+  ]
+ }
+}
+2019-03-02 00:33:39,844 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:33:39,844 - main - INFO - MainThread - BAKING ADDRESS is tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik
+2019-03-02 00:33:39,844 - main - INFO - MainThread - PAYMENT ADDRESS is tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik
+2019-03-02 00:33:39,844 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:33:39,855 - main - INFO - MainThread - initial_cycle set to 0
+2019-03-02 00:33:39,856 - main - DEBUG - MainThread - Producer started
+2019-03-02 00:33:39,860 - main - INFO - MainThread - If you want to send emails, populate email.ini file under current working directory.
+2019-03-02 00:33:39,860 - main - DEBUG - MainThread - Consumer "consumer0" created
+2019-03-02 00:33:40,491 - main - DEBUG - producer  - Payment cycle is set to 75
+2019-03-02 00:33:40,861 - main - INFO - MainThread - Application start completed
+2019-03-02 00:33:40,862 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:33:45,507 - main - DEBUG - producer  - Trying payments for cycle 75
+2019-03-02 00:33:45,745 - main - DEBUG - producer  - Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
+2019-03-02 00:33:45,745 - main - DEBUG - producer  - Checking for pending payments : checking 75 <= 81 - (5 + 1) - 0
+2019-03-02 00:33:45,745 - main - INFO - producer  - Payment cycle is 75
+2019-03-02 00:33:45,862 - main - WARNING - producer  - No delegators at cycle 75. Check your delegation status
+2019-03-02 00:33:45,863 - main - INFO - producer  - Reward creation done for cycle 75
+2019-03-02 00:34:10,402 - main - INFO - MainThread - Tezos Reward Distributor is Starting
+2019-03-02 00:34:10,402 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:34:10,402 - main - INFO - MainThread - Copyright Hüseyin ABANOZ 2019
+2019-03-02 00:34:10,402 - main - INFO - MainThread - huseyinabanox@gmail.com
+2019-03-02 00:34:10,402 - main - INFO - MainThread - Please leave copyright information
+2019-03-02 00:34:10,402 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 00:34:10,412 - main - INFO - MainThread - Arguments Configuration = {
+ "network": "MAINNET",
+ "reports_dir": "~/pymnt/reports",
+ "config_dir": "~/pymnt/cfg",
+ "node_addr": "127.0.0.1:8732",
+ "dry_run": false,
+ "dry_run_no_payments": false,
+ "executable_dirs": "~/,~/tezos",
+ "docker": true,
+ "verbose": false,
+ "run_mode": 1,
+ "release_override": 0,
+ "payment_offset": 0,
+ "initial_cycle": null
+}
+2019-03-02 00:34:13,042 - main - INFO - MainThread - Loading master configuration file C:\Users\7624/pymnt/cfg\master.yaml
+2019-03-02 00:34:13,050 - main - DEBUG - MainThread - Tezos client path is C:\Users\7624/mainnet.sh client
+2019-03-02 00:34:13,051 - main - INFO - MainThread - Loading baking configuration file C:\Users\7624/pymnt/cfg\tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj.yaml
+2019-03-02 12:44:17,850 - main - INFO - MainThread - Tezos Reward Distributor is Starting
+2019-03-02 12:44:17,851 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:44:17,851 - main - INFO - MainThread - Copyright Hüseyin ABANOZ 2019
+2019-03-02 12:44:17,851 - main - INFO - MainThread - huseyinabanox@gmail.com
+2019-03-02 12:44:17,851 - main - INFO - MainThread - Please leave copyright information
+2019-03-02 12:44:17,851 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:44:17,851 - main - INFO - MainThread - Arguments Configuration = {
+ "network": "MAINNET",
+ "reports_dir": "~/pymnt/reports",
+ "config_dir": "~/pymnt/cfg",
+ "node_addr": "127.0.0.1:8732",
+ "dry_run": false,
+ "dry_run_no_payments": false,
+ "executable_dirs": "~/,~/tezos",
+ "docker": true,
+ "verbose": false,
+ "run_mode": 1,
+ "release_override": 0,
+ "payment_offset": 0,
+ "initial_cycle": null
+}
+2019-03-02 12:44:17,863 - main - INFO - MainThread - Loading master configuration file C:\Users\7624/pymnt/cfg\master.yaml
+2019-03-02 12:44:17,872 - main - DEBUG - MainThread - Tezos client path is C:\Users\7624/mainnet.sh client
+2019-03-02 12:44:17,872 - main - INFO - MainThread - Loading baking configuration file C:\Users\7624/pymnt/cfg\tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj.yaml
+2019-03-02 12:44:17,890 - main - INFO - MainThread - Baking Configuration {
+ "master_dict": {
+  "version": 2.0,
+  "managers": {
+   "KT1EVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy": "tz1YWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane",
+   "KT1eVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy": "tz1yWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane"
+  },
+  "addresses_by_pkh": {
+   "tz1YWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane": {
+    "alias": "mainnetme",
+    "sk": true
+   },
+   "tz3WXYtyDUNL91qfiCJtVUX746QpNv5i5ve5": {
+    "alias": "alphanet1",
+    "sk": true
+   },
+   "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik": {
+    "alias": "alphanet2",
+    "sk": true
+   }
+  },
+  "contracts_by_alias": {
+   "pk1": "KT1EVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy"
+  }
+ },
+ "cfg_dict": {
+  "baking_address": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "excluded_delegators_set": [
+   "KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad"
+  ],
+  "founders_map": {
+   "tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9": 1.0
+  },
+  "min_delegation_amt": 1000,
+  "owners_map": {
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2": 1.0
+  },
+  "payment_address": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "prcnt_scale": 5,
+  "pymnt_scale": 3,
+  "service_fee": 0.045,
+  "specials_map": {
+   "KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad": 1.0
+  },
+  "supporters_set": [
+   "KT1T4RgrQ986qp2ndZ2YTnxKVSSUrD2BoKFH",
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2"
+  ],
+  "version": "1.0",
+  "payment_address_type": "TZ",
+  "payment_address_pkh": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "payment_address_manager": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "delegator_pays_xfer_fee": true,
+  "full_supporters_set": [
+   "KT1T4RgrQ986qp2ndZ2YTnxKVSSUrD2BoKFH",
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2",
+   "tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9"
+  ]
+ }
+}
+2019-03-02 12:44:17,890 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:44:17,890 - main - INFO - MainThread - BAKING ADDRESS is tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik
+2019-03-02 12:44:17,891 - main - INFO - MainThread - PAYMENT ADDRESS is tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik
+2019-03-02 12:44:17,891 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:44:17,903 - main - INFO - MainThread - initial_cycle set to 0
+2019-03-02 12:44:17,904 - main - DEBUG - MainThread - Producer started
+2019-03-02 12:44:17,916 - main - INFO - MainThread - If you want to send emails, populate email.ini file under current working directory.
+2019-03-02 12:44:17,916 - main - DEBUG - MainThread - Consumer "consumer0" created
+2019-03-02 12:44:18,820 - main - DEBUG - producer  - Payment cycle is set to 75
+2019-03-02 12:44:18,941 - main - INFO - MainThread - Application start completed
+2019-03-02 12:44:18,941 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:44:23,841 - main - DEBUG - producer  - Trying payments for cycle 75
+2019-03-02 12:44:24,195 - main - DEBUG - producer  - Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
+2019-03-02 12:44:24,195 - main - DEBUG - producer  - Checking for pending payments : checking 75 <= 81 - (5 + 1) - 0
+2019-03-02 12:44:24,195 - main - INFO - producer  - Payment cycle is 75
+2019-03-02 12:44:24,364 - main - WARNING - producer  - No delegators at cycle 75. Check your delegation status
+2019-03-02 12:44:24,364 - main - INFO - producer  - Reward creation done for cycle 75
+2019-03-02 12:44:29,369 - main - DEBUG - producer  - Trying payments for cycle 76
+2019-03-02 12:44:29,614 - main - DEBUG - producer  - Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
+2019-03-02 12:44:29,614 - main - DEBUG - producer  - Checking for pending payments : checking 76 <= 81 - (5 + 1) - 0
+2019-03-02 12:44:29,614 - main - DEBUG - producer  - No pending payments for cycle 76, current cycle is 81
+2019-03-02 12:45:22,060 - main - INFO - MainThread - Tezos Reward Distributor is Starting
+2019-03-02 12:45:22,060 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:45:22,060 - main - INFO - MainThread - Copyright Hüseyin ABANOZ 2019
+2019-03-02 12:45:22,060 - main - INFO - MainThread - huseyinabanox@gmail.com
+2019-03-02 12:45:22,060 - main - INFO - MainThread - Please leave copyright information
+2019-03-02 12:45:22,060 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:45:22,060 - main - INFO - MainThread - Arguments Configuration = {
+ "network": "MAINNET",
+ "reports_dir": "~/pymnt/reports",
+ "config_dir": "~/pymnt/cfg",
+ "node_addr": "127.0.0.1:8732",
+ "dry_run": false,
+ "dry_run_no_payments": false,
+ "executable_dirs": "~/,~/tezos",
+ "docker": true,
+ "verbose": false,
+ "run_mode": 1,
+ "release_override": 0,
+ "payment_offset": 0,
+ "initial_cycle": null
+}
+2019-03-02 12:45:22,060 - main - INFO - MainThread - Loading master configuration file C:\Users\7624/pymnt/cfg\master.yaml
+2019-03-02 12:45:22,065 - main - DEBUG - MainThread - Tezos client path is C:\Users\7624/mainnet.sh client
+2019-03-02 12:45:22,065 - main - INFO - MainThread - Loading baking configuration file C:\Users\7624/pymnt/cfg\tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj.yaml
+2019-03-02 12:45:22,073 - main - INFO - MainThread - Baking Configuration {
+ "master_dict": {
+  "version": 2.0,
+  "managers": {
+   "KT1EVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy": "tz1YWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane",
+   "KT1eVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy": "tz1yWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane"
+  },
+  "addresses_by_pkh": {
+   "tz1YWn9eVvXuRkUxNwewVdYr71QKA8cr5Ane": {
+    "alias": "mainnetme",
+    "sk": true
+   },
+   "tz3WXYtyDUNL91qfiCJtVUX746QpNv5i5ve5": {
+    "alias": "alphanet1",
+    "sk": true
+   },
+   "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik": {
+    "alias": "alphanet2",
+    "sk": true
+   }
+  },
+  "contracts_by_alias": {
+   "pk1": "KT1EVBSE6cevRV8Uau2uySzjuYvWh7NDhnfy"
+  }
+ },
+ "cfg_dict": {
+  "baking_address": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "excluded_delegators_set": [
+   "KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad"
+  ],
+  "founders_map": {
+   "tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9": 1.0
+  },
+  "min_delegation_amt": 1000,
+  "owners_map": {
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2": 1.0
+  },
+  "payment_address": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "prcnt_scale": 5,
+  "pymnt_scale": 3,
+  "service_fee": 0.045,
+  "specials_map": {
+   "KT1VYLbR7Cp4xxywWR4c12BPbkmrqSf5UXad": 1.0
+  },
+  "supporters_set": [
+   "KT1T4RgrQ986qp2ndZ2YTnxKVSSUrD2BoKFH",
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2"
+  ],
+  "version": "1.0",
+  "payment_address_type": "TZ",
+  "payment_address_pkh": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "payment_address_manager": "tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik",
+  "delegator_pays_xfer_fee": true,
+  "full_supporters_set": [
+   "KT1T4RgrQ986qp2ndZ2YTnxKVSSUrD2BoKFH",
+   "tz1MWTkFRXA2dwez4RHJWnDWziLpaN6iDTZ9",
+   "KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn2"
+  ]
+ }
+}
+2019-03-02 12:45:22,073 - main - INFO - MainThread - --------------------------------------------
+2019-03-02 12:45:22,073 - main - INFO - MainThread - BAKING ADDRESS is tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik
+2019-03-02 12:45:22,073 - main - INFO - MainThread - PAYMENT ADDRESS is tz1RW2P6sMLUMDVWimgYK6LDgsFfRALPEXik
+2019-03-02 12:45:22,073 - main - INFO - MainThread - --------------------------------------------

@@ -60,7 +60,8 @@ class CalculatePhase2(CalculatePhaseBase):
 
         # calculate new ratio using remaining balance
         for rl2 in self.filterskipped(rewards):
-            rl2.ratio2 = self.prcnt_rm.round(rl2.balance / new_total_balance)
+            rl2.ratio = self.prcnt_rm.round(rl2.balance / new_total_balance)
+            rl2.ratio2 = rl2.ratio
 
         # total reward amount remains the same
         return rewards, total_amount

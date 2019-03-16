@@ -35,7 +35,8 @@ class CalculatePhase4(CalculatePhaseBase):
                 for addr, ratio in self.founders_map.items():
                     rl4 = RewardLog(addr, TYPE_FOUNDER, 0)
                     # new ratio is parent ratio * ratio of the founder
-                    rl4.ratio4 = self.prcnt_rm.round(ratio * rl3.ratio3)
+                    rl4.ratio = self.prcnt_rm.round(ratio * rl3.ratio)
+                    rl4.ratio4 = rl4.ratio
                     rl4.service_fee_ratio = 0
                     rl4.service_fee_rate = 0
                     rl4.parent = rl3
@@ -49,7 +50,8 @@ class CalculatePhase4(CalculatePhaseBase):
                 for addr, ratio in self.owners_map.items():
                     rl4 = RewardLog(addr, TYPE_OWNER, ratio * rl3.balance)
                     # new ratio is parent ratio * ratio of the owner
-                    rl4.ratio4 = self.prcnt_rm.round(ratio * rl3.ratio3)
+                    rl4.ratio = self.prcnt_rm.round(ratio * rl3.ratio)
+                    rl4.ratio4 = rl4.ratio
                     rl4.service_fee_ratio = 0
                     rl4.service_fee_rate = 0
                     rl4.parent = rl3
@@ -59,7 +61,7 @@ class CalculatePhase4(CalculatePhaseBase):
                 if not self.owners_map.items():
                     rewards.append(rl3)
             else:
-                rl3.ratio4 = rl3.ratio3
+                rl3.ratio4 = rl3.ratio
                 rewards.append(rl3)
 
         return rewards, total_amount

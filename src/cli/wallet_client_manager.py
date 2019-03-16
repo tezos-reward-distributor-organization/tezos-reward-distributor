@@ -1,6 +1,5 @@
 from cli.simple_client_manager import SimpleClientManager
 from exception.client import ClientException
-from exception.configuration import ConfigurationException
 from util.address_validator import AddressValidator
 from util.client_utils import clear_terminal_chars, not_indicator_line
 

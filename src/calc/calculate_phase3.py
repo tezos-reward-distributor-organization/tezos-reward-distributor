@@ -39,11 +39,11 @@ class CalculatePhase3(CalculatePhaseBase):
             if rl2.address in self.excluded_set:
                 rl2.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 rewards.append(rl2)
-                total_excluded_ratio += rl2.ratio2
+                total_excluded_ratio += rl2.ratio
             elif MIN_DELEGATION_KEY in self.excluded_set and rl2.balance < self.min_delegation_amount:
                 rl2.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 rewards.append(rl2)
-                total_excluded_ratio += rl2.ratio2
+                total_excluded_ratio += rl2.ratio
             else:
                 rewards.append(rl2)
 
@@ -59,11 +59,13 @@ class CalculatePhase3(CalculatePhaseBase):
 
             rl3.service_fee_rate = service_fee_rate
             rl3.service_fee_ratio = service_fee_ratio
-            rl3.ratio3 = new_ratio
+            rl3.ratio = new_ratio
+            rl3.ratio3 = rl3.ratio
 
         if total_service_fee_ratio > 1e-6:  # >0
             rl3 = RewardLog(address=TYPE_FOUNDERS_PARENT, type=TYPE_FOUNDERS_PARENT, balance=0)
-            rl3.ratio3 = total_service_fee_ratio
+            rl3.ratio = total_service_fee_ratio
+            rl3.ratio3 = rl3.ratio
             rl3.service_fee_ratio = 0
             rl3.service_fee_rate = 0
 

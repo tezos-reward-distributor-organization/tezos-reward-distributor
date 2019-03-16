@@ -56,30 +56,10 @@ class CalculatePhase1(CalculatePhaseBase):
 
         # calculate new ratio using remaining balance
         for rl1 in self.filterskipped(rewards):
-            rl1.ratio1 = self.prcnt_rm.round(rl1.balance / new_total_balance)
+            rl1.ratio = self.prcnt_rm.round(rl1.balance / new_total_balance)
+            rl1.ratio1 = rl1.ratio
 
         # total reward amount needs to be diminished at the same rate total balance diminishes
         new_total_amnt_multiplier = new_total_balance / total_balance
 
         return rewards, total_amount * new_total_amnt_multiplier
-
-    def old_method(self, reward_data0, total_amount):
-        rewards = []
-        total_excluded_ratio = 0.0
-
-        # calculate how rewards will be distributed
-        for rl0 in reward_data0:
-            if rl0.address in self.excluded_set:
-                total_excluded_ratio += rl0.ratio
-            else:
-                rewards.append(RewardLog(rl0, rl0.ratio))  # not upto date anymore
-        # We need to distribute excluded ratios among remaining records
-        # a,b,c,d -> b*(1+(a/1-a)), c*(1+(a/1-a)), d*(1+ (a/1-a)) -> (1+(a/1-a))*(b,c,d)
-        # calculate 1+(a/1-a)
-        multiplier = 1 + total_excluded_ratio / (1 - total_excluded_ratio)
-        # for each record, calculate new ratio
-        for pr in rewards:
-            pr.ratio = self.prcnt_rm.round(pr.ratio * multiplier)
-        # subtract from total amount, subtracted amount will remain in staking balance
-        total_amount = total_amount * (1 - total_excluded_ratio)
-        return total_amount
