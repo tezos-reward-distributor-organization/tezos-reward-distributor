@@ -205,12 +205,11 @@ class PaymentProducer(threading.Thread):
                                  "{0:f}".format(pymnt_log.service_fee_rate)])
 
                 logger.info(
-                    "Reward created for cycle %s, address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
+                    "Reward created for address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
                         .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                 pymnt_log.amount / MUTEZ,
                                 pymnt_log.service_fee_amount / MUTEZ, pymnt_log.service_fee_rate),
-                    payment_cycle, pymnt_log.address, pymnt_log.type, pymnt_log.skipped, pymnt_log.skippedatphase,
-                    pymnt_log.desc)
+                    pymnt_log.address, pymnt_log.type, pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
 
     @staticmethod
     def create_exit_payment():

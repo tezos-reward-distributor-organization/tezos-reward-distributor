@@ -1,11 +1,15 @@
 import csv
+import functools
 import threading
 import os
+import time
 
 from Constants import EXIT_PAYMENT_TYPE
 from calc.calculate_phase5 import CalculatePhase5
+from calc.calculate_phase6 import CalculatePhase6
 from emails.email_manager import EmailManager
 from log_config import main_logger
+from model.reward_log import cmp_by_type_balance
 from pay.batch_payer import BatchPayer
 from util.dir_utils import payment_report_file_path, get_busy_file
 
@@ -60,6 +64,8 @@ class PaymentConsumer(threading.Thread):
                 # each log in the batch belongs to the same cycle
                 pymnt_cycle = payment_items[0].cycle
 
+                time.sleep(1)
+
                 logger.info("Starting payments for cycle {}".format(pymnt_cycle))
 
                 # 2- select suitable payment script
@@ -68,8 +74,16 @@ class PaymentConsumer(threading.Thread):
                 # payment_log = regular_payer.pay(payment_items[0], self.verbose, dry_run=self.dry_run)
                 # payment_logs = [payment_log]
 
+                reward_items = payment_items
+
                 phase5 = CalculatePhase5(self.dest_map)
                 payment_items, _ = phase5.calculate(payment_items, None)
+
+                phase6 = CalculatePhase6(addr_dest_dict=self.dest_map)
+                payment_items, _ = phase6.calculate(payment_items, None)
+
+                payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
+
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
                                          self.delegator_pays_xfer_fee)

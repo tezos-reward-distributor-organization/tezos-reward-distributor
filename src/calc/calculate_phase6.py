@@ -4,7 +4,7 @@ from model.reward_log import RewardLog, TYPE_MERGED
 MUTEZ = 1e+6
 
 
-class CalculatePhase5(CalculatePhaseBase):
+class CalculatePhase6(CalculatePhaseBase):
     """
     -- Phase6 : Merge Phase --
 
@@ -23,13 +23,16 @@ class CalculatePhase5(CalculatePhaseBase):
             rl.ratio6 = rl.ratio
 
         address_set = set(rl.paymentaddress for rl in self.filterskipped(reward_data5))
-        payment_address_list = {addr: [] for addr in address_set}
+        payment_address_list_dict = {addr: [] for addr in address_set}
         # group payments by paymentaddress
         for rl in self.filterskipped(reward_data5):
-            payment_address_list[rl.paymentaddress].append(rl)
+            payment_address_list_dict[rl.paymentaddress].append(rl)
 
         reward_data6 = []
-        for addr, rl_list in payment_address_list:
+        for rl in self.iterateskipped(reward_data5):
+            reward_data6.append(rl)
+
+        for addr, rl_list in payment_address_list_dict.items():
             if len(rl_list) > 1:
                 total_balance = sum([rl.balance for rl in rl_list])
                 total_ratio = sum([rl.ratio for rl in rl_list])

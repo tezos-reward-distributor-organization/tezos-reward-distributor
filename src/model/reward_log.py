@@ -22,7 +22,7 @@ class RewardLog:
         super().__init__()
         self.balance = balance
         self.address = address
-        self.pymntaddress = address
+        self.paymentaddress = address
         self.type = type
         self.desc = ""
         self.skipped = False
