@@ -14,6 +14,7 @@ from pay.batch_payer import BatchPayer
 from util.dir_utils import payment_report_file_path, get_busy_file
 
 logger = main_logger
+MUTEZ = 1e6
 
 
 def count_and_log_failed(payment_logs, pymnt_cycle):
@@ -74,8 +75,6 @@ class PaymentConsumer(threading.Thread):
                 # payment_log = regular_payer.pay(payment_items[0], self.verbose, dry_run=self.dry_run)
                 # payment_logs = [payment_log]
 
-                reward_items = payment_items
-
                 phase5 = CalculatePhase5(self.dest_map)
                 payment_items, _ = phase5.calculate(payment_items, None)
 
@@ -83,7 +82,6 @@ class PaymentConsumer(threading.Thread):
                 payment_items, _ = phase6.calculate(payment_items, None)
 
                 payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
-
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
                                          self.delegator_pays_xfer_fee)
@@ -132,10 +130,14 @@ class PaymentConsumer(threading.Thread):
             csv_writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             csv_writer.writerow(["address", "type", "payment", "hash", "paid"])
 
-            for payment_item in payment_logs:
+            for pl in payment_logs:
                 # write row to csv file
                 csv_writer.writerow(
-                    [payment_item.address, payment_item.type, "{0:f}".format(payment_item.payment), payment_item.hash,
-                     "1" if payment_item.paid else "0"])
+                    [pl.address, pl.type, "{0:f}".format(pl.amount/ MUTEZ), pl.hash,
+                     "1" if pl.paid else "0"])
+
+                logger.info("Payment done for address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
+                    .format(pl.balance / MUTEZ, pl.ratio, pl.service_fee_ratio, pl.amount / MUTEZ,
+                            pl.service_fee_amount / MUTEZ, pl.service_fee_rate), pl.address, pl.type, pl.skipped, pl.skippedatphase, pl.desc)
 
         return report_file

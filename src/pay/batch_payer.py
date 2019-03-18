@@ -106,7 +106,7 @@ class BatchPayer():
         return_code = False
         operation_hash = ""
 
-        # due to unknown reasons, some times a batch fails to pre-apply
+        # due to unknown reasons, some times a batch fails
         # trying after some time should be OK
         for attempt in range(max_try):
             return_code, operation_hash = self.pay_single_batch(payment_items, verbose, dry_run=dry_run)
