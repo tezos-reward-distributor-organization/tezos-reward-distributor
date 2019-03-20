@@ -144,7 +144,7 @@ class BatchPayer():
         content_list = []
 
         for payment_item in payment_records:
-            pymnt_amnt = int(payment_item.payment * 1e6)  # expects in micro tezos
+            pymnt_amnt = payment_item.amount  # expects in micro tezos
 
             if self.delegator_pays_xfer_fee:
                 pymnt_amnt = max(pymnt_amnt - int(self.default_fee), 0)  # ensure not less than 0
