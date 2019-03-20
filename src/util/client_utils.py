@@ -5,10 +5,10 @@ DOCKER_CLIENT_EXE = "%network%.sh"
 DOCKER_CLIENT_EXE_SUFFIX = " client"
 REGULAR_CLIENT_EXE = "tezos-client"
 
-def get_client_path(search_paths, docker=None, network_config=None, verbose=None):
+def get_client_path(search_paths, docker=None, network_name=None, verbose=None):
     client_exe = REGULAR_CLIENT_EXE
     if docker:
-        client_exe = DOCKER_CLIENT_EXE.replace("%network%", network_config['NAME'].lower())
+        client_exe = DOCKER_CLIENT_EXE.replace("%network%", network_name.lower())
     for search_path in search_paths:
         expanded_path = os.path.expanduser(search_path)
         client_path = os.path.join(expanded_path, client_exe)
