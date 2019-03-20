@@ -24,7 +24,7 @@ class CalculatePhaseFinal(CalculatePhaseBase):
         # generate new rewards, rewards with the same address are merged
         new_rewards = []
         for rl in rewards:
-            rl.amount = self.rm_pymnt.round(rl.ratio * total_amount)
+            rl.amount = int(rl.ratio * total_amount)
             rl.payable = rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR]
             rl.cycle = self.cycle
             rl.service_fee_amount = self.rm_pymnt.round(rl.service_fee_ratio * total_amount)

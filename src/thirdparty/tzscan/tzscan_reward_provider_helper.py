@@ -46,7 +46,6 @@ class TzScanRewardProviderHelper:
 
         return root
 
-
     def get_rewards_for_cycle(self, cycle, verbose=False):
         #############
         nb_delegators = self.__get_nb_delegators(cycle, verbose)[0]

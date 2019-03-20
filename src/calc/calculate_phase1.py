@@ -61,5 +61,6 @@ class CalculatePhase1(CalculatePhaseBase):
 
         # total reward amount needs to be diminished at the same rate total balance diminishes
         new_total_amnt_multiplier = new_total_balance / total_balance
-
-        return rewards, total_amount * new_total_amnt_multiplier
+        new_total_amount = int(total_amount * new_total_amnt_multiplier)
+        
+        return rewards, new_total_amount
