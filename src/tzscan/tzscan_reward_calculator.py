@@ -9,27 +9,28 @@ MUTEZ = 1000000
 
 class TzScanRewardCalculatorApi(RewardCalculatorApi):
     # reward_data : payment map returned from tzscan
-    def __init__(self, founders_map, reward_data, min_delegation_amt, excluded_set, rc=RoundingCommand(None)):
+    def __init__(self, founders_map, min_delegation_amt, excluded_set, rc=RoundingCommand(None)):
         super(TzScanRewardCalculatorApi, self).__init__(founders_map, excluded_set)
-        self.reward_data = reward_data
         self.min_delegation_amt_mutez = min_delegation_amt * MUTEZ
         self.logger = main_logger
         self.rc = rc
 
     ##
     # return rewards    : tuple (list of PaymentRecord objects, total rewards)
-    def calculate(self):
-        root = self.reward_data
+    def calculate(self, reward_data):
+        root = reward_data
 
         delegate_staking_balance = int(root["delegate_staking_balance"])
         blocks_rewards = int(root["blocks_rewards"])
         future_blocks_rewards = int(root["future_blocks_rewards"])
         endorsements_rewards = int(root["endorsements_rewards"])
         future_endorsements_rewards = int(root["future_endorsements_rewards"])
+        lost_rewards_denounciation = int(root["lost_rewards_denounciation"])
+        lost_fees_denounciation = int(root["lost_fees_denounciation"])
         fees = int(root["fees"])
 
         self.total_rewards = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
-                              future_endorsements_rewards + fees) / MUTEZ
+                              future_endorsements_rewards + fees - lost_rewards_denounciation - lost_fees_denounciation) / MUTEZ
 
         delegators_balance = root["delegators_balance"]
 

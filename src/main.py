@@ -144,7 +144,8 @@ def main(args):
                         payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
-                        payments_queue=payments_queue, dry_run=dry_run, verbose=args.verbose)
+                        payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr, 
+                        node_url=args.node_addr, verbose=args.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
