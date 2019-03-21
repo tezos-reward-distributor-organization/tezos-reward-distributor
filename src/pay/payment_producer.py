@@ -27,7 +27,7 @@ from util.rounding_command import RoundingCommand
 
 logger = main_logger
 
-BOOL_USE_TZSCAN = False
+BOOL_USE_LOCAL_NODE = True
 
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
@@ -46,14 +46,14 @@ class PaymentProducer(threading.Thread):
 
         rc = RoundingCommand(self.prcnt_scale)
         
-        if BOOL_USE_TZSCAN:
-            self.block_api = TzScanBlockApiImpl(network_config)
-            self.reward_api = TzScanRewardApiImpl(network_config, self.baking_address)        
-            self.reward_calculator_api = TzScanRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
-        else:
-            self.block_api = RpcBlockApiImpl(network_config, wllt_clnt_mngr, node_url)
-            self.reward_api = RpcRewardApiImpl(network_config, self.baking_address, wllt_clnt_mngr, node_url)        
-            self.reward_calculator_api = RpcRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
+        self.block_api_tzscan = TzScanBlockApiImpl(network_config)
+        self.reward_api_tzscan = TzScanRewardApiImpl(network_config, self.baking_address)        
+        self.reward_calculator_api_tzscan = TzScanRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
+        
+        if BOOL_USE_LOCAL_NODE:
+            self.block_api_rpc = RpcBlockApiImpl(network_config, wllt_clnt_mngr, node_url)
+            self.reward_api_rpc = RpcRewardApiImpl(network_config, self.baking_address, wllt_clnt_mngr, node_url)        
+            self.reward_calculator_api_rpc = RpcRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
         
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
@@ -79,8 +79,14 @@ class PaymentProducer(threading.Thread):
             _thread.interrupt_main()
 
     def run(self):
-        current_cycle = self.block_api.get_current_cycle()
-
+        
+        current_cycle_tzscan = self.block_api_tzscan.get_current_cycle()
+        if BOOL_USE_LOCAL_NODE:
+            current_cycle_rpc = self.block_api_rpc.get_current_cycle()
+            current_cycle = min(current_cycle_tzscan, current_cycle_rpc) 
+        else:
+            current_cycle = current_cycle_tzscan     
+        
         payment_cycle = self.initial_payment_cycle
 
         # if non-positive initial_payment_cycle, set initial_payment_cycle to
@@ -97,9 +103,15 @@ class PaymentProducer(threading.Thread):
             time.sleep(5)
 
             logger.debug("Trying payments for cycle {}".format(payment_cycle))
-
-            current_level = self.block_api.get_current_level(verbose=self.verbose)
-            current_cycle = self.block_api.level_to_cycle(current_level)
+            
+            current_level_tzscan = self.block_api_tzscan.get_current_level()
+            if BOOL_USE_LOCAL_NODE:
+                current_level_rpc = self.block_api_rpc.get_current_level()
+                current_level = min(current_level_tzscan, current_level_rpc) 
+            else:
+                current_level = current_level_tzscan
+            
+            current_cycle = self.block_api_tzscan.level_to_cycle(current_level)
 
             # create reports dir
             if self.calculations_dir and not os.path.exists(self.calculations_dir):
@@ -119,11 +131,20 @@ class PaymentProducer(threading.Thread):
                         logger.info("Payment cycle is " + str(payment_cycle))
 
                         # 1- get reward data
-                        reward_data = self.reward_api.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
-
+                        reward_data_tzscan = self.reward_api_tzscan.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
+                        
+                        if BOOL_USE_LOCAL_NODE:
+                            reward_data_rpc = self.reward_api_rpc.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
+                            self.__validate_reward_data(reward_data_rpc, reward_data_tzscan)                        
+                            
                         # 2- make payment calculations from reward data
-                        pymnt_logs, total_rewards = self.make_payment_calculations(payment_cycle, reward_data)
-
+                        pymnt_logs_tzscan, total_rewards_tzscan = self.make_payment_calculations(payment_cycle, reward_data_tzscan, self.reward_calculator_api_tzscan)
+                        pymnt_logs_rpc, total_rewards_rpc = None, None                         
+                        if BOOL_USE_LOCAL_NODE:
+                            pymnt_logs_rpc, total_rewards_rpc = self.make_payment_calculations(payment_cycle, reward_data_rpc, self.reward_calculator_api_rpc)
+                        
+                        pymnt_logs, total_rewards = self.__validate_reward_shares(pymnt_logs_rpc, total_rewards_rpc, pymnt_logs_tzscan, total_rewards_tzscan)                       
+                        
                         # 3- check for past payment evidence for current cycle
                         past_payment_state = check_past_payment(self.payments_root, payment_cycle)
                         if not self.dry_run and total_rewards > 0 and past_payment_state:
@@ -190,6 +211,53 @@ class PaymentProducer(threading.Thread):
         self.exit()
 
         return
+    
+    def __validate_reward_data(self, reward_data_rpc, reward_data_tzscan):    
+        if not reward_data_rpc["delegate_staking_balance"] == int(reward_data_tzscan["delegate_staking_balance"]):
+            raise Exception("Delegate staking balance from local node and tzscan are not identical.")
+                
+        if not (reward_data_rpc["delegators_nb"]) == (reward_data_tzscan["delegators_nb"]):
+            raise Exception("Delegators number from local node and tzscan are not identical.")
+        
+        if (reward_data_rpc["delegators_nb"]) == 0:
+            return
+        
+        delegators_balance_tzscan = [ int(reward_data_tzscan["delegators_balance"][i][1]) for i in range(len(reward_data_tzscan["delegators_balance"]))]
+        print(set(list(reward_data_rpc["delegators"].values())))
+        print(set(delegators_balance_tzscan))
+        if not set(list(reward_data_rpc["delegators"].values())) == set(delegators_balance_tzscan):
+            raise Exception("Delegators' balances from local node and tzscan are not identical.")
+
+        blocks_rewards = int(reward_data_tzscan["blocks_rewards"])
+        future_blocks_rewards = int(reward_data_tzscan["future_blocks_rewards"])
+        endorsements_rewards = int(reward_data_tzscan["endorsements_rewards"])
+        future_endorsements_rewards = int(reward_data_tzscan["future_endorsements_rewards"])
+        lost_rewards_denounciation = int(reward_data_tzscan["lost_rewards_denounciation"])
+        lost_fees_denounciation = int(reward_data_tzscan["lost_fees_denounciation"])
+        fees = int(reward_data_tzscan["fees"])
+
+        total_rewards_tzscan = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
+                              future_endorsements_rewards + fees - lost_rewards_denounciation - lost_fees_denounciation)
+
+        if not reward_data_rpc["total_rewards"] == total_rewards_tzscan:
+            raise Exception("Total rewards from local node and tzscan are not identical.")
+        
+    def __validate_reward_shares(self, pymnt_logs_rpc, total_rewards_rpc, pymnt_logs_tzscan, total_rewards_tzscan):
+        if pymnt_logs_rpc is None or total_rewards_rpc is None:
+            return pymnt_logs_tzscan, total_rewards_tzscan
+        
+        if not total_rewards_rpc == total_rewards_tzscan:
+            raise Exception("Total rewards from local node and tzscan are not identical.")
+        
+        for reward_item_rpc in pymnt_logs_rpc:
+            address_rpc = reward_item_rpc.address
+            for reward_item_tzscan in pymnt_logs_tzscan:
+                if address_rpc == reward_item_tzscan.address:
+                    if reward_item_tzscan.ratio != reward_item_rpc.ratio or reward_item_tzscan.reward != reward_item_rpc.reward:
+                        raise Exception("Reward calculations for {} from local node do not match tzscan results.".format(address_rpc))
+                    pymnt_logs_tzscan.remove(reward_item_tzscan)
+        
+        return pymnt_logs_rpc, total_rewards_rpc
 
     def waint_until_next_cycle(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):
@@ -220,14 +288,14 @@ class PaymentProducer(threading.Thread):
                             payment_cycle, pymnt_log.address, pymnt_log.payment, pymnt_log.fee,
                             pymnt_log.type)
 
-    def make_payment_calculations(self, payment_cycle, reward_data):
+    def make_payment_calculations(self, payment_cycle, reward_data, reward_calculator_api):
 
         if reward_data["delegators_nb"] == 0:
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
         
-        rewards, total_rewards = self.reward_calculator_api.calculate(reward_data)
+        rewards, total_rewards = reward_calculator_api.calculate(reward_data)
 
         logger.info("Total rewards={}".format(total_rewards))
 
@@ -238,7 +306,8 @@ class PaymentProducer(threading.Thread):
         payment_logs = pymnt_calc.calculate()
 
         return payment_logs, total_rewards
-
+    
+    
     @staticmethod
     def create_exit_payment():
         return PaymentRecord.ExitInstance()
@@ -295,3 +364,5 @@ class PaymentProducer(threading.Thread):
                 # mark the files as in use. we do not want it to be read again
                 # BUSY file will be removed, if successful payment is done
                 os.rename(payment_failed_report_file, payment_failed_report_file + BUSY_FILE)
+    
+    
