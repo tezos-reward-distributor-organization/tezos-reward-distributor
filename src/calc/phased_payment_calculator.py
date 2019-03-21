@@ -9,7 +9,8 @@ from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase_final import CalculatePhaseFinal
 from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_skip_type_balance, cmp_by_type_balance
 
-MINOR_DIFF = 1e-6
+MINOR_DIFF = 2
+MINOR_RATIO_DIFF = 1e-6
 
 
 class PhasedPaymentCalculator:
@@ -43,45 +44,42 @@ class PhasedPaymentCalculator:
     # founders reward = delegators fee = total reward - delegators reward
     ####
     def calculate(self, reward_provider_model):
-        phase0 = CalculatePhase0(reward_provider_model, self.prcnt_rm)
+        phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs, total_rwrd_amnt = phase0.calculate()
 
         assert reward_provider_model.delegate_staking_balance == sum([rl.balance for rl in rwrd_logs])
-        assert 1 == sum([rl.ratio0 for rl in rwrd_logs])
+        assert abs(1-sum([rl.ratio for rl in rwrd_logs]))<MINOR_RATIO_DIFF
 
         # calculate phase 1
-        phase1 = CalculatePhase1(self.rules_model.exclusion_set1, self.min_delegation_amnt, self.prcnt_rm)
+        phase1 = CalculatePhase1(self.rules_model.exclusion_set1, self.min_delegation_amnt)
         rwrd_logs, total_rwrd_amnt = phase1.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert 1 == sum([rl.ratio1 for rl in rwrd_logs if not rl.skipped])
+        assert abs(1 - sum([rl.ratio for rl in rwrd_logs if not rl.skipped])) < MINOR_RATIO_DIFF
 
         # calculate phase 2
-        phase2 = CalculatePhase2(self.rules_model.exclusion_set2, self.min_delegation_amnt, self.prcnt_rm)
+        phase2 = CalculatePhase2(self.rules_model.exclusion_set2, self.min_delegation_amnt)
         rwrd_logs, total_rwrd_amnt = phase2.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert 1 == sum([rl.ratio2 for rl in rwrd_logs if not rl.skipped])
+        assert abs(1 - sum([rl.ratio for rl in rwrd_logs if not rl.skipped])) < MINOR_RATIO_DIFF
 
         # calculate phase 3
-        phase3 = CalculatePhase3(self.fee_calc, self.rules_model.exclusion_set3, self.min_delegation_amnt,
-                                 self.prcnt_rm)
+        phase3 = CalculatePhase3(self.fee_calc, self.rules_model.exclusion_set3, self.min_delegation_amnt)
         rwrd_logs, total_rwrd_amnt = phase3.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert 1 == sum([rl.ratio3 for rl in rwrd_logs if not rl.skipped])
+        assert abs(1 - sum([rl.ratio for rl in rwrd_logs if not rl.skipped])) < MINOR_RATIO_DIFF
+        
         founder_parent = next(filter(lambda x: x.type == TYPE_FOUNDERS_PARENT, rwrd_logs), None)
         assert founder_parent.ratio3 == sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum(
             [rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])
         owners_parent = next(filter(lambda x: x.type == TYPE_OWNERS_PARENT, rwrd_logs), None)
         assert owners_parent.service_fee_rate == 0
 
-        phase4 = CalculatePhase4(self.founders_map, self.owners_map, self.prcnt_rm)
+        phase4 = CalculatePhase4(self.founders_map, self.owners_map)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
 
         # prepare phase 5
         # phase5 = CalculatePhase5(self.rules_model.dest_map)
         # rwrd_logs, total_rwrd_amnt = phase5.calculate(rwrd_logs, total_rwrd_amnt)
-
-        for rl in rwrd_logs:
-            rl.ratio = rl.ratio4
 
         phase_last = CalculatePhaseFinal(self.cycle, self.pymnt_rm)
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(rwrd_logs, total_rwrd_amnt)

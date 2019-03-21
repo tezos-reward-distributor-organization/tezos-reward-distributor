@@ -13,17 +13,15 @@ class CalculatePhase0(CalculatePhaseBase):
     Calculate ratios for each delegator based on tz scan data. @see calculate function.
     """
 
-    def __init__(self, reward_provider_model, percent_round_mode=RoundingCommand(None)) -> None:
+    def __init__(self, reward_provider_model) -> None:
         """
         Constructor
-        :param reward_provider_model: Data from provider
         :param percent_round_mode: RoundingCommand object for percentage calculations. Since this is the first layer in
         calculations RoundingCommand(None) is recommended to avoid rounding.
         """
         super().__init__()
 
         self.reward_provider_model = reward_provider_model
-        self.prcnt_rm = percent_round_mode
 
     def calculate(self, reward_logs=None, total_reward_amount=None):
         """
@@ -46,7 +44,7 @@ class CalculatePhase0(CalculatePhaseBase):
         for address, balance in delegators_balance_dict.items():
             total_delegator_balance += balance
 
-            ratio = self.prcnt_rm.round(balance / delegate_staking_balance)
+            ratio = balance / delegate_staking_balance
             reward_item = RewardLog(address=address, type=reward_log.TYPE_DELEGATOR, balance=balance)
             reward_item.ratio = ratio
             reward_item.ratio0 = reward_item.ratio

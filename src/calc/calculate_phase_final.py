@@ -1,3 +1,6 @@
+from _decimal import ROUND_HALF_DOWN
+from decimal import Decimal
+
 from calc.calculate_phase_base import CalculatePhaseBase
 from model.reward_log import TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from util.rounding_command import RoundingCommand
@@ -24,10 +27,11 @@ class CalculatePhaseFinal(CalculatePhaseBase):
         # generate new rewards, rewards with the same address are merged
         new_rewards = []
         for rl in rewards:
-            rl.amount = int(rl.ratio * total_amount)
+            rl.amount = int(Decimal(rl.ratio * total_amount).to_integral_value(rounding=ROUND_HALF_DOWN))
             rl.payable = rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR]
             rl.cycle = self.cycle
-            rl.service_fee_amount = self.rm_pymnt.round(rl.service_fee_ratio * total_amount)
+            rl.service_fee_amount = \
+                int(Decimal(rl.service_fee_ratio * total_amount).to_integral_value(rounding=ROUND_HALF_DOWN))
 
             new_rewards.append(rl)
 

@@ -19,11 +19,11 @@ class CalculatePhase5(CalculatePhaseBase):
     def calculate(self, reward_data4, total_amount):
         # if address is in address destination dictionary;
         # then set payment address to mapped address value
-        for rl4 in self.filterskipped(reward_data4):
-            rl4.ratio5 = rl4.ratio
+        for rl in self.filterskipped(reward_data4):
+            rl.ratio5 = rl.ratio
 
-            if rl4.address in self.addr_dest_dict:
-                rl4.paymentaddress = self.addr_dest_dict[rl4.address]
+            if rl.address in self.addr_dest_dict:
+                rl.paymentaddress = self.addr_dest_dict[rl.address]
 
 
         return reward_data4, total_amount

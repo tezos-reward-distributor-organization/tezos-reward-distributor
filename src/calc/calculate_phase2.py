@@ -1,7 +1,5 @@
 from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
 from model.baking_conf import MIN_DELEGATION_KEY
-from model.payment_log import PaymentRecord
-from util.rounding_command import RoundingCommand
 
 MUTEZ = 1e+6
 
@@ -13,11 +11,10 @@ class CalculatePhase2(CalculatePhaseBase):
     At phase 2, share of the excluded delegators are distributed among other delegators. Total reward distributed remains the same.
     """
 
-    def __init__(self, excluded_set, min_delegation_amount=None, prcnt_rm=RoundingCommand(None)) -> None:
+    def __init__(self, excluded_set, min_delegation_amount=None) -> None:
         super().__init__()
 
         self.min_delegation_amount = min_delegation_amount
-        self.prcnt_rm = prcnt_rm
         self.excluded_set = excluded_set
         self.phase = 2
 
@@ -60,7 +57,7 @@ class CalculatePhase2(CalculatePhaseBase):
 
         # calculate new ratio using remaining balance
         for rl2 in self.filterskipped(rewards):
-            rl2.ratio = self.prcnt_rm.round(rl2.balance / new_total_balance)
+            rl2.ratio = rl2.balance / new_total_balance
             rl2.ratio2 = rl2.ratio
 
         # total reward amount remains the same

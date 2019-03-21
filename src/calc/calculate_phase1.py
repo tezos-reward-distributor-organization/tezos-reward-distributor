@@ -1,7 +1,8 @@
+from _decimal import ROUND_HALF_DOWN
+from decimal import Decimal
+
 from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
 from model.baking_conf import MIN_DELEGATION_KEY
-from model.reward_log import RewardLog
-from util.rounding_command import RoundingCommand
 
 
 class CalculatePhase1(CalculatePhaseBase):
@@ -11,15 +12,13 @@ class CalculatePhase1(CalculatePhaseBase):
     At phase 1, share of the excluded delegators remains in the staking Balance. Remaining rewards are distributed among other delegators.
     """
 
-    def __init__(self, excluded_set, min_delegation_amount=None, prcnt_rm=RoundingCommand(None)) -> None:
+    def __init__(self, excluded_set, min_delegation_amount=None) -> None:
         """
         :param excluded_set: set of address to exclude from rewards. Excluded rewards will leave at staking balance. Total reward will be updated.
-        :param prcnt_rm: RoundingCommand object for percentage calculations. Since this is the first layer in calculations RoundingCommand(None) is recommended to avoid rounding.
         """
         super().__init__()
 
         self.min_delegation_amount = min_delegation_amount
-        self.prcnt_rm = prcnt_rm
         self.excluded_set = excluded_set
         self.phase = 1
 
@@ -56,11 +55,12 @@ class CalculatePhase1(CalculatePhaseBase):
 
         # calculate new ratio using remaining balance
         for rl1 in self.filterskipped(rewards):
-            rl1.ratio = self.prcnt_rm.round(rl1.balance / new_total_balance)
+            rl1.ratio = rl1.balance / new_total_balance
             rl1.ratio1 = rl1.ratio
 
         # total reward amount needs to be diminished at the same rate total balance diminishes
         new_total_amnt_multiplier = new_total_balance / total_balance
-        new_total_amount = int(total_amount * new_total_amnt_multiplier)
+        new_total_amount = \
+            int(Decimal(total_amount * new_total_amnt_multiplier).to_integral_value(rounding=ROUND_HALF_DOWN))
 
         return rewards, new_total_amount
