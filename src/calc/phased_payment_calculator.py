@@ -8,6 +8,7 @@ from calc.calculate_phase4 import CalculatePhase4
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase_final import CalculatePhaseFinal
 from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_skip_type_balance, cmp_by_type_balance
+from pay.payment_consumer import logger
 
 MINOR_DIFF = 4
 MINOR_RATIO_DIFF = 1e-6
@@ -48,7 +49,7 @@ class PhasedPaymentCalculator:
         rwrd_logs, total_rwrd_amnt = phase0.calculate()
 
         assert reward_provider_model.delegate_staking_balance == sum([rl.balance for rl in rwrd_logs])
-        assert abs(1-sum([rl.ratio for rl in rwrd_logs]))<MINOR_RATIO_DIFF
+        assert abs(1 - sum([rl.ratio for rl in rwrd_logs])) < MINOR_RATIO_DIFF
 
         # calculate phase 1
         phase1 = CalculatePhase1(self.rules_model.exclusion_set1, self.min_delegation_amnt)
@@ -86,6 +87,10 @@ class PhasedPaymentCalculator:
 
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
-        assert abs(total_rwrd_amnt - sum([rl.amount for rl in rwrd_logs if not rl.skipped])) < MINOR_DIFF
+        error = abs(total_rwrd_amnt - sum([rl.amount for rl in rwrd_logs if not rl.skipped]))
+
+        logger.debug("Calculation error is {} mutez".format(error))
+
+        assert error < MINOR_DIFF
 
         return rwrd_logs, total_rwrd_amnt
