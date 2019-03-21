@@ -5,12 +5,11 @@ from calc.calculate_phase1 import CalculatePhase1
 from calc.calculate_phase2 import CalculatePhase2
 from calc.calculate_phase3 import CalculatePhase3
 from calc.calculate_phase4 import CalculatePhase4
-from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase_final import CalculatePhaseFinal
-from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_skip_type_balance, cmp_by_type_balance
+from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_type_balance
 from pay.payment_consumer import logger
 
-MINOR_DIFF = 4
+MINOR_DIFF = 5
 MINOR_RATIO_DIFF = 1e-6
 
 
@@ -89,8 +88,9 @@ class PhasedPaymentCalculator:
 
         error = abs(total_rwrd_amnt - sum([rl.amount for rl in rwrd_logs if not rl.skipped]))
 
-        logger.debug("Calculation error is {} mutez".format(error))
+        logger.info("Calculation error due to floating point arithmetic is {} mutez (max allowed error is {})"
+                     .format(error, MINOR_DIFF))
 
-        assert error < MINOR_DIFF
+        assert error <= MINOR_DIFF
 
         return rwrd_logs, total_rwrd_amnt
