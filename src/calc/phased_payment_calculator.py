@@ -9,7 +9,7 @@ from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase_final import CalculatePhaseFinal
 from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_skip_type_balance, cmp_by_type_balance
 
-MINOR_DIFF = 2
+MINOR_DIFF = 4
 MINOR_RATIO_DIFF = 1e-6
 
 
@@ -67,7 +67,7 @@ class PhasedPaymentCalculator:
         rwrd_logs, total_rwrd_amnt = phase3.calculate(rwrd_logs, total_rwrd_amnt)
 
         assert abs(1 - sum([rl.ratio for rl in rwrd_logs if not rl.skipped])) < MINOR_RATIO_DIFF
-        
+
         founder_parent = next(filter(lambda x: x.type == TYPE_FOUNDERS_PARENT, rwrd_logs), None)
         assert founder_parent.ratio3 == sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum(
             [rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])

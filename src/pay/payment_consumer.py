@@ -26,7 +26,7 @@ def count_and_log_failed(payment_logs, pymnt_cycle):
         else:
             nb_failed = nb_failed + 1
             logger.warning("No Reward paid for cycle %s address %s amount %f tz: Reason client failed!",
-                           pymnt_cycle, pymnt_itm.address, pymnt_itm.payment)
+                           pymnt_cycle, pymnt_itm.address, pymnt_itm.amount)
     return nb_failed
 
 
