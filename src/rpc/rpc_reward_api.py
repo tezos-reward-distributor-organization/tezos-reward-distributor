@@ -2,6 +2,7 @@ from api.reward_api import RewardApi
 
 from log_config import main_logger
 from util.rpc_utils import parse_json_response
+from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 logger = main_logger
 
@@ -14,7 +15,7 @@ COMM_DELEGATE_BALANCE = " rpc get http://{}/chains/main/blocks/{}/context/contra
 
 class RpcRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address, wllt_clnt_mngr, node_url):
+    def __init__(self, nw, baking_address, wllt_clnt_mngr, node_url, validate=True):
         super(RpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']  
@@ -24,6 +25,10 @@ class RpcRewardApiImpl(RewardApi):
         self.baking_address = baking_address
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.node_url = node_url
+        
+        self.validate = validate
+        if self.validate:
+            self.validate_api = TzScanRewardApiImpl(nw, self.baking_address)        
 
 
     def get_nb_delegators(self, cycle, verbose=False):
@@ -59,6 +64,8 @@ class RpcRewardApiImpl(RewardApi):
                         elif balance_update["category"] == "fees":
                             unfrozen_fees = -int(balance_update["change"])
             reward_data["total_rewards"] = unfrozen_rewards + unfrozen_fees
+            if self.validate:
+                self.__validate_reward_data(reward_data, cycle)
         else:
             logger.warn("Please wait until the rewards and fees for cycle {} are unfrozen".format(cycle))        
             reward_data["total_rewards"] = 0
@@ -122,3 +129,35 @@ class RpcRewardApiImpl(RewardApi):
         else:
             logger.info("Cycle too far in the future")
             return ""
+
+    def __validate_reward_data(self, reward_data_rpc, cycle):
+        reward_data_tzscan = self.validate_api.get_rewards_for_cycle_map(cycle)
+        if not reward_data_rpc["delegate_staking_balance"] == int(reward_data_tzscan["delegate_staking_balance"]):
+            raise Exception("Delegate staking balance from local node and tzscan are not identical.")
+                
+        if not (reward_data_rpc["delegators_nb"]) == (reward_data_tzscan["delegators_nb"]):
+            raise Exception("Delegators number from local node and tzscan are not identical.")
+        
+        if (reward_data_rpc["delegators_nb"]) == 0:
+            return
+        
+        delegators_balance_tzscan = [ int(reward_data_tzscan["delegators_balance"][i][1]) for i in range(len(reward_data_tzscan["delegators_balance"]))]
+        print(set(list(reward_data_rpc["delegators"].values())))
+        print(set(delegators_balance_tzscan))
+        if not set(list(reward_data_rpc["delegators"].values())) == set(delegators_balance_tzscan):
+            raise Exception("Delegators' balances from local node and tzscan are not identical.")
+
+        blocks_rewards = int(reward_data_tzscan["blocks_rewards"])
+        future_blocks_rewards = int(reward_data_tzscan["future_blocks_rewards"])
+        endorsements_rewards = int(reward_data_tzscan["endorsements_rewards"])
+        future_endorsements_rewards = int(reward_data_tzscan["future_endorsements_rewards"])
+        lost_rewards_denounciation = int(reward_data_tzscan["lost_rewards_denounciation"])
+        lost_fees_denounciation = int(reward_data_tzscan["lost_fees_denounciation"])
+        fees = int(reward_data_tzscan["fees"])
+
+        total_rewards_tzscan = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
+                              future_endorsements_rewards + fees - lost_rewards_denounciation - lost_fees_denounciation)
+
+        if not reward_data_rpc["total_rewards"] == total_rewards_tzscan:
+            raise Exception("Total rewards from local node and tzscan are not identical.")
+        
