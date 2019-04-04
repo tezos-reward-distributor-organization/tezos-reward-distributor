@@ -34,13 +34,6 @@ sudo apt-get update
 sudo apt-get -y install python3-pip
 ```
 
-If this did not work then you can also do this using curl
-
-```
-curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-python3 get-pip.py --user
-```
-
 Download the application repository using git clone:
 
 ```
