@@ -27,13 +27,10 @@ Features:
 
 ### Requirements and Setup:
 
-Python 3 is required. 
+Python 3 is required. You can use following commands to install. 
 
 ```
 sudo apt-get update
-```
-
-```
 sudo apt-get -y install python3-pip
 ```
 
