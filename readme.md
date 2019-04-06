@@ -91,6 +91,12 @@ Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 python3 src/main.py -D -N ZERONET -C 30 -M 3
 ```
 
+Run in dry-run mode in mainnet, make payments from cycle 30 onwards, for calculations use data provided by tezos node rpc interface:
+
+```
+python3 src/main.py -C 30 -P rpc
+```
+
 ### Baker Configuration:
 
 Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. 
