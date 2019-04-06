@@ -242,7 +242,7 @@ if __name__ == '__main__':
                         default=0, type=int)
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values "
-                             "are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). "
+                             "are interpreted as: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). "
                              "If not set application will continue from last payment made or last reward released.",
                         type=int)
 
