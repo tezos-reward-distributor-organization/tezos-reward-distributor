@@ -145,7 +145,7 @@ def main(args):
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr, 
-                        node_url=args.node_addr, verbose=args.verbose)
+                        node_url=args.node_addr, provider=args.reward_data_provider, verbose=args.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
@@ -206,6 +206,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
+    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided", choices=['tzscan', 'rpc'],
+                        default='tzscan')
     parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
     parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')

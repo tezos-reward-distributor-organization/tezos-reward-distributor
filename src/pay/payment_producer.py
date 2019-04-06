@@ -1,38 +1,25 @@
-import csv
-import threading
-
 import _thread
-
+import csv
+import os
+import threading
 import time
 
-import os
-
 from Constants import RunMode
+from api.provider_factory import ProviderFactory
 from calc.payment_calculator import PaymentCalculator
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from pay.double_payment_check import check_past_payment
-
-from tzscan.tzscan_block_api import TzScanBlockApiImpl
-from tzscan.tzscan_reward_api import TzScanRewardApiImpl
-from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
-
-from rpc.rpc_block_api import RpcBlockApiImpl
-from rpc.rpc_reward_api import RpcRewardApiImpl
-from rpc.rpc_reward_calculator import RpcRewardCalculatorApi
-
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
 from util.rounding_command import RoundingCommand
 
 logger = main_logger
 
-BOOL_USE_LOCAL_NODE = True
-
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, wllt_clnt_mngr, node_url, verbose=False):
+                 dry_run, wllt_clnt_mngr, node_url, provider, verbose=False):
         super(PaymentProducer, self).__init__()
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
@@ -45,16 +32,11 @@ class PaymentProducer(threading.Thread):
         self.name = name
 
         rc = RoundingCommand(self.prcnt_scale)
-                
-        
-        if BOOL_USE_LOCAL_NODE:
-            self.block_api = RpcBlockApiImpl(network_config, wllt_clnt_mngr, node_url)
-            self.reward_api = RpcRewardApiImpl(network_config, self.baking_address, wllt_clnt_mngr, node_url)        
-            self.reward_calculator_api = RpcRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
-        else:
-            self.block_api = TzScanBlockApiImpl(network_config)
-            self.reward_api = TzScanRewardApiImpl(network_config, self.baking_address)        
-            self.reward_calculator_api = TzScanRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
+
+        provider_factory = ProviderFactory(provider)
+        self.reward_api = provider_factory.newRewardApi(network_config, self.baking_address, wllt_clnt_mngr, node_url)
+        self.block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
+        self.reward_calculator_api = provider_factory.newCalcApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
 
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
