@@ -17,7 +17,7 @@ Design principals are:
 - Safety: Payment logs for avoiding double payments by mistake. Lock file for avoiding multiple instances running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
 
 Features:
-- Reward calculations based on tzscan API.
+- Reward calculations based on tzscan API or tezos node RPC interface. 
 - Batch Payments
 - Email notifications
 - Re-attempt failed payments
