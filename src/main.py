@@ -250,7 +250,7 @@ if __name__ == '__main__':
 
     logger.info("Tezos Reward Distributor is Starting")
     logger.info(LINER)
-    logger.info("Copyright Hüseyin ABANOZ 2019")
+    logger.info("Copyright Huseyin ABANOZ 2019")
     logger.info("huseyinabanox@gmail.com")
     logger.info("Please leave copyright information")
     logger.info(LINER)
