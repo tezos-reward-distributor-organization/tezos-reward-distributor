@@ -12,20 +12,27 @@ from calc.payment_calculator import PaymentCalculator
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from pay.double_payment_check import check_past_payment
+
 from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
+
+from rpc.rpc_block_api import RpcBlockApiImpl
+from rpc.rpc_reward_api import RpcRewardApiImpl
+from rpc.rpc_reward_calculator import RpcRewardCalculatorApi
+
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
 from util.rounding_command import RoundingCommand
 
 logger = main_logger
 
+BOOL_USE_LOCAL_NODE = True
 
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, verbose=False):
+                 dry_run, wllt_clnt_mngr, node_url, verbose=False):
         super(PaymentProducer, self).__init__()
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
@@ -36,7 +43,19 @@ class PaymentProducer(threading.Thread):
         self.prcnt_scale = baking_cfg.get_percentage_scale()
 
         self.name = name
-        self.block_api = TzScanBlockApiImpl(network_config)
+
+        rc = RoundingCommand(self.prcnt_scale)
+                
+        
+        if BOOL_USE_LOCAL_NODE:
+            self.block_api = RpcBlockApiImpl(network_config, wllt_clnt_mngr, node_url)
+            self.reward_api = RpcRewardApiImpl(network_config, self.baking_address, wllt_clnt_mngr, node_url)        
+            self.reward_calculator_api = RpcRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
+        else:
+            self.block_api = TzScanBlockApiImpl(network_config)
+            self.reward_api = TzScanRewardApiImpl(network_config, self.baking_address)        
+            self.reward_calculator_api = TzScanRewardCalculatorApi(self.founders_map, self.min_delegation_amt, self.excluded_delegators_set, rc)
+
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
         self.nw_config = network_config
@@ -61,12 +80,14 @@ class PaymentProducer(threading.Thread):
             _thread.interrupt_main()
 
     def run(self):
+        
         current_cycle = self.block_api.get_current_cycle()
-
+        
         payment_cycle = self.initial_payment_cycle
 
         # if non-positive initial_payment_cycle, set initial_payment_cycle to
         # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
+
         if self.initial_payment_cycle <= 0:
             payment_cycle = current_cycle - abs(self.initial_payment_cycle) - (
                     self.nw_config['NB_FREEZE_CYCLE'] + 1)
@@ -78,8 +99,8 @@ class PaymentProducer(threading.Thread):
             time.sleep(5)
 
             logger.debug("Trying payments for cycle {}".format(payment_cycle))
-
-            current_level = self.block_api.get_current_level(verbose=self.verbose)
+            
+            current_level = self.block_api.get_current_level()
             current_cycle = self.block_api.level_to_cycle(current_level)
 
             # create reports dir
@@ -100,12 +121,11 @@ class PaymentProducer(threading.Thread):
                         logger.info("Payment cycle is " + str(payment_cycle))
 
                         # 1- get reward data
-                        reward_api = TzScanRewardApiImpl(self.nw_config, self.baking_address)
-                        reward_data = reward_api.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
-
+                        reward_data = self.reward_api.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
+                            
                         # 2- make payment calculations from reward data
                         pymnt_logs, total_rewards = self.make_payment_calculations(payment_cycle, reward_data)
-
+                        
                         # 3- check for past payment evidence for current cycle
                         past_payment_state = check_past_payment(self.payments_root, payment_cycle)
                         if not self.dry_run and total_rewards > 0 and past_payment_state:
@@ -172,6 +192,7 @@ class PaymentProducer(threading.Thread):
         self.exit()
 
         return
+    
 
     def waint_until_next_cycle(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):
@@ -208,11 +229,8 @@ class PaymentProducer(threading.Thread):
             logger.warn("No delegators at cycle {}. Check your delegation status".format(payment_cycle))
             return [], 0
 
-        rc = RoundingCommand(self.prcnt_scale)
-        reward_calc = TzScanRewardCalculatorApi(self.founders_map, reward_data, self.min_delegation_amt,
-                                                self.excluded_delegators_set, rc)
 
-        rewards, total_rewards = reward_calc.calculate()
+        rewards, total_rewards = self.reward_calculator_api.calculate(reward_data)
 
         logger.info("Total rewards={}".format(total_rewards))
 
@@ -223,7 +241,8 @@ class PaymentProducer(threading.Thread):
         payment_logs = pymnt_calc.calculate()
 
         return payment_logs, total_rewards
-
+    
+    
     @staticmethod
     def create_exit_payment():
         return PaymentRecord.ExitInstance()
@@ -280,3 +299,5 @@ class PaymentProducer(threading.Thread):
                 # mark the files as in use. we do not want it to be read again
                 # BUSY file will be removed, if successful payment is done
                 os.rename(payment_failed_report_file, payment_failed_report_file + BUSY_FILE)
+    
+    

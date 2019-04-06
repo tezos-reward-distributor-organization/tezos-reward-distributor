@@ -7,9 +7,10 @@ import sys
 import time
 
 from Constants import RunMode
-from NetworkConfiguration import network_config_map
+from NetworkConfiguration import init_network_config
 from calc.service_fee_calculator import ServiceFeeCalculator
 from cli.wallet_client_manager import WalletClientManager
+from cli.simple_client_manager import SimpleClientManager
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
@@ -65,16 +66,20 @@ def main(args):
     if 'addresses_by_pkh' in master_cfg:
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
-    # 3-
 
-    # 4- get client path
-    network_config = network_config_map[args.network]
+    # 3- get client path
+    
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, network_config,
+                                  args.docker, args.network,
                                   args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
-
+    
+    # 4. get network config     
+    config_client_manager = SimpleClientManager(client_path)
+    network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
+    network_config = network_config_map[args.network]
+    
     # 5- load baking configuration file
     config_file_path = get_baking_configuration_file(config_dir)
 
@@ -139,7 +144,8 @@ def main(args):
                         payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
-                        payments_queue=payments_queue, dry_run=dry_run, verbose=args.verbose)
+                        payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr, 
+                        node_url=args.node_addr, verbose=args.verbose)
     p.start()
 
     for i in range(NB_CONSUMERS):
