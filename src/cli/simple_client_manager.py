@@ -10,9 +10,14 @@ class SimpleClientManager:
         self.verbose = verbose
         self.client_path = client_path
 
-    def send_request(self, cmd):
+    def send_request(self, cmd, verbose_override=None):
         whole_cmd = self.client_path + cmd
-        if self.verbose:
+        verbose = self.verbose
+
+        if verbose_override is not None:
+            verbose = verbose_override
+
+        if verbose:
             print("Command is |{}|".format(whole_cmd))
 
         # execute client
@@ -26,7 +31,7 @@ class SimpleClientManager:
 
         buffer = b''.join(bytes).decode('utf-8')
 
-        if self.verbose:
+        if verbose:
             print("Answer is |{}|".format(buffer))
 
         return buffer
@@ -40,4 +45,5 @@ class SimpleClientManager:
             if "Signature" in line:
                 return line.strip("Signature:").strip()
 
-        raise ClientException("Signature not found in response '{}'. Signed with {}".format(response.replace('\n'), 'key_name'))
+        raise ClientException(
+            "Signature not found in response '{}'. Signed with {}".format(response.replace('\n'), 'key_name'))

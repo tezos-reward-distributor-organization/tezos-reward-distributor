@@ -135,7 +135,7 @@ class BatchPayer():
         counter = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_counter))
         counter = int(counter)
 
-        head = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_head))
+        head = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_head, verbose_override=False))
         branch = head["hash"]
         protocol = head["metadata"]["protocol"]
 
