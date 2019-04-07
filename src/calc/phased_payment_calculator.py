@@ -90,10 +90,13 @@ class PhasedPaymentCalculator:
 
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
-        error = abs(total_rwrd_amnt - sum([rl.amount for rl in rwrd_logs if not rl.skipped]))
+        total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
+        error = abs(total_rwrd_amnt - total_amount_to_pay)
 
-        logger.info("Difference between total rewards and calculated rewards is {} mutez. This is due to floating point arithmetic. (max allowed diff is {})"
-                    .format(error, MINOR_DIFF))
+        logger.info("Total rewards is {}, amount will be paid is {}".format(total_rwrd_amnt, total_amount_to_pay))
+        logger.debug("Difference between total rewards and calculated rewards is {} mutez. "
+                     "This is due to floating point arithmetic. (max allowed diff is {})"
+                     .format(error, MINOR_DIFF))
 
         assert error <= MINOR_DIFF
 

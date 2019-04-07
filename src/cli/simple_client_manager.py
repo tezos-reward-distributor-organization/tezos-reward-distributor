@@ -18,7 +18,7 @@ class SimpleClientManager:
             verbose = verbose_override
 
         if verbose:
-            print("Command is |{}|".format(whole_cmd))
+            print("--> Verbose : Command is |{}|".format(whole_cmd))
 
         # execute client
         process = subprocess.Popen(whole_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -32,7 +32,7 @@ class SimpleClientManager:
         buffer = b''.join(bytes).decode('utf-8')
 
         if verbose:
-            print("Answer is |{}|".format(buffer))
+            print("<-- Verbose : Answer is |{}|".format(buffer))
 
         return buffer
 
