@@ -25,11 +25,16 @@ class SimpleClientManager:
 
         bytes = []
 
-        for b in process.stderr:
-            bytes.append(b)
-
         for b in process.stdout:
             bytes.append(b)
+
+        if verbose:
+            print("--- Verbose : Nothing in stdout, reading stderr...")
+
+        # if no response in stdout, read stderr
+        if not bytes:
+            for b in process.stderr:
+                bytes.append(b)
 
         process.wait()
 
