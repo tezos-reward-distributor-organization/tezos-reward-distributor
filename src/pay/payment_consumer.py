@@ -75,6 +75,9 @@ class PaymentConsumer(threading.Thread):
                 phase6 = CalculatePhase6(addr_dest_dict=self.dest_map)
                 payment_items, _ = phase6.calculate(payment_items, None)
 
+                # filter out non-payable items
+                payment_items = [pi for pi in payment_items if pi.payable]
+
                 payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,

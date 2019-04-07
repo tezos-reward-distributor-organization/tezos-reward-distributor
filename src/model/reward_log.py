@@ -43,6 +43,7 @@ class RewardLog:
 
         self.paid=False
         self.hash="asdasd"
+        self.payable=True
 
     def skip(self, desc, phase):
         if self.skipped:
