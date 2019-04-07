@@ -47,6 +47,10 @@ class PhasedPaymentCalculator:
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs, total_rwrd_amnt = phase0.calculate()
 
+        if total_rwrd_amnt == 0:
+            logger.debug("NO REWARDS to process!")
+            return [], 0
+
         assert reward_provider_model.delegate_staking_balance == sum([rl.balance for rl in rwrd_logs])
         assert abs(1 - sum([rl.ratio for rl in rwrd_logs])) < MINOR_RATIO_DIFF
 
@@ -88,8 +92,8 @@ class PhasedPaymentCalculator:
 
         error = abs(total_rwrd_amnt - sum([rl.amount for rl in rwrd_logs if not rl.skipped]))
 
-        logger.info("Calculation error due to floating point arithmetic is {} mutez (max allowed error is {})"
-                     .format(error, MINOR_DIFF))
+        logger.info("Difference between total rewards and calculated rewards is {} mutez. This is due to floating point arithmetic. (max allowed diff is {})"
+                    .format(error, MINOR_DIFF))
 
         assert error <= MINOR_DIFF
 

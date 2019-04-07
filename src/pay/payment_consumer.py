@@ -69,12 +69,6 @@ class PaymentConsumer(threading.Thread):
 
                 logger.info("Starting payments for cycle {}".format(pymnt_cycle))
 
-                # 2- select suitable payment script
-                # if len(payment_items) == 1:
-                # regular_payer = RegularPayer(self.client_path, self.key_name)
-                # payment_log = regular_payer.pay(payment_items[0], self.verbose, dry_run=self.dry_run)
-                # payment_logs = [payment_log]
-
                 phase5 = CalculatePhase5(self.dest_map)
                 payment_items, _ = phase5.calculate(payment_items, None)
 
@@ -133,11 +127,13 @@ class PaymentConsumer(threading.Thread):
             for pl in payment_logs:
                 # write row to csv file
                 csv_writer.writerow(
-                    [pl.address, pl.type, "{0:f}".format(pl.amount/ MUTEZ), pl.hash,
+                    [pl.address, pl.type, "{0:f}".format(pl.amount / MUTEZ), pl.hash,
                      "1" if pl.paid else "0"])
 
-                logger.info("Payment done for address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
+                logger.info(
+                    "Payment done for address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
                     .format(pl.balance / MUTEZ, pl.ratio, pl.service_fee_ratio, pl.amount / MUTEZ,
-                            pl.service_fee_amount / MUTEZ, pl.service_fee_rate), pl.address, pl.type, pl.skipped, pl.skippedatphase, pl.desc)
+                            pl.service_fee_amount / MUTEZ, pl.service_fee_rate), pl.address, pl.type, pl.skipped,
+                    pl.skippedatphase, pl.desc)
 
         return report_file
