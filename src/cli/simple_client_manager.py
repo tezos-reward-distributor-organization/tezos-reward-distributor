@@ -24,6 +24,10 @@ class SimpleClientManager:
         process = subprocess.Popen(whole_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         bytes = []
+
+        for b in process.stderr:
+            bytes.append(b)
+
         for b in process.stdout:
             bytes.append(b)
 
