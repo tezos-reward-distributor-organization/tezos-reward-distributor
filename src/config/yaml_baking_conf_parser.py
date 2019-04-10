@@ -132,13 +132,13 @@ class BakingYamlConfParser(YamlConfParser):
                                          "For more information please refer to tezos command line interface."
                                          .format(pymnt_addr))
 
-        if not self.block_api.get_revelation(conf_obj[('%s_manager' % PAYMENT_ADDRESS)]):
-            raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
-                                         "Public key of Manager ({}) is not revealed.\n"
-                                         "Use command 'reveal key for <src>' to reveal your public key. \n"
-                                         "For implicit accounts, setting your account as delegate is enough.\n"
-                                         "For more information please refer to tezos command line interface."
-                                         .format(pymnt_addr, conf_obj[('%s_manager' % PAYMENT_ADDRESS)]))
+        #if not self.block_api.get_revelation(conf_obj[('%s_manager' % PAYMENT_ADDRESS)]):
+        #    raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
+        #                                 "Public key of Manager ({}) is not revealed.\n"
+        #                                 "Use command 'reveal key for <src>' to reveal your public key. \n"
+        #                                 "For implicit accounts, setting your account as delegate is enough.\n"
+        #                                 "For more information please refer to tezos command line interface."
+        #                                 .format(pymnt_addr, conf_obj[('%s_manager' % PAYMENT_ADDRESS)]))
 
     def check_sk(self, addr_obj, pkh):
         if not addr_obj['sk']:
