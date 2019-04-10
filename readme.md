@@ -17,7 +17,7 @@ Design principals are:
 - Safety: Payment logs for avoiding double payments by mistake. Lock file for avoiding multiple instances running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
 
 Features:
-- Reward calculations based on tzscan API.
+- Reward calculations based on tzscan API or tezos node RPC interface. 
 - Batch Payments
 - Email notifications
 - Re-attempt failed payments
@@ -89,6 +89,12 @@ Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
 
 ```
 python3 src/main.py -D -N ZERONET -C 30 -M 3
+```
+
+Run in dry-run mode in mainnet, make payments from cycle 30 onwards, for calculations use data provided by tezos node rpc interface:
+
+```
+python3 src/main.py -C 30 -P rpc
 ```
 
 ### Baker Configuration:
