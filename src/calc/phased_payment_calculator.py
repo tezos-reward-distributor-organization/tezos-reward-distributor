@@ -52,29 +52,31 @@ class PhasedPaymentCalculator:
             return [], 0
 
         assert reward_provider_model.delegate_staking_balance == sum([rl.balance for rl in rwrd_logs])
-        assert abs(1 - sum([rl.ratio for rl in rwrd_logs])) < MINOR_RATIO_DIFF
+        assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs]))
 
         # calculate phase 1
         phase1 = CalculatePhase1(self.rules_model.exclusion_set1, self.min_delegation_amnt)
         rwrd_logs, total_rwrd_amnt = phase1.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert abs(1 - sum([rl.ratio for rl in rwrd_logs if not rl.skipped])) < MINOR_RATIO_DIFF
+        assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped]))
 
         # calculate phase 2
         phase2 = CalculatePhase2(self.rules_model.exclusion_set2, self.min_delegation_amnt)
         rwrd_logs, total_rwrd_amnt = phase2.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert abs(1 - sum([rl.ratio for rl in rwrd_logs if not rl.skipped])) < MINOR_RATIO_DIFF
+        assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped]))
 
         # calculate phase 3
         phase3 = CalculatePhase3(self.fee_calc, self.rules_model.exclusion_set3, self.min_delegation_amnt)
         rwrd_logs, total_rwrd_amnt = phase3.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert abs(1 - sum([rl.ratio for rl in rwrd_logs if not rl.skipped])) < MINOR_RATIO_DIFF
+        assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped]))
 
         founder_parent = next(filter(lambda x: x.type == TYPE_FOUNDERS_PARENT, rwrd_logs), None)
-        assert founder_parent.ratio3 == sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum(
+        # 0.12337318992795385 -> 0.12337318992795383
+        calculated_founder_rewards = sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum(
             [rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])
+        assert self.almost_equal(founder_parent.ratio3, calculated_founder_rewards)
         owners_parent = next(filter(lambda x: x.type == TYPE_OWNERS_PARENT, rwrd_logs), None)
         assert owners_parent.service_fee_rate == 0
 
@@ -101,3 +103,6 @@ class PhasedPaymentCalculator:
         assert error <= MINOR_DIFF
 
         return rwrd_logs, total_rwrd_amnt
+
+    def almost_equal(self, double1, double2):
+        return abs(double1 - double2) < MINOR_RATIO_DIFF
