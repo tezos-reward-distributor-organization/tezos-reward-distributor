@@ -14,7 +14,6 @@ from thirdparty.tzscan.tzscan_block_api import TzScanBlockApiImpl
 from thirdparty.tzscan.tzscan_reward_provider import TzScanRewardProvider
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
-from util.rounding_command import RoundingCommand
 
 logger = main_logger
 
@@ -105,12 +104,8 @@ class PaymentProducer(threading.Thread):
                         reward_provider_model = reward_provider.provide_for_cycle(payment_cycle, self.verbose)
 
                         # 2- calculate rewards
-                        prcnt_rm = RoundingCommand(self.prcnt_scale)
-                        pymnt_rm = RoundingCommand(self.pymnt_scale)
-
                         payment_calc = PhasedPaymentCalculator(self.founders_map, self.owners_map,
-                                                               self.fee_calc, payment_cycle, prcnt_rm, pymnt_rm,
-                                                               self.min_delegation_amt_in_mutez, self.rules_model)
+                                                               self.fee_calc, payment_cycle, self.min_delegation_amt_in_mutez, self.rules_model)
                         reward_logs, total_amount = payment_calc.calculate(reward_provider_model)
 
                         total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])

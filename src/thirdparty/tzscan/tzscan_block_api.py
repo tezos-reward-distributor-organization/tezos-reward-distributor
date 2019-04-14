@@ -1,9 +1,7 @@
-import random
-
 import requests
+
 from api.block_api import BlockApi
 from exception.tzscan import TzScanException
-
 from log_config import main_logger
 from thirdparty.tzscan.tzscan_utility import rand_mirror
 

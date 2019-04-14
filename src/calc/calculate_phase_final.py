@@ -3,7 +3,6 @@ from decimal import Decimal
 
 from calc.calculate_phase_base import CalculatePhaseBase
 from model.reward_log import TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
-from util.rounding_command import RoundingCommand
 
 MUTEZ = 1e+6
 
@@ -15,10 +14,9 @@ class CalculatePhaseFinal(CalculatePhaseBase):
     At stage final, convert ratios to actual payment amounts.
     """
 
-    def __init__(self, cycle, payment_rounding=RoundingCommand(None)) -> None:
+    def __init__(self, cycle) -> None:
         super().__init__()
         self.cycle = cycle
-        self.rm_pymnt = payment_rounding
 
     def calculate(self, reward_data5, total_amount):
         skipped_rewards = list(self.iterateskipped(reward_data5))
@@ -30,8 +28,7 @@ class CalculatePhaseFinal(CalculatePhaseBase):
             rl.amount = int(Decimal(rl.ratio * total_amount).to_integral_value(rounding=ROUND_HALF_DOWN))
             rl.payable = rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR]
             rl.cycle = self.cycle
-            rl.service_fee_amount = \
-                int(Decimal(rl.service_fee_ratio * total_amount).to_integral_value(rounding=ROUND_HALF_DOWN))
+            rl.service_fee_amount = int(Decimal(rl.service_fee_ratio * total_amount).to_integral_value(rounding=ROUND_HALF_DOWN))
 
             new_rewards.append(rl)
 

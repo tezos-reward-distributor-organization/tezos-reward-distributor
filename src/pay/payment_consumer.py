@@ -1,7 +1,7 @@
 import csv
 import functools
-import threading
 import os
+import threading
 import time
 
 from Constants import EXIT_PAYMENT_TYPE
@@ -9,7 +9,7 @@ from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
 from emails.email_manager import EmailManager
 from log_config import main_logger
-from model.reward_log import cmp_by_type_balance, RewardLog, TYPE_MERGED
+from model.reward_log import cmp_by_type_balance, TYPE_MERGED
 from pay.batch_payer import BatchPayer
 from util.dir_utils import payment_report_file_path, get_busy_file
 

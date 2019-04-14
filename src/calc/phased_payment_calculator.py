@@ -24,15 +24,12 @@ class PhasedPaymentCalculator:
     -- Phase Last : Payment Phase
     """
 
-    def __init__(self, founders_map, owners_map, service_fee_calculator, cycle,
-                 percent_rounding_mode, payment_rounding_mode, min_delegation_amount, rules_model):
+    def __init__(self, founders_map, owners_map, service_fee_calculator, cycle, min_delegation_amount, rules_model):
         self.rules_model = rules_model
         self.owners_map = owners_map
         self.founders_map = founders_map
         self.cycle = cycle
         self.fee_calc = service_fee_calculator
-        self.prcnt_rm = percent_rounding_mode
-        self.pymnt_rm = payment_rounding_mode
         self.min_delegation_amnt = min_delegation_amount
 
     #
@@ -88,7 +85,7 @@ class PhasedPaymentCalculator:
         # phase5 = CalculatePhase5(self.rules_model.dest_map)
         # rwrd_logs, total_rwrd_amnt = phase5.calculate(rwrd_logs, total_rwrd_amnt)
 
-        phase_last = CalculatePhaseFinal(self.cycle, self.pymnt_rm)
+        phase_last = CalculatePhaseFinal(self.cycle)
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(rwrd_logs, total_rwrd_amnt)
 
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
