@@ -9,7 +9,7 @@ from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
 from emails.email_manager import EmailManager
 from log_config import main_logger
-from model.reward_log import cmp_by_type_balance
+from model.reward_log import cmp_by_type_balance, RewardLog, TYPE_MERGED
 from pay.batch_payer import BatchPayer
 from util.dir_utils import payment_report_file_path, get_busy_file
 
@@ -129,13 +129,19 @@ class PaymentConsumer(threading.Thread):
 
         with open(report_file, "w") as f:
             csv_writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            csv_writer.writerow(["address", "type", "amount", "hash", "paid"])
+            csv_writer.writerow(["address", "type", "amount", "hash", "paid", "parent"])
 
             for pl in payment_logs:
                 # write row to csv file
                 csv_writer.writerow(
                     [pl.address, pl.type, pl.amount, pl.hash if pl.hash else "None",
-                     "1" if pl.paid else "0"])
+                     "1" if pl.paid else "0", "None"])
+
+                if pl.type == TYPE_MERGED and pl.parents:
+                    for ppl in pl.parents:
+                        csv_writer.writerow(
+                            [ppl.address, ppl.type, ppl.amount, pl.hash if pl.hash else "None", "1" if pl.paid else "0",
+                             pl.address])
 
                 logger.info("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ),
                             pl.address, pl.type, pl.paid)

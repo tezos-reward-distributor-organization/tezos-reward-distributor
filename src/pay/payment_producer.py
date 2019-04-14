@@ -130,6 +130,8 @@ class PaymentProducer(threading.Thread):
                             logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
                                         "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
 
+                            logger.info("Creating calculation report (%s)", report_file_path)
+
                             # 6- create calculations report file. This file contains calculations details
                             self.create_calculations_report(payment_cycle, reward_logs, report_file_path, total_amount)
                         else:
@@ -200,10 +202,10 @@ class PaymentProducer(threading.Thread):
             writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
             writer.writerow(
-                ["address", "paymentaddress","type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
+                ["address","type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
                  "skipped", "atphase", "desc"])
 
-            writer.writerow([self.baking_address, self.baking_address, "B", sum([pl.balance for pl in payment_logs]),
+            writer.writerow([self.baking_address, "B", sum([pl.balance for pl in payment_logs]),
                              "{0:f}".format(1.0),
                              "{0:f}".format(0.0),
                              "{0:f}".format(total_rewards),
@@ -215,7 +217,7 @@ class PaymentProducer(threading.Thread):
 
             for pymnt_log in payment_logs:
                 # write row to csv file
-                writer.writerow([pymnt_log.address,pymnt_log.paymentaddress, pymnt_log.type, pymnt_log.balance,
+                writer.writerow([pymnt_log.address, pymnt_log.type, pymnt_log.balance,
                                  "{0:f}".format(pymnt_log.ratio),
                                  "{0:f}".format(pymnt_log.service_fee_ratio),
                                  "{0:f}".format(pymnt_log.amount),
