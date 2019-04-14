@@ -47,6 +47,7 @@ class PhasedPaymentCalculator:
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs, total_rwrd_amnt = phase0.calculate()
 
+        logger.info("Total rewards before processing is {:,} mutez.".format(total_rwrd_amnt))
         if total_rwrd_amnt == 0:
             logger.debug("NO REWARDS to process!")
             return [], 0
@@ -73,7 +74,7 @@ class PhasedPaymentCalculator:
         assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped]))
 
         founder_parent = next(filter(lambda x: x.type == TYPE_FOUNDERS_PARENT, rwrd_logs), None)
-        # 0.12337318992795385 -> 0.12337318992795383
+
         calculated_founder_rewards = sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum(
             [rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])
         assert self.almost_equal(founder_parent.ratio3, calculated_founder_rewards)
@@ -95,8 +96,9 @@ class PhasedPaymentCalculator:
         total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
         error = abs(total_rwrd_amnt - total_amount_to_pay)
 
-        logger.info("Total rewards is {}, amount will be paid is {}".format(total_rwrd_amnt, total_amount_to_pay))
-        logger.debug("Difference between total rewards and calculated rewards is {} mutez. "
+        logger.info("Total rewards after  processing is {:,} mutez, distributed total amount is {:,} mutez".format(total_rwrd_amnt, total_amount_to_pay))
+        if error:
+            logger.debug("Difference between total rewards and distributed total amount is {} mutez. "
                      "This is due to floating point arithmetic. (max allowed diff is {})"
                      .format(error, MINOR_DIFF))
 

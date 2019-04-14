@@ -34,6 +34,7 @@ class PaymentProducer(threading.Thread):
         self.min_delegation_amt_in_mutez = baking_cfg.get_min_delegation_amount() * MUTEZ
         self.pymnt_scale = baking_cfg.get_payment_scale()
         self.prcnt_scale = baking_cfg.get_percentage_scale()
+        self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
 
         self.name = name
         self.block_api = TzScanBlockApiImpl(network_config)
@@ -112,25 +113,31 @@ class PaymentProducer(threading.Thread):
                                                                self.min_delegation_amt_in_mutez, self.rules_model)
                         reward_logs, total_amount = payment_calc.calculate(reward_provider_model)
 
+                        total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
+
                         # 3- check for past payment evidence for current cycle
                         past_payment_state = check_past_payment(self.payments_root, payment_cycle)
-                        if not self.dry_run and total_amount > 0 and past_payment_state:
+                        if not self.dry_run and total_amount_to_pay > 0 and past_payment_state:
                             logger.warn(past_payment_state)
-                            total_amount = 0
+                            total_amount_to_pay = 0
 
                         # 4- if total_rewards > 0, proceed with payment
-                        if total_amount > 0:
+                        if total_amount_to_pay > 0:
                             report_file_path = get_calculation_report_file(self.calculations_dir, payment_cycle)
 
                             # 5- send to payment consumer
                             self.payments_queue.put(reward_logs)
+                            logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
+                                        "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
 
                             # 6- create calculations report file. This file contains calculations details
                             self.create_calculations_report(payment_cycle, reward_logs, report_file_path, total_amount)
+                        else:
+                            logger.info("Total payment amount is 0. Nothing to pay!")
 
                         # 7- next cycle
                         # processing of cycle is done
-                        logger.info("Reward creation done for cycle %s", payment_cycle)
+                        logger.info("Reward creation is done for cycle %s.", payment_cycle)
                         payment_cycle = payment_cycle + 1
 
                         # single run is done. Do not continue.
@@ -192,24 +199,39 @@ class PaymentProducer(threading.Thread):
         with open(report_file_path, 'w', newline='') as f:
             writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
-            writer.writerow(["address", "type", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate"])
-            writer.writerow([self.baking_address, "B", 1.0, total_rewards, 0, total_rewards, 0])
+            writer.writerow(
+                ["address", "paymentaddress","type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
+                 "skipped", "atphase", "desc"])
+
+            writer.writerow([self.baking_address, self.baking_address, "B", sum([pl.balance for pl in payment_logs]),
+                             "{0:f}".format(1.0),
+                             "{0:f}".format(0.0),
+                             "{0:f}".format(total_rewards),
+                             "{0:f}".format(0.0),
+                             "{0:f}".format(0.0),
+                             "0", "0", "-1", "Baker"
+                             ])
+
 
             for pymnt_log in payment_logs:
                 # write row to csv file
-                writer.writerow([pymnt_log.address, pymnt_log.type,
+                writer.writerow([pymnt_log.address,pymnt_log.paymentaddress, pymnt_log.type, pymnt_log.balance,
                                  "{0:f}".format(pymnt_log.ratio),
                                  "{0:f}".format(pymnt_log.service_fee_ratio),
                                  "{0:f}".format(pymnt_log.amount),
                                  "{0:f}".format(pymnt_log.service_fee_amount),
-                                 "{0:f}".format(pymnt_log.service_fee_rate)])
+                                 "{0:f}".format(pymnt_log.service_fee_rate),
+                                 "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
+                                 pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
+                                 pymnt_log.desc if pymnt_log.desc else "None"
+                                 ])
 
-                logger.info(
-                    "Reward created for address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
-                        .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
-                                pymnt_log.amount / MUTEZ,
-                                pymnt_log.service_fee_amount / MUTEZ, pymnt_log.service_fee_rate),
-                    pymnt_log.address, pymnt_log.type, pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
+                logger.info("Reward created for address %s type %s balance {:>10.2f} ratio {:.8f} fee_ratio {:.6f} "
+                            "amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f} payable %s skipped %s atphase %s desc %s"
+                            .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
+                                    pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
+                                    pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
+                                    pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
 
     @staticmethod
     def create_exit_payment():

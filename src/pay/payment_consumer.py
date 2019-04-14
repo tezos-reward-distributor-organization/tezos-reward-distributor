@@ -122,21 +122,22 @@ class PaymentConsumer(threading.Thread):
     #
     # create report file
     def create_payment_report(self, nb_failed, payment_logs, payment_cycle):
+        logger.info("Payment completed for {} addresses".format(len(payment_logs)))
+
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
+        logger.info("Creating payment report (%s)", report_file)
+
         with open(report_file, "w") as f:
             csv_writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            csv_writer.writerow(["address", "type", "payment", "hash", "paid"])
+            csv_writer.writerow(["address", "type", "amount", "hash", "paid"])
 
             for pl in payment_logs:
                 # write row to csv file
                 csv_writer.writerow(
-                    [pl.address, pl.type, "{0:f}".format(pl.amount / MUTEZ), pl.hash,
+                    [pl.address, pl.type, pl.amount, pl.hash if pl.hash else "None",
                      "1" if pl.paid else "0"])
 
-                logger.info(
-                    "Payment done for address %s type %s balance {:>10.2f} ratio {:.2f} fee_ratio {:.2f} amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f}, skipped %s atphase %s desc %s "
-                    .format(pl.balance / MUTEZ, pl.ratio, pl.service_fee_ratio, pl.amount / MUTEZ,
-                            pl.service_fee_amount / MUTEZ, pl.service_fee_rate), pl.address, pl.type, pl.skipped,
-                    pl.skippedatphase, pl.desc)
+                logger.info("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ),
+                            pl.address, pl.type, pl.paid)
 
         return report_file

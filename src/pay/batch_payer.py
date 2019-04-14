@@ -91,7 +91,7 @@ class BatchPayer():
                                 range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
         payment_logs = []
-        logger.debug("Payment will be done in {} batches".format(len(payment_items_chunks)))
+        logger.debug("Payment for {} addresses will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
         for payment_items_chunk in payment_items_chunks:
             logger.debug("Payment of a batch started")
             payments_log = self.pay_single_batch_wrap(payment_items_chunk, verbose=verbose, dry_run=dry_run)
