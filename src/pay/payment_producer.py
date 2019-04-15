@@ -122,8 +122,8 @@ class PaymentProducer(threading.Thread):
 
                             # 5- send to payment consumer
                             self.payments_queue.put(reward_logs)
-                            logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
-                                        "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
+                            #logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
+                            #            "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
 
                             logger.info("Creating calculation report (%s)", report_file_path)
 
@@ -213,8 +213,8 @@ class PaymentProducer(threading.Thread):
             for pymnt_log in payment_logs:
                 # write row to csv file
                 writer.writerow([pymnt_log.address, pymnt_log.type, pymnt_log.balance,
-                                 "{0:f}".format(pymnt_log.ratio),
-                                 "{0:f}".format(pymnt_log.service_fee_ratio),
+                                 "{0:.10f}".format(pymnt_log.ratio),
+                                 "{0:.10f}".format(pymnt_log.service_fee_ratio),
                                  "{0:f}".format(pymnt_log.amount),
                                  "{0:f}".format(pymnt_log.service_fee_amount),
                                  "{0:f}".format(pymnt_log.service_fee_rate),

@@ -93,8 +93,9 @@ class PhasedPaymentCalculator:
         total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
         error = abs(total_rwrd_amnt - total_amount_to_pay)
 
-        logger.info("Total rewards after  processing is {:,} mutez, distributed total amount is {:,} mutez".format(total_rwrd_amnt, total_amount_to_pay))
+        logger.info("Total rewards after  processing is {:,} mutez.".format(total_rwrd_amnt))
         if error:
+            logger.debug("Distributed total amount is {:,} mutez".format(total_amount_to_pay))
             logger.debug("Difference between total rewards and distributed total amount is {} mutez. "
                      "This is due to floating point arithmetic. (max allowed diff is {})"
                      .format(error, MINOR_DIFF))

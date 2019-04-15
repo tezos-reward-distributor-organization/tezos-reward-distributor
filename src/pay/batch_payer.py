@@ -90,8 +90,14 @@ class BatchPayer():
         payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in
                                 range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
+        total_amount_to_pay = sum([pl.amount for pl in payment_items])
+        if not self.delegator_pays_xfer_fee: total_amount_to_pay += int(self.default_fee) * len(payment_items)
+        logger.info("Total amount to pay is {:,} mutez.".format(total_amount_to_pay))
+
+        logger.debug(
+            "Payment for {} addresses will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
+
         payment_logs = []
-        logger.debug("Payment for {} addresses will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
         for payment_items_chunk in payment_items_chunks:
             logger.debug("Payment of a batch started")
             payments_log = self.pay_single_batch_wrap(payment_items_chunk, verbose=verbose, dry_run=dry_run)
@@ -223,8 +229,9 @@ class BatchPayer():
 
         if len(decoded_signature) != 128:  # must be 64 bytes
             # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            logger.warn("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            #return False, ""
+            logger.warn(
+                "Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
+            # return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
@@ -245,4 +252,3 @@ class BatchPayer():
         logger.debug("Operation {} is included".format(operation_hash))
 
         return True, operation_hash
-
