@@ -11,6 +11,7 @@ from emails.email_manager import EmailManager
 from log_config import main_logger
 from model.reward_log import cmp_by_type_balance, TYPE_MERGED
 from pay.batch_payer import BatchPayer
+from stats.stats_pusblisher import stat_publish
 from util.dir_utils import payment_report_file_path, get_busy_file
 
 logger = main_logger
@@ -32,7 +33,7 @@ def count_and_log_failed(payment_logs, pymnt_cycle):
 
 class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
-                 verbose=None, dry_run=None, delegator_pays_xfer_fee=True, dest_map=None):
+                 verbose=None, dry_run=None, delegator_pays_xfer_fee=True, dest_map=None, publish_stats=True):
         super(PaymentConsumer, self).__init__()
 
         self.dest_map = dest_map if dest_map else {}
@@ -47,6 +48,7 @@ class PaymentConsumer(threading.Thread):
         self.mm = EmailManager()
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
+        self.publish_stats = publish_stats
 
         logger.debug('Consumer "%s" created', self.name)
 
@@ -145,5 +147,15 @@ class PaymentConsumer(threading.Thread):
 
                 logger.info("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ),
                             pl.address, pl.type, pl.paid)
+
+        if self.publish_stats:
+            stats_dict = {}
+            stats_dict['total_amount'] = sum([rl.amount for rl in payment_logs])
+            stats_dict['nb_payments'] = len(payment_logs)
+            stats_dict['nb_failed'] = nb_failed
+            stats_dict['cycle'] = payment_cycle
+            stats_dict['delegator_pays_fee'] = 1 if self.delegator_pays_xfer_fee else 0
+
+            stat_publish(stats_dict)
 
         return report_file

@@ -141,11 +141,13 @@ def main(args):
                         payments_queue=payments_queue, dry_run=dry_run, verbose=args.verbose)
     p.start()
 
+    publish_stats = not args.do_not_publish_stats
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                             wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(),dest_map=cfg.get_dest_map())
+                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
+                            publish_stats=publish_stats)
         time.sleep(1)
         c.start()
 
@@ -218,6 +220,9 @@ if __name__ == '__main__':
                         action="store_true")
     parser.add_argument("-V", "--verbose",
                         help="Low level details.",
+                        action="store_true")
+    parser.add_argument("-Dp", "--do_not_publish_stats",
+                        help="Do not publish anonymous usage statistics",
                         action="store_true")
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. "
