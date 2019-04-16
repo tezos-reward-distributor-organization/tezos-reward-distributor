@@ -9,7 +9,7 @@ from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
 from emails.email_manager import EmailManager
 from log_config import main_logger
-from model.reward_log import cmp_by_type_balance, TYPE_MERGED
+from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from pay.batch_payer import BatchPayer
 from stats.stats_pusblisher import stat_publish
 from util.dir_utils import payment_report_file_path, get_busy_file
@@ -149,10 +149,17 @@ class PaymentConsumer(threading.Thread):
                             pl.address, pl.type, pl.paid)
 
         if self.publish_stats:
+            n_f_type = len([pl for pl in payment_logs if pl.type==TYPE_FOUNDER]+[p for pl in payment_logs if pl.type==TYPE_MERGED for p in pl.parents if p.type==TYPE_FOUNDER])
+            n_o_type = len([pl for pl in payment_logs if pl.type==TYPE_OWNER]+[p for pl in payment_logs if pl.type==TYPE_MERGED for p in pl.parents if p.type==TYPE_OWNER])
+            n_d_type = len([pl for pl in payment_logs if pl.type==TYPE_DELEGATOR]+[p for pl in payment_logs if pl.type==TYPE_MERGED for p in pl.parents if p.type==TYPE_DELEGATOR])
+
             stats_dict = {}
             stats_dict['total_amount'] = sum([rl.amount for rl in payment_logs])
             stats_dict['nb_payments'] = len(payment_logs)
             stats_dict['nb_failed'] = nb_failed
+            stats_dict['nb_founder'] = n_f_type
+            stats_dict['nb_owner'] = n_o_type
+            stats_dict['nb_delegator'] = n_d_type
             stats_dict['cycle'] = payment_cycle
             stats_dict['delegator_pays_fee'] = 1 if self.delegator_pays_xfer_fee else 0
 
