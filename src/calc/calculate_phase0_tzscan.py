@@ -1,23 +1,18 @@
 from calc.calculate_phase_base import CalculatePhaseBase
 from model import reward_log
 from model.reward_log import RewardLog
-from util.rounding_command import RoundingCommand
-
-MUTEZ = 1e+6
 
 
 class CalculatePhase0(CalculatePhaseBase):
     """
     -- Phase0 : Provider Phase --
 
-    Calculate ratios for each delegator based on tz scan data. @see calculate function.
+    Calculate ratios for each delegator based on provider data. @see calculate function.
     """
 
     def __init__(self, reward_provider_model) -> None:
         """
         Constructor
-        :param percent_round_mode: RoundingCommand object for percentage calculations. Since this is the first layer in
-        calculations RoundingCommand(None) is recommended to avoid rounding.
         """
         super().__init__()
 

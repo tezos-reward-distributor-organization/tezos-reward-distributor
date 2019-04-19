@@ -24,11 +24,10 @@ class PhasedPaymentCalculator:
     -- Phase Last : Payment Phase
     """
 
-    def __init__(self, founders_map, owners_map, service_fee_calculator, cycle, min_delegation_amount, rules_model):
+    def __init__(self, founders_map, owners_map, service_fee_calculator, min_delegation_amount, rules_model):
         self.rules_model = rules_model
         self.owners_map = owners_map
         self.founders_map = founders_map
-        self.cycle = cycle
         self.fee_calc = service_fee_calculator
         self.min_delegation_amnt = min_delegation_amount
 
@@ -81,24 +80,24 @@ class PhasedPaymentCalculator:
         phase4 = CalculatePhase4(self.founders_map, self.owners_map)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
 
-        # prepare phase 5
-        # phase5 = CalculatePhase5(self.rules_model.dest_map)
-        # rwrd_logs, total_rwrd_amnt = phase5.calculate(rwrd_logs, total_rwrd_amnt)
-
-        phase_last = CalculatePhaseFinal(self.cycle)
+        # calculate amounts
+        phase_last = CalculatePhaseFinal()
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(rwrd_logs, total_rwrd_amnt)
 
+        # sort rewards according to type and balance
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
+        # check if there is difference between sum of calculated amounts and total_rewards
         total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
         error = abs(total_rwrd_amnt - total_amount_to_pay)
 
         logger.info("Total rewards after  processing is {:,} mutez.".format(total_rwrd_amnt))
+
         if error:
             logger.debug("Distributed total amount is {:,} mutez".format(total_amount_to_pay))
             logger.debug("Difference between total rewards and distributed total amount is {} mutez. "
-                     "This is due to floating point arithmetic. (max allowed diff is {})"
-                     .format(error, MINOR_DIFF))
+                         "This is due to floating point arithmetic. (max allowed diff is {})"
+                         .format(error, MINOR_DIFF))
 
         assert error <= MINOR_DIFF
 
