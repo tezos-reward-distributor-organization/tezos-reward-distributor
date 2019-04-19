@@ -5,16 +5,12 @@ import threading
 import time
 
 from Constants import RunMode
-from api import provider_factory
 from api.provider_factory import ProviderFactory
-from calc.payment_calculator import PaymentCalculator
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from model.rules_model import RulesModel
 from pay.double_payment_check import check_past_payment
-from thirdparty.tzscan.tzscan_block_api import TzScanBlockApiImpl
-from thirdparty.tzscan.tzscan_reward_provider import TzScanRewardProvider
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
 

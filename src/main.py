@@ -7,6 +7,7 @@ import time
 
 from Constants import RunMode
 from NetworkConfiguration import init_network_config
+from api.provider_factory import ProviderFactory
 from calc.service_fee_calculator import ServiceFeeCalculator
 from cli.wallet_client_manager import WalletClientManager
 from cli.simple_client_manager import SimpleClientManager
@@ -65,20 +66,19 @@ def main(args):
     if 'addresses_by_pkh' in master_cfg:
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
-
     # 3- get client path
-    
+
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
                                   args.docker, args.network,
                                   args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
-    
+
     # 4. get network config     
     config_client_manager = SimpleClientManager(client_path)
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
     network_config = network_config_map[args.network]
-    
+
     # 5- load baking configuration file
     config_file_path = get_baking_configuration_file(config_dir)
 
@@ -87,7 +87,9 @@ def main(args):
     wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers,
                                          verbose=args.verbose)
 
-    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, network_config)
+    provider_factory = ProviderFactory(args.reward_data_provider)
+    block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, args.node_addr)
+    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, block_api)
     parser.parse()
     parser.validate()
     parser.process()
@@ -143,7 +145,7 @@ def main(args):
                         payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
-                        payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr, 
+                        payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider=args.reward_data_provider, verbose=args.verbose)
     p.start()
 

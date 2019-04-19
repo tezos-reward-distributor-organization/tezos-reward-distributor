@@ -2,7 +2,7 @@ from api.reward_api import RewardApi
 
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
-from thirdparty.tzscan.tzscan_reward_provider_helper import TzScanRewardProviderHelper
+from tzscan.tzscan_reward_provider_helper import TzScanRewardProviderHelper
 
 logger = main_logger
 

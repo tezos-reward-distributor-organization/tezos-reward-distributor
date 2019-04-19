@@ -5,7 +5,7 @@ from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTE
     PYMNT_SCALE, PRCNT_SCALE, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
     EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP
-from thirdparty.tzscan.tzscan_block_api import TzScanBlockApiImpl
+from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -13,11 +13,10 @@ PKH_LENGHT = 36
 
 
 class BakingYamlConfParser(YamlConfParser):
-    def __init__(self, yaml_text, wllt_clnt_mngr, network_config, verbose=None) -> None:
+    def __init__(self, yaml_text, wllt_clnt_mngr, block_api, verbose=None) -> None:
         super().__init__(yaml_text, verbose)
         self.wllt_clnt_mngr = wllt_clnt_mngr
-        self.network_config = network_config
-        self.block_api = TzScanBlockApiImpl(network_config)
+        self.block_api = block_api
 
     def parse(self):
         yaml_conf_dict = super().parse()

@@ -2,7 +2,7 @@ import requests
 
 from exception.tzscan import TzScanException
 from log_config import main_logger
-from thirdparty.tzscan.tzscan_utility import rand_mirror
+from tzscan.tzscan_utility import rand_mirror
 
 MAX_PER_PAGE = 50
 

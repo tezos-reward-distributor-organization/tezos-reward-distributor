@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from calc.calculate_phase0_tzscan import CalculatePhase0
 from model import reward_log
-from thirdparty.tzscan.tzscan_reward_provider_helper import TzScanRewardProviderHelper
+from tzscan.tzscan_reward_provider_helper import TzScanRewardProviderHelper
 
 
 class TestCalculatePhase0(TestCase):
