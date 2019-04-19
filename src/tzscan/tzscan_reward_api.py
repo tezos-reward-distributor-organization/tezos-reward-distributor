@@ -22,10 +22,12 @@ class TzScanRewardApiImpl(RewardApi):
         future_blocks_rewards = int(root["future_blocks_rewards"])
         endorsements_rewards = int(root["endorsements_rewards"])
         future_endorsements_rewards = int(root["future_endorsements_rewards"])
+        lost_rewards_denounciation = int(root["lost_rewards_denounciation"])
+        lost_fees_denounciation = int(root["lost_fees_denounciation"])
         fees = int(root["fees"])
 
-        total_reward_amount = (
-                blocks_rewards + endorsements_rewards + future_blocks_rewards + future_endorsements_rewards + fees)
+        total_reward_amount = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
+                              future_endorsements_rewards + fees - lost_rewards_denounciation - lost_fees_denounciation)
 
         delegators_balance = root["delegators_balance"]
 
