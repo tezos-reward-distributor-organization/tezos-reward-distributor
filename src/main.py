@@ -6,9 +6,10 @@ import sys
 import time
 
 from Constants import RunMode
-from NetworkConfiguration import network_config_map
+from NetworkConfiguration import init_network_config
 from calc.service_fee_calculator import ServiceFeeCalculator
 from cli.wallet_client_manager import WalletClientManager
+from cli.simple_client_manager import SimpleClientManager
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
@@ -64,16 +65,20 @@ def main(args):
     if 'addresses_by_pkh' in master_cfg:
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
-    # 3-
 
-    # 4- get client path
-    network_config = network_config_map[args.network]
+    # 3- get client path
+    
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, network_config,
+                                  args.docker, args.network,
                                   args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
-
+    
+    # 4. get network config     
+    config_client_manager = SimpleClientManager(client_path)
+    network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
+    network_config = network_config_map[args.network]
+    
     # 5- load baking configuration file
     config_file_path = get_baking_configuration_file(config_dir)
 
@@ -138,7 +143,8 @@ def main(args):
                         payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
-                        payments_queue=payments_queue, dry_run=dry_run, verbose=args.verbose)
+                        payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr, 
+                        node_url=args.node_addr, provider=args.reward_data_provider, verbose=args.verbose)
     p.start()
 
     publish_stats = not args.do_not_publish_stats
@@ -201,6 +207,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
                         default='MAINNET')
+    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided", choices=['tzscan', 'rpc'],
+                        default='tzscan')
     parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
     parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
@@ -240,7 +248,7 @@ if __name__ == '__main__':
                         default=0, type=int)
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values "
-                             "are interpreted as : current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). "
+                             "are interpreted as: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). "
                              "If not set application will continue from last payment made or last reward released.",
                         type=int)
 
@@ -248,7 +256,7 @@ if __name__ == '__main__':
 
     logger.info("Tezos Reward Distributor is Starting")
     logger.info(LINER)
-    logger.info("Copyright Hüseyin ABANOZ 2019")
+    logger.info("Copyright Huseyin ABANOZ 2019")
     logger.info("huseyinabanox@gmail.com")
     logger.info("Please leave copyright information")
     logger.info(LINER)

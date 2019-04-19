@@ -5,6 +5,9 @@ import threading
 import time
 
 from Constants import RunMode
+from api import provider_factory
+from api.provider_factory import ProviderFactory
+from calc.payment_calculator import PaymentCalculator
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from log_config import main_logger
 from model.payment_log import PaymentRecord
@@ -23,7 +26,7 @@ MUTEZ = 1e+6
 class PaymentProducer(threading.Thread):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, verbose=False):
+                 dry_run, wllt_clnt_mngr, node_url, provider, verbose=False):
         super(PaymentProducer, self).__init__()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
@@ -36,7 +39,11 @@ class PaymentProducer(threading.Thread):
         self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
 
         self.name = name
-        self.block_api = TzScanBlockApiImpl(network_config)
+
+        provider_factory = ProviderFactory(provider)
+        self.reward_api = provider_factory.newRewardApi(network_config, self.baking_address, wllt_clnt_mngr, node_url)
+        self.block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
+
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
         self.nw_config = network_config
@@ -51,6 +58,9 @@ class PaymentProducer(threading.Thread):
         self.payments_queue = payments_queue
         self.life_cycle = life_cycle
         self.dry_run = dry_run
+
+        self.payment_calc = PhasedPaymentCalculator(self.founders_map, self.owners_map, self.fee_calc,
+                                                    self.min_delegation_amt_in_mutez, self.rules_model)
         logger.debug('Producer started')
 
     def exit(self):
@@ -100,15 +110,21 @@ class PaymentProducer(threading.Thread):
                         logger.info("Payment cycle is " + str(payment_cycle))
 
                         # 1- get reward data
-                        reward_provider = TzScanRewardProvider(self.nw_config, self.baking_address)
-                        reward_provider_model = reward_provider.provide_for_cycle(payment_cycle, self.verbose)
+                        reward_model = self.reward_api.get_rewards_for_cycle_map(payment_cycle, )
 
                         # 2- calculate rewards
-                        payment_calc = PhasedPaymentCalculator(self.founders_map, self.owners_map,
-                                                               self.fee_calc, payment_cycle, self.min_delegation_amt_in_mutez, self.rules_model)
-                        reward_logs, total_amount = payment_calc.calculate(reward_provider_model)
+                        reward_logs, total_amount = self.payment_calc.calculate(reward_model)
+
+                        # set cycle info
+                        for rl in reward_logs: rl.cycle = payment_cycle
 
                         total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
+
+                        # 1- get reward data
+                        # reward_data = self.reward_api.get_rewards_for_cycle_map(payment_cycle, verbose=self.verbose)
+
+                        # 2- make payment calculations from reward data
+                        # pymnt_logs, total_rewards = self.make_payment_calculations(payment_cycle, reward_data)
 
                         # 3- check for past payment evidence for current cycle
                         past_payment_state = check_past_payment(self.payments_root, payment_cycle)
@@ -122,7 +138,7 @@ class PaymentProducer(threading.Thread):
 
                             # 5- send to payment consumer
                             self.payments_queue.put(reward_logs)
-                            #logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
+                            # logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
                             #            "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
 
                             logger.info("Creating calculation report (%s)", report_file_path)
@@ -197,7 +213,7 @@ class PaymentProducer(threading.Thread):
             writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
             writer.writerow(
-                ["address","type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
+                ["address", "type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
                  "skipped", "atphase", "desc"])
 
             writer.writerow([self.baking_address, "B", sum([pl.balance for pl in payment_logs]),
@@ -208,7 +224,6 @@ class PaymentProducer(threading.Thread):
                              "{0:f}".format(0.0),
                              "0", "0", "-1", "Baker"
                              ])
-
 
             for pymnt_log in payment_logs:
                 # write row to csv file
@@ -228,7 +243,7 @@ class PaymentProducer(threading.Thread):
                             .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                     pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
                                     pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
-                                    pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
+                            pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
 
     @staticmethod
     def create_exit_payment():

@@ -39,8 +39,7 @@ class PaymentRecord():
 
     @staticmethod
     def FromPaymentCSVDictRow(row, cyle):
-        return PaymentRecord(cyle, row["address"], row["ratio"], row["fee_rate"], row["reward"], row["fee"],
-                             row["type"], row["payment"], row["paid"], row["hash"])
+        return PaymentRecord(cyle, row["address"], None, None, None, None, row["type"], float(row["payment"]), row["paid"], row["hash"])
 
     @staticmethod
     def ManualInstance(file_name, address, payment):
