@@ -163,7 +163,7 @@ class PaymentConsumer(threading.Thread):
             stats_dict['nb_delegator'] = n_d_type
             stats_dict['cycle'] = payment_cycle
             stats_dict['delegator_pays_fee'] = 1 if self.delegator_pays_xfer_fee else 0
-            stats_dict['trdversion'] = version
+            stats_dict['trdversion'] = version.version
 
             stat_publish(stats_dict)
 

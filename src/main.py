@@ -5,6 +5,7 @@ import queue
 import sys
 import time
 
+import version
 from Constants import RunMode
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
@@ -34,7 +35,7 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
+    logger.info("Version {} Arguments Configuration = {}".format(version.version, json.dumps(args.__dict__, indent=1)))
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
