@@ -6,7 +6,7 @@ import threading
 import time
 import datetime
 
-from main import version
+import version
 
 url = "http://34.74.27.213:8080/trd/stats/add"
 headers = {'content-type': 'application/json'}

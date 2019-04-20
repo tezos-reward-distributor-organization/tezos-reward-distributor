@@ -29,7 +29,7 @@ NB_CONSUMERS = 1
 BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
-version = 5.0
+
 life_cycle = ProcessLifeCycle()
 
 
