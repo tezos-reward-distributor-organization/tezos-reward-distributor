@@ -39,7 +39,7 @@ if __name__ == '__main__':
     stats_dict['nb_delegator'] = 10
     stats_dict['cycle'] = 83
     stats_dict['delegator_pays_fee'] = 1
-    stats_dict['version'] = version
+    stats_dict['trdversion'] = version
 
     stat_publish(stats_dict)
 
