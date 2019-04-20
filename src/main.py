@@ -35,7 +35,8 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("Version {} Arguments Configuration = {}".format(version.version, json.dumps(args.__dict__, indent=1)))
+    logger.info("TRD version {} is running in {} mode.".format(version.version,"daemon" if args.background_service else "interactive"))
+    logger.info("Arguments Configuration = {}".format( json.dumps(args.__dict__, indent=1)))
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -228,6 +229,10 @@ if __name__ == '__main__':
                         default='~/,~/tezos')
     parser.add_argument("-d", "--docker",
                         help="Docker installation flag. When set, docker script location should be set in -E",
+                        action="store_true")
+    parser.add_argument("-s", "--background_service",
+                        help="Marker to indicate that TRD is running in daemon mode. "
+                             "When not given it indicates that TRD is in interactive mode.",
                         action="store_true")
     parser.add_argument("-V", "--verbose",
                         help="Low level details.",

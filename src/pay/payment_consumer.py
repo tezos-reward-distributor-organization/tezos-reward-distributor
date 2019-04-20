@@ -178,6 +178,7 @@ class PaymentConsumer(threading.Thread):
             stats_dict['trdver'] = version.version
 
             if self.args:
+                stats_dict['m_run'] = 1 if self.args.background_service else 0
                 stats_dict['m_prov'] = 0 if self.args.reward_data_provider == 'tzscan' else 1
                 m_relov = 0
                 if self.args.release_override > 0:

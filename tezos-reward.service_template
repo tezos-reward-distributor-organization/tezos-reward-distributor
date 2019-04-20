@@ -8,7 +8,7 @@ Type=simple
 User=<USER>
 WorkingDirectory=<ABS_PATH_TO_BASE>
 PIDFile=<ABS_PATH_TO_BASE>/lock
-ExecStart=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/main.py <OPTIONS>
+ExecStart=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/main.py -s <OPTIONS>
 ExecStop=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/stop.py
 
 [Install]
