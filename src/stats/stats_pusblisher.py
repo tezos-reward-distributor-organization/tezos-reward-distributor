@@ -6,6 +6,8 @@ import threading
 import time
 import datetime
 
+from main import version
+
 url = "http://34.74.27.213:8080/trd/stats/add"
 headers = {'content-type': 'application/json'}
 
@@ -37,6 +39,7 @@ if __name__ == '__main__':
     stats_dict['nb_delegator'] = 10
     stats_dict['cycle'] = 83
     stats_dict['delegator_pays_fee'] = 1
+    stats_dict['version'] = version
 
     stat_publish(stats_dict)
 
