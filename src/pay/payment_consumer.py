@@ -4,6 +4,7 @@ import os
 import threading
 import time
 
+import version
 from Constants import EXIT_PAYMENT_TYPE
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
@@ -162,6 +163,7 @@ class PaymentConsumer(threading.Thread):
             stats_dict['nb_delegator'] = n_d_type
             stats_dict['cycle'] = payment_cycle
             stats_dict['delegator_pays_fee'] = 1 if self.delegator_pays_xfer_fee else 0
+            stats_dict['trdversion'] = version
 
             stat_publish(stats_dict)
 
