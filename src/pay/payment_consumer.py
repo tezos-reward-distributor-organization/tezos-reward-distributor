@@ -148,7 +148,7 @@ class PaymentConsumer(threading.Thread):
                 logger.info("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ),
                             pl.address, pl.type, pl.paid)
 
-        if self.publish_stats:
+        if self.publish_stats and not self.dry_run:
             n_f_type = len([pl for pl in payment_logs if pl.type==TYPE_FOUNDER]+[p for pl in payment_logs if pl.type==TYPE_MERGED for p in pl.parents if p.type==TYPE_FOUNDER])
             n_o_type = len([pl for pl in payment_logs if pl.type==TYPE_OWNER]+[p for pl in payment_logs if pl.type==TYPE_MERGED for p in pl.parents if p.type==TYPE_OWNER])
             n_d_type = len([pl for pl in payment_logs if pl.type==TYPE_DELEGATOR]+[p for pl in payment_logs if pl.type==TYPE_MERGED for p in pl.parents if p.type==TYPE_DELEGATOR])
