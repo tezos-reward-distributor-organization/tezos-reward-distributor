@@ -8,6 +8,9 @@ V5 is available under pphases branch. It will be merged to master in coming days
 - Merging of multiple payments towars an address into single payment
 - Ability to choose where rewards of excluded or min delegated accounts go: share among other delegators, send to founders, do nothing e.g. leave in balance.
 
+## V4 Announcement
+With V4 TRD can use tezos node to make calculations. This way, dependency on tzscan is relieved.
+
 ## Tezos Reward Distributor : Run & Forget
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
