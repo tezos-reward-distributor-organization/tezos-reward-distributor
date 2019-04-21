@@ -1,3 +1,13 @@
+## V5 Announcement
+
+V5 is available under pphases branch. It will be merged to master in coming days. Feel free to test it. New version comes with following improvements:
+- Better output
+- Enhanced calculation steps aka phases
+- Ability to exclude owners or founders
+- Payment to custom address
+- Merging of multiple payments towars an address into single payment
+- Ability to choose where rewards of excluded or min delegated accounts go: share among other delegators, send to founders, do nothing e.g. leave in balance.
+
 ## Tezos Reward Distributor : Run & Forget
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
@@ -99,7 +109,7 @@ python3 src/main.py -C 30 -P rpc
 
 ### Baker Configuration:
 
-Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. 
+Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The application uses a yaml file for loading baker specific configurations. 
 
 An example configuration file is present in the repository. For more information on configuration details please see our wiki page:
 https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
