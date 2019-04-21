@@ -80,35 +80,10 @@ The most common use case is to run in mainnet and start to make payments from la
 python3 src/main.py
 ```
 
-Make payments for a single cycle:
+For more example commands please see wiki page:
 
-```
-python3 src/main.py -C 42 -M 3 
-```
+https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run
 
-Make pending payments and stop:
-
-```
-python3 src/main.py -M 2
-```
-
-Make pending payments beginning from a cycle and stop:
-
-```
-python3 src/main.py -C 30 -M 2
-```
-
-Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
-
-```
-python3 src/main.py -D -N ZERONET -C 30 -M 3
-```
-
-Run in dry-run mode in mainnet, make payments from cycle 30 onwards, for calculations use data provided by tezos node rpc interface:
-
-```
-python3 src/main.py -C 30 -P rpc
-```
 
 ### Baker Configuration:
 
@@ -128,27 +103,10 @@ It is possible to add tezos-reward-distributer as a Linux service. It can run in
 sudo python3 service_add.py
 ```
 
-Note: If you do not want to use the default arguments, append any arguments you wish to change after service_add.py. They will be appended to main.py call.
+For more information please refer to wiki page:
 
+https://github.com/habanoz/tezos-reward-distributor/wiki/Linux-Service
 
-It will create a service file and use it to enable the service. Once enabled use following commands to start/stop the service.
-
-```
-sudo systemctl start tezos-reward.service
-sudo systemctl stop tezos-reward.service
-```
-
-In order to see service status:
-
-```
-systemctl status tezos-reward.service
-```
-
-In order to see logs:
-
-```
-journalctl --follow --unit=tezos-reward.service
-```
 
 ### Email Setup
 
