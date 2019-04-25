@@ -2,11 +2,11 @@ version : 1.0
 baking_address : tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889
 payment_address : tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889
 service_fee : 4.5
-founders_map : {tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889:0.3, KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS:0.7}
-owners_map : {tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889:0.3, KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS:0.7}
+founders_map : {tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889: 0.3, KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS: 0.7}
+owners_map : {tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889: 0.3, KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS: 0.7}
 prcnt_scale : None
 pymnt_scale : None
-specials_map : {KT19g4JHTd3QYuYcpKFFiwViEzQ5n6ovYx1V:7.5}
+specials_map : {KT19g4JHTd3QYuYcpKFFiwViEzQ5n6ovYx1V: 7.5}
 supporters_set : {KT1SenDhs9rL9fpZV3cLRXFovEBafmGqkki8}
 min_delegation_amt : 1000
 excluded_delegators_set : {KT1RtkxyyMS26zwxZgduPUytEA4XkcsG6Vzm}

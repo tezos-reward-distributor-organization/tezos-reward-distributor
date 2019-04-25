@@ -1,3 +1,16 @@
+## V5 Announcement
+
+V5 is available under pphases branch. It will be merged to master in coming days. Feel free to test it. New version comes with following improvements:
+- Better output
+- Enhanced calculation steps aka phases
+- Ability to exclude owners or founders
+- Payment to custom address
+- Merging of multiple payments towars an address into single payment
+- Ability to choose where rewards of excluded or min delegated accounts go: share among other delegators, send to founders, do nothing e.g. leave in balance.
+
+## V4 Announcement
+With V4 TRD can use tezos node to make calculations. This way, dependency on tzscan is relieved.
+
 ## Tezos Reward Distributor : Run & Forget
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
@@ -67,39 +80,14 @@ The most common use case is to run in mainnet and start to make payments from la
 python3 src/main.py
 ```
 
-Make payments for a single cycle:
+For more example commands please see wiki page:
 
-```
-python3 src/main.py -C 42 -M 3 
-```
+https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run
 
-Make pending payments and stop:
-
-```
-python3 src/main.py -M 2
-```
-
-Make pending payments beginning from a cycle and stop:
-
-```
-python3 src/main.py -C 30 -M 2
-```
-
-Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
-
-```
-python3 src/main.py -D -N ZERONET -C 30 -M 3
-```
-
-Run in dry-run mode in mainnet, make payments from cycle 30 onwards, for calculations use data provided by tezos node rpc interface:
-
-```
-python3 src/main.py -C 30 -P rpc
-```
 
 ### Baker Configuration:
 
-Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The applcation uses a yaml file for loading baker specific configurations. 
+Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The application uses a yaml file for loading baker specific configurations. 
 
 An example configuration file is present in the repository. For more information on configuration details please see our wiki page:
 https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
@@ -115,27 +103,10 @@ It is possible to add tezos-reward-distributer as a Linux service. It can run in
 sudo python3 service_add.py
 ```
 
-Note: If you do not want to use the default arguments, append any arguments you wish to change after service_add.py. They will be appended to main.py call.
+For more information please refer to wiki page:
 
+https://github.com/habanoz/tezos-reward-distributor/wiki/Linux-Service
 
-It will create a service file and use it to enable the service. Once enabled use following commands to start/stop the service.
-
-```
-sudo systemctl start tezos-reward.service
-sudo systemctl stop tezos-reward.service
-```
-
-In order to see service status:
-
-```
-systemctl status tezos-reward.service
-```
-
-In order to see logs:
-
-```
-journalctl --follow --unit=tezos-reward.service
-```
 
 ### Email Setup
 
