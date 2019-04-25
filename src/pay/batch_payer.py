@@ -91,29 +91,35 @@ class BatchPayer():
                                 range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
         payment_logs = []
+        op_counter = OpCounter()
         logger.debug("Payment will be done in {} batches".format(len(payment_items_chunks)))
         for payment_items_chunk in payment_items_chunks:
             logger.debug("Payment of a batch started")
-            payments_log = self.pay_single_batch_wrap(payment_items_chunk, verbose=verbose, dry_run=dry_run)
+            payments_log = \
+                self.pay_single_batch_wrap(payment_items_chunk, verbose=verbose, dry_run=dry_run, op_counter=op_counter)
             payment_logs.extend(payments_log)
             logger.debug("Payment of a batch is complete")
 
         return payment_logs
 
-    def pay_single_batch_wrap(self, payment_items, verbose=None, dry_run=None):
+    def pay_single_batch_wrap(self, payment_items, op_counter, verbose=None, dry_run=None):
 
         max_try = 3
         return_code = False
         operation_hash = ""
-        counter = None
+
         # due to unknown reasons, some times a batch fails to pre-apply
         # trying after some time should be OK
         for attempt in range(max_try):
-            return_code, operation_hash, counter = \
-                self.pay_single_batch(payment_items, verbose, dry_run=dry_run, counter=counter)
+            return_code, operation_hash = \
+                self.pay_single_batch(payment_items, op_counter, verbose, dry_run=dry_run)
 
             # if successful, do not try anymore
-            if return_code: break
+            if return_code:
+                op_counter.commit()
+                break
+
+            op_counter.rollback()
 
             logger.debug("Batch payment attempt {} failed".format(attempt))
 
@@ -132,16 +138,17 @@ class BatchPayer():
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
         sleep(slp_tm)
 
-    def pay_single_batch(self, payment_records, verbose=None, dry_run=None, counter=None):
-        if not counter:
+    def pay_single_batch(self, payment_records, op_counter, verbose=None, dry_run=None):
+        if not op_counter.get():
             counter = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_counter))
             counter = int(counter)
+            op_counter.set(counter)
 
         head = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_head))
         branch = head["hash"]
         protocol = head["metadata"]["protocol"]
 
-        logger.debug("head: branch {} counter {} protocol {}".format(branch, counter, protocol))
+        logger.debug("head: branch {} counter {} protocol {}".format(branch, op_counter.get(), protocol))
 
         content_list = []
 
@@ -154,9 +161,9 @@ class BatchPayer():
             if pymnt_amnt < 1e-3:  # zero check
                 continue
 
-            counter = counter + 1
+            op_counter.inc()
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.address) \
-                .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(counter)) \
+                .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
                 .replace("%fee%", self.default_fee).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%",
                                                                                                    self.storage_limit)
             content_list.append(content)
@@ -249,8 +256,33 @@ class BatchPayer():
         self.wllt_clnt_mngr.send_request(self.comm_wait.replace("%OPERATION%", operation_hash))
         logger.debug("Operation {} is included".format(operation_hash))
 
-        return True, operation_hash, counter
+        return True, operation_hash
 
+
+class OpCounter:
+    def __init__(self) -> None:
+        super().__init__()
+        self.__counter = None
+        self.__counter_backup = None
+
+    def inc(self):
+        if self.__counter is None:
+            raise Exception("Counter is not set!!!")
+
+        self.__counter += 1
+
+    def get(self):
+        return self.__counter
+
+    def commit(self):
+        self.__counter_backup = self.__counter
+
+    def rollback(self):
+        self.__counter = self.__counter_backup
+
+    def set(self, counter):
+        self.__counter = counter
+        self.__counter_backup = counter
 
 if __name__ == '__main__':
     payer = BatchPayer("127.0.0.1:8273", "~/zeronet.sh client", "mybaker")
