@@ -105,11 +105,12 @@ class BatchPayer():
         max_try = 3
         return_code = False
         operation_hash = ""
-
+        counter = None
         # due to unknown reasons, some times a batch fails to pre-apply
         # trying after some time should be OK
         for attempt in range(max_try):
-            return_code, operation_hash = self.pay_single_batch(payment_items, verbose, dry_run=dry_run)
+            return_code, operation_hash, counter = \
+                self.pay_single_batch(payment_items, verbose, dry_run=dry_run, counter=counter)
 
             # if successful, do not try anymore
             if return_code: break
@@ -131,9 +132,10 @@ class BatchPayer():
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
         sleep(slp_tm)
 
-    def pay_single_batch(self, payment_records, verbose=None, dry_run=None):
-        counter = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_counter))
-        counter = int(counter)
+    def pay_single_batch(self, payment_records, verbose=None, dry_run=None, counter=None):
+        if not counter:
+            counter = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_counter))
+            counter = int(counter)
 
         head = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_head))
         branch = head["hash"]
@@ -226,8 +228,9 @@ class BatchPayer():
 
         if len(decoded_signature) != 128:  # must be 64 bytes
             # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            logger.warn("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            #return False, ""
+            logger.warn(
+                "Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
+            # return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
@@ -246,7 +249,7 @@ class BatchPayer():
         self.wllt_clnt_mngr.send_request(self.comm_wait.replace("%OPERATION%", operation_hash))
         logger.debug("Operation {} is included".format(operation_hash))
 
-        return True, operation_hash
+        return True, operation_hash, counter
 
 
 if __name__ == '__main__':
