@@ -20,7 +20,7 @@ COMM_FORGE = " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/oper
 COMM_RUNOPS = " rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
 COMM_PREAPPLY = " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = " %LOG% rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-COMM_WAIT = " wait for %OPERATION% to be included ---confirmations 5"
+COMM_WAIT = " wait for %OPERATION% to be included --confirmations 1"
 MAX_TX_PER_BLOCK = 280
 PKH_LENGHT = 36
 
