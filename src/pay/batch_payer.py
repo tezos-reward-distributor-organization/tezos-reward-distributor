@@ -114,12 +114,14 @@ class BatchPayer():
             return_code, operation_hash = \
                 self.pay_single_batch(payment_items, op_counter, verbose, dry_run=dry_run)
 
+            if dry_run or not return_code:
+                op_counter.rollback()
+            else:
+                op_counter.commit()
+
             # if successful, do not try anymore
             if return_code:
-                op_counter.commit()
                 break
-
-            op_counter.rollback()
 
             logger.debug("Batch payment attempt {} failed".format(attempt))
 
@@ -283,6 +285,7 @@ class OpCounter:
     def set(self, counter):
         self.__counter = counter
         self.__counter_backup = counter
+
 
 if __name__ == '__main__':
     payer = BatchPayer("127.0.0.1:8273", "~/zeronet.sh client", "mybaker")
