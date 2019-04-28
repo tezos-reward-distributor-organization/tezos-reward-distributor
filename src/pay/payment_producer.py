@@ -153,7 +153,7 @@ class PaymentProducer(threading.Thread):
                     self.exit()
                     break
 
-                time.sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
+                time.sleep(10)
 
                 self.retry_failed_payments()
 
@@ -270,7 +270,7 @@ class PaymentProducer(threading.Thread):
             with open(payment_failed_report_file) as f:
                 # read csv into list of dictionaries
                 dict_rows = [{key: value for key, value in row.items()} for row in
-                             csv.DictReader(f, skipinitialspace=True)]
+                             csv.DictReader(f, delimiter='\t', skipinitialspace=True)]
 
                 batch = PaymentRecord.FromPaymentCSVDictRows(dict_rows, cycle)
 

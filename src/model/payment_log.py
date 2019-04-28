@@ -48,7 +48,10 @@ class PaymentRecord():
         items = []
         for row in rows:
             print(row)
-            items.append(PaymentRecord.FromPaymentCSVDictRow(row, cycle))
+            pr = PaymentRecord.FromPaymentCSVDictRow(row, cycle)
+
+            if pr.paid == '0':
+                items.append(pr)
 
         return items
 
