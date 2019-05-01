@@ -1,6 +1,4 @@
-import random
 import requests
-
 import NetworkConfiguration
 from api.reward_api import RewardApi
 from exception.tzscan import TzScanException
@@ -22,17 +20,18 @@ API = {'MAINNET': {'API_URL': 'http://api%MIRROR%.tzscan.io/v1/'},
 
 class TzScanRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address):
+    def __init__(self, nw, baking_address, mirror_selector):
         super(TzScanRewardApiImpl, self).__init__()
 
         self.api = API[nw['NAME']]
         if self.api is None:
-            raise TzScanException("Unknown network {}".format(nw))
+            raise Exception("Unknown network {}".format(nw))
 
         self.baking_address = baking_address
+        self.mirror_selector = mirror_selector
 
     def get_nb_delegators(self, cycle, verbose=False):
-        uri = self.api['API_URL'].replace("%MIRROR%", str(self.rand_mirror())) + nb_delegators_call.format(
+        uri = self.api['API_URL'].replace("%MIRROR%", str(self.mirror_selector.get_mirror())) + nb_delegators_call.format(
             self.baking_address, cycle)
 
         if verbose:
@@ -41,6 +40,7 @@ class TzScanRewardApiImpl(RewardApi):
         resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
+            self.mirror_selector.validate_mirrors()
             raise TzScanException('GET {} {}'.format(uri, resp.status_code))
         root = resp.json()
 
@@ -48,15 +48,6 @@ class TzScanRewardApiImpl(RewardApi):
             logger.debug("Response from tzscan is {}".format(root))
 
         return root
-
-    def rand_mirror(self):
-        mirror = random.randint(1, 6)
-
-        # mirror 4 not working
-        if mirror == 4:
-            mirror = 3
-
-        return mirror
 
     def get_rewards_for_cycle_map(self, cycle, verbose=False):
         #############
@@ -70,7 +61,7 @@ class TzScanRewardApiImpl(RewardApi):
                 "lost_fees_denounciation": 0}
 
         while nb_delegators_remaining > 0:
-            uri = self.api['API_URL'].replace("%MIRROR%", str(self.rand_mirror())) + rewards_split_call. \
+            uri = self.api['API_URL'].replace("%MIRROR%", str(self.mirror_selector.get_mirror())) + rewards_split_call. \
                 format(self.baking_address, cycle, p, MAX_PER_PAGE)
 
             if verbose:
@@ -83,6 +74,7 @@ class TzScanRewardApiImpl(RewardApi):
 
             if resp.status_code != 200:
                 # This means something went wrong.
+                self.mirror_selector.validate_mirrors()
                 raise TzScanException('GET {} {}'.format(uri, resp.status_code))
 
             if p == 0:  # keep first result as basis; append 'delegators_balance' from other responses

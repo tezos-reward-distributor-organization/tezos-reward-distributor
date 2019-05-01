@@ -1,9 +1,7 @@
-import random
-
 import requests
+
 from api.block_api import BlockApi
 from exception.tzscan import TzScanException
-
 from log_config import main_logger
 
 logger = main_logger
@@ -21,7 +19,7 @@ REVELATION_API = {'MAINNET': {'HEAD_API_URL': 'https://api%MIRROR%.tzscan.io/v1/
 
 class TzScanBlockApiImpl(BlockApi):
 
-    def __init__(self, nw):
+    def __init__(self, nw, mirror_selector):
         super(TzScanBlockApiImpl, self).__init__(nw)
 
         self.head_api = HEAD_API[nw['NAME']]
@@ -29,9 +27,10 @@ class TzScanBlockApiImpl(BlockApi):
             raise Exception("Unknown network {}".format(nw))
 
         self.revelation_api = REVELATION_API[nw['NAME']]
+        self.mirror_selector = mirror_selector
 
     def get_current_level(self, verbose=False):
-        uri = self.head_api['HEAD_API_URL'].replace("%MIRROR%", str(self.rand_mirror()))
+        uri = self.head_api['HEAD_API_URL'].replace("%MIRROR%", str(self.mirror_selector.get_mirror()))
 
         if verbose:
             logger.debug("Requesting {}".format(uri))
@@ -39,6 +38,7 @@ class TzScanBlockApiImpl(BlockApi):
         resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
+            self.mirror_selector.validate_mirrors()
             raise TzScanException('GET {} {}'.format(uri, resp.status_code))
         root = resp.json()
 
@@ -50,7 +50,7 @@ class TzScanBlockApiImpl(BlockApi):
         return current_level
 
     def get_revelation(self, pkh, verbose=False):
-        uri = self.revelation_api['HEAD_API_URL'].replace("%MIRROR%", str(self.rand_mirror())).replace("%PKH%", pkh)
+        uri = self.revelation_api['HEAD_API_URL'].replace("%MIRROR%", str(self.mirror_selector.get_mirror())).replace("%PKH%", pkh)
 
         if verbose:
             logger.debug("Requesting {}".format(uri))
@@ -58,6 +58,7 @@ class TzScanBlockApiImpl(BlockApi):
         resp = requests.get(uri)
         if resp.status_code != 200:
             # This means something went wrong.
+            self.mirror_selector.validate_mirrors()
             raise TzScanException('GET {} {}'.format(uri, resp.status_code))
         root = resp.json()
 
@@ -65,18 +66,3 @@ class TzScanBlockApiImpl(BlockApi):
             logger.debug("Response from tzscan is: {}".format(root))
 
         return len(root) > 0
-
-    def rand_mirror(self):
-        mirror = random.randint(1, 6)
-
-        if mirror == 4:  # has problem lately
-            mirror = 3
-
-        return mirror
-
-def test_get_revelation():
-    address_api = TzScanBlockApiImpl({"NAME":"ALPHANET"})
-    address_api.get_revelation("tz3WXYtyDUNL91qfiCJtVUX746QpNv5i5ve5")
-
-if __name__ == '__main__':
-    test_get_revelation()

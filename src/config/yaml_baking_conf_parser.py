@@ -4,7 +4,6 @@ from exception.configuration import ConfigurationException
 from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, EXCLUDED_DELEGATORS_SET, \
     PYMNT_SCALE, PRCNT_SCALE, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE
-from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -12,11 +11,11 @@ PKH_LENGHT = 36
 
 
 class BakingYamlConfParser(YamlConfParser):
-    def __init__(self, yaml_text, wllt_clnt_mngr, network_config, verbose=None) -> None:
+    def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, verbose=None) -> None:
         super().__init__(yaml_text, verbose)
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
-        self.block_api = TzScanBlockApiImpl(network_config)
+        self.block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
 
     def parse(self):
         yaml_conf_dict = super().parse()
@@ -132,7 +131,7 @@ class BakingYamlConfParser(YamlConfParser):
                                          "For more information please refer to tezos command line interface."
                                          .format(pymnt_addr))
 
-        #if not self.block_api.get_revelation(conf_obj[('%s_manager' % PAYMENT_ADDRESS)]):
+        # if not self.block_api.get_revelation(conf_obj[('%s_manager' % PAYMENT_ADDRESS)]):
         #    raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
         #                                 "Public key of Manager ({}) is not revealed.\n"
         #                                 "Use command 'reveal key for <src>' to reveal your public key. \n"

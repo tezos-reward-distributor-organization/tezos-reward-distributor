@@ -51,6 +51,10 @@ class PaymentConsumer(threading.Thread):
                 # 1-  wait until a reward is present
                 payment_items = self.payments_queue.get(True)
 
+                if len(payment_items) == 0:
+                    logger.debug("Batch is empty, ignoring ...")
+                    continue
+
                 if payment_items[0].type == EXIT_PAYMENT_TYPE:
                     logger.debug("Exit signal received. Killing the thread...")
                     break

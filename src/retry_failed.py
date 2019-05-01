@@ -4,6 +4,7 @@ import os
 import queue
 import sys
 import time
+from time import sleep
 
 from Constants import RunMode
 from NetworkConfiguration import init_network_config
@@ -67,8 +68,10 @@ def main(args):
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
     # 3- get client path
+
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network, args.verbose)
+                                  args.docker, args.network,
+                                  args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
@@ -131,21 +134,13 @@ def main(args):
     # 9- service fee calculator
     srvc_fee_calc = ServiceFeeCalculator(cfg.get_full_supporters_set(), cfg.get_specials_map(), cfg.get_service_fee())
 
-    if args.initial_cycle is None:
-        recent = get_latest_report_file(payments_root)
-        # if payment logs exists set initial cycle to following cycle
-        # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
-        args.initial_cycle = 0 if recent is None else int(recent) + 1
-
-        logger.info("initial_cycle set to {}".format(args.initial_cycle))
-
-    p = PaymentProducer(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
-                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
-                        service_fee_calc=srvc_fee_calc, release_override=args.release_override,
-                        payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
+    p = PaymentProducer(name='producer', initial_payment_cycle=None, network_config=network_config,
+                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode.ONETIME,
+                        service_fee_calc=srvc_fee_calc, release_override=0,
+                        payment_offset=0, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
-    p.start()
+    p.retry_failed_payments()
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
@@ -157,6 +152,9 @@ def main(args):
 
         logger.info("Application start completed")
         logger.info(LINER)
+
+    sleep(5)
+    p.exit()
     try:
         while life_cycle.is_running(): time.sleep(10)
     except KeyboardInterrupt:
@@ -179,22 +177,6 @@ def get_baking_configuration_file(config_dir):
 
     return os.path.join(config_dir, config_file)
 
-
-def get_latest_report_file(payments_root):
-    recent = None
-    if get_successful_payments_dir(payments_root):
-        files = sorted([os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))],
-                       key=lambda x: int(x))
-        recent = files[-1] if len(files) > 0 else None
-    return recent
-
-
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
-
-        setattr(namespace, "release_override", values)
 
 
 if __name__ == '__main__':
@@ -227,29 +209,10 @@ if __name__ == '__main__':
     parser.add_argument("-V", "--verbose",
                         help="Low level details.",
                         action="store_true")
-    parser.add_argument("-M", "--run_mode",
-                        help="Waiting decision after making pending payments. 1: default option. Run forever. "
-                             "2: Run all pending payments and exit. 3: Run for one cycle and exit. "
-                             "Suitable to use with -C option.",
-                        default=1, choices=[1, 2, 3], type=int)
-    parser.add_argument("-R", "--release_override",
-                        help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
-                             "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
-                             "For future payments give negative values. Valid range is [-11,)",
-                        default=0, type=int, action=ReleaseOverrideAction)
-    parser.add_argument("-O", "--payment_offset",
-                        help="Number of blocks to wait after a cycle starts before starting payments. "
-                             "This can be useful because cycle beginnings may be bussy.",
-                        default=0, type=int)
-    parser.add_argument("-C", "--initial_cycle",
-                        help="First cycle to start payment. For last released rewards, set to 0. Non-positive values "
-                             "are interpreted as: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). "
-                             "If not set application will continue from last payment made or last reward released.",
-                        type=int)
 
     args = parser.parse_args()
 
-    logger.info("Tezos Reward Distributor is Starting")
+    logger.info("Tezos Reward Distributor - Retry Failed Files is Starting")
     logger.info(LINER)
     logger.info("Copyright Huseyin ABANOZ 2019")
     logger.info("huseyinabanox@gmail.com")

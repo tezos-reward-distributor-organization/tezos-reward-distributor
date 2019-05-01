@@ -1,14 +1,18 @@
-from random import randint
-from time import sleep
-
+import configparser
 import base58
 import os
+
 from log_config import main_logger
 from util.client_utils import check_response
 from util.rpc_utils import parse_json_response
-import configparser
+from random import randint
+from time import sleep
 
 logger = main_logger
+
+MAX_TX_PER_BLOCK = 280
+PKH_LENGHT = 36
+CONFIRMATIONS = 1
 
 COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
 COMM_COUNTER = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
@@ -20,9 +24,7 @@ COMM_FORGE = " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/oper
 COMM_RUNOPS = " rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
 COMM_PREAPPLY = " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
 COMM_INJECT = " %LOG% rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-COMM_WAIT = " wait for %OPERATION% to be included --confirmations 1"
-MAX_TX_PER_BLOCK = 280
-PKH_LENGHT = 36
+COMM_WAIT = " wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
 
 FEE_INI = 'fee.ini'
 DUMMY_FEE = 1000
@@ -84,20 +86,32 @@ class BatchPayer():
         self.comm_inject = COMM_INJECT.format().replace("%NODE%", self.node_url)
         self.comm_wait = COMM_WAIT.format()
 
-    def pay(self, payment_items, verbose=None, dry_run=None):
+    def pay(self, payment_items_in, verbose=None, dry_run=None):
+
+        # initialize the result list with already paid items
+        payment_logs = [pi for pi in payment_items_in if pi.paid]
+
+        payment_items = [pi for pi in payment_items_in if not pi.paid]
+
+        if payment_logs:
+            for pl in payment_logs:
+                logger.info("Reward already paid for cycle %s address %s amount %f tz type %s",
+                            pl.cycle, pl.address, pl.payment, pl.type)
+
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
         payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in
                                 range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
-        payment_logs = []
         op_counter = OpCounter()
         logger.debug("Payment will be done in {} batches".format(len(payment_items_chunks)))
+
         for payment_items_chunk in payment_items_chunks:
             logger.debug("Payment of a batch started")
             payments_log = \
                 self.pay_single_batch_wrap(payment_items_chunk, verbose=verbose, dry_run=dry_run, op_counter=op_counter)
             payment_logs.extend(payments_log)
+
             logger.debug("Payment of a batch is complete")
 
         return payment_logs
@@ -118,6 +132,10 @@ class BatchPayer():
                 op_counter.rollback()
             else:
                 op_counter.commit()
+
+            # we do not want to preserve counter anymore
+            # force re-read of counter at every try
+            op_counter.set(None)
 
             # if successful, do not try anymore
             if return_code:
@@ -141,6 +159,7 @@ class BatchPayer():
         sleep(slp_tm)
 
     def pay_single_batch(self, payment_records, op_counter, verbose=None, dry_run=None):
+
         if not op_counter.get():
             counter = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_counter))
             counter = int(counter)
@@ -254,8 +273,10 @@ class BatchPayer():
         logger.debug("Operation hash is {}".format(operation_hash))
 
         # wait for inclusion
-        logger.debug("Waiting for operation {} to be included".format(operation_hash))
+        logger.debug("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)"
+                     .format(operation_hash, CONFIRMATIONS))
         self.wllt_clnt_mngr.send_request(self.comm_wait.replace("%OPERATION%", operation_hash))
+
         logger.debug("Operation {} is included".format(operation_hash))
 
         return True, operation_hash
@@ -285,7 +306,3 @@ class OpCounter:
     def set(self, counter):
         self.__counter = counter
         self.__counter_backup = counter
-
-
-if __name__ == '__main__':
-    payer = BatchPayer("127.0.0.1:8273", "~/zeronet.sh client", "mybaker")

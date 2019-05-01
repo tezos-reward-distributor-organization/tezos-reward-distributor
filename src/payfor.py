@@ -1,5 +1,4 @@
 import argparse
-import argparse
 import json
 import os
 import queue
@@ -7,21 +6,15 @@ import sys
 import time
 from datetime import datetime
 
-from Constants import RunMode
-from NetworkConfiguration import network_config_map
-from calc.service_fee_calculator import ServiceFeeCalculator
 from cli.wallet_client_manager import WalletClientManager
 from config.config_parser import ConfigParser
-from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger
-from model.baking_conf import BakingConf
 from model.payment_log import PaymentRecord
 from pay.payment_consumer import PaymentConsumer
-from pay.payment_producer import PaymentProducer
 from util.client_utils import get_client_path
 from util.dir_utils import get_payment_root, \
-    get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
+    get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
 
 LINER = "--------------------------------------------"
@@ -32,6 +25,7 @@ payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
 
 life_cycle = ProcessLifeCycle()
+MUTEZ = 1
 
 
 def main(args):
@@ -86,10 +80,17 @@ def main(args):
     if not payments_dict:
         raise Exception("No payments to process")
 
-    # 4- get client path
-    network_config = network_config_map[args.network]
+    # 3- get client path
+
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, network_config,
+                                  args.docker, args.network,
+                                  args.verbose)
+
+    logger.debug("Tezos client path is {}".format(client_path))
+
+    # 4- get client path
+    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
+                                  args.docker, args.network,
                                   args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
@@ -107,7 +108,6 @@ def main(args):
     reports_dir = os.path.join(reports_dir, "manual")
 
     payments_root = get_payment_root(reports_dir, create=True)
-    calculations_root = get_calculations_root(reports_dir, create=True)
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 
@@ -130,7 +130,13 @@ def main(args):
 
     payment_items = []
     for key, value in payments_dict.items():
-        payment_items.append(PaymentRecord.ManualInstance(file_name, key, value))
+        pi = PaymentRecord.ManualInstance(file_name, key, value)
+        pi.payment = pi.payment * MUTEZ
+        payment_items.append(pi)
+
+        logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
+                    pi.cycle, pi.address, pi.payment, pi.fee,
+                    pi.type)
 
     payments_queue.put(payment_items)
     payments_queue.put([PaymentRecord.ExitInstance()])
