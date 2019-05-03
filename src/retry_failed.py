@@ -129,7 +129,7 @@ def main(args):
     get_failed_payments_dir(payments_root, create=True)
 
     # 8- start the life cycle
-    life_cycle.start(not dry_run)
+    life_cycle.start(False)
 
     # 9- service fee calculator
     srvc_fee_calc = ServiceFeeCalculator(cfg.get_full_supporters_set(), cfg.get_specials_map(), cfg.get_service_fee())
