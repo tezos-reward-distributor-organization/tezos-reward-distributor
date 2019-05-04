@@ -6,6 +6,7 @@ import time
 
 from Constants import RunMode
 from calc.payment_calculator import PaymentCalculator
+from exception.tzscan import TzScanException
 from log_config import main_logger
 from model.payment_log import PaymentRecord
 from pay.double_payment_check import check_past_payment
@@ -137,6 +138,8 @@ class PaymentProducer(threading.Thread):
 
                     # wait until current cycle ends
                     self.wait_until_next_cycle(nb_blocks_remaining)
+            except TzScanException:
+                logger.warn("Tzscan error at reward loop", exc_info=True)
             except Exception:
                 logger.error("Error at payment producer loop", exc_info=True)
 
@@ -177,7 +180,8 @@ class PaymentProducer(threading.Thread):
             # processing of cycle is done
             logger.info("Reward creation done for cycle %s", payment_cycle)
             return True
-
+        except TzScanException:
+            logger.warn("Tzscan error at reward calculation", exc_info=True)
         except Exception:
             logger.error("Error at reward calculation", exc_info=True)
             return False
