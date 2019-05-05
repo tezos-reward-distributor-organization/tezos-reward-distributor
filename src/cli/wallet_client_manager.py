@@ -76,6 +76,8 @@ class WalletClientManager(SimpleClientManager):
         if self.address_dict is not None:
             return self.address_dict
 
+        logger.debug("Generating known address dictionary")
+
         self.address_dict = {}
 
         if self.contr_dict_by_alias is None:
