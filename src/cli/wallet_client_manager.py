@@ -105,6 +105,9 @@ class WalletClientManager(SimpleClientManager):
 
                 logger.debug("Known contract added: {}".format(self.address_dict[pkh]))
 
+        if self.address_dict is None:
+            logger.warn("No known address info is reached. Check your environment. Try to run in privileged mode.")
+
     def __list_known_contracts_by_alias(self):
         response = self.send_request(" list known contracts")
 
