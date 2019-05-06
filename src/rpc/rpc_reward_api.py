@@ -30,6 +30,7 @@ class RpcRewardApiImpl(RewardApi):
         self.validate = validate
         if self.validate:
             mirror_selector = TzScanMirrorSelector(nw)
+            mirror_selector.initialize()
             self.validate_api = TzScanRewardApiImpl(nw, self.baking_address, mirror_selector)
 
 
