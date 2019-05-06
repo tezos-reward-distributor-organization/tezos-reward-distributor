@@ -182,6 +182,7 @@ class PaymentProducer(threading.Thread):
             return True
         except TzScanException:
             logger.warn("Tzscan error at reward calculation", exc_info=True)
+            return False
         except Exception:
             logger.error("Error at reward calculation", exc_info=True)
             return False

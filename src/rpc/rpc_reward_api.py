@@ -1,6 +1,7 @@
 from api.reward_api import RewardApi
 
 from log_config import main_logger
+from tzscan.mirror_selection_helper import TzScanMirrorSelector
 from util.rpc_utils import parse_json_response
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
@@ -28,7 +29,8 @@ class RpcRewardApiImpl(RewardApi):
         
         self.validate = validate
         if self.validate:
-            self.validate_api = TzScanRewardApiImpl(nw, self.baking_address)        
+            mirror_selector = TzScanMirrorSelector(nw)
+            self.validate_api = TzScanRewardApiImpl(nw, self.baking_address, mirror_selector)
 
 
     def get_nb_delegators(self, cycle, verbose=False):

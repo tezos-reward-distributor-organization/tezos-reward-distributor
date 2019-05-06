@@ -37,7 +37,7 @@ class TzScanMirrorSelector:
 
         self.mirrors = tmp_mirrors
 
-        logger.info("Available mirrors are: {}".format(self.mirrors))
+        logger.debug("Available mirrors are: {}".format(self.mirrors))
 
     def validate_mirrors_endless(self):
 
