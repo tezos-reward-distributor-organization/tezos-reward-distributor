@@ -191,7 +191,7 @@ class BakingYamlConfParser(YamlConfParser):
 
         # {KT*****,KT****} are loaded as {KT*****:None,KT****:None}
         # convert to set
-        if set(conf_obj[set_name].values()) == {None}:
+        if isinstance(conf_obj[set_name], dict) and set(conf_obj[set_name].values()) == {None}:
             conf_obj[set_name] = set(conf_obj[set_name].keys())
 
         validator = AddressValidator(set_name)
