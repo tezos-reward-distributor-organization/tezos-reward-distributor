@@ -10,7 +10,7 @@ from time import sleep
 
 logger = main_logger
 
-MAX_TX_PER_BLOCK = 285
+MAX_TX_PER_BLOCK = 280
 PKH_LENGHT = 36
 CONFIRMATIONS = 1
 
