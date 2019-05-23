@@ -18,7 +18,7 @@ V5 comes with the following enhancements:
 - Merging of multiple payments towards an address into a single payment, to pay less network fee.
 - Exclude any address and choose what will be done with their share: share among other delegators, send to founders, do nothing e.g. leave in balance. 
 - Set a minimum delegation amount and choose what will be done with their share: share among other delegators, send to founders, do nothing e.g. leave in balance. 
-- If a batch fails rewards belonging to that batch are marked as failed and payment report is put under payments/failed directory. Failed payments are retried after one hour or just after a successful payment.  
+- If a batch fails, rewards belonging to that batch are marked as failed. Payment report is put under payments/failed directory. Failed payments are retried after one hour or just after a successful payment.
 
 V5 is distributed under GPL license. 
 V5 collects anonymous usage statistics to help improve the application.
