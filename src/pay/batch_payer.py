@@ -114,11 +114,11 @@ class BatchPayer():
         op_counter = OpCounter()
 
         for i_batch, payment_items_chunk in enumerate(payment_items_chunks):
-            logger.debug("Payment of batch {} started".format(i_batch))
+            logger.debug("Payment of batch {} started".format(i_batch + 1))
             payments_log, attempt = self.pay_single_batch_wrap(payment_items_chunk, verbose=verbose, dry_run=dry_run,
                                                                op_counter=op_counter)
 
-            logger.info("Payment of batch {} is complete, in {} attempts".format(i_batch, attempt))
+            logger.info("Payment of batch {} is complete, in {} attempts".format(i_batch + 1, attempt))
 
             payment_logs.extend(payments_log)
             total_attempts += attempt
@@ -145,7 +145,9 @@ class BatchPayer():
             try:
                 return_code, operation_hash = self.pay_single_batch(payment_items, op_counter, verbose, dry_run=dry_run)
             except:
-                logger.error("current batch payment attempt {}/{} failed".format(attempt + 1, max_try), exc_info=True)
+                logger.error(
+                    "batch payment attempt {}/{} for current batch failed with error".format(attempt + 1, max_try),
+                    exc_info=True)
                 return_code, operation_hash = False, ""
 
             if dry_run or not return_code:
@@ -163,7 +165,7 @@ class BatchPayer():
             if return_code:
                 break
 
-            logger.debug("Batch payment attempt {} failed".format(attempt))
+            logger.debug("payment attempt {}/{} failed".format(attempt + 1, max_try))
 
             # But do not wait after last attempt
             if attempt < max_try - 1:

@@ -224,7 +224,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.create_calculations_report(reward_logs, report_file_path, total_amount)
                 # 7- next cycle
                 # processing of cycle is done
-                logger.info("Reward creation is done for cycle {}, {} payments.".format(pymnt_cycle, len(reward_logs)))
+                logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
 
             elif total_amount_to_pay == 0:
                 logger.info("Total payment amount is 0. Nothing to pay!")
@@ -256,7 +256,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
     def create_calculations_report(self, payment_logs, report_file_path, total_rewards):
         with open(report_file_path, 'w', newline='') as f:
-            writer = csv.writer(f, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
             writer.writerow(
                 ["address", "type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
