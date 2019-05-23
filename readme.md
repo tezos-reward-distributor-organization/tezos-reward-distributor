@@ -24,8 +24,6 @@ V5 is distributed under GPL license.
 V5 collects anonymous usage statistics to help improve the application.
 For more information please check license.ini and notice.txt.
 
-Notice: If git pull fails, try to remove trd files and run git clone again. 
-
 ## Tezos Reward Distributor
 
 A software for distributing baking rewards with delegators. This is not a script but service which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively. 
