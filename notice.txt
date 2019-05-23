@@ -13,7 +13,6 @@ nb_m		: Number of merged payments. A merged transaction composes of other type o
 cycle		: Cycle payment belongs
 m_fee		: 0 delegate pays transfer fee, 1 delegators pays transfer fee
 trdver		: Software version
-timezone	: Timezone of the region TRD runs. To get an idea on how spread the use of TRD is.
 m_run		: Running mode: 0 for interactive mode, 1 for background service mode.
 m_prov		: Provider mode: 0 for tzscan, 1 for rpc.
 m_relov		: Release override mode: -1 for negative values, 1 for positive values, 0 otherwise.
