@@ -23,6 +23,7 @@ V5 is distributed under GPL license.
 V5 collects anonymous usage statistics to help improve the application.
 For more information please check license.ini and notice.txt.
 
+Notice: If git pull fails, try to remove trd files and run git clone again. 
 
 ## Tezos Reward Distributor
 
