@@ -1,23 +1,27 @@
 <img src="https://raw.githubusercontent.com/habanoz/trd-art/master/logo-narrow/trd_512__1.png" width="128" /> 
 
-## V5 Announcement
-
-V5 is available under pphases branch. It will be merged to master in coming days. Feel free to test it. New version comes with following improvements:
-- Better output
-- Enhanced calculation steps aka phases
-- Ability to exclude owners or founders
-- Payment to custom address
-- Merging of multiple payments towards an address into single payment
-- Ability to choose where rewards of excluded or min delegated accounts go: share among other delegators, send to founders, do nothing e.g. leave in balance.
-
-Check license and notice.txt files for more information. 
-
-## V4 Announcement
-With V4 TRD can use tezos node to make calculations. This way, dependency on tzscan is relieved.
 
 ## Tezos Reward Distributor : Run & Forget 
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
+
+## V5 Announcement
+
+V5 is ready. Not all users are encouraged to switch to the new release. If you are happy with a previous release you may stick to it. However, earlier releases will not be supported. 
+
+V5 comes with the following enhancements: 
+- Better output, finer logs, easier to track and debug.
+- Modular calculation steps aka phases, easy to follow and create complex calculation logic
+- Calculations are done in mutez domain, less floating point error thus results are more accurate.
+- Ability to exclude owners or founders
+- Redirect payments to any designated address.
+- Merging of multiple payments towards an address into a single payment, to pay less network fee.
+- Exclude any address and choose what will be done with their share: share among other delegators, send to founders, do nothing e.g. leave in balance. 
+- Set a minimum delegation amount and choose what will be done with their share: share among other delegators, send to founders, do nothing e.g. leave in balance. 
+
+V5 is distributed under GPL license. 
+V5 collects anonymous usage statistics to help improve the application.
+For more information please check license.ini and notice.txt.
 
 
 ## Tezos Reward Distributor
@@ -40,6 +44,9 @@ Features:
 - Re-attempt failed payments
 - Minimal configuration needs, while having many configuration options
 - Written in Python. Easy to modify to suit custom needs
+
+## TRD Art Work
+https://github.com/habanoz/trd-art contains logo images. If you are using TRD and want to let everybody know about it, feel free to place them in your website.
 
 
 ### Requirements and Setup:
