@@ -1,2 +1,3 @@
-amzid
-utdrmac
+amzid - Thanks for RPC implementation and loding network parameters from tezos node.
+jdsika - Thanks for coordination with amzid on changes.
+utdrmac - Thanks for various PRs and ideas.

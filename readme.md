@@ -12,12 +12,13 @@ V5 is ready. Not all users are encouraged to switch to the new release. If you a
 V5 comes with the following enhancements: 
 - Better output, finer logs, easier to track and debug.
 - Modular calculation steps aka phases, easy to follow and create complex calculation logic
-- Calculations are done in mutez domain, less floating point error thus results are more accurate.
+- Calculations are done in mutez domain, less floating point error thus results are more accurate. Rounding is removed.
 - Ability to exclude owners or founders
 - Redirect payments to any designated address.
 - Merging of multiple payments towards an address into a single payment, to pay less network fee.
 - Exclude any address and choose what will be done with their share: share among other delegators, send to founders, do nothing e.g. leave in balance. 
 - Set a minimum delegation amount and choose what will be done with their share: share among other delegators, send to founders, do nothing e.g. leave in balance. 
+- If a batch fails, rewards belonging to that batch are marked as failed. Payment report is put under payments/failed directory. Failed payments are retried after one hour or just after a successful payment.
 
 V5 is distributed under GPL license. 
 V5 collects anonymous usage statistics to help improve the application.
