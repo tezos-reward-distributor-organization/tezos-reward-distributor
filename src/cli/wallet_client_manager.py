@@ -105,7 +105,7 @@ class WalletClientManager(SimpleClientManager):
 
                 logger.debug("Known contract added: {}".format(self.address_dict[pkh]))
 
-        if self.address_dict is None:
+        if not self.address_dict:
             logger.warn("No known address info is reached. Check your environment. Try to run in privileged mode.")
 
     def __list_known_contracts_by_alias(self):
@@ -114,6 +114,12 @@ class WalletClientManager(SimpleClientManager):
         response = clear_terminal_chars(response)
 
         dict = self.parse_list_known_contracts_response(response)
+
+        for alias, pkh in dict.items():
+            try:
+                AddressValidator("known_contract").validate(pkh)
+            except Exception as e:
+                raise ClientException("Invalid response from client '{}'".format(response), e)
 
         return dict
 
@@ -124,6 +130,13 @@ class WalletClientManager(SimpleClientManager):
         response = clear_terminal_chars(response)
 
         dict = self.parse_list_known_addresses_response(response)
+
+        for pkh, dict_alias_sk in dict.items():
+            try:
+                AddressValidator("known_address").validate(pkh)
+            except Exception as e:
+                raise ClientException("Invalid response from client '{}'".format(response), e)
+
 
         return dict
 

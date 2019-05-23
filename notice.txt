@@ -1,0 +1,21 @@
+TRD V5 onwards collects the following anonymous information to let the developers improve it.
+List of collected information may change in future but anonymity will always be preserved.
+Users may opt out by adding -Dp or --do_not_publish_stats switch.
+
+tot_amnt 	: Total amount of payments in 1K tezos. e.g. 1123 tezos is shared as 1. Data is rounded for anonmity.
+nb_pay 		: Number of payments divided by 10 removing decimal parts. e.g. 33 payments will be shared as 3. Data is rounded for anonmity.
+nb_failed	: Number of failed payments. Each batch fails or succeeds completely. A batch size is currently 280 transactions.
+tot_attmpt 	: Total attempts made to complete payments.  A batch is tried at most 3 times before completion.
+nb_f		: Number of founders
+nb_o		: Number of owners
+nb_d		: Number of delegators
+nb_m		: Number of merged payments. A merged transaction composes of other type of payments and aims to pay less transfer fee.
+cycle		: Cycle payment belongs
+m_fee		: 0 delegate pays transfer fee, 1 delegators pays transfer fee
+trdver		: Software version
+timezone	: Timezone of the region TRD runs. To get an idea on how spread the use of TRD is.
+m_run		: Running mode: 0 for interactive mode, 1 for background service mode.
+m_prov		: Provider mode: 0 for tzscan, 1 for rpc.
+m_relov		: Release override mode: -1 for negative values, 1 for positive values, 0 otherwise.
+m_offset	: Payment offset mode: 1 if set, 0 otherwise.
+m_clnt		: Client mode: 1 if docker is used, 0 otherwise.

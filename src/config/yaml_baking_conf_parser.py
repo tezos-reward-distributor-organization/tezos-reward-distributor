@@ -3,7 +3,8 @@ from config.yaml_conf_parser import YamlConfParser
 from exception.configuration import ConfigurationException
 from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, EXCLUDED_DELEGATORS_SET, \
     PYMNT_SCALE, PRCNT_SCALE, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
-    DELEGATOR_PAYS_XFER_FEE
+    DELEGATOR_PAYS_XFER_FEE, RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
+    EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -32,6 +33,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.__validate_address_set(conf_obj, SUPPORTERS_SET)
         self.__validate_address_set(conf_obj, EXCLUDED_DELEGATORS_SET)
         self.__validate_specials_map(conf_obj)
+        self.__validate_dest_map(conf_obj)
         self.__validate_scale(conf_obj, PYMNT_SCALE)
         self.__validate_scale(conf_obj, PRCNT_SCALE)
         self.__parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
@@ -42,6 +44,19 @@ class BakingYamlConfParser(YamlConfParser):
         conf_obj[FULL_SUPPORTERS_SET] = set(
             conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(conf_obj[OWNERS_MAP].keys()))
 
+        conf_obj[EXCLUDED_DELEGATORS_SET_TOB] = set(
+            conf_obj[EXCLUDED_DELEGATORS_SET] | set([k for k, v in conf_obj[RULES_MAP].items() if v == TOB]))
+
+        conf_obj[EXCLUDED_DELEGATORS_SET_TOE] = set([k for k, v in conf_obj[RULES_MAP].items() if v == TOE])
+        conf_obj[EXCLUDED_DELEGATORS_SET_TOF] = set([k for k, v in conf_obj[RULES_MAP].items() if v == TOF])
+
+        addr_validator = AddressValidator("dest_map")
+        conf_obj[DEST_MAP] = {k: v for k, v in conf_obj[RULES_MAP].items() if addr_validator.isaddress(v)}
+
+        # default destination for min_delegation filtered account rewards
+        if MIN_DELEGATION_KEY not in conf_obj[RULES_MAP]:
+            conf_obj[EXCLUDED_DELEGATORS_SET_TOB].add(MIN_DELEGATION_KEY)
+
     def __validate_share_map(self, conf_obj, map_name):
         """
         all shares in the map must sum up to 1
@@ -51,6 +66,10 @@ class BakingYamlConfParser(YamlConfParser):
         """
 
         if map_name not in conf_obj:
+            conf_obj[map_name] = dict()
+            return
+
+        if not conf_obj[map_name]:
             conf_obj[map_name] = dict()
             return
 
@@ -242,3 +261,24 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[param_name] = True
         else:
             conf_obj[param_name] = False
+
+    def __validate_dest_map(self, conf_obj):
+        if RULES_MAP not in conf_obj:
+            conf_obj[RULES_MAP] = dict()
+            return
+
+        if isinstance(conf_obj[RULES_MAP], str) and conf_obj[SPECIALS_MAP].lower() == 'none':
+            conf_obj[RULES_MAP] = dict()
+            return
+
+        if not conf_obj[RULES_MAP]:
+            return
+
+        addr_validator = AddressValidator(RULES_MAP)
+        for key, value in conf_obj[RULES_MAP].items():
+            # validate key (and address or MINDELEGATION)
+            if key != MIN_DELEGATION_KEY:
+                addr_validator.validate(key)
+            # validate destination value (An address OR TOF OR TOB OR TOE)
+            if value not in [TOF, TOB, TOE]:
+                addr_validator.validate(key)

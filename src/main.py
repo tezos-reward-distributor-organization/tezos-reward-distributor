@@ -5,6 +5,7 @@ import queue
 import sys
 import time
 
+import version
 from Constants import RunMode
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
@@ -15,6 +16,9 @@ from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger
+from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_dir, \
+    add_argument_config_dir, add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, \
+    add_argument_executable_dirs, add_argument_docker, add_argument_verbose
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -34,7 +38,8 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
+    logger.info("TRD version {} is running in {} mode.".format(version.version,"daemon" if args.background_service else "interactive"))
+    logger.info("Arguments Configuration = {}".format( json.dumps(args.__dict__, indent=1)))
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -49,12 +54,12 @@ def main(args):
 
     master_cfg = {}
     if os.path.isfile(master_config_file_path):
-        logger.info("Loading master configuration file {}".format(master_config_file_path))
+        logger.debug("Loading master configuration file {}".format(master_config_file_path))
 
         master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
         master_cfg = master_parser.parse()
     else:
-        logger.info("master configuration file not present.")
+        logger.debug("master configuration file not present.")
 
     managers = None
     contracts_by_alias = None
@@ -67,11 +72,12 @@ def main(args):
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
     # 3- get client path
+
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
                                   args.docker, args.network, args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
-
+    
     # 4. get network config     
     config_client_manager = SimpleClientManager(client_path)
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
@@ -106,8 +112,8 @@ def main(args):
     logger.info(LINER)
 
     # 6- is it a reports run
-    dry_run = args.dry_run_no_payments or args.dry_run
-    if args.dry_run_no_payments:
+    dry_run = args.dry_run_no_consumers or args.dry_run
+    if args.dry_run_no_consumers:
         global NB_CONSUMERS
         NB_CONSUMERS = 0
 
@@ -147,11 +153,13 @@ def main(args):
                         node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
     p.start()
 
+    publish_stats = not args.do_not_publish_stats
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee())
+                            wllt_clnt_mngr=wllt_clnt_mngr, args=args, verbose=args.verbose, dry_run=dry_run,
+                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
+                            publish_stats=publish_stats)
         time.sleep(1)
         c.start()
 
@@ -203,29 +211,24 @@ if __name__ == '__main__':
         raise Exception("Must be using Python 3")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
-                        default='MAINNET')
-    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided", choices=['tzscan', 'rpc'],
-                        default='tzscan')
-    parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
-    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
-    parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
-    parser.add_argument("-D", "--dry_run",
-                        help="Run without injecting payments. Suitable for testing. Does not require locking.",
+
+    add_argument_network(parser)
+    add_argument_provider(parser)
+    add_argument_reports_dir(parser)
+    add_argument_config_dir(parser)
+    add_argument_node_addr(parser)
+    add_argument_dry(parser)
+    add_argument_dry_no_consumer(parser)
+    add_argument_executable_dirs(parser)
+    add_argument_docker(parser)
+    add_argument_verbose(parser)
+
+    parser.add_argument("-s", "--background_service",
+                        help="Marker to indicate that TRD is running in daemon mode. "
+                             "When not given it indicates that TRD is in interactive mode.",
                         action="store_true")
-    parser.add_argument("-Dn", "--dry_run_no_payments",
-                        help="Run without doing any payments. Suitable for testing. Does not require locking.",
-                        action="store_true")
-    parser.add_argument("-E", "--executable_dirs",
-                        help="Comma separated list of directories to search for client executable. Prefer single "
-                             "location when setting client directory. If -d is set, point to location where tezos docker "
-                             "script (e.g. mainnet.sh for mainnet) is found. Default value is given for minimum configuration effort.",
-                        default='~/,~/tezos')
-    parser.add_argument("-d", "--docker",
-                        help="Docker installation flag. When set, docker script location should be set in -E",
-                        action="store_true")
-    parser.add_argument("-V", "--verbose",
-                        help="Low level details.",
+    parser.add_argument("-Dp", "--do_not_publish_stats",
+                        help="Do not publish anonymous usage statistics",
                         action="store_true")
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. "
@@ -248,14 +251,7 @@ if __name__ == '__main__':
                         type=int)
 
     args = parser.parse_args()
+    script_name = ""
+    print_banner(args, script_name)
 
-    logger.info("Tezos Reward Distributor is Starting")
-    logger.info(LINER)
-    logger.info("Copyright Huseyin ABANOZ 2019")
-    logger.info("huseyinabanox@gmail.com")
-    logger.info("Please leave copyright information")
-    logger.info(LINER)
-    if args.dry_run:
-        logger.info("DRY RUN MODE")
-        logger.info(LINER)
     main(args)

@@ -55,6 +55,7 @@ class TestWalletClientManager(TestCase):
                 habanoz: tz1fyvFH2pd3V9UEq5psqVokVBYkt7rHTKio (unencrypted sk known)
                 mainnetme: tz1a5GGJeyqeQ4ihZqbiRVcvj5rY5kMAt3Xa (tcp sk known)
                 zeronetme: tz1MZ72sJEVen3Qgc7uWvqKhKFJW84bNGd6T (unencrypted sk not known)
+                baker: tz1XXXXXXXX (unix sk known)
                         """
 
         clientManager = WalletClientManager(None)
@@ -81,3 +82,6 @@ class TestWalletClientManager(TestCase):
         self.assertEqual(mainpay['alias'], 'mainpay')
         self.assertEqual(mainpay['sk'], False)
 
+        baker = dict['tz1XXXXXXXX']
+        self.assertEqual(baker['alias'], 'baker')
+        self.assertEqual(baker['sk'], True)

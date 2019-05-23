@@ -1,10 +1,8 @@
 from rpc.rpc_block_api import RpcBlockApiImpl
 from rpc.rpc_reward_api import RpcRewardApiImpl
-from rpc.rpc_reward_calculator import RpcRewardCalculatorApi
-from tzscan.mirror_selection_helper import TzScanMirrorSelector
+from tzscan.tzscan_mirror_selection_helper import TzScanMirrorSelector
 from tzscan.tzscan_block_api import TzScanBlockApiImpl
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
-from tzscan.tzscan_reward_calculator import TzScanRewardCalculatorApi
 
 
 class ProviderFactory:
@@ -33,14 +31,6 @@ class ProviderFactory:
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
-            return TzScanBlockApiImpl(network_config, self.mirror_selector)
-
-        raise Exception("No supported reward data provider : {}".format(self.provider))
-
-    def newCalcApi(self, founders_map, min_delegation_amt, excluded_delegators_set, rc):
-        if self.provider == 'rpc':
-            return RpcRewardCalculatorApi(founders_map, min_delegation_amt, excluded_delegators_set, rc)
-        elif self.provider == 'tzscan':
-            return TzScanRewardCalculatorApi(founders_map, min_delegation_amt, excluded_delegators_set, rc)
+            return TzScanBlockApiImpl(network_config,self.mirror_selector)
 
         raise Exception("No supported reward data provider : {}".format(self.provider))

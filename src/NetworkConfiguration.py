@@ -19,20 +19,20 @@ def init_network_config(network_name, config_client_manager, node_addr):
     try:
         network_config_map[network_name] = get_network_config_from_local_node(config_client_manager, node_addr)
         network_config_map[network_name]['NAME'] = network_name
-        logger.info("Network configuration constants successfully loaded from a local node.")
+        logger.debug("Network configuration constants successfully loaded from a local node.")
         return network_config_map
     except:
-        logger.info("Failed to get network configuration constants from a local node.")
+        logger.debug("Failed to get network configuration constants from a local node.")
     
     try:
         network_config_map[network_name] = get_network_config_from_public_node(network_name)
         network_config_map[network_name]['NAME'] = network_name
-        logger.info("Network configuration constants successfully loaded from a public node.")
+        logger.debug("Network configuration constants successfully loaded from a public node.")
         return network_config_map
     except:
-        logger.info("Failed to get network configuration constants from a public node.")
+        logger.debug("Failed to get network configuration constants from a public node.")
     
-    logger.info("Default network configuration constants will be used.")
+    logger.debug("Default network configuration constants will be used.")
     return default_network_config_map
 
 
@@ -47,7 +47,7 @@ def get_network_config_from_local_node(config_client_manager, node_addr):
 
 def get_network_config_from_public_node(network_name):
     url = URL.format(url_prefix[network_name])
-    response_constants = requests.get(url)
+    response_constants = requests.get(url, timeout=5)
     constants = response_constants.json()
     network_config_map = parse_constants(constants)
     return network_config_map

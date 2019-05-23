@@ -55,7 +55,7 @@ class TzScanBlockApiImpl(BlockApi):
         if verbose:
             logger.debug("Requesting {}".format(uri))
 
-        resp = requests.get(uri, timeout= 5)
+        resp = requests.get(uri, timeout=5)
         if resp.status_code != 200:
             # This means something went wrong.
             self.mirror_selector.validate_mirrors()

@@ -16,6 +16,10 @@ from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger
+from main import LINER
+from launch_common import add_argument_network, add_argument_reports_dir, add_argument_provider, add_argument_config_dir, \
+    add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, add_argument_executable_dirs, \
+    add_argument_docker, add_argument_verbose, print_banner
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -24,7 +28,6 @@ from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
 
-LINER = "--------------------------------------------"
 
 NB_CONSUMERS = 1
 BUF_SIZE = 50
@@ -75,7 +78,7 @@ def main(args):
 
     logger.debug("Tezos client path is {}".format(client_path))
 
-    # 4. get network config     
+    # 4. get network config
     config_client_manager = SimpleClientManager(client_path)
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
     network_config = network_config_map[args.network]
@@ -109,8 +112,8 @@ def main(args):
     logger.info(LINER)
 
     # 6- is it a reports run
-    dry_run = args.dry_run_no_payments or args.dry_run
-    if args.dry_run_no_payments:
+    dry_run = args.dry_run_no_consumers or args.dry_run
+    if args.dry_run_no_consumers:
         global NB_CONSUMERS
         NB_CONSUMERS = 0
 
@@ -142,24 +145,19 @@ def main(args):
                         node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
     p.retry_failed_payments()
 
-    for i in range(NB_CONSUMERS):
-        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
-                            client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee())
-        time.sleep(1)
-        c.start()
+    c = PaymentConsumer(name='consumer' + '_retry_failed', payments_dir=payments_root, key_name=payment_address,
+                        client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
+                        wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
+                        delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee())
+    time.sleep(1)
+    c.start()
+    p.exit()
+    c.join()
 
-        logger.info("Application start completed")
-        logger.info(LINER)
+    logger.info("Application start completed")
+    logger.info(LINER)
 
     sleep(5)
-    p.exit()
-    try:
-        while life_cycle.is_running(): time.sleep(10)
-    except KeyboardInterrupt:
-        logger.info("Interrupted.")
-        life_cycle.stop()
 
 
 def get_baking_configuration_file(config_dir):
@@ -178,47 +176,25 @@ def get_baking_configuration_file(config_dir):
     return os.path.join(config_dir, config_file)
 
 
-
 if __name__ == '__main__':
 
     if sys.version_info[0] < 3:
         raise Exception("Must be using Python 3")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
-                        default='MAINNET')
-    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided", choices=['tzscan', 'rpc'],
-                        default='tzscan')
-    parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
-    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
-    parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
-    parser.add_argument("-D", "--dry_run",
-                        help="Run without injecting payments. Suitable for testing. Does not require locking.",
-                        action="store_true")
-    parser.add_argument("-Dn", "--dry_run_no_payments",
-                        help="Run without doing any payments. Suitable for testing. Does not require locking.",
-                        action="store_true")
-    parser.add_argument("-E", "--executable_dirs",
-                        help="Comma separated list of directories to search for client executable. Prefer single "
-                             "location when setting client directory. If -d is set, point to location where tezos docker "
-                             "script (e.g. mainnet.sh for mainnet) is found. Default value is given for minimum configuration effort.",
-                        default='~/,~/tezos')
-    parser.add_argument("-d", "--docker",
-                        help="Docker installation flag. When set, docker script location should be set in -E",
-                        action="store_true")
-    parser.add_argument("-V", "--verbose",
-                        help="Low level details.",
-                        action="store_true")
+    add_argument_network(parser)
+    add_argument_provider(parser)
+    add_argument_reports_dir(parser)
+    add_argument_config_dir(parser)
+    add_argument_node_addr(parser)
+    add_argument_dry(parser)
+    add_argument_dry_no_consumer(parser)
+    add_argument_executable_dirs(parser)
+    add_argument_docker(parser)
+    add_argument_verbose(parser)
 
     args = parser.parse_args()
+    script_name = " - Retry Failed Files"
+    print_banner(args, script_name)
 
-    logger.info("Tezos Reward Distributor - Retry Failed Files is Starting")
-    logger.info(LINER)
-    logger.info("Copyright Huseyin ABANOZ 2019")
-    logger.info("huseyinabanox@gmail.com")
-    logger.info("Please leave copyright information")
-    logger.info(LINER)
-    if args.dry_run:
-        logger.info("DRY RUN MODE")
-        logger.info(LINER)
     main(args)

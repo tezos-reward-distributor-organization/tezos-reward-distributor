@@ -1,6 +1,5 @@
 import json
 
-
 SERVICE_FEE = 'service_fee'
 OWNERS_MAP = 'owners_map'
 FOUNDERS_MAP = 'founders_map'
@@ -9,12 +8,24 @@ PRCNT_SCALE = "prcnt_scale"
 PYMNT_SCALE = "pymnt_scale"
 EXCLUDED_DELEGATORS_SET = "excluded_delegators_set"
 SPECIALS_MAP = 'specials_map'
+RULES_MAP = 'rules_map'
 SUPPORTERS_SET = 'supporters_set'
 PAYMENT_ADDRESS = 'payment_address'
 MIN_DELEGATION_AMT = 'min_delegation_amt'
 DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
 ### extensions
 FULL_SUPPORTERS_SET = "full_supporters_set"
+EXCLUDED_DELEGATORS_SET_TOB = "excluded_delegators_set_tob"
+EXCLUDED_DELEGATORS_SET_TOE = "excluded_delegators_set_toe"
+EXCLUDED_DELEGATORS_SET_TOF = "excluded_delegators_set_tof"
+DEST_MAP = "destination_map"
+
+### destination map
+TOF = "TOF"
+TOB = "TOB"
+TOE = "TOE"
+MIN_DELEGATION_KEY = 'mindelegation'
+###
 
 from model.custom_json_encoder import CustomJsonEncoder
 
@@ -73,7 +84,20 @@ class BakingConf:
     def get_delegator_pays_xfer_fee(self):
         return self.get_attribute(DELEGATOR_PAYS_XFER_FEE)
 
+    def get_rule_map(self):
+        return self.get_attribute(RULES_MAP)
+
+    def get_dest_map(self):
+        return self.get_attribute(DEST_MAP)
+
+    def get_excluded_set_toe(self):
+        return self.get_attribute(EXCLUDED_DELEGATORS_SET_TOE)
+
+    def get_excluded_set_tob(self):
+        return self.get_attribute(EXCLUDED_DELEGATORS_SET_TOB)
+
+    def get_excluded_set_tof(self):
+        return self.get_attribute(EXCLUDED_DELEGATORS_SET_TOF)
 
     def __repr__(self) -> str:
         return json.dumps(self.__dict__, cls=CustomJsonEncoder, indent=1)
-
