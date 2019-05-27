@@ -231,13 +231,13 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             return True
         except ReadTimeout:
-            logger.warn("Tzscan call failed", exc_info=True)
+            logger.warning("Tzscan call failed", exc_info=False)
             return False
         except ConnectTimeout:
-            logger.warn("Tzscan connection failed", exc_info=True)
+            logger.warning("Tzscan connection failed", exc_info=False)
             return False
         except TzScanException:
-            logger.warn("Tzscan error at reward loop", exc_info=True)
+            logger.warning("Tzscan error at reward loop", exc_info=False)
             return False
         except Exception:
             logger.error("Error at payment producer loop", exc_info=True)

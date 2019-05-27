@@ -9,7 +9,7 @@ from calc.calculate_phase_final import CalculatePhaseFinal
 from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_type_balance
 from pay.payment_consumer import logger
 
-MINOR_DIFF = 5
+MINOR_DIFF = 6
 MINOR_RATIO_DIFF = 1e-6
 
 
@@ -95,8 +95,8 @@ class PhasedPaymentCalculator:
         logger.info("Total rewards after  processing is {:,} mutez.".format(total_rwrd_amnt))
 
         if error:
-            logger.debug("Distributed total amount is {:,} mutez".format(total_amount_to_pay))
-            logger.debug("Difference between total rewards and distributed total amount is {} mutez. "
+            logger.debug("Total amount to pay is {:,} mutez".format(total_amount_to_pay))
+            logger.debug("Difference between total rewards and total payment amount is {} mutez. "
                          "This is due to floating point arithmetic. (max allowed diff is {})"
                          .format(error, MINOR_DIFF))
 
