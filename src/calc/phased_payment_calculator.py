@@ -9,7 +9,7 @@ from calc.calculate_phase_final import CalculatePhaseFinal
 from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_type_balance
 from pay.payment_consumer import logger
 
-MINOR_DIFF = 6
+MINOR_DIFF = 8
 MINOR_RATIO_DIFF = 1e-6
 
 
@@ -72,11 +72,16 @@ class PhasedPaymentCalculator:
 
         founder_parent = next(filter(lambda x: x.type == TYPE_FOUNDERS_PARENT, rwrd_logs), None)
 
-        calculated_founder_rewards = sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum(
-            [rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])
-        assert self.almost_equal(founder_parent.ratio3, calculated_founder_rewards)
+        calculated_founder_rewards = sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum([rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])
+
+        if founder_parent:
+            assert self.almost_equal(founder_parent.ratio3, calculated_founder_rewards)
+        else:
+            assert self.almost_equal(0, calculated_founder_rewards)
+
         owners_parent = next(filter(lambda x: x.type == TYPE_OWNERS_PARENT, rwrd_logs), None)
-        assert owners_parent.service_fee_rate == 0
+        if owners_parent:
+            assert owners_parent.service_fee_rate == 0
 
         phase4 = CalculatePhase4(self.founders_map, self.owners_map)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
