@@ -1,6 +1,7 @@
 import os
 
-from util.dir_utils import payment_dir_c, payment_report_file_path
+from util.dir_utils import payment_dir_c, payment_report_file_path, get_busy_file
+
 
 #
 # if there is a past payment evidence for a cycle, return evidence description. Else return None
@@ -18,4 +19,14 @@ def check_past_payment(payments_root, payment_cycle):
         return "Payment report for cycle {} is present. No payment will be run for the cycle. Check '{}'" \
             .format(payment_cycle, payment_file)
 
-    return None # which means No past payment
+    payment_file_failed = payment_report_file_path(payments_root, payment_cycle, 1)
+    if os.path.isfile(payment_file_failed):
+        return "Payment failed report for cycle {} is present. No payment will be run for the cycle. Check '{}'" \
+            .format(payment_cycle, payment_file_failed)
+
+    payment_file_failed_bush = get_busy_file(payment_file_failed)
+    if os.path.isfile(payment_file_failed_bush):
+        return "Busy payment failed report for cycle {} is present. No payment will be run for the cycle. Check '{}'" \
+            .format(payment_cycle, payment_file_failed_bush)
+
+    return None  # which means No past payment

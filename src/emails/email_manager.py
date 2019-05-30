@@ -53,13 +53,14 @@ class EmailManager():
             return
 
         title = "Payment Report for Cycle {}".format(cyle)
-        if nb_failed == 0: title + ", {} failed".format(nb_failed)
+        if nb_failed > 0: title + ", {} failed".format(nb_failed)
 
         self.email_sender.send(title, "Payment for cycle {} is completed. Report file is attached.".format(cyle),
                                self.default["recipients"], [payments_file])
 
         logger.debug("Report email sent for cycle {}.".format(cyle))
 
+
 if __name__ == '__main__':
     mm = EmailManager()
-    mm.send_payment_mail(32, "D:\dev_root\\tezos-reward-distributer\\requirements.txt",0)
+    mm.send_payment_mail(32, "D:\dev_root\\tezos-reward-distributer\\requirements.txt", 0)
