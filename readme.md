@@ -1,5 +1,14 @@
 <img src="https://raw.githubusercontent.com/habanoz/trd-art/master/logo-narrow/trd_512__1.png" width="128" /> 
 
+## IMPORTANT! : Athens Upgrade
+
+As part of Athens upgrdate, minmum gas amount has changed. New gas amount is 10200. Either update your fee.ini file or make a git pull to update your gas settings. If you have failed payments, check failed payments directory (e.g. ~/pymnt/reports/PKH/payments/failed). If there is a file there check to see if all payments are failed. If all of them are failed remove that file.
+
+In order to retry the payment and use new gas setting, restart your trd service.
+
+NOT: For partial faiures, do not remove failed payment report. TRD service will try to pay again if it is in Mode 3. If it is not running in mode 3, use src/retry_failed.py to retry. Due to gas issue all payments should fail, it is safe to report failed payment file and let trd start from scrach. 
+
+In case of any trouble feel free to contat me, or file an issue.
 
 ## Tezos Reward Distributor : Run & Forget 
 
