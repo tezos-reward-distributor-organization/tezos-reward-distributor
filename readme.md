@@ -6,9 +6,9 @@ As part of Athens upgrdate, minmum gas amount has changed. New gas amount is 102
 
 In order to retry the payment and use new gas setting, restart your trd service.
 
-NOT: For partial faiures, do not remove failed payment report. TRD service will try to pay again if it is in Mode 3. If it is not running in mode 3, use src/retry_failed.py to retry. Due to gas issue all payments should fail, it is safe to remove failed payment report file and let trd start from scrach. 
+NOTE: For partial faiures, do not remove failed payment report. TRD service will try to pay again if it is in Mode 3. If it is not running in mode 3, use src/retry_failed.py to retry. Due to gas issue all payments should fail, it is safe to remove failed payment report file and let trd start from scrach. 
 
-In case of any trouble feel free to contat me, or file an issue.
+In case of any trouble feel free to contact me, or file an issue.
 
 ## Tezos Reward Distributor : Run & Forget 
 
