@@ -159,7 +159,7 @@ def main(args):
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                             wllt_clnt_mngr=wllt_clnt_mngr, args=args, verbose=args.verbose, dry_run=dry_run,
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
-                            publish_stats=publish_stats)
+                            network_config=network_config,publish_stats=publish_stats)
         time.sleep(1)
         c.start()
 

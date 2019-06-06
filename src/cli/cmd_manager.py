@@ -1,4 +1,6 @@
-import subprocess
+from subprocess import STDOUT, check_output, TimeoutExpired
+
+TIMEOUT = "SUBPROCESS_TIMEOUT"
 
 
 class CommandManager:
@@ -6,7 +8,7 @@ class CommandManager:
         super().__init__()
         self.verbose = verbose
 
-    def send_request(self, cmd, verbose_override=None):
+    def send_request(self, cmd, verbose_override=None, timeout=None):
 
         verbose = self.verbose
 
@@ -16,27 +18,14 @@ class CommandManager:
         if verbose:
             print("--> Verbose : Command is |{}|".format(cmd))
 
-        # execute client
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            output = check_output(cmd, stderr=STDOUT, timeout=timeout)
+        except TimeoutExpired as e:
+            raise e
 
-        bytes = []
-
-        for b in process.stdout:
-            bytes.append(b)
-
-        # if no response in stdout, read stderr
-        if not bytes:
-            if verbose:
-                print("--- Verbose : Nothing in stdout, reading stderr...")
-            for b in process.stderr:
-                bytes.append(b)
-
-        process.wait()
-
-        buffer = b''.join(bytes).decode('utf-8')
-        buffer = buffer.strip()
+        output = output.strip()
 
         if verbose:
-            print("<-- Verbose : Answer is |{}|".format(buffer))
+            print("<-- Verbose : Answer is |{}|".format(output))
 
-        return buffer
+        return output

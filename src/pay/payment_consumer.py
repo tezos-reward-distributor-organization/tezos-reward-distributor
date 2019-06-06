@@ -32,8 +32,9 @@ def count_and_log_failed(payment_logs, pymnt_cycle):
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr, args=None,
-                 verbose=None, dry_run=None, delegator_pays_xfer_fee=True, dest_map=None, publish_stats=True):
+    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
+                 network_config, args=None, verbose=None, dry_run=None, delegator_pays_xfer_fee=True, dest_map=None,
+                 publish_stats=True):
         super(PaymentConsumer, self).__init__()
 
         self.dest_map = dest_map if dest_map else {}
@@ -50,6 +51,7 @@ class PaymentConsumer(threading.Thread):
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
         self.publish_stats = publish_stats
         self.args = args
+        self.network_config = network_config
 
         logger.info('Consumer "%s" created', self.name)
 
@@ -88,8 +90,7 @@ class PaymentConsumer(threading.Thread):
 
                 payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
-                batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
-                                         self.delegator_pays_xfer_fee)
+                batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr, self.delegator_pays_xfer_fee, self.network_config)
 
                 # 3- do the payment
                 payment_logs, total_attempts = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
@@ -163,7 +164,8 @@ class PaymentConsumer(threading.Thread):
 
             for pl in payment_logs:
                 # write row to csv file
-                csv_writer.writerow([pl.address, pl.type, pl.amount, pl.hash if pl.hash else "None", "1" if pl.paid else "0"])
+                csv_writer.writerow(
+                    [pl.address, pl.type, pl.amount, pl.hash if pl.hash else "None", "1" if pl.paid else "0"])
 
                 logger.debug("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ),
                              pl.address, pl.type, pl.paid)
