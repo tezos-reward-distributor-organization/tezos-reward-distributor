@@ -122,7 +122,8 @@ class BatchPayer():
         # separate trivial items, amounts less than zero_threshold are not trivial, no needed to be paid
         non_trivial_payment_items = [pi for pi in payment_items if pi.amount < ZERO_THRESHOLD]
         non_trivial_payment_items_total = sum([pl.amount for pl in non_trivial_payment_items])
-        logger.info("{} payment items are not trivial, total of {:,} mutez".format(len(non_trivial_payment_items), non_trivial_payment_items_total))
+        if non_trivial_payment_items:
+            logger.info("{} payment items are not trivial, total of {:,} mutez".format(len(non_trivial_payment_items), non_trivial_payment_items_total))
         self.log_non_trivial_items(non_trivial_payment_items)
 
         trivial_payment_items = [pi for pi in payment_items if pi.amount >= ZERO_THRESHOLD]
