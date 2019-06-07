@@ -21,13 +21,13 @@ class CommandManager:
             print("--> Verbose : Command is |{}|".format(cmd))
 
         try:
-            output = check_output(cmd,shell=True, stderr=STDOUT, timeout=timeout)
+            output = check_output(cmd,shell=True, stderr=STDOUT, timeout=timeout, encoding='utf8')
         except TimeoutExpired as e:
             raise e
         except CalledProcessError as e:
             return e.output
 
-        output = output.decode('utf-8')
+        #output = output.decode('utf-8')
         output = clear_terminal_chars(output)
         output = output.strip()
 
