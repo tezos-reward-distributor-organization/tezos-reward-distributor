@@ -2,7 +2,7 @@ from cli.simple_client_manager import SimpleClientManager
 from exception.client import ClientException
 from log_config import main_logger
 from util.address_validator import AddressValidator
-from util.client_utils import clear_terminal_chars, not_indicator_line
+from util.client_utils import not_indicator_line
 
 logger = main_logger
 
@@ -30,8 +30,6 @@ class WalletClientManager(SimpleClientManager):
             return self.managers[pkh]
 
         response = self.send_request(" get manager for " + pkh)
-
-        response = clear_terminal_chars(response)
 
         manager = self.parse_get_manager_for_contract_response(response)
 
@@ -111,8 +109,6 @@ class WalletClientManager(SimpleClientManager):
     def __list_known_contracts_by_alias(self):
         response = self.send_request(" list known contracts")
 
-        response = clear_terminal_chars(response)
-
         dict = self.parse_list_known_contracts_response(response)
 
         for alias, pkh in dict.items():
@@ -126,8 +122,6 @@ class WalletClientManager(SimpleClientManager):
     def __list_known_addresses_by_pkh(self):
 
         response = self.send_request(" list known addresses")
-
-        response = clear_terminal_chars(response)
 
         dict = self.parse_list_known_addresses_response(response)
 

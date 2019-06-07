@@ -1,10 +1,7 @@
 import json
 
-from util.client_utils import clear_terminal_chars
-
 
 def extract_json_part(input, verbose= None):
-    input = clear_terminal_chars(input)
 
     if verbose:
         print("->will parse json response_str is '{}'".format(input))

@@ -1,5 +1,7 @@
 from subprocess import STDOUT, check_output, TimeoutExpired
 
+from util.client_utils import clear_terminal_chars
+
 TIMEOUT = "SUBPROCESS_TIMEOUT"
 
 
@@ -23,6 +25,8 @@ class CommandManager:
         except TimeoutExpired as e:
             raise e
 
+        output = b''.join(output).decode('utf-8')
+        output = clear_terminal_chars(output)
         output = output.strip()
 
         if verbose:

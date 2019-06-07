@@ -1,6 +1,5 @@
 from cli.cmd_manager import CommandManager
 from exception.client import ClientException
-from util.client_utils import clear_terminal_chars
 
 
 class SimpleClientManager:
@@ -17,8 +16,6 @@ class SimpleClientManager:
 
     def sign(self, bytes, key_name):
         response = self.send_request(" sign bytes 0x03{} for {}".format(bytes, key_name))
-
-        response = clear_terminal_chars(response)
 
         for line in response.splitlines():
             if "Signature" in line:
