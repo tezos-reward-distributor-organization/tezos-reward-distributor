@@ -21,3 +21,6 @@ class PaymentStatus(Enum):
 
     def is_processed(self):
         return self.value > 0
+
+    def __str__(self):
+        return self.name

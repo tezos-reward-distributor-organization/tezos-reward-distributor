@@ -3,7 +3,7 @@ import logging
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(threadName)-9s %(message)s', )
 
 main_logger = logging.getLogger('main')
-main_logger.setLevel(logging.INFO)
+main_logger.setLevel(logging.DEBUG)
 
 # create file handler which logs even debug messages
 fh = logging.FileHandler('app.log')
