@@ -290,7 +290,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
                                      pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
                              pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
-
+        logger.info("Calculation report is created '{}'".format(report_file_path))
     @staticmethod
     def create_exit_payment():
         return RewardLog.ExitInstance()
