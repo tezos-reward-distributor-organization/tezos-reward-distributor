@@ -25,7 +25,7 @@ class CommandManager:
         except TimeoutExpired as e:
             raise e
         except CalledProcessError as e:
-            return e.message
+            return e.output
 
         output = output.decode('utf-8')
         output = clear_terminal_chars(output)
