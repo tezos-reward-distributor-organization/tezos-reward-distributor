@@ -3,15 +3,15 @@ import logging
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(threadName)-9s %(message)s', )
 
 main_logger = logging.getLogger('main')
-main_logger.setLevel(logging.DEBUG)
+main_logger.setLevel(logging.INFO)
 
 # create file handler which logs even debug messages
 fh = logging.FileHandler('app.log')
-fh.setLevel(logging.DEBUG)
+fh.setLevel(logging.INFO)
 
 # create console handler with a higher log level
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 
 # create formatter and add it to the handlers
 #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(threadName)-9s - %(message)s')
