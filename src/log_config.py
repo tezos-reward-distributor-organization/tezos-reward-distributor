@@ -7,7 +7,7 @@ main_logger.setLevel(logging.INFO)
 
 # create file handler which logs even debug messages
 fh = logging.FileHandler('app.log')
-fh.setLevel(logging.INFO)
+fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
 ch = logging.StreamHandler()

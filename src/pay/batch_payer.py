@@ -99,13 +99,16 @@ class BatchPayer():
 
         # initialize the result list with already paid items
         payment_logs_paid = [pi for pi in payment_items_in if pi.paid==PaymentStatus.PAID]
-        logger.info("{} payment items are already paid".format(len(payment_logs_paid)))
+        if payment_logs_paid:
+            logger.info("{} payment items are already paid".format(len(payment_logs_paid)))
 
         payment_logs_done = [pi for pi in payment_items_in if pi.paid==PaymentStatus.DONE]
-        logger.info("{} payment items are already processed".format(len(payment_logs_done)))
+        if payment_logs_done:
+            logger.info("{} payment items are already processed".format(len(payment_logs_done)))
 
         payment_logs_unknown = [pi for pi in payment_items_in if pi.paid==PaymentStatus.UNKNOWN]
-        logger.info("{} payment items are in unknown status".format(len(payment_logs_unknown)))
+        if payment_logs_unknown:
+            logger.info("{} payment items are in unknown status".format(len(payment_logs_unknown)))
 
         payment_logs = []
         payment_logs.extend(payment_logs_paid)
