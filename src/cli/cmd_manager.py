@@ -1,4 +1,4 @@
-from subprocess import STDOUT, check_output, TimeoutExpired
+from subprocess import STDOUT, check_output, TimeoutExpired, CalledProcessError
 
 from util.client_utils import clear_terminal_chars
 
@@ -24,6 +24,8 @@ class CommandManager:
             output = check_output(cmd,shell=True, stderr=STDOUT, timeout=timeout)
         except TimeoutExpired as e:
             raise e
+        except CalledProcessError as e:
+            return e.message
 
         output = output.decode('utf-8')
         output = clear_terminal_chars(output)
