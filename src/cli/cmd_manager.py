@@ -19,7 +19,7 @@ class CommandManager:
             print("--> Verbose : Command is |{}|".format(cmd))
 
         try:
-            output = check_output(cmd, stderr=STDOUT, timeout=timeout)
+            output = check_output(cmd,shell=True, stderr=STDOUT, timeout=timeout)
         except TimeoutExpired as e:
             raise e
 
