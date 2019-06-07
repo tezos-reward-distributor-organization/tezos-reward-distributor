@@ -18,3 +18,6 @@ class PaymentStatus(Enum):
 
     def is_fail(self):
         return self.value == 0
+
+    def is_processed(self):
+        return self.value > 0

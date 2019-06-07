@@ -95,20 +95,31 @@ class BatchPayer():
         self.comm_wait = COMM_WAIT.format()
 
     def pay(self, payment_items_in, verbose=None, dry_run=None):
-        logger.info("{} payment items will be paid".format(len(payment_items_in)))
+        logger.info("{} payment items to process".format(len(payment_items_in)))
 
         # initialize the result list with already paid items
-        payment_logs = [pi for pi in payment_items_in if pi.paid]
-        logger.info("{} payment items are already paid".format(len(payment_logs)))
+        payment_logs_paid = [pi for pi in payment_items_in if pi.paid==PaymentStatus.PAID]
+        logger.info("{} payment items are already paid".format(len(payment_logs_paid)))
 
-        payment_items = [pi for pi in payment_items_in if not pi.paid]
+        payment_logs_done = [pi for pi in payment_items_in if pi.paid==PaymentStatus.DONE]
+        logger.info("{} payment items are already processed".format(len(payment_logs_done)))
+
+        payment_logs_unknown = [pi for pi in payment_items_in if pi.paid==PaymentStatus.UNKNOWN]
+        logger.info("{} payment items are in unknown status".format(len(payment_logs_unknown)))
+
+        payment_logs = []
+        payment_logs.extend(payment_logs_paid)
+        payment_logs.extend(payment_logs_done)
+        payment_logs.extend(payment_logs_unknown)
+
+        self.log_processed_items(payment_logs)
+
+        payment_items = [pi for pi in payment_items_in if not pi.paid.is_processed()]
 
         # separate trivial items, amounts less than zero_threshold are not trivial, no needed to be paid
         non_trivial_payment_items = [pi for pi in payment_items if pi.amount < ZERO_THRESHOLD]
-        non_trivial_payment_items_total=sum([pl.amount for pl in non_trivial_payment_items])
+        non_trivial_payment_items_total = sum([pl.amount for pl in non_trivial_payment_items])
         logger.info("{} payment items are not trivial, total of {:,} mutez".format(len(non_trivial_payment_items), non_trivial_payment_items_total))
-
-        self.log_paid_items(payment_logs)
         self.log_non_trivial_items(non_trivial_payment_items)
 
         trivial_payment_items = [pi for pi in payment_items if pi.amount >= ZERO_THRESHOLD]
@@ -147,17 +158,15 @@ class BatchPayer():
 
         return payment_logs, total_attempts
 
-    def log_paid_items(self, payment_logs):
+    def log_processed_items(self, payment_logs):
         if payment_logs:
             for pl in payment_logs:
-                logger.debug("Reward already paid for cycle %s address %s amount %f tz type %s",
-                             pl.cycle, pl.address, pl.amount, pl.type)
+                logger.debug("Reward already {} for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
 
     def log_non_trivial_items(self, payment_logs):
         if payment_logs:
             for pl in payment_logs:
-                logger.debug("Reward not trivial for cycle %s address %s amount %f tz type %s",
-                             pl.cycle, pl.address, pl.amount, pl.type)
+                logger.debug("Reward not trivial for address %s amount %f tz type %s", pl.address, pl.amount, pl.type)
 
     def pay_single_batch(self, payment_items, op_counter, verbose=None, dry_run=None):
 
