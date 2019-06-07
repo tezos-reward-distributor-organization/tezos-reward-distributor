@@ -10,10 +10,11 @@ class RunMode(Enum):
 
 
 class PaymentStatus(Enum):
+    UNDEFINED = -1
     FAIL = 0
     PAID = 1
     DONE = 2
     UNKNOWN = 3
 
-    def is_success(self):
-        return self.value > 0
+    def is_fail(self):
+        return self.value == 0

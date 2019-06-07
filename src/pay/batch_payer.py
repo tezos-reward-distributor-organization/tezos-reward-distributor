@@ -174,7 +174,7 @@ class BatchPayer():
             except:
                 logger.error("batch payment attempt {}/{} for current batch failed with error".format(attempt + 1, max_try), exc_info=True)
 
-            if dry_run or not status.is_success():
+            if dry_run or status.is_fail():
                 op_counter.rollback()
             else:
                 op_counter.commit()
@@ -185,8 +185,8 @@ class BatchPayer():
 
             attempt_count += 1
 
-            # if successful, do not try anymore
-            if status.is_success():
+            # if not fail, do not try anymore
+            if not status.is_fail():
                 break
 
             logger.debug("payment attempt {}/{} failed".format(attempt + 1, max_try))

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from Constants import EXIT_PAYMENT_TYPE
+from Constants import EXIT_PAYMENT_TYPE, PaymentStatus
 
 TYPE_DELEGATOR = "D"
 TYPE_FOUNDER = "F"
@@ -45,7 +45,7 @@ class RewardLog:
         self.amount = 0
         self.parents = None
 
-        self.paid = False
+        self.paid = PaymentStatus.UNDEFINED
         self.hash = "0"
         self.payable = True
 
