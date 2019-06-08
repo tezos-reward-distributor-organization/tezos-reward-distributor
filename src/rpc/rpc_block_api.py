@@ -13,13 +13,13 @@ class RpcBlockApiImpl(BlockApi):
         self.node_url = node_url
         
     def get_current_level(self, verbose=False):
-        response = self.wllt_clnt_mngr.send_request(COMM_HEAD.format(self.node_url))
+        response = self.wllt_clnt_mngr.exec(COMM_HEAD.format(self.node_url))
         head = parse_json_response(response)
         current_level = int(head["metadata"]["level"]["level"])
         return current_level
 
     def get_revelation(self, pkh, verbose=False):
-        response = self.wllt_clnt_mngr.send_request(COMM_REVELATION.format(self.node_url, pkh))
+        response = self.wllt_clnt_mngr.exec(COMM_REVELATION.format(self.node_url, pkh))
         manager_key = parse_json_response(response)
         bool_revelation = "key" in manager_key.keys() and len(manager_key["key"]) > 0
         return bool_revelation

@@ -228,7 +228,7 @@ class BatchPayer():
             counter = int(counter)
             op_counter.set(counter)
 
-        head = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_head, verbose_override=False))
+        head = parse_json_response(self.wllt_clnt_mngr.exec(self.comm_head, verbose_override=False))
         branch = head["hash"]
         protocol = head["metadata"]["protocol"]
 
@@ -264,8 +264,8 @@ class BatchPayer():
 
         if verbose: print("--> runops_command_str is |{}|".format(runops_command_str))
 
-        runops_command_response = self.wllt_clnt_mngr.send_request(runops_command_str)
-        if not check_response(runops_command_response):
+        result, runops_command_response = self.wllt_clnt_mngr.send_request(runops_command_str)
+        if not result:
             logger.error("Error in run_operation")
             logger.debug("Error in run_operation, request ->{}<-".format(runops_command_str))
             logger.debug("---")
@@ -279,8 +279,8 @@ class BatchPayer():
 
         if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
 
-        forge_command_response = self.wllt_clnt_mngr.send_request(forge_command_str)
-        if not check_response(forge_command_response):
+        result, forge_command_response = self.wllt_clnt_mngr.send_request(forge_command_str)
+        if not result:
             logger.error("Error in forge operation")
             logger.debug("Error in forge, request '{}'".format(forge_command_str))
             logger.debug("---")
@@ -293,14 +293,13 @@ class BatchPayer():
 
         # pre-apply operations
         logger.debug("Preapplying the operations")
-        preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace(
-            "%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
+        preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
         preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
 
         if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
 
-        preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
-        if not check_response(preapply_command_response):
+        result, preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
+        if not result:
             logger.error("Error in preapply operation")
             logger.debug("Error in preapply, request '{}'".format(preapply_command_str))
             logger.debug("---")
@@ -331,8 +330,7 @@ class BatchPayer():
 
         if len(decoded_signature) != 128:  # must be 64 bytes
             # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            logger.warn(
-                "Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
+            logger.warn("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
             # return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
@@ -340,8 +338,8 @@ class BatchPayer():
 
         if verbose: print("--> inject_command_str is |{}|".format(inject_command_str))
 
-        inject_command_response = self.wllt_clnt_mngr.send_request(inject_command_str)
-        if not check_response(inject_command_response):
+        result, inject_command_response = self.wllt_clnt_mngr.send_request(inject_command_str)
+        if not result:
             logger.error("Error in inject operation")
             logger.debug("Error in inject, response '{}'".format(inject_command_str))
             logger.debug("---")
@@ -355,7 +353,7 @@ class BatchPayer():
         logger.debug("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
-            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * ( CONFIRMATIONS + PATIENCE))
+            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
             logger.debug("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))

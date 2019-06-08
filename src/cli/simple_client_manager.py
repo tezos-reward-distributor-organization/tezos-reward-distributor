@@ -12,7 +12,7 @@ class SimpleClientManager:
     def send_request(self, cmd, verbose_override=None, timeout=None):
         whole_cmd = self.client_path + cmd
 
-        return self.cmd_manager.send_request(whole_cmd, verbose_override, timeout=timeout)
+        return self.cmd_manager.execute(whole_cmd, verbose_override, timeout=timeout)
 
     def sign(self, bytes, key_name):
         response = self.send_request(" sign bytes 0x03{} for {}".format(bytes, key_name))

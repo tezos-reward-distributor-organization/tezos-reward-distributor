@@ -48,7 +48,7 @@ def is_mainnet(nw_name):
 
 def get_network_config_from_local_node(config_client_manager, node_addr):
     request_constants = CONSTANTS_COMM.format(node_addr)
-    response_constants = config_client_manager.send_request(request_constants)
+    response_constants = config_client_manager.exec(request_constants)
     constants = parse_json_response(response_constants)
     network_config_map = parse_constants(constants)
     return network_config_map

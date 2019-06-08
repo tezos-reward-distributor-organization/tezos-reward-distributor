@@ -10,7 +10,10 @@ class CommandManager:
         super().__init__()
         self.verbose = verbose
 
-    def send_request(self, cmd, verbose_override=None, timeout=None):
+    def exec(self, cmd, verbose_override=None, timeout=None):
+        return self.execute(cmd, verbose_override, timeout)[1]
+
+    def execute(self, cmd, verbose_override=None, timeout=None):
 
         verbose = self.verbose
 
@@ -21,17 +24,17 @@ class CommandManager:
             print("--> Verbose : Command is |{}|".format(cmd))
 
         try:
-            output = check_output(cmd,shell=True, stderr=STDOUT, timeout=timeout, encoding='utf8')
+            output = check_output(cmd, shell=True, stderr=STDOUT, timeout=timeout, encoding='utf8')
         except TimeoutExpired as e:
             raise e
         except CalledProcessError as e:
-            return e.output
+            return False, e.output
 
-        #output = output.decode('utf-8')
+        # output = output.decode('utf-8')
         output = clear_terminal_chars(output)
         output = output.strip()
 
         if verbose:
             print("<-- Verbose : Answer is |{}|".format(output))
 
-        return output
+        return True, output
