@@ -354,8 +354,8 @@ class BatchPayer():
         # wait for inclusion
         logger.debug("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
         try:
-            cmd = self.comm_wait.replace("%OPERATION%", operation_hash.replace('W','K'))
-            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
+            cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
+            self.wllt_clnt_mngr.send_request(cmd, timeout=0.5*self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
             logger.debug("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
