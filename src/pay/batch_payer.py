@@ -16,9 +16,9 @@ ZERO_THRESHOLD = 2e+3
 logger = main_logger
 
 MAX_TX_PER_BLOCK = 284
-PKH_LENGHT = 36
+PKH_LENGTH = 36
 CONFIRMATIONS = 1
-PATIENCE = 0
+PATIENCE = 10
 
 COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
 COMM_COUNTER = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
@@ -69,7 +69,7 @@ class BatchPayer():
         logger.debug("Transfer fee is paid by {}".format("Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
 
         # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
-        if len(self.pymnt_addr) == PKH_LENGHT and (
+        if len(self.pymnt_addr) == PKH_LENGTH and (
                 self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")):
             self.source = self.pymnt_addr
         else:
@@ -355,7 +355,7 @@ class BatchPayer():
         logger.debug("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
-            self.wllt_clnt_mngr.send_request(cmd, timeout=0.5*self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
+            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
             logger.debug("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
