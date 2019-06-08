@@ -1,16 +1,15 @@
 import configparser
+import os
+from random import randint
 from subprocess import TimeoutExpired
+from time import sleep
 
 import base58
-import os
 
 from Constants import PaymentStatus
 from NetworkConfiguration import BLOCK_TIME_IN_SEC
 from log_config import main_logger
-from util.client_utils import check_response
 from util.rpc_utils import parse_json_response
-from random import randint
-from time import sleep
 
 ZERO_THRESHOLD = 2e-3
 
@@ -291,8 +290,8 @@ class BatchPayer():
 
         # sign the operations
         bytes = parse_json_response(forge_command_response, verbose=verbose)
-        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager_alias,verbose_override=True)
-        logger.debug("Signed bytes '{}'".format(signed_bytes))
+        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager_alias)
+
         # pre-apply operations
         logger.debug("Preapplying the operations")
         preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
@@ -301,13 +300,11 @@ class BatchPayer():
         #if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
 
         result, preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
-
-        logger.debug("Error in preapply, request '{}'".format(preapply_command_str))
-        logger.debug("---")
-        logger.debug("Error in preapply, response '{}'".format(preapply_command_response))
-
         if not result:
             logger.error("Error in preapply operation")
+            logger.debug("Error in preapply, request '{}'".format(preapply_command_str))
+            logger.debug("---")
+            logger.debug("Error in preapply, response '{}'".format(preapply_command_response))
 
             return PaymentStatus.FAIL, ""
 

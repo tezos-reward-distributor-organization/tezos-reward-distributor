@@ -51,7 +51,7 @@ class WalletClientManager(SimpleClientManager):
                 break
 
         if self.verbose:
-            print("Manager address is : {}".format(manager))
+            logger.debug("Manager address is : {}".format(manager))
 
         return manager
 
@@ -194,7 +194,7 @@ class WalletClientManager(SimpleClientManager):
                 dict[pkh] = {"alias": alias, "sk": sk_known}
 
         if self.verbose:
-            print("known addresses: {}".format(dict))
+            logger.debug("known addresses: {}".format(dict))
 
         return dict
 
@@ -206,5 +206,5 @@ class WalletClientManager(SimpleClientManager):
                 alias, pkh = line.split(":", maxsplit=1)
                 dict[alias.strip()] = pkh.strip()
         if self.verbose:
-            print("known contracts: {}".format(dict))
+            logger.debug("known contracts: {}".format(dict))
         return dict

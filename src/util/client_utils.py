@@ -1,9 +1,13 @@
 import os
 import re
 
+from log_config import main_logger
+
 DOCKER_CLIENT_EXE = "%network%.sh"
 DOCKER_CLIENT_EXE_SUFFIX = " client"
 REGULAR_CLIENT_EXE = "tezos-client"
+
+logger = main_logger
 
 def get_client_path(search_paths, docker=None, network_name=None, verbose=None):
     client_exe = REGULAR_CLIENT_EXE
@@ -14,7 +18,8 @@ def get_client_path(search_paths, docker=None, network_name=None, verbose=None):
         client_path = os.path.join(expanded_path, client_exe)
         if os.path.isfile(client_path):
             return client_path + DOCKER_CLIENT_EXE_SUFFIX if docker else client_path
-        if verbose: print("Not found {}".format(client_path))
+
+        logger.debug("Not found {}".format(client_path))
 
     raise Exception("Client executable not found. Review --executable_dirs, --docker and --network parameters")
 

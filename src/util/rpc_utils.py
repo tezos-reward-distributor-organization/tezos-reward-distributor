@@ -1,10 +1,13 @@
 import json
 
+from log_config import main_logger
+
+logger = main_logger
 
 def extract_json_part(input, verbose= None):
 
     if verbose:
-        print("->will parse json response_str is '{}'".format(input))
+        logger.debug("->will parse json response_str is '{}'".format(input))
 
     # because of disclaimer header; find beginning of response
     idx = input.find("{")
@@ -19,7 +22,7 @@ def extract_json_part(input, verbose= None):
     extracted_json_part = input[idx:].strip()
 
     if verbose:
-        print("<-parsed json response_str is '{}'".format(extracted_json_part))
+        logger.debug("<-parsed json response_str is '{}'".format(extracted_json_part))
 
     return extracted_json_part
 

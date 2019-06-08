@@ -5,7 +5,7 @@ import time
 
 
 def main():
-    print("Stopping reward distributer")
+    print("Stopping reward distributor")
 
     stop()
 

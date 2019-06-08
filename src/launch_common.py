@@ -1,16 +1,25 @@
+from time import sleep
+
 from log_config import main_logger
 
 LINER = "--------------------------------------------"
 logger = main_logger
 
 def print_banner(args, script_name):
+    with open("./banner.txt", "rt") as file:
+        print(file.read())
+    print(LINER, flush=True)
+    print("Copyright Huseyin ABANOZ 2019")
+    print("huseyinabanox@gmail.com")
+    print("Please leave copyright information")
+    print(LINER,flush=True)
+
+    sleep(0.1)
+
     logger.info("Tezos Reward Distributor" + script_name + " is Starting")
-    logger.info(LINER)
-    logger.info("Copyright Huseyin ABANOZ 2019")
-    logger.info("huseyinabanox@gmail.com")
-    logger.info("Please leave copyright information")
-    logger.info(LINER)
+
     if args.dry_run:
+        logger.info(LINER)
         logger.info("DRY RUN MODE")
         logger.info(LINER)
 
