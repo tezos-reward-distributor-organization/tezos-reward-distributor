@@ -232,16 +232,19 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             return True
         except ReadTimeout:
-            logger.warning("Tzscan call failed", exc_info=False)
+            logger.info("Tzscan call failed, will try again.")
+            logger.debug("Tzscan call failed", exc_info=False)
             return False
         except ConnectTimeout:
-            logger.warning("Tzscan connection failed", exc_info=False)
+            logger.info("Tzscan connection failed, will try again.")
+            logger.debug("Tzscan connection failed", exc_info=False)
             return False
         except TzScanException:
-            logger.warning("Tzscan error at reward loop", exc_info=False)
+            logger.info("Tzscan error at reward loop, will try again.")
+            logger.debug("Tzscan error at reward loop", exc_info=False)
             return False
         except Exception:
-            logger.error("Error at payment producer loop", exc_info=True)
+            logger.error("Error at payment producer loop, will try again.", exc_info=True)
             return False
         finally:
             sleep(10)
