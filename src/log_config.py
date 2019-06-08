@@ -6,7 +6,9 @@ main_logger = logging.getLogger('main')
 main_logger.setLevel(logging.DEBUG)
 
 # create file handler which logs even debug messages
-fh = logging.FileHandler('app.log')
+# fh = logging.FileHandler('logs/app.log')
+max_log_size = 5 * 1024 * 1024  # Bytes
+fh = logging.RotatingFileHandler('logs/app.log', maxBytes=max_log_size, backupCount=10)
 fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level

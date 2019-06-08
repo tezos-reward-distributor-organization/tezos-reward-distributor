@@ -19,8 +19,8 @@ class RpcBlockApiImpl(BlockApi):
         return current_level
 
     def get_revelation(self, pkh, verbose=False):
-        response = self.wllt_clnt_mngr.exec(COMM_REVELATION.format(self.node_url, pkh))
-        manager_key = parse_json_response(response)
+        _, response = self.wllt_clnt_mngr.send_request(COMM_REVELATION.format(self.node_url, pkh))
+        manager_key = parse_json_response(response, verbose=verbose)
         bool_revelation = "key" in manager_key.keys() and len(manager_key["key"]) > 0
         return bool_revelation
 
