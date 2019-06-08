@@ -324,8 +324,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             if os.path.isfile(payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)):
                 # remove payments/failed/csv_report.csv
                 os.remove(payment_failed_report_file)
-                logger.info(
-                    "Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
+                logger.info("Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
 
                 # remove payments/failed/csv_report.csv.BUSY
                 # if there is a busy failed payment report file, remove it.
@@ -344,6 +343,13 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # 2.3 read payments/failed/csv_report.csv file into a list of dictionaries
             batch = CsvPaymentFileParser().parse(payment_failed_report_file, cycle)
+
+            nb_paid = len(list(filter(lambda f:f.paid==PaymentStatus.PAID, batch)))
+            nb_done = len(list(filter(lambda f:f.paid==PaymentStatus.DONE, batch)))
+            nb_injected = len(list(filter(lambda f:f.paid==PaymentStatus.INJECTED, batch)))
+            nb_failed = len(list(filter(lambda f:f.paid==PaymentStatus.FAIL, batch)))
+
+            logger.info("Summary {} paid, {} done, {} injected, {} fail".format(nb_paid, nb_done, nb_injected, nb_failed))
 
             if retry_injected:
                 nb_converted = 0

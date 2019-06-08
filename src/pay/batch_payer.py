@@ -127,7 +127,7 @@ class BatchPayer():
 
         trivial_payment_items = [pi for pi in payment_items if pi.amount >= ZERO_THRESHOLD]
         if not trivial_payment_items:
-            logger.debug("No trivial items found, returning...")
+            logger.info("No trivial items found, returning...")
             return payment_items_in, 0
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
