@@ -13,7 +13,7 @@ class RpcBlockApiImpl(BlockApi):
         self.node_url = node_url
         
     def get_current_level(self, verbose=False):
-        response = self.wllt_clnt_mngr.exec(COMM_HEAD.format(self.node_url))
+        _, response = self.wllt_clnt_mngr.send_request(COMM_HEAD.format(self.node_url))
         head = parse_json_response(response)
         current_level = int(head["metadata"]["level"]["level"])
         return current_level
