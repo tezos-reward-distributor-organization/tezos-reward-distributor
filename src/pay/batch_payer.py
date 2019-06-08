@@ -18,7 +18,7 @@ logger = main_logger
 MAX_TX_PER_BLOCK = 284
 PKH_LENGHT = 36
 CONFIRMATIONS = 1
-PATIENCE = 5
+PATIENCE = 0
 
 COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
 COMM_COUNTER = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
