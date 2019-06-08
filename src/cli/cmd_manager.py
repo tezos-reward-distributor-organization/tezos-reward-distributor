@@ -26,7 +26,7 @@ class CommandManager:
             logger.debug("--> Verbose : Command is |{}|".format(cmd))
 
         try:
-            output = check_output(cmd, shell=True, stderr=None, timeout=timeout, encoding='utf8')
+            output = check_output(cmd, shell=True, stderr=STDOUT, timeout=timeout, encoding='utf8')
         except TimeoutExpired as e:
             raise e
         except CalledProcessError as e:

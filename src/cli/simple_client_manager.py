@@ -22,25 +22,6 @@ class SimpleClientManager:
 
         for line in response.splitlines():
             if "Signature" in line:
-                return line.strip("Signature:").strip()
+                return line.replace("Signature:","").strip()
 
         raise ClientException("Signature not found in response '{}'. Signed with key '{}'".format(response, key_name))
-
-if __name__ == '__main__':
-    response = """Warning:
-  
-                 This is NOT the Tezos Mainnet.
-  
-      The node you are connecting to claims to be running on the
-                 Tezos Zeronet DEVELOPMENT NETWORK.
-           Do NOT use your fundraiser keys on this network.
-  Zeronet is a testing network, with free tokens and frequent resets.
-
-Signature: edsigtooXY4QHwhycxkhkfVUqusWYqHemb51kaEh7ATtiigxjrLaVcPMttKBMLFzNtb7SmEc7Vn53PbXWSPnGHmHavTfhNYwiut"""
-
-    print(response)
-    for line in response.splitlines():
-        print (line)
-    for line in response.splitlines():
-        #if "Signature" in line:
-        print (line.strip("Signature"))
