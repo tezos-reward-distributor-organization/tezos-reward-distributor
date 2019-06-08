@@ -1,6 +1,7 @@
 import logging
 
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(threadName)-9s %(message)s', )
+import os
 from logging.handlers import RotatingFileHandler
 
 main_logger = logging.getLogger('main')
@@ -9,7 +10,9 @@ main_logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
 # fh = logging.FileHandler('logs/app.log')
 max_log_size = 5 * 1024 * 1024  # Bytes
-fh = RotatingFileHandler('logs/app.log', maxBytes=max_log_size, backupCount=10)
+log_file = 'logs/app.log'
+os.makedirs(log_file, exist_ok=True)
+fh = RotatingFileHandler(log_file, maxBytes=max_log_size, backupCount=10)
 fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
@@ -25,3 +28,4 @@ fh.setFormatter(formatter)
 # add the handlers to logger
 main_logger.addHandler(ch)
 main_logger.addHandler(fh)
+
