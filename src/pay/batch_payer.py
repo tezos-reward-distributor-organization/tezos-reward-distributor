@@ -224,7 +224,8 @@ class BatchPayer():
 
     def attempt_single_batch(self, payment_records, op_counter, verbose=None, dry_run=None):
         if not op_counter.get():
-            counter = parse_json_response(self.wllt_clnt_mngr.send_request(self.comm_counter))
+            _, response = self.wllt_clnt_mngr.send_request(self.comm_counter)
+            counter = parse_json_response(response)
             counter = int(counter)
             op_counter.set(counter)
 
