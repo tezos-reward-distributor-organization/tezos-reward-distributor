@@ -19,18 +19,12 @@ class CsvPaymentFileParser:
             return records
 
     def FromPaymentCSVDictRow(self, row, cyle):
-        try:
-            paid = int(row["paid"])
-            paid = paid > 0
-        except ValueError as ve:
-            raise Exception("Unable to read paid value.") from ve
-
         rl = RewardLog(row["address"], row["type"], None)
         rl.cycle = cyle
         rl.amount = int(row["amount"])
         rl.hash = None if row["hash"] == 'None' else row["hash"]
         rl.balance = 0 if rl.balance == None else rl.balance
-        rl.paid = PaymentStatus(paid)
+        rl.paid = PaymentStatus(int(row["paid"]))
         # rl.child = None if row["child"] == 'None' else row["child"]
 
         return rl
