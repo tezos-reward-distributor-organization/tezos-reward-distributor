@@ -1,4 +1,3 @@
-import csv
 import functools
 import os
 import threading
@@ -158,9 +157,10 @@ class PaymentConsumer(threading.Thread):
         logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed>0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
-        logger.debug("Creating payment report (%s)", report_file)
 
         CsvPaymentFileParser().write(report_file, payment_logs)
+
+        logger.debug("Payment report is created at '%s'", report_file)
 
         for pl in payment_logs:
             logger.debug("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
