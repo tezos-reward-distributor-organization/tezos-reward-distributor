@@ -155,7 +155,7 @@ class PaymentConsumer(threading.Thread):
     #
     # create report file
     def create_payment_report(self, nb_failed, nb_unknown, payment_logs, payment_cycle, total_attempts):
-        logger.info("Processing completed for {} payment items {}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed>0 else ""))
+        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed>0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
         logger.debug("Creating payment report (%s)", report_file)

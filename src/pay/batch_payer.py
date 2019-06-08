@@ -11,7 +11,7 @@ from NetworkConfiguration import BLOCK_TIME_IN_SEC
 from log_config import main_logger
 from util.rpc_utils import parse_json_response
 
-ZERO_THRESHOLD = 2e-3
+ZERO_THRESHOLD = 100e-3
 
 logger = main_logger
 
