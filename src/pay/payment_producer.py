@@ -301,7 +301,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     def create_exit_payment():
         return RewardLog.ExitInstance()
 
-    def retry_failed_payments(self, retry_injected):
+    def retry_failed_payments(self, retry_injected=False):
         logger.debug("retry_failed_payments started")
 
         # 1 - list csv files under payments/failed directory
@@ -350,7 +350,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     if pl.paid == PaymentStatus.INJECTED:
                         pl.paid = PaymentStatus.FAIL
                         nb_converted += 1
-                        logger.debug("Reward converted from %s to fail for cycle %s address %s amount %f tz type %s",pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
+                        logger.debug("Reward converted from %s to fail for cycle %s address %s amount %f tz type %s",
+                                     pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
 
                 if nb_converted:
                     logger.info("{} rewards converted from injected to fail.".format(nb_converted))
