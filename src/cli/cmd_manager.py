@@ -1,8 +1,10 @@
 from subprocess import STDOUT, check_output, TimeoutExpired, CalledProcessError
 
+from log_config import main_logger
 from util.client_utils import clear_terminal_chars
 
 TIMEOUT = "SUBPROCESS_TIMEOUT"
+logger = main_logger
 
 
 class CommandManager:
@@ -21,7 +23,7 @@ class CommandManager:
             verbose = verbose_override
 
         if verbose:
-            print("--> Verbose : Command is |{}|".format(cmd))
+            logger.debug("--> Verbose : Command is |{}|".format(cmd))
 
         try:
             output = check_output(cmd, shell=True, stderr=STDOUT, timeout=timeout, encoding='utf8')
@@ -35,6 +37,6 @@ class CommandManager:
         output = output.strip()
 
         if verbose:
-            print("<-- Verbose : Answer is |{}|".format(output))
+            logger.debug("<-- Verbose : Answer is |{}|".format(output))
 
         return True, output

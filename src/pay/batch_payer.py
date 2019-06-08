@@ -264,7 +264,7 @@ class BatchPayer():
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
 
-        if verbose: print("--> runops_command_str is |{}|".format(runops_command_str))
+        # if verbose: print("--> runops_command_str is |{}|".format(runops_command_str))
 
         result, runops_command_response = self.wllt_clnt_mngr.send_request(runops_command_str)
         if not result:
@@ -279,7 +279,7 @@ class BatchPayer():
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
 
-        if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
+        #if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
 
         result, forge_command_response = self.wllt_clnt_mngr.send_request(forge_command_str)
         if not result:
@@ -298,7 +298,7 @@ class BatchPayer():
         preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
         preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
 
-        if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
+        #if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
 
         result, preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
 
@@ -341,7 +341,7 @@ class BatchPayer():
         signed_operation_bytes = bytes + decoded_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
 
-        if verbose: print("--> inject_command_str is |{}|".format(inject_command_str))
+        #if verbose: print("--> inject_command_str is |{}|".format(inject_command_str))
 
         result, inject_command_response = self.wllt_clnt_mngr.send_request(inject_command_str)
         if not result:
