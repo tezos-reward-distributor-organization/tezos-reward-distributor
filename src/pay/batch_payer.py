@@ -164,7 +164,7 @@ class BatchPayer():
     def log_processed_items(self, payment_logs):
         if payment_logs:
             for pl in payment_logs:
-                logger.debug("Reward already {} for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
+                logger.debug("Reward already %s for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
 
     def log_non_trivial_items(self, payment_logs):
         if payment_logs:
