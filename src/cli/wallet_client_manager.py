@@ -29,7 +29,7 @@ class WalletClientManager(SimpleClientManager):
         if pkh in self.managers:
             return self.managers[pkh]
 
-        response = self.send_request(" get manager for " + pkh)
+        _, response = self.send_request(" get manager for " + pkh)
 
         manager = self.parse_get_manager_for_contract_response(response)
 
@@ -107,7 +107,7 @@ class WalletClientManager(SimpleClientManager):
             logger.warn("No known address info is reached. Check your environment. Try to run in privileged mode.")
 
     def __list_known_contracts_by_alias(self):
-        response = self.send_request(" list known contracts")
+        _, response = self.send_request(" list known contracts")
 
         dict = self.parse_list_known_contracts_response(response)
 
@@ -121,7 +121,7 @@ class WalletClientManager(SimpleClientManager):
 
     def __list_known_addresses_by_pkh(self):
 
-        response = self.send_request(" list known addresses")
+        _, response = self.send_request(" list known addresses")
 
         dict = self.parse_list_known_addresses_response(response)
 
