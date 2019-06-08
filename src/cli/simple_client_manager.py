@@ -14,8 +14,8 @@ class SimpleClientManager:
 
         return self.cmd_manager.execute(whole_cmd, verbose_override, timeout=timeout)
 
-    def sign(self, bytes, key_name):
-        result, response = self.send_request(" sign bytes 0x03{} for {}".format(bytes, key_name))
+    def sign(self, bytes, key_name, verbose_override=None):
+        result, response = self.send_request(" sign bytes 0x03{} for {}".format(bytes, key_name), verbose_override=verbose_override)
 
         if not result:
             raise ClientException("Error at signing: '{}'".format(response))

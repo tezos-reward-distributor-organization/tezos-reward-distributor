@@ -291,8 +291,8 @@ class BatchPayer():
 
         # sign the operations
         bytes = parse_json_response(forge_command_response, verbose=verbose)
-        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager_alias)
-
+        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager_alias,verbose_override=True)
+        logger.debug("Signed bytes '{}'".format(signed_bytes))
         # pre-apply operations
         logger.debug("Preapplying the operations")
         preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
