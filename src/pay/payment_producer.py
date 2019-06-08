@@ -311,7 +311,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                   os.listdir(failed_payments_dir) if x.endswith('.csv')]
 
         if payment_reports_failed:
-            payment_reports_failed=sorted(payment_reports_failed,key=lambda x: int(os.path.splitext(x)[0]))
+            payment_reports_failed=sorted(payment_reports_failed,key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
             logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
         else:
             logger.debug("No failed payment files found under directory '{}'".format(failed_payments_dir))
