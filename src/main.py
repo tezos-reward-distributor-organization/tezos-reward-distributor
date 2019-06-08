@@ -83,6 +83,8 @@ def main(args):
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
     network_config = network_config_map[args.network]
 
+    logger.debug("Network config {}".format(network_config))
+
     # 5- load baking configuration file
     config_file_path = get_baking_configuration_file(config_dir)
 
