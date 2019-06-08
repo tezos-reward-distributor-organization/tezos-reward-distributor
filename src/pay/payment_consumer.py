@@ -160,7 +160,7 @@ class PaymentConsumer(threading.Thread):
 
         CsvPaymentFileParser().write(report_file, payment_logs)
 
-        logger.debug("Payment report is created at '%s'", report_file)
+        logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
             logger.debug("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
