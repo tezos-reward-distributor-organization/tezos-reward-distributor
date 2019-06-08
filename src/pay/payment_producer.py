@@ -178,7 +178,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     self.wait_until_next_cycle(nb_blocks_remaining)
 
             except TzScanException:
-                logger.warn("Tzscan error at reward loop", exc_info=True)
+                logger.debug("Tzscan error at reward loop", exc_info=True)
+                logger.info("Tzscan error at reward loop, will try again.")
             except Exception:
                 logger.error("Error at payment producer loop", exc_info=True)
 
