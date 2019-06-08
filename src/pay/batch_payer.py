@@ -105,14 +105,14 @@ class BatchPayer():
         if payment_logs_done:
             logger.info("{} payment items are already processed".format(len(payment_logs_done)))
 
-        payment_logs_unknown = [pi for pi in payment_items_in if pi.paid==PaymentStatus.UNKNOWN]
-        if payment_logs_unknown:
-            logger.info("{} payment items are in unknown status".format(len(payment_logs_unknown)))
+        payment_logs_injected = [pi for pi in payment_items_in if pi.paid == PaymentStatus.INJECTED]
+        if payment_logs_injected:
+            logger.info("{} payment items are in injected status".format(len(payment_logs_injected)))
 
         payment_logs = []
         payment_logs.extend(payment_logs_paid)
         payment_logs.extend(payment_logs_done)
-        payment_logs.extend(payment_logs_unknown)
+        payment_logs.extend(payment_logs_injected)
 
         self.log_processed_items(payment_logs)
 
@@ -178,8 +178,7 @@ class BatchPayer():
         operation_hash = ""
         attempt_count = 0
 
-        # due to unknown reasons, some times a batch fails to pre-apply
-        # trying after some time should be OK
+        # for failed operations, trying after some time should be OK
         for attempt in range(max_try):
             try:
                 status, operation_hash = self.attempt_single_batch(payment_items, op_counter, verbose, dry_run=dry_run)
@@ -359,7 +358,7 @@ class BatchPayer():
             logger.debug("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
-            return PaymentStatus.UNKNOWN, operation_hash
+            return PaymentStatus.INJECTED, operation_hash
 
         return PaymentStatus.PAID, operation_hash
 

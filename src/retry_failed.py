@@ -143,12 +143,12 @@ def main(args):
                         payment_offset=0, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
-    p.retry_failed_payments()
+    p.retry_failed_payments(args.retry_injected)
 
     c = PaymentConsumer(name='consumer' + '_retry_failed', payments_dir=payments_root, key_name=payment_address,
                         client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                         wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                        delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee())
+                        delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), network_config=network_config)
     time.sleep(1)
     c.start()
     p.exit()
@@ -193,6 +193,7 @@ if __name__ == '__main__':
     add_argument_docker(parser)
     add_argument_verbose(parser)
 
+    parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items are injected bu not actually paid.", action="store_true")
     args = parser.parse_args()
     script_name = " - Retry Failed Files"
     print_banner(args, script_name)

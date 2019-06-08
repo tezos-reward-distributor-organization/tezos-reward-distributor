@@ -22,13 +22,13 @@ MUTEZ = 1e6
 
 def count_and_log_failed(payment_logs):
     nb_failed = 0
-    nb_unknown = 0
+    nb_injected = 0
     for pymnt_itm in payment_logs:
         if pymnt_itm.paid == PaymentStatus.FAIL:
             nb_failed = nb_failed + 1
-        elif pymnt_itm.paid == PaymentStatus.UNKNOWN:
-            nb_unknown = nb_unknown + 1
-    return nb_failed, nb_unknown
+        elif pymnt_itm.paid == PaymentStatus.INJECTED:
+            nb_injected = nb_injected + 1
+    return nb_failed, nb_injected
 
 
 class PaymentConsumer(threading.Thread):
@@ -70,7 +70,7 @@ class PaymentConsumer(threading.Thread):
                     continue
 
                 if payment_items[0].type == EXIT_PAYMENT_TYPE:
-                    logger.warn("Exit signal received. Killing the thread...")
+                    logger.warn("Exit signal received. Terminating...")
                     break
 
                 time.sleep(1)
@@ -107,10 +107,10 @@ class PaymentConsumer(threading.Thread):
                 #    payment_logs.append(pl)
 
                 # 4- count failed payments
-                nb_failed, nb_unknown = count_and_log_failed(payment_logs)
+                nb_failed, nb_injected = count_and_log_failed(payment_logs)
 
                 # 5- create payment report file
-                report_file = self.create_payment_report(nb_failed, nb_unknown, payment_logs, pymnt_cycle, total_attempts)
+                report_file = self.create_payment_report(nb_failed, nb_injected, payment_logs, pymnt_cycle, total_attempts)
 
                 # 6- Clean failure reports
                 self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
@@ -125,7 +125,7 @@ class PaymentConsumer(threading.Thread):
 
                 # 8- send email
                 if not self.dry_run:
-                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_unknown)
+                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected)
 
             except Exception:
                 logger.error("Error at reward payment", exc_info=True)
@@ -153,7 +153,7 @@ class PaymentConsumer(threading.Thread):
 
     #
     # create report file
-    def create_payment_report(self, nb_failed, nb_unknown, payment_logs, payment_cycle, total_attempts):
+    def create_payment_report(self, nb_failed, nb_injected, payment_logs, payment_cycle, total_attempts):
         logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed>0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
@@ -166,14 +166,14 @@ class PaymentConsumer(threading.Thread):
             logger.debug("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
 
         if self.publish_stats and not self.dry_run and (not self.args or is_mainnet(self.args.network)):
-            stats_dict = self.create_stats_dict(nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts)
+            stats_dict = self.create_stats_dict(nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts)
 
             # publish
             stat_publish(stats_dict)
 
         return report_file
 
-    def create_stats_dict(self, nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts):
+    def create_stats_dict(self, nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts):
         n_f_type = len([pl for pl in payment_logs if pl.type == TYPE_FOUNDER])
         n_o_type = len([pl for pl in payment_logs if pl.type == TYPE_OWNER])
         n_d_type = len([pl for pl in payment_logs if pl.type == TYPE_DELEGATOR])
@@ -182,7 +182,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict['tot_amnt'] = int(sum([rl.amount for rl in payment_logs]) / 1e+9)  # in 1K tezos
         stats_dict['nb_pay'] = int(len(payment_logs) / 10)
         stats_dict['nb_failed'] = nb_failed
-        stats_dict['nb_unkwn'] = nb_unknown
+        stats_dict['nb_unkwn'] = nb_injected
         stats_dict['tot_attmpt'] = total_attempts
         stats_dict['nb_f'] = n_f_type
         stats_dict['nb_o'] = n_o_type

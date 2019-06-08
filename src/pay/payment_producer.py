@@ -5,7 +5,7 @@ import threading
 import time
 
 from time import sleep
-from Constants import RunMode
+from Constants import RunMode, PaymentStatus
 from log_config import main_logger
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
@@ -144,7 +144,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         if result:
                             # single run is done. Do not continue.
                             if self.run_mode == RunMode.ONETIME:
-                                logger.info("Run mode ONETIME satisfied. Killing the thread ...")
+                                logger.info("Run mode ONETIME satisfied. Terminating ...")
                                 self.exit()
                                 break
                             else:
@@ -161,7 +161,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                     # pending payments done. Do not wait any more.
                     if self.run_mode == RunMode.PENDING:
-                        logger.info("Run mode PENDING satisfied. Killing the thread ...")
+                        logger.info("Run mode PENDING satisfied. Terminating ...")
                         self.exit()
                         break
 
@@ -225,7 +225,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.create_calculations_report(reward_logs, report_file_path, total_amount)
                 # 7- next cycle
                 # processing of cycle is done
-                logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
+                logger.info(
+                    "Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
 
             elif total_amount_to_pay == 0:
                 logger.info("Total payment amount is 0. Nothing to pay!")
@@ -295,11 +296,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                      pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
                              pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
         logger.info("Calculation report is created at '{}'".format(report_file_path))
+
     @staticmethod
     def create_exit_payment():
         return RewardLog.ExitInstance()
 
-    def retry_failed_payments(self):
+    def retry_failed_payments(self, retry_injected):
         logger.debug("retry_failed_payments started")
 
         # 1 - list csv files under payments/failed directory
@@ -341,6 +343,17 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # 2.3 read payments/failed/csv_report.csv file into a list of dictionaries
             batch = CsvPaymentFileParser().parse(payment_failed_report_file, cycle)
+
+            if retry_injected:
+                nb_converted = 0
+                for pl in batch:
+                    if pl.paid == PaymentStatus.INJECTED:
+                        pl.paid = PaymentStatus.FAIL
+                        nb_converted += 1
+                        logger.debug("Reward converted from %s to fail for cycle %s address %s amount %f tz type %s",pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
+
+                if nb_converted:
+                    logger.info("{} rewards converted from injected to fail.".format(nb_converted))
 
             # 2.4 put records into payment_queue. payment_consumer will make payments
             self.payments_queue.put(PaymentBatch(self, cycle, batch))

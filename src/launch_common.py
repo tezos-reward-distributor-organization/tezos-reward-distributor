@@ -72,4 +72,4 @@ def add_argument_docker(parser):
 
 
 def add_argument_verbose(parser):
-    parser.add_argument("-V", "--verbose", help="Low level details.", action="store_true")
+    parser.add_argument("-V", "--verbose", help="Produces a lot of logs. Good for trouble shooting.", action="store_true")

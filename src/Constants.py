@@ -14,7 +14,7 @@ class PaymentStatus(Enum):
     FAIL = 0
     PAID = 1
     DONE = 2
-    UNKNOWN = 3
+    INJECTED = 3
 
     def is_fail(self):
         return self.value == 0
