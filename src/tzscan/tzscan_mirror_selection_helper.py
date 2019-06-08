@@ -23,13 +23,13 @@ class TzScanMirrorSelector:
         self.validate_mirrors_endless()
 
     def get_mirror(self):
-        mirror_idx = random.randrange(1, len(self.mirrors))
+        mirror_idx = random.randrange(0, len(self.mirrors))
 
         return self.mirrors[mirror_idx]
 
     def validate_mirrors(self):
         tmp_mirrors = []
-        for mirror in range(7):
+        for mirror in range(1, 7):
             if self.validate_mirror(mirror):
                 tmp_mirrors.append(mirror)
 
