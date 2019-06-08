@@ -10,9 +10,10 @@ main_logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
 # fh = logging.FileHandler('logs/app.log')
 max_log_size = 5 * 1024 * 1024  # Bytes
-log_file = 'logs/app.log'
-os.makedirs(log_file, exist_ok=True)
-fh = RotatingFileHandler(log_file, maxBytes=max_log_size, backupCount=10)
+log_file_path = os.path.abspath('logs/app.log')
+log_dir = os.path.dirname(log_file_path)
+os.makedirs(log_dir, exist_ok=True)
+fh = RotatingFileHandler(log_file_path, maxBytes=max_log_size, backupCount=10)
 fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
