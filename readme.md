@@ -5,25 +5,9 @@
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
 
 ## Tezos Reward Distributor
+A software for distributing baking rewards with delegators. This is not a script but service which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively.
 
-A software for distributing baking rewards with delegators. This is not a script but service which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively. 
-
-Design principals are: 
-
-- Automatic Execution with no manual involvement: Run and forget
-- Simplicity: Simple and intuitional parameter configuration. Default values are ready for the most common use case. 
-- Covering different use cases: supporters, special rates, future payments, security deposit owned by multiple parties, fee sharing among founders. Choose which cycle to pay and when to stop the application.
-- Traceability: CSV payment reports with calculation details. Logs for traking application lifecycle.
-- Testability: Dry for seeing results witout making any modification. Support for development networks e.g. zeronet, alphanet.
-- Safety: Payment logs for avoiding double payments by mistake. Lock file for avoiding multiple instances running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
-
-Features:
-- Reward calculations based on tzscan API or tezos node RPC interface. 
-- Batch Payments
-- Email notifications
-- Re-attempt failed payments
-- Minimal configuration needs, while having many configuration options
-- Written in Python. Easy to modify to suit custom needs
+https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7?postPublishedType=repub
 
 ## TRD Art Work
 https://github.com/habanoz/trd-art contains logo images. If you are using TRD and want to let everybody know about it, feel free to place them in your website.
