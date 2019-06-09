@@ -1,6 +1,6 @@
 import functools
 
-from calc.calculate_phase0_tzscan import CalculatePhase0
+from calc.calculate_phase0 import CalculatePhase0
 from calc.calculate_phase1 import CalculatePhase1
 from calc.calculate_phase2 import CalculatePhase2
 from calc.calculate_phase3 import CalculatePhase3
