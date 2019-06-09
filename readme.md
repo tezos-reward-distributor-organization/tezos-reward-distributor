@@ -64,10 +64,10 @@ https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run
 
 Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The application uses a yaml file for loading baker specific configurations. 
 
-An example configuration file is present in the repository. For more information on configuration details please see our wiki page:
+Configuration tool can be used to create baking configuration file interactively. Also an example configuration file is present under examples directory. For more information on configuration details please see our wiki page:
 https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
 
-TRD is designed to work as a deamon. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
+TRD is designed to work as a linux service. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
 https://github.com/habanoz/tezos-reward-distributor/wiki/Payment-Address
 
 ### Linux Service
