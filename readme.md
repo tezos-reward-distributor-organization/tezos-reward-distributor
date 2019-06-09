@@ -96,10 +96,7 @@ tezos-reward-distribute will create an email.ini file. Fill this file with your 
 
 ### Fee Setup
 
-fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez. Check the link below to see effect of fee value of 1274.
-
-https://zeronet.tzscan.io/opCnDj8bpr5ACrbLSqy4BDCMsNiY8Y34bvnm2hj7MvcxaRiu5tu
-
+fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.
 
 ### Contributions
 Please refer to contributions guide on wiki pages.
