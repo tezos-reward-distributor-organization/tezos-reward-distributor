@@ -6,7 +6,7 @@ class ConfigParser(ABC):
         super(ConfigParser, self).__init__()
         self.conf_text = text
         self.verbose = verbose
-        self.conf_obj = None
+        self.conf_obj = dict()
 
     @abstractmethod
     def parse(self):

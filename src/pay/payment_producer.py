@@ -35,8 +35,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.owners_map = baking_cfg.get_owners_map()
         self.founders_map = baking_cfg.get_founders_map()
         self.min_delegation_amt_in_mutez = baking_cfg.get_min_delegation_amount() * MUTEZ
-        self.pymnt_scale = baking_cfg.get_payment_scale()
-        self.prcnt_scale = baking_cfg.get_percentage_scale()
         self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
 
         self.name = name

@@ -34,13 +34,10 @@ class TestYamlAppConfParser(TestCase):
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_type'), AddrType.TZ)
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZ)
         self.assertEqual(0, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('excluded_delegators_set'), set())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('prcnt_scale'), None)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('pymnt_scale'), None)
 
     def test_validate_no_founders_map(self):
         data_no_founders = """
@@ -75,9 +72,6 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('founders_map'), dict())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('specials_map'), dict())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('supporters_set'), set())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('excluded_delegators_set'), set())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('prcnt_scale'), None)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('pymnt_scale'), None)
         self.assertEqual(0, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
 
     def test_validate_pymnt_alias(self):
@@ -116,47 +110,8 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('founders_map'), dict())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('specials_map'), dict())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('supporters_set'), set())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('excluded_delegators_set'), set())
 
         self.assertEqual(100, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('prcnt_scale'), None)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('pymnt_scale'), None)
-
-    def test_validate_scales(self):
-        data_fine = """
-        version : 1.0
-        baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        payment_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        founders_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        owners_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        service_fee : 4.5 
-        pymnt_scale : 3
-        prcnt_scale : 5
-        """
-
-        managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
-                    'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-        contr_dict_by_alias = {}
-        addr_dict_by_pkh = {
-            "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
-                                                     "alias": "main1", "sk": True,
-                                                     "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}}
-
-        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
-                                                    contr_dict_by_alias=contr_dict_by_alias, managers=managers)
-        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager,network_config=network)
-        cnf_prsr.parse()
-        cnf_prsr.validate()
-
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_type'), AddrType.TZ)
-        self.assertEqual(0, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('excluded_delegators_set'), set())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('prcnt_scale'), 5)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('pymnt_scale'), 3)
 
     def test_validate_empty(self):
         data_fine = """
@@ -166,12 +121,9 @@ class TestYamlAppConfParser(TestCase):
         service_fee : 4.5
         founders_map : {}
         owners_map : {}
-        prcnt_scale : None
-        pymnt_scale : None
         specials_map : {}
         supporters_set : {}
         min_delegation_amt : 0
-        excluded_delegators_set : {}
         """
 
 
@@ -200,7 +152,4 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address_type'), AddrType.KT)
         self.assertEqual(0, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('excluded_delegators_set'), set())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('supporters_set'), set())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('prcnt_scale'), None)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('pymnt_scale'), None)

@@ -1,8 +1,7 @@
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
 from exception.configuration import ConfigurationException
-from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, EXCLUDED_DELEGATORS_SET, \
-    PYMNT_SCALE, PRCNT_SCALE, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
+from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
     EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP
 from util.address_validator import AddressValidator
@@ -24,19 +23,19 @@ class BakingYamlConfParser(YamlConfParser):
 
     def validate(self):
         conf_obj = self.get_conf_obj()
-        self.__validate_share_map(conf_obj, FOUNDERS_MAP)
-        self.__validate_share_map(conf_obj, OWNERS_MAP)
-        self.__validate_service_fee(conf_obj)
-        self.__validate_baking_address(conf_obj)
-        self.__validate_payment_address(conf_obj)
-        self.__validate_min_delegation_amt(conf_obj)
-        self.__validate_address_set(conf_obj, SUPPORTERS_SET)
-        self.__validate_address_set(conf_obj, EXCLUDED_DELEGATORS_SET)
-        self.__validate_specials_map(conf_obj)
-        self.__validate_dest_map(conf_obj)
-        self.__validate_scale(conf_obj, PYMNT_SCALE)
-        self.__validate_scale(conf_obj, PRCNT_SCALE)
-        self.__parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
+        self.validate_baking_address(conf_obj)
+        self.validate_payment_address(conf_obj)
+        self.validate_share_map(conf_obj, FOUNDERS_MAP)
+        self.validate_share_map(conf_obj, OWNERS_MAP)
+        self.validate_service_fee(conf_obj)
+        self.validate_min_delegation_amt(conf_obj)
+        self.validate_address_set(conf_obj, SUPPORTERS_SET)
+        self.validate_specials_map(conf_obj)
+        self.validate_dest_map(conf_obj)
+        self.parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
+
+    def set(self, key, value):
+        self.conf_obj[key] = value
 
     def process(self):
         conf_obj = self.get_conf_obj()
@@ -44,11 +43,9 @@ class BakingYamlConfParser(YamlConfParser):
         conf_obj[FULL_SUPPORTERS_SET] = set(
             conf_obj[SUPPORTERS_SET] | set(conf_obj[FOUNDERS_MAP].keys()) | set(conf_obj[OWNERS_MAP].keys()))
 
-        conf_obj[EXCLUDED_DELEGATORS_SET_TOB] = set(
-            conf_obj[EXCLUDED_DELEGATORS_SET] | set([k for k, v in conf_obj[RULES_MAP].items() if v == TOB]))
-
         conf_obj[EXCLUDED_DELEGATORS_SET_TOE] = set([k for k, v in conf_obj[RULES_MAP].items() if v == TOE])
         conf_obj[EXCLUDED_DELEGATORS_SET_TOF] = set([k for k, v in conf_obj[RULES_MAP].items() if v == TOF])
+        conf_obj[EXCLUDED_DELEGATORS_SET_TOB] = set([k for k, v in conf_obj[RULES_MAP].items() if v == TOB])
 
         addr_validator = AddressValidator("dest_map")
         conf_obj[DEST_MAP] = {k: v for k, v in conf_obj[RULES_MAP].items() if addr_validator.isaddress(v)}
@@ -57,7 +54,7 @@ class BakingYamlConfParser(YamlConfParser):
         if MIN_DELEGATION_KEY not in conf_obj[RULES_MAP]:
             conf_obj[EXCLUDED_DELEGATORS_SET_TOB].add(MIN_DELEGATION_KEY)
 
-    def __validate_share_map(self, conf_obj, map_name):
+    def validate_share_map(self, conf_obj, map_name):
         """
         all shares in the map must sum up to 1
         :param conf_obj: configuration object
@@ -93,22 +90,22 @@ class BakingYamlConfParser(YamlConfParser):
             except TypeError:
                 raise ConfigurationException("Map '{}' values must be number!".format(map_name))
 
-    def __validate_service_fee(self, conf_obj):
+    def validate_service_fee(self, conf_obj):
         if SERVICE_FEE not in conf_obj:
             raise ConfigurationException("Service fee is not set")
 
         FeeValidator(SERVICE_FEE).validate(conf_obj[(SERVICE_FEE)])
 
-    def __validate_min_delegation_amt(self, conf_obj):
+    def validate_min_delegation_amt(self, conf_obj):
         if MIN_DELEGATION_AMT not in conf_obj:
             conf_obj[MIN_DELEGATION_AMT] = 0
             return
 
-        if not self.__validate_non_negative_int(conf_obj[MIN_DELEGATION_AMT]):
+        if not self.validate_non_negative_int(conf_obj[MIN_DELEGATION_AMT]):
             raise ConfigurationException("Invalid value:'{}'. {} parameter value must be an non negative integer".
                                          format(conf_obj[MIN_DELEGATION_AMT], MIN_DELEGATION_AMT))
 
-    def __validate_payment_address(self, conf_obj):
+    def validate_payment_address(self, conf_obj):
         if PAYMENT_ADDRESS not in conf_obj or not conf_obj[PAYMENT_ADDRESS]:
             raise ConfigurationException("Payment address must be set")
 
@@ -123,9 +120,9 @@ class BakingYamlConfParser(YamlConfParser):
 
             self.check_sk(addr_obj, pymnt_addr)
 
-            conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
-            conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
-            conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)
+            conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
+            conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
+            conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)
         else:
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
@@ -134,15 +131,15 @@ class BakingYamlConfParser(YamlConfParser):
 
                 self.check_sk(addr_obj, pkh)
 
-                conf_obj[('%s_type' % PAYMENT_ADDRESS)] = AddrType.KTALS if pkh.startswith("KT") else AddrType.TZALS
-                conf_obj[('%s_pkh' % PAYMENT_ADDRESS)] = pkh
-                conf_obj[('%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pkh)
+                conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.KTALS if pkh.startswith("KT") else AddrType.TZALS
+                conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pkh
+                conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pkh)
 
             else:
                 raise ConfigurationException("Payment Address ({}) cannot be translated into a PKH or alias. "
                                              "If it is an alias import it first. ".format(pymnt_addr))
 
-        if not self.block_api.get_revelation(conf_obj[('%s_pkh' % PAYMENT_ADDRESS)]):
+        if not self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)]):
             raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
                                          "Public key is not revealed.\n"
                                          "Use command 'reveal key for <src>' to reveal your public key. \n"
@@ -162,7 +159,7 @@ class BakingYamlConfParser(YamlConfParser):
         if not addr_obj['sk']:
             raise ConfigurationException("No secret key for Address Obj {} with PKH {}".format(addr_obj, pkh))
 
-    def __validate_baking_address(self, conf_obj):
+    def validate_baking_address(self, conf_obj):
         if BAKING_ADDRESS not in conf_obj or not conf_obj[BAKING_ADDRESS]:
             raise ConfigurationException("Baking address must be set")
 
@@ -177,7 +174,7 @@ class BakingYamlConfParser(YamlConfParser):
 
         pass
 
-    def __validate_specials_map(self, conf_obj):
+    def validate_specials_map(self, conf_obj):
         if SPECIALS_MAP not in conf_obj:
             conf_obj[SPECIALS_MAP] = dict()
             return
@@ -194,7 +191,7 @@ class BakingYamlConfParser(YamlConfParser):
             addr_validator.validate(key)
             FeeValidator("specials_map:" + key).validate(value)
 
-    def __validate_address_set(self, conf_obj, set_name):
+    def validate_address_set(self, conf_obj, set_name):
         if set_name not in conf_obj:
             conf_obj[set_name] = set()
             return
@@ -217,24 +214,7 @@ class BakingYamlConfParser(YamlConfParser):
         for addr in conf_obj[set_name]:
             validator.validate(addr)
 
-    def __validate_scale(self, conf_obj, scale_name):
-        if scale_name not in conf_obj:
-            conf_obj[scale_name] = None
-            return
-
-        if isinstance(conf_obj[scale_name], str) and conf_obj[scale_name].lower() == 'none':
-            conf_obj[scale_name] = None
-            return
-
-        if conf_obj[scale_name] is None:
-            return
-
-        if not self.__validate_non_negative_int(conf_obj[scale_name]):
-            raise ConfigurationException(
-                "Invalid value:'{}'. {} parameter value must be an non negative integer or None. ".
-                    format(conf_obj[scale_name], scale_name))
-
-    def __validate_non_negative_int(self, param_value):
+    def validate_non_negative_int(self, param_value):
         try:
             param_value += 1
         except TypeError:
@@ -247,7 +227,7 @@ class BakingYamlConfParser(YamlConfParser):
 
         return True
 
-    def __parse_bool(self, conf_obj, param_name, default):
+    def parse_bool(self, conf_obj, param_name, default):
 
         if param_name not in conf_obj:
             conf_obj[param_name] = default
@@ -262,7 +242,7 @@ class BakingYamlConfParser(YamlConfParser):
         else:
             conf_obj[param_name] = False
 
-    def __validate_dest_map(self, conf_obj):
+    def validate_dest_map(self, conf_obj):
         if RULES_MAP not in conf_obj:
             conf_obj[RULES_MAP] = dict()
             return

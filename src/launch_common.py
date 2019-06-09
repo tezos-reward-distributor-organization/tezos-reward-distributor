@@ -28,8 +28,8 @@ def add_argument_network(parser):
                         default='MAINNET')
 
 
-def add_argument_reports_dir(parser):
-    parser.add_argument("-r", "--reports_dir", help="Directory to create reports", default='~/pymnt/reports')
+def add_argument_reports_base(parser):
+    parser.add_argument("-r", "--reports_base", help="Base directory to create reports", default='~/pymnt/reports')
 
 
 def add_argument_provider(parser):

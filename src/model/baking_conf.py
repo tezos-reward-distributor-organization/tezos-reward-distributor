@@ -4,9 +4,6 @@ SERVICE_FEE = 'service_fee'
 OWNERS_MAP = 'owners_map'
 FOUNDERS_MAP = 'founders_map'
 BAKING_ADDRESS = 'baking_address'
-PRCNT_SCALE = "prcnt_scale"
-PYMNT_SCALE = "pymnt_scale"
-EXCLUDED_DELEGATORS_SET = "excluded_delegators_set"
 SPECIALS_MAP = 'specials_map'
 RULES_MAP = 'rules_map'
 SUPPORTERS_SET = 'supporters_set'
@@ -14,11 +11,11 @@ PAYMENT_ADDRESS = 'payment_address'
 MIN_DELEGATION_AMT = 'min_delegation_amt'
 DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
 ### extensions
-FULL_SUPPORTERS_SET = "full_supporters_set"
-EXCLUDED_DELEGATORS_SET_TOB = "excluded_delegators_set_tob"
-EXCLUDED_DELEGATORS_SET_TOE = "excluded_delegators_set_toe"
-EXCLUDED_DELEGATORS_SET_TOF = "excluded_delegators_set_tof"
-DEST_MAP = "destination_map"
+FULL_SUPPORTERS_SET = "__full_supporters_set"
+EXCLUDED_DELEGATORS_SET_TOB = "__excluded_delegators_set_tob"
+EXCLUDED_DELEGATORS_SET_TOE = "__excluded_delegators_set_toe"
+EXCLUDED_DELEGATORS_SET_TOF = "__excluded_delegators_set_tof"
+DEST_MAP = "__destination_map"
 
 ### destination map
 TOF = "TOF"
@@ -63,20 +60,11 @@ class BakingConf:
     def get_specials_map(self):
         return self.get_attribute(SPECIALS_MAP)
 
-    def get_excluded_delegators_set(self):
-        return self.get_attribute(EXCLUDED_DELEGATORS_SET)
-
     def get_supporters_set(self):
         return self.get_attribute(SUPPORTERS_SET)
 
     def get_full_supporters_set(self):
         return self.get_attribute(FULL_SUPPORTERS_SET)
-
-    def get_payment_scale(self):
-        return self.get_attribute(PYMNT_SCALE)
-
-    def get_percentage_scale(self):
-        return self.get_attribute(PRCNT_SCALE)
 
     def get_min_delegation_amount(self):
         return self.get_attribute(MIN_DELEGATION_AMT)

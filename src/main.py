@@ -16,7 +16,7 @@ from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger
-from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_dir, \
+from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, \
     add_argument_executable_dirs, add_argument_docker, add_argument_verbose
 from model.baking_conf import BakingConf
@@ -94,8 +94,7 @@ def main(args):
                                          verbose=args.verbose)
 
     provider_factory = ProviderFactory(args.reward_data_provider)
-    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory,
-                                  network_config, args.node_addr)
+    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
     parser.parse()
     parser.validate()
     parser.process()
@@ -120,13 +119,13 @@ def main(args):
         NB_CONSUMERS = 0
 
     # 7- get reporting directories
-    reports_dir = os.path.expanduser(args.reports_dir)
+    reports_base = os.path.expanduser(args.reports_base)
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
-        reports_dir = os.path.expanduser("./reports")
+        reports_base = os.path.expanduser("./reports")
 
-    reports_dir = os.path.join(reports_dir, baking_address)
+    reports_dir = os.path.join(reports_base, baking_address)
 
     payments_root = get_payment_root(reports_dir, create=True)
     calculations_root = get_calculations_root(reports_dir, create=True)
@@ -216,7 +215,7 @@ if __name__ == '__main__':
 
     add_argument_network(parser)
     add_argument_provider(parser)
-    add_argument_reports_dir(parser)
+    add_argument_reports_base(parser)
     add_argument_config_dir(parser)
     add_argument_node_addr(parser)
     add_argument_dry(parser)
