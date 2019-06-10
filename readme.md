@@ -2,28 +2,14 @@
 
 ## Tezos Reward Distributor : Run & Forget 
 
-DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION AND IN SERVICE MODE DO NOT UPDATE OFTEN.
+DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE DO NOT UPDATE OFTEN.
 
 ## Tezos Reward Distributor
+TRD is a software for distributing baking rewards with delegators. This is not a script but a full scale application which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively.
 
-A software for distributing baking rewards with delegators. This is not a script but service which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively. 
+TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and tzcan. Developped and tested extensively by the community. For more information please check following article.
 
-Design principals are: 
-
-- Automatic Execution with no manual involvement: Run and forget
-- Simplicity: Simple and intuitional parameter configuration. Default values are ready for the most common use case. 
-- Covering different use cases: supporters, special rates, future payments, security deposit owned by multiple parties, fee sharing among founders. Choose which cycle to pay and when to stop the application.
-- Traceability: CSV payment reports with calculation details. Logs for traking application lifecycle.
-- Testability: Dry for seeing results witout making any modification. Support for development networks e.g. zeronet, alphanet.
-- Safety: Payment logs for avoiding double payments by mistake. Lock file for avoiding multiple instances running at the same time. Shutdown handlers for avoiding application shutdowns in the middle of a sensitive operation. 
-
-Features:
-- Reward calculations based on tzscan API or tezos node RPC interface. 
-- Batch Payments
-- Email notifications
-- Re-attempt failed payments
-- Minimal configuration needs, while having many configuration options
-- Written in Python. Easy to modify to suit custom needs
+https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7
 
 ## TRD Art Work
 https://github.com/habanoz/trd-art contains logo images. If you are using TRD and want to let everybody know about it, feel free to place them in your website.
@@ -80,10 +66,10 @@ https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run
 
 Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The application uses a yaml file for loading baker specific configurations. 
 
-An example configuration file is present in the repository. For more information on configuration details please see our wiki page:
+Configuration tool can be used to create baking configuration file interactively. Also an example configuration file is present under examples directory. For more information on configuration details please see our wiki page:
 https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
 
-TRD is designed to work as a deamon. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
+TRD is designed to work as a linux service. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
 https://github.com/habanoz/tezos-reward-distributor/wiki/Payment-Address
 
 ### Linux Service
@@ -108,14 +94,11 @@ https://github.com/habanoz/tezos-reward-distributor/wiki/Linux-Service
 
 ### Email Setup
 
-tezos-reward-distribute will create an email.ini file. Fill this file with your email configuration to send payment emails.
+Get emails for payment reports at each cycle. Fill email.ini file with your email details to receive payment emails.
 
 ### Fee Setup
 
-fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez. Check the link below to see effect of fee value of 1274.
-
-https://zeronet.tzscan.io/opCnDj8bpr5ACrbLSqy4BDCMsNiY8Y34bvnm2hj7MvcxaRiu5tu
-
+fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.
 
 ### Contributions
 Please refer to contributions guide on wiki pages.
