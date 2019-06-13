@@ -17,7 +17,7 @@ class ProviderFactory:
         if self.provider == 'rpc':
             return RpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url)
         elif self.provider == 'prpc':
-            return RpcRewardApiImpl(network_config,  baking_address, wllt_clnt_mngr, self.URL.format(self.url_prefix[network_config]))
+            return RpcRewardApiImpl(network_config,  baking_address, wllt_clnt_mngr, self.URL.format(self.url_prefix[network_config['NAME']]))
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
@@ -33,7 +33,7 @@ class ProviderFactory:
         if self.provider == 'rpc':
             return RpcBlockApiImpl(network_config, wllt_clnt_mngr, node_url)
         elif self.provider == 'prpc':
-            return RpcBlockApiImpl(network_config, wllt_clnt_mngr, self.URL.format(self.url_prefix[network_config]))
+            return RpcBlockApiImpl(network_config, wllt_clnt_mngr, self.URL.format(self.url_prefix[network_config]['NAME']))
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
