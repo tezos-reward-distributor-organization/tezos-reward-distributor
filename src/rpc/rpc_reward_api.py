@@ -167,7 +167,7 @@ class RpcRewardApiImpl(RewardApi):
     def __validate_reward_data(self, reward_data_rpc, cycle):
         reward_data_tzscan = self.validate_api.get_rewards_for_cycle_map(cycle)
         if not (reward_data_rpc.delegate_staking_balance == int(reward_data_tzscan.delegate_staking_balance)):
-            raise Exception("Delegate staking balance from local node and tzscan are not identical.")
+            raise Exception("Delegate staking balance from local node and tzscan are not identical. local node {}, tzscan {}".format(reward_data_rpc.delegate_staking_balance,reward_data_tzscan.delegate_staking_balance ))
 
         if not (len(reward_data_rpc.delegator_balance_dict) == len(reward_data_tzscan.delegator_balance_dict)):
             raise Exception("Delegators number from local node and tzscan are not identical.")
