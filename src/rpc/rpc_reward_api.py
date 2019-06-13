@@ -150,7 +150,8 @@ class RpcRewardApiImpl(RewardApi):
 
             level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + ( chosen_snapshot + 1) * self.blocks_per_roll_snapshot
             request = COMM_BLOCK.format(self.node_url, head_hash, current_level - level_snapshot_block)
-            _, comm_block_response = self.wllt_clnt_mngr.send_request(request).rstrip()
+            _, comm_block_response = self.wllt_clnt_mngr.send_request(request)
+            comm_block_response = comm_block_response.rstrip()
             comm_block_response_json = extract_json_part(comm_block_response, verbose=True)
             cmd_mngr = CommandManager(verbose=verbose)
             _, hash_snapshot_block = cmd_mngr.execute("echo '{}' | jq -r .hash".format(comm_block_response_json))
