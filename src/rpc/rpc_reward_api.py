@@ -11,10 +11,9 @@ logger = main_logger
 
 COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
 COMM_DELEGATES = " rpc get http://{}/chains/main/blocks/{}/context/delegates/{}"
-COMM_BLOCK = " rpc get http://{}/chains/main/blocks/{}~{}/"
+COMM_BLOCK = " rpc get http://{}/chains/main/blocks/{}/"
 COMM_SNAPSHOT = COMM_BLOCK + "context/raw/json/rolls/owner/snapshot/{}/"
 COMM_DELEGATE_BALANCE = " rpc get http://{}/chains/main/blocks/{}/context/contracts/{}"
-
 
 class RpcRewardApiImpl(RewardApi):
 
@@ -36,7 +35,7 @@ class RpcRewardApiImpl(RewardApi):
             self.validate_api = TzScanRewardApiImpl(nw, self.baking_address, mirror_selector)
 
     def get_nb_delegators(self, cycle, verbose=False):
-        _, delegators = self.__get_delegators_and_delgators_balance(cycle)
+        _, delegators = self.__get_delegators_and_delgators_balance(cycle,verbose )
         return len(delegators)
 
     def get_rewards_for_cycle_map(self, cycle, verbose=False):
@@ -44,10 +43,10 @@ class RpcRewardApiImpl(RewardApi):
         reward_data = {}
 
         reward_data["delegate_staking_balance"], reward_data[
-            "delegators"] = self.__get_delegators_and_delgators_balance(cycle)
+            "delegators"] = self.__get_delegators_and_delgators_balance(cycle, verbose)
         reward_data["delegators_nb"] = len(reward_data["delegators"])
 
-        current_level, head_hash = self.__get_current_level(verbose)
+        current_level, head_hash, current_cycle = self.__get_current_level(verbose)
 
         logger.debug("Current level {}, head hash {}".format(current_level, head_hash))
 
@@ -91,8 +90,9 @@ class RpcRewardApiImpl(RewardApi):
         _, response = self.wllt_clnt_mngr.send_request(COMM_HEAD.format(self.node_url))
         head = parse_json_response(response)
         current_level = int(head["metadata"]["level"]["level"])
+        current_cycle = int(head["metadata"]["level"]["cycle"])
         head_hash = head["hash"]
-        return current_level, head_hash
+        return current_level, head_hash, current_cycle
 
     def __get_delegators_and_delgators_balance(self, cycle, verbose=False):
 
@@ -127,7 +127,7 @@ class RpcRewardApiImpl(RewardApi):
 
     def __get_snapshot_block_hash(self, cycle, verbose=False):
 
-        current_level, head_hash = self.__get_current_level(verbose)
+        current_level, head_hash, current_cycle = self.__get_current_level(verbose)
 
         level_for_snapshot_request = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
 
@@ -135,8 +135,10 @@ class RpcRewardApiImpl(RewardApi):
         logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, level of interest {}"
                      .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_for_snapshot_request))
 
+        block_level = cycle * self.blocks_per_cycle + 1
+
         if current_level - level_for_snapshot_request >= 0:
-            request = COMM_SNAPSHOT.format(self.node_url, head_hash, current_level - level_for_snapshot_request, cycle)
+            request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
             _, response = self.wllt_clnt_mngr.send_request(request)
             snapshots = parse_json_response(response)
 
@@ -159,6 +161,7 @@ class RpcRewardApiImpl(RewardApi):
         else:
             logger.info("Cycle too far in the future")
             return ""
+
 
     def __validate_reward_data(self, reward_data_rpc, cycle):
         reward_data_tzscan = self.validate_api.get_rewards_for_cycle_map(cycle)
