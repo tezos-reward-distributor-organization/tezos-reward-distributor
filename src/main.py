@@ -18,7 +18,7 @@ from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger
 from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, \
-    add_argument_executable_dirs, add_argument_docker, add_argument_verbose
+    add_argument_executable_dirs, add_argument_docker, add_argument_verbose, add_argument_node_addr_public
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -218,6 +218,7 @@ if __name__ == '__main__':
     add_argument_reports_base(parser)
     add_argument_config_dir(parser)
     add_argument_node_addr(parser)
+    add_argument_node_addr_public(parser)
     add_argument_dry(parser)
     add_argument_dry_no_consumer(parser)
     add_argument_executable_dirs(parser)

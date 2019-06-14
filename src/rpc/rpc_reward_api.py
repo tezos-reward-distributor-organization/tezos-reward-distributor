@@ -9,15 +9,9 @@ from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 logger = main_logger
 
-COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
-COMM_DELEGATES = " rpc get http://{}/chains/main/blocks/{}/context/delegates/{}"
-COMM_BLOCK = " rpc get http://{}/chains/main/blocks/{}/"
-COMM_SNAPSHOT = COMM_BLOCK + "context/raw/json/rolls/owner/snapshot/{}/"
-COMM_DELEGATE_BALANCE = " rpc get http://{}/chains/main/blocks/{}/context/contracts/{}"
-
 class RpcRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address, wllt_clnt_mngr, node_url, validate=True):
+    def __init__(self, nw, baking_address, wllt_clnt_mngr, node_url, protocol='http', validate=True):
         super(RpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
@@ -33,6 +27,13 @@ class RpcRewardApiImpl(RewardApi):
             mirror_selector = TzScanMirrorSelector(nw)
             mirror_selector.initialize()
             self.validate_api = TzScanRewardApiImpl(nw, self.baking_address, mirror_selector)
+
+        BASE_URL=protocol+'://'+node_url
+        self.COMM_HEAD = " rpc get %BASE_URL%/chains/main/blocks/head".replace('%BASE_URL%',BASE_URL)
+        self.COMM_DELEGATES = " rpc get %BASE_URL%/chains/main/blocks/{}/context/delegates/{}".replace('%BASE_URL%',BASE_URL)
+        self.COMM_BLOCK = " rpc get %BASE_URL%/chains/main/blocks/{}/".replace('%BASE_URL%',BASE_URL)
+        self.COMM_SNAPSHOT = self.COMM_BLOCK + "context/raw/json/rolls/owner/snapshot/{}/"
+        self.COMM_DELEGATE_BALANCE = " rpc get %BASE_URL%/chains/main/blocks/{}/context/contracts/{}".replace('%BASE_URL%',BASE_URL)
 
     def get_nb_delegators(self, cycle, verbose=False):
         _, delegators = self.__get_delegators_and_delgators_balance(cycle,verbose )
@@ -57,7 +58,7 @@ class RpcRewardApiImpl(RewardApi):
                      .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_for_relevant_request))
 
         if current_level - level_for_relevant_request >= 0:
-            request_metadata = COMM_BLOCK.format(self.node_url, head_hash,
+            request_metadata = self.COMM_BLOCK.format(head_hash,
                                                  current_level - level_for_relevant_request) + '/metadata/'
             _, response_metadata = self.wllt_clnt_mngr.send_request(request_metadata)
             metadata = parse_json_response(response_metadata)
@@ -87,7 +88,7 @@ class RpcRewardApiImpl(RewardApi):
         return reward_model
 
     def __get_current_level(self, verbose=False):
-        _, response = self.wllt_clnt_mngr.send_request(COMM_HEAD.format(self.node_url))
+        _, response = self.wllt_clnt_mngr.send_request(self.COMM_HEAD)
         head = parse_json_response(response)
         current_level = int(head["metadata"]["level"]["level"])
         current_cycle = int(head["metadata"]["level"]["cycle"])
@@ -100,7 +101,7 @@ class RpcRewardApiImpl(RewardApi):
         if hash_snapshot_block == "":
             return 0, []
 
-        request = COMM_DELEGATES.format(self.node_url, hash_snapshot_block, self.baking_address)
+        request = self.COMM_DELEGATES.format(hash_snapshot_block, self.baking_address)
         _, response = self.wllt_clnt_mngr.send_request(request)
 
         delegate_staking_balance = 0
@@ -112,7 +113,7 @@ class RpcRewardApiImpl(RewardApi):
 
             delegators_addresses = response["delegated_contracts"]
             for idx, delegator in enumerate(delegators_addresses):
-                request = COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
+                request = self.COMM_DELEGATE_BALANCE.format(hash_snapshot_block, delegator)
                 _, response = self.wllt_clnt_mngr.send_request(request)
                 response = parse_json_response(response)
                 delegators[delegator] = int(response["balance"])
@@ -138,7 +139,7 @@ class RpcRewardApiImpl(RewardApi):
         block_level = cycle * self.blocks_per_cycle + 1
 
         if current_level - level_for_snapshot_request >= 0:
-            request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
+            request = self.COMM_SNAPSHOT.format(block_level, cycle)
             _, response = self.wllt_clnt_mngr.send_request(request)
             snapshots = parse_json_response(response)
 
@@ -149,7 +150,7 @@ class RpcRewardApiImpl(RewardApi):
                 return ""
 
             level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + ( chosen_snapshot + 1) * self.blocks_per_roll_snapshot
-            request = COMM_BLOCK.format(self.node_url, head_hash, current_level - level_snapshot_block)
+            request = self.COMM_BLOCK.format(head_hash, current_level - level_snapshot_block)
             _, comm_block_response = self.wllt_clnt_mngr.send_request(request)
             comm_block_response = comm_block_response.rstrip()
             comm_block_response_json = extract_json_part(comm_block_response, verbose=True)
