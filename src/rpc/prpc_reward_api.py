@@ -9,11 +9,11 @@ from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 logger = main_logger
 
-COMM_HEAD = "curl https://{}/chains/main/blocks/head"
-COMM_DELEGATES = "curl  https://{}/chains/main/blocks/{}/context/delegates/{}"
-COMM_BLOCK = "curl  https://{}/chains/main/blocks/{}/"
+COMM_HEAD = "curl -s https://{}/chains/main/blocks/head"
+COMM_DELEGATES = "curl -s https://{}/chains/main/blocks/{}/context/delegates/{}"
+COMM_BLOCK = "curl -s https://{}/chains/main/blocks/{}/"
 COMM_SNAPSHOT = COMM_BLOCK + "context/raw/json/rolls/owner/snapshot/{}/"
-COMM_DELEGATE_BALANCE = "curl  https://{}/chains/main/blocks/{}/context/contracts/{}"
+COMM_DELEGATE_BALANCE = "curl -s https://{}/chains/main/blocks/{}/context/contracts/{}"
 
 class PRpcRewardApiImpl(RewardApi):
 
