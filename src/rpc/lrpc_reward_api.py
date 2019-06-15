@@ -109,8 +109,11 @@ class LRpcRewardApiImpl(RewardApi):
         if self.verbose:
             logger.debug("[do_rpc_request] running command {}".format(request))
 
-        _, resp = self.wllt_clnt_mngr.send_request(request)
-        response = parse_json_response(resp)
+        try:
+            _, resp = self.wllt_clnt_mngr.send_request(request)
+            response = parse_json_response(resp)
+        except Exception as e:
+            raise Exception("RPC request failed. Make sure you are using an Archive Node!") from e
 
         if self.verbose:
             logger.debug("[do_rpc_request] Response {}".format(response))
