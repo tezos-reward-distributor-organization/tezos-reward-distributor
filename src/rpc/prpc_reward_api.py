@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 
 import requests
 
@@ -105,6 +106,8 @@ class PRpcRewardApiImpl(RewardApi):
     def do_rpc_request(self, request):
         if self.verbose:
             logger.debug("[do_rpc_request] Requesting URL {}".format(request))
+
+        sleep(0.1) # be nice to public node service
 
         resp = requests.get(request)
         if resp.status_code != 200:
