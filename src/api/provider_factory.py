@@ -13,20 +13,21 @@ class ProviderFactory:
     url_prefixes = {"MAINNET": "rpc", "ALPHANET": "rpcalpha", "ZERONET": "rpczero"}
     url_prefixes = {"MAINNET": "mainnet", "ALPHANET": "alphanet", "ZERONET": "zeronet"}
 
-    def __init__(self, provider):
+    def __init__(self, provider, verbose=False):
         self.provider = provider
         self.mirror_selector = None
+        self.verbose = verbose
 
     def newRewardApi(self, network_config, baking_address, wllt_clnt_mngr, node_url):
         if self.provider == 'rpc':
-            return LRpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url)
+            return LRpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url, verbose=self.verbose)
         elif self.provider == 'prpc':
             url_prefix = self.url_prefixes[network_config['NAME']]
-            return PRpcRewardApiImpl(network_config,  baking_address, self.URL.format(url_prefix))
+            return PRpcRewardApiImpl(network_config,  baking_address, self.URL.format(url_prefix), verbose=self.verbose)
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
-            return TzScanRewardApiImpl(network_config, baking_address, self.mirror_selector)
+            return TzScanRewardApiImpl(network_config, baking_address, self.mirror_selector, verbose=self.verbose)
 
         raise Exception("No supported reward data provider : {}".format(self.provider))
 

@@ -201,7 +201,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, verbose=self.verbose)
+            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle)
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
             # set cycle info

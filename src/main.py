@@ -94,7 +94,7 @@ def main(args):
                                          verbose=args.verbose)
 
     provider_factory = ProviderFactory(args.reward_data_provider)
-    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
+    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr, verbose=args.verbose)
     parser.parse()
     parser.validate()
     parser.process()
