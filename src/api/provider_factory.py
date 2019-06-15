@@ -16,7 +16,7 @@ class ProviderFactory:
         self.provider = provider
         self.mirror_selector = None
 
-    def newRewardApi(self, network_config, baking_address, wllt_clnt_mngr, node_url, public_node_url):
+    def newRewardApi(self, network_config, baking_address, wllt_clnt_mngr, node_url):
         if self.provider == 'rpc':
             return RpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url)
         elif self.provider == 'prpc':
