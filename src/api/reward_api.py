@@ -6,5 +6,5 @@ class RewardApi(ABC):
         super().__init__()
 
     @abstractmethod
-    def get_rewards_for_cycle_map(self, cycle, verbose=False):
+    def get_rewards_for_cycle_map(self, cycle):
         pass

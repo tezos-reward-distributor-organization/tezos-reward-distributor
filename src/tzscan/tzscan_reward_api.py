@@ -9,14 +9,15 @@ logger = main_logger
 
 class TzScanRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address, mirror_selector):
+    def __init__(self, nw, baking_address, mirror_selector, verbose=False):
         super().__init__()
 
+        self.verbose = verbose
         self.logger = main_logger
         self.helper = TzScanRewardProviderHelper(nw, baking_address, mirror_selector)
 
-    def get_rewards_for_cycle_map(self, cycle, verbose=False):
-        root = self.helper.get_rewards_for_cycle(cycle, verbose)
+    def get_rewards_for_cycle_map(self, cycle):
+        root = self.helper.get_rewards_for_cycle(cycle, self.verbose)
 
         delegate_staking_balance = int(root["delegate_staking_balance"])
         blocks_rewards = int(root["blocks_rewards"])

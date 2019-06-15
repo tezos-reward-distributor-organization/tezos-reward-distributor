@@ -8,11 +8,12 @@ from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from tzscan.tzscan_mirror_selection_helper import TzScanMirrorSelector
 from tzscan.tzscan_reward_api import TzScanRewardApiImpl
+from util.rpc_utils import parse_json_response
 
 logger = main_logger
 
 
-class PRpcRewardApiImpl(RewardApi):
+class LRpcRewardApiImpl(RewardApi):
 
     COMM_HEAD = "%protocol%://{}/chains/main/blocks/head"
     COMM_DELEGATES = "%protocol%://{}/chains/main/blocks/{}/context/delegates/{}"
@@ -20,8 +21,8 @@ class PRpcRewardApiImpl(RewardApi):
     COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/rolls/owner/snapshot/{}/"
     COMM_DELEGATE_BALANCE = "%protocol%://{}/chains/main/blocks/{}/context/contracts/{}"
 
-    def __init__(self, nw, baking_address, node_url, validate=True, verbose=True):
-        super(PRpcRewardApiImpl, self).__init__()
+    def __init__(self, nw, baking_address, node_url, wllt_clnt_mngr,  validate=True, verbose=True):
+        super(LRpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
         self.preserved_cycles = nw['NB_FREEZE_CYCLE']
@@ -29,6 +30,7 @@ class PRpcRewardApiImpl(RewardApi):
 
         self.baking_address = baking_address
         self.node_url = node_url
+        self.wllt_clnt_mngr = wllt_clnt_mngr
 
         self.verbose = verbose
         self.validate = validate
@@ -106,11 +108,9 @@ class PRpcRewardApiImpl(RewardApi):
         if self.verbose:
             logger.debug("[do_rpc_request] Requesting URL {}".format(request))
 
-        resp = requests.get(request)
-        if resp.status_code != 200:
-            raise Exception("Request '{} failed with status code {}".format(request, resp.status_code))
+        _, resp = self.wllt_clnt_mngr.send_request(request)
+        response = parse_json_response(resp)
 
-        response = resp.json()
         if self.verbose:
             logger.debug("[do_rpc_request] Response {}".format(response))
         return response
@@ -202,29 +202,3 @@ class PRpcRewardApiImpl(RewardApi):
             raise Exception("Total rewards from local node and tzscan are not identical.")
 
         logger.debug("[__validate_reward_data] validation passed")
-
-
-def test():
-    configure_test_logger()
-
-    network_config_map = init_network_config("MAINNET", None, None)
-    network_config = network_config_map["MAINNET"]
-
-    prpc = PRpcRewardApiImpl(network_config, "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "mainnet.tezrpc.me",True, True)
-    prpc.get_rewards_for_cycle_map(42)
-
-
-def configure_test_logger():
-    test_logger = logging.getLogger('main')
-    test_logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
-    ch.setFormatter(formatter)
-    test_logger.addHandler(ch)
-    global logger
-    logger = test_logger
-
-
-if __name__ == '__main__':
-    test()

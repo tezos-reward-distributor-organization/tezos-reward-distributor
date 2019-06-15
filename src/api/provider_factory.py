@@ -1,3 +1,4 @@
+from rpc.lrpc_reward_api import LRpcRewardApiImpl
 from rpc.prpc_reward_api import PRpcRewardApiImpl
 from rpc.rpc_block_api import RpcBlockApiImpl
 from rpc.rpc_reward_api import RpcRewardApiImpl
@@ -18,10 +19,10 @@ class ProviderFactory:
 
     def newRewardApi(self, network_config, baking_address, wllt_clnt_mngr, node_url):
         if self.provider == 'rpc':
-            return RpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url)
+            return LRpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url)
         elif self.provider == 'prpc':
             url_prefix = self.url_prefixes[network_config['NAME']]
-            return PRpcRewardApiImpl(network_config,  baking_address, wllt_clnt_mngr, self.URL.format(url_prefix))
+            return PRpcRewardApiImpl(network_config,  baking_address, self.URL.format(url_prefix))
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
