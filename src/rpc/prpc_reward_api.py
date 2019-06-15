@@ -9,7 +9,7 @@ from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 logger = main_logger
 
-COMM_HEAD = "https://{}/chains/main/blocks/head"
+COMM_HEAD = "curl https://{}/chains/main/blocks/head"
 COMM_DELEGATES = "curl  https://{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "curl  https://{}/chains/main/blocks/{}/"
 COMM_SNAPSHOT = COMM_BLOCK + "context/raw/json/rolls/owner/snapshot/{}/"
