@@ -1,3 +1,4 @@
+from rpc.prpc_reward_api import PRpcRewardApiImpl
 from rpc.rpc_block_api import RpcBlockApiImpl
 from rpc.rpc_reward_api import RpcRewardApiImpl
 from tzscan.tzscan_mirror_selection_helper import TzScanMirrorSelector
@@ -18,7 +19,7 @@ class ProviderFactory:
             return RpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url)
         elif self.provider == 'prpc':
             url_prefix = self.url_prefixes[network_config['NAME']]
-            return RpcRewardApiImpl(network_config,  baking_address, wllt_clnt_mngr, self.URL.format(url_prefix), protocol='https')
+            return PRpcRewardApiImpl(network_config,  baking_address, wllt_clnt_mngr, self.URL.format(url_prefix))
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
@@ -31,11 +32,8 @@ class ProviderFactory:
         self.mirror_selector.initialize()
 
     def newBlockApi(self, network_config, wllt_clnt_mngr, node_url):
-        if self.provider == 'rpc':
+        if self.provider == 'rpc' or self.provider == 'prpc':
             return RpcBlockApiImpl(network_config, wllt_clnt_mngr, node_url)
-        elif self.provider == 'prpc':
-            url_prefix = self.url_prefixes[network_config['NAME']]
-            return RpcBlockApiImpl(network_config, wllt_clnt_mngr, self.URL.format(url_prefix), protocol='https')
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
