@@ -8,13 +8,15 @@ from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 class ProviderFactory:
     URL = "{}.tzbeta.net/"
+    URL = "{}.tezrpc.me/"
     url_prefixes = {"MAINNET": "rpc", "ALPHANET": "rpcalpha", "ZERONET": "rpczero"}
+    url_prefixes = {"MAINNET": "mainnet", "ALPHANET": "alphanet", "ZERONET": "zeronet"}
 
     def __init__(self, provider):
         self.provider = provider
         self.mirror_selector = None
 
-    def newRewardApi(self, network_config, baking_address, wllt_clnt_mngr, node_url):
+    def newRewardApi(self, network_config, baking_address, wllt_clnt_mngr, node_url, public_node_url):
         if self.provider == 'rpc':
             return RpcRewardApiImpl(network_config, baking_address, wllt_clnt_mngr, node_url)
         elif self.provider == 'prpc':
