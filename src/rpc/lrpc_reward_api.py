@@ -36,7 +36,7 @@ class LRpcRewardApiImpl(RewardApi):
         self.validate = validate
 
         # replace protocol placeholder
-        protocol = 'https'
+        protocol = 'http'
         self.COMM_HEAD = self.COMM_HEAD.replace('%protocol%',protocol)
         self.COMM_DELEGATES = self.COMM_DELEGATES.replace('%protocol%',protocol)
         self.COMM_BLOCK = self.COMM_BLOCK.replace('%protocol%',protocol)
@@ -105,8 +105,9 @@ class LRpcRewardApiImpl(RewardApi):
         return unfrozen_fees + unfrozen_rewards
 
     def do_rpc_request(self, request):
+        request = " rpc get "+request
         if self.verbose:
-            logger.debug("[do_rpc_request] Requesting URL {}".format(request))
+            logger.debug("[do_rpc_request] running command {}".format(request))
 
         _, resp = self.wllt_clnt_mngr.send_request(request)
         response = parse_json_response(resp)
