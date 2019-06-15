@@ -58,8 +58,7 @@ class PRpcRewardApiImpl(RewardApi):
                      .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_for_relevant_request))
 
         if current_level - level_for_relevant_request >= 0:
-            request_metadata = COMM_BLOCK.format(self.node_url, head_hash,
-                                                 current_level - level_for_relevant_request) + '/metadata/'
+            request_metadata = COMM_BLOCK.format(self.node_url, level_for_relevant_request) + '/metadata/'
             _, response_metadata = self.cmd_manager.execute(request_metadata)
             metadata = parse_json_response(response_metadata)
             balance_updates = metadata["balance_updates"]
