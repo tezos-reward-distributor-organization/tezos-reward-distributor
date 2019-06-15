@@ -17,7 +17,7 @@ COMM_DELEGATE_BALANCE = "curl  https://{}/chains/main/blocks/{}/context/contract
 
 class PRpcRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address, wllt_clnt_mngr, node_url, validate=True, verbose=False):
+    def __init__(self, nw, baking_address, wllt_clnt_mngr, node_url, validate=True, verbose=True):
         super(PRpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
