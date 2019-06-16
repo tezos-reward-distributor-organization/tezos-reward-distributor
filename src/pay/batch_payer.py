@@ -239,10 +239,10 @@ class BatchPayer():
         for payment_item in payment_records:
             pymnt_amnt = payment_item.amount  # expects in micro tezos
 
+            assert pymnt_amnt >= ZERO_THRESHOLD # zero check, zero amounts needs to be filtered out earlier
+
             if self.delegator_pays_xfer_fee:
                 pymnt_amnt = max(pymnt_amnt - int(self.default_fee), 0)  # ensure not less than 0
-
-            assert pymnt_amnt >= ZERO_THRESHOLD # zero check, zero amounts needs to be filtered out earlier
 
             op_counter.inc()
 
