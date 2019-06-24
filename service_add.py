@@ -14,7 +14,7 @@ def main():
 
     with open(path_template, 'r') as template_file:
         content = template_file.read()
-        content = content.replace("<USER>", os.getlogin())
+        content = content.replace("<USER>", get_username())
         content = content.replace("<PYTHON_PATH>", python_executable)
         content = content.replace("<ABS_PATH_TO_BASE>", dir_path)
         content = content.replace("<OPTIONS>", ' '.join(sys.argv[1:]))
@@ -30,6 +30,18 @@ def main():
     print("Running command:'{}'".format("systemctl enable " + path_service))
     os.system(cmd)
 
+
+def get_username():
+    try:
+        import pwd
+    except ImportError:
+        import getpass
+        pwd = None
+
+    if pwd:
+        return pwd.getpwuid(os.geteuid()).pw_name
+    else:
+        return getpass.getuser()
 
 if __name__ == '__main__':
     main()
