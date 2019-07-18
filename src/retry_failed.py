@@ -91,7 +91,7 @@ def main(args):
     wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers,
                                          verbose=args.verbose)
 
-    provider_factory = ProviderFactory(args.reward_data_provider)
+    provider_factory = ProviderFactory(args.reward_data_provider, verbose=args.verbose)
     parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory,
                                   network_config, args.node_addr)
     parser.parse()
