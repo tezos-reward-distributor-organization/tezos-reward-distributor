@@ -29,9 +29,7 @@ class TzScanRewardProviderHelper:
         self.mirror_selector = mirror_selector
 
     def __get_nb_delegators(self, cycle, verbose=False):
-        uri = self.api['API_URL'].replace("%MIRROR%",
-                                          str(self.mirror_selector.get_mirror())) + nb_delegators_call.format(
-            self.baking_address, cycle)
+        uri = self.api['API_URL'].replace("%MIRROR%", str(self.mirror_selector.get_mirror())) + nb_delegators_call.format(self.baking_address, cycle)
 
         if verbose:
             logger.debug("Requesting {}".format(uri))

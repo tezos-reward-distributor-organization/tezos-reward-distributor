@@ -1,7 +1,8 @@
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
 from exception.configuration import ConfigurationException
-from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, SERVICE_FEE, FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
+from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, SERVICE_FEE, \
+    FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
     EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP
 from util.address_validator import AddressValidator
@@ -11,11 +12,14 @@ PKH_LENGHT = 36
 
 
 class BakingYamlConfParser(YamlConfParser):
-    def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, verbose=None) -> None:
+    def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, verbose=None,
+                 block_api=None) -> None:
         super().__init__(yaml_text, verbose)
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
-        self.block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
+        if block_api is None:
+            block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
+        self.block_api = block_api
 
     def parse(self):
         yaml_conf_dict = super().parse()
@@ -123,6 +127,7 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
             conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
             conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)
+
         else:
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
@@ -139,7 +144,14 @@ class BakingYamlConfParser(YamlConfParser):
                 raise ConfigurationException("Payment Address ({}) cannot be translated into a PKH or alias. "
                                              "If it is an alias import it first. ".format(pymnt_addr))
 
-        if not self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)]):
+        # if reveal information is present, do not ask
+        if 'revealed' in addr_obj:
+            revealed = addr_obj['revealed']
+        else:
+            revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
+
+        # payment address needs to be revealed
+        if not revealed:
             raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
                                          "Public key is not revealed.\n"
                                          "Use command 'reveal key for <src>' to reveal your public key. \n"

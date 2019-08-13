@@ -87,6 +87,9 @@ class WalletClientManager(SimpleClientManager):
         for pkh, dict_alias_sk in self.addr_dict_by_pkh.items():
             self.address_dict[pkh] = {"pkh": pkh, "originated": False, "alias": dict_alias_sk['alias'],
                                       "sk": dict_alias_sk['sk'], "manager": pkh}
+            if 'revealed' in dict_alias_sk:
+                self.address_dict[pkh]["revealed"] = dict_alias_sk['revealed']
+
             logger.debug("Known address added: {}".format(self.address_dict[pkh]))
 
         for alias, pkh in self.contr_dict_by_alias.items():
@@ -98,8 +101,9 @@ class WalletClientManager(SimpleClientManager):
                 else:
                     manager_sk = self.addr_dict_by_pkh[manager]['sk']
 
-                self.address_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk,
-                                          "manager": manager}
+                self.address_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk, "manager": manager}
+                if pkh in self.addr_dict_by_pkh and "revealed" in self.addr_dict_by_pkh[pkh]:
+                    self.address_dict[pkh]["revealed"] = self.addr_dict_by_pkh[pkh]["revealed"]
 
                 logger.debug("Known contract added: {}".format(self.address_dict[pkh]))
 

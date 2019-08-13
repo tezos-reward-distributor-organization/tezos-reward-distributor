@@ -12,15 +12,13 @@ class TestCalculatePhase5(TestCase):
 
         for i, ratio in enumerate(ratios, start=1):
             rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratio)
+            rl0.ratio = ratio
             rl0.ratio4 = ratio
             rewards.append(rl0)
 
-        rewards[0].address = "addr1"
-        rewards[1].address = "addr1"
-
         rewards.append(RewardLog("addrdummy","D",0).skip("skipped for testing",4))
 
-        phase5 = CalculatePhase5()
+        phase5 = CalculatePhase5({"addr2":"addr1"})
 
         new_rewards, new_total_reward = phase5.calculate(rewards, total_reward)
 
@@ -34,15 +32,16 @@ class TestCalculatePhase5(TestCase):
         # old and new reward amount is the same
         ratio_sum = sum(rl.ratio5 for rl in new_rewards)
 
-        # 2 records are merged
-        self.assertEqual(4, len(new_rewards))
+        # payment address for address2 is address1
+        payment_address_set = set(rl.paymentaddress for rl in new_rewards)
+        self.assertEqual(4, len(payment_address_set))
 
         self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
 
-        # ratio of merged record must be 0.30 (0.25+0.05)
+        # ratio of records having payment address addr1 must be 0.30 (0.25+0.05)
         self.assertAlmostEqual(0.30,
-                               list(
-                                   filter(lambda rl: rl.type == TYPE_MERGED,
+                               sum(rl.ratio for rl in list(
+                                   filter(lambda rl: rl.paymentaddress == "addr1",
                                           filter(lambda rl: not rl.skipped, new_rewards))
-                               )[0].ratio5,
+                               )),
                                delta=1e-6)

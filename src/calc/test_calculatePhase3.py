@@ -13,6 +13,7 @@ class TestCalculatePhase3(TestCase):
 
         for i, ratio in enumerate(ratios, start=1):
             rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratio)
+            rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
 
@@ -58,6 +59,7 @@ class TestCalculatePhase3(TestCase):
 
         for i, ratio in enumerate(ratios, start=1):
             rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratio)
+            rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
 
