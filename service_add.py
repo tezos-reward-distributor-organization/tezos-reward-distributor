@@ -16,7 +16,7 @@ def main():
 
     if username_from_path is not None and username_from_path != username_from_system:
         print("User name from path '{}' and user name from system does not match [{}!={}].".format(dir_path, username_from_path, username_from_system))
-        print("User name inside service definition file '{}' is {}. Make sure it is correct!".format(path_service, username))
+        print("User name inside service definition file '{}' is '{}'. Make sure it is correct!".format(path_service, username))
     elif username=='root':
         print("User name inside service definition file '{}' is 'root'. Make sure it is correct!".format(path_service))
 
