@@ -28,10 +28,10 @@ class CommandManager:
         try:
             output = check_output(cmd, shell=True, stderr=STDOUT, timeout=timeout, encoding='utf8')
         except TimeoutExpired as e:
-            logger.debug("Command timed out")
+            logger.info("Command timed out")
             raise e
         except CalledProcessError as e:
-            logger.debug("Command failed, error is |{}|".format(e.output))
+            logger.info("Command failed, error is |{}|".format(e.output))
             return False, e.output
 
         # output = output.decode('utf-8')
