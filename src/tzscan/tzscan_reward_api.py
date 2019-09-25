@@ -30,7 +30,11 @@ class TzScanRewardApiImpl(RewardApi):
         else:
             lost_rewards_denounciation = int(root["lost_rewards_denounciation"])
 
-        lost_fees_denounciation = int(root["lost_fees_denounciation_baking"])+int(root["lost_fees_denounciation_endorsement"])
+        if "lost_fees_denounciation_baking" in root:
+            lost_fees_denounciation = int(root["lost_fees_denounciation_baking"])+int(root["lost_fees_denounciation_endorsement"])
+        else:
+            lost_fees_denounciation = int(root["lost_fees_denounciation"])
+
         fees = int(root["fees"])
 
         total_reward_amount = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
