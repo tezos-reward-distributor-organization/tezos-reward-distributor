@@ -52,6 +52,9 @@ class TzScanBlockApiImpl(BlockApi):
     def get_revelation(self, pkh, verbose=False):
         uri = self.revelation_api['HEAD_API_URL'].replace("%MIRROR%", str(self.mirror_selector.get_mirror())).replace("%PKH%", pkh)
 
+        # todo remove
+        return True
+
         if verbose:
             logger.debug("Requesting {}".format(uri))
 
