@@ -31,7 +31,7 @@ class CommandManager:
             logger.debug("Command timed out")
             raise e
         except CalledProcessError as e:
-            logger.debug("Command failed, error is {}".format(e.output))
+            logger.debug("Command failed, error is |{}|".format(e.output))
             return False, e.output
 
         # output = output.decode('utf-8')
