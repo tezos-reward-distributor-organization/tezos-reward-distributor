@@ -26,6 +26,7 @@ CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
+JSON_WRAP='{"operation": "%JSON%","chain_id":["%chain_id%"}'
 COMM_FORGE = " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
 COMM_RUNOPS = " rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
 COMM_PREAPPLY = " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
@@ -230,6 +231,7 @@ class BatchPayer():
         _, response = self.wllt_clnt_mngr.send_request(self.comm_head, verbose_override=False)
         head = parse_json_response(response)
         branch = head["hash"]
+        chain_id = head["chain_id"]
         protocol = head["metadata"]["protocol"]
 
         logger.debug("head: branch {} counter {} protocol {}".format(branch, op_counter.get(), protocol))
@@ -260,6 +262,7 @@ class BatchPayer():
         # run the operations
         logger.debug("Running {} operations".format(len(content_list)))
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
+        runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%",chain_id)
         runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
 
         # if verbose: print("--> runops_command_str is |{}|".format(runops_command_str))
