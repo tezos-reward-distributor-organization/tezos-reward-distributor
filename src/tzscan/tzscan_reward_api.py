@@ -24,7 +24,12 @@ class TzScanRewardApiImpl(RewardApi):
         future_blocks_rewards = int(root["future_blocks_rewards"])
         endorsements_rewards = int(root["endorsements_rewards"])
         future_endorsements_rewards = int(root["future_endorsements_rewards"])
-        lost_rewards_denounciation = int(root["lost_rewards_denounciation_baking"])+int(root["lost_rewards_denounciation_endorsement"])
+
+        if "lost_rewards_denounciation_baking" in root:
+            lost_rewards_denounciation = int(root["lost_rewards_denounciation_baking"])+int(root["lost_rewards_denounciation_endorsement"])
+        else:
+            lost_rewards_denounciation = int(root["lost_rewards_denounciation"])
+
         lost_fees_denounciation = int(root["lost_fees_denounciation_baking"])+int(root["lost_fees_denounciation_endorsement"])
         fees = int(root["fees"])
 
