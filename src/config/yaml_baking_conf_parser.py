@@ -127,13 +127,16 @@ class BakingYamlConfParser(YamlConfParser):
 
             self.check_sk(addr_obj, pymnt_addr)
 
-            conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
+            conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.TZ
             conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
-            conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)
+            conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = pymnt_addr
 
         else:
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
+
+                if pkh.startswith("KT"):
+                    raise ConfigurationException("KT address cannot be used for payments")
 
                 addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
 
