@@ -28,7 +28,7 @@ class RpcBlockApiImpl(BlockApi):
 
         logger.debug("Manager key is '{}'".format(manager_key))
 
-        bool_revelation = "key" in manager_key.keys() and len(manager_key["key"]) > 0
+        bool_revelation = manager_key and manager_key!='null'
         return bool_revelation
 
 
