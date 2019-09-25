@@ -1,7 +1,7 @@
 from api.block_api import BlockApi
 from util.rpc_utils import parse_json_response
 
-from src.log_config import main_logger
+from log_config import main_logger
 
 logger = main_logger
 
