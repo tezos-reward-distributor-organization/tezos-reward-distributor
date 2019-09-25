@@ -119,7 +119,7 @@ class BakingYamlConfParser(YamlConfParser):
             raise ConfigurationException("Payment address must be set")
 
         if pymnt_addr.startswith("KT"):
-            raise ConfigurationException("KT address cannot be used for payments")
+            raise ConfigurationException("KT addresses cannot be used for payments. Only tz addresses are allowed")
 
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
 
@@ -136,7 +136,7 @@ class BakingYamlConfParser(YamlConfParser):
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
 
                 if pkh.startswith("KT"):
-                    raise ConfigurationException("KT address cannot be used for payments")
+                    raise ConfigurationException("KT addresses cannot be used for payments. Only tz addresses are allowed")
 
                 addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
 
