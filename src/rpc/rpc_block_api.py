@@ -1,6 +1,10 @@
 from api.block_api import BlockApi
 from util.rpc_utils import parse_json_response
 
+from src.log_config import main_logger
+
+logger = main_logger
+
 COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
 COMM_REVELATION = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
@@ -21,6 +25,9 @@ class RpcBlockApiImpl(BlockApi):
     def get_revelation(self, pkh, verbose=False):
         _, response = self.wllt_clnt_mngr.send_request(COMM_REVELATION.format(self.node_url, pkh))
         manager_key = parse_json_response(response, verbose=verbose)
+
+        logger.debug("Manager key is '{}'", manager_key)
+
         bool_revelation = "key" in manager_key.keys() and len(manager_key["key"]) > 0
         return bool_revelation
 
