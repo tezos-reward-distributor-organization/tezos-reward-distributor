@@ -14,6 +14,7 @@ before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
   - python3 -m unittest discover -s src
   - sphinx-build -b html ./docs/ ./docs/build/
+  - touch ./docs/build/.nojekyll
 deploy:
   provider: pages
   skip_cleanup: true
