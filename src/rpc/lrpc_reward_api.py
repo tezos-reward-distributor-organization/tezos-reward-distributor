@@ -83,7 +83,7 @@ class LRpcRewardApiImpl(RewardApi):
 
         return reward_model
 
-    def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle):
+    def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
         request_metadata = self.COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle) + '/metadata'
         metadata = self.do_rpc_request(request_metadata)
         balance_updates = metadata["balance_updates"]
@@ -93,14 +93,17 @@ class LRpcRewardApiImpl(RewardApi):
             balance_update = balance_updates[i]
             if balance_update["kind"] == "freezer":
                 if balance_update["delegate"] == self.baking_address:
-                    if balance_update["category"] == "rewards":
-                        unfrozen_rewards = -int(balance_update["change"])
-                        logger.debug("[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
-                    elif balance_update["category"] == "fees":
-                        unfrozen_fees = -int(balance_update["change"])
-                        logger.debug("[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
+                    if int(balance_update["cycle"]) == cycle or int(balance_update["change"])<0:
+                        if balance_update["category"] == "rewards":
+                            unfrozen_rewards = -int(balance_update["change"])
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
+                        elif balance_update["category"] == "fees":
+                            unfrozen_fees = -int(balance_update["change"])
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
+                        else:
+                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(balance_update))
                     else:
-                        logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(balance_update))
+                        logger.debug("[__get_unfrozen_rewards] Found balance update, cycle does not match or change is non-zero, not including: {}".format(balance_update))
 
         return unfrozen_fees + unfrozen_rewards
 
