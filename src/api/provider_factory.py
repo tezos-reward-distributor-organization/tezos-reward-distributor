@@ -18,10 +18,10 @@ class ProviderFactory:
 
     def newRewardApi(self, network_config, baking_address, wllt_clnt_mngr, node_url):
         if self.provider == 'rpc':
-            return LRpcRewardApiImpl(network_config, baking_address, node_url, wllt_clnt_mngr, verbose=self.verbose)
+            return LRpcRewardApiImpl(network_config, baking_address, node_url, wllt_clnt_mngr, validate=False, verbose=self.verbose)
         elif self.provider == 'prpc':
             url_prefix = self.url_prefixes[network_config['NAME']]
-            return PRpcRewardApiImpl(network_config,  baking_address, self.URL.format(url_prefix), verbose=self.verbose)
+            return PRpcRewardApiImpl(network_config,  baking_address, self.URL.format(url_prefix), validate=False, verbose=self.verbose)
         elif self.provider == 'tzscan':
             if not self.mirror_selector:
                 self.init_mirror_selector(network_config)
