@@ -8,7 +8,7 @@ from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 
 class ProviderFactory:
-    URL = "https://rpc.tulip.tools/{}/"
+    URL = "rpc.tulip.tools/{}/"
     url_prefixes = {"MAINNET": "mainnet", "ALPHANET": "alphanet", "ZERONET": "zeronet"}
 
     def __init__(self, provider, verbose=False):
