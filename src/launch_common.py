@@ -33,8 +33,8 @@ def add_argument_reports_base(parser):
 
 
 def add_argument_provider(parser):
-    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided. prpc=public rpc", choices=['tzscan', 'rpc','prpc'],
-                        default='tzscan')
+    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided. prpc=public rpc", choices=['rpc','prpc'],
+                        default='prpc')
 
 
 def add_argument_config_dir(parser):

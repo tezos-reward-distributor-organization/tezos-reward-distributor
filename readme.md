@@ -12,7 +12,7 @@ TRD supports complex payments, pays in batches, provides two back ends for calcu
 
 https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7
 
-## TRD Art Work
+## TRD Art Work 
 https://github.com/habanoz/trd-art contains logo images. If you are using TRD and want to let everybody know about it, feel free to place them in your website.
 
 
