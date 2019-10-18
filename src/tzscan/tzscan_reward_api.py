@@ -46,8 +46,8 @@ class TzScanRewardApiImpl(RewardApi):
 
         delegator_balance_dict = {}
         for dbalance in delegators_balance:
-            address = dbalance["account"]["tz"]
-            balance = int(dbalance["balance"])
+            address = dbalance[0]["tz"]
+            balance = int(dbalance[1])
 
             delegator_balance_dict[address] = balance
 
