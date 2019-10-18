@@ -21,7 +21,7 @@ class LRpcRewardApiImpl(RewardApi):
     COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/rolls/owner/snapshot/{}/"
     COMM_DELEGATE_BALANCE = "%protocol%://{}/chains/main/blocks/{}/context/contracts/{}"
 
-    def __init__(self, nw, baking_address, node_url, wllt_clnt_mngr,  validate=True, verbose=True):
+    def __init__(self, nw, baking_address, node_url, wllt_clnt_mngr,  validate=False, verbose=True):
         super(LRpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
@@ -66,7 +66,7 @@ class LRpcRewardApiImpl(RewardApi):
         logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, last_block_cycle {}".format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
 
         if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
-            unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle)
+            unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
             reward_data["total_rewards"] = unfrozen_rewards
 
         else:

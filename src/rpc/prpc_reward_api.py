@@ -21,7 +21,7 @@ class PRpcRewardApiImpl(RewardApi):
     COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/rolls/owner/snapshot/{}/"
     COMM_DELEGATE_BALANCE = "%protocol%://{}/chains/main/blocks/{}/context/contracts/{}"
 
-    def __init__(self, nw, baking_address, node_url, validate=True, verbose=True):
+    def __init__(self, nw, baking_address, node_url, validate=False, verbose=True):
         super(PRpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
