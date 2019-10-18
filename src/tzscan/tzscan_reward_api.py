@@ -36,16 +36,18 @@ class TzScanRewardApiImpl(RewardApi):
             lost_fees_denounciation = int(root["lost_fees_denounciation"])
 
         fees = int(root["fees"])
+        revelation_net = int(root["revelation_rewards"]) - int(root["lost_revelation_rewards"]) - int(root["lost_revelation_fees"])
 
         total_reward_amount = (blocks_rewards + endorsements_rewards + future_blocks_rewards +
-                               future_endorsements_rewards + fees - lost_rewards_denounciation - lost_fees_denounciation)
+                               future_endorsements_rewards + fees + revelation_net
+                               - lost_rewards_denounciation - lost_fees_denounciation)
 
         delegators_balance = root["delegators_balance"]
 
         delegator_balance_dict = {}
         for dbalance in delegators_balance:
-            address = dbalance[0]["tz"]
-            balance = int(dbalance[1])
+            address = dbalance["account"]["tz"]
+            balance = int(dbalance["balance"])
 
             delegator_balance_dict[address] = balance
 
