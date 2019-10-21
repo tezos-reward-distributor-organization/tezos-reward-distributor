@@ -7,8 +7,6 @@ from NetworkConfiguration import init_network_config
 from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
-from tzscan.tzscan_mirror_selection_helper import TzScanMirrorSelector
-from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 logger = main_logger
 
@@ -41,11 +39,6 @@ class PRpcRewardApiImpl(RewardApi):
         self.COMM_BLOCK = self.COMM_BLOCK.replace('%protocol%',protocol)
         self.COMM_SNAPSHOT = self.COMM_SNAPSHOT.replace('%protocol%',protocol)
         self.COMM_DELEGATE_BALANCE = self.COMM_DELEGATE_BALANCE.replace('%protocol%',protocol)
-
-        if self.validate:
-            mirror_selector = TzScanMirrorSelector(nw)
-            mirror_selector.initialize()
-            self.validate_api = TzScanRewardApiImpl(nw, self.baking_address, mirror_selector)
 
     def get_nb_delegators(self, cycle, current_level):
         _, delegators = self.__get_delegators_and_delgators_balance(cycle, current_level)
@@ -188,26 +181,6 @@ class PRpcRewardApiImpl(RewardApi):
         else:
             logger.info("Cycle too far in the future")
             return ""
-
-
-    def __validate_reward_data(self, reward_data_rpc, cycle):
-        reward_data_tzscan = self.validate_api.get_rewards_for_cycle_map(cycle)
-        if not (reward_data_rpc.delegate_staking_balance == int(reward_data_tzscan.delegate_staking_balance)):
-            raise Exception("Delegate staking balance from local node and tzscan are not identical. local node {}, tzscan {}".format(reward_data_rpc.delegate_staking_balance,reward_data_tzscan.delegate_staking_balance ))
-
-        if not (len(reward_data_rpc.delegator_balance_dict) == len(reward_data_tzscan.delegator_balance_dict)):
-            raise Exception("Delegators number from local node and tzscan are not identical.")
-
-        if (len(reward_data_rpc.delegator_balance_dict)) == 0:
-            return
-
-        if not (reward_data_rpc.delegator_balance_dict == reward_data_tzscan.delegator_balance_dict):
-            raise Exception("Delegators' balances from local node and tzscan are not identical.")
-
-        if not reward_data_rpc.total_reward_amount == reward_data_tzscan.total_reward_amount:
-            raise Exception("Total rewards from local node and tzscan are not identical.")
-
-        logger.debug("[__validate_reward_data] validation passed")
 
 
 def test():
