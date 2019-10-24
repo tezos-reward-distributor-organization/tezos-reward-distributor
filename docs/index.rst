@@ -45,6 +45,6 @@ them in your website.
 
 .. toctree::
     :maxdepth: 2
-    :caption: TRD README:
+    :caption: TRD Readme:
 
-    readme
+    ../readme
