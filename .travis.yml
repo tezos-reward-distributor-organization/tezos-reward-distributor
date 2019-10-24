@@ -37,7 +37,7 @@ script:
 deploy:
     provider: pages
     skip_cleanup: true
-    local_dir: docs/build/html
+    local_dir: docs/build
     keep-history: true
     target_branch: gh-pages
     github_token: $GITHUB_TOKEN
