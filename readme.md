@@ -1,7 +1,6 @@
+## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/habanoz/tezos-reward-distributor.svg?branch=development)](https://travis-ci.com/habanoz/tezos-reward-distributor)
 
 <img src="https://raw.githubusercontent.com/habanoz/trd-art/master/logo-narrow/trd_512__1.png" width="128" /> 
-
-## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/habanoz/tezos-reward-distributor.svg?branch=development)](https://travis-ci.com/habanoz/tezos-reward-distributor)
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE DO NOT UPDATE OFTEN.
 
