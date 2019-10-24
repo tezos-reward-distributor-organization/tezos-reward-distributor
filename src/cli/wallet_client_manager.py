@@ -78,8 +78,8 @@ class WalletClientManager(SimpleClientManager):
 
         self.address_dict = {}
 
-        if self.contr_dict_by_alias is None:
-            self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
+        #if self.contr_dict_by_alias is None:
+        #    self.contr_dict_by_alias = self.__list_known_contracts_by_alias()
 
         if self.addr_dict_by_pkh is None:
             self.addr_dict_by_pkh = self.__list_known_addresses_by_pkh()
@@ -92,20 +92,20 @@ class WalletClientManager(SimpleClientManager):
 
             logger.debug("Known address added: {}".format(self.address_dict[pkh]))
 
-        for alias, pkh in self.contr_dict_by_alias.items():
-            if pkh.startswith("KT"):
-                manager = self.get_manager_for_contract(pkh)
-                if manager not in self.addr_dict_by_pkh:
-                    # raise ConfigurationException("Manager pkh {} not found in known addresses".format(manager))
-                    manager_sk = None
-                else:
-                    manager_sk = self.addr_dict_by_pkh[manager]['sk']
+        #for alias, pkh in self.contr_dict_by_alias.items():
+        #    if pkh.startswith("KT"):
+        #        manager = self.get_manager_for_contract(pkh)
+        #        if manager not in self.addr_dict_by_pkh:
+        #            # raise ConfigurationException("Manager pkh {} not found in known addresses".format(manager))
+        #            manager_sk = None
+        #        else:
+        #            manager_sk = self.addr_dict_by_pkh[manager]['sk']
 
-                self.address_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk, "manager": manager}
-                if pkh in self.addr_dict_by_pkh and "revealed" in self.addr_dict_by_pkh[pkh]:
-                    self.address_dict[pkh]["revealed"] = self.addr_dict_by_pkh[pkh]["revealed"]
+        #        self.address_dict[pkh] = {"pkh": pkh, "originated": True, "alias": alias, "sk": manager_sk, "manager": manager}
+        #        if pkh in self.addr_dict_by_pkh and "revealed" in self.addr_dict_by_pkh[pkh]:
+        #            self.address_dict[pkh]["revealed"] = self.addr_dict_by_pkh[pkh]["revealed"]
 
-                logger.debug("Known contract added: {}".format(self.address_dict[pkh]))
+        #        logger.debug("Known contract added: {}".format(self.address_dict[pkh]))
 
         if not self.address_dict:
             logger.warn("No known address info is reached. Check your environment. Try to run in privileged mode.")

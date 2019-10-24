@@ -118,19 +118,25 @@ class BakingYamlConfParser(YamlConfParser):
         if not pymnt_addr:
             raise ConfigurationException("Payment address must be set")
 
-        if len(pymnt_addr) == PKH_LENGHT and (pymnt_addr.startswith("KT") or pymnt_addr.startswith("tz")):
+        if pymnt_addr.startswith("KT"):
+            raise ConfigurationException("KT addresses cannot be used for payments. Only tz addresses are allowed")
+
+        if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
 
             addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pymnt_addr)
 
             self.check_sk(addr_obj, pymnt_addr)
 
-            conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.KT if pymnt_addr.startswith("KT") else AddrType.TZ
+            conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.TZ
             conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
-            conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pymnt_addr)
+            conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = pymnt_addr
 
         else:
             if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
                 pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
+
+                if pkh.startswith("KT"):
+                    raise ConfigurationException("KT addresses cannot be used for payments. Only tz addresses are allowed")
 
                 addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
 
@@ -147,17 +153,17 @@ class BakingYamlConfParser(YamlConfParser):
         # if reveal information is present, do not ask
         if 'revealed' in addr_obj:
             revealed = addr_obj['revealed']
-        else:
-            revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
+        #else:
+        #   revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
 
         # payment address needs to be revealed
-        if not revealed:
-            raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
-                                         "Public key is not revealed.\n"
-                                         "Use command 'reveal key for <src>' to reveal your public key. \n"
-                                         "For implicit accounts, setting your account as delegate is enough.\n"
-                                         "For more information please refer to tezos command line interface."
-                                         .format(pymnt_addr))
+        #if not revealed:
+        #   raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
+        #                                "Public key is not revealed.\n"
+        #                                "Use command 'reveal key for <src>' to reveal your public key. \n"
+        #                                "For implicit accounts, setting your account as delegate is enough.\n"
+        #                                "For more information please refer to tezos command line interface."
+        #                                .format(pymnt_addr))
 
         # if not self.block_api.get_revelation(conf_obj[('%s_manager' % PAYMENT_ADDRESS)]):
         #    raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
