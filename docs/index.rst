@@ -47,4 +47,4 @@ them in your website.
     :maxdepth: 2
     :caption: TRD Readme:
 
-    ../readme
+    readme
