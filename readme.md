@@ -8,7 +8,7 @@ DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DE
 ## Tezos Reward Distributor
 TRD is a software for distributing baking rewards with delegators. This is not a script but a full scale application which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively.
 
-TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and tzcan. Developped and tested extensively by the community. For more information please check following article.
+TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and tzstats. Developed and tested extensively by the community. For more information please check following article.
 
 https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7
 
@@ -38,11 +38,29 @@ cd tezos-reward-distributor
 pip3 install -r requirements.txt
 ```
 
-Regulary check and upgrade to the latest available version:
+Regularly check and upgrade to the latest available version:
 
 ```
 git pull
 ```
+
+### Baker Configuration:
+
+Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The application uses a yaml file for loading baker specific configurations. 
+
+Configuration tool can be used to create baking configuration file interactively. Also an example configuration file is present under examples directory. For more information on configuration details please see our wiki page:
+https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
+
+TRD is designed to work as a linux service. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
+https://github.com/habanoz/tezos-reward-distributor/wiki/Payment-Address
+
+### Email Setup
+
+Get emails for payment reports at each cycle. Fill email.ini file with your email details to receive payment emails.
+
+### Fee Setup
+
+fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.
 
 ### How to Run:
 
@@ -61,17 +79,6 @@ python3 src/main.py
 For more example commands please see wiki page:
 
 https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run
-
-
-### Baker Configuration:
-
-Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The application uses a yaml file for loading baker specific configurations. 
-
-Configuration tool can be used to create baking configuration file interactively. Also an example configuration file is present under examples directory. For more information on configuration details please see our wiki page:
-https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
-
-TRD is designed to work as a linux service. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
-https://github.com/habanoz/tezos-reward-distributor/wiki/Payment-Address
 
 ### Linux Service
 
@@ -92,15 +99,6 @@ For more information please refer to wiki page:
 
 https://github.com/habanoz/tezos-reward-distributor/wiki/Linux-Service
 
-
-### Email Setup
-
-Get emails for payment reports at each cycle. Fill email.ini file with your email details to receive payment emails.
-
-### Fee Setup
-
-fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.
-
 ### Contributions
 Please refer to contributions guide on wiki pages.
 
@@ -109,4 +107,3 @@ https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Contribute
 ### Funding
 
 TRD is an open source project and will stay like this. It is not funded by any organization. A grant request is rejected by Tezos Foundation. However, I will try to continue to enhance the software and support the community.
-

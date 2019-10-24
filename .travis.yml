@@ -1,27 +1,43 @@
+# Use distribution Ubuntu 18.04 Bionic
+dist: bionic
+
+# Travis CI does install a virtual environment automatically for python 3.6
 language: python
+python:
+    - "3.6"
 
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
-  - pip install sphinx_rtd_theme
+    # Requirements for the software
+    - pip install -r requirements.txt
+    # Requirements to deploy the documentation
+    - pip install sphinx_rtd_theme
+    - pip install sphinxcontrib.spelling
+    - pip install --upgrade recommonmark
+
 # Addons necessary for documentation.
 addons:
     apt:
         packages:
             - python3-sphinx
+
 # command to run tests
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
-  - python3 -m unittest discover -s src
-  - sphinx-build -b html ./docs/ ./docs/build/
-  - touch ./docs/build/.nojekyll
+    - python3 -m unittest discover -s src
+    - cd docs
+    - make spelling
+    - make linkcheck
+    - sphinx-build -b html . build/
+    - touch build/.nojekyll
+
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep-history: true
-  target_branch: gh-pages
-  on:
-    branch: sphinx-doc
-  local_dir: docs/build/
+    provider: pages
+    skip_cleanup: true
+    local_dir: docs/build/html
+    keep-history: true
+    target_branch: gh-pages
+    github_token: $GITHUB_TOKEN
+    on:
+        branch: sphinx-doc
 
