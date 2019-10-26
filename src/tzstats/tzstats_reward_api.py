@@ -25,11 +25,4 @@ class TzStatsRewardApiImpl(RewardApi):
 
         delegators_balance = root["delegators_balance"]
 
-        delegator_balance_dict = {}
-        for dbalance in delegators_balance:
-            address = dbalance[0]["tz"]
-            balance = int(dbalance[1])
-
-            delegator_balance_dict[address] = balance
-
-        return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegator_balance_dict)
+        return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balance)

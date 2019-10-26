@@ -2,14 +2,15 @@ import requests
 
 from exception.tzstats import TzStatsException
 from log_config import main_logger
+from tzstats.tzstats_api_constants import *
 
 logger = main_logger
 
 rewards_split_call = '/tables/income?address={}&cycle={}'
 
-PREFIX_API = {'MAINNET': {'API_URL': 'https://api.tzstats.com'},
-              'ZERONET': {'API_URL': 'https://api.zeronet.tzstats.com'},
-              'BABYLONNET': {'API_URL': 'https://api.babylonnet.tzstats.com'}
+PREFIX_API = {'MAINNET': {'API_URL': 'http://api.tzstats.com'},
+              'ZERONET': {'API_URL': 'http://api.zeronet.tzstats.com'},
+              'BABYLONNET': {'API_URL': 'http://api.babylonnet.tzstats.com'}
             }
 
 
@@ -26,10 +27,7 @@ class TzStatsRewardProviderHelper:
 
     def get_rewards_for_cycle(self, cycle, verbose=False):
         #############
-        root = {"delegate_staking_balance": 0, "delegators_nb": 0, "delegators_balance": [], "blocks_rewards": 0,
-                "endorsements_rewards": 0, "fees": 0, "future_blocks_rewards": 0, "future_endorsements_rewards": 0,
-                "gain_from_denounciation": 0, "lost_deposit_from_denounciation": 0, "lost_rewards_denounciation": 0,
-                "lost_fees_denounciation": 0}
+        root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balance": {}}
 
         uri = self.api['API_URL'] + rewards_split_call.format(self.baking_address, cycle)
 
@@ -45,8 +43,10 @@ class TzStatsRewardProviderHelper:
             # This means something went wrong.
             raise TzStatsException('GET {} {}'.format(uri, resp.status_code))
 
-        resp = resp.json()
+        resp = resp.json()[0]
 
-        #root["delegate_staking_balance"] = resp[]
+        root["total_reward_amount"] = resp[idx_income_total_income] * 1e6 # needs to be more precise -> feature request
+        root["delegate_staking_balance"] = resp[idx_income_balance] + resp[idx_income_delegated]
+        # root["delegators_balance"] -> feature request
 
         return root
