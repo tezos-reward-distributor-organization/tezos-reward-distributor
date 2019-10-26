@@ -39,7 +39,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.name = name
 
-        self.reward_api = provider_factory.newRewardApi(network_config, self.baking_address, wllt_clnt_mngr, node_url)
+        self.reward_api = provider_factory.newRewardApi(network_config, self.baking_address, node_url)
         self.block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
 
         self.fee_calc = service_fee_calc
