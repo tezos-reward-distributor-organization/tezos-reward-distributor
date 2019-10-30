@@ -28,10 +28,9 @@ addons:
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
     - python3 -m unittest discover -s src
-    - cd docs
     #- make spelling
     #- make linkcheck
-    - sphinx-build -b html . build/
+    - sphinx-build -b html ./ ./docs/build/
     - touch build/.nojekyll
 
 deploy:
