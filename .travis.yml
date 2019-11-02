@@ -30,7 +30,8 @@ script:
     - python3 -m unittest discover -s src
     #- make spelling
     #- make linkcheck
-    - sphinx-build -b html ./ ./docs/build/
+    - cd docs
+    - sphinx-build -b html ./ ./build/
     - touch build/.nojekyll
 
 deploy:
