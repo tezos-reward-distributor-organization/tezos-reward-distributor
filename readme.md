@@ -38,6 +38,14 @@ Regularly check and upgrade to the latest available version:
 git pull
 ```
 
+### Sample configuration:
+Before running the TRD, you need to configure a few stuff including the baking address and the payout process. 
+The configuration file should be by default included in `~/pymnt/cfg/`.
+```
+cp tezos-reward-distributor/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml ~/pymnt/cfg/
+```
+
+
 ### How to Run:
 
 For a list of parameters, run:

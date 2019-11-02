@@ -28,7 +28,6 @@ and the source code which can be found in the following Github_ repo.
    :maxdepth: 2
    :caption: Tezos Reward Distributor:
 
-   readme
    installation
    configuration
    run
