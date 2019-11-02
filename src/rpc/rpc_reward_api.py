@@ -1,27 +1,23 @@
-import logging
 from time import sleep
 
 import requests
 
-from NetworkConfiguration import init_network_config
 from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
-from tzscan.tzscan_mirror_selection_helper import TzScanMirrorSelector
-from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 logger = main_logger
 
 
 class RpcRewardApiImpl(RewardApi):
 
-    COMM_HEAD = "%protocol%://{}/chains/main/blocks/head"
-    COMM_DELEGATES = "%protocol%://{}/chains/main/blocks/{}/context/delegates/{}"
-    COMM_BLOCK = "%protocol%://{}/chains/main/blocks/{}"
+    COMM_HEAD = "{}/chains/main/blocks/head"
+    COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
+    COMM_BLOCK = "{}/chains/main/blocks/{}"
     COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/rolls/owner/snapshot/{}/"
-    COMM_DELEGATE_BALANCE = "%protocol%://{}/chains/main/blocks/{}/context/contracts/{}"
+    COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}"
 
-    def __init__(self, nw, baking_address, node_url, protocol='http', validate=False, verbose=True):
+    def __init__(self, nw, baking_address, node_url, verbose=True):
         super(RpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
@@ -32,19 +28,13 @@ class RpcRewardApiImpl(RewardApi):
         self.node_url = node_url
 
         self.verbose = verbose
-        self.validate = validate
 
         # replace protocol placeholder
-        self.COMM_HEAD = self.COMM_HEAD.replace('%protocol%',protocol)
-        self.COMM_DELEGATES = self.COMM_DELEGATES.replace('%protocol%',protocol)
-        self.COMM_BLOCK = self.COMM_BLOCK.replace('%protocol%',protocol)
-        self.COMM_SNAPSHOT = self.COMM_SNAPSHOT.replace('%protocol%',protocol)
-        self.COMM_DELEGATE_BALANCE = self.COMM_DELEGATE_BALANCE.replace('%protocol%',protocol)
-
-        if self.validate:
-            mirror_selector = TzScanMirrorSelector(nw)
-            mirror_selector.initialize()
-            self.validate_api = TzScanRewardApiImpl(nw, self.baking_address, mirror_selector)
+        self.COMM_HEAD = self.COMM_HEAD
+        self.COMM_DELEGATES = self.COMM_DELEGATES
+        self.COMM_BLOCK = self.COMM_BLOCK
+        self.COMM_SNAPSHOT = self.COMM_SNAPSHOT
+        self.COMM_DELEGATE_BALANCE = self.COMM_DELEGATE_BALANCE
 
     def get_nb_delegators(self, cycle, current_level):
         _, delegators = self.__get_delegators_and_delgators_balance(cycle, current_level)
@@ -75,9 +65,6 @@ class RpcRewardApiImpl(RewardApi):
 
         logger.debug("delegate_staking_balance={}, total_rewards = {}".format(reward_data["delegate_staking_balance"],reward_data["total_rewards"]))
         logger.debug("delegators = {}".format(reward_data["delegators"]))
-
-        if self.validate:
-            self.__validate_reward_data(reward_model, cycle)
 
         return reward_model
 
@@ -178,58 +165,7 @@ class RpcRewardApiImpl(RewardApi):
 
             level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (chosen_snapshot+1) * self.blocks_per_roll_snapshot
             return level_snapshot_block
-            # request = self.COMM_BLOCK.format(self.node_url, level_snapshot_block)
-            # response = self.do_rpc_request(request)
-            # snapshot = response['hash']
-            # logger.debug("Hash of snapshot block is {}".format(snapshot))
 
-            # return snapshot
         else:
             logger.info("Cycle too far in the future")
             return ""
-
-
-    def __validate_reward_data(self, reward_data_rpc, cycle):
-        reward_data_tzscan = self.validate_api.get_rewards_for_cycle_map(cycle)
-        if not (reward_data_rpc.delegate_staking_balance == int(reward_data_tzscan.delegate_staking_balance)):
-            raise Exception("Delegate staking balance from local node and tzscan are not identical. local node {}, tzscan {}".format(reward_data_rpc.delegate_staking_balance,reward_data_tzscan.delegate_staking_balance ))
-
-        if not (len(reward_data_rpc.delegator_balance_dict) == len(reward_data_tzscan.delegator_balance_dict)):
-            raise Exception("Delegators number from local node and tzscan are not identical.")
-
-        if (len(reward_data_rpc.delegator_balance_dict)) == 0:
-            return
-
-        if not (reward_data_rpc.delegator_balance_dict == reward_data_tzscan.delegator_balance_dict):
-            raise Exception("Delegators' balances from local node and tzscan are not identical.")
-
-        if not reward_data_rpc.total_reward_amount == reward_data_tzscan.total_reward_amount:
-            raise Exception("Total rewards from local node and tzscan are not identical.")
-
-        logger.debug("[__validate_reward_data] validation passed")
-
-
-def test():
-    configure_test_logger()
-
-    network_config_map = init_network_config("MAINNET", None, None)
-    network_config = network_config_map["MAINNET"]
-
-    prpc = PRpcRewardApiImpl(network_config, "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "mainnet.tezrpc.me",True, True)
-    prpc.get_rewards_for_cycle_map(42)
-
-
-def configure_test_logger():
-    test_logger = logging.getLogger('main')
-    test_logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
-    ch.setFormatter(formatter)
-    test_logger.addHandler(ch)
-    global logger
-    logger = test_logger
-
-
-if __name__ == '__main__':
-    test()
