@@ -1,0 +1,239 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to run Tezos Reward Distributor? &mdash; Tezos Reward Distributor 6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="For developers" href="contributers.html" />
+    <link rel="prev" title="How to configure Tezos Reward Distributor?" href="configuration.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run Tezos Reward Distributor?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#linux-service">Linux Service</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributers.html">For developers</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Tezos Reward Distributor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>How to run Tezos Reward Distributor?</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/run.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-run-tezos-reward-distributor">
+<h1>How to run Tezos Reward Distributor?<a class="headerlink" href="#how-to-run-tezos-reward-distributor" title="Permalink to this headline">¶</a></h1>
+<p>For a list of parameters, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>The most common use case is to run in mainnet and start to make payments
+from last released rewards or continue making payments from the cycle
+last payment is done.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>For more example commands please see wiki <a class="reference external" href="https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run">page</a>.</p>
+<div class="section" id="linux-service">
+<h2>Linux Service<a class="headerlink" href="#linux-service" title="Permalink to this headline">¶</a></h2>
+<p>Alternatively, it is possible to add tezos-reward-distributer as a Linux service. It
+can run in the background.</p>
+<p>If docker is used, make sure user is in docker group</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sudo usermod -a -G docker $USER
+</pre></div>
+</div>
+<p>In order to set up the service with default configuration arguments, run
+the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">python3</span> <span class="n">service_add</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>For more information please refer to this wiki <a class="reference external" href="https://github.com/habanoz/tezos-reward-distributor/wiki/Linux-Service">page</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contributers.html" class="btn btn-neutral float-right" title="For developers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="configuration.html" class="btn btn-neutral float-left" title="How to configure Tezos Reward Distributor?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, habanoz
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
