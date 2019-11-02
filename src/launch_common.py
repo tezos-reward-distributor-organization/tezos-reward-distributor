@@ -45,7 +45,7 @@ def add_argument_node_addr(parser):
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
 
 def add_argument_node_addr_public(parser):
-    parser.add_argument("-Ap", "--node_addr_public", help="Public node base url pair, https support is required. i.e. rpc.tzbeta.net", default='rpc.tzbeta.net')
+    parser.add_argument("-Ap", "--node_addr_public", help="Public node base url pair with protocol prefix. i.e. https://rpc.letzbake.com", default='https://mainnet.tezrpc.me')
 
 
 def add_argument_dry(parser):

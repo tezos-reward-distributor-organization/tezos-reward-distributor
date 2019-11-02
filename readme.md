@@ -60,6 +60,12 @@ The most common use case is to run in mainnet and start to make payments from la
 python3 src/main.py
 ```
 
+TRD necessitates an interface to get provided with income and delegator data in order to perform the needed calculations. 
+The default provider is the public rpc node mainnet.tezrpc.me. However, it is possible to change the data provider with the flag -P rpc.
+Please note that in this case, the default node would be localhost:8732. In order to change the node url for the provider, you can give the desired url 
+under the flag -A followed with node_url:port (e.g. -P rpc -A 127.0.0.1:8733).
+Please note that the node should be an archive node, and that the port should be the rpc port specified while launching the node. 
+
 For more example commands please see wiki page:
 
 https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run
