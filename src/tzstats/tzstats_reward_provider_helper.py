@@ -68,6 +68,7 @@ class TzStatsRewardProviderHelper:
         resp = resp.json()
 
         for delegator in resp:
-            root["delegators_balance"][delegator[idx_delegator_address]] = int(1e6 * float(delegator[idx_delegator_balance]))
+            if delegator[idx_delegator_address] != self.baking_address:
+                root["delegators_balance"][delegator[idx_delegator_address]] = int(1e6 * float(delegator[idx_delegator_balance]))
 
         return root
