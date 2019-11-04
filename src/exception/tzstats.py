@@ -1,2 +1,0 @@
-class TzStatsException(Exception):
-    pass

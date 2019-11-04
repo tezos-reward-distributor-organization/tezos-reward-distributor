@@ -151,7 +151,7 @@ def main(args):
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                        node_url=args.node_addr, provider_factory=provider_factory, node_url_public=args.node_addr_public, verbose=args.verbose)
+                        node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
     p.start()
 
     publish_stats = not args.do_not_publish_stats
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     add_argument_reports_base(parser)
     add_argument_config_dir(parser)
     add_argument_node_addr(parser)
-    add_argument_node_addr_public(parser)
+    # add_argument_node_addr_public(parser)
     add_argument_dry(parser)
     add_argument_dry_no_consumer(parser)
     add_argument_executable_dirs(parser)

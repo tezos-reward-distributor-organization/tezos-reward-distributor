@@ -1,0 +1,2 @@
+class TzScanException(Exception):
+    pass

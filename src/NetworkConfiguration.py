@@ -7,11 +7,11 @@ BLOCK_TIME_IN_SEC = 'BLOCK_TIME_IN_SEC'
 logger = main_logger
 
 default_network_config_map = {
-    'MAINNET': {'NAME': 'MAINNET', 'NB_FREEZE_CYCLE': 5, 'BLOCK_TIME_IN_SEC': 60, 'BLOCKS_PER_CYCLE': 4096,
+    'MAINNET': {'NAME': 'MAINNET', 'NB_FREEZE_CYCLE': 5, BLOCK_TIME_IN_SEC: 60, 'BLOCKS_PER_CYCLE': 4096,
                 'BLOCKS_PER_ROLL_SNAPSHOT': 256},
-    'ALPHANET': {'NAME': 'ALPHANET', 'NB_FREEZE_CYCLE': 3, 'BLOCK_TIME_IN_SEC': 30, 'BLOCKS_PER_CYCLE': 2048,
+    'ALPHANET': {'NAME': 'ALPHANET', 'NB_FREEZE_CYCLE': 3, BLOCK_TIME_IN_SEC: 30, 'BLOCKS_PER_CYCLE': 2048,
                  'BLOCKS_PER_ROLL_SNAPSHOT': 256},
-    'ZERONET': {'NAME': 'ZERONET', 'NB_FREEZE_CYCLE': 5, 'BLOCK_TIME_IN_SEC': 20, 'BLOCKS_PER_CYCLE': 128,
+    'ZERONET': {'NAME': 'ZERONET', 'NB_FREEZE_CYCLE': 5, BLOCK_TIME_IN_SEC: 20, 'BLOCKS_PER_CYCLE': 128,
                 'BLOCKS_PER_ROLL_SNAPSHOT': 8},
 }
 
@@ -48,7 +48,7 @@ def is_mainnet(nw_name):
 
 def get_network_config_from_local_node(config_client_manager, node_addr):
     request_constants = CONSTANTS_COMM.format(node_addr)
-    _,response_constants = config_client_manager.send_request(request_constants)
+    response_constants = config_client_manager.exec(request_constants)
     constants = parse_json_response(response_constants)
     network_config_map = parse_constants(constants)
     return network_config_map

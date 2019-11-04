@@ -9,7 +9,7 @@ from Constants import RunMode, PaymentStatus
 from log_config import main_logger
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
-from exception.tzstats import TzStatsException
+from exception.tzscan import TzScanException
 from requests import ReadTimeout, ConnectTimeout
 from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
@@ -27,7 +27,7 @@ MUTEZ = 1e+6
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', verbose=False):
+                 dry_run, wllt_clnt_mngr, node_url, provider_factory, verbose=False):
         super(PaymentProducer, self).__init__()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
@@ -39,7 +39,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.name = name
 
-        self.reward_api = provider_factory.newRewardApi(network_config, self.baking_address, node_url, node_url_public)
+        self.reward_api = provider_factory.newRewardApi(network_config, self.baking_address, wllt_clnt_mngr, node_url)
         self.block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
 
         self.fee_calc = service_fee_calc
@@ -175,9 +175,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # wait until current cycle ends
                     self.wait_until_next_cycle(nb_blocks_remaining)
 
-            except TzStatsException:
-                logger.debug("Tzstats error at reward loop", exc_info=True)
-                logger.info("Tzstats error at reward loop, will try again.")
+            except TzScanException:
+                logger.debug("Tzscan error at reward loop", exc_info=True)
+                logger.info("Tzscan error at reward loop, will try again.")
             except Exception:
                 logger.error("Error at payment producer loop", exc_info=True)
 
@@ -231,16 +231,16 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             return True
         except ReadTimeout:
-            logger.info("Tzstats call failed, will try again.")
-            logger.debug("Tzstats call failed", exc_info=False)
+            logger.info("Tzscan call failed, will try again.")
+            logger.debug("Tzscan call failed", exc_info=False)
             return False
         except ConnectTimeout:
-            logger.info("Tzstats connection failed, will try again.")
-            logger.debug("Tzstats connection failed", exc_info=False)
+            logger.info("Tzscan connection failed, will try again.")
+            logger.debug("Tzscan connection failed", exc_info=False)
             return False
-        except TzStatsException:
-            logger.info("Tzstats error at reward loop, will try again.")
-            logger.debug("Tzstats error at reward loop", exc_info=False)
+        except TzScanException:
+            logger.info("Tzscan error at reward loop, will try again.")
+            logger.debug("Tzscan error at reward loop", exc_info=False)
             return False
         except Exception:
             logger.error("Error at payment producer loop, will try again.", exc_info=True)
