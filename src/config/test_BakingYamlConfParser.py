@@ -3,8 +3,7 @@ from unittest import TestCase
 from cli.wallet_client_manager import WalletClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
-from tzscan.tzscan_block_api import TzScanBlockApiImpl
-from tzscan.tzscan_mirror_selection_helper import TzScanMirrorSelector
+from rpc.rpc_block_api import RpcBlockApiImpl
 
 network={'NAME': 'MAINNET'}
 mainnet_public_node_url = "https://rpc.tzbeta.net/"
@@ -35,9 +34,7 @@ class TestYamlAppConfParser(TestCase):
 
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers)
 
-        mirror_selector = TzScanMirrorSelector(network)
-        mirror_selector.initialize()
-        block_api = TzScanBlockApiImpl(network, mirror_selector)
+        block_api = RpcBlockApiImpl(network, wallet_client_manager, mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager, provider_factory=None, network_config=network,node_url=mainnet_public_node_url,block_api=block_api)
 
 
@@ -72,9 +69,7 @@ class TestYamlAppConfParser(TestCase):
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
                                                     contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
 
-        mirror_selector = TzScanMirrorSelector(network)
-        mirror_selector.initialize()
-        block_api = TzScanBlockApiImpl(network, mirror_selector)
+        block_api = RpcBlockApiImpl(network, wallet_client_manager, mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None, network_config=network,
                                         node_url=mainnet_public_node_url, block_api=block_api)
 
@@ -116,9 +111,7 @@ class TestYamlAppConfParser(TestCase):
 
         wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
 
-        mirror_selector = TzScanMirrorSelector(network)
-        mirror_selector.initialize()
-        block_api = TzScanBlockApiImpl(network, mirror_selector)
+        block_api = RpcBlockApiImpl(network, wallet_client_manager, mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None, network_config=network, node_url=mainnet_public_node_url, block_api=block_api)
 
         cnf_prsr.parse()

@@ -1,0 +1,7 @@
+logs/
+reports/
+*/*/__pycache__/
+*/__pycache__/
+email.ini
+logs/
+docs/build/

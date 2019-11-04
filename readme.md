@@ -1,24 +1,18 @@
-
 <img src="https://raw.githubusercontent.com/habanoz/trd-art/master/logo-narrow/trd_512__1.png" width="128" /> 
-
-## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/habanoz/tezos-reward-distributor.svg?branch=development)](https://travis-ci.com/habanoz/tezos-reward-distributor)
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE DO NOT UPDATE OFTEN.
 
-## Tezos Reward Distributor
-TRD is a software for distributing baking rewards with delegators. This is not a script but a full scale application which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively.
+## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/habanoz/tezos-reward-distributor.svg?branch=master)](https://travis-ci.com/habanoz/tezos-reward-distributor)
 
-TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and tzcan. Developped and tested extensively by the community. For more information please check following article.
+TRD is a software for distributing baking rewards with delegators. The documentation can be found [here](https://habanoz.github.io/tezos-reward-distributor/). This is not a script but a full scale application which can run in the background all the time. It can track cycles and make payments. It does not have to be used as a service, It can also be used interactively.
 
-https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7
+TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and tzstats. Developed and tested extensively by the community. For more information please check following article.
 
-## TRD Art Work 
-https://github.com/habanoz/trd-art contains logo images. If you are using TRD and want to let everybody know about it, feel free to place them in your website.
-
+[Medium article](https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7)
 
 ### Requirements and Setup:
 
-Python 3 is required. You can use following commands to install. 
+Python 3 is required. You can use the following commands to install it. 
 
 ```
 sudo apt-get update
@@ -38,11 +32,19 @@ cd tezos-reward-distributor
 pip3 install -r requirements.txt
 ```
 
-Regulary check and upgrade to the latest available version:
+Regularly check and upgrade to the latest available version:
 
 ```
 git pull
 ```
+
+### Sample configuration:
+Before running the TRD, you need to configure a few stuff including the baking address and the payout process. 
+The configuration file should be by default included in `~/pymnt/cfg/`.
+```
+cp tezos-reward-distributor/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml ~/pymnt/cfg/
+```
+
 
 ### How to Run:
 
@@ -58,55 +60,16 @@ The most common use case is to run in mainnet and start to make payments from la
 python3 src/main.py
 ```
 
+TRD necessitates an interface to get provided with income and delegator data in order to perform the needed calculations. 
+The default provider is the public rpc node mainnet.tezrpc.me. However, it is possible to change the data provider with the flag -P rpc.
+Please note that in this case, the default node would be localhost:8732. In order to change the node url for the provider, you can give the desired url 
+under the flag -A followed with node_url:port (e.g. -P rpc -A 127.0.0.1:8733).
+Please note that the node should be an archive node, and that the port should be the rpc port specified while launching the node. 
+
 For more example commands please see wiki page:
 
 https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run
 
-
-### Baker Configuration:
-
-Each baker has its own configuration and policy. A payment system should be flexible enough to cover needs of bakers. The application uses a yaml file for loading baker specific configurations. 
-
-Configuration tool can be used to create baking configuration file interactively. Also an example configuration file is present under examples directory. For more information on configuration details please see our wiki page:
-https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration
-
-TRD is designed to work as a linux service. It expects use of tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze. For more information on payment addresses please refer to our wikipage:
-https://github.com/habanoz/tezos-reward-distributor/wiki/Payment-Address
-
-### Linux Service
-
-It is possible to add tezos-reward-distributer as a Linux service. It can run in the background. 
-
-If docker is used, make sure user is in docker group
-```
-sudo usermod -a -G docker $USER
-```
-
-In order to set up the service with default configuration arguments, run the following command:
-
-```
-sudo python3 service_add.py
-```
-
-For more information please refer to wiki page:
-
-https://github.com/habanoz/tezos-reward-distributor/wiki/Linux-Service
-
-
-### Email Setup
-
-Get emails for payment reports at each cycle. Fill email.ini file with your email details to receive payment emails.
-
-### Fee Setup
-
-fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.
-
-### Contributions
-Please refer to contributions guide on wiki pages.
-
-https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Contribute
-
 ### Funding
 
 TRD is an open source project and will stay like this. It is not funded by any organization. A grant request is rejected by Tezos Foundation. However, I will try to continue to enhance the software and support the community.
-

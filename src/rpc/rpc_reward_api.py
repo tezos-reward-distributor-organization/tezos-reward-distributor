@@ -1,23 +1,23 @@
-from api.reward_api import RewardApi
+from time import sleep
 
+import requests
+
+from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
-from tzscan.tzscan_mirror_selection_helper import TzScanMirrorSelector
-from cli.cmd_manager import CommandManager
-from util.rpc_utils import parse_json_response, extract_json_part
-from tzscan.tzscan_reward_api import TzScanRewardApiImpl
 
 logger = main_logger
 
-COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
-COMM_DELEGATES = " rpc get http://{}/chains/main/blocks/{}/context/delegates/{}"
-COMM_BLOCK = " rpc get http://{}/chains/main/blocks/{}/"
-COMM_SNAPSHOT = COMM_BLOCK + "context/raw/json/rolls/owner/snapshot/{}/"
-COMM_DELEGATE_BALANCE = " rpc get http://{}/chains/main/blocks/{}/context/contracts/{}"
 
 class RpcRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address, wllt_clnt_mngr, node_url, validate=True):
+    COMM_HEAD = "{}/chains/main/blocks/head"
+    COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
+    COMM_BLOCK = "{}/chains/main/blocks/{}"
+    COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/rolls/owner/snapshot/{}/"
+    COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}"
+
+    def __init__(self, nw, baking_address, node_url, verbose=True):
         super(RpcRewardApiImpl, self).__init__()
 
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
@@ -25,96 +25,117 @@ class RpcRewardApiImpl(RewardApi):
         self.blocks_per_roll_snapshot = nw['BLOCKS_PER_ROLL_SNAPSHOT']
 
         self.baking_address = baking_address
-        self.wllt_clnt_mngr = wllt_clnt_mngr
         self.node_url = node_url
 
-        self.validate = validate
-        if self.validate:
-            mirror_selector = TzScanMirrorSelector(nw)
-            mirror_selector.initialize()
-            self.validate_api = TzScanRewardApiImpl(nw, self.baking_address, mirror_selector)
+        self.verbose = verbose
 
-    def get_nb_delegators(self, cycle, verbose=False):
-        _, delegators = self.__get_delegators_and_delgators_balance(cycle,verbose )
+        # replace protocol placeholder
+        self.COMM_HEAD = self.COMM_HEAD
+        self.COMM_DELEGATES = self.COMM_DELEGATES
+        self.COMM_BLOCK = self.COMM_BLOCK
+        self.COMM_SNAPSHOT = self.COMM_SNAPSHOT
+        self.COMM_DELEGATE_BALANCE = self.COMM_DELEGATE_BALANCE
+
+    def get_nb_delegators(self, cycle, current_level):
+        _, delegators = self.__get_delegators_and_delgators_balance(cycle, current_level)
         return len(delegators)
 
-    def get_rewards_for_cycle_map(self, cycle, verbose=False):
+    def get_rewards_for_cycle_map(self, cycle):
+        current_level, current_cycle = self.__get_current_level()
+        logger.debug("Current level {}, current cycle {}".format(current_level, current_cycle))
 
         reward_data = {}
-
-        reward_data["delegate_staking_balance"], reward_data[
-            "delegators"] = self.__get_delegators_and_delgators_balance(cycle, verbose)
+        reward_data["delegate_staking_balance"], reward_data["delegators"] = self.__get_delegators_and_delgators_balance(cycle, current_level)
         reward_data["delegators_nb"] = len(reward_data["delegators"])
 
-        current_level, head_hash, current_cycle = self.__get_current_level(verbose)
-
-        logger.debug("Current level {}, head hash {}".format(current_level, head_hash))
-
         # Get last block in cycle where rewards are unfrozen
-        level_for_relevant_request = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
+        level_of_last_block_in_unfreeze_cycle = (cycle+self.preserved_cycles+1) * self.blocks_per_cycle
 
-        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, level of interest {}"
-                     .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_for_relevant_request))
+        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, last_block_cycle {}".format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
 
-        if current_level - level_for_relevant_request >= 0:
-            request_metadata = COMM_BLOCK.format(self.node_url, head_hash,
-                                                 current_level - level_for_relevant_request) + '/metadata/'
-            _, response_metadata = self.wllt_clnt_mngr.send_request(request_metadata)
-            metadata = parse_json_response(response_metadata)
-            balance_updates = metadata["balance_updates"]
-
-            unfrozen_rewards = unfrozen_fees = 0
-            for i in range(len(balance_updates)):
-                balance_update = balance_updates[i]
-                if balance_update["kind"] == "freezer":
-                    if balance_update["delegate"] == self.baking_address:
-                        if balance_update["category"] == "rewards":
-                            unfrozen_rewards = -int(balance_update["change"])
-                        elif balance_update["category"] == "fees":
-                            unfrozen_fees = -int(balance_update["change"])
-            reward_data["total_rewards"] = unfrozen_rewards + unfrozen_fees
+        if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
+            unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
+            reward_data["total_rewards"] = unfrozen_rewards
 
         else:
             logger.warn("Please wait until the rewards and fees for cycle {} are unfrozen".format(cycle))
             reward_data["total_rewards"] = 0
 
-        reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
-                                           reward_data["delegators"])
+        reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"], reward_data["delegators"])
 
-        if self.validate:
-            self.__validate_reward_data(reward_model, cycle)
+        logger.debug("delegate_staking_balance={}, total_rewards = {}".format(reward_data["delegate_staking_balance"],reward_data["total_rewards"]))
+        logger.debug("delegators = {}".format(reward_data["delegators"]))
 
         return reward_model
 
-    def __get_current_level(self, verbose=False):
-        _, response = self.wllt_clnt_mngr.send_request(COMM_HEAD.format(self.node_url))
-        head = parse_json_response(response)
+    def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
+        request_metadata = self.COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle) + '/metadata'
+        metadata = self.do_rpc_request(request_metadata)
+        balance_updates = metadata["balance_updates"]
+        unfrozen_rewards = unfrozen_fees = 0
+
+        for i in range(len(balance_updates)):
+            balance_update = balance_updates[i]
+            if balance_update["kind"] == "freezer":
+                if balance_update["delegate"] == self.baking_address:
+                    if int(balance_update["cycle"]) == cycle or int(balance_update["change"]) < 0:
+                        if balance_update["category"] == "rewards":
+                            unfrozen_rewards = -int(balance_update["change"])
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
+                        elif balance_update["category"] == "fees":
+                            unfrozen_fees = -int(balance_update["change"])
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
+                        else:
+                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(balance_update))
+                    else:
+                        logger.debug("[__get_unfrozen_rewards] Found balance update, cycle does not match or change is non-zero, not including: {}".format(balance_update))
+
+        return unfrozen_fees + unfrozen_rewards
+
+    def do_rpc_request(self, request):
+        if self.verbose:
+            logger.debug("[do_rpc_request] Requesting URL {}".format(request))
+
+        sleep(0.1) # be nice to public node service
+
+        resp = requests.get(request)
+        if resp.status_code != 200:
+            raise Exception("Request '{} failed with status code {}".format(request, resp.status_code))
+
+        response = resp.json()
+        if self.verbose:
+            logger.debug("[do_rpc_request] Response {}".format(response))
+        return response
+
+    def __get_current_level(self):
+        head = self.do_rpc_request(self.COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
         current_cycle = int(head["metadata"]["level"]["cycle"])
-        head_hash = head["hash"]
-        return current_level, head_hash, current_cycle
+        # head_hash = head["hash"]
 
-    def __get_delegators_and_delgators_balance(self, cycle, verbose=False):
+        return current_level, current_cycle
 
-        hash_snapshot_block = self.__get_snapshot_block_hash(cycle)
+
+
+    def __get_delegators_and_delgators_balance(self, cycle, current_level):
+
+        hash_snapshot_block = self.__get_snapshot_block_hash(cycle, current_level)
         if hash_snapshot_block == "":
             return 0, []
 
-        request = COMM_DELEGATES.format(self.node_url, hash_snapshot_block, self.baking_address)
-        _, response = self.wllt_clnt_mngr.send_request(request)
+        request = self.COMM_DELEGATES.format(self.node_url, hash_snapshot_block, self.baking_address)
 
         delegate_staking_balance = 0
         delegators = {}
 
         try:
-            response = parse_json_response(response)
+            response = self.do_rpc_request(request)
             delegate_staking_balance = int(response["staking_balance"])
 
             delegators_addresses = response["delegated_contracts"]
             for idx, delegator in enumerate(delegators_addresses):
-                request = COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
-                _, response = self.wllt_clnt_mngr.send_request(request)
-                response = parse_json_response(response)
+                request = self.COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
+                response = self.do_rpc_request(request)
                 delegators[delegator] = int(response["balance"])
 
                 logger.debug(
@@ -125,22 +146,16 @@ class RpcRewardApiImpl(RewardApi):
 
         return delegate_staking_balance, delegators
 
-    def __get_snapshot_block_hash(self, cycle, verbose=False):
+    def __get_snapshot_block_hash(self, cycle, current_level):
 
-        current_level, head_hash, current_cycle = self.__get_current_level(verbose)
-
-        level_for_snapshot_request = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
-
-        logger.debug("Current level {}, head hash {}".format(current_level, head_hash))
-        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, level of interest {}"
-                     .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_for_snapshot_request))
+        snapshot_level = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
+        logger.debug("Reward cycle {}, snapshot level {}".format(cycle,snapshot_level))
 
         block_level = cycle * self.blocks_per_cycle + 1
 
-        if current_level - level_for_snapshot_request >= 0:
-            request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
-            _, response = self.wllt_clnt_mngr.send_request(request)
-            snapshots = parse_json_response(response)
+        if current_level - snapshot_level >= 0:
+            request = self.COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
+            snapshots = self.do_rpc_request(request)
 
             if len(snapshots) == 1:
                 chosen_snapshot = snapshots[0]
@@ -148,38 +163,9 @@ class RpcRewardApiImpl(RewardApi):
                 logger.error("Too few or too many possible snapshots found!")
                 return ""
 
-            level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + ( chosen_snapshot + 1) * self.blocks_per_roll_snapshot
-            request = COMM_BLOCK.format(self.node_url, head_hash, current_level - level_snapshot_block)
-            _, comm_block_response = self.wllt_clnt_mngr.send_request(request)
-            comm_block_response = comm_block_response.rstrip()
-            comm_block_response_json = extract_json_part(comm_block_response, verbose=True)
-            cmd_mngr = CommandManager(verbose=verbose)
-            _, hash_snapshot_block = cmd_mngr.execute("echo '{}' | jq -r .hash".format(comm_block_response_json))
+            level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (chosen_snapshot+1) * self.blocks_per_roll_snapshot
+            return level_snapshot_block
 
-            logger.debug("Hash of snapshot block is {}".format(hash_snapshot_block))
-
-            return hash_snapshot_block
         else:
             logger.info("Cycle too far in the future")
             return ""
-
-
-    def __validate_reward_data(self, reward_data_rpc, cycle):
-        reward_data_tzscan = self.validate_api.get_rewards_for_cycle_map(cycle)
-        if not (reward_data_rpc.delegate_staking_balance == int(reward_data_tzscan.delegate_staking_balance)):
-            raise Exception("Delegate staking balance from local node and tzscan are not identical. local node {}, tzscan {}".format(reward_data_rpc.delegate_staking_balance,reward_data_tzscan.delegate_staking_balance ))
-
-        if not (len(reward_data_rpc.delegator_balance_dict) == len(reward_data_tzscan.delegator_balance_dict)):
-            raise Exception("Delegators number from local node and tzscan are not identical.")
-
-        if (len(reward_data_rpc.delegator_balance_dict)) == 0:
-            return
-
-        # delegators_balance_tzscan = [ int(reward_data_tzscan["delegators_balance"][i][1]) for i in range(len(reward_data_tzscan["delegators_balance"]))]
-        # print(set(list(reward_data_rpc["delegators"].values())))
-        # print(set(delegators_balance_tzscan))
-        if not (reward_data_rpc.delegator_balance_dict == reward_data_tzscan.delegator_balance_dict):
-            raise Exception("Delegators' balances from local node and tzscan are not identical.")
-
-        if not reward_data_rpc.total_reward_amount == reward_data_tzscan.total_reward_amount:
-            raise Exception("Total rewards from local node and tzscan are not identical.")

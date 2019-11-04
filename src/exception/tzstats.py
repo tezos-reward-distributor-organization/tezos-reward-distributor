@@ -1,0 +1,2 @@
+class TzStatsException(Exception):
+    pass

@@ -153,17 +153,17 @@ class BakingYamlConfParser(YamlConfParser):
         # if reveal information is present, do not ask
         if 'revealed' in addr_obj:
             revealed = addr_obj['revealed']
-        else:
-            revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
+        #else:
+        #   revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
 
         # payment address needs to be revealed
-        if not revealed:
-            raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
-                                         "Public key is not revealed.\n"
-                                         "Use command 'reveal key for <src>' to reveal your public key. \n"
-                                         "For implicit accounts, setting your account as delegate is enough.\n"
-                                         "For more information please refer to tezos command line interface."
-                                         .format(pymnt_addr))
+        #if not revealed:
+        #   raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
+        #                                "Public key is not revealed.\n"
+        #                                "Use command 'reveal key for <src>' to reveal your public key. \n"
+        #                                "For implicit accounts, setting your account as delegate is enough.\n"
+        #                                "For more information please refer to tezos command line interface."
+        #                                .format(pymnt_addr))
 
         # if not self.block_api.get_revelation(conf_obj[('%s_manager' % PAYMENT_ADDRESS)]):
         #    raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
