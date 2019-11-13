@@ -248,7 +248,7 @@ class BatchPayer():
 
             op_counter.inc()
 
-            content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.address) \
+            content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
                 .replace("%fee%", self.default_fee).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", self.storage_limit)
 

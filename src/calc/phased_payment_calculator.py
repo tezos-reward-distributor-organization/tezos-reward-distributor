@@ -86,6 +86,7 @@ class PhasedPaymentCalculator:
         phase4 = CalculatePhase4(self.founders_map, self.owners_map)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
 
+
         # calculate amounts
         phase_last = CalculatePhaseFinal()
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(rwrd_logs, total_rwrd_amnt)
