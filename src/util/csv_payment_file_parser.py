@@ -36,4 +36,4 @@ class CsvPaymentFileParser:
 
             for pl in payment_logs:
                 # write row to csv file
-                csv_writer.writerow([pl.address, pl.type, pl.amount, pl.hash if pl.hash else "None", pl.paid.value])
+                csv_writer.writerow([pl.paymentaddress, pl.type, pl.amount, pl.hash if pl.hash else "None", pl.paid.value])

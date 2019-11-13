@@ -1,7 +1,5 @@
 # Income
-idx_income_balance = 4
-idx_income_delegated = 5
-
+idx_income_expected_income = 19
 idx_income_total_income = 21
 idx_income_total_bonds = 22
 
@@ -23,5 +21,8 @@ idx_income_lost_revelation_fees = 36
 idx_income_lost_revelation_rewards = 37
 
 #snapshot
-idx_delegator_address = 15
+idx_baker_balance = 11
+idx_baker_delegated = 12
+
 idx_delegator_balance = 11
+idx_delegator_address = 15

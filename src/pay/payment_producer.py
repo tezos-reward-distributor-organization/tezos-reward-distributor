@@ -137,7 +137,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 if pymnt_cycle <= crrnt_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                     if not self.payments_queue.full():
 
-                        result = self.try_to_pay(pymnt_cycle)
+                        if pymnt_cycle >= crrnt_cycle:
+                            if self.reward_api.name == 'tzstats':
+                                result = self.try_to_pay(pymnt_cycle, expected_reward=True)
+                            else:
+                                logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag.")
+                                self.exit()
+                                break
+                        else:
+                            result = self.try_to_pay(pymnt_cycle)
 
                         if result:
                             # single run is done. Do not continue.
@@ -189,7 +197,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle):
+    def try_to_pay(self, pymnt_cycle, expected_reward = False):
         try:
             logger.info("Payment cycle is " + str(pymnt_cycle))
 
@@ -201,7 +209,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle)
+            if expected_reward:
+                reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, expected_reward)
+            else:
+                reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle)
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
             # set cycle info
