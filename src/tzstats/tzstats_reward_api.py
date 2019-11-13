@@ -12,12 +12,14 @@ class TzStatsRewardApiImpl(RewardApi):
     def __init__(self, nw, baking_address, verbose=False):
         super().__init__()
 
+        self.name = 'tzstats'
+
         self.verbose = verbose
         self.logger = main_logger
         self.helper = TzStatsRewardProviderHelper(nw, baking_address)
 
-    def get_rewards_for_cycle_map(self, cycle):
-        root = self.helper.get_rewards_for_cycle(cycle, self.verbose)
+    def get_rewards_for_cycle_map(self, cycle, expected_reward = False):
+        root = self.helper.get_rewards_for_cycle(cycle, expected_reward, self.verbose)
 
         delegate_staking_balance = root["delegate_staking_balance"]
 

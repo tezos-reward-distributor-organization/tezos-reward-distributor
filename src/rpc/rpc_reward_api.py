@@ -20,6 +20,8 @@ class RpcRewardApiImpl(RewardApi):
     def __init__(self, nw, baking_address, node_url, verbose=True):
         super(RpcRewardApiImpl, self).__init__()
 
+        self.name = 'RPC'
+
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
         self.preserved_cycles = nw['NB_FREEZE_CYCLE']
         self.blocks_per_roll_snapshot = nw['BLOCKS_PER_ROLL_SNAPSHOT']

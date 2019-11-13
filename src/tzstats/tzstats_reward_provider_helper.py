@@ -28,7 +28,7 @@ class TzStatsRewardProviderHelper:
 
         self.baking_address = baking_address
 
-    def get_rewards_for_cycle(self, cycle, verbose=False):
+    def get_rewards_for_cycle(self, cycle, expected_reward = False, verbose=False):
         #############
         root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balance": {}}
 
@@ -47,9 +47,11 @@ class TzStatsRewardProviderHelper:
             raise TzStatsException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
+        if expected_reward:
+            root["total_reward_amount"] = int(1e6 * float(resp[idx_income_expected_income]))
+        else:
+            root["total_reward_amount"] = int(1e6 * (float(resp[idx_income_baking_income]) + float(resp[idx_income_endorsing_income]) + float(resp[idx_income_seed_income]) +  float(resp[idx_income_fees_income])  -  float(resp[idx_income_lost_accusation_fees]) -  float(resp[idx_income_lost_accusation_rewards]) -  float(resp[idx_income_lost_revelation_fees]) -  float(resp[idx_income_lost_revelation_rewards])))
 
-        root["total_reward_amount"] = int( 1e6 * ( float(resp[idx_income_baking_income]) +  float(resp[idx_income_endorsing_income]) + float(resp[idx_income_seed_income]) +  float(resp[idx_income_fees_income])  -  float(resp[idx_income_lost_accusation_fees]) -  float(resp[idx_income_lost_accusation_rewards]) -  float(resp[idx_income_lost_revelation_fees]) -  float(resp[idx_income_lost_revelation_rewards])))
-        root["delegate_staking_balance"] = int( 1e6 * (float(resp[idx_income_balance]) + float(resp[idx_income_delegated])))
 
         uri = self.api['API_URL'] + delegators_call.format(cycle - self.preserved_cycles - 2, self.baking_address)
 
@@ -68,7 +70,9 @@ class TzStatsRewardProviderHelper:
         resp = resp.json()
 
         for delegator in resp:
-            if delegator[idx_delegator_address] != self.baking_address:
+            if delegator[idx_delegator_address] == self.baking_address:
+                root["delegate_staking_balance"] = int(1e6 * (float(delegator[idx_baker_balance]) + float(delegator[idx_baker_delegated])))
+            else:
                 root["delegators_balance"][delegator[idx_delegator_address]] = int(1e6 * float(delegator[idx_delegator_balance]))
 
         return root
