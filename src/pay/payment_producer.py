@@ -23,7 +23,6 @@ logger = main_logger
 
 MUTEZ = 1e+6
 
-
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
@@ -137,11 +136,22 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 if pymnt_cycle <= crrnt_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                     if not self.payments_queue.full():
 
+                        # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= crrnt_cycle:
                             if self.reward_api.name == 'tzstats':
+                                logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation given by tzstats.")
                                 result = self.try_to_pay(pymnt_cycle, expected_reward=True)
                             else:
                                 logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag.")
+                                self.exit()
+                                break
+                        # Paying cycles with frozen rewards (-R in [-1, -5] )
+                        elif pymnt_cycle >= crrnt_cycle - self.nw_config['NB_FREEZE_CYCLE']:
+                            if self.reward_api.name == 'tzstats':
+                                logger.warn("Please note that you are doing payouts for frozen rewards!!!")
+                                result = self.try_to_pay(pymnt_cycle)
+                            else:
+                                logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag or wait until the rewards are unfrozen.")
                                 self.exit()
                                 break
                         else:
@@ -230,6 +240,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 logger.debug("Creating calculation report (%s)", report_file_path)
 
+                sleep(5.0)
+
                 # 6- create calculations report file. This file contains calculations details
                 self.create_calculations_report(reward_logs, report_file_path, total_amount)
                 # 7- next cycle
@@ -274,7 +286,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # write headers and total rewards
             writer.writerow(
                 ["address", "type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
-                 "skipped", "atphase", "desc"])
+                 "skipped", "atphase", "desc", "payment_address"])
 
             writer.writerow([self.baking_address, "B", sum([pl.balance for pl in payment_logs]),
                              "{0:f}".format(1.0),
@@ -282,28 +294,30 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                              "{0:f}".format(total_rewards),
                              "{0:f}".format(0.0),
                              "{0:f}".format(0.0),
-                             "0", "0", "-1", "Baker"
+                             "0", "0", "-1", "Baker",
+                             "None"
                              ])
 
             for pymnt_log in payment_logs:
                 # write row to csv file
-                writer.writerow([pymnt_log.address, pymnt_log.type, pymnt_log.balance,
-                                 "{0:.10f}".format(pymnt_log.ratio),
-                                 "{0:.10f}".format(pymnt_log.service_fee_ratio),
-                                 "{0:f}".format(pymnt_log.amount),
-                                 "{0:f}".format(pymnt_log.service_fee_amount),
-                                 "{0:f}".format(pymnt_log.service_fee_rate),
-                                 "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
-                                 pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
-                                 pymnt_log.desc if pymnt_log.desc else "None"
-                                 ])
+                array = [pymnt_log.address, pymnt_log.type, pymnt_log.balance,
+                         "{0:.10f}".format(pymnt_log.ratio),
+                         "{0:.10f}".format(pymnt_log.service_fee_ratio),
+                         "{0:f}".format(pymnt_log.amount),
+                         "{0:f}".format(pymnt_log.service_fee_amount),
+                         "{0:f}".format(pymnt_log.service_fee_rate),
+                         "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
+                         pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
+                         pymnt_log.desc if pymnt_log.desc else "None",
+                         pymnt_log.paymentaddress]
+                writer.writerow(array)
 
                 logger.debug("Reward created for address %s type %s balance {:>10.2f} ratio {:.8f} fee_ratio {:.6f} "
-                             "amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f} payable %s skipped %s atphase %s desc %s"
+                             "amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f} payable %s skipped %s atphase %s desc %s pay_addr %s"
                              .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
                                      pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
-                             pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc)
+                                     pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc, pymnt_log.paymentaddress)
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
     @staticmethod
