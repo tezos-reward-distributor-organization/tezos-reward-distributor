@@ -18,7 +18,7 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_executable_dirs, add_argument_docker, \
-    add_argument_verbose, add_argument_dry
+    add_argument_verbose, add_argument_dry, add_argument_provider
 from log_config import main_logger
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, SPECIALS_MAP, SUPPORTERS_SET
@@ -69,7 +69,7 @@ def onbakingaddress(input):
     if not input.startswith("tz"):
         printe("Only tz addresses are allowed")
         return
-    provider_factory = ProviderFactory("tzscan")
+    provider_factory = ProviderFactory(args.reward_data_provider)
     global parser
     parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
     parser.set(BAKING_ADDRESS, input)
@@ -377,7 +377,7 @@ def main(args):
         print("Configuration file is created at '{}'".format(config_file_path))
 
 def load_config_file(wllt_clnt_mngr, network_config, master_cfg):
-    provider_factory = ProviderFactory("tzscan")
+    provider_factory = ProviderFactory(args.reward_data_provider)
     parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
     parser.parse()
     parser.validate()
@@ -446,6 +446,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
+    add_argument_provider(parser)
     add_argument_network(parser)
     add_argument_reports_base(parser)
     add_argument_config_dir(parser)
