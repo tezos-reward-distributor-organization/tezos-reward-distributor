@@ -56,7 +56,7 @@ class EmailManager():
 
         with open(EMAIL_INI_PATH, "w") as f:
             f.writelines(["[DEFAULT]\n", USER + NL, PASS + NL, HOST + NL, PORT + NL, SENDER + NL,
-                          RECIPIENTS + NL])
+                          RECIPIENTS + NL + USE_SSL+NL])
 
     def send_payment_mail(self, cyle, payments_file, nb_failed, nb_unknown):
         if not self.email_sender:
