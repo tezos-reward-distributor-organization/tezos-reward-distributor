@@ -7,8 +7,9 @@ from os.path import basename
 
 
 class EmailSender():
-    def __init__(self, host, port, user, passw, sender):
+    def __init__(self, host, port, user, passw, sender, use_ssl: False):
         super(EmailSender, self).__init__()
+        self.use_ssl = use_ssl
         self.host = host
         self.port = port
         self.sender = sender
@@ -36,7 +37,16 @@ class EmailSender():
             part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
             msg.attach(part)
 
-        smtp = smtplib.SMTP(self.host, self.port)
+        if self.use_ssl:
+            smtp = smtplib.SMTP_SSL(self.host, self.port)
+        else:
+            smtp = smtplib.SMTP(self.host, self.port)
+
         smtp.login(self.user, self.password)
         smtp.sendmail(self.sender, recipient_string, msg.as_string())
         smtp.close()
+
+
+if __name__ == '__main__':
+    sender = EmailSender("---", 587, "---", "---", "---")
+    sender.send("---", "---", "---", [])
