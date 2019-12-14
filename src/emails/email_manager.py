@@ -13,6 +13,7 @@ PASS = "pass"
 HOST = "smtp.host"
 PORT = "smtp.port"
 SENDER = "sender"
+USE_SSL = "use.ssl"
 
 EMAIL_INI_PATH = "./email.ini"
 
@@ -29,12 +30,21 @@ class EmailManager():
 
         config.read(EMAIL_INI_PATH)
         default = config['DEFAULT']
+
+        use_ssl = self.getUseSslOrFalse(default)
+
         self.default = default
         if self.all_set(default):
-            self.email_sender = EmailSender(default[HOST], int(default[PORT]), default[USER],
-                                            default[PASS], default[SENDER])
+            self.email_sender = EmailSender(default[HOST], int(default[PORT]), default[USER], default[PASS],
+                                            default[SENDER], use_ssl)
         else:
             logger.info("If you want to send emails, populate email.ini file under current working directory.")
+
+    def getUseSslOrFalse(self, default):
+        use_ssl = False
+        if USE_SSL in default:
+            use_ssl = default[USE_SSL]
+        return use_ssl
 
     def all_set(self, default):
         return default[USER] and default[PASS] and default[HOST] and default[PORT] and default[SENDER] and default[
@@ -46,7 +56,7 @@ class EmailManager():
 
         with open(EMAIL_INI_PATH, "w") as f:
             f.writelines(["[DEFAULT]\n", USER + NL, PASS + NL, HOST + NL, PORT + NL, SENDER + NL,
-                          RECIPIENTS + NL])
+                          RECIPIENTS + NL + USE_SSL+NL])
 
     def send_payment_mail(self, cyle, payments_file, nb_failed, nb_unknown):
         if not self.email_sender:
@@ -60,4 +70,3 @@ class EmailManager():
                                self.default["recipients"], [payments_file])
 
         logger.debug("Report email sent for cycle {}.".format(cyle))
-
