@@ -9,7 +9,7 @@ from Constants import RunMode, PaymentStatus
 from log_config import main_logger
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
-from exception.tzstats import TzStatsException
+from exception.api_provider import ApiProviderException
 from requests import ReadTimeout, ConnectTimeout
 from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
@@ -193,9 +193,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # wait until current cycle ends
                     self.wait_until_next_cycle(nb_blocks_remaining)
 
-            except TzStatsException:
-                logger.debug("Tzstats error at reward loop", exc_info=True)
-                logger.info("Tzstats error at reward loop, will try again.")
+            except ApiProviderException:
+                logger.debug("{} API error at reward loop".format(self.reward_api.name), exc_info=True)
+                logger.info("{} API error at reward loop, will try again.".format(self.reward_api.name))
             except Exception:
                 logger.error("Error at payment producer loop", exc_info=True)
 
@@ -254,16 +254,16 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             return True
         except ReadTimeout:
-            logger.info("Tzstats call failed, will try again.")
-            logger.debug("Tzstats call failed", exc_info=False)
+            logger.info("API provider call failed, will try again.")
+            logger.debug("API provider call failed", exc_info=False)
             return False
         except ConnectTimeout:
-            logger.info("Tzstats connection failed, will try again.")
-            logger.debug("Tzstats connection failed", exc_info=False)
+            logger.info("API provider connection failed, will try again.")
+            logger.debug("API provider connection failed", exc_info=False)
             return False
-        except TzStatsException:
-            logger.info("Tzstats error at reward loop, will try again.")
-            logger.debug("Tzstats error at reward loop", exc_info=False)
+        except ApiProviderException:
+            logger.info("API provider error at reward loop, will try again.")
+            logger.debug("API provider error at reward loop", exc_info=False)
             return False
         except Exception:
             logger.error("Error at payment producer loop, will try again.", exc_info=True)

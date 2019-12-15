@@ -52,7 +52,6 @@ class BatchPayer():
             logger.warn("File {} not found. Using default fee values".format(FEE_INI))
 
         kttx = config['KTTX']
-        self.base = kttx['base']
         self.gas_limit = kttx['gas_limit']
         self.storage_limit = kttx['storage_limit']
         self.default_fee = kttx['fee']
@@ -351,14 +350,14 @@ class BatchPayer():
             return PaymentStatus.FAIL, ""
 
         operation_hash = parse_json_response(inject_command_response)
-        logger.debug("Operation hash is {}".format(operation_hash))
+        logger.info("Operation hash is {}".format(operation_hash))
 
         # wait for inclusion
-        logger.debug("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
+        logger.info("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
             self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
-            logger.debug("Operation {} is included".format(operation_hash))
+            logger.info("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
             return PaymentStatus.INJECTED, operation_hash

@@ -1,7 +1,7 @@
 import requests
 
 from api.block_api import BlockApi
-from exception.tzstats import TzStatsException
+from exception.api_provider import ApiProviderException
 from log_config import main_logger
 
 logger = main_logger

@@ -1,6 +1,6 @@
 import requests
 
-from exception.tzstats import TzStatsException
+from exception.api_provider import ApiProviderException
 from log_config import main_logger
 from tzstats.tzstats_api_constants import *
 
@@ -24,7 +24,7 @@ class TzStatsRewardProviderHelper:
 
         self.api = PREFIX_API[nw['NAME']]
         if self.api is None:
-            raise TzStatsException("Unknown network {}".format(nw))
+            raise ApiProviderException("Unknown network {}".format(nw))
 
         self.baking_address = baking_address
 
@@ -44,7 +44,7 @@ class TzStatsRewardProviderHelper:
 
         if resp.status_code != 200:
             # This means something went wrong.
-            raise TzStatsException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
         if expected_reward:
@@ -65,7 +65,7 @@ class TzStatsRewardProviderHelper:
 
         if resp.status_code != 200:
             # This means something went wrong.
-            raise TzStatsException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()
 
