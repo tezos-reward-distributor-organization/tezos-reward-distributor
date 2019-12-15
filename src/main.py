@@ -1,10 +1,10 @@
-import argparse
 import json
 import os
 import queue
 import sys
 import time
 
+from launch_common import print_banner, parse_arguments
 import version
 from Constants import RunMode
 from NetworkConfiguration import init_network_config
@@ -16,9 +16,6 @@ from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger
-from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_base, \
-    add_argument_config_dir, add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, \
-    add_argument_executable_dirs, add_argument_docker, add_argument_verbose, add_argument_node_addr_public
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -28,12 +25,10 @@ from util.dir_utils import get_payment_root, \
 from util.process_life_cycle import ProcessLifeCycle
 
 LINER = "--------------------------------------------"
-
 NB_CONSUMERS = 1
 BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
-
 life_cycle = ProcessLifeCycle()
 
 
@@ -198,62 +193,13 @@ def get_latest_report_file(payments_root):
     return recent
 
 
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
-
-        setattr(namespace, "release_override", values)
-
-
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor>=6:
         raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major,sys.version_info.minor ))
 
-    parser = argparse.ArgumentParser()
+    args = parse_arguments()
 
-    add_argument_network(parser)
-    add_argument_provider(parser)
-    add_argument_reports_base(parser)
-    add_argument_config_dir(parser)
-    add_argument_node_addr(parser)
-    add_argument_node_addr_public(parser)
-    add_argument_dry(parser)
-    add_argument_dry_no_consumer(parser)
-    add_argument_executable_dirs(parser)
-    add_argument_docker(parser)
-    add_argument_verbose(parser)
-
-    parser.add_argument("-s", "--background_service",
-                        help="Marker to indicate that TRD is running in daemon mode. "
-                             "When not given it indicates that TRD is in interactive mode.",
-                        action="store_true")
-    parser.add_argument("-Dp", "--do_not_publish_stats",
-                        help="Do not publish anonymous usage statistics",
-                        action="store_true")
-    parser.add_argument("-M", "--run_mode",
-                        help="Waiting decision after making pending payments. 1: default option. Run forever. "
-                             "2: Run all pending payments and exit. 3: Run for one cycle and exit. "
-                             "Suitable to use with -C option.",
-                        default=1, choices=[1, 2, 3], type=int)
-    parser.add_argument("-R", "--release_override",
-                        help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
-                             "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
-                             "For future payments give negative values. Valid range is [-11,)",
-                        default=0, type=int, action=ReleaseOverrideAction)
-    parser.add_argument("-O", "--payment_offset",
-                        help="Number of blocks to wait after a cycle starts before starting payments. "
-                             "This can be useful because cycle beginnings may be bussy.",
-                        default=0, type=int)
-    parser.add_argument("-C", "--initial_cycle",
-                        help="First cycle to start payment. For last released rewards, set to 0. Non-positive values "
-                             "are interpreted as: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). "
-                             "If not set application will continue from last payment made or last reward released.",
-                        type=int)
-
-    args = parser.parse_args()
-    script_name = ""
-    print_banner(args, script_name)
+    print_banner(args, script_name="")
 
     main(args)
