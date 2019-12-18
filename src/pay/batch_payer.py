@@ -11,8 +11,6 @@ from NetworkConfiguration import BLOCK_TIME_IN_SEC
 from log_config import main_logger
 from util.rpc_utils import parse_json_response
 
-ZERO_THRESHOLD = 2e+3
-
 logger = main_logger
 
 MAX_TX_PER_BLOCK = 280
@@ -44,6 +42,7 @@ class BatchPayer():
         self.node_url = node_url
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
+        self.zero_threshold = 1e+1  # 10 = 0.00001 XTZ
 
         config = configparser.ConfigParser()
         if os.path.isfile(FEE_INI):
@@ -65,6 +64,9 @@ class BatchPayer():
                 "delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
 
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
+
+        if self.delegator_pays_xfer_fee:
+            self.zero_threshold = int(self.default_fee)+1
 
         logger.debug("Transfer fee is paid by {}".format("Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
 
@@ -116,28 +118,24 @@ class BatchPayer():
 
         self.log_processed_items(payment_logs)
 
-        payment_items = [pi for pi in payment_items_in if not pi.paid.is_processed()]
+        unprocessed_payment_items = [pi for pi in payment_items_in if not pi.paid.is_processed()]
 
-        # separate trivial items, amounts less than zero_threshold are not trivial, no needed to be paid
-        non_trivial_payment_items = [pi for pi in payment_items if pi.amount < ZERO_THRESHOLD]
-        non_trivial_payment_items_total = sum([pl.amount for pl in non_trivial_payment_items])
-        if non_trivial_payment_items:
-            logger.info("{} payment items are not trivial, total of {:,} mutez".format(len(non_trivial_payment_items), non_trivial_payment_items_total))
-        self.log_non_trivial_items(non_trivial_payment_items)
-
-        trivial_payment_items = [pi for pi in payment_items if pi.amount >= ZERO_THRESHOLD]
-        if not trivial_payment_items:
-            logger.info("No trivial items found, returning...")
+        # all unprocessed_payment_items are important (non-trivial)
+        # gather up all unprocessed_payment_items that are greater than, or equal to the zero_threshold
+        # zero_threshold is either "0.00001 XTZ" or the txn fee if delegator is not paying it
+        payment_items = [pi for pi in unprocessed_payment_items if pi.amount >= self.zero_threshold]
+        if not payment_items:
+            logger.info("No payment items found, returning...")
             return payment_items_in, 0
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
-        payment_items_chunks = [trivial_payment_items[i:i + MAX_TX_PER_BLOCK] for i in range(0, len(trivial_payment_items), MAX_TX_PER_BLOCK)]
+        payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
-        total_amount_to_pay = sum([pl.amount for pl in trivial_payment_items])
-        if not self.delegator_pays_xfer_fee: total_amount_to_pay += int(self.default_fee) * len(trivial_payment_items)
-        logger.info("Total trivial amount to pay is {:,} mutez.".format(total_amount_to_pay))
-        logger.info("{} trivial payments will be done in {} batches".format(len(trivial_payment_items), len(payment_items_chunks)))
+        total_amount_to_pay = sum([pl.amount for pl in payment_items])
+        if not self.delegator_pays_xfer_fee: total_amount_to_pay += int(self.default_fee) * len(payment_items)
+        logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
+        logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
 
         total_attempts = 0
         op_counter = OpCounter()
@@ -150,14 +148,6 @@ class BatchPayer():
 
             payment_logs.extend(payments_log)
             total_attempts += attempt
-
-        # set non trivial items to DONE
-        for pi in non_trivial_payment_items:
-            pi.paid = PaymentStatus.DONE
-            pi.hash = ""
-
-        # add non trivial items
-        payment_logs.extend(non_trivial_payment_items)
 
         return payment_logs, total_attempts
 
@@ -239,8 +229,6 @@ class BatchPayer():
 
         for payment_item in payment_records:
             pymnt_amnt = payment_item.amount  # expects in micro tezos
-
-            assert pymnt_amnt >= ZERO_THRESHOLD # zero check, zero amounts needs to be filtered out earlier
 
             if self.delegator_pays_xfer_fee:
                 pymnt_amnt = max(pymnt_amnt - int(self.default_fee), 0)  # ensure not less than 0
