@@ -13,7 +13,7 @@ class RpcRewardApiImpl(RewardApi):
     COMM_HEAD = "{}/chains/main/blocks/head"
     COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
     COMM_BLOCK = "{}/chains/main/blocks/{}"
-    COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/rolls/owner/snapshot/{}/"
+    COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
     COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}"
 
     def __init__(self, nw, baking_address, node_url, verbose=True):
@@ -85,7 +85,7 @@ class RpcRewardApiImpl(RewardApi):
             balance_update = balance_updates[i]
             if balance_update["kind"] == "freezer":
                 if balance_update["delegate"] == self.baking_address:
-                    if int(balance_update["cycle"]) == cycle or int(balance_update["change"]) < 0:
+                    if int(balance_update["cycle"]) == cycle and int(balance_update["change"]) < 0:
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
                             logger.debug(
@@ -176,13 +176,7 @@ class RpcRewardApiImpl(RewardApi):
 
         if current_level - snapshot_level >= 0:
             request = self.COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
-            snapshots = self.do_rpc_request(request)
-
-            if len(snapshots) == 1:
-                chosen_snapshot = snapshots[0]
-            else:
-                logger.error("Too few or too many possible snapshots found!")
-                return ""
+            chosen_snapshot = self.do_rpc_request(request)
 
             level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (
                     chosen_snapshot + 1) * self.blocks_per_roll_snapshot
