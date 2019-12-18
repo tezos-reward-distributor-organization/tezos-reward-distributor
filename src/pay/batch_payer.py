@@ -32,8 +32,7 @@ COMM_INJECT = " rpc post http://%NODE%/injection/operation with '\"%OPERATION_HA
 COMM_WAIT = " wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
 
 FEE_INI = 'fee.ini'
-DUMMY_FEE = 1000
-
+MUTEZ = 1e6
 
 class BatchPayer():
     def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_xfer_fee, network_config):
@@ -42,7 +41,7 @@ class BatchPayer():
         self.node_url = node_url
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
-        self.zero_threshold = 1e+1  # 10 = 0.00001 XTZ
+        self.zero_threshold = 1    # 1 mutez = 0.000001 XTZ
 
         config = configparser.ConfigParser()
         if os.path.isfile(FEE_INI):
@@ -53,7 +52,7 @@ class BatchPayer():
         kttx = config['KTTX']
         self.gas_limit = kttx['gas_limit']
         self.storage_limit = kttx['storage_limit']
-        self.default_fee = kttx['fee']
+        self.default_fee = int(kttx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
         self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee',
@@ -65,10 +64,14 @@ class BatchPayer():
 
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
 
+        # If delegator pays the fee, then the cutoff should be transaction-fee + 1
+        # Ex: Delegator reward is 1800 mutez, txn fee is 1792 mutez, reward - fee = 8 mutez payable reward
+        #     If delegate pays fee, then cutoff is 1 mutez payable reward
         if self.delegator_pays_xfer_fee:
-            self.zero_threshold = int(self.default_fee)+1
+            self.zero_threshold = self.default_fee + 1
 
-        logger.debug("Transfer fee is paid by {}".format("Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee/MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold/MUTEZ))
 
         # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
         if len(self.pymnt_addr) == PKH_LENGTH and (
@@ -122,7 +125,7 @@ class BatchPayer():
 
         # all unprocessed_payment_items are important (non-trivial)
         # gather up all unprocessed_payment_items that are greater than, or equal to the zero_threshold
-        # zero_threshold is either "0.00001 XTZ" or the txn fee if delegator is not paying it
+        # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it
         payment_items = [pi for pi in unprocessed_payment_items if pi.amount >= self.zero_threshold]
         if not payment_items:
             logger.info("No payment items found, returning...")
@@ -133,7 +136,8 @@ class BatchPayer():
         payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
-        if not self.delegator_pays_xfer_fee: total_amount_to_pay += int(self.default_fee) * len(payment_items)
+        if not self.delegator_pays_xfer_fee: total_amount_to_pay += self.default_fee * len(payment_items)
+
         logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
         logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
 
@@ -155,11 +159,6 @@ class BatchPayer():
         if payment_logs:
             for pl in payment_logs:
                 logger.debug("Reward already %s for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
-
-    def log_non_trivial_items(self, payment_logs):
-        if payment_logs:
-            for pl in payment_logs:
-                logger.debug("Reward not trivial for address %s amount %f tz type %s", pl.address, pl.amount, pl.type)
 
     def pay_single_batch(self, payment_items, op_counter, verbose=None, dry_run=None):
 
@@ -231,18 +230,22 @@ class BatchPayer():
             pymnt_amnt = payment_item.amount  # expects in micro tezos
 
             if self.delegator_pays_xfer_fee:
-                pymnt_amnt = max(pymnt_amnt - int(self.default_fee), 0)  # ensure not less than 0
+                pymnt_amnt = max(pymnt_amnt - self.default_fee, 0)  # ensure not less than 0
+
+            # if, somehow, pymnt_amnt becomes 0, don't pay
+            if pymnt_amnt == 0:
+                continue
 
             op_counter.inc()
 
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
-                .replace("%fee%", self.default_fee).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", self.storage_limit)
+                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", self.storage_limit)
 
             content_list.append(content)
 
             if verbose:
-                logger.debug("Payment content: {}".format(content))
+                logger.info("Payment content: {}".format(content))
 
         contents_string = ",".join(content_list)
 

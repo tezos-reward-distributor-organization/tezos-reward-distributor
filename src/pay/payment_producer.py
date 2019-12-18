@@ -173,7 +173,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         time.sleep(60 * 3)
                 # end of payment cycle check
                 else:
-                    logger.info("No pending payments for cycle {},current cycle is {}".format(pymnt_cycle, crrnt_cycle))
+                    logger.info("No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, crrnt_cycle))
 
                     # pending payments done. Do not wait any more.
                     if self.run_mode == RunMode.PENDING:
@@ -312,8 +312,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          pymnt_log.paymentaddress]
                 writer.writerow(array)
 
-                logger.debug("Reward created for address %s type %s balance {:>10.2f} ratio {:.8f} fee_ratio {:.6f} "
-                             "amount {:>8.2f} fee_amount {:.2f} fee_rate {:.2f} payable %s skipped %s atphase %s desc %s pay_addr %s"
+                logger.debug("Reward created for address %s type %s balance {:>10.2f} ratio {:.6f} fee_ratio {:.6f} "
+                             "amount {:>10.6f} fee_amount {:>4.6f} fee_rate {:.2f} payable %s skipped %s atphase %s desc %s pay_addr %s"
                              .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
                                      pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
