@@ -163,7 +163,7 @@ class PaymentConsumer(threading.Thread):
         logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
-            logger.debug("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
+            logger.debug("Payment done for address %s type %s amount {:>10.6f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
 
         if self.publish_stats and not self.dry_run and (not self.args or is_mainnet(self.args.network)):
             stats_dict = self.create_stats_dict(nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts)
