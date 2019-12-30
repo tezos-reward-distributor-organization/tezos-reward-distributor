@@ -155,7 +155,7 @@ class RpcRewardApiImpl(RewardApi):
                     try:
                         response = self.do_rpc_request(request, time_out=5)
                     except:
-                        logger.error("Fetching delegator info failed {}, will retry", delegator)
+                        logger.debug("Fetching delegator info failed {}, will retry", delegator)
 
                 delegators[delegator] = int(response["balance"])
 

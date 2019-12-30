@@ -11,7 +11,7 @@ delegators_call = '/tables/snapshot?cycle={}&is_selected=1&delegate={}&limit=500
 
 PREFIX_API = {'MAINNET': {'API_URL': 'http://api.tzstats.com'},
               'ZERONET': {'API_URL': 'http://api.zeronet.tzstats.com'},
-              'BABYLONNET': {'API_URL': 'http://api.babylonnet.tzstats.com'}
+              'ALPHANET': {'API_URL': 'http://api.babylonnet.tzstats.com'}
             }
 
 

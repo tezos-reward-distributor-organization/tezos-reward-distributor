@@ -103,7 +103,7 @@ def add_argument_provider(parser):
 
 
 def add_argument_node_addr_public(parser):
-    parser.add_argument("-Ap", "--node_addr_public", help="Public node base url pair with protocol prefix. i.e. https://rpc.letzbake.com. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node. (default is https://mainnet.tezrpc.me)", default='https://mainnet.tezrpc.me')
+    parser.add_argument("-Ap", "--node_addr_public", help="Public node base url pair with protocol prefix. i.e. https://rpc.letzbake.com. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node. (default is https://mainnet.tezrpc.me)", default='')
 
 
 def add_argument_reports_base(parser):

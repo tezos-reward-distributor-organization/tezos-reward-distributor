@@ -18,7 +18,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
         if block_api is None:
-            block_api = provider_factory.newBlockApi(network_config, wllt_clnt_mngr, node_url)
+            block_api = provider_factory.newBlockApi(network_config, node_url)
         self.block_api = block_api
 
     def parse(self):
