@@ -17,7 +17,6 @@ class SimpleClientManager:
     def send_request(self, cmd, verbose_override=None, timeout=None):
         # Build command with flags
         whole_cmd = "{} -A {} -P {} {}".format(self.client_path, self.node_hostname, self.node_port, cmd)
-        print(whole_cmd)
         return self.cmd_manager.execute(whole_cmd, verbose_override, timeout=timeout)
 
     def sign(self, bytes, key_name, verbose_override=None):
