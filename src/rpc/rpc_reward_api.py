@@ -85,7 +85,8 @@ class RpcRewardApiImpl(RewardApi):
             balance_update = balance_updates[i]
             if balance_update["kind"] == "freezer":
                 if balance_update["delegate"] == self.baking_address:
-                    if int(balance_update["cycle"]) == cycle and int(balance_update["change"]) < 0:
+                    # Protocols < Athens (004) mistakenly used 'level'
+                    if (("level" in balance_update and int(balance_update["level"]) == cycle) or ("cycle" in balance_update and int(balance_update["cycle"]) == cycle)) and int(balance_update["change"]) < 0:
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
                             logger.debug(
