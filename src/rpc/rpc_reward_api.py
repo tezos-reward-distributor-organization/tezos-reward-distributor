@@ -139,15 +139,14 @@ class RpcRewardApiImpl(RewardApi):
         delegate_staking_balance = 0
         delegators = {}
 
-        # try to fetch delegate's staking balance and delegators
+        # try to fetch delegate's staking balance and list of delegators
         try:
             response = self.do_rpc_request(request)
             delegate_staking_balance = int(response["staking_balance"])
-
             delegators_addresses = response["delegated_contracts"]
 
         except:
-            logger.warn('No delegators or unexpected error', exc_info=True)
+            logger.warn('No delegators or unexpected error while fetching delegators', exc_info=True)
 
         # loop over found delegators
         for idx, delegator in enumerate(delegators_addresses):
