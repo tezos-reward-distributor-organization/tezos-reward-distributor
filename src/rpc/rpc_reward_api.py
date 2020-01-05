@@ -14,7 +14,7 @@ class RpcRewardApiImpl(RewardApi):
     COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
     COMM_BLOCK = "{}/chains/main/blocks/{}"
     COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
-    COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}"
+    COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 
     def __init__(self, nw, baking_address, node_url, verbose=True):
         super(RpcRewardApiImpl, self).__init__()
@@ -139,32 +139,29 @@ class RpcRewardApiImpl(RewardApi):
         delegate_staking_balance = 0
         delegators = {}
 
+        # try to fetch delegate's staking balance and delegators
         try:
             response = self.do_rpc_request(request)
             delegate_staking_balance = int(response["staking_balance"])
 
             delegators_addresses = response["delegated_contracts"]
-            for idx, delegator in enumerate(delegators_addresses):
-                request = self.COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
-                response = self.do_rpc_request(request)
 
-                sleep(0.5)  # be nice to public node service
+        except:
+            logger.warn('No delegators or unexpected error', exc_info=True)
 
-                response = None
+        # loop over found delegators
+        for idx, delegator in enumerate(delegators_addresses):
+            request = self.COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
 
-                while not response:
-                    try:
-                        response = self.do_rpc_request(request, time_out=5)
-                    except:
-                        logger.error("Fetching delegator info failed {}, will retry", delegator)
-
-                delegators[delegator] = int(response["balance"])
+            try:
+                response = self.do_rpc_request(request, time_out=5)
+                delegators[delegator] = int(response)
 
                 logger.debug(
                     "Delegator info ({}/{}) fetched: address {}, balance {}".format(idx, len(delegators_addresses),
                                                                                     delegator, delegators[delegator]))
-        except:
-            logger.warn('No delegators or unexpected error', exc_info=True)
+            except:
+                logger.error("Fetching delegator info failed {}, will retry", delegator)
 
         return delegate_staking_balance, delegators
 
