@@ -18,18 +18,18 @@ PKH_LENGTH = 36
 CONFIRMATIONS = 1
 PATIENCE = 10
 
-COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
-COMM_COUNTER = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
+COMM_HEAD = "rpc get /chains/main/blocks/head"
+COMM_COUNTER = "rpc get /chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit": "%gas_limit%", "storage_limit": "%storage_limit%","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 JSON_WRAP='{"operation": %JSON%,"chain_id":"%chain_id%"}'
-COMM_FORGE = " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
-COMM_RUNOPS = " rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
-COMM_PREAPPLY = " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
-COMM_INJECT = " rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-COMM_WAIT = " wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
+COMM_FORGE = "rpc post /chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
+COMM_RUNOPS = "rpc post /chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
+COMM_PREAPPLY = "rpc post /chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
+COMM_INJECT = "rpc post /injection/operation with '\"%OPERATION_HASH%\"'"
+COMM_WAIT = "wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
 
 FEE_INI = 'fee.ini'
 MUTEZ = 1e6
@@ -90,13 +90,13 @@ class BatchPayer():
         logger.debug("Payment address is {}".format(self.source))
         logger.debug("Signing address is {}, manager alias is {}".format(self.manager, self.manager_alias))
 
-        self.comm_head = COMM_HEAD.format(self.node_url)
-        self.comm_counter = COMM_COUNTER.format(self.node_url, self.source)
-        self.comm_runops = COMM_RUNOPS.format().replace("%NODE%", self.node_url)
-        self.comm_forge = COMM_FORGE.format().replace("%NODE%", self.node_url)
-        self.comm_preapply = COMM_PREAPPLY.format().replace("%NODE%", self.node_url)
-        self.comm_inject = COMM_INJECT.format().replace("%NODE%", self.node_url)
-        self.comm_wait = COMM_WAIT.format()
+        self.comm_head = COMM_HEAD
+        self.comm_counter = COMM_COUNTER.format(self.source)
+        self.comm_runops = COMM_RUNOPS
+        self.comm_forge = COMM_FORGE
+        self.comm_preapply = COMM_PREAPPLY
+        self.comm_inject = COMM_INJECT
+        self.comm_wait = COMM_WAIT
 
     def pay(self, payment_items_in, verbose=None, dry_run=None):
         logger.info("{} payment items to process".format(len(payment_items_in)))
