@@ -5,8 +5,8 @@ from log_config import main_logger
 
 logger = main_logger
 
-COMM_HEAD = "rpc get /chains/main/blocks/head"
-COMM_REVELATION = "rpc get /chains/main/blocks/head/context/contracts/{}/manager_key"
+COMM_HEAD = "http://{}/chains/main/blocks/head"
+COMM_REVELATION = "http://{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
 class RpcBlockApiImpl(BlockApi):
 
@@ -16,13 +16,13 @@ class RpcBlockApiImpl(BlockApi):
         self.node_url = node_url
 
     def get_current_level(self, verbose=False):
-        response = requests.get(COMM_HEAD, timeout=5)
+        response = requests.get(COMM_HEAD.format(self.node_url), timeout=5)
         head = response.json()
         current_level = int(head["metadata"]["level"]["level"])
         return current_level
 
     def get_revelation(self, pkh, verbose=False):
-        response = requests.get(COMM_REVELATION.format(pkh), timeout=5)
+        response = requests.get(COMM_REVELATION.format(self.node_url, pkh), timeout=5)
         manager_key = response.json()
         logger.debug("Manager key is '{}'".format(manager_key))
         bool_revelation = manager_key and manager_key!='null'
