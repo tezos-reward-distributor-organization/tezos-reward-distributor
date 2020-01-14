@@ -112,7 +112,7 @@ class RpcRewardApiImpl(RewardApi):
 
         resp = requests.get(request, timeout=time_out)
         if resp.status_code != 200:
-            raise Exception("Request '{} failed with status code {}".format(request, resp.status_code))
+            raise Exception("Request '{} failed with status code {}, after {}, unique request_id {}".format(request, resp.status_code, time_out, resp.headers['CF-RAY']))
 
         response = resp.json()
         if self.verbose:
