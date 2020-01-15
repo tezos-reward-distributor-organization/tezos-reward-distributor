@@ -7,9 +7,9 @@ owners_map : {tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889: 0.3, KT1KLQbYFtFZ5mAEnfEMZaW
 specials_map : {KT19g4JHTd3QYuYcpKFFiwViEzQ5n6ovYx1V: 7.5}
 supporters_set : {KT1SenDhs9rL9fpZV3cLRXFovEBafmGqkki8}
 min_delegation_amt : 1000
-reactivate_zeroed_account : False
+reactivate_zeroed : False
 delegator_pays_xfer_fee : True
-delegator_pays_reactivation_fee : True
+delegator_pays_ra_fee : True
 rules_map:
   KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn3: KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn0
   KT1D33n8zp1bqBkViiQtLLPLEGRW9xcqihY3: KT1MMhmTkUoHez4u58XMZL7NkpU9FWY4QLn0
