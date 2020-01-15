@@ -223,8 +223,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, expected_reward)
             else:
                 reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle)
+
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
+
             # set cycle info
             for rl in reward_logs: rl.cycle = pymnt_cycle
             total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
@@ -235,6 +237,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 # 5- send to payment consumer
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
+
                 # logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
                 #            "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
 
@@ -244,10 +247,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 # 6- create calculations report file. This file contains calculations details
                 self.create_calculations_report(reward_logs, report_file_path, total_amount)
-                # 7- next cycle
-                # processing of cycle is done
-                logger.info(
-                    "Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
+
+                # 7- processing of cycle is done
+                logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
 
             elif total_amount_to_pay == 0:
                 logger.info("Total payment amount is 0. Nothing to pay!")
@@ -285,10 +287,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
             writer.writerow(
-                ["address", "type", "balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
+                ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
                  "skipped", "atphase", "desc", "payment_address"])
 
-            writer.writerow([self.baking_address, "B", sum([pl.balance for pl in payment_logs]),
+            writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
+                             "{0:f}".format(1.0),
                              "{0:f}".format(1.0),
                              "{0:f}".format(0.0),
                              "{0:f}".format(total_rewards),
@@ -300,7 +303,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             for pymnt_log in payment_logs:
                 # write row to csv file
-                array = [pymnt_log.address, pymnt_log.type, pymnt_log.balance,
+                array = [pymnt_log.address, pymnt_log.type, pymnt_log.staking_balance, pymnt_log.current_balance,
                          "{0:.10f}".format(pymnt_log.ratio),
                          "{0:.10f}".format(pymnt_log.service_fee_ratio),
                          "{0:f}".format(pymnt_log.amount),
@@ -312,12 +315,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          pymnt_log.paymentaddress]
                 writer.writerow(array)
 
-                logger.debug("Reward created for address %s type %s balance {:>10.2f} ratio {:.6f} fee_ratio {:.6f} "
-                             "amount {:>10.6f} fee_amount {:>4.6f} fee_rate {:.2f} payable %s skipped %s atphase %s desc %s pay_addr %s"
-                             .format(pymnt_log.balance / MUTEZ, pymnt_log.ratio, pymnt_log.service_fee_ratio,
+                logger.debug("Reward created for %s type: %s, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: %s, skipped: %s, at-phase: %s, "
+                             "desc: %s, pay_addr: %s"
+                             .format(pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
+                                     pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
                                      pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
                                      pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc, pymnt_log.paymentaddress)
+
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
     @staticmethod

@@ -30,6 +30,8 @@ class TzStatsRewardProviderHelper:
 
     def get_rewards_for_cycle(self, cycle, expected_reward = False, verbose=False):
         #############
+        ## TODO: Fetch current balance to check if zeroed
+
         root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balance": {}}
 
         uri = self.api['API_URL'] + rewards_split_call.format(self.baking_address, cycle)

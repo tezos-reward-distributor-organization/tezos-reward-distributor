@@ -9,7 +9,9 @@ RULES_MAP = 'rules_map'
 SUPPORTERS_SET = 'supporters_set'
 PAYMENT_ADDRESS = 'payment_address'
 MIN_DELEGATION_AMT = 'min_delegation_amt'
+REACTIVATE_ZEROED = 'reactivate_zeroed'
 DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
+DELEGATOR_PAYS_RA_FEE = 'delegator_pays_ra_fee'
 ### extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
 EXCLUDED_DELEGATORS_SET_TOB = "__excluded_delegators_set_tob"
@@ -69,8 +71,14 @@ class BakingConf:
     def get_min_delegation_amount(self):
         return self.get_attribute(MIN_DELEGATION_AMT)
 
+    def get_reactivate_zeroed(self):
+        return self.get_attribute(REACTIVATE_ZEROED)
+
     def get_delegator_pays_xfer_fee(self):
         return self.get_attribute(DELEGATOR_PAYS_XFER_FEE)
+
+    def get_delegator_pays_ra_fee(self):
+        return self.get_attribute(DELEGATOR_PAYS_RA_FEE)
 
     def get_rule_map(self):
         return self.get_attribute(RULES_MAP)

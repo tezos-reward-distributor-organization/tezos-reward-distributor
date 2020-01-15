@@ -20,7 +20,7 @@ PATIENCE = 10
 
 COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
 COMM_COUNTER = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
-CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit": "%gas_limit%", "storage_limit": "%storage_limit%","amount":"%AMOUNT%"}'
+CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit":"%gas_limit%","storage_limit":"%storage_limit%","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
@@ -33,9 +33,11 @@ COMM_WAIT = " wait for %OPERATION% to be included --confirmations {}".format(CON
 
 FEE_INI = 'fee.ini'
 MUTEZ = 1e6
+RA_BURN_FEE = 257e3  # 0.257 XTZ
+RA_STORAGE = 300
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_xfer_fee, network_config):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
@@ -51,7 +53,7 @@ class BatchPayer():
 
         kttx = config['KTTX']
         self.gas_limit = kttx['gas_limit']
-        self.storage_limit = kttx['storage_limit']
+        self.storage_limit = int(kttx['storage_limit'])
         self.default_fee = int(kttx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
@@ -62,15 +64,17 @@ class BatchPayer():
             raise Exception(
                 "delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
 
+        self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
 
         # If delegator pays the fee, then the cutoff should be transaction-fee + 1
-        # Ex: Delegator reward is 1800 mutez, txn fee is 1792 mutez, reward - fee = 8 mutez payable reward
+        # Ex: Delegator reward is 1800 mutez, txn fee is 1792 mutez, reward - txn fee = 8 mutez payable reward
         #     If delegate pays fee, then cutoff is 1 mutez payable reward
         if self.delegator_pays_xfer_fee:
-            self.zero_threshold = self.default_fee + 1
+            self.zero_threshold += self.default_fee
 
         logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee/MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE/MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
         logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold/MUTEZ))
 
         # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
@@ -125,8 +129,18 @@ class BatchPayer():
 
         # all unprocessed_payment_items are important (non-trivial)
         # gather up all unprocessed_payment_items that are greater than, or equal to the zero_threshold
-        # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it
-        payment_items = [pi for pi in unprocessed_payment_items if pi.amount >= self.zero_threshold]
+        # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it, and burn fee
+        payment_items = []
+        for pi in unprocessed_payment_items:
+
+            zt = self.zero_threshold
+            if pi.needs_activation and self.delegator_pays_ra_fee:
+                # Need to apply this fee to only those which need reactivation
+                zt += RA_BURN_FEE
+
+            if pi.amount >= zt:
+                payment_items.append(pi)
+
         if not payment_items:
             logger.info("No payment items found, returning...")
             return payment_items_in, 0
@@ -137,6 +151,9 @@ class BatchPayer():
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
         if not self.delegator_pays_xfer_fee: total_amount_to_pay += self.default_fee * len(payment_items)
+
+        ## TODO: Add any reactivation fees to this total for display;
+        ## need proper way of calculating since it does not apply to each transaction, unlike xfer fee
 
         logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
         logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
@@ -227,20 +244,28 @@ class BatchPayer():
         content_list = []
 
         for payment_item in payment_records:
+
+            storage = self.storage_limit
             pymnt_amnt = payment_item.amount  # expects in micro tezos
+
+            if payment_item.needs_activation:
+                storage += RA_STORAGE
+                if self.delegator_pays_ra_fee:
+                    pymnt_amnt = max(pymnt_amnt - RA_BURN_FEE, 0)  # ensure not less than 0
 
             if self.delegator_pays_xfer_fee:
                 pymnt_amnt = max(pymnt_amnt - self.default_fee, 0)  # ensure not less than 0
 
-            # if, somehow, pymnt_amnt becomes 0, don't pay
+            # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
+                logger.debug("Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
             op_counter.inc()
 
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
-                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", self.storage_limit)
+                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", str(storage))
 
             content_list.append(content)
 
