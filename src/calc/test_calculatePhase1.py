@@ -11,7 +11,7 @@ class TestCalculatePhase1(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios,start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratio)
+            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
             rl0.ratio0 = ratio
             rewards.append(rl0)
 

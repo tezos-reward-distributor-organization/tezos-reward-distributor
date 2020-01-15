@@ -12,12 +12,12 @@ class TestCalculatePhase3(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratio)
+            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
             rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
 
-        rewards.append(RewardLog("addrdummy", "D", 0).skip("skipped for testing", 2))
+        rewards.append(RewardLog("addrdummy", "D", 0, 0).skip("skipped for testing", 2))
 
         excluded_set = {"addr1"}
 
@@ -58,12 +58,12 @@ class TestCalculatePhase3(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratio)
+            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
             rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
 
-        rewards.append(RewardLog("addrdummy", "D", 0).skip("skipped for testing", 2))
+        rewards.append(RewardLog("addrdummy", "D", 0, 0).skip("skipped for testing", 2))
 
         excluded_set = {"addr1"}
         supporters_set = {"addr2"}

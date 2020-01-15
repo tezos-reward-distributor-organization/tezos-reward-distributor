@@ -46,7 +46,7 @@ messages = {'hello':'This application will help you create configuration file fo
     , 'redirect' : "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip"
     , 'reactivatezeroed' : "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes"
     , 'delegatorpaysxfrfee' : "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator"
-    , 'delegatorpaysrafee' : "Who is going to pay for 0XTZ-balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator"
+    , 'delegatorpaysrafee' : "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator"
     , 'supporters' : "Add supporter address. Supporters do not pay service fee. Type enter to skip"
     , 'specials' : "Add special fee in form of PKH,fee. Given addresses will pay the specified fee rate. Type enter to skip"
     , 'final' : "Add excluded address in form of PKH,target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip"

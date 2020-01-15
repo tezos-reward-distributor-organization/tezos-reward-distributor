@@ -11,11 +11,11 @@ class TestCalculatePhase2(TestCase):
         total_reward = 1000
 
         for i, addr in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratios[addr])
+            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratios[addr], current_balance=0)
             rl0.ratio1 = ratios[addr]
             rewards.append(rl0)
 
-        rewards.append(RewardLog("addrdummy", "D", 0).skip("skipped for testing", 2))
+        rewards.append(RewardLog("addrdummy", "D", 0, 0).skip("skipped for testing", 2))
 
         excluded_set = {"addr1"}
 
