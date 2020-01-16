@@ -39,6 +39,8 @@ class TzStatsRewardProviderHelper:
         #
         uri = self.api['API_URL'] + rewards_split_call.format(self.baking_address, cycle)
 
+        sleep(0.5) # be nice to tzstats
+
         if verbose:
             logger.debug("Requesting rewards breakdown, {}".format(uri))
 
@@ -69,6 +71,8 @@ class TzStatsRewardProviderHelper:
         #
         uri = self.api['API_URL'] + delegators_call.format(cycle - self.preserved_cycles - 2, self.baking_address)
 
+        sleep(0.5) # be nice to tzstats
+
         if verbose:
             logger.debug("Requesting staking balances of delegators, {}".format(uri))
 
@@ -95,7 +99,7 @@ class TzStatsRewardProviderHelper:
         #
         # Get current balance of delegates
         #
-        # This is done in 2 phases. 1) make a single API call to tzscan, retrieving an array
+        # This is done in 2 phases. 1) make a single API call to tzstats, retrieving an array
         # of arrays with current balance of each delegator who "currently" delegates to delegate. There may
         # be a case where the delegator has changed delegations and would therefor not be in this array.
         # Thus, 2) determines which delegators are not in the first result, and makes individual
@@ -105,6 +109,8 @@ class TzStatsRewardProviderHelper:
         # Phase 1
         #
         uri = self.api['API_URL'] + batch_current_balance_call.format(self.baking_address)
+
+        sleep(0.5) # be nice to tzstats
 
         if verbose:
             logger.debug("Requesting current balance of delegators, phase 1, {}".format(uri))
@@ -146,8 +152,10 @@ class TzStatsRewardProviderHelper:
         if len(need_curr_balance_fetch) > 0:
 
             for d in need_curr_balance_fetch:
-            
+
                 uri = self.api['API_URL'] + single_current_balance_call.format(d)
+
+                sleep(0.5) # be nice to tzstats
                 
                 if verbose:
                     logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
