@@ -1,5 +1,5 @@
+import os
 from subprocess import STDOUT, check_output, TimeoutExpired, CalledProcessError
-
 from log_config import main_logger
 from util.client_utils import clear_terminal_chars
 
@@ -26,6 +26,7 @@ class CommandManager:
             logger.debug("--> Verbose : Command is |{}|".format(cmd))
 
         try:
+            os.environ["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
             output = check_output(cmd, shell=True, stderr=STDOUT, timeout=timeout, encoding='utf8')
         except TimeoutExpired as e:
             logger.info("Command timed out")
