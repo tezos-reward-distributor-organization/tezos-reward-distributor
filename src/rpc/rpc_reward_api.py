@@ -15,6 +15,7 @@ COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 
 class RpcRewardApiImpl(RewardApi):
+
     def __init__(self, nw, baking_address, node_url, verbose=True):
         super(RpcRewardApiImpl, self).__init__()
 
@@ -73,7 +74,8 @@ class RpcRewardApiImpl(RewardApi):
             balance_update = balance_updates[i]
             if balance_update["kind"] == "freezer":
                 if balance_update["delegate"] == self.baking_address:
-                    if int(balance_update["cycle"]) == cycle and int(balance_update["change"]) < 0:
+                    # Protocols < Athens (004) mistakenly used 'level'
+                    if (("level" in balance_update and int(balance_update["level"]) == cycle) or ("cycle" in balance_update and int(balance_update["cycle"]) == cycle)) and int(balance_update["change"]) < 0:
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
                             logger.debug(
@@ -100,7 +102,7 @@ class RpcRewardApiImpl(RewardApi):
 
         resp = requests.get(request, timeout=time_out)
         if resp.status_code != 200:
-            raise Exception("Request '{} failed with status code {}".format(request, resp.status_code))
+            raise Exception("Request '{} failed with status code {}, after {}, unique request_id {}".format(request, resp.status_code, time_out, resp.headers['CF-RAY']))
 
         response = resp.json()
         if self.verbose:

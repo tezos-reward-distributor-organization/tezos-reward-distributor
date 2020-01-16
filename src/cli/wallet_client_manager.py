@@ -9,9 +9,9 @@ logger = main_logger
 
 class WalletClientManager(SimpleClientManager):
 
-    def __init__(self, client_path, contr_dict_by_alias=None,
+    def __init__(self, client_path, node_addr, contr_dict_by_alias=None,
                  addr_dict_by_pkh=None, managers=None, verbose=None) -> None:
-        super().__init__(client_path, verbose)
+        super().__init__(client_path, node_addr, verbose)
 
         self.managers = managers
         if self.managers is None:
