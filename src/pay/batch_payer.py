@@ -131,12 +131,14 @@ class BatchPayer():
         # gather up all unprocessed_payment_items that are greater than, or equal to the zero_threshold
         # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it, and burn fee
         payment_items = []
+        sum_burn_fees = 0
         for pi in unprocessed_payment_items:
 
             zt = self.zero_threshold
             if pi.needs_activation and self.delegator_pays_ra_fee:
                 # Need to apply this fee to only those which need reactivation
                 zt += RA_BURN_FEE
+                sum_burn_fees += RA_BURN_FEE
 
             if pi.amount >= zt:
                 payment_items.append(pi)
@@ -150,10 +152,8 @@ class BatchPayer():
         payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
+        total_amount_to_pay += sum_burn_fees
         if not self.delegator_pays_xfer_fee: total_amount_to_pay += self.default_fee * len(payment_items)
-
-        ## TODO: Add any reactivation fees to this total for display;
-        ## need proper way of calculating since it does not apply to each transaction, unlike xfer fee
 
         logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
         logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
