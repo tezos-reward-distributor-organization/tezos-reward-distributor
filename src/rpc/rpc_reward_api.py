@@ -14,7 +14,7 @@ class RpcRewardApiImpl(RewardApi):
     COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
     COMM_BLOCK = "{}/chains/main/blocks/{}"
     COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
-    COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}"
+    COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 
     def __init__(self, nw, baking_address, node_url, verbose=True):
         super(RpcRewardApiImpl, self).__init__()
@@ -85,7 +85,8 @@ class RpcRewardApiImpl(RewardApi):
             balance_update = balance_updates[i]
             if balance_update["kind"] == "freezer":
                 if balance_update["delegate"] == self.baking_address:
-                    if int(balance_update["cycle"]) == cycle and int(balance_update["change"]) < 0:
+                    # Protocols < Athens (004) mistakenly used 'level'
+                    if (("level" in balance_update and int(balance_update["level"]) == cycle) or ("cycle" in balance_update and int(balance_update["cycle"]) == cycle)) and int(balance_update["change"]) < 0:
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
                             logger.debug(
@@ -145,7 +146,6 @@ class RpcRewardApiImpl(RewardApi):
             delegators_addresses = response["delegated_contracts"]
             for idx, delegator in enumerate(delegators_addresses):
                 request = self.COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
-                response = self.do_rpc_request(request)
 
                 sleep(0.5)  # be nice to public node service
 
@@ -155,9 +155,9 @@ class RpcRewardApiImpl(RewardApi):
                     try:
                         response = self.do_rpc_request(request, time_out=5)
                     except:
-                        logger.debug("Fetching delegator info failed {}, will retry", delegator)
+                        logger.error("Fetching delegator info failed {}, will retry", delegator)
 
-                delegators[delegator] = int(response["balance"])
+                delegators[delegator] = int(response)
 
                 logger.debug(
                     "Delegator info ({}/{}) fetched: address {}, balance {}".format(idx, len(delegators_addresses),

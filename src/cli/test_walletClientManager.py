@@ -16,7 +16,7 @@ class TestWalletClientManager(TestCase):
 
         tz1PJnnddwa1P5jg5sChddigxfMccK8nwLiV (known as habanoz)
                 """
-        clientManager = WalletClientManager(None)
+        clientManager = WalletClientManager(None, node_addr=None)
         manager = clientManager.parse_get_manager_for_contract_response(response)
         self.assertEqual('tz1PJnnddwa1P5jg5sChddigxfMccK8nwLiV', manager)
 
@@ -34,7 +34,7 @@ class TestWalletClientManager(TestCase):
         habanoz: tz1fyvFH2pd3V9UEq5psqVokVBYkt7rHTKio
         mainnetme: tz1a5GGJeyqeQ4ihZqbiRVcvj5rY5kMAt3Xa
                 """
-        clientManager = WalletClientManager(None)
+        clientManager = WalletClientManager(None, node_addr=None)
         dict = clientManager.parse_list_known_contracts_response(response)
 
         self.assertTrue(dict['newcontr'] == 'KT1XqEHigP5XumZy9i76QyVd6u93VD4HTqJK')
@@ -58,7 +58,7 @@ class TestWalletClientManager(TestCase):
                 baker: tz1XXXXXXXX (unix sk known)
                         """
 
-        clientManager = WalletClientManager(None)
+        clientManager = WalletClientManager(None, node_addr=None)
         dict = clientManager.parse_list_known_addresses_response(response)
 
         habanoz = dict['tz1fyvFH2pd3V9UEq5psqVokVBYkt7rHTKio']

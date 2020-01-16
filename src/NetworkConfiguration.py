@@ -15,7 +15,7 @@ default_network_config_map = {
                 'BLOCKS_PER_ROLL_SNAPSHOT': 8},
 }
 
-CONSTANTS_COMM = " rpc get http://{}/chains/main/blocks/head/context/constants"
+CONSTANTS_COMM = " rpc get /chains/main/blocks/head/context/constants"
 URL = "https://{}.tzbeta.net/chains/main/blocks/head/context/constants"
 url_prefix = {"MAINNET": "rpc", "ALPHANET": "rpcalpha", "ZERONET": "rpczero"}
 
