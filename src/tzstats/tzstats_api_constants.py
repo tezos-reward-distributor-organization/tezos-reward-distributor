@@ -1,4 +1,4 @@
-# Income
+# Income/Rewards Breakdown
 idx_income_expected_income = 19
 idx_income_total_income = 21
 idx_income_total_bonds = 22
@@ -20,9 +20,12 @@ idx_income_lost_accusation_deposits = 35
 idx_income_lost_revelation_fees = 36
 idx_income_lost_revelation_rewards = 37
 
-#snapshot
-idx_baker_balance = 11
-idx_baker_delegated = 12
+# Cycle Snapshot
+idx_balance = 0
+idx_baker_delegated = 1
+idx_delegator_address = 2
 
-idx_delegator_balance = 11
-idx_delegator_address = 15
+# Current balances
+idx_cb_delegator_id = 0
+idx_cb_current_balance = 1
+idx_cb_delegator_address = 2
