@@ -33,7 +33,7 @@ COMM_WAIT = " wait for %OPERATION% to be included --confirmations {}".format(CON
 
 FEE_INI = 'fee.ini'
 MUTEZ = 1e6
-RA_BURN_FEE = 257e3  # 0.257 XTZ
+RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
 class BatchPayer():
