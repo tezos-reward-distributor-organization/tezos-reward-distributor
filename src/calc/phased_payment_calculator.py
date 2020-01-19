@@ -49,7 +49,7 @@ class PhasedPaymentCalculator:
             logger.debug("NO REWARDS to process!")
             return [], 0
 
-        assert reward_provider_model.delegate_staking_balance == sum([rl.balance for rl in rwrd_logs])
+        assert reward_provider_model.delegate_staking_balance == sum([rl.staking_balance for rl in rwrd_logs])
         assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs]))
 
         # calculate phase 1
@@ -85,7 +85,6 @@ class PhasedPaymentCalculator:
 
         phase4 = CalculatePhase4(self.founders_map, self.owners_map)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
-
 
         # calculate amounts
         phase_last = CalculatePhaseFinal()

@@ -8,13 +8,13 @@ from model.reward_provider_model import RewardProviderModel
 
 logger = main_logger
 
+COMM_HEAD = "{}/chains/main/blocks/head"
+COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
+COMM_BLOCK = "{}/chains/main/blocks/{}"
+COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
+COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 
 class RpcRewardApiImpl(RewardApi):
-    COMM_HEAD = "{}/chains/main/blocks/head"
-    COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
-    COMM_BLOCK = "{}/chains/main/blocks/{}"
-    COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
-    COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 
     def __init__(self, nw, baking_address, node_url, verbose=True):
         super(RpcRewardApiImpl, self).__init__()
@@ -30,24 +30,13 @@ class RpcRewardApiImpl(RewardApi):
 
         self.verbose = verbose
 
-        # replace protocol placeholder
-        self.COMM_HEAD = self.COMM_HEAD
-        self.COMM_DELEGATES = self.COMM_DELEGATES
-        self.COMM_BLOCK = self.COMM_BLOCK
-        self.COMM_SNAPSHOT = self.COMM_SNAPSHOT
-        self.COMM_DELEGATE_BALANCE = self.COMM_DELEGATE_BALANCE
-
-    def get_nb_delegators(self, cycle, current_level):
-        _, delegators = self.__get_delegators_and_delgators_balance(cycle, current_level)
-        return len(delegators)
-
     def get_rewards_for_cycle_map(self, cycle):
         current_level, current_cycle = self.__get_current_level()
         logger.debug("Current level {}, current cycle {}".format(current_level, current_cycle))
 
         reward_data = {}
         reward_data["delegate_staking_balance"], reward_data[
-            "delegators"] = self.__get_delegators_and_delgators_balance(cycle, current_level)
+            "delegators"] = self.__get_delegators_and_delgators_balances(cycle, current_level)
         reward_data["delegators_nb"] = len(reward_data["delegators"])
 
         # Get last block in cycle where rewards are unfrozen
@@ -69,14 +58,14 @@ class RpcRewardApiImpl(RewardApi):
         reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
                                            reward_data["delegators"])
 
-        logger.debug("delegate_staking_balance={}, total_rewards = {}".format(reward_data["delegate_staking_balance"],
+        logger.debug("delegate_staking_balance = {}, total_rewards = {}".format(reward_data["delegate_staking_balance"],
                                                                               reward_data["total_rewards"]))
         logger.debug("delegators = {}".format(reward_data["delegators"]))
 
         return reward_model
 
     def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
-        request_metadata = self.COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle) + '/metadata'
+        request_metadata = COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle) + '/metadata'
         metadata = self.do_rpc_request(request_metadata)
         balance_updates = metadata["balance_updates"]
         unfrozen_rewards = unfrozen_fees = 0
@@ -121,49 +110,84 @@ class RpcRewardApiImpl(RewardApi):
         return response
 
     def __get_current_level(self):
-        head = self.do_rpc_request(self.COMM_HEAD.format(self.node_url))
+        head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
         current_cycle = int(head["metadata"]["level"]["cycle"])
         # head_hash = head["hash"]
 
         return current_level, current_cycle
+    
+    def __get_delegators_and_delgators_balances(self, cycle, current_level):
 
-    def __get_delegators_and_delgators_balance(self, cycle, current_level):
-
+        # calculate the hash of the block for the chosen snapshot of the rewards cycle
         hash_snapshot_block = self.__get_snapshot_block_hash(cycle, current_level)
         if hash_snapshot_block == "":
             return 0, []
 
-        request = self.COMM_DELEGATES.format(self.node_url, hash_snapshot_block, self.baking_address)
+        # construct RPC for getting list of delegates
+        get_delegates_request = COMM_DELEGATES.format(self.node_url, hash_snapshot_block, self.baking_address)
 
         delegate_staking_balance = 0
         delegators = {}
 
         try:
-            response = self.do_rpc_request(request)
+            # get RPC response for delegates and staking balance
+            response = self.do_rpc_request(get_delegates_request)
             delegate_staking_balance = int(response["staking_balance"])
 
+            # loop over delegates; get snapshot balance, and current balance
             delegators_addresses = response["delegated_contracts"]
+            d_a_len = len(delegators_addresses)
+            
+            if d_a_len == 0:
+                raise RpcRewardApiError("No delegators found")
+            
+            # Loop over delegators, get balances
             for idx, delegator in enumerate(delegators_addresses):
-                request = self.COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
 
-                sleep(0.5)  # be nice to public node service
+                # create new dictionary for each delegator
+                d_info = {"staking_balance": 0, "current_balance": 0}
 
-                response = None
+                get_staking_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
+                get_current_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, "head", delegator)
 
-                while not response:
+                staking_balance_response = None
+                current_balance_response = None
+
+                while not staking_balance_response:
                     try:
-                        response = self.do_rpc_request(request, time_out=5)
+                        staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
                     except:
-                        logger.error("Fetching delegator info failed {}, will retry", delegator)
+                        logger.debug("Fetching delegator staking balance failed {}, will retry", delegator)
 
-                delegators[delegator] = int(response)
+                d_info["staking_balance"] = int(staking_balance_response)
+
+                sleep(0.4) # Be nice to public RPC since we are now making 2x the amount of RPC calls
+
+                while not current_balance_response:
+                    try:
+                        current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
+                    except:
+                        logger.debug("Fetching delegator current balance failed {}, will retry", delegator)
+
+                d_info["current_balance"] = int(current_balance_response)
 
                 logger.debug(
-                    "Delegator info ({}/{}) fetched: address {}, balance {}".format(idx, len(delegators_addresses),
-                                                                                    delegator, delegators[delegator]))
-        except:
-            logger.warn('No delegators or unexpected error', exc_info=True)
+                    "Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} ".format(
+                        idx+1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
+
+                # "append" to master dict
+                delegators[delegator] = d_info
+
+            # Sanity check. We should have fetched info for all delegates. If we didn't, something went wrong
+            d_len = len(delegators)
+            if d_a_len != d_len:
+                raise RpcRewardApiError("Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
+
+        except RpcRewardApiError as r:
+            logger.warn("RPC API Error: {}".format(r), exc_info=True)
+        except Exception as e:
+            logger.warn("Unexpected error: {}".format(e), exc_info=True)
 
         return delegate_staking_balance, delegators
 
@@ -175,7 +199,7 @@ class RpcRewardApiImpl(RewardApi):
         block_level = cycle * self.blocks_per_cycle + 1
 
         if current_level - snapshot_level >= 0:
-            request = self.COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
+            request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
             level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (
@@ -185,3 +209,6 @@ class RpcRewardApiImpl(RewardApi):
         else:
             logger.info("Cycle too far in the future")
             return ""
+
+class RpcRewardApiError(Exception):
+    pass

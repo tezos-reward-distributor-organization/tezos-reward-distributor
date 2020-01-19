@@ -122,7 +122,7 @@ def main(args):
                             key_name=args.paymentaddress,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                             wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                            delegator_pays_xfer_fee=False)
+                            reactivate_zeroed=False, delegator_pays_ra_fee=False, delegator_pays_xfer_fee=False)
         time.sleep(1)
         c.start()
 

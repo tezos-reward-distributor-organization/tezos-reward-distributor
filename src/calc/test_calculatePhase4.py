@@ -11,7 +11,7 @@ class TestCalculatePhase4(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", balance=total_reward * ratio)
+            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
             rl0.ratio = ratio
             rl0.ratio3 = ratio
             rewards.append(rl0)
@@ -19,13 +19,12 @@ class TestCalculatePhase4(TestCase):
         rewards[0].type = TYPE_OWNERS_PARENT
         rewards[1].type = TYPE_FOUNDERS_PARENT
 
-        rewards.append(RewardLog("addrdummy", "D", 0).skip("skipped for testing", 3))
+        rewards.append(RewardLog("addrdummy", "D", 0, 0).skip("skipped for testing", 3))
 
         founders_map = {"addr1": 0.4, "addr2": 0.6}
         owners_map = {"addr1": 0.6, "addr2": 0.4}
 
         phase4 = CalculatePhase4(founders_map, owners_map)
-
         new_rewards, new_total_reward = phase4.calculate(rewards, total_reward)
 
         # new_total_reward = total_reward
