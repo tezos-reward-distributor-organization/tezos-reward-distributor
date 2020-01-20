@@ -1,6 +1,9 @@
 How to run Tezos Reward Distributor?
 =====================================================
 
+Command Line Usage
+------------------------
+
 For a list of parameters, run:
 
 ::
@@ -9,35 +12,39 @@ For a list of parameters, run:
 
 The most common use case is to run in mainnet and start to make payments
 from last released rewards or continue making payments from the cycle
-last payment is done.
+last payment is done:
 
 ::
 
     python3 src/main.py
 
-For more example commands please see wiki `page <https://github.com/habanoz/tezos-reward-distributor/wiki/How-to-Run>`_.
-
-
-Linux Service
-------------------------
-
-Alternatively, it is possible to add tezos-reward-distributer as a Linux service. It
-can run in the background.
-
-If docker is used, make sure user is in docker group
+Make payments for a single cycle:
 
 ::
 
-    sudo usermod -a -G docker $USER
+    python3 src/main.py -C 42 -M 3 
 
-In order to set up the service with default configuration arguments, run
-the following command:
+Make pending payments and stop:
 
 ::
 
-    sudo python3 service_add.py
+    python3 src/main.py -M 2
 
-For more information please refer to this wiki `page <https://github.com/habanoz/tezos-reward-distributor/wiki/Linux-Service>`_.
+Make pending payments beginning from a cycle and stop:
 
+::
 
+    python3 src/main.py -C 30 -M 2
 
+Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
+
+::
+
+    python3 src/main.py -D -N ZERONET -C 30 -M 3
+
+Run in dry-run mode in mainnet, make payments from cycle 30 onwards,
+for calculations use data provided by tezos node rpc interface:
+
+::
+
+    python3 src/main.py -C 30 -P rpc

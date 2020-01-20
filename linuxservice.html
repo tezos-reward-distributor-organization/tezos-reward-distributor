@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>How to run Tezos Reward Distributor? &mdash; Tezos Reward Distributor 6.0 documentation</title>
+  <title>Run as Linux Service &mdash; Tezos Reward Distributor 6.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Run as Linux Service" href="linuxservice.html" />
-    <link rel="prev" title="Tezos Signer with Docker" href="tezossignerdocker.html" /> 
+    <link rel="next" title="For developers" href="contributers.html" />
+    <link rel="prev" title="How to run Tezos Reward Distributor?" href="run.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,11 +91,8 @@
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run Tezos Reward Distributor?</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#command-line-usage">Command Line Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Run as Linux Service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributers.html">For developers</a></li>
 </ul>
 
@@ -142,13 +139,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>How to run Tezos Reward Distributor?</li>
+      <li>Run as Linux Service</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/run.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/linuxservice.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -161,41 +158,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="how-to-run-tezos-reward-distributor">
-<h1>How to run Tezos Reward Distributor?<a class="headerlink" href="#how-to-run-tezos-reward-distributor" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="command-line-usage">
-<h2>Command Line Usage<a class="headerlink" href="#command-line-usage" title="Permalink to this headline">¶</a></h2>
-<p>For a list of parameters, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">help</span>
+  <div class="section" id="run-as-linux-service">
+<h1>Run as Linux Service<a class="headerlink" href="#run-as-linux-service" title="Permalink to this headline">¶</a></h1>
+<p>Alternatively, it is possible to add tezos-reward-distributer as a Linux service. It
+can run in the background.</p>
+<p>If docker is used, make sure user is in docker group</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sudo usermod -a -G docker $USER
 </pre></div>
 </div>
-<p>The most common use case is to run in mainnet and start to make payments
-from last released rewards or continue making payments from the cycle
-last payment is done:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span>
+<p>In order to set up the service with default configuration arguments, run
+the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">python3</span> <span class="n">service_add</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p>Make payments for a single cycle:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">42</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span>
+<p><strong>Note:</strong></p>
+<p>If you do not want to use the default arguments, append any arguments
+you wish to change after service_add.py. They will be appended to
+main.py call. For example if you want to change configuration directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">python3</span> <span class="n">service_add</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">f</span> <span class="o">~/</span><span class="n">payment</span><span class="o">/</span><span class="n">config</span><span class="o">/</span>
 </pre></div>
 </div>
-<p>Make pending payments and stop:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span>
+<p>It will create a service file and use it to enable the service.
+Once enabled use following commands to start/stop the service.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">tezos</span><span class="o">-</span><span class="n">reward</span><span class="o">.</span><span class="n">service</span>
+<span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">stop</span> <span class="n">tezos</span><span class="o">-</span><span class="n">reward</span><span class="o">.</span><span class="n">service</span>
 </pre></div>
 </div>
-<p>Make pending payments beginning from a cycle and stop:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">30</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span>
+<p>In order to see service status:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="n">status</span> <span class="n">tezos</span><span class="o">-</span><span class="n">reward</span><span class="o">.</span><span class="n">service</span>
 </pre></div>
 </div>
-<p>Run in dry-run mode in zeronet, make payments from cycle 30 and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">N</span> <span class="n">ZERONET</span> <span class="o">-</span><span class="n">C</span> <span class="mi">30</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span>
+<p>In order to see logs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">journalctl</span> <span class="o">--</span><span class="n">follow</span> <span class="o">--</span><span class="n">unit</span><span class="o">=</span><span class="n">tezos</span><span class="o">-</span><span class="n">reward</span><span class="o">.</span><span class="n">service</span>
 </pre></div>
-</div>
-<p>Run in dry-run mode in mainnet, make payments from cycle 30 onwards,
-for calculations use data provided by tezos node rpc interface:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">30</span> <span class="o">-</span><span class="n">P</span> <span class="n">rpc</span>
-</pre></div>
-</div>
 </div>
 </div>
 
@@ -207,10 +202,10 @@ for calculations use data provided by tezos node rpc interface:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="linuxservice.html" class="btn btn-neutral float-right" title="Run as Linux Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contributers.html" class="btn btn-neutral float-right" title="For developers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tezossignerdocker.html" class="btn btn-neutral float-left" title="Tezos Signer with Docker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="run.html" class="btn btn-neutral float-left" title="How to run Tezos Reward Distributor?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

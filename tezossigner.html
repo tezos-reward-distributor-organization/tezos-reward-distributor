@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>For developers &mdash; Tezos Reward Distributor 6.0 documentation</title>
+  <title>How to use the Tezos Signer &mdash; Tezos Reward Distributor 6.0 documentation</title>
   
 
   
@@ -35,7 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Run as Linux Service" href="linuxservice.html" /> 
+    <link rel="next" title="Tezos Signer with Docker" href="tezossignerdocker.html" />
+    <link rel="prev" title="Payment Address" href="paymentaddress.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,11 +89,11 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use the Tezos Signer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">For developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributers.html">For developers</a></li>
 </ul>
 
             
@@ -138,13 +139,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>For developers</li>
+      <li>How to use the Tezos Signer</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/contributers.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/tezossigner.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -157,28 +158,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="for-developers">
-<h1>For developers<a class="headerlink" href="#for-developers" title="Permalink to this headline">¶</a></h1>
-<p>If you are interested in improving our project, this is just great! Our community looks forward to your contribution. Please follow this process:</p>
+  <div class="section" id="how-to-use-the-tezos-signer">
+<h1>How to use the Tezos Signer<a class="headerlink" href="#how-to-use-the-tezos-signer" title="Permalink to this headline">¶</a></h1>
+<p>Tezos signer daemon can be configured to sign the
+operations with the secret key of the account.
+There are two steps, first import secret key to
+the signer, second tell the client that it can use
+particular signer to sign the operations.</p>
 <ol class="arabic simple">
-<li><p>Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.</p></li>
-<li><p>Fork the repo. Ideally, create a new branch from your fork for your contribution to make it easier to merge your changes back.</p></li>
-<li><p>Make your changes on the branch you hopefully created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.</p></li>
-<li><p>Push your changes to your fork/branch in GitHub. Don’t push it to your master! If you do it will make it harder to submit new changes later.</p></li>
-<li><p>Submit a pull request to the repo from your commit page on GitHub.</p></li>
+<li><p>Configure Signer</p></li>
 </ol>
-<p>Principles on the application evolution:</p>
-<ol class="arabic simple">
-<li><p>Discuss the solution with repository owners and other community members. Start the development after everybody agrees on a solution.</p></li>
-<li><p>Prefer the simpler solution. Try to make as fewer changes as possible.</p></li>
-<li><p>Update documentation wherever it is meaningful.</p></li>
-<li><p>Create and run unit tests for the changes. Please do not sends PRs for untested changes. Payment domain requires the utmost responsibility.</p></li>
-<li><p>Follow naming conventions.</p></li>
-<li><p>Avoid code repetition. Make use of Object Oriented design principles when possible.</p></li>
-<li><p>More configuration parameters do not always mean more flexibility. We do not want the application to turn into configuration hell which nobody can use.</p></li>
-<li><p>The idea of community members is very important because this repo is just a sequence of statements if nobody uses and benefit.</p></li>
-<li><p>A change will be accepted if it will benefit the community. Particular requests which only very few people will take advantage will not be accepted to leave the code as simple as possible.</p></li>
+<blockquote>
+<div><p>Replace “<cite>&lt;myaddressalias&gt;</cite>” with your alias.
+Replace “edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX”
+with your encryped private key. IP address and port
+selection are up to the user.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">signer</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="o">&lt;</span><span class="n">myaddressalias</span><span class="o">&gt;</span> <span class="n">encrypted</span><span class="p">:</span><span class="n">edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
+<span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">signer</span> <span class="n">launch</span> <span class="n">socket</span> <span class="n">signer</span> <span class="o">-</span><span class="n">a</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span> <span class="o">-</span><span class="n">p</span> <span class="mi">22000</span> <span class="o">-</span><span class="n">W</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Configure Client</p></li>
 </ol>
+<blockquote>
+<div><p>Replace “<cite>&lt;myaddressalias&gt;</cite>” with your alias.
+Replace “<cite>&lt;PKH&gt;</cite>” with your public key hash.
+Use the same host port combination from the previous step.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="o">&lt;</span><span class="n">myaddressalias</span><span class="o">&gt;</span> <span class="n">tcp</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">22000</span><span class="o">/&lt;</span><span class="n">PKH</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">f</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>When the client is required to sign an operation, the operation
+is sent to the signer. Signer generates a signature and sends
+back to the client. Normally encrypted accounts are imported
+to the signer. So, it is necessary to provide encryption password
+to the signer at launch. Note that signer generates generic
+signatures e.g. sigXXXX but not edsigXXXX.</p>
+<p>For instructions on how to configure signer on a docker image
+go to the next section.</p>
 </div>
 
 
@@ -189,8 +207,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="tezossignerdocker.html" class="btn btn-neutral float-right" title="Tezos Signer with Docker" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="linuxservice.html" class="btn btn-neutral float-left" title="Run as Linux Service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="paymentaddress.html" class="btn btn-neutral float-left" title="Payment Address" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

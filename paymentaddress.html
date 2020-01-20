@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>For developers &mdash; Tezos Reward Distributor 6.0 documentation</title>
+  <title>Payment Address &mdash; Tezos Reward Distributor 6.0 documentation</title>
   
 
   
@@ -35,7 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Run as Linux Service" href="linuxservice.html" /> 
+    <link rel="next" title="How to use the Tezos Signer" href="tezossigner.html" />
+    <link rel="prev" title="How to configure Tezos Reward Distributor?" href="configuration.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -87,12 +88,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">For developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributers.html">For developers</a></li>
 </ul>
 
             
@@ -138,13 +139,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>For developers</li>
+      <li>Payment Address</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/contributers.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/paymentaddress.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -157,28 +158,43 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="for-developers">
-<h1>For developers<a class="headerlink" href="#for-developers" title="Permalink to this headline">¶</a></h1>
-<p>If you are interested in improving our project, this is just great! Our community looks forward to your contribution. Please follow this process:</p>
-<ol class="arabic simple">
-<li><p>Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.</p></li>
-<li><p>Fork the repo. Ideally, create a new branch from your fork for your contribution to make it easier to merge your changes back.</p></li>
-<li><p>Make your changes on the branch you hopefully created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.</p></li>
-<li><p>Push your changes to your fork/branch in GitHub. Don’t push it to your master! If you do it will make it harder to submit new changes later.</p></li>
-<li><p>Submit a pull request to the repo from your commit page on GitHub.</p></li>
-</ol>
-<p>Principles on the application evolution:</p>
-<ol class="arabic simple">
-<li><p>Discuss the solution with repository owners and other community members. Start the development after everybody agrees on a solution.</p></li>
-<li><p>Prefer the simpler solution. Try to make as fewer changes as possible.</p></li>
-<li><p>Update documentation wherever it is meaningful.</p></li>
-<li><p>Create and run unit tests for the changes. Please do not sends PRs for untested changes. Payment domain requires the utmost responsibility.</p></li>
-<li><p>Follow naming conventions.</p></li>
-<li><p>Avoid code repetition. Make use of Object Oriented design principles when possible.</p></li>
-<li><p>More configuration parameters do not always mean more flexibility. We do not want the application to turn into configuration hell which nobody can use.</p></li>
-<li><p>The idea of community members is very important because this repo is just a sequence of statements if nobody uses and benefit.</p></li>
-<li><p>A change will be accepted if it will benefit the community. Particular requests which only very few people will take advantage will not be accepted to leave the code as simple as possible.</p></li>
-</ol>
+  <div class="section" id="payment-address">
+<h1>Payment Address<a class="headerlink" href="#payment-address" title="Permalink to this headline">¶</a></h1>
+<p>TRD is designed to work as a linux service. It expects
+the usage of the Tezos signer for encrypted payment
+accounts. Unencrypted payment accounts can be used
+without tezos signer. If a payment account is encrypted
+and not configured to be signed by tezos signer,
+TRD will freeze.</p>
+<p>An address can only be used for payments if it satisfies the
+following criteria:</p>
+<ul>
+<li><p>Public key of the address must be revealed. See tezos command
+line interface on how to run reveal command on tezos client.
+If an address is registered as delegate, there is no need to
+run reveal command.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="n">reveal</span> <span class="n">key</span> <span class="k">for</span> <span class="o">&lt;</span><span class="n">alias</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Secret key of the address must be known. If the payment
+address is an implicit address (tz), its secret key must
+be imported. If payment address is an originated address
+(KT), secret key of the manager address must be imported.</p></li>
+<li><p>If secret key is encrypted, tezos-signer must be used to
+sign payments. For instructions on how to use signer,
+please refer to the next section.</p></li>
+<li><p>Use of unencrypted secret key is also possible. The
+unencrypted secret key can be obtained from tezbox
+web wallet. An unencrypted secret key can be imported
+to the client using the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="o">&lt;</span><span class="n">alias</span><span class="o">&gt;</span> <span class="n">unencrypted</span><span class="p">:</span><span class="n">edskXXXXX</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>For more information about tezos command line interface please
+refer to the official Tezos <a class="reference external" href="http://tezos.gitlab.io/api/cli-commands.html">documentation</a>.</p>
 </div>
 
 
@@ -189,8 +205,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="tezossigner.html" class="btn btn-neutral float-right" title="How to use the Tezos Signer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="linuxservice.html" class="btn btn-neutral float-left" title="Run as Linux Service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="configuration.html" class="btn btn-neutral float-left" title="How to configure Tezos Reward Distributor?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
