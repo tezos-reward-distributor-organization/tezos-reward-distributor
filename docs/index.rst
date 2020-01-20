@@ -1,26 +1,51 @@
 Tezos Reward Distributor (Run & Forget) |Build Status|
 ======================================================
 
-DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER
-CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE WITH
-CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS.
-IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH
-THE APPLICATION. IN SERVICE MODE DO NOT UPDATE OFTEN.
+DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS.
+IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL
+TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN
+DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO
+RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH
+THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.
 
 What is Tezos Reward Distributor?
 ------------------------------------------------
 
-TRD is a software for distributing baking rewards with delegators. This
-is not a script but a full scale application which can run in the
-background all the time. It can track cycles and make payments. It does
-not have to be used as a service, It can also be used interactively.
+TRD is a software for distributing staking rewards of
+delegators introduced in detail in this Medium article_.
+This is not a script but a full scale application which
+can continuously run in the background as a Linux service.
+It can track cycles and make payments. However it does
+not have to be used as a service, but it can also be
+used interactively.
 
-TRD supports complex payments, pays in batches, provides two back ends
-for calculations: rpc and tzstats. It was developed and tested extensively by
-the community. For more information, please check following Medium article_
-and the source code which can be found in the following Github_ repo.
+TRD supports complex payments, pays in batches, provides
+two back ends for calculations: rpc and tzstats_.
+Developed and tested extensively by the community and the
+source code which can be found in the following Github_ repo.
+
+**Important note:**
+
+The terms_ of tzstats note that a license is needed for
+the commercial use of the API!
+
+> If you wish to use the Data in a manner that is primarily
+> intended for or directed towards commercial advantage or
+> monetary compensation (such use, “Commercial Use”),
+> KIDTSUNAMI requires that you enter into a separate
+> commercial license agreement. Entering into a separate
+> commercial license allows us to protect KIDTSUNAMI’s
+> investment in the Data and to maintain the integrity of
+>the Data.
+>
+> Please contact us at license@kidtsunami.com for more
+> information about Commercial Uses of our Data.
 
 .. _article : https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7
+
+.. _tzstats : https://tzstats.com/
+
+.. _terms : https://tzstats.com/terms
 
 .. _Github : https://github.com/habanoz/tezos-reward-distributor
 
@@ -30,7 +55,11 @@ and the source code which can be found in the following Github_ repo.
 
    installation
    configuration
+   paymentaddress
+   tezossigner
+   tezossignerdocker
    run
+   linuxservice
    contributers
 
 Funding

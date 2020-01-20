@@ -1,24 +1,5 @@
-
 How to configure Tezos Reward Distributor?
-=====================================================
-
-Baker Configuration:
-------------------------
-
-Each baker has its own configuration and policy. A payment system should
-be flexible enough to cover needs of bakers. The application uses a yaml
-file for loading baker specific configurations.
-
-Configuration tool can be used to create baking configuration file
-interactively. Also an example configuration file is present under
-examples directory. For more information on configuration details, please
-see our wiki `page <https://github.com/habanoz/tezos-reward-distributor/wiki/Configuration>`_.
-
-TRD is designed to work as a linux service. It expects use of tezos
-signer for encrypted payment accounts. Unencrypted payment accounts can
-be used without tezos signer. If a payment account is encrypted and not
-configured to be signed by tezos signer, TRD will freeze. For more
-information on payment addresses please refer to our wiki `page <https://github.com/habanoz/tezos-reward-distributor/wiki/Payment-Address>`_.
+==========================================
 
 Email Setup
 ------------------------
@@ -33,3 +14,72 @@ fee.ini file contains details about transaction fees. Currently the fee
 value specified under DEFAULT domain is used as fee amount. It is in
 mutez.
 
+Baker Configuration:
+--------------------
+
+Each baker has its own configuration and policy. A payment system should
+be flexible enough to cover the needs of bakers. The application uses a yaml
+file for loading baker specific configurations.
+
+Configuration tool can be used to create baking configuration file
+interactively. Also an example configuration file is present under
+examples directory.
+By default configuration files are kept under ~/pymnt/cfg directory.
+Configuration directory can be changed with "-f" configuration option.
+Name of a configuration file should be the baker's address
+(e.g. tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).
+
+You can use configure.py tool to interactively create your configuration
+file, with ease.
+
+Available configuration parameters are:
+
+**baking_address**
+  Address of the baker. It must be an implicit account (tz1).
+  No alias is allowed.
+
+**owners_map**
+  A dictionary of PKH and ratio ( decimal in the range [0-1])
+  pairs. Each item in this dictionary represents PKH of each
+  balance owner and his ratio of the amount he owned in the
+  total baking balance. Implicit or originated addresses are
+  accepted. It is important that the sum of all ratios equals
+  to 1. This map is optional if owners do not want to be paid
+  for baking rewards, in this case, service fee remains in
+  baking balance.
+
+**founders_map**
+  A dictionary of PKH and ratio (decimal in the range [0-1])
+  pairs. Each item in this dictionary represents PKH of each
+  founder and his ratio of the shares coming from service fees.
+  Implicit or originated addresses are accepted. It is important
+  that the sum of all ratios equals to 1. This map is optional
+  if founders do not want to be paid from service fees, in
+  this case, service fee remains in baking balance.
+
+**service_fee**
+  A decimal in range [0-100]. This is evaluated as a percentage
+  value. If this value is set to 5, 5% of baking rewards are
+  kept as a service fee.
+
+**supporters_set**
+  A set of PKH values. Each PKH represents a supporter of the
+  baker. Supporters are not charged with a service fee. Founders
+  and balance owners are natural supporters, they are not
+  needed to be added.
+
+**specials_map**
+  A dictionary of PKH and fee (decimal in the range [0-100] )
+  pairs. This dictionary can be used to set special service
+  fee values for desired delegators.
+
+**delegator_pays_xfer_fee**
+  Default value is true. If set to false, the transfer fee for
+  each payment is paid by the delegate. Otherwise, the transfer
+  fee is deducted from the delegator reward.
+
+**payment_address**
+  This is the address where payments will be done from. A PKH
+  or alias of implicit or originated account is accepted. For
+  more information on the payment address configuration please
+  refer to the next section.
