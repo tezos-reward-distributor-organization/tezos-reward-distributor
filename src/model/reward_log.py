@@ -22,11 +22,13 @@ class RunMode(Enum):
 
 
 class RewardLog:
-    def __init__(self, address, type, balance) -> None:
+    def __init__(self, address, type, staking_balance, current_balance) -> None:
         super().__init__()
-        self.balance = balance
+        self.staking_balance = staking_balance
+        self.current_balance = current_balance
         self.address = address
         self.paymentaddress = address
+        self.needs_activation = False
         self.type = type
         self.desc = ""
         self.skipped = False
@@ -61,11 +63,12 @@ class RewardLog:
         return self
 
     def __repr__(self) -> str:
-        return "address: %s, type: %s, balance: %s, disabled:%s" % (self.address, self.type, self.balance, self.skipped)
+        return "Address: {}, Type: {}, SB: {}, CB: {}, Skipped: {}, NA: {}".format(
+            self.address, self.type, self.staking_balance, self.current_balance, self.skipped, self.needs_activation)
 
     @staticmethod
     def ExitInstance():
-        return RewardLog(address=EXIT_PAYMENT_TYPE, type=EXIT_PAYMENT_TYPE, balance=0)
+        return RewardLog(address=EXIT_PAYMENT_TYPE, type=EXIT_PAYMENT_TYPE, staking_balance=0, current_balance=0)
 
     @staticmethod
     def ExternalInstance(file_name, address, amount):
@@ -80,14 +83,14 @@ def cmp_by_skip_type_balance(rl1, rl2):
              TYPE_MERGED: 0}
     if rl1.skipped == rl2.skipped:
         if rl1.type == rl2.type:
-            if rl1.balance is None:
+            if rl1.staking_balance is None:
                 return 1
-            if rl2.balance is None:
+            if rl2.staking_balance is None:
                 return -1
-            if rl1.balance == rl2.balance:
+            if rl1.staking_balance == rl2.staking_balance:
                 return 1
             else:
-                return rl2.balance - rl1.balance
+                return rl2.staking_balance - rl1.staking_balance
         else:
             return types[rl2.type] - types[rl1.type]
     else:
@@ -102,13 +105,13 @@ def cmp_by_type_balance(rl1, rl2):
              TYPE_MERGED: 0}
 
     if rl1.type == rl2.type:
-        if rl1.balance is None:
+        if rl1.staking_balance is None:
             return 1
-        if rl2.balance is None:
+        if rl2.staking_balance is None:
             return -1
-        if rl1.balance == rl2.balance:
+        if rl1.staking_balance == rl2.staking_balance:
             return 1
         else:
-            return rl2.balance - rl1.balance
+            return rl2.staking_balance - rl1.staking_balance
     else:
         return types[rl2.type] - types[rl1.type]

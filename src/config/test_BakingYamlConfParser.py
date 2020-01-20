@@ -32,9 +32,9 @@ class TestYamlAppConfParser(TestCase):
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}
         }
 
-        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers)
+        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers)
 
-        block_api = RpcBlockApiImpl(network, wallet_client_manager, mainnet_public_node_url)
+        block_api = RpcBlockApiImpl(network, mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager, provider_factory=None, network_config=network,node_url=mainnet_public_node_url,block_api=block_api)
 
 
@@ -66,10 +66,10 @@ class TestYamlAppConfParser(TestCase):
                                                      "alias": "main1", "sk": True,
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}}
 
-        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh,
+        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None, addr_dict_by_pkh=addr_dict_by_pkh,
                                                     contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
 
-        block_api = RpcBlockApiImpl(network, wallet_client_manager, mainnet_public_node_url)
+        block_api = RpcBlockApiImpl(network, mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None, network_config=network,
                                         node_url=mainnet_public_node_url, block_api=block_api)
 
@@ -109,9 +109,9 @@ class TestYamlAppConfParser(TestCase):
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}
         }
 
-        wallet_client_manager = WalletClientManager(client_path=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
+        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
 
-        block_api = RpcBlockApiImpl(network, wallet_client_manager, mainnet_public_node_url)
+        block_api = RpcBlockApiImpl(network, mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None, network_config=network, node_url=mainnet_public_node_url, block_api=block_api)
 
         cnf_prsr.parse()

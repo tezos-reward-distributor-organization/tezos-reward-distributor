@@ -1,14 +1,14 @@
 import requests
 
 from api.block_api import BlockApi
-from exception.tzstats import TzStatsException
+from exception.api_provider import ApiProviderException
 from log_config import main_logger
 
 logger = main_logger
 
 PREFIX_API = {'MAINNET': {'HEAD_API_URL': 'https://api.tzstats.com'},
               'ZERONET': {'HEAD_API_URL': 'https://api.zeronet.tzstats.com'},
-              'BABYLONNET': {'HEAD_API_URL': 'https://api.babylonnet.tzstats.com'}
+              'ALPHANET': {'HEAD_API_URL': 'https://api.babylonnet.tzstats.com'}
             }
 
 class TzStatsBlockApiImpl(BlockApi):

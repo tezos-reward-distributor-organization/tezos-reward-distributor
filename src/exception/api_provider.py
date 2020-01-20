@@ -1,0 +1,2 @@
+class ApiProviderException(Exception):
+    pass

@@ -21,7 +21,8 @@ from launch_common import print_banner, add_argument_network, add_argument_repor
     add_argument_verbose, add_argument_dry, add_argument_provider
 from log_config import main_logger
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
-    MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, SPECIALS_MAP, SUPPORTERS_SET
+    MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
+    REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET
 from util.address_validator import AddressValidator
 from util.client_utils import get_client_path
 from util.dir_utils import get_payment_root, \
@@ -43,7 +44,9 @@ messages = {'hello':'This application will help you create configuration file fo
     , 'mindelegationtarget' : "Specify where should shares of delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB"
     , 'exclude' : "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip"
     , 'redirect' : "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip"
-    , 'delegatorpays' : "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator"
+    , 'reactivatezeroed' : "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes"
+    , 'delegatorpaysxfrfee' : "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator"
+    , 'delegatorpaysrafee' : "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator"
     , 'supporters' : "Add supporter address. Supporters do not pay service fee. Type enter to skip"
     , 'specials' : "Add special fee in form of PKH,fee. Given addresses will pay the specified fee rate. Type enter to skip"
     , 'final' : "Add excluded address in form of PKH,target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip"
@@ -253,12 +256,34 @@ def onredirect(input):
         printe("Invalid redirection entry: " + traceback.format_exc())
         return
 
-def ondelegatorpays(input):
+def ondelegatorpaysxfrfee(input):
     try:
         if not input:
             input="0"
         global parser
         parser.set(DELEGATOR_PAYS_XFER_FEE, input!="1")
+    except:
+        printe("Invalid input: " + traceback.format_exc())
+        return
+    fsm.go()
+
+def ondelegatorpaysrafee(input):
+    try:
+        if not input:
+            input="1"
+        global parser
+        parser.set(DELEGATOR_PAYS_RA_FEE, input!="1")
+    except:
+        printe("Invalid input: " + traceback.format_exc())
+        return
+    fsm.go()
+
+def onreactivatezeroed(input):
+    try:
+        if not input:
+            input="1"
+        global parser
+        parser.set(REACTIVATE_ZEROED, input!="1")
     except:
         printe("Invalid input: " + traceback.format_exc())
         return
@@ -276,7 +301,9 @@ callbacks = {'bakingaddress':onbakingaddress
     ,'mindelegationtarget':onmindelegationtarget
     ,'exclude':onexclude
     ,'redirect':onredirect
-    ,'delegatorpays':ondelegatorpays
+    ,'reactivatezeroed':onreactivatezeroed
+    ,'delegatorpaysxfrfee':ondelegatorpaysxfrfee
+    ,'delegatorpaysrafee':ondelegatorpaysrafee
     ,'supporters':onsupporters
     ,'specials':onspecials
     ,'final':onfinal
@@ -293,8 +320,10 @@ fsm = Fysom({ 'initial': 'hello', 'final':'final',
                   {'name': 'go', 'src': 'mindelegation', 'dst': 'mindelegationtarget'},
                   {'name': 'go', 'src': 'mindelegationtarget', 'dst': 'exclude'},
                   {'name': 'go', 'src': 'exclude', 'dst': 'redirect'},
-                  {'name': 'go', 'src': 'redirect', 'dst': 'delegatorpays'},
-                  {'name': 'go', 'src': 'delegatorpays', 'dst': 'specials'},
+                  {'name': 'go', 'src': 'redirect', 'dst': 'reactivatezeroed'},
+                  {'name': 'go', 'src': 'reactivatezeroed', 'dst': 'delegatorpaysrafee'},
+                  {'name': 'go', 'src': 'delegatorpaysrafee', 'dst': 'delegatorpaysxfrfee'},
+                  {'name': 'go', 'src': 'delegatorpaysxfrfee', 'dst': 'specials'},
                   {'name': 'go', 'src': 'specials', 'dst': 'supporters'},
                   {'name': 'go', 'src': 'supporters', 'dst': 'final'} ],
               'callbacks': {

@@ -34,7 +34,7 @@ class CalculatePhase6(CalculatePhaseBase):
 
         for addr, rl_list in payment_address_list_dict.items():
             if len(rl_list) > 1:
-                total_balance = sum([rl.balance for rl in rl_list])
+                total_balance = sum([rl.staking_balance for rl in rl_list])
                 total_ratio = sum([rl.ratio for rl in rl_list])
                 total_payment_amount = sum([rl.amount for rl in rl_list])
                 total_service_fee_amount = sum([rl.service_fee_amount for rl in rl_list])

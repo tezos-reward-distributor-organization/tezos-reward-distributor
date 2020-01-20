@@ -22,9 +22,7 @@ class TzStatsRewardApiImpl(RewardApi):
         root = self.helper.get_rewards_for_cycle(cycle, expected_reward, self.verbose)
 
         delegate_staking_balance = root["delegate_staking_balance"]
-
         total_reward_amount = root["total_reward_amount"]
+        delegators_balances_dict = root["delegators_balances"]
 
-        delegators_balance = root["delegators_balance"]
-
-        return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balance)
+        return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances_dict)

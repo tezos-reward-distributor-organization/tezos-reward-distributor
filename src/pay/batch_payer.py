@@ -11,8 +11,6 @@ from NetworkConfiguration import BLOCK_TIME_IN_SEC
 from log_config import main_logger
 from util.rpc_utils import parse_json_response
 
-ZERO_THRESHOLD = 2e+3
-
 logger = main_logger
 
 MAX_TX_PER_BLOCK = 280
@@ -20,30 +18,32 @@ PKH_LENGTH = 36
 CONFIRMATIONS = 1
 PATIENCE = 10
 
-COMM_HEAD = " rpc get http://{}/chains/main/blocks/head"
-COMM_COUNTER = " rpc get http://{}/chains/main/blocks/head/context/contracts/{}/counter"
-CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit": "%gas_limit%", "storage_limit": "%storage_limit%","amount":"%AMOUNT%"}'
+COMM_HEAD = "rpc get /chains/main/blocks/head"
+COMM_COUNTER = "rpc get /chains/main/blocks/head/context/contracts/{}/counter"
+CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit":"%gas_limit%","storage_limit":"%storage_limit%","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 JSON_WRAP='{"operation": %JSON%,"chain_id":"%chain_id%"}'
-COMM_FORGE = " rpc post http://%NODE%/chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
-COMM_RUNOPS = " rpc post http://%NODE%/chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
-COMM_PREAPPLY = " rpc post http://%NODE%/chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
-COMM_INJECT = " rpc post http://%NODE%/injection/operation with '\"%OPERATION_HASH%\"'"
-COMM_WAIT = " wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
+COMM_FORGE = "rpc post /chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
+COMM_RUNOPS = "rpc post /chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
+COMM_PREAPPLY = "rpc post /chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
+COMM_INJECT = "rpc post /injection/operation with '\"%OPERATION_HASH%\"'"
+COMM_WAIT = "wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
 
 FEE_INI = 'fee.ini'
-DUMMY_FEE = 1000
-
+MUTEZ = 1e6
+RA_BURN_FEE = 257000  # 0.257 XTZ
+RA_STORAGE = 300
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_xfer_fee, network_config):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
+        self.zero_threshold = 1    # 1 mutez = 0.000001 XTZ
 
         config = configparser.ConfigParser()
         if os.path.isfile(FEE_INI):
@@ -52,10 +52,9 @@ class BatchPayer():
             logger.warn("File {} not found. Using default fee values".format(FEE_INI))
 
         kttx = config['KTTX']
-        self.base = kttx['base']
         self.gas_limit = kttx['gas_limit']
-        self.storage_limit = kttx['storage_limit']
-        self.default_fee = kttx['fee']
+        self.storage_limit = int(kttx['storage_limit'])
+        self.default_fee = int(kttx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
         self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee',
@@ -65,9 +64,18 @@ class BatchPayer():
             raise Exception(
                 "delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
 
+        self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
 
-        logger.debug("Transfer fee is paid by {}".format("Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        # If delegator pays the fee, then the cutoff should be transaction-fee + 1
+        # Ex: Delegator reward is 1800 mutez, txn fee is 1792 mutez, reward - txn fee = 8 mutez payable reward
+        #     If delegate pays fee, then cutoff is 1 mutez payable reward
+        if self.delegator_pays_xfer_fee:
+            self.zero_threshold += self.default_fee
+
+        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee/MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE/MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
+        logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold/MUTEZ))
 
         # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
         if len(self.pymnt_addr) == PKH_LENGTH and (
@@ -86,13 +94,13 @@ class BatchPayer():
         logger.debug("Payment address is {}".format(self.source))
         logger.debug("Signing address is {}, manager alias is {}".format(self.manager, self.manager_alias))
 
-        self.comm_head = COMM_HEAD.format(self.node_url)
-        self.comm_counter = COMM_COUNTER.format(self.node_url, self.source)
-        self.comm_runops = COMM_RUNOPS.format().replace("%NODE%", self.node_url)
-        self.comm_forge = COMM_FORGE.format().replace("%NODE%", self.node_url)
-        self.comm_preapply = COMM_PREAPPLY.format().replace("%NODE%", self.node_url)
-        self.comm_inject = COMM_INJECT.format().replace("%NODE%", self.node_url)
-        self.comm_wait = COMM_WAIT.format()
+        self.comm_head = COMM_HEAD
+        self.comm_counter = COMM_COUNTER.format(self.source)
+        self.comm_runops = COMM_RUNOPS
+        self.comm_forge = COMM_FORGE
+        self.comm_preapply = COMM_PREAPPLY
+        self.comm_inject = COMM_INJECT
+        self.comm_wait = COMM_WAIT
 
     def pay(self, payment_items_in, verbose=None, dry_run=None):
         logger.info("{} payment items to process".format(len(payment_items_in)))
@@ -117,28 +125,38 @@ class BatchPayer():
 
         self.log_processed_items(payment_logs)
 
-        payment_items = [pi for pi in payment_items_in if not pi.paid.is_processed()]
+        unprocessed_payment_items = [pi for pi in payment_items_in if not pi.paid.is_processed()]
 
-        # separate trivial items, amounts less than zero_threshold are not trivial, no needed to be paid
-        non_trivial_payment_items = [pi for pi in payment_items if pi.amount < ZERO_THRESHOLD]
-        non_trivial_payment_items_total = sum([pl.amount for pl in non_trivial_payment_items])
-        if non_trivial_payment_items:
-            logger.info("{} payment items are not trivial, total of {:,} mutez".format(len(non_trivial_payment_items), non_trivial_payment_items_total))
-        self.log_non_trivial_items(non_trivial_payment_items)
+        # all unprocessed_payment_items are important (non-trivial)
+        # gather up all unprocessed_payment_items that are greater than, or equal to the zero_threshold
+        # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it, and burn fee
+        payment_items = []
+        sum_burn_fees = 0
+        for pi in unprocessed_payment_items:
 
-        trivial_payment_items = [pi for pi in payment_items if pi.amount >= ZERO_THRESHOLD]
-        if not trivial_payment_items:
-            logger.info("No trivial items found, returning...")
+            zt = self.zero_threshold
+            if pi.needs_activation and self.delegator_pays_ra_fee:
+                # Need to apply this fee to only those which need reactivation
+                zt += RA_BURN_FEE
+                sum_burn_fees += RA_BURN_FEE
+
+            if pi.amount >= zt:
+                payment_items.append(pi)
+
+        if not payment_items:
+            logger.info("No payment items found, returning...")
             return payment_items_in, 0
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
-        payment_items_chunks = [trivial_payment_items[i:i + MAX_TX_PER_BLOCK] for i in range(0, len(trivial_payment_items), MAX_TX_PER_BLOCK)]
+        payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
-        total_amount_to_pay = sum([pl.amount for pl in trivial_payment_items])
-        if not self.delegator_pays_xfer_fee: total_amount_to_pay += int(self.default_fee) * len(trivial_payment_items)
-        logger.info("Total trivial amount to pay is {:,} mutez.".format(total_amount_to_pay))
-        logger.info("{} trivial payments will be done in {} batches".format(len(trivial_payment_items), len(payment_items_chunks)))
+        total_amount_to_pay = sum([pl.amount for pl in payment_items])
+        total_amount_to_pay += sum_burn_fees
+        if not self.delegator_pays_xfer_fee: total_amount_to_pay += self.default_fee * len(payment_items)
+
+        logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
+        logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
 
         total_attempts = 0
         op_counter = OpCounter()
@@ -152,25 +170,12 @@ class BatchPayer():
             payment_logs.extend(payments_log)
             total_attempts += attempt
 
-        # set non trivial items to DONE
-        for pi in non_trivial_payment_items:
-            pi.paid = PaymentStatus.DONE
-            pi.hash = ""
-
-        # add non trivial items
-        payment_logs.extend(non_trivial_payment_items)
-
         return payment_logs, total_attempts
 
     def log_processed_items(self, payment_logs):
         if payment_logs:
             for pl in payment_logs:
                 logger.debug("Reward already %s for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
-
-    def log_non_trivial_items(self, payment_logs):
-        if payment_logs:
-            for pl in payment_logs:
-                logger.debug("Reward not trivial for address %s amount %f tz type %s", pl.address, pl.amount, pl.type)
 
     def pay_single_batch(self, payment_items, op_counter, verbose=None, dry_run=None):
 
@@ -239,23 +244,33 @@ class BatchPayer():
         content_list = []
 
         for payment_item in payment_records:
+
+            storage = self.storage_limit
             pymnt_amnt = payment_item.amount  # expects in micro tezos
 
-            assert pymnt_amnt >= ZERO_THRESHOLD # zero check, zero amounts needs to be filtered out earlier
+            if payment_item.needs_activation:
+                storage += RA_STORAGE
+                if self.delegator_pays_ra_fee:
+                    pymnt_amnt = max(pymnt_amnt - RA_BURN_FEE, 0)  # ensure not less than 0
 
             if self.delegator_pays_xfer_fee:
-                pymnt_amnt = max(pymnt_amnt - int(self.default_fee), 0)  # ensure not less than 0
+                pymnt_amnt = max(pymnt_amnt - self.default_fee, 0)  # ensure not less than 0
+
+            # if pymnt_amnt becomes 0, don't pay
+            if pymnt_amnt == 0:
+                logger.debug("Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
+                continue
 
             op_counter.inc()
 
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
-                .replace("%fee%", self.default_fee).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", self.storage_limit)
+                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", str(storage))
 
             content_list.append(content)
 
             if verbose:
-                logger.debug("Payment content: {}".format(content))
+                logger.info("Payment content: {}".format(content))
 
         contents_string = ",".join(content_list)
 
@@ -351,14 +366,14 @@ class BatchPayer():
             return PaymentStatus.FAIL, ""
 
         operation_hash = parse_json_response(inject_command_response)
-        logger.debug("Operation hash is {}".format(operation_hash))
+        logger.info("Operation hash is {}".format(operation_hash))
 
         # wait for inclusion
-        logger.debug("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
+        logger.info("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
             self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
-            logger.debug("Operation {} is included".format(operation_hash))
+            logger.info("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
             return PaymentStatus.INJECTED, operation_hash

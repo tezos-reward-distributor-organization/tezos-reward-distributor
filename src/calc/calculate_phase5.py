@@ -25,5 +25,4 @@ class CalculatePhase5(CalculatePhaseBase):
             if rl.address in self.addr_dest_dict:
                 rl.paymentaddress = self.addr_dest_dict[rl.address]
 
-
         return reward_data4, total_amount

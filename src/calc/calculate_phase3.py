@@ -9,7 +9,7 @@ class CalculatePhase3(CalculatePhaseBase):
     """
     -- Phase3 : Founders Phase --
 
-    At stage 3, Founders record is created. Founders record is later on splitted into founder records, for each founder.
+    At stage 3, Founders record is created. Founders record is later split into founder records, for each founder.
     If any address is excluded at this stage, its reward is given to founders.
     Fee rates are set at this stage.
     """
@@ -37,7 +37,7 @@ class CalculatePhase3(CalculatePhaseBase):
                 rl2.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 new_rewards.append(rl2)
                 total_excluded_ratio += rl2.ratio
-            elif MIN_DELEGATION_KEY in self.excluded_set and rl2.balance < self.min_delegation_amount:
+            elif MIN_DELEGATION_KEY in self.excluded_set and rl2.staking_balance < self.min_delegation_amount:
                 rl2.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 new_rewards.append(rl2)
                 total_excluded_ratio += rl2.ratio
@@ -57,7 +57,7 @@ class CalculatePhase3(CalculatePhaseBase):
 
         # create founders parent record
         if total_service_fee_ratio > 1e-6:  # >0
-            rl = RewardLog(address=TYPE_FOUNDERS_PARENT, type=TYPE_FOUNDERS_PARENT, balance=0)
+            rl = RewardLog(address=TYPE_FOUNDERS_PARENT, type=TYPE_FOUNDERS_PARENT, staking_balance=0, current_balance=0)
             rl.service_fee_rate = 0
             rl.service_fee_ratio = 0
             rl.ratio = total_service_fee_ratio

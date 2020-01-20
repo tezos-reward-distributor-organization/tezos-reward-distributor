@@ -8,6 +8,7 @@ from Constants import EXIT_PAYMENT_TYPE, PaymentStatus
 from NetworkConfiguration import is_mainnet
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
+from calc.calculate_phase7 import CalculatePhase7
 from emails.email_manager import EmailManager
 from log_config import main_logger
 from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
@@ -33,7 +34,8 @@ def count_and_log_failed(payment_logs):
 
 class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
-                 network_config, args=None, verbose=None, dry_run=None, delegator_pays_xfer_fee=True, dest_map=None,
+                 network_config, args=None, verbose=None, dry_run=None, reactivate_zeroed=True,
+                 delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None,
                  publish_stats=True):
         super(PaymentConsumer, self).__init__()
 
@@ -48,7 +50,9 @@ class PaymentConsumer(threading.Thread):
         self.dry_run = dry_run
         self.mm = EmailManager()
         self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.reactivate_zeroed = reactivate_zeroed
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
+        self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.publish_stats = publish_stats
         self.args = args
         self.network_config = network_config
@@ -60,7 +64,7 @@ class PaymentConsumer(threading.Thread):
     def run(self):
         while True:
             try:
-                # 1-  wait until a reward is present
+                # 1 - wait until a reward is present
                 payment_batch = self.payments_queue.get(True)
 
                 payment_items = payment_batch.batch
@@ -79,19 +83,26 @@ class PaymentConsumer(threading.Thread):
 
                 logger.info("Starting payments for cycle {}".format(pymnt_cycle))
 
+                # Handle remapping of payment to alternate address
                 phase5 = CalculatePhase5(self.dest_map)
                 payment_items, _ = phase5.calculate(payment_items, None)
 
+                # Merge payments to same address
                 phase6 = CalculatePhase6(addr_dest_dict=self.dest_map)
                 payment_items, _ = phase6.calculate(payment_items, None)
 
-                # filter out non-payable items
+                # Filter zero-balance addresses based on config
+                phase7 = CalculatePhase7(self.reactivate_zeroed)
+                payment_items = phase7.calculate(payment_items)
+
+                # Filter out non-payable items
                 payment_items = [pi for pi in payment_items if pi.payable]
 
                 payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
-                                         self.delegator_pays_xfer_fee, self.network_config)
+                                         self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
+                                         self.network_config)
 
                 # 3- do the payment
                 payment_logs, total_attempts = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
@@ -163,7 +174,7 @@ class PaymentConsumer(threading.Thread):
         logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
-            logger.debug("Payment done for address %s type %s amount {:>8.2f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
+            logger.debug("Payment done for address %s type %s amount {:>10.6f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
 
         if self.publish_stats and not self.dry_run and (not self.args or is_mainnet(self.args.network)):
             stats_dict = self.create_stats_dict(nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts)
