@@ -13,7 +13,7 @@ from util.rpc_utils import parse_json_response
 
 logger = main_logger
 
-MAX_TX_PER_BLOCK = 280
+MAX_TX_PER_BLOCK = 200
 PKH_LENGTH = 36
 CONFIRMATIONS = 1
 PATIENCE = 10
