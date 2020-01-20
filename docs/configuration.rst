@@ -106,7 +106,7 @@ Available configuration parameters are:
   their rewards will be ignored and will simply remain at the bakers address.
 
 **rules_map**
-  The rules_map is needed to redirect payments. A Pre-defined source (left side) is 
+  The rules_map is needed to redirect payments. A pre-defined source (left side) is 
   mindelegation. Pre-defined destinations (right side) are TOF = to founders balance, 
   TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are 
   PKHs.
