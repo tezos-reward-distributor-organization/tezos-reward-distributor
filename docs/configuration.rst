@@ -112,8 +112,8 @@ Available configuration parameters are:
   
   Example: 
   rules_map:
-  PKH: TOF (redirects payment from PKH to TOF)
-  PHK: TOB (payment will be kept in the baking_address)
-  PKH: PKH (redirects payment from PKH to PKH)
-  mindelegation: TOE (mindelegation will be shared with everyone)
+  PKH: TOF (redirects payment from PKH to TOF)  
+  PHK: TOB (payment will be kept in the baking_address)  
+  PKH: PKH (redirects payment from PKH to PKH)  
+  mindelegation: TOE (mindelegation will be shared with everyone)  
   
