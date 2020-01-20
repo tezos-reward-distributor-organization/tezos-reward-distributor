@@ -37,7 +37,27 @@ Available configuration parameters are:
 **baking_address**
   Address of the baker. It must be an implicit account (tz1).
   No alias is allowed.
+  
+**payment_address**
+  This is the address where payments will be done from. A PKH
+  or alias of implicit or originated account is accepted. For
+  more information on the payment address configuration please
+  refer to the next section.
+  
+**service_fee**
+  A decimal in range [0-100]. This is evaluated as a percentage
+  value. If this value is set to 5, 5% of baking rewards are
+  kept as a service fee.
 
+**founders_map**
+  A dictionary of PKH and ratio (decimal in the range [0-1])
+  pairs. Each item in this dictionary represents PKH of each
+  founder and his ratio of the shares coming from service fees.
+  Implicit or originated addresses are accepted. It is important
+  that the sum of all ratios equals to 1. This map is optional
+  if founders do not want to be paid from service fees, in
+  this case, service fee remains in baking balance.
+  
 **owners_map**
   A dictionary of PKH and ratio ( decimal in the range [0-1])
   pairs. Each item in this dictionary represents PKH of each
@@ -48,38 +68,34 @@ Available configuration parameters are:
   for baking rewards, in this case, service fee remains in
   baking balance.
 
-**founders_map**
-  A dictionary of PKH and ratio (decimal in the range [0-1])
-  pairs. Each item in this dictionary represents PKH of each
-  founder and his ratio of the shares coming from service fees.
-  Implicit or originated addresses are accepted. It is important
-  that the sum of all ratios equals to 1. This map is optional
-  if founders do not want to be paid from service fees, in
-  this case, service fee remains in baking balance.
-
-**service_fee**
-  A decimal in range [0-100]. This is evaluated as a percentage
-  value. If this value is set to 5, 5% of baking rewards are
-  kept as a service fee.
-
+**specials_map**
+  A dictionary of PKH and fee (decimal in the range [0-100] )
+  pairs. This dictionary can be used to set special service
+  fee values for desired delegators.
+  
 **supporters_set**
   A set of PKH values. Each PKH represents a supporter of the
   baker. Supporters are not charged with a service fee. Founders
   and balance owners are natural supporters, they are not
   needed to be added.
 
-**specials_map**
-  A dictionary of PKH and fee (decimal in the range [0-100] )
-  pairs. This dictionary can be used to set special service
-  fee values for desired delegators.
-
+**min_delegation_amt**
+ A minimum delegation amount can be set here. If this value is set 
+ to 10, 10 XTZ are required as minimum.
+  
 **delegator_pays_xfer_fee**
   Default value is true. If set to false, the transfer fee for
   each payment is paid by the delegate. Otherwise, the transfer
   fee is deducted from the delegator reward.
 
-**payment_address**
-  This is the address where payments will be done from. A PKH
-  or alias of implicit or originated account is accepted. For
-  more information on the payment address configuration please
-  refer to the next section.
+**rules_map**
+  The rules_map is needed to redirect payments. Constants are TOF = To Founders Balance, 
+  TOB = To Bakers Balance and mindelegation.
+  
+  Example: 
+  rule_map:
+  PKH: TOF (redirects payment from PKH to TOF)
+  PHK: TOB (payment will be kept in the baking_address)
+  PKH: PKH (redirects payment from PKH to PKH)
+  mindelegation: TOB (mindelegation will be kept in the baking_address)
+  
