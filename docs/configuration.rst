@@ -80,22 +80,40 @@ Available configuration parameters are:
   needed to be added.
 
 **min_delegation_amt**
- A minimum delegation amount can be set here. If this value is set 
- to 10, 10 XTZ are required as minimum.
+  A minimum delegation amount can be set here. If this value is set 
+  to 10, 10 XTZ are required as minimum. It is important to define 
+  what happens to the rewards of excluded delegates that are below 
+  the minimum delegation balance in rules_map.
+  
+**reactivate_zeroed**
+  True/False - If True, an account to be paid found with a 0 
+  balance will be reactivated, incurring the necessary burn fee 
+  and storage, and rewards will be sent. If False, any account 
+  with a 0 balance will be skipped payment. This will be noted in 
+  the CSV report.
   
 **delegator_pays_xfer_fee**
   Default value is true. If set to false, the transfer fee for
   each payment is paid by the delegate. Otherwise, the transfer
   fee is deducted from the delegator reward.
 
+**delegator_pays_ra_fee**
+  True/False - Functions just like delegator_pays_xfer_fee, except refers 
+  to the burn/reactivation fee. If True, the burn fee 
+  is subtracted from the reward payment (ie: delegate pays). 
+  If False, burn fee is paid for by baker. If reactivate_zeroed: True 
+  and delegator_pays_ra_fee: True but the reward is smaller than the burn fee,
+  their rewards will be ignored and will simply remain at the bakers address.
+
 **rules_map**
-  The rules_map is needed to redirect payments. Constants are TOF = To Founders Balance, 
-  TOB = To Bakers Balance and mindelegation.
+  The rules_map is needed to redirect payments. Constant source (left side) is 
+  mindelegation. Constants destinations (right side) are TOF = to founders balance, 
+  TOB = to bakers balance and TOE = to everyone.
   
   Example: 
-  rule_map:
+  rules_map:
   PKH: TOF (redirects payment from PKH to TOF)
   PHK: TOB (payment will be kept in the baking_address)
   PKH: PKH (redirects payment from PKH to PKH)
-  mindelegation: TOB (mindelegation will be kept in the baking_address)
+  mindelegation: TOE (mindelegation will be shared with everyone)
   
