@@ -106,12 +106,13 @@ Available configuration parameters are:
   their rewards will be ignored and will simply remain at the bakers address.
 
 **rules_map**
-  The rules_map is needed to redirect payments. Constant source (left side) is 
-  mindelegation. Constants destinations (right side) are TOF = to founders balance, 
-  TOB = to bakers balance and TOE = to everyone.
+  The rules_map is needed to redirect payments. A Pre-defined source (left side) is 
+  mindelegation. Pre-defined destinations (right side) are TOF = to founders balance, 
+  TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are 
+  PKHs.
   
-  Example: 
-  rules_map:
+  Example:  
+  rules_map:  
   PKH: TOF (redirects payment from PKH to TOF)  
   PHK: TOB (payment will be kept in the baking_address)  
   PKH: PKH (redirects payment from PKH to PKH)  
