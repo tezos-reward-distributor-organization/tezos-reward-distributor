@@ -252,9 +252,10 @@ If False, burn fee is paid for by baker. If reactivate_zeroed: True
 and delegator_pays_ra_fee: True but the reward is smaller than the burn fee,
 their rewards will be ignored and will simply remain at the bakers address.</p>
 </dd>
-<dt><strong>rules_map</strong></dt><dd><p>The rules_map is needed to redirect payments. Constant source (left side) is
-mindelegation. Constants destinations (right side) are TOF = to founders balance,
-TOB = to bakers balance and TOE = to everyone.</p>
+<dt><strong>rules_map</strong></dt><dd><p>The rules_map is needed to redirect payments. A pre-defined source (left side) is
+mindelegation. Pre-defined destinations (right side) are TOF = to founders balance,
+TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are
+PKHs.</p>
 <p>Example:
 rules_map:
 PKH: TOF (redirects payment from PKH to TOF)
