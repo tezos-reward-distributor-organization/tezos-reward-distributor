@@ -3,7 +3,8 @@ from config.yaml_conf_parser import YamlConfParser
 from exception.configuration import ConfigurationException
 from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, SERVICE_FEE, \
     FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
-    DELEGATOR_PAYS_XFER_FEE, RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
+    DELEGATOR_PAYS_XFER_FEE, REACTIVATE_ZEROED, DELEGATOR_PAYS_RA_FEE, \
+    RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
     EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
@@ -37,6 +38,9 @@ class BakingYamlConfParser(YamlConfParser):
         self.validate_specials_map(conf_obj)
         self.validate_dest_map(conf_obj)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
+        self.parse_bool(conf_obj, REACTIVATE_ZEROED, None)
+        self.parse_bool(conf_obj, DELEGATOR_PAYS_RA_FEE, None)
+        
 
     def set(self, key, value):
         self.conf_obj[key] = value
@@ -248,8 +252,13 @@ class BakingYamlConfParser(YamlConfParser):
     def parse_bool(self, conf_obj, param_name, default):
 
         if param_name not in conf_obj:
-            conf_obj[param_name] = default
-            return
+        
+            # If required param (ie: no default), raise exception if not defined
+            if default is None:
+                raise ConfigurationException("Parameter '{}' is not present in config file. Please consult the documentation and add this parameter.".format(param_name))
+            else:
+                conf_obj[param_name] = default
+                return
 
         # already a bool value
         if type(conf_obj[param_name]) == type(False):
