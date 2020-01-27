@@ -17,7 +17,9 @@ class TestYamlAppConfParser(TestCase):
         payment_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         founders_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
         owners_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        service_fee : 4.53  
+        service_fee : 4.53
+        reactivate_zeroed: False
+        delegator_pays_ra_fee: True
         """
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -43,10 +45,15 @@ class TestYamlAppConfParser(TestCase):
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZ)
-        self.assertEqual(0, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
+
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('min_delegation_amt'), 0)
+
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
 
     def test_validate_no_founders_map(self):
         data_no_founders = """
@@ -54,7 +61,9 @@ class TestYamlAppConfParser(TestCase):
         baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         payment_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         owners_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        service_fee : 4.5  
+        service_fee : 4.5
+        reactivate_zeroed: False
+        delegator_pays_ra_fee: True
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
@@ -81,10 +90,15 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZ)
+
         self.assertEqual(cnf_prsr.get_conf_obj_attr('founders_map'), dict())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('specials_map'), dict())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('supporters_set'), set())
-        self.assertEqual(0, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
+
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('min_delegation_amt'), 0)
+
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
 
     def test_validate_pymnt_alias(self):
         data_no_founders = """
@@ -92,8 +106,10 @@ class TestYamlAppConfParser(TestCase):
         baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         payment_address : tzPay
         owners_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        service_fee : 4.5  
+        service_fee : 4.5
         min_delegation_amt : 100
+        reactivate_zeroed: False
+        delegator_pays_ra_fee: True
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -127,6 +143,7 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('specials_map'), dict())
         self.assertEqual(cnf_prsr.get_conf_obj_attr('supporters_set'), set())
 
-        self.assertEqual(100, cnf_prsr.get_conf_obj_attr('min_delegation_amt'))
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('min_delegation_amt'), 100)
 
-
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
