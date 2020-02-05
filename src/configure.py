@@ -371,7 +371,7 @@ def main(args):
     logger.debug("Tezos client path is {}".format(client_path))
     
     # 4. get network config     
-    config_client_manager = SimpleClientManager(client_path)
+    config_client_manager = SimpleClientManager(client_path, args.node_addr)
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
     global network_config
     network_config = network_config_map[args.network]
@@ -379,7 +379,7 @@ def main(args):
     logger.debug("Network config {}".format(network_config))
 
     global wllt_clnt_mngr
-    wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers, verbose=args.verbose)
+    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers, verbose=args.verbose)
 
     # hello state
     command = input("{} >".format(messages['hello'])).strip()
