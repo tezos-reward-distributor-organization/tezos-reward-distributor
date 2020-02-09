@@ -23,6 +23,7 @@ from util.client_utils import get_client_path
 from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
+from exception.configuration import ConfigurationException
 
 LINER = "--------------------------------------------"
 NB_CONSUMERS = 1
@@ -80,23 +81,32 @@ def main(args):
 
     logger.debug("Network config {}".format(network_config))
 
-    # 5- load baking configuration file
-    config_file_path = get_baking_configuration_file(config_dir)
-
-    logger.info("Loading baking configuration file {}".format(config_file_path))
-
+    # Load the payment wallet
     wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers,
                                          verbose=args.verbose)
 
+    # Setup provider to fetch RPCs
     provider_factory = ProviderFactory(args.reward_data_provider, verbose=args.verbose)
-    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr, verbose=args.verbose)
-    parser.parse()
-    parser.validate()
-    parser.process()
-    cfg_dict = parser.get_conf_obj()
 
-    # dictionary to BakingConf object, for a bit of type safety
-    cfg = BakingConf(cfg_dict, master_cfg)
+    # 5- load and verify baking configuration file
+    try:
+        config_file_path = get_baking_configuration_file(config_dir)
+
+        logger.info("Loading baking configuration file {}".format(config_file_path))
+
+        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr, verbose=args.verbose)
+        parser.parse()
+        parser.validate()
+        parser.process()
+
+        # dictionary to BakingConf object, for a bit of type safety
+        cfg_dict = parser.get_conf_obj()
+        cfg = BakingConf(cfg_dict, master_cfg)
+
+    except ConfigurationException as e:
+        logger.info("Unable to parse '{}' config file.".format(config_file_path))
+        logger.info(e)
+        sys.exit(1)
 
     logger.info("Baking Configuration {}".format(cfg))
 
