@@ -27,16 +27,16 @@ class CalculatePhase7(CalculatePhaseBase):
             # then mark address as being skipped with a description to be included
             # in the CSV payment report
 
-            if (delegate.type == reward_log.TYPE_DELEGATOR and delegate.current_balance == 0):
+            # KT1 accounts do not require reactivation on 0 balance
 
-                # KT1 accounts do not require reactivation on 0 balance
-                # Check paymentaddress in case there is an alternate destination in the mapping
-                if not delegate.paymentaddress.startswith("KT1"):
+            if (delegate.type == reward_log.TYPE_DELEGATOR and 
+                delegate.current_balance == 0 and
+                not delegate.paymentaddress.startswith("KT1")):
 
-                    if self.reactivate_zeroed:
-                        delegate.needs_activation = True
-                    else:
-                        delegate.skip(BY_ZERO_BALANCE, self.phase)
+                if self.reactivate_zeroed:
+                    delegate.needs_activation = True
+                else:
+                    delegate.skip(BY_ZERO_BALANCE, self.phase)
 
             reward_data7.append(delegate)
 
