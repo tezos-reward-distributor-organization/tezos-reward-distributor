@@ -144,7 +144,8 @@ class RpcRewardApiImpl(RewardApi):
             
             # Loop over delegators, get balances
             for idx, delegator in enumerate(delegators_addresses):
-
+                if delegator == self.baking_address:
+                    continue
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
 
