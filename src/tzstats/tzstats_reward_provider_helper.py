@@ -14,7 +14,7 @@ single_current_balance_call = '/tables/account?address={}&columns=row_id,spendab
 
 PREFIX_API = {'MAINNET': {'API_URL': 'http://api.tzstats.com'},
               'ZERONET': {'API_URL': 'http://api.zeronet.tzstats.com'},
-              'ALPHANET': {'API_URL': 'http://api.babylonnet.tzstats.com'}
+              'ALPHANET': {'API_URL': 'http://api.carthagenet.tzstats.com'}
             }
 
 
