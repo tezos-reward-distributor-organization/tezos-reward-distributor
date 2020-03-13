@@ -53,6 +53,8 @@ Before running the TRD, you need to configure it e.g by adding your staking addr
 The configuration file should be included in the `~/pymnt/cfg/` directory by default. You can use the following command to copy and modify the example configuration:
 
 ```bash
+# create directory
+mkdir -p ~/pymnt/cfg/
 cp tezos-reward-distributor/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml ~/pymnt/cfg/
 nano ~/pymnt/cfg/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml
 ```
