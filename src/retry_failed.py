@@ -117,7 +117,7 @@ def main(args):
         NB_CONSUMERS = 0
 
     # 7- get reporting directories
-    reports_dir = os.path.expanduser(args.reports_dir)
+    reports_dir = os.path.expanduser(args.reports_base)
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
