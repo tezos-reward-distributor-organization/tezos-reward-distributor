@@ -26,3 +26,6 @@ class TzStatsRewardApiImpl(RewardApi):
         delegators_balances_dict = root["delegators_balances"]
 
         return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances_dict)
+
+    def update_current_balances(self, reward_logs):
+        self.helper.update_current_balances(reward_logs)

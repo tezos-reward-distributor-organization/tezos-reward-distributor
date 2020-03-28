@@ -118,6 +118,7 @@ def main(args):
 
     # 7- get reporting directories
     reports_dir = os.path.expanduser(args.reports_base)
+
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
@@ -136,28 +137,33 @@ def main(args):
     # 9- service fee calculator
     srvc_fee_calc = ServiceFeeCalculator(cfg.get_full_supporters_set(), cfg.get_specials_map(), cfg.get_service_fee())
 
-    p = PaymentProducer(name='producer', initial_payment_cycle=None, network_config=network_config,
-                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode.ONETIME,
-                        service_fee_calc=srvc_fee_calc, release_override=0,
-                        payment_offset=0, baking_cfg=cfg, life_cycle=life_cycle,
-                        payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                        node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
-    p.retry_failed_payments(args.retry_injected)
+    try:
 
-    c = PaymentConsumer(name='consumer' + '_retry_failed', payments_dir=payments_root, key_name=payment_address,
-                        client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                        wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                        delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), network_config=network_config)
-    time.sleep(1)
-    c.start()
-    p.exit()
-    c.join()
+        p = PaymentProducer(name='producer', initial_payment_cycle=None, network_config=network_config,
+                            payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode.ONETIME,
+                            service_fee_calc=srvc_fee_calc, release_override=0,
+                            payment_offset=0, baking_cfg=cfg, life_cycle=life_cycle,
+                            payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
+                            node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
 
-    logger.info("Application start completed")
-    logger.info(LINER)
+        p.retry_failed_payments(args.retry_injected)
 
-    sleep(5)
+        c = PaymentConsumer(name='consumer_retry_failed', payments_dir=payments_root, key_name=payment_address,
+                            client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
+                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
+                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), network_config=network_config)
+        time.sleep(1)
+        c.start()
+        p.exit()
+        c.join()
 
+        logger.info("Application start completed")
+        logger.info(LINER)
+
+        sleep(5)
+
+    except KeyboardInterrupt:
+        logger.info("Interrupted.")
 
 def get_baking_configuration_file(config_dir):
     config_file = None

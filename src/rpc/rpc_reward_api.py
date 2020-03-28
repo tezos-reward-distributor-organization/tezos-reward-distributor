@@ -109,6 +109,15 @@ class RpcRewardApiImpl(RewardApi):
             logger.debug("[do_rpc_request] Response {}".format(response))
         return response
 
+    def update_current_balances(self, reward_logs):
+
+        for rl in reward_logs:
+            try:
+                rl.current_balance = self.__get_current_balance_of_delegator(rl.address)
+            except Exception as e:
+                logger.warn("update_current_balances - unexpected error: {}".format(e), exc_info=True)
+                raise e from e
+
     def __get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
@@ -149,10 +158,8 @@ class RpcRewardApiImpl(RewardApi):
                 d_info = {"staking_balance": 0, "current_balance": 0}
 
                 get_staking_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
-                get_current_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, "head", delegator)
 
                 staking_balance_response = None
-                current_balance_response = None
 
                 while not staking_balance_response:
                     try:
@@ -164,13 +171,7 @@ class RpcRewardApiImpl(RewardApi):
 
                 sleep(0.4) # Be nice to public RPC since we are now making 2x the amount of RPC calls
 
-                while not current_balance_response:
-                    try:
-                        current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
-                    except:
-                        logger.debug("Fetching delegator current balance failed {}, will retry", delegator)
-
-                d_info["current_balance"] = int(current_balance_response)
+                d_info["current_balance"] = self.__get_current_balance_of_delegator(delegator)
 
                 logger.debug(
                     "Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} ".format(
@@ -190,6 +191,28 @@ class RpcRewardApiImpl(RewardApi):
             logger.warn("Unexpected error: {}".format(e), exc_info=True)
 
         return delegate_staking_balance, delegators
+
+    def __get_current_balance_of_delegator(self, address):
+
+        """Helper function to get current balance of delegator"""
+
+        get_current_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, "head", address)
+
+        current_balance_response = None
+
+        while not current_balance_response:
+            sleep(0.4) # Be nice to public RPC
+            try:
+                current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
+            except requests.exceptions.RequestException as e:
+                # Catch HTTP-related errors and retry
+                logger.debug("Fetching delegator {} current balance failed, will retry: {}", address, e)
+                sleep(2.0)
+            except Exception as e:
+                # Anything else, raise up
+                raise e from e
+
+        return int(current_balance_response)
 
     def __get_snapshot_block_hash(self, cycle, current_level):
 
