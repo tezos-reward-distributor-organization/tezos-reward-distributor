@@ -386,16 +386,22 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     if pl.paid == PaymentStatus.INJECTED:
                         pl.paid = PaymentStatus.FAIL
                         nb_converted += 1
-                        logger.debug("Reward converted from %s to fail for cycle %s address %s amount %f tz type %s",
+                        logger.debug("Reward converted from %s to fail for cycle %s, address %s, amount %f, tz type %s",
                                      pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
 
                 if nb_converted:
                     logger.info("{} rewards converted from injected to fail.".format(nb_converted))
 
-            # 2.4 put records into payment_queue. payment_consumer will make payments
+            # 2.4 - Filter batch to only include those which failed. No need to mess with PAID/DONE
+            batch = list(filter(lambda f:f.paid == PaymentStatus.FAIL, batch))
+
+            # 2.5 - Need to fetch current balance for addresses of any failed payments
+            self.reward_api.update_current_balances(batch)
+
+            # 2.6 - put records into payment_queue. payment_consumer will make payments
             self.payments_queue.put(PaymentBatch(self, cycle, batch))
 
-            # 2.5 rename payments/failed/csv_report.csv to payments/failed/csv_report.csv.BUSY
+            # 2.7 - rename payments/failed/csv_report.csv to payments/failed/csv_report.csv.BUSY
             # mark the files as in use. we do not want it to be read again
             # BUSY file will be removed, if successful payment is done
             os.rename(payment_failed_report_file, payment_failed_report_file + BUSY_FILE)

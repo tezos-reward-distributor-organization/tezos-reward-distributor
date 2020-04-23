@@ -151,29 +151,10 @@ class TzStatsRewardProviderHelper:
 
         # Fetch individual not in original batch
         if len(need_curr_balance_fetch) > 0:
-
             for d in need_curr_balance_fetch:
-
-                uri = self.api['API_URL'] + single_current_balance_call.format(d)
-
-                sleep(0.5) # be nice to tzstats
-                
-                if verbose:
-                    logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
-                
-                resp = requests.get(uri, timeout=5)
-                
-                if verbose:
-                    logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
-
-                if resp.status_code != 200:
-                    # This means something went wrong.
-                    raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
-                
-                resp = resp.json()[0]
-                root["delegators_balances"][d]["current_balance"] = int(1e6 * float(resp[idx_cb_current_balance]))
+                root["delegators_balances"][d]["current_balance"] = self.__fetch_current_balance(d, verbose)
                 curr_bal_delegators.append(d)
-        
+
         # All done fetching balances.
         # Sanity check.
         n_curr_balance = len(curr_bal_delegators)
@@ -183,3 +164,30 @@ class TzStatsRewardProviderHelper:
             raise ApiProviderException('Did not fetch all balances {}/{}'.format(n_curr_balance, n_stake_balance))
 
         return root
+
+    def update_current_balances(self, reward_logs):
+        """External helper for fetching current balance of addresses"""
+        for rl in reward_logs:
+            rl.current_balance = self.__fetch_current_balance(rl.address)
+
+    def __fetch_current_balance(self, address, verbose=False):
+
+        uri = self.api['API_URL'] + single_current_balance_call.format(address)
+
+        sleep(0.5) # be nice to tzstats
+        
+        if verbose:
+            logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
+        
+        resp = requests.get(uri, timeout=5)
+        
+        if verbose:
+            logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+
+        if resp.status_code != 200:
+            # This means something went wrong.
+            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+        
+        resp = resp.json()[0]
+
+        return int(1e6 * float(resp[idx_cb_current_balance]))
