@@ -25,6 +25,6 @@ class PaymentStatus(Enum):
     def __str__(self):
         return self.name
 
-PUBLIC_NODE_URL = { "MAINNET": ["https://mainnet.tezos.org.ua", "https://teznode.letzbake.com"],
-                    "ALPHANET": ["https://tezos-dev.cryptonomic-infra.tech"],
+PUBLIC_NODE_URL = { "MAINNET": ["https://mainnet-tezos.giganode.io", "https://teznode.letzbake.com"],
+                    "ALPHANET": ["https://tezos-dev.cryptonomic-infra.tech", "https://testnet-tezos.giganode.io"],
                     "ZERONET": ["https://rpczero.tzbeta.net"]}
