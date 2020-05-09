@@ -78,7 +78,3 @@ The default provider is the public rpc node *mainnet.tezrpc.me*. However, it is 
 Please note that in this case, the default node would be localhost:8732. In order to change the node url for the provider, you can give the desired url 
 under the flag -A followed with node_url:port (e.g. -P rpc -A 127.0.0.1:8733).
 Please note that the node should be an archive node, and that the port should be the rpc port specified while launching the node.
-
-## Funding
-
-TRD is an open source project and will stay like this. It is not funded by any organization. A grant request is rejected by Tezos Foundation. However, I will try to continue to enhance the software and support the community.
