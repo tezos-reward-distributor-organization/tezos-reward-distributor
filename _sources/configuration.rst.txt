@@ -45,28 +45,56 @@ Available configuration parameters are:
   refer to the next section.
   
 **service_fee**
-  A decimal in range [0-100]. This is evaluated as a percentage
-  value. If this value is set to 5, 5% of baking rewards are
-  kept as a service fee.
+  A decimal in range [0-100]. Also known as the baker's fee.
+  This is evaluated as a percentage value. Example: If set to 5,
+  then 5% of baking rewards are kept as a service fee by the baker.
 
 **founders_map**
   A dictionary of PKH and ratio (decimal in the range [0-1])
   pairs. Each item in this dictionary represents PKH of each
-  founder and his ratio of the shares coming from service fees.
+  founder and his ratio of the shares coming from the service fee.
   Implicit or originated addresses are accepted. It is important
   that the sum of all ratios equals to 1. This map is optional
   if founders do not want to be paid from service fees, in
   this case, service fee remains in baking balance.
   
+  Example::
+
+    service_fee: 10
+    founders_map:
+        tz3VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf: 0.6
+        tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17: 0.4
+  
+  Alice and Bob are both founders of Acme Bakery. Their bakery fee is 10%. 
+  Alice has a 60% (0.6) interest in the bakery, and Bob has a 40% (0.4) interest. 
+  When rewards are delivered at the end of each cycle, 10% is taken as the bakery 
+  fee (ie: *service_fee*). That 10% is then divided between Alice and Bob according to their ratios.
+  
 **owners_map**
   A dictionary of PKH and ratio ( decimal in the range [0-1])
   pairs. Each item in this dictionary represents PKH of each
-  balance owner and his ratio of the amount he owned in the
+  balance owner and his ratio of the amount he owns in the
   total baking balance. Implicit or originated addresses are
   accepted. It is important that the sum of all ratios equals
   to 1. This map is optional if owners do not want to be paid
   for baking rewards, in this case, service fee remains in
   baking balance.
+  
+  Example::
+
+    Current Baker Balance: 17,400 XTZ
+    Total Delegations: 69,520 XTZ
+    Total Staked: 86,920 XTZ
+
+    service_fee: 9
+    owners_map:
+      tz1PV5g16m9hHMAVJ4Hx6NzzUHgksDnTLFcK: 0.4
+      tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17: 0.4
+      tz1VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf: 0.2
+  
+  Charlie, and Dave, have each transfered 6,960 Tez to the baker address. Edwin has transfered 3,480 Tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: *service_fee*). That 9% is dispersed to any *founders*. If there are no founders, that 9% remains in the baker's balance.
+  
+  The baker address is technically a delegator to itself. Its share of rewards are part of the overall cycle rewards. Charlie, Dave, and Edwin divide the "baker address rewards" as per the ratios in *owners_map*. Additionally, owners are *not* subject to the *service_fee*.
 
 **specials_map**
   A dictionary of PKH and fee (decimal in the range [0-100] )
