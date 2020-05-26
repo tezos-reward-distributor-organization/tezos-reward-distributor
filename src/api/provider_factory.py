@@ -25,6 +25,8 @@ class ProviderFactory:
 
     def newBlockApi(self, network_config, node_url):
         if self.provider == 'rpc' or self.provider == 'prpc':
+            if node_url.find("http") == -1:
+                node_url = 'http://' + node_url
             return RpcBlockApiImpl(network_config, node_url)
         elif self.provider == 'tzstats':
             return TzStatsBlockApiImpl(network_config)
