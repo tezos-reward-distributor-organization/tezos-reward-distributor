@@ -1,7 +1,7 @@
 [Unit]
-Description=Tezos Reward Distribution Software
+Description=Tezos Reward Distribution Service
 After=syslog.target network.target
-Documentation=https://github.com/habanoz/tezos-reward-distributor
+Documentation=https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/
 
 [Service]
 Type=simple
