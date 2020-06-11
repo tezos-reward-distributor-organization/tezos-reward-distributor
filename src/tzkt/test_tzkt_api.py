@@ -1,8 +1,7 @@
 import unittest
-import pandas as pd
+import os
 from unittest.mock import patch, MagicMock
 from os.path import dirname, join
-from decimal import Decimal
 from parameterized import parameterized
 
 from main import main
@@ -62,15 +61,6 @@ def make_config(baking_address, payment_address, service_fee: int,
            f'rules_map:\n  mindelegation: TOB'
 
 
-def parse_report_rewards(baking_address, initial_cycle) -> dict:
-    report_file = join(dirname(__file__), f'reports/{baking_address}/calculations/{initial_cycle}.csv')
-    df = pd.read_csv(report_file)
-    df.set_index('address', inplace=True)
-    df = df[(df['type'] == 'D') & (df['skipped'] == 0)]
-    df['amount'] = df['amount'].apply(lambda x: Decimal(x / 10 ** 6).quantize(Decimal('0.000001')))
-    return df['amount'].to_dict()
-
-
 @patch('pay.payment_producer.sleep', MagicMock())
 @patch('pay.payment_producer.time', MagicMock(sleep=MagicMock()))
 @patch('main.time', MagicMock(sleep=MagicMock()))
@@ -94,11 +84,9 @@ class IntegrationTests(unittest.TestCase):
             delegator_pays_xfer_fee=True
         ))
         main(Args(initial_cycle=201, reward_data_provider='tzkt'))
-        # tzkt_rewards = parse_report_rewards(
-        #     baking_address='tz1NortRftucvAkD1J58L32EhSVrQEWJCEnB',
-        #     initial_cycle=201)
 
 
+@unittest.skipIf('TRAVIS' in os.environ, "Not suited for Travis")
 @patch('rpc.rpc_reward_api.sleep', MagicMock())
 @patch('rpc.rpc_reward_api.logger', MagicMock(debug=MagicMock(side_effect=print)))
 class RewardApiImplTests(unittest.TestCase):
