@@ -10,13 +10,15 @@ python:
 # command to install dependencies
 install:
     - sudo apt-get update -y
-    - sudo apt-get install libenchant1c2a parameterized -y
+    - sudo apt-get install libenchant1c2a -y
     # Requirements for the software
     - pip install -r requirements.txt
     # Requirements to deploy the documentation
     - pip install sphinx_rtd_theme
     - pip install sphinxcontrib.spelling
     - pip install --upgrade recommonmark
+    # Requirements to run tests
+    - pip install parameterized
 
 # Addons necessary for documentation.
 addons:
