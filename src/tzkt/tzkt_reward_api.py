@@ -13,7 +13,6 @@ class TzKTRewardApiImpl(RewardApi):
         super(TzKTRewardApiImpl, self).__init__()
         self.api = TzKTApi.from_network(nw['NAME'].lower(), verbose=verbose)
         self.baking_address = baking_address
-        self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
         self.name = 'tzkt'
 
     def calc_expected_reward(self, cycle: int, num_blocks: int, num_endorsements: int) -> int:
@@ -23,16 +22,14 @@ class TzKTRewardApiImpl(RewardApi):
         :param num_blocks: Number of baking rights
         :param num_endorsements: Number of endorsement rights
         """
-        protocols = self.api.get_protocols()
-        level = cycle * self.blocks_per_cycle + 1
-        current_proto = next(proto for proto in protocols if proto['firstLevel'] <= level <= proto['lastLevel'])
+        proto = self.api.get_protocol_by_cycle(cycle)
 
         block_reward = \
-            current_proto['constants']['blockReward'][0] \
-            * current_proto['constants']['endorsersPerBlock']
+            proto['constants']['blockReward'][0] \
+            * proto['constants']['endorsersPerBlock']
 
         endorsement_reward = \
-            current_proto['constants']['endorsementReward'][0]
+            proto['constants']['endorsementReward'][0]
 
         return num_blocks * block_reward + num_endorsements * endorsement_reward
 
@@ -78,6 +75,8 @@ class TzKTRewardApiImpl(RewardApi):
                 + split['ownBlockFees'] \
                 + split['extraBlockFees'] \
                 + split['revelationRewards'] \
+                + split['doubleBakingRewards'] \
+                + split['doubleEndorsingRewards'] \
                 - split['doubleBakingLostDeposits'] \
                 - split['doubleBakingLostRewards'] \
                 - split['doubleBakingLostFees'] \
@@ -86,6 +85,8 @@ class TzKTRewardApiImpl(RewardApi):
                 - split['doubleEndorsingLostFees'] \
                 - split['revelationLostRewards'] \
                 - split['revelationLostFees']
+
+            total_reward_amount = max(0, total_reward_amount)
 
         delegators_balances = {
             item['address']: {

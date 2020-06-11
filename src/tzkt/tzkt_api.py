@@ -4,6 +4,7 @@ from pprint import pformat
 from os.path import join
 from json import JSONDecodeError
 
+from version import version
 from exception.api_provider import ApiProviderException
 from log_config import main_logger
 
@@ -48,7 +49,11 @@ class TzKTApi:
             logger.debug("Requesting {}".format(url))
 
         try:
-            response = requests.get(url, params=data, timeout=10)
+            response = requests.get(
+                url=url,
+                params=data,
+                timeout=10,
+                headers={'User-agent': f'trd-{version}'})
         except requests.Timeout:
             raise TzKTApiError('Request timeout')
         except requests.ConnectionError:
@@ -167,7 +172,7 @@ class TzKTApi:
                 assert isinstance(res, dict) and 'delegators' in res
                 res['delegators'].extend(page['delegators'])
 
-            if not fetch_delegators or len(page['delegators']) < limit:
+            if not fetch_delegators or len(res['delegators']) == res['numDelegators']:
                 return res
             else:
                 offset += limit
@@ -235,10 +240,11 @@ class TzKTApi:
         """
         return self._request(f'accounts/{address}')
 
-    def get_protocols(self) -> list:
+    def get_protocol_by_cycle(self, cycle: int) -> dict:
         """
-        Returns a list of protocols.
-        :return: [{
+        Returns actual protocol for a particular cycle.
+        :param cycle: Cycle
+        :return: {
             "code": 6,
             "hash": "PsCARTHAGazKbHtnKfLzQg3kms52kSRpgnDY982a9oYsSXRLQEb",
             "firstLevel": 851969,
@@ -272,6 +278,6 @@ class TzKTApi:
                 "alias": "Carthage",
                 "docs": "https://tezos.gitlab.io/protocols/006_carthage.html"
             }
-        }]
+        }
         """
-        return self._request('protocols', offset=0, limit=self.max_page_size)
+        return self._request(f'protocols/cycles/{cycle}')

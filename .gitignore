@@ -6,8 +6,8 @@ email.ini
 logs/
 docs/build/
 venv/
-src/tzkt/test/logs
-src/tzkt/test/reports
+src/tzkt/logs
+src/tzkt/reports
 .pytest_cache
 .idea/
 .python-version
