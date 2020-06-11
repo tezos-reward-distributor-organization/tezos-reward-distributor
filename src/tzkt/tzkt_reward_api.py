@@ -94,6 +94,7 @@ class TzKTRewardApiImpl(RewardApi):
                 'current_balance': item['currentBalance']
             }
             for item in split['delegators']
+            if item['balance'] > 0
         }
 
         return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances)

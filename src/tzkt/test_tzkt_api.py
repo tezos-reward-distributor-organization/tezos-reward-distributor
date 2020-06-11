@@ -7,6 +7,7 @@ from parameterized import parameterized
 
 from main import main
 from rpc.rpc_reward_api import RpcRewardApiImpl
+from tzstats.tzstats_reward_api import TzStatsRewardApiImpl
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
 from NetworkConfiguration import default_network_config_map
@@ -117,15 +118,37 @@ class RewardApiImplTests(unittest.TestCase):
         rpc_impl = RpcRewardApiImpl(
             nw=default_network_config_map['MAINNET'],
             baking_address=address,
-            node_url='https://mainnet-tezos.giganode.io')
+            node_url='https://rpc.tzkt.io/mainnet')
         tzkt_impl = TzKTRewardApiImpl(
             nw=default_network_config_map['MAINNET'],
             baking_address=address)
+
         rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle)
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle)
+
         self.assertEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance)
         self.assertEqual(rpc_rewards.total_reward_amount, tzkt_rewards.total_reward_amount)
         self.assertDictEqual(rpc_rewards.delegator_balance_dict, tzkt_rewards.delegator_balance_dict)
+
+    def test_expected_rewards(self):
+        address = 'tz1YKh8T79LAtWxX29N5VedCSmaZGw9LNVxQ'
+        tzstats_impl = TzStatsRewardApiImpl(
+            nw=default_network_config_map['MAINNET'],
+            baking_address=address)
+        tzkt_impl = TzKTRewardApiImpl(
+            nw=default_network_config_map['MAINNET'],
+            baking_address=address)
+
+        tzkt_block_impl = TzKTBlockApiImpl(
+            nw=default_network_config_map['MAINNET'])
+        current_cycle = tzkt_block_impl.get_current_cycle()
+
+        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(current_cycle + 4, expected_reward=True)
+        tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(current_cycle + 4, expected_reward=True)
+
+        self.assertAlmostEqual(tzstats_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance, delta=1)
+        self.assertAlmostEqual(tzstats_rewards.total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
+        self.assertDictEqual(tzstats_rewards.delegator_balance_dict, tzkt_rewards.delegator_balance_dict)
 
     def test_update_current_balances(self):
         log_items = [RewardLog(address='KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR',
