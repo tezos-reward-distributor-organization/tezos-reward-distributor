@@ -30,7 +30,7 @@ class Args:
         self.release_override = 0
         self.payment_offset = 0
         self.network = 'MAINNET'
-        self.node_addr = 'mainnet-tezos.giganode.io:443'
+        self.node_addr = ''
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = ''
         self.reports_base = join(dirname(__file__), reward_data_provider)

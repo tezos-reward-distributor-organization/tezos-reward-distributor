@@ -26,7 +26,7 @@ class TzKTApi:
         self.verbose = verbose
 
     @staticmethod
-    def from_network(network, timeout=10, verbose=False):
+    def from_network(network, timeout=30, verbose=False):
         """
         Create new API instance
         :param network: one of `mainnet`, `carthagenet`, `zeronet`
