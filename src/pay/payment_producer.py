@@ -26,7 +26,8 @@ MUTEZ = 1e+6
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', verbose=False):
+                 dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', verbose=False,
+                 api_base_url=None):
         super(PaymentProducer, self).__init__()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
@@ -38,8 +39,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.name = name
 
-        self.reward_api = provider_factory.newRewardApi(network_config, self.baking_address, node_url, node_url_public)
-        self.block_api = provider_factory.newBlockApi(network_config, node_url)
+        self.reward_api = provider_factory.newRewardApi(
+            network_config, self.baking_address, node_url, node_url_public, api_base_url)
+        self.block_api = provider_factory.newBlockApi(network_config, node_url, api_base_url)
 
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle

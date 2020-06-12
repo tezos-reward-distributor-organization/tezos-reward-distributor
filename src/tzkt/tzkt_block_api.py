@@ -4,9 +4,12 @@ from api.block_api import BlockApi
 
 class TzKTBlockApiImpl(BlockApi):
 
-    def __init__(self, nw, verbose=False):
+    def __init__(self, nw, verbose=False, base_url=None):
         super(TzKTBlockApiImpl, self).__init__(nw)
-        self.api = TzKTApi.from_network(nw['NAME'].lower(), verbose=verbose)
+        if base_url is None:
+            self.api = TzKTApi.from_network(nw['NAME'].lower(), verbose=verbose)
+        else:
+            self.api = TzKTApi.from_url(base_url, verbose=verbose)
 
     def get_current_level(self, verbose=False) -> int:
         """

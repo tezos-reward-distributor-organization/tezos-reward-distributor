@@ -30,7 +30,7 @@ class TzKTApi:
         """
         Create new API instance
         :param network: one of `mainnet`, `carthagenet`, `zeronet`
-        :param timeout: request timeout in seconds (default = 10)
+        :param timeout: request timeout in seconds (default = 30)
         :param verbose: print requested url and JSON response
         """
         base_urls = dict(
@@ -40,6 +40,16 @@ class TzKTApi:
         )
         assert network in base_urls, f'Unsupported network {network}'
         return TzKTApi(base_url=base_urls[network], timeout=timeout, verbose=verbose)
+
+    @staticmethod
+    def from_url(base_url, timeout=30, verbose=False):
+        """
+        Create new API instance
+        :param base_url: base API url, i.e. http://localhost:5000/v1
+        :param timeout: request timeout in seconds (default = 30)
+        :param verbose: print requested url and JSON response
+        """
+        return TzKTApi(base_url=base_url, timeout=timeout, verbose=verbose)
 
     def _request(self, path, **params):
         data = {key: value for key, value in params.items() if value is not None}
@@ -52,8 +62,8 @@ class TzKTApi:
             response = requests.get(
                 url=url,
                 params=data,
-                timeout=10,
-                headers={'User-agent': f'trd-{version}'})
+                timeout=self.timeout,
+                headers={'User-Agent': f'trd-{version}'})
         except requests.Timeout:
             raise TzKTApiError('Request timeout')
         except requests.ConnectionError:

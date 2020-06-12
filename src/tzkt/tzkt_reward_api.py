@@ -9,9 +9,12 @@ from tzkt.tzkt_api import TzKTApi
 
 class TzKTRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address, verbose=False):
+    def __init__(self, nw, baking_address, verbose=False, base_url=None):
         super(TzKTRewardApiImpl, self).__init__()
-        self.api = TzKTApi.from_network(nw['NAME'].lower(), verbose=verbose)
+        if base_url is None:
+            self.api = TzKTApi.from_network(nw['NAME'].lower(), verbose=verbose)
+        else:
+            self.api = TzKTApi.from_url(base_url, verbose=verbose)
         self.baking_address = baking_address
         self.name = 'tzkt'
 

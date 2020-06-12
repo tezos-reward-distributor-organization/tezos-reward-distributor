@@ -11,7 +11,7 @@ class ProviderFactory:
         self.provider = provider
         self.verbose = verbose
 
-    def newRewardApi(self, network_config, baking_address, node_url, node_url_public=''):
+    def newRewardApi(self, network_config, baking_address, node_url, node_url_public='', api_base_url=None):
         if self.provider == 'rpc':
             if node_url.find("http") == -1:
                 node_url = 'http://' + node_url
@@ -23,15 +23,15 @@ class ProviderFactory:
         elif self.provider == 'tzstats':
             return TzStatsRewardApiImpl(network_config, baking_address, verbose=self.verbose)
         elif self.provider == 'tzkt':
-            return TzKTRewardApiImpl(network_config, baking_address, verbose=self.verbose)
+            return TzKTRewardApiImpl(network_config, baking_address, verbose=self.verbose, base_url=api_base_url)
 
         raise Exception("No supported reward data provider : {}".format(self.provider))
 
-    def newBlockApi(self, network_config, node_url):
+    def newBlockApi(self, network_config, node_url, api_base_url=None):
         if self.provider == 'rpc' or self.provider == 'prpc':
             return RpcBlockApiImpl(network_config, node_url)
         elif self.provider == 'tzstats':
             return TzStatsBlockApiImpl(network_config)
         elif self.provider == 'tzkt':
-            return TzKTBlockApiImpl(network_config, verbose=self.verbose)
+            return TzKTBlockApiImpl(network_config, verbose=self.verbose, base_url=api_base_url)
         raise Exception("No supported reward data provider : {}".format(self.provider))

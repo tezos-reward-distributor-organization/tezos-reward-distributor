@@ -44,6 +44,7 @@ def parse_arguments():
     add_argument_background_service(parser)
     add_argument_stats(parser)
     add_argument_verbose(parser)
+    add_argument_api_base_url(parser)
     args = parser.parse_args()
     return args
 
@@ -155,3 +156,9 @@ def add_argument_stats(parser):
 
 def add_argument_verbose(parser):
     parser.add_argument("-V", "--verbose", help="Produces a lot of logs. Good for trouble shooting.", action="store_true")
+
+
+def add_argument_api_base_url(parser: argparse.ArgumentParser):
+    parser.add_argument("-U", "--api-base-url",
+                        help="Base API url for non-rpc providers. If not set, public endpoints will be used.",
+                        type=str)
