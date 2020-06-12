@@ -29,7 +29,7 @@ addons:
 # command to run tests
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
-    - python3 -m unittest discover -s src
+    - python3 -m unittest discover -s src --verbose
     #- make spelling
     #- make linkcheck
     - cd docs

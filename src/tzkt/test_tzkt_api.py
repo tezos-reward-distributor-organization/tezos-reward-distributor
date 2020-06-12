@@ -92,6 +92,7 @@ def make_config(baking_address, payment_address, service_fee: int,
            f'rules_map:\n  mindelegation: TOB'
 
 
+@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 @patch('pay.payment_producer.sleep', MagicMock())
 @patch('pay.payment_producer.time', MagicMock(sleep=MagicMock()))
 @patch('main.time', MagicMock(sleep=MagicMock()))
@@ -127,6 +128,7 @@ class IntegrationTests(unittest.TestCase):
         main(Args(initial_cycle=100, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1'))
 
 
+@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 @patch('rpc.rpc_reward_api.sleep', MagicMock())
 @patch('rpc.rpc_reward_api.logger', MagicMock(debug=MagicMock(side_effect=print)))
 class RewardApiImplTests(unittest.TestCase):
@@ -196,6 +198,27 @@ class RewardApiImplTests(unittest.TestCase):
         self.assertBalancesAlmostEqual(
             tzstats_rewards.delegator_balance_dict, tzkt_rewards.delegator_balance_dict, delta=1)
 
+    def test_staking_balance_issue(self):
+        address = 'tz1V4qCyvPKZ5UeqdH14HN42rxvNPQfc9UZg'
+        cycle = 220  # snapshot index == 15
+
+        rpc_rewards = load_reward_model(address, cycle, 'actual')
+        if rpc_rewards is None:
+            rpc_impl = RpcRewardApiImpl(
+                nw=default_network_config_map['MAINNET'],
+                baking_address=address,
+                node_url='https://rpc.tzkt.io/mainnet')
+            rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle)
+            store_reward_model(address, cycle, 'actual', rpc_rewards)
+
+        tzkt_impl = TzKTRewardApiImpl(
+            nw=default_network_config_map['MAINNET'],
+            baking_address=address)
+        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle)
+
+        self.assertNotEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance)
+        self.assertAlmostEqual(rpc_rewards.total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
+
     def test_update_current_balances(self):
         log_items = [RewardLog(address='KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR',
                                type='D',
@@ -207,12 +230,13 @@ class RewardApiImplTests(unittest.TestCase):
         self.assertNotEqual(0, log_items[0].current_balance)
 
 
+@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 class BlockApiImplTests(unittest.TestCase):
 
     def test_get_head(self):
         tzkt_impl = TzKTBlockApiImpl(nw=default_network_config_map['MAINNET'])
         level = tzkt_impl.get_current_level()
-        self.assertNotEqual(0, level)
+        self.assertGreater(level, 900000)
 
 
 if __name__ == '__main__':
