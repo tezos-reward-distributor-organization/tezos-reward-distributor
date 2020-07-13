@@ -92,7 +92,7 @@ def make_config(baking_address, payment_address, service_fee: int,
            f'rules_map:\n  mindelegation: TOB'
 
 
-@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
+#@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 @patch('pay.payment_producer.sleep', MagicMock())
 @patch('pay.payment_producer.time', MagicMock(sleep=MagicMock()))
 @patch('main.time', MagicMock(sleep=MagicMock()))
@@ -128,7 +128,7 @@ class IntegrationTests(unittest.TestCase):
         main(Args(initial_cycle=100, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1'))
 
 
-@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
+#@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 @patch('rpc.rpc_reward_api.sleep', MagicMock())
 @patch('rpc.rpc_reward_api.logger', MagicMock(debug=MagicMock(side_effect=print)))
 class RewardApiImplTests(unittest.TestCase):
@@ -230,7 +230,7 @@ class RewardApiImplTests(unittest.TestCase):
         self.assertNotEqual(0, log_items[0].current_balance)
 
 
-@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
+#@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 class BlockApiImplTests(unittest.TestCase):
 
     def test_get_head(self):
