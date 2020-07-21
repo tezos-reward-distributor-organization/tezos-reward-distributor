@@ -144,14 +144,14 @@ class RpcRewardApiImpl(RewardApi):
             response = self.do_rpc_request(get_delegates_request)
             delegate_staking_balance = int(response["staking_balance"])
 
-            # loop over delegates; get snapshot balance, and current balance
-            delegators_addresses = response["delegated_contracts"]
+            # Remove baker's address from list of delegators
+            delegators_addresses = list(filter(lambda x: x != self.baking_address, response["delegated_contracts"]))
             d_a_len = len(delegators_addresses)
             
             if d_a_len == 0:
                 raise RpcRewardApiError("No delegators found")
             
-            # Loop over delegators, get balances
+            # Loop over delegates; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses):
 
                 # create new dictionary for each delegator
