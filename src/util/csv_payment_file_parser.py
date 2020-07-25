@@ -18,14 +18,12 @@ class CsvPaymentFileParser:
 
             return records
 
-    def FromPaymentCSVDictRow(self, row, cyle):
-        rl = RewardLog(row["address"], row["type"], None)
-        rl.cycle = cyle
+    def FromPaymentCSVDictRow(self, row, cycle):
+        rl = RewardLog(row["address"], row["type"], 0, 0)
+        rl.cycle = cycle
         rl.amount = int(row["amount"])
         rl.hash = None if row["hash"] == 'None' else row["hash"]
-        rl.balance = 0 if rl.balance == None else rl.balance
         rl.paid = PaymentStatus(int(row["paid"]))
-        # rl.child = None if row["child"] == 'None' else row["child"]
 
         return rl
 

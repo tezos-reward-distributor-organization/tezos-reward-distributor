@@ -2,10 +2,10 @@
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.
 
-## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/habanoz/tezos-reward-distributor.svg?branch=master)](https://travis-ci.com/habanoz/tezos-reward-distributor)
+## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master)](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor)
 
 TRD is a software for distributing staking rewards of delegators introduced in detail in this [Medium article](https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7). This is not a script but a full scale application which can continuously run in the background as a Linux service. It can track cycles and make payments. However it does not have to be used as a service, but it can also be used interactively.
-The documentation can be found [here](https://habanoz.github.io/tezos-reward-distributor/).
+The documentation can be found [here](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/).
 
 TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and [tzstats](https://tzstats.com/). Developed and tested extensively by the community.
 
@@ -78,7 +78,3 @@ The default provider is the public rpc node *mainnet.tezrpc.me*. However, it is 
 Please note that in this case, the default node would be localhost:8732. In order to change the node url for the provider, you can give the desired url 
 under the flag -A followed with node_url:port (e.g. -P rpc -A 127.0.0.1:8733).
 Please note that the node should be an archive node, and that the port should be the rpc port specified while launching the node.
-
-## Funding
-
-TRD is an open source project and will stay like this. It is not funded by any organization. A grant request is rejected by Tezos Foundation. However, I will try to continue to enhance the software and support the community.
