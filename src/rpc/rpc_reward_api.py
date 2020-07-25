@@ -168,7 +168,6 @@ class RpcRewardApiImpl(RewardApi):
                 d_info = {"staking_balance": 0, "current_balance": 0}
 
                 get_staking_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, level_snapshot_block, delegator)
-                get_current_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, "head", delegator)
 
                 staking_balance_response = None
 
