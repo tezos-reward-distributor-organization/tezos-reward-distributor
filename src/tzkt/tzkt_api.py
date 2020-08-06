@@ -36,7 +36,8 @@ class TzKTApi:
         base_urls = dict(
             mainnet='https://api.tzkt.io/v1',
             zeronet='https://api.zeronet.tzkt.io/v1',
-            carthagenet='https://api.carthage.tzkt.io/v1'
+            carthagenet='https://api.carthage.tzkt.io/v1',
+            alphanet='https://api.carthage.tzkt.io/v1'  # backward compatibility, current active test network
         )
         assert network in base_urls, f'Unsupported network {network}'
         return TzKTApi(base_url=base_urls[network], timeout=timeout, verbose=verbose)
