@@ -3,8 +3,7 @@ import os
 import threading
 import time
 
-import version
-from Constants import EXIT_PAYMENT_TYPE, PaymentStatus
+from Constants import EXIT_PAYMENT_TYPE, PaymentStatus, VERSION
 from NetworkConfiguration import is_mainnet
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
@@ -201,7 +200,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict['nb_d'] = n_d_type
         stats_dict['cycle'] = payment_cycle
         stats_dict['m_fee'] = 1 if self.delegator_pays_xfer_fee else 0
-        stats_dict['trdver'] = version.version
+        stats_dict['trdver'] = VERSION
         if self.args:
             stats_dict['m_run'] = 1 if self.args.background_service else 0
             stats_dict['m_prov'] = 0 if self.args.reward_data_provider == 'tzscan' else 1

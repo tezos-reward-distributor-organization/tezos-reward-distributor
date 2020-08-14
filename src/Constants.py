@@ -1,7 +1,7 @@
 from enum import Enum
 
 MUTEZ = 1e+6
-
+VERSION = "6.0"
 EXIT_PAYMENT_TYPE = "exit"
 
 

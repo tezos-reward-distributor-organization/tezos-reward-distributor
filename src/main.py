@@ -5,8 +5,7 @@ import sys
 import time
 
 from launch_common import print_banner, parse_arguments
-import version
-from Constants import RunMode
+from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from calc.service_fee_calculator import ServiceFeeCalculator
@@ -34,7 +33,7 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("TRD version {} is running in {} mode.".format(version.version,"daemon" if args.background_service else "interactive"))
+    logger.info("TRD version {} is running in {} mode.".format(VERSION, "daemon" if args.background_service else "interactive"))
     logger.info("Arguments Configuration = {}".format( json.dumps(args.__dict__, indent=1)))
 
     # 1- find where configuration is

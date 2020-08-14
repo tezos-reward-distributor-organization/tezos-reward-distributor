@@ -1,9 +1,8 @@
 import json
 import threading
-from time import sleep
-
 import requests
-import version
+from time import sleep
+from Constants import VERSION
 
 url = "http://35.211.164.111:8080/trd/stats/add"
 headers = {'content-type': 'application/json'}
@@ -27,7 +26,7 @@ if __name__ == '__main__':
     stats_dict = {}
     stats_dict['total_amount'] = 123
     stats_dict['nb_payments'] = 12
-    stats_dict['trdversion'] = version
+    stats_dict['trdversion'] = VERSION
 
     stat_publish(stats_dict)
 
