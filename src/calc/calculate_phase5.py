@@ -1,6 +1,5 @@
 from calc.calculate_phase_base import CalculatePhaseBase
-
-MUTEZ = 1e+6
+from Constants import MUTEZ
 
 
 class CalculatePhase5(CalculatePhaseBase):

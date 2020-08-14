@@ -18,10 +18,10 @@ from util.csv_payment_file_parser import CsvPaymentFileParser
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
+from Constants import MUTEZ
 
 logger = main_logger
 
-MUTEZ = 1e+6
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,

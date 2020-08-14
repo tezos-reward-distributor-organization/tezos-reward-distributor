@@ -1,7 +1,6 @@
 from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
 from model.baking_conf import MIN_DELEGATION_KEY
-
-MUTEZ = 1e+6
+from Constants import MUTEZ
 
 
 class CalculatePhase2(CalculatePhaseBase):

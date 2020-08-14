@@ -16,9 +16,9 @@ from pay.batch_payer import BatchPayer
 from stats.stats_pusblisher import stat_publish
 from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path, get_busy_file
+from Constants import MUTEZ
 
 logger = main_logger
-MUTEZ = 1e6
 
 
 def count_and_log_failed(payment_logs):

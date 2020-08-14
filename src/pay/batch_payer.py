@@ -6,7 +6,7 @@ from time import sleep
 
 import base58
 
-from Constants import PaymentStatus
+from Constants import PaymentStatus, MUTEZ
 from NetworkConfiguration import BLOCK_TIME_IN_SEC
 from log_config import main_logger
 from util.rpc_utils import parse_json_response
@@ -32,7 +32,6 @@ COMM_INJECT = "rpc post /injection/operation with '\"%OPERATION_HASH%\"'"
 COMM_WAIT = "wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
 
 FEE_INI = 'fee.ini'
-MUTEZ = 1e6
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
@@ -73,9 +72,9 @@ class BatchPayer():
         if self.delegator_pays_xfer_fee:
             self.zero_threshold += self.default_fee
 
-        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee/MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
-        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE/MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
-        logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold/MUTEZ))
+        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee / MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE /  MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
+        logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold / MUTEZ))
 
         # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
         if len(self.pymnt_addr) == PKH_LENGTH and (
