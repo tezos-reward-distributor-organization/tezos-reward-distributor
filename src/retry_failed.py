@@ -27,6 +27,7 @@ from util.client_utils import get_client_path
 from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
+from storage.storage import Storage
 
 nb_consumers = 1
 BUF_SIZE = 50
@@ -81,75 +82,82 @@ def main(args):
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
     network_config = network_config_map[args.network]
 
+    logger.debug("Network config {}".format(network_config))
+
     # 5- load baking configuration file
-    config_file_path = get_baking_configuration_file(config_dir)
-
-    logger.info("Loading baking configuration file {}".format(config_file_path))
-
-    wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers,
+    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers,
                                          verbose=args.verbose)
 
+    # Setup provider to fetch RPCs
     provider_factory = ProviderFactory(args.reward_data_provider, verbose=args.verbose)
-    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
-    parser.parse()
-    parser.validate()
-    parser.process()
-    cfg_dict = parser.get_conf_obj()
 
-    # dictionary to BakingConf object, for a bit of type safety
-    cfg = BakingConf(cfg_dict, master_cfg)
+    # 5- is it a reports run
+    dry_run = args.dry_run_no_consumers or args.dry_run
+    if args.dry_run_no_consumers:
+        nb_consumers = 0
 
-    logger.info("Baking Configuration {}".format(cfg))
+    # 6- load config from database
+    try:
 
-    baking_address = cfg.get_baking_address()
-    payment_address = cfg.get_payment_address()
+        block_api = provider_factory.newBlockApi(network_config, args.node_addr)
+        
+        storage = Storage(config_dir, dry_run)
+
+        # Get config from DB
+        db_cfg_dict = ConfigStorage(storage).get_baker_config()
+        db_cfg = BakingConf(db_cfg_dict, master_cfg)
+        db_cfg.validate(wllt_clnt_mngr, block_api)
+        db_cfg.process()
+
+        baking_address = db_cfg.get_baking_address()
+        payment_address = db_cfg.get_payment_address()
+
+    except (ConfigStorageException, ConfigurationException) as e:
+        logger.info("Unable to load/verify/convert '{}' config file.".format(config_file_path))
+        logger.info(e)
+        sys.exit(1)
+
+    logger.info("Baking Configuration {}".format(db_cfg))
+
     logger.info(LINER)
     logger.info("BAKING ADDRESS is {}".format(baking_address))
     logger.info("PAYMENT ADDRESS is {}".format(payment_address))
     logger.info(LINER)
 
-    # 6- is it a reports run
-    dry_run = args.dry_run_no_consumers or args.dry_run
-    if args.dry_run_no_consumers:
-        global NB_CONSUMERS
-        NB_CONSUMERS = 0
-
     # 7- get reporting directories
-    reports_dir = os.path.expanduser(args.reports_base)
-
-    # if in reports run mode, do not create consumers
-    # create reports in reports directory
+    reports_base = os.path.expanduser(args.reports_base)
     if dry_run:
-        reports_dir = os.path.expanduser("./reports")
+        reports_base = os.path.expanduser("./reports")
 
-    reports_dir = os.path.join(reports_dir, baking_address)
-
+    reports_dir = os.path.join(reports_base, baking_address)
     payments_root = get_payment_root(reports_dir, create=True)
     calculations_root = get_calculations_root(reports_dir, create=True)
-    get_successful_payments_dir(payments_root, create=True)
-    get_failed_payments_dir(payments_root, create=True)
 
     # 8- start the life cycle
     life_cycle.start(False)
 
     # 9- service fee calculator
-    srvc_fee_calc = ServiceFeeCalculator(cfg.get_full_supporters_set(), cfg.get_specials_map(), cfg.get_service_fee())
+    srvc_fee_calc = ServiceFeeCalculator(db_cfg.get_full_supporters_set(), db_cfg.get_specials_map(), db_cfg.get_service_fee())
 
     try:
 
         p = PaymentProducer(name='producer', initial_payment_cycle=None, network_config=network_config,
                             payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode.ONETIME,
                             service_fee_calc=srvc_fee_calc, release_override=0,
-                            payment_offset=0, baking_cfg=cfg, life_cycle=life_cycle,
+                            payment_offset=0, baking_cfg=db_cfg, life_cycle=life_cycle,
                             payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                            node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
+                            node_url=args.node_addr, provider_factory=provider_factory, storage=storage,
+                            node_url_public=args.node_addr_public, verbose=args.verbose)
 
         p.retry_failed_payments(args.retry_injected)
 
-        c = PaymentConsumer(name='consumer_retry_failed', payments_dir=payments_root, key_name=payment_address,
+        c = PaymentConsumer(name='consumer_retry_failed', payments_dir=payments_root, storage=storage, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                             wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), network_config=network_config)
+                            reactivate_zeroed=db_cfg.get_reactivate_zeroed(),
+                            delegator_pays_ra_fee=db_cfg.get_delegator_pays_ra_fee(),
+                            delegator_pays_xfer_fee=db_cfg.get_delegator_pays_xfer_fee(), dest_map=db_cfg.get_dest_map(),
+                            network_config=network_config, publish_stats=not args.do_not_publish_stats)
         time.sleep(1)
         c.start()
         p.exit()
@@ -162,21 +170,6 @@ def main(args):
 
     except KeyboardInterrupt:
         logger.info("Interrupted.")
-
-def get_baking_configuration_file(config_dir):
-    config_file = None
-    for file in os.listdir(config_dir):
-        if file.endswith(".yaml") and not file.startswith("master"):
-            if config_file:
-                raise Exception(
-                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
-                        config_file, file))
-            config_file = file
-    if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
-
-    return os.path.join(config_dir, config_file)
 
 
 if __name__ == '__main__':

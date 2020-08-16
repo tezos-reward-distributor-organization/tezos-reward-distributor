@@ -36,26 +36,35 @@ class TestYamlAppConfParser(TestCase):
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}
         }
 
-        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers)
+        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None,
+                                                    addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias,
+                                                    managers=managers)
 
-        block_api = RpcBlockApiImpl(network, mainnet_public_node_url)
-        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager, provider_factory=None, network_config=network,node_url=mainnet_public_node_url,block_api=block_api)
-
-
+        block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
+        cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager, provider_factory=None,
+                                        network_config=network, node_url=self.mainnet_public_node_url,
+                                        block_api=block_api)
         cnf_prsr.parse()
-        cnf_prsr.validate()
+        
+        yaml_cfg_dict = cnf_prsr.get_conf_obj()
+        
+        # dictionary to BakingConf object, for a bit of type safety
+        yaml_cfg = BakingConf(yaml_cfg_dict, None)
+        yaml_cfg.validate(wallet_client_manager, block_api)
+        yaml_cfg.process()
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZ)
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_type'), AddrType.TZ)
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('min_delegation_amt'), 0)
+        self.assertEqual(yaml_cfg.get_attribute('min_delegation_amt'), 0)
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
+        self.assertEqual(yaml_cfg.get_attribute('reactivate_zeroed'), False)
+        self.assertEqual(yaml_cfg.get_attribute('delegator_pays_ra_fee'), True)
 
     def test_validate_no_founders_map(self):
         data_no_founders = """
@@ -77,30 +86,36 @@ class TestYamlAppConfParser(TestCase):
                                                      "alias": "main1", "sk": True,
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}}
 
-        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None, addr_dict_by_pkh=addr_dict_by_pkh,
-                                                    contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
+        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None,
+                                                    addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias,
+                                                    managers=managers_map)
 
-        block_api = RpcBlockApiImpl(network, mainnet_public_node_url)
-        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None, network_config=network,
-                                        node_url=mainnet_public_node_url, block_api=block_api)
-
+        block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None,
+                                        network_config=network, node_url=mainnet_public_node_url,
+                                        block_api=block_api)
         cnf_prsr.parse()
-        cnf_prsr.validate()
+        
+        yaml_cfg_dict = cnf_prsr.get_conf_obj()
+        yaml_cfg = BakingConf(yaml_cfg_dict, None)
+        yaml_cfg.validate(wallet_client_manager, block_api)
+        yaml_cfg.process()
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZ)
+        self.assertEqual(yaml_cfg.get_attribute('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_type'), AddrType.TZ)
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('founders_map'), dict())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('specials_map'), dict())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('supporters_set'), set())
+        self.assertEqual(yaml_cfg.get_attribute('founders_map'), dict())
+        self.assertEqual(yaml_cfg.get_attribute('specials_map'), dict())
+        self.assertEqual(yaml_cfg.get_attribute('supporters_set'), set())
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('min_delegation_amt'), 0)
+        self.assertEqual(yaml_cfg.get_attribute('min_delegation_amt'), 0)
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
+        self.assertEqual(yaml_cfg.get_attribute('reactivate_zeroed'), False)
+        self.assertEqual(yaml_cfg.get_attribute('delegator_pays_ra_fee'), True)
 
     def test_validate_pymnt_alias(self):
         data_no_founders = """
@@ -127,25 +142,33 @@ class TestYamlAppConfParser(TestCase):
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}
         }
 
-        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None, addr_dict_by_pkh=addr_dict_by_pkh, contr_dict_by_alias=contr_dict_by_alias, managers=managers_map)
+        wallet_client_manager = WalletClientManager(client_path=None, node_addr=None,
+                                                    addr_dict_by_pkh=addr_dict_by_pkh,
+                                                    contr_dict_by_alias=contr_dict_by_alias,
+                                                    managers=managers_map)
 
-        block_api = RpcBlockApiImpl(network, mainnet_public_node_url)
-        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None, network_config=network, node_url=mainnet_public_node_url, block_api=block_api)
-
+        block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
+        cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None,
+                                        network_config=network, node_url=mainnet_public_node_url,
+                                        block_api=block_api)
         cnf_prsr.parse()
-        cnf_prsr.validate()
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tzPay')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZALS)
+        yaml_cfg_dict = cnf_prsr.get_conf_obj()
+        yaml_cfg = BakingConf(yaml_cfg_dict, None)
+        yaml_cfg.validate(wallet_client_manager, block_api)
+        yaml_cfg.process()
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('founders_map'), dict())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('specials_map'), dict())
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('supporters_set'), set())
+        self.assertEqual(yaml_cfg.get_attribute('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('payment_address'), 'tzPay')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(yaml_cfg.get_attribute('__payment_address_type'), AddrType.TZALS)
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('min_delegation_amt'), 100)
+        self.assertEqual(yaml_cfg.get_attribute('founders_map'), dict())
+        self.assertEqual(yaml_cfg.get_attribute('specials_map'), dict())
+        self.assertEqual(yaml_cfg.get_attribute('supporters_set'), set())
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
+        self.assertEqual(yaml_cfg.get_attribute('min_delegation_amt'), 100)
+
+        self.assertEqual(yaml_cfg.get_attribute('reactivate_zeroed'), False)
+        self.assertEqual(yaml_cfg.get_attribute('delegator_pays_ra_fee'), True)

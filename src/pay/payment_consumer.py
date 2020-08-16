@@ -14,8 +14,8 @@ from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYP
 from pay.batch_payer import BatchPayer
 from stats.stats_pusblisher import stat_publish
 from util.csv_payment_file_parser import CsvPaymentFileParser
-from util.dir_utils import payment_report_file_path, get_busy_file
-from Constants import MUTEZ
+from util.dir_utils import payment_report_file_path
+from storage.reports import ReportStorage
 
 logger = main_logger
 
@@ -32,7 +32,7 @@ def count_and_log_failed(payment_logs):
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
+    def __init__(self, name, payments_dir, storage, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
                  network_config, args=None, verbose=None, dry_run=None, reactivate_zeroed=True,
                  delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None,
                  publish_stats=True):
@@ -41,6 +41,7 @@ class PaymentConsumer(threading.Thread):
         self.dest_map = dest_map if dest_map else {}
         self.name = name
         self.payments_dir = payments_dir
+        self.reportstorage = ReportStorage(storage)
         self.key_name = key_name
         self.client_path = client_path
         self.payments_queue = payments_queue
@@ -118,14 +119,15 @@ class PaymentConsumer(threading.Thread):
 
                 # 4- count failed payments
                 nb_failed, nb_injected = count_and_log_failed(payment_logs)
+                logger.info("Processing completed for {} payment items: {} injected, {} failed".format(
+                    len(payment_logs), nb_injected, nb_failed))
 
-                # 5- create payment report file
+                # 5- save payment report to DB; generate CSV report for backwards compatibility
+                self.save_payment_report(pymnt_cycle, payment_logs)
+
                 report_file = self.create_payment_report(nb_failed, nb_injected, payment_logs, pymnt_cycle, total_attempts)
 
-                # 6- Clean failure reports
-                self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
-
-                # 7- notify back producer
+                # 7- notify batch producer
                 if nb_failed == 0:
                     if payment_batch.producer_ref:
                         payment_batch.producer_ref.on_success(payment_batch)
@@ -137,29 +139,17 @@ class PaymentConsumer(threading.Thread):
                 if not self.dry_run:
                     self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected)
 
+                # 9- anonymous stats
+                if self.publish_stats and not self.dry_run and (not self.args or is_mainnet(self.args.network)):
+                    stats_dict = self.create_stats_dict(nb_failed, nb_injected, pymnt_cycle, payment_logs, total_attempts)
+                    stat_publish(stats_dict)
+
             except Exception:
                 logger.error("Error at reward payment", exc_info=True)
 
         logger.info("Consumer returning ...")
 
         return
-
-    def clean_failed_payment_reports(self, payment_cycle, success):
-        # 1- generate path of a assumed failure report file
-        # if it exists and payments were successful, remove it
-        failure_report_file = payment_report_file_path(self.payments_dir, payment_cycle, 1)
-        if success and os.path.isfile(failure_report_file):
-            os.remove(failure_report_file)
-        # 2- generate path of a assumed busy failure report file
-        # if it exists, remove it
-        ###
-        # remove file failed/cycle.csv.BUSY file;
-        #  - if payment attempt was successful it is not needed anymore,
-        #  - if payment attempt was un-successful, new failedY/cycle.csv is already created.
-        # Thus  failed/cycle.csv.BUSY file is not needed and removing it is fine.
-        failure_report_busy_file = get_busy_file(failure_report_file)
-        if os.path.isfile(failure_report_busy_file):
-            os.remove(failure_report_busy_file)
 
     #
     # create report file
@@ -175,14 +165,16 @@ class PaymentConsumer(threading.Thread):
         for pl in payment_logs:
             logger.debug("Payment done for address %s type %s amount {:>10.6f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
 
-        if self.publish_stats and not self.dry_run and (not self.args or is_mainnet(self.args.network)):
-            stats_dict = self.create_stats_dict(nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts)
-
-            # publish
-            stat_publish(stats_dict)
-
         return report_file
 
+    def save_payment_report(self, pymnt_cycle, payment_logs):
+        try:
+            self.reportstorage.save_payment_report(pymnt_cycle, payment_logs)
+            logger.info("Payment report saved to DB")
+        except:
+            raise
+
+    # For sending anonymous stats of TRD usage
     def create_stats_dict(self, nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts):
         n_f_type = len([pl for pl in payment_logs if pl.type == TYPE_FOUNDER])
         n_o_type = len([pl for pl in payment_logs if pl.type == TYPE_OWNER])

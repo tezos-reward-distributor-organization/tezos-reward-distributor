@@ -25,7 +25,7 @@ class CalculatePhase7(CalculatePhaseBase):
 
             # If delegate's current balance is 0, and we are NOT reactivating it,
             # then mark address as being skipped with a description to be included
-            # in the CSV payment report
+            # in the database payment report
 
             # KT1 accounts do not require reactivation on 0 balance
 

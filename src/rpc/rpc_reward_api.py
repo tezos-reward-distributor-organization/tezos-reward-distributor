@@ -3,6 +3,7 @@ from time import sleep
 import requests
 
 from api.reward_api import RewardApi
+from exception.rpc_provider import RpcRewardApiException
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 
@@ -99,8 +100,10 @@ class RpcRewardApiImpl(RewardApi):
         sleep(0.1)  # be nice to public node service
 
         resp = requests.get(request, timeout=time_out)
+        if resp.status_code == 404:
+            raise RpcRewardApiException("RPC URL '{}' not found. Is this node in archive mode?".format(request))
         if resp.status_code != 200:
-            raise Exception("Request '{} failed with status code {}, after {}, unique request_id {}".format(request, resp.status_code, time_out, resp.headers['CF-RAY']))
+            raise RpcRewardApiException("Request '{}' failed with status code {}, after {}s".format(request, resp.status_code, time_out))
 
         response = resp.json()
         if self.verbose:
@@ -120,7 +123,6 @@ class RpcRewardApiImpl(RewardApi):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
         current_cycle = int(head["metadata"]["level"]["cycle"])
-        # head_hash = head["hash"]
 
         return current_level, current_cycle
     
@@ -147,7 +149,7 @@ class RpcRewardApiImpl(RewardApi):
             d_a_len = len(delegators_addresses)
             
             if d_a_len == 0:
-                raise RpcRewardApiError("No delegators found")
+                raise RpcRewardApiException("No delegators found")
             
             # Loop over delegators, get balances
             for idx, delegator in enumerate(delegators_addresses):
@@ -181,9 +183,9 @@ class RpcRewardApiImpl(RewardApi):
             # Sanity check. We should have fetched info for all delegates. If we didn't, something went wrong
             d_len = len(delegators)
             if d_a_len != d_len:
-                raise RpcRewardApiError("Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
+                raise RpcRewardApiException("Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
 
-        except RpcRewardApiError as r:
+        except RpcRewardApiException as r:
             logger.warn("RPC API Error: {}".format(r), exc_info=True)
         except Exception as e:
             logger.warn("Unexpected error: {}".format(e), exc_info=True)
@@ -235,6 +237,3 @@ class RpcRewardApiImpl(RewardApi):
         else:
             logger.info("Cycle too far in the future")
             return ""
-
-class RpcRewardApiError(Exception):
-    pass

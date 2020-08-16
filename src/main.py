@@ -99,7 +99,7 @@ def main(args):
 
         block_api = provider_factory.newBlockApi(network_config, args.node_addr)
 
-        db = Storage(config_dir, dry_run)
+        storage = Storage(config_dir, dry_run)
 
         # Look for old .yaml config file and convert to DB
         config_file_path = get_baking_configuration_file(config_dir)
@@ -122,13 +122,13 @@ def main(args):
             tmp_baking_address = yaml_cfg.get_baking_address()
 
             # Convert and store to DB
-            ConfigStorage(db).save_baker_config(t_baking_address, yaml_cfg.toDB())
+            ConfigStorage(storage).save_baker_config(t_baking_address, yaml_cfg.toDB())
 
             # Move .yaml to .dbconverted so that we skip this on future runs
             move_baking_configuration_file(config_file_path)
 
         # Get config from DB
-        db_cfg_dict = ConfigStorage(db).get_baker_config()
+        db_cfg_dict = ConfigStorage(storage).get_baker_config()
         db_cfg = BakingConf(db_cfg_dict, master_cfg)
         db_cfg.validate(wllt_clnt_mngr, block_api)
         db_cfg.process()
@@ -147,6 +147,15 @@ def main(args):
     logger.info("BAKING ADDRESS is {}".format(baking_address))
     logger.info("PAYMENT ADDRESS is {}".format(payment_address))
     logger.info(LINER)
+
+    # Still want CSV reports for backwards compatibility
+    reports_base = os.path.expanduser(args.reports_base)
+    if dry_run:
+        reports_base = os.path.expanduser("./reports")
+
+    reports_dir = os.path.join(reports_base, baking_address)
+    payments_root = get_payment_root(reports_dir, create=True)
+    calculations_root = get_calculations_root(reports_dir, create=True)
 
     # 7- start the life cycle
     life_cycle.start(not dry_run)
@@ -167,10 +176,10 @@ def main(args):
 
     logger.info("Initial cycle set to {}".format(initial_cycle))
 
-    # Launch producer-consumer threads
+    # 9- Launch producer-consumer threads
     try:
         p = PaymentProducer(name='producer', initial_payment_cycle=initial_cycle, network_config=network_config,
-                            run_mode=RunMode(args.run_mode),
+                            payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                             service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                             payment_offset=args.payment_offset, baking_cfg=db_cfg, life_cycle=life_cycle,
                             payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
@@ -184,7 +193,7 @@ def main(args):
 
     publish_stats = not args.do_not_publish_stats
     for i in range(nb_consumers):
-        c = PaymentConsumer(name='consumer' + str(i), storage=storage, key_name=payment_address,
+        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, storage=storage, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                             wllt_clnt_mngr=wllt_clnt_mngr, args=args, verbose=args.verbose, dry_run=dry_run,
                             reactivate_zeroed=db_cfg.get_reactivate_zeroed(),
@@ -197,7 +206,7 @@ def main(args):
         logger.info("Application start completed")
         logger.info(LINER)
 
-    # Main check-sleep loop
+    # 10- Main check-sleep loop
     try:
         while life_cycle.is_running():
             time.sleep(10)
