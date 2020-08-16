@@ -1,19 +1,18 @@
 import requests
-
 from api.block_api import BlockApi
 from log_config import main_logger
 
 logger = main_logger
 
-COMM_HEAD = "http://{}/chains/main/blocks/head"
-COMM_REVELATION = "http://{}/chains/main/blocks/head/context/contracts/{}/manager_key"
+COMM_HEAD = "{}/chains/main/blocks/head"
+COMM_REVELATION = "{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
 class RpcBlockApiImpl(BlockApi):
 
     def __init__(self, nw, node_url):
         super(RpcBlockApiImpl, self).__init__(nw)
-
         self.node_url = node_url
+        logger.debug("RpcBlockApiImpl - node_url {}".format(self.node_url))
 
     def get_current_level(self, verbose=False):
         response = requests.get(COMM_HEAD.format(self.node_url), timeout=5)

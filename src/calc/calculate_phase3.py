@@ -2,8 +2,6 @@ from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_M
 from model.baking_conf import MIN_DELEGATION_KEY
 from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
 
-MUTEZ = 1e+6
-
 
 class CalculatePhase3(CalculatePhaseBase):
     """

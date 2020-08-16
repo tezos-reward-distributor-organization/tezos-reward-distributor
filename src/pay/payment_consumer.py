@@ -3,7 +3,7 @@ import os
 import threading
 import time
 
-from Constants import EXIT_PAYMENT_TYPE, PaymentStatus, VERSION
+from Constants import EXIT_PAYMENT_TYPE, PaymentStatus, VERSION, MUTEZ
 from NetworkConfiguration import is_mainnet
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
@@ -164,7 +164,7 @@ class PaymentConsumer(threading.Thread):
     #
     # create report file
     def create_payment_report(self, nb_failed, nb_injected, payment_logs, payment_cycle, total_attempts):
-        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed>0 else ""))
+        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
 
@@ -189,7 +189,7 @@ class PaymentConsumer(threading.Thread):
         n_d_type = len([pl for pl in payment_logs if pl.type == TYPE_DELEGATOR])
         n_m_type = len([pl for pl in payment_logs if pl.type == TYPE_MERGED])
         stats_dict = {}
-        stats_dict['tot_amnt'] = int(sum([rl.amount for rl in payment_logs]) / 1e+9)  # in 1K tezos
+        stats_dict['tot_amnt'] = int(sum([rl.amount for rl in payment_logs]) / MUTEZ)
         stats_dict['nb_pay'] = int(len(payment_logs) / 10)
         stats_dict['nb_failed'] = nb_failed
         stats_dict['nb_unkwn'] = nb_injected
@@ -199,17 +199,13 @@ class PaymentConsumer(threading.Thread):
         stats_dict['nb_m'] = n_m_type
         stats_dict['nb_d'] = n_d_type
         stats_dict['cycle'] = payment_cycle
-        stats_dict['m_fee'] = 1 if self.delegator_pays_xfer_fee else 0
+        stats_dict['m_xffee'] = 1 if self.delegator_pays_xfer_fee else 0
+        stats_dict['m_rafee'] = 1 if self.delegator_pays_ra_fee else 0
         stats_dict['trdver'] = VERSION
         if self.args:
             stats_dict['m_run'] = 1 if self.args.background_service else 0
-            stats_dict['m_prov'] = 0 if self.args.reward_data_provider == 'tzscan' else 1
-            m_relov = 0
-            if self.args.release_override > 0:
-                m_relov = 1
-            elif self.args.release_override < 0:
-                m_relov = -1
-            stats_dict['m_relov'] = m_relov
-            stats_dict['m_offset'] = 1 if self.args.payment_offset != 0 else 0
+            stats_dict['m_prov'] = self.args.reward_data_provider
+            stats_dict['m_relov'] = self.args.release_override
+            stats_dict['m_offset'] = self.args.payment_offset
             stats_dict['m_clnt'] = 1 if self.args.docker else 0
         return stats_dict

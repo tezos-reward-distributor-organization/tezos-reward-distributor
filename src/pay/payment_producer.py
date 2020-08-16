@@ -5,7 +5,7 @@ import threading
 import time
 
 from time import sleep
-from Constants import RunMode, PaymentStatus
+from Constants import RunMode, PaymentStatus, MUTEZ
 from log_config import main_logger
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
@@ -18,7 +18,6 @@ from util.csv_payment_file_parser import CsvPaymentFileParser
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
-from Constants import MUTEZ
 
 logger = main_logger
 
@@ -171,6 +170,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         logger.debug("Wait a few minutes, queue is full")
                         # wait a few minutes to let payments done
                         time.sleep(60 * 3)
+
                 # end of payment cycle check
                 else:
                     logger.info("No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, crrnt_cycle))
@@ -188,7 +188,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # plus offset. cycle beginnings may be busy, move payments forward
                     nb_blocks_remaining = nb_blocks_remaining + self.payment_offset
 
-                    logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
+                    logger.debug("Waiting until next cycle; {} blocks remaining".format(nb_blocks_remaining))
 
                     # wait until current cycle ends
                     self.wait_until_next_cycle(nb_blocks_remaining)

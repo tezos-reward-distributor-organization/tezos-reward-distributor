@@ -1,7 +1,5 @@
 from _decimal import ROUND_HALF_DOWN
 from decimal import Decimal
-from Constants import MUTEZ
-
 from calc.calculate_phase_base import CalculatePhaseBase
 from model.reward_log import TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 

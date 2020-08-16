@@ -56,17 +56,17 @@ class EmailManager():
 
         with open(EMAIL_INI_PATH, "w") as f:
             f.writelines(["[DEFAULT]\n", USER + NL, PASS + NL, HOST + NL, PORT + NL, SENDER + NL,
-                          RECIPIENTS + NL + USE_SSL+NL])
+                          RECIPIENTS + NL + USE_SSL + NL])
 
-    def send_payment_mail(self, cyle, payments_file, nb_failed, nb_unknown):
+    def send_payment_mail(self, cycle, payments_file, nb_failed, nb_unknown):
         if not self.email_sender:
             return
 
-        title = "Payment Report for Cycle {}".format(cyle)
+        title = "Payment Report for Cycle {}".format(cycle)
         if nb_failed > 0: title + ", {} failed".format(nb_failed)
         if nb_unknown > 0: title + ", {} final state not known".format(nb_unknown)
 
-        self.email_sender.send(title, "Payment for cycle {} is completed. Report file is attached.".format(cyle),
+        self.email_sender.send(title, "Payment for cycle {} is completed. Report file is attached.".format(cycle),
                                self.default["recipients"], [payments_file])
 
-        logger.debug("Report email sent for cycle {}.".format(cyle))
+        logger.debug("Report email sent for cycle {}.".format(cycle))

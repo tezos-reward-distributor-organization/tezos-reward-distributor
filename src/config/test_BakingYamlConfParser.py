@@ -1,16 +1,18 @@
 from unittest import TestCase
-
 from cli.wallet_client_manager import WalletClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from rpc.rpc_block_api import RpcBlockApiImpl
+from Constants import PUBLIC_NODE_URL
 
 network={'NAME': 'MAINNET'}
-mainnet_public_node_url = "https://rpc.tzbeta.net/"
 
 class TestYamlAppConfParser(TestCase):
-    def test_validate(self):
 
+    def setUp(self):
+        self.mainnet_public_node_url = PUBLIC_NODE_URL["MAINNET"][0]
+
+    def test_validate(self):
         data_fine = """
         version : 1.0
         baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj

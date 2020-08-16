@@ -76,7 +76,7 @@ class BatchPayer():
         logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE /  MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
         logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold / MUTEZ))
 
-        # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
+        # If pymnt_addr has a length of 36 and starts with tz or KT then it is a public key, else it is an alias
         if len(self.pymnt_addr) == PKH_LENGTH and (
                 self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")):
             self.source = self.pymnt_addr

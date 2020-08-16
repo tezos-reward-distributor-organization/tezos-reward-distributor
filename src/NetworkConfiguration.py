@@ -2,8 +2,6 @@ from log_config import main_logger
 from util.rpc_utils import parse_json_response
 import requests
 
-BLOCK_TIME_IN_SEC = 'BLOCK_TIME_IN_SEC'
-
 logger = main_logger
 
 default_network_config_map = {
@@ -15,30 +13,36 @@ default_network_config_map = {
                 'BLOCKS_PER_ROLL_SNAPSHOT': 8},
 }
 
-CONSTANTS_COMM = " rpc get /chains/main/blocks/head/context/constants"
-URL = "https://{}.tzbeta.net/chains/main/blocks/head/context/constants"
-url_prefix = {"MAINNET": "rpc", "ALPHANET": "rpcalpha", "ZERONET": "rpczero"}
+CONSTANTS_PATH = "/chains/main/blocks/head/context/constants"
+CONSTANTS_RPC = "rpc get " + CONSTANTS_PATH
+
+PUBLIC_NODE_BASE = "https://{}-tezos.giganode.io"
+PUBLIC_NODE_RPC = PUBLIC_NODE_BASE + CONSTANTS_PATH
+PUBLIC_NODE_PREFIX = { "MAINNET": "mainnet", "ALPHANET": "testnet", "ZERONET": "labnet" }
 
 
 def init_network_config(network_name, config_client_manager, node_addr):
     network_config_map = {}
+    node_addr = config_client_manager.get_node_addr()
+
     try:
-        network_config_map[network_name] = get_network_config_from_local_node(config_client_manager, node_addr)
+        network_config_map[network_name] = get_network_config_from_local_node(config_client_manager)
         network_config_map[network_name]['NAME'] = network_name
-        logger.debug("Network configuration constants successfully loaded from a local node.")
+        logger.debug("Network configuration constants successfully loaded from local node ({}).".format(node_addr))
         return network_config_map
     except:
-        logger.debug("Failed to get network configuration constants from a local node.")
+        logger.debug("Failed to get network configuration constants from local node ({}).".format(node_addr))
 
     try:
         network_config_map[network_name] = get_network_config_from_public_node(network_name)
         network_config_map[network_name]['NAME'] = network_name
-        logger.debug("Network configuration constants successfully loaded from a public node.")
+        logger.debug("Network configuration constants successfully loaded from a public node ({}).".format(PUBLIC_NODE_BASE))
         return network_config_map
     except:
-        logger.debug("Failed to get network configuration constants from a public node.")
+        logger.debug("Failed to get network configuration constants from a public node ({}).".format(PUBLIC_NODE_BASE))
 
     logger.debug("Default network configuration constants will be used.")
+
     return default_network_config_map
 
 
@@ -46,16 +50,15 @@ def is_mainnet(nw_name):
     return nw_name == 'MAINNET'
 
 
-def get_network_config_from_local_node(config_client_manager, node_addr):
-    request_constants = CONSTANTS_COMM.format(node_addr)
-    _,response_constants = config_client_manager.send_request(request_constants)
+def get_network_config_from_local_node(config_client_manager):
+    _, response_constants = config_client_manager.send_request(CONSTANTS_RPC)
     constants = parse_json_response(response_constants)
     network_config_map = parse_constants(constants)
     return network_config_map
 
 
 def get_network_config_from_public_node(network_name):
-    url = URL.format(url_prefix[network_name])
+    url = PUBLIC_NODE_RPC.format(PUBLIC_NODE_PREFIX[network_name])
     response_constants = requests.get(url, timeout=5)
     constants = response_constants.json()
     network_config_map = parse_constants(constants)
@@ -65,7 +68,7 @@ def get_network_config_from_public_node(network_name):
 def parse_constants(constants):
     network_config_map = {}
     network_config_map['NB_FREEZE_CYCLE'] = int(constants['preserved_cycles'])
-    network_config_map[BLOCK_TIME_IN_SEC] = int(constants['time_between_blocks'][0])
+    network_config_map['BLOCK_TIME_IN_SEC'] = int(constants['time_between_blocks'][0])
     network_config_map['BLOCKS_PER_CYCLE'] = int(constants['blocks_per_cycle'])
     network_config_map['BLOCKS_PER_ROLL_SNAPSHOT'] = int(constants['blocks_per_roll_snapshot'])
     return network_config_map

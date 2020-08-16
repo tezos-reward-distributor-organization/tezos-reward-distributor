@@ -6,6 +6,7 @@ import sys
 import time
 from datetime import datetime
 
+from Constants import MUTEZ
 from cli.wallet_client_manager import WalletClientManager
 from config.config_parser import ConfigParser
 from config.yaml_conf_parser import YamlConfParser
@@ -29,7 +30,6 @@ payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
 
 life_cycle = ProcessLifeCycle()
-MUTEZ = 1
 
 
 def main(args):

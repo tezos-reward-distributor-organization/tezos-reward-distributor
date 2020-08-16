@@ -42,10 +42,8 @@ class RpcRewardApiImpl(RewardApi):
         # Get last block in cycle where rewards are unfrozen
         level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
 
-        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, last_block_cycle {}".format(cycle,
-                                                                                                      self.preserved_cycles,
-                                                                                                      self.blocks_per_cycle,
-                                                                                                      level_of_last_block_in_unfreeze_cycle))
+        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, last block of cycle {}".format(cycle,
+            self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
 
         if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
             unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
@@ -225,8 +223,13 @@ class RpcRewardApiImpl(RewardApi):
             request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
-            level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (
-                    chosen_snapshot + 1) * self.blocks_per_roll_snapshot
+            level_snapshot_block = (cycle - self.preserved_cycles - 2)
+                * self.blocks_per_cycle
+                + (chosen_snapshot + 1)
+                * self.blocks_per_roll_snapshot
+
+            logger.debug("Chosen snapshot {}, snapshot level {}".format(chosen_snapshot, level_snapshot_block))
+
             return level_snapshot_block
 
         else:

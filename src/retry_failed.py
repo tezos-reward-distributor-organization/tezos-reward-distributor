@@ -6,7 +6,7 @@ import sys
 import time
 from time import sleep
 
-from Constants import RunMode
+from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from calc.service_fee_calculator import ServiceFeeCalculator
@@ -28,8 +28,7 @@ from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
 
-
-NB_CONSUMERS = 1
+nb_consumers = 1
 BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
@@ -38,6 +37,7 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
+    logger.info("TRD v{} - Retry Failed Helper".format(VERSION))
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
     # 1- find where configuration is
@@ -54,7 +54,6 @@ def main(args):
     master_cfg = {}
     if os.path.isfile(master_config_file_path):
         logger.info("Loading master configuration file {}".format(master_config_file_path))
-
         master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
         master_cfg = master_parser.parse()
     else:
@@ -63,6 +62,7 @@ def main(args):
     managers = None
     contracts_by_alias = None
     addresses_by_pkh = None
+
     if 'managers' in master_cfg:
         managers = master_cfg['managers']
     if 'contracts_by_alias' in master_cfg:
@@ -71,10 +71,8 @@ def main(args):
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
     # 3- get client path
-
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network,
-                                  args.verbose)
+                                  args.docker, args.network, args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
@@ -183,7 +181,7 @@ def get_baking_configuration_file(config_dir):
 
 if __name__ == '__main__':
 
-    if not sys.version_info.major >= 3 and sys.version_info.minor>=6:
+    if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
         raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major,sys.version_info.minor ))
 
     parser = argparse.ArgumentParser()
@@ -198,7 +196,7 @@ if __name__ == '__main__':
     add_argument_docker(parser)
     add_argument_verbose(parser)
 
-    parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items are injected bu not actually paid.", action="store_true")
+    parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.", action="store_true")
     args = parser.parse_args()
     script_name = " - Retry Failed Files"
     print_banner(args, script_name)

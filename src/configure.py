@@ -368,7 +368,7 @@ def main(args):
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
                                   args.docker, args.network, args.verbose)
 
-    logger.debug("Tezos client path is {}".format(client_path))
+    logger.debug("tezos-client path is {}".format(client_path))
     
     # 4. get network config     
     config_client_manager = SimpleClientManager(client_path, args.node_addr)
