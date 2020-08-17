@@ -8,13 +8,15 @@ TYPE_FOUNDERS_PARENT = "FOUNDERS_PARENT"
 TYPE_MERGED = "M"
 TYPE_EXTERNAL = "E"
 
-types = {   TYPE_DELEGATOR: 5,
-            TYPE_OWNER: 4,
-            TYPE_FOUNDER: 3,
-            TYPE_OWNERS_PARENT: 2,
-            TYPE_FOUNDERS_PARENT: 1,
-            TYPE_MERGED: 0
-        }
+types = {
+    TYPE_DELEGATOR: 5,
+    TYPE_OWNER: 4,
+    TYPE_FOUNDER: 3,
+    TYPE_OWNERS_PARENT: 2,
+    TYPE_FOUNDERS_PARENT: 1,
+    TYPE_MERGED: 0
+}
+
 
 class RewardLog:
     def __init__(self, address, type, staking_balance, current_balance) -> None:
@@ -28,7 +30,7 @@ class RewardLog:
         self.desc = ""
         self.skipped = False
         self.skippedatphase = 0
-        self.cycle =  0
+        self.cycle = 0
         self.ratio0 = 0
         self.ratio1 = 0
         self.ratio2 = 0

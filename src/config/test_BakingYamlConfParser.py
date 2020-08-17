@@ -5,7 +5,8 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from rpc.rpc_block_api import RpcBlockApiImpl
 from Constants import PUBLIC_NODE_URL
 
-network={'NAME': 'MAINNET'}
+network = {'NAME': 'MAINNET'}
+
 
 class TestYamlAppConfParser(TestCase):
 
@@ -14,12 +15,12 @@ class TestYamlAppConfParser(TestCase):
 
     def test_validate(self):
         data_fine = """
-        version : 1.0
-        baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        payment_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        founders_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        owners_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        service_fee : 4.53
+        version: 1.0
+        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        founders_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5, 'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
+        owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5, 'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
+        service_fee: 4.53
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
         """
@@ -29,10 +30,10 @@ class TestYamlAppConfParser(TestCase):
         contr_dict_by_alias = {}
         addr_dict_by_pkh = {
             "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
-                                                     "alias": "main1", "sk": True, "revealed" : True,
+                                                     "alias": "main1", "sk": True, "revealed": True,
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"},
             "KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": True,
-                                                     "alias": "kt1", "sk": True, "revealed" : True,
+                                                     "alias": "kt1", "sk": True, "revealed": True,
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}
         }
 
@@ -46,9 +47,9 @@ class TestYamlAppConfParser(TestCase):
                                         network_config=network, node_url=self.mainnet_public_node_url,
                                         block_api=block_api)
         cnf_prsr.parse()
-        
+
         yaml_cfg_dict = cnf_prsr.get_conf_obj()
-        
+
         # dictionary to BakingConf object, for a bit of type safety
         yaml_cfg = BakingConf(yaml_cfg_dict, None)
         yaml_cfg.validate(wallet_client_manager, block_api)
@@ -68,17 +69,16 @@ class TestYamlAppConfParser(TestCase):
 
     def test_validate_no_founders_map(self):
         data_no_founders = """
-        version : 1.0
-        baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        payment_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        owners_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        service_fee : 4.5
+        version: 1.0
+        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
+        service_fee: 4.5
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
-
 
         contr_dict_by_alias = {}
         addr_dict_by_pkh = {
@@ -96,7 +96,7 @@ class TestYamlAppConfParser(TestCase):
                                         network_config=network, node_url=mainnet_public_node_url,
                                         block_api=block_api)
         cnf_prsr.parse()
-        
+
         yaml_cfg_dict = cnf_prsr.get_conf_obj()
         yaml_cfg = BakingConf(yaml_cfg_dict, None)
         yaml_cfg.validate(wallet_client_manager, block_api)
@@ -119,12 +119,12 @@ class TestYamlAppConfParser(TestCase):
 
     def test_validate_pymnt_alias(self):
         data_no_founders = """
-        version : 1.0
-        baking_address : tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        payment_address : tzPay
-        owners_map : {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
-        service_fee : 4.5
-        min_delegation_amt : 100
+        version: 1.0
+        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        payment_address: tzPay
+        owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj':0.5}
+        service_fee: 4.5
+        min_delegation_amt: 100
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
         """
@@ -132,13 +132,13 @@ class TestYamlAppConfParser(TestCase):
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
                         'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
 
-        contr_dict_by_alias = {'kt': 'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj','tzPay':'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
+        contr_dict_by_alias = {'kt': 'KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj', 'tzPay': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
         addr_dict_by_pkh = {
             "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
                                                      "alias": "tz1", "sk": True,
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"},
             "KT1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj": {"pkh": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj", "originated": False,
-                                                     "alias": "ktPay", "sk": True, "revealed":True,
+                                                     "alias": "ktPay", "sk": True, "revealed": True,
                                                      "manager": "tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj"}
         }
 

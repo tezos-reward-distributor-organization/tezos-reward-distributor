@@ -4,6 +4,7 @@ from log_config import main_logger
 
 logger = main_logger
 
+
 class Storage:
 
     dbPath = ""
@@ -47,7 +48,6 @@ class Storage:
             logger.warn("Storage - SQLite Error: {}".format(e))
         return self.dbh
 
-
     def __exit__(self, exc_type, exc_value, exc_traceback):
         if exc_type:
             # logger.debug("Storage - EXCEPTION {}: {}".format(exc_type, exc_value))
@@ -59,7 +59,6 @@ class Storage:
         self.locker.release()
 
         logger.info("Storage - Closed")
-
 
     def __del__(self):
         if self.dbh:

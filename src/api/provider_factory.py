@@ -4,6 +4,7 @@ from tzstats.tzstats_block_api import TzStatsBlockApiImpl
 from tzstats.tzstats_reward_api import TzStatsRewardApiImpl
 from Constants import PUBLIC_NODE_URL
 
+
 class ProviderFactory:
     def __init__(self, provider, verbose=False):
         self.provider = provider
@@ -17,7 +18,7 @@ class ProviderFactory:
         elif self.provider == 'prpc':
             if node_url_public == '':
                 node_url_public = PUBLIC_NODE_URL[network_config['NAME']][0]
-            return RpcRewardApiImpl(network_config,  baking_address, node_url_public, verbose=self.verbose)
+            return RpcRewardApiImpl(network_config, baking_address, node_url_public, verbose=self.verbose)
         elif self.provider == 'tzstats':
             return TzStatsRewardApiImpl(network_config, baking_address, verbose=self.verbose)
 

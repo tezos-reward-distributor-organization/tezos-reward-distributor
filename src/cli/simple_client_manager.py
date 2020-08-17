@@ -33,6 +33,6 @@ class SimpleClientManager:
 
         for line in response.splitlines():
             if "Signature" in line:
-                return line.replace("Signature:","").strip()
+                return line.replace("Signature:", "").strip()
 
         raise ClientException("Signature not found in response '{}'. Signed with key '{}'".format(response, key_name))

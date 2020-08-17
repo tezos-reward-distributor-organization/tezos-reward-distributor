@@ -212,7 +212,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle, expected_reward = False):
+    def try_to_pay(self, pymnt_cycle, expected_reward=False):
         try:
             logger.info("Payment cycle is " + str(pymnt_cycle))
 
@@ -233,7 +233,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
 
             # set cycle info
-            for rl in reward_logs: rl.cycle = pymnt_cycle
+            for rl in reward_logs:
+                rl.cycle = pymnt_cycle
             total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
 
             # 4- if total_rewards > 0, proceed with payment
@@ -324,11 +325,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 logger.debug("Reward created for %s type: %s, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
                              "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: %s, skipped: %s, at-phase: %s, "
                              "desc: %s, pay_addr: %s"
-                             .format(pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
+                             .format(pymnt_log.address, pymnt_log.type,
+                                     pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
                                      pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
-                                     pymnt_log.service_fee_rate), pymnt_log.address, pymnt_log.type, pymnt_log.payable,
-                                     pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc, pymnt_log.paymentaddress)
+                                     pymnt_log.service_fee_rate, pymnt_log.payable,
+                                     pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc, pymnt_log.paymentaddress))
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
@@ -381,10 +383,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 rl.paid = PaymentStatus(int(row["paid"]))
                 batch.append(rl)
 
-            nb_paid = len(list(filter(lambda f:f.paid==PaymentStatus.PAID, batch)))
-            nb_done = len(list(filter(lambda f:f.paid==PaymentStatus.DONE, batch)))
-            nb_injected = len(list(filter(lambda f:f.paid==PaymentStatus.INJECTED, batch)))
-            nb_failed = len(list(filter(lambda f:f.paid==PaymentStatus.FAIL, batch)))
+            nb_paid = len(list(filter(lambda f: f.paid == PaymentStatus.PAID, batch)))
+            nb_done = len(list(filter(lambda f: f.paid == PaymentStatus.DONE, batch)))
+            nb_injected = len(list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch)))
+            nb_failed = len(list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch)))
 
             logger.info("Summary {} paid, {} done, {} injected, {} fail".format(nb_paid, nb_done, nb_injected, nb_failed))
 
@@ -405,7 +407,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # Add failed records into payment_queue. payment_consumer will reattempt payments
             self.payments_queue.put(PaymentBatch(self, f_cycle, batch))
-
 
     # upon success retry failed payments if present
     # success may indicate what went wrong in past is fixed.

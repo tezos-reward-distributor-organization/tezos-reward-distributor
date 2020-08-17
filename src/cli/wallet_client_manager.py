@@ -117,7 +117,6 @@ class WalletClientManager(SimpleClientManager):
             except Exception as e:
                 raise ClientException("Invalid response from client '{}'".format(response), e)
 
-
         return dict
 
     def get_known_contract_by_alias(self, alias):

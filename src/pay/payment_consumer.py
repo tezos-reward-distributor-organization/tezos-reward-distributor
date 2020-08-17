@@ -171,7 +171,7 @@ class PaymentConsumer(threading.Thread):
         try:
             self.reportstorage.save_payment_report(pymnt_cycle, payment_logs)
             logger.info("Payment report saved to DB")
-        except:
+        except Exception:
             raise
 
     # For sending anonymous stats of TRD usage

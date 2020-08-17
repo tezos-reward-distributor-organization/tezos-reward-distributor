@@ -9,7 +9,7 @@ headers = {'content-type': 'application/json'}
 
 
 def stat_publish(stats_map):
-    t = threading.Thread(target=stat_publish_job, name="stat_publish_job", args=({'stats':stats_map},))
+    t = threading.Thread(target=stat_publish_job, name="stat_publish_job", args=({'stats': stats_map},))
     t.daemon = True
     t.start()
 

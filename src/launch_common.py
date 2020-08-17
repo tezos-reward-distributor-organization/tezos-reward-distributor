@@ -7,6 +7,7 @@ import argparse
 LINER = "--------------------------------------------"
 logger = main_logger
 
+
 def print_banner(args, script_name):
     with open("./banner.txt", "rt") as file:
         print(file.read())
@@ -14,7 +15,7 @@ def print_banner(args, script_name):
     print("Copyright Huseyin ABANOZ 2019")
     print("huseyinabanox@gmail.com")
     print("Please leave copyright information")
-    print(LINER,flush=True)
+    print(LINER, flush=True)
 
     sleep(0.1)
 
@@ -24,6 +25,7 @@ def print_banner(args, script_name):
         logger.info(LINER)
         logger.info("DRY RUN MODE")
         logger.info(LINER)
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -98,7 +100,7 @@ def add_argument_node_addr(parser):
 
 
 def add_argument_provider(parser):
-    parser.add_argument("-P", "--reward_data_provider", help="Source of reward data. The default is the use of a public archive rpc node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!", choices=['rpc','prpc','tzstats'],
+    parser.add_argument("-P", "--reward_data_provider", help="Source of reward data. The default is the use of a public archive rpc node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!", choices=['rpc', 'prpc', 'tzstats'],
                         default='prpc')
 
 

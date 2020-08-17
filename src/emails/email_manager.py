@@ -63,8 +63,10 @@ class EmailManager():
             return
 
         title = "Payment Report for Cycle {}".format(cycle)
-        if nb_failed > 0: title + ", {} failed".format(nb_failed)
-        if nb_unknown > 0: title + ", {} final state not known".format(nb_unknown)
+        if nb_failed > 0:
+            title + ", {} failed".format(nb_failed)
+        if nb_unknown > 0:
+            title + ", {} final state not known".format(nb_unknown)
 
         self.email_sender.send(title, "Payment for cycle {} is completed. Report file is attached.".format(cycle),
                                self.default["recipients"], [payments_file])

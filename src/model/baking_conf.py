@@ -17,14 +17,14 @@ REACTIVATE_ZEROED = 'reactivate_zeroed'
 DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
 DELEGATOR_PAYS_RA_FEE = 'delegator_pays_ra_fee'
 
-### extensions
+# extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
 EXCLUDED_DELEGATORS_SET_TOB = "__excluded_delegators_set_tob"
 EXCLUDED_DELEGATORS_SET_TOE = "__excluded_delegators_set_toe"
 EXCLUDED_DELEGATORS_SET_TOF = "__excluded_delegators_set_tof"
 DEST_MAP = "__destination_map"
 
-### destination map
+# destination map
 TOF = "TOF"
 TOB = "TOB"
 TOE = "TOE"
@@ -94,7 +94,7 @@ class BakingConf:
 
         if pymnt_addr.startswith("KT1"):
             raise ConfigurationException("KT1 addresses cannot be used for payments. Only dn addresses are allowed.")
-        
+
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("dn"):
 
             addr_obj = wllt_clnt_mngr.get_addr_dict_by_pkh(pymnt_addr)
@@ -250,12 +250,12 @@ class BakingConf:
         if param_name not in self.cfg_dict:
             # If required param (ie: no default), raise exception if not defined
             if default is None:
-                raise ConfigurationException("Parameter '{}' is not present in config file. Please consult the documentation and add this parameter.".format$
+                raise ConfigurationException("Parameter '{}' is not present in config file. Please consult the documentation and add this parameter.".format(param_name))
             self.cfg_dict[param_name] = default
             return
 
         # already a bool value
-        if type(self.cfg_dict[param_name]) == type(False):
+        if isinstance(self.cfg_dict[param_name], bool):
             return
 
         if isinstance(self.cfg_dict[param_name], str) and "true" == self.cfg_dict[param_name].lower():
@@ -361,7 +361,7 @@ class BakingConfJsonEncoder(json.JSONEncoder):
         if isinstance(obj, set):
             # Convert set() to list
             return list(obj)
-	    return json.JSONEncoder.default(self, obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 class ConfigurationException(Exception):

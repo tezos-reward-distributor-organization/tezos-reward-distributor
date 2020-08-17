@@ -4,6 +4,7 @@ from calc.calculate_phase_base import CalculatePhaseBase, BY_ZERO_BALANCE
 
 logger = main_logger
 
+
 class CalculatePhase7(CalculatePhaseBase):
     """
     -- Phase7 : Check if current delegator balance is 0 --
@@ -29,9 +30,9 @@ class CalculatePhase7(CalculatePhaseBase):
 
             # KT1 accounts do not require reactivation on 0 balance
 
-            if (delegate.type == reward_log.TYPE_DELEGATOR and 
-                delegate.current_balance == 0 and
-                not delegate.paymentaddress.startswith("KT1")):
+            if (delegate.type == reward_log.TYPE_DELEGATOR
+                    and delegate.current_balance == 0
+                    and not delegate.paymentaddress.startswith("KT1")):
 
                 if self.reactivate_zeroed:
                     delegate.needs_activation = True

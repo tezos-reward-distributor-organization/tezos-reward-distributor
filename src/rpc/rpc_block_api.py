@@ -7,6 +7,7 @@ logger = main_logger
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_REVELATION = "{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
+
 class RpcBlockApiImpl(BlockApi):
 
     def __init__(self, nw, node_url):
@@ -24,13 +25,13 @@ class RpcBlockApiImpl(BlockApi):
         response = requests.get(COMM_REVELATION.format(self.node_url, pkh), timeout=5)
         manager_key = response.json()
         logger.debug("Manager key is '{}'".format(manager_key))
-        bool_revelation = manager_key and manager_key!='null'
+        bool_revelation = manager_key and manager_key != 'null'
         return bool_revelation
 
 
 def test_get_revelation():
 
-    address_api = RpcBlockApiImpl({"NAME":"ALPHANET"}, "127.0.0.1:8732")
+    address_api = RpcBlockApiImpl({"NAME": "ALPHANET"}, "127.0.0.1:8732")
     print(address_api.get_revelation("tz1N5cvoGZFNYWBp2NbCWhaRXuLQf6e1gZrv"))
     print(address_api.get_revelation("KT1FXQjnbdqDdKNpjeM6o8PF1w8Rn2j8BmmG"))
     print(address_api.get_revelation("tz1YVxe7FFisREKXWNxdrrwqvw3o2jeXzaNb"))

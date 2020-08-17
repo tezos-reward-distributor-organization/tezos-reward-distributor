@@ -16,9 +16,9 @@ class TestCalculatePhase5(TestCase):
             rl0.ratio4 = ratio
             rewards.append(rl0)
 
-        rewards.append(RewardLog("addrdummy", "D", 0, 0).skip("skipped for testing",4))
+        rewards.append(RewardLog("addrdummy", "D", 0, 0).skip("skipped for testing", 4))
 
-        phase5 = CalculatePhase5({"addr2":"addr1"})
+        phase5 = CalculatePhase5({"addr2": "addr1"})
 
         new_rewards, new_total_reward = phase5.calculate(rewards, total_reward)
 

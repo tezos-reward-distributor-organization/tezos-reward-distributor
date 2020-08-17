@@ -5,8 +5,8 @@ from log_config import main_logger
 
 logger = main_logger
 
-class ReportStorage:
 
+class ReportStorage:
 
     def __init__(self, _storage):
 
@@ -14,7 +14,6 @@ class ReportStorage:
 
         self._storage = _storage
         self.__create_tables()
-
 
     def get_recent_cycle(self):
         r_cycle = None
@@ -27,7 +26,6 @@ class ReportStorage:
                 raise ReportStorageException("Unable to get most recent cycle: {}".format(e)) from e
         return r_cycle
 
-
     def get_failed_payment_cycles(self):
         cycles = []
         with self._storage as dbh:
@@ -37,10 +35,9 @@ class ReportStorage:
                 cycles = cur.fetchall()
             except sqlite3.Error as e:
                 raise ReportStorageException("Unable to get failed payment cycles: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
         return cycles
-
 
     def get_failed_payments(self, cycle):
         payments = []
@@ -51,10 +48,9 @@ class ReportStorage:
                 payments = cur.fetchall()
             except sqlite3.Error as e:
                 raise ReportStorageException("Unable to get failed payments: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
         return payments
-
 
     def check_past_payment(self, cycle):
 
@@ -78,7 +74,7 @@ class ReportStorage:
 
             except sqlite3.Error as e:
                 raise ReportStorageException("Unable to get failed payments: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
 
         return nb_fail, nb_success
@@ -100,16 +96,15 @@ class ReportStorage:
                 for pl in payment_logs:
 
                     data_t = (cycle, pl.address, pl.type, pl.amount, pl.staking_balance,
-                        pl.current_balance, pl.hash, pl.paid.value)
+                              pl.current_balance, pl.hash, pl.paid.value)
                     dbh.execute(insert_sql, data_t)
 
                 logger.debug("save_payment_report - COMMIT")
 
             except sqlite3.Error as e:
                 raise ReportStorageException("Unable to save payment report to database: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
-
 
     def save_calculations_report(self, baker_address, cycle, reward_logs, total_reward_amount):
 
@@ -125,8 +120,8 @@ class ReportStorage:
 
                 # Baker report
                 baker_t = (cycle, baker_address, baker_address, "B",
-                    sum([rl.staking_balance for rl in reward_logs]), 1.0, 1.0, 0.0,
-                    total_reward_amount, 0.0, 0.0, "0", "0", "-1", "Baker")
+                           sum([rl.staking_balance for rl in reward_logs]), 1.0, 1.0, 0.0,
+                           total_reward_amount, 0.0, 0.0, "0", "0", "-1", "Baker")
 
                 dbh.execute(insert_sql, baker_t)
 
@@ -135,26 +130,27 @@ class ReportStorage:
 
                     # Create tuple for prepared statement
                     data_t = (cycle, rl.address, rl.paymentaddress, rl.type, rl.staking_balance, rl.current_balance,
-                        rl.ratio, rl.service_fee_ratio, rl.amount, rl.service_fee_amount, rl.service_fee_rate,
-                        1 if rl.payable else 0, 1 if rl.skipped else 0,
-                        rl.skippedatphase if rl.skipped else -1, rl.desc if rl.desc else "None")
+                              rl.ratio, rl.service_fee_ratio, rl.amount, rl.service_fee_amount, rl.service_fee_rate,
+                              1 if rl.payable else 0, 1 if rl.skipped else 0,
+                              rl.skippedatphase if rl.skipped else -1, rl.desc if rl.desc else "None")
 
                     dbh.execute(insert_sql, data_t)
 
-                    logger.debug("DB reward: {:s} -> {:s} ({:s}), Staked: {:>10.2f}, Current: {:>10.2f}, Ratio: {:.6f}, "
-                        "fee_ratio: {:.6f}, amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:b}, "
-                        "skipped: {:b}, at-phase: {:d}, desc: {:s}".format(rl.address, rl.paymentaddress, rl.type,
-                        rl.staking_balance / MUTEZ, rl.current_balance / MUTEZ,
-                        rl.ratio, rl.service_fee_ratio, rl.amount / MUTEZ, rl.service_fee_amount / MUTEZ,
-                        rl.service_fee_rate, rl.payable, rl.skipped, rl.skippedatphase, rl.desc))
+                    logger.debug("DB reward: {:s} -> {:s} ({:s}), Staked: {:>10.2f}, Current: {:>10.2f}, "
+                                 "Ratio: {:.6f}, fee_ratio: {:.6f}, amount: {:>10.6f}, fee_amount: {:>4.6f}, "
+                                 "fee_rate: {:.2f}, payable: {:b}, skipped: {:b}, at-phase: {:d}, "
+                                 "desc: {:s}".format(rl.address, rl.paymentaddress, rl.type,
+                                                     rl.staking_balance / MUTEZ, rl.current_balance / MUTEZ,
+                                                     rl.ratio, rl.service_fee_ratio, rl.amount / MUTEZ,
+                                                     rl.service_fee_amount / MUTEZ, rl.service_fee_rate, rl.payable,
+                                                     rl.skipped, rl.skippedatphase, rl.desc))
 
                 logger.debug("save_calculations_report - COMMIT")
 
             except sqlite3.Error as e:
                 raise ReportStorageException("Unable to save calculations report to database: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
-
 
     def __create_tables(self):
 
@@ -174,8 +170,9 @@ class ReportStorage:
 
             except sqlite3.Error as e:
                 raise ReportStorageException("Unable to create tables: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
+
 
 class ReportStorageException(Exception):
     pass

@@ -18,7 +18,7 @@ CONSTANTS_RPC = "rpc get " + CONSTANTS_PATH
 
 PUBLIC_NODE_BASE = "https://{}-tezos.giganode.io"
 PUBLIC_NODE_RPC = PUBLIC_NODE_BASE + CONSTANTS_PATH
-PUBLIC_NODE_PREFIX = { "MAINNET": "mainnet", "ALPHANET": "testnet", "ZERONET": "labnet" }
+PUBLIC_NODE_PREFIX = {"MAINNET": "mainnet", "ALPHANET": "testnet", "ZERONET": "labnet"}
 
 
 def init_network_config(network_name, config_client_manager, node_addr):
@@ -30,7 +30,7 @@ def init_network_config(network_name, config_client_manager, node_addr):
         network_config_map[network_name]['NAME'] = network_name
         logger.debug("Network configuration constants successfully loaded from local node ({}).".format(node_addr))
         return network_config_map
-    except:
+    except Exception:
         logger.debug("Failed to get network configuration constants from local node ({}).".format(node_addr))
 
     try:
@@ -38,7 +38,7 @@ def init_network_config(network_name, config_client_manager, node_addr):
         network_config_map[network_name]['NAME'] = network_name
         logger.debug("Network configuration constants successfully loaded from a public node ({}).".format(PUBLIC_NODE_BASE))
         return network_config_map
-    except:
+    except Exception:
         logger.debug("Failed to get network configuration constants from a public node ({}).".format(PUBLIC_NODE_BASE))
 
     logger.debug("Default network configuration constants will be used.")

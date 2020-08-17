@@ -6,6 +6,7 @@ BY_CONFIGURATION = "Excluded by configuration"
 BY_MIN_DELEGATION = "Excluded by min delegation"
 BY_ZERO_BALANCE = "Excluded by zero balance"
 
+
 class CalculatePhaseBase(ABC):
 
     @abstractmethod

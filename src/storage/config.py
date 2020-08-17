@@ -48,7 +48,7 @@ class ConfigStorage:
                 dbh.execute(i_sql, (baker_addr, baker_cfg_dict))
             except sqlite3.Error as e:
                 raise ConfigStorageException("Unable to save baker config to database: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
 
     def __create_tables(self):
@@ -59,15 +59,18 @@ class ConfigStorage:
 
             except sqlite3.Error as e:
                 raise ConfigStorageException("Unable to create tables: {}".format(e)) from e
-            except:
+            except Exception:
                 raise
+
 
 # SQLite-JSON helpers
 def adapt_json(data):
     return (json.dumps(data, cls=BakingConfJsonEncoder)).encode()
 
+
 def convert_json(blob):
     return json.loads(blob.decode())
+
 
 class ConfigStorageException(Exception):
     pass

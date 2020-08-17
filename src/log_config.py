@@ -27,4 +27,3 @@ fh.setFormatter(formatter)
 # add the handlers to logger
 main_logger.addHandler(ch)
 main_logger.addHandler(fh)
-

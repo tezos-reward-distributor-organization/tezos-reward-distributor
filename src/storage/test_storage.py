@@ -3,6 +3,7 @@ from sqlite3 import OperationalError
 from storage.storage import Storage
 from tempfile import TemporaryDirectory
 
+
 class TestStorage(TestCase):
 
     def test_sqlite(self):

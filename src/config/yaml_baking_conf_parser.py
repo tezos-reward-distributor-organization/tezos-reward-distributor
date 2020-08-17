@@ -1,5 +1,6 @@
 from config.yaml_conf_parser import YamlConfParser
 
+
 class BakingYamlConfParser(YamlConfParser):
     def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, verbose=None,
                  block_api=None) -> None:
