@@ -15,7 +15,7 @@ class Storage:
     def __init__(self, _dbPath, _dryRun=False):
 
         self.dryRun = _dryRun
-        self.dbPath = "{}drd_config{}.sqlite".format(_dbPath, "_dryRun" if self.dryRun else "")
+        self.dbPath = "{}/drd_config{}.sqlite".format(_dbPath, "_dryRun" if self.dryRun else "")
         self.locker = Lock()
 
         logger.info("Storage - Database located at {}{}".format(

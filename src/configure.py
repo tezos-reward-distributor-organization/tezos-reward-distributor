@@ -13,9 +13,6 @@ from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from cli.simple_client_manager import SimpleClientManager
 from cli.wallet_client_manager import WalletClientManager
-from config.config_parser import ConfigParser
-from config.yaml_baking_conf_parser import BakingYamlConfParser
-from config.yaml_conf_parser import YamlConfParser
 from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_executable_dirs, add_argument_docker, \
     add_argument_verbose, add_argument_dry, add_argument_provider
@@ -29,31 +26,35 @@ from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.fee_validator import FeeValidator
 
+from storage.storage import Storage
+from storage.config import ConfigStorage
+
 LINER = "--------------------------------------------"
 
 logger = main_logger
 
 
 messages = {
-    'hello': 'This application will help you create configuration file for your bakery. Type enter to continue',
+    'hello': 'This application will help you configure TRD payouts for your bakery. Type enter to continue',
     'bakingaddress': 'Specify your baking address public key hash (Processing may take a few seconds)',
     'paymentaddress': 'Specify your payment PKH/alias. Available aliases:{}',
-    'servicefee': 'Specify service fee [0:100]',
+    'servicefee': 'Specify bakery fee [0:100]',
     'foundersmap': "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
     'ownersmap': "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
     'mindelegation': "Specify minimum delegation amount in tezos. Type enter for 0",
-    'mindelegationtarget': "Specify where should shares of delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB",
+    'mindelegationtarget': "Specify where the reward for delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB",
     'exclude': "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip",
     'redirect': "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
     'reactivatezeroed': "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes",
     'delegatorpaysxfrfee': "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator",
     'delegatorpaysrafee': "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
-    'supporters': "Add supporter address. Supporters do not pay service fee. Type enter to skip",
-    'specials': "Add special fee in form of PKH,fee. Given addresses will pay the specified fee rate. Type enter to skip",
-    'final': "Add excluded address in form of PKH,target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip"
+    'supporters': "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
+    'specials': "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
+    'final': "Add excluded address in form of 'PKH,target'. Possbile targets are: TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip"
 }
 
-parser = None
+# Global variables
+db_cfg = None
 wllt_clnt_mngr = None
 network_config = None
 
@@ -76,19 +77,15 @@ def onbakingaddress(input):
     if not input.startswith("tz"):
         printe("Only tz addresses are allowed")
         return
-    provider_factory = ProviderFactory(args.reward_data_provider)
-    global parser
-    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
-    parser.set(BAKING_ADDRESS, input)
+    db_cfg.set(BAKING_ADDRESS, input)
     messages['paymentaddress'] = messages['paymentaddress'].format([v['alias'] for k, v in wllt_clnt_mngr.get_addr_dict().items() if v['sk']]) + " (without quotes)"
     fsm.go()
 
 
 def onpaymentaddress(input):
     try:
-        global parser
-        parser.set(PAYMENT_ADDRESS, input)
-        parser.validate_payment_address(parser.get_conf_obj())
+        db_cfg.set(PAYMENT_ADDRESS, input)
+        db_cfg.validate_payment_address(parser.get_conf_obj())
     except Exception:
         printe("Invalid payment address: " + traceback.format_exc())
         return
@@ -98,9 +95,8 @@ def onpaymentaddress(input):
 
 def onservicefee(input):
     try:
-        global parser
-        parser.set(SERVICE_FEE, float(input))
-        parser.validate_service_fee(parser.get_conf_obj())
+        db_cfg.set(SERVICE_FEE, float(input))
+        db_cfg.validate_service_fee()
     except Exception:
         printe("Invalid service fee: " + traceback.format_exc())
         return
@@ -110,10 +106,9 @@ def onservicefee(input):
 
 def onfoundersmap(input):
     try:
-        global parser
         dict = ast.literal_eval('{' + input + '}')
-        parser.set(FOUNDERS_MAP, dict)
-        parser.validate_share_map(parser.get_conf_obj(), FOUNDERS_MAP)
+        db_cfg.set(FOUNDERS_MAP, dict)
+        db_cfg.validate_share_map(parser.get_conf_obj(), FOUNDERS_MAP)
     except Exception:
         printe("Invalid founders input: " + traceback.format_exc())
         return
@@ -123,10 +118,9 @@ def onfoundersmap(input):
 
 def onownersmap(input):
     try:
-        global parser
         dict = ast.literal_eval('{' + input + '}')
-        parser.set(OWNERS_MAP, dict)
-        parser.validate_share_map(parser.get_conf_obj(), OWNERS_MAP)
+        db_cfg.set(OWNERS_MAP, dict)
+        db_cfg.validate_share_map(parser.get_conf_obj(), OWNERS_MAP)
     except Exception:
         printe("Invalid owners input: " + traceback.format_exc())
         return
@@ -138,9 +132,8 @@ def onmindelegation(input):
     try:
         if not input:
             input = "0"
-        global parser
-        parser.set(MIN_DELEGATION_AMT, float(input))
-        parser.validate_service_fee(parser.get_conf_obj())
+        db_cfg.set(MIN_DELEGATION_AMT, float(input))
+        db_cfg.validate_service_fee()
     except Exception:
         printe("Invalid service fee: " + traceback.format_exc())
         return
@@ -157,14 +150,13 @@ def onmindelegationtarget(input):
             printe("Invalid target, available options are {}".format(options))
             return
 
-        global parser
-        conf_obj = parser.get_conf_obj()
+        conf_obj = db_cfg.get_conf_obj()
         if RULES_MAP not in conf_obj:
             conf_obj[RULES_MAP] = dict()
 
         conf_obj[RULES_MAP][MIN_DELEGATION_KEY] = input
 
-        parser.validate_dest_map(parser.get_conf_obj())
+        db_cfg.validate_dest_map()
     except Exception:
         printe("Invalid target: " + traceback.format_exc())
         return
@@ -186,14 +178,13 @@ def onexclude(input):
             printe("Invalid target, available options are {}".format(options))
             return
 
-        global parser
-        conf_obj = parser.get_conf_obj()
+        conf_obj = db_cfg.get_conf_obj()
         if RULES_MAP not in conf_obj:
             conf_obj[RULES_MAP] = dict()
 
         conf_obj[RULES_MAP][address] = target
 
-        parser.validate_dest_map(parser.get_conf_obj())
+        db_cfg.validate_dest_map()
     except Exception:
         printe("Invalid exclusion entry: " + traceback.format_exc())
         return
@@ -211,14 +202,13 @@ def onspecials(input):
         AddressValidator("special address").validate(address)
         FeeValidator("special_fee").validate(fee)
 
-        global parser
-        conf_obj = parser.get_conf_obj()
+        conf_obj = db_cfg.get_conf_obj()
         if SPECIALS_MAP not in conf_obj:
             conf_obj[SPECIALS_MAP] = dict()
 
         conf_obj[SPECIALS_MAP][address] = fee
 
-        parser.validate_specials_map(parser.get_conf_obj())
+        db_cfg.validate_specials_map()
     except Exception:
         printe("Invalid specials entry: " + traceback.format_exc())
         return
@@ -232,14 +222,13 @@ def onsupporters(input):
     try:
         AddressValidator("supporter address").validate(input)
 
-        global parser
-        conf_obj = parser.get_conf_obj()
+        conf_obj = db_cfg.get_conf_obj()
         if SUPPORTERS_SET not in conf_obj:
             conf_obj[SUPPORTERS_SET] = set()
 
         conf_obj[SUPPORTERS_SET].add(input)
 
-        parser.validate_address_set(parser.get_conf_obj(), SUPPORTERS_SET)
+        db_cfg.validate_address_set(SUPPORTERS_SET)
     except Exception:
         printe("Invalid supporter entry: " + traceback.format_exc())
         return
@@ -258,14 +247,13 @@ def onredirect(input):
         AddressValidator("redirected source address").validate(address1)
         AddressValidator("redirected target address").validate(address2)
 
-        global parser
-        conf_obj = parser.get_conf_obj()
+        conf_obj = db_cfg.get_conf_obj()
         if RULES_MAP not in conf_obj:
             conf_obj[RULES_MAP] = dict()
 
         conf_obj[RULES_MAP][address1] = address2
 
-        parser.validate_dest_map(parser.get_conf_obj())
+        db_cfg.validate_dest_map()
     except Exception:
         printe("Invalid redirection entry: " + traceback.format_exc())
         return
@@ -275,8 +263,7 @@ def ondelegatorpaysxfrfee(input):
     try:
         if not input:
             input = "0"
-        global parser
-        parser.set(DELEGATOR_PAYS_XFER_FEE, input != "1")
+        db_cfg.set(DELEGATOR_PAYS_XFER_FEE, input != "1")
     except Exception:
         printe("Invalid input: " + traceback.format_exc())
         return
@@ -287,8 +274,7 @@ def ondelegatorpaysrafee(input):
     try:
         if not input:
             input = "1"
-        global parser
-        parser.set(DELEGATOR_PAYS_RA_FEE, input != "1")
+        db_cfg.set(DELEGATOR_PAYS_RA_FEE, input != "1")
     except Exception:
         printe("Invalid input: " + traceback.format_exc())
         return
@@ -299,8 +285,7 @@ def onreactivatezeroed(input):
     try:
         if not input:
             input = "1"
-        global parser
-        parser.set(REACTIVATE_ZEROED, input != "1")
+        db_cfg.set(REACTIVATE_ZEROED, input != "1")
     except Exception:
         printe("Invalid input: " + traceback.format_exc())
         return
@@ -362,31 +347,7 @@ def main(args):
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
-    # 2- Load master configuration file if it is present
-    master_config_file_path = os.path.join(config_dir, "master.yaml")
-
-    master_cfg = {}
-    if os.path.isfile(master_config_file_path):
-        logger.debug("Loading master configuration file {}".format(master_config_file_path))
-
-        master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
-        master_cfg = master_parser.parse()
-    else:
-        logger.debug("master configuration file not present.")
-
-    managers = None
-    contracts_by_alias = None
-    addresses_by_pkh = None
-
-    if 'managers' in master_cfg:
-        managers = master_cfg['managers']
-    if 'contracts_by_alias' in master_cfg:
-        contracts_by_alias = master_cfg['contracts_by_alias']
-    if 'addresses_by_pkh' in master_cfg:
-        addresses_by_pkh = master_cfg['addresses_by_pkh']
-
-    # 3- get client path
-
+    # 3- get tezos-client path
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
                                   args.docker, args.network, args.verbose)
 
@@ -395,13 +356,17 @@ def main(args):
     # 4. get network config
     config_client_manager = SimpleClientManager(client_path, args.node_addr)
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
-    global network_config
     network_config = network_config_map[args.network]
 
     logger.debug("Network config {}".format(network_config))
 
-    global wllt_clnt_mngr
-    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers, verbose=args.verbose)
+    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contr_dict_by_alias=None,
+                                         addr_dict_by_pkh=None, managers=None, verbose=args.verbose)
+
+    # Get or create config object from DB
+    storage = Storage(config_dir)
+    db_cfg_dict = ConfigStorage(storage).get_baker_config()
+    db_cfg = BakingConf(db_cfg_dict)
 
     # hello state
     command = input("{} >".format(messages['hello'])).strip()
@@ -413,83 +378,14 @@ def main(args):
         callbacks[fsm.current](command)
     pass
 
-    parser.validate()
-    parser.process()
-    cfg_dict = parser.get_conf_obj()
+    # Re-validate everything again
+    db_cfg.validate(wllt_clnt_mngr, block_api)
 
     # dictionary to BakingConf object, for a bit of type safety
-    cfg = BakingConf(cfg_dict, master_cfg)
+    cfg = BakingConf(db_cfg.get_conf_obj())
+    ConfigStorage(storage).save_baker_config(cfg.get_baking_address(), db_cfg.toDB())
 
-    config_file_path = os.path.join(os.path.abspath(config_dir), cfg.get_baking_address() + '.yaml')
-    cfg_dict_plain = {k: v for k, v in cfg_dict.items() if not k.startswith('__')}
-    with open(config_file_path, 'w') as outfile:
-        yaml.dump(cfg_dict_plain, outfile, default_flow_style=True, indent=4)
-
-        print("Configuration file is created at '{}'".format(config_file_path))
-
-
-def load_config_file(wllt_clnt_mngr, network_config, master_cfg):
-    provider_factory = ProviderFactory(args.reward_data_provider)
-    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
-    parser.parse()
-    parser.validate()
-    parser.process()
-    cfg_dict = parser.get_conf_obj()
-
-    # dictionary to BakingConf object, for a bit of type safety
-    cfg = BakingConf(cfg_dict, master_cfg)
-
-    logger.info("Baking Configuration {}".format(cfg))
-
-    baking_address = cfg.get_baking_address()
-    payment_address = cfg.get_payment_address()
-    logger.info(LINER)
-    logger.info("BAKING ADDRESS is {}".format(baking_address))
-    logger.info("PAYMENT ADDRESS is {}".format(payment_address))
-    logger.info(LINER)
-
-    # 7- get reporting directories
-    reports_dir = os.path.expanduser(args.reports_base)
-
-    reports_dir = os.path.join(reports_dir, baking_address)
-
-    payments_root = get_payment_root(reports_dir, create=True)
-    calculations_root = get_calculations_root(reports_dir, create=True)
-    get_successful_payments_dir(payments_root, create=True)
-    get_failed_payments_dir(payments_root, create=True)
-
-
-def get_baking_configuration_file(config_dir):
-    config_file = None
-    for file in os.listdir(config_dir):
-        if file.endswith(".yaml") and not file.startswith("master"):
-            if config_file:
-                raise Exception(
-                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
-                        config_file, file))
-            config_file = file
-    if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
-
-    return os.path.join(config_dir, config_file)
-
-
-def get_latest_report_file(payments_root):
-    recent = None
-    if get_successful_payments_dir(payments_root):
-        files = sorted([os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))],
-                       key=lambda x: int(x))
-        recent = files[-1] if len(files) > 0 else None
-    return recent
-
-
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
-
-        setattr(namespace, "release_override", values)
+    print("Configuration database is created at '{}/drd_config.sqlite'".format(config_dir))
 
 
 if __name__ == '__main__':
@@ -507,7 +403,6 @@ if __name__ == '__main__':
     add_argument_executable_dirs(parser)
     add_argument_docker(parser)
     add_argument_verbose(parser)
-    add_argument_dry(parser)
 
     args = parser.parse_args()
     script_name = " Baker Configuration Tool"

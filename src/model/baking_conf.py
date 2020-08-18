@@ -36,6 +36,8 @@ class BakingConf:
         super().__init__()
         self.master_dict = master_dict
         self.cfg_dict = cfg_dict
+        if cfg_dict is None:
+            self.cfg_dict = {}
 
     def process(self):
 
@@ -76,8 +78,8 @@ class BakingConf:
 
         # key_name must has a length of 36 and starts with tz or KT, an alias is not expected
         if len(baking_address) == PKH_LENGHT:
-            if not baking_address.startswith("dn"):
-                raise ConfigurationException("Baking address must be a valid dn address")
+            if not baking_address.startswith("tz"):
+                raise ConfigurationException("Baking address must be a valid tz address")
         else:
             raise ConfigurationException("Baking address length must be {}".format(PKH_LENGHT))
 
@@ -93,9 +95,9 @@ class BakingConf:
             raise ConfigurationException("Payment address must be set")
 
         if pymnt_addr.startswith("KT1"):
-            raise ConfigurationException("KT1 addresses cannot be used for payments. Only dn addresses are allowed.")
+            raise ConfigurationException("KT1 addresses cannot be used for payments. Only tz addresses are allowed.")
 
-        if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("dn"):
+        if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
 
             addr_obj = wllt_clnt_mngr.get_addr_dict_by_pkh(pymnt_addr)
 
@@ -109,7 +111,7 @@ class BakingConf:
                 pkh = wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
 
                 if pkh.startswith("KT1"):
-                    raise ConfigurationException("KT1 addresses cannot be used for payments. Only dn addresses are allowed.")
+                    raise ConfigurationException("KT1 addresses cannot be used for payments. Only tz addresses are allowed.")
 
                 addr_obj = wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
 
