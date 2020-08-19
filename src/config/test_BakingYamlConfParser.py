@@ -6,6 +6,8 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from rpc.rpc_block_api import RpcBlockApiImpl
 from Constants import PUBLIC_NODE_URL
 
+network = {'NAME': 'MAINNET'}
+
 
 class TestYamlAppConfParser(TestCase):
 
