@@ -54,7 +54,6 @@ def main(args):
     master_cfg = {}
     if os.path.isfile(master_config_file_path):
         logger.info("Loading master configuration file {}".format(master_config_file_path))
-
         master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
         master_cfg = master_parser.parse()
     else:
@@ -63,6 +62,7 @@ def main(args):
     managers = None
     contracts_by_alias = None
     addresses_by_pkh = None
+
     if 'managers' in master_cfg:
         managers = master_cfg['managers']
     if 'contracts_by_alias' in master_cfg:
@@ -73,8 +73,7 @@ def main(args):
     # 3- get client path
 
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network,
-                                  args.verbose)
+                                  args.docker, args.network, args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
@@ -165,6 +164,7 @@ def main(args):
     except KeyboardInterrupt:
         logger.info("Interrupted.")
 
+
 def get_baking_configuration_file(config_dir):
     config_file = None
     for file in os.listdir(config_dir):
@@ -183,8 +183,8 @@ def get_baking_configuration_file(config_dir):
 
 if __name__ == '__main__':
 
-    if not sys.version_info.major >= 3 and sys.version_info.minor>=6:
-        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major,sys.version_info.minor ))
+    if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
+        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     parser = argparse.ArgumentParser()
     add_argument_network(parser)
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     add_argument_docker(parser)
     add_argument_verbose(parser)
 
-    parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items are injected bu not actually paid.", action="store_true")
+    parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.", action="store_true")
     args = parser.parse_args()
     script_name = " - Retry Failed Files"
     print_banner(args, script_name)

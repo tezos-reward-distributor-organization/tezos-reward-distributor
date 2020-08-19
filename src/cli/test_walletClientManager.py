@@ -50,7 +50,7 @@ class TestWalletClientManager(TestCase):
                   own  research to determine  if Tezos is the appropriate
                   platform for their needs and should apply judgement and
                   care in their network interactions.
-                  
+
                 mainpay: tz1aZoFH2pd3V9UEq5psqVokVBYkt7YSi1ow
                 habanoz: tz1fyvFH2pd3V9UEq5psqVokVBYkt7rHTKio (unencrypted sk known)
                 mainnetme: tz1a5GGJeyqeQ4ihZqbiRVcvj5rY5kMAt3Xa (tcp sk known)
@@ -75,7 +75,6 @@ class TestWalletClientManager(TestCase):
 
         self.assertEqual(zeronetme['alias'], 'zeronetme')
         self.assertEqual(zeronetme['sk'], False)
-
 
         mainpay = dict['tz1aZoFH2pd3V9UEq5psqVokVBYkt7YSi1ow']
 

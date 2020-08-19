@@ -34,8 +34,8 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("TRD version {} is running in {} mode.".format(version.version,"daemon" if args.background_service else "interactive"))
-    logger.info("Arguments Configuration = {}".format( json.dumps(args.__dict__, indent=1)))
+    logger.info("TRD version {} is running in {} mode.".format(version.version, "daemon" if args.background_service else "interactive"))
+    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -73,8 +73,8 @@ def main(args):
                                   args.docker, args.network, args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
-    
-    # 4. get network config     
+
+    # 4. get network config
     config_client_manager = SimpleClientManager(client_path, args.node_addr)
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
     network_config = network_config_map[args.network]
@@ -167,14 +167,15 @@ def main(args):
                             reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
-                            network_config=network_config,publish_stats=publish_stats)
+                            network_config=network_config, publish_stats=publish_stats)
         time.sleep(1)
         c.start()
 
         logger.info("Application start completed")
         logger.info(LINER)
     try:
-        while life_cycle.is_running(): time.sleep(10)
+        while life_cycle.is_running():
+            time.sleep(10)
     except KeyboardInterrupt:
         logger.info("Interrupted.")
         life_cycle.stop()
@@ -207,8 +208,8 @@ def get_latest_report_file(payments_root):
 
 if __name__ == '__main__':
 
-    if not sys.version_info.major >= 3 and sys.version_info.minor>=6:
-        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major,sys.version_info.minor ))
+    if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
+        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     args = parse_arguments()
 

@@ -14,6 +14,7 @@ COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 
+
 class RpcRewardApiImpl(RewardApi):
 
     def __init__(self, nw, baking_address, node_url, verbose=True):
@@ -42,10 +43,8 @@ class RpcRewardApiImpl(RewardApi):
         # Get last block in cycle where rewards are unfrozen
         level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
 
-        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, last_block_cycle {}".format(cycle,
-                                                                                                      self.preserved_cycles,
-                                                                                                      self.blocks_per_cycle,
-                                                                                                      level_of_last_block_in_unfreeze_cycle))
+        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, last block of cycle {}"
+                     .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
 
         if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
             unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
@@ -58,8 +57,8 @@ class RpcRewardApiImpl(RewardApi):
         reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
                                            reward_data["delegators"])
 
-        logger.debug("delegate_staking_balance = {}, total_rewards = {}".format(reward_data["delegate_staking_balance"],
-                                                                              reward_data["total_rewards"]))
+        logger.debug("delegate_staking_balance = {}, total_rewards = {}"
+                     .format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
         logger.debug("delegators = {}".format(reward_data["delegators"]))
 
         return reward_model
@@ -101,8 +100,13 @@ class RpcRewardApiImpl(RewardApi):
         sleep(0.1)  # be nice to public node service
 
         resp = requests.get(request, timeout=time_out)
+        if resp.status_code == 404:
+            raise Exception("RPC URL '{}' not found. Is this node in archive mode?".format(request))
         if resp.status_code != 200:
-            raise Exception("Request '{} failed with status code {}, after {}, unique request_id {}".format(request, resp.status_code, time_out, resp.headers['CF-RAY']))
+            message = "Request '{}' failed with status code {}, after {}s".format(request, resp.status_code, time_out)
+            if "CF-RAY" in resp.headers:
+                message += ", unique request_id: {}".format(resp.headers['CF-RAY'])
+            raise Exception(message)
 
         response = resp.json()
         if self.verbose:
@@ -122,10 +126,9 @@ class RpcRewardApiImpl(RewardApi):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
         current_cycle = int(head["metadata"]["level"]["cycle"])
-        # head_hash = head["hash"]
 
         return current_level, current_cycle
-    
+
     def __get_delegators_and_delgators_balances(self, cycle, current_level):
 
         # calculate the hash of the block for the chosen snapshot of the rewards cycle
@@ -147,10 +150,10 @@ class RpcRewardApiImpl(RewardApi):
             # loop over delegates; get snapshot balance, and current balance
             delegators_addresses = response["delegated_contracts"]
             d_a_len = len(delegators_addresses)
-            
+
             if d_a_len == 0:
                 raise RpcRewardApiError("No delegators found")
-            
+
             # Loop over delegators, get balances
             for idx, delegator in enumerate(delegators_addresses):
 
@@ -164,18 +167,18 @@ class RpcRewardApiImpl(RewardApi):
                 while not staking_balance_response:
                     try:
                         staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
-                    except:
-                        logger.debug("Fetching delegator staking balance failed {}, will retry", delegator)
+                    except Exception as e:
+                        logger.debug("Fetching delegator {} staking balance failed, will retry: {}, will retry", delegator, e)
 
                 d_info["staking_balance"] = int(staking_balance_response)
 
-                sleep(0.4) # Be nice to public RPC since we are now making 2x the amount of RPC calls
+                sleep(0.4)  # Be nice to public RPC since we are now making 2x the amount of RPC calls
 
                 d_info["current_balance"] = self.__get_current_balance_of_delegator(delegator)
 
                 logger.debug(
                     "Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} ".format(
-                        idx+1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
+                        idx + 1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
 
                 # "append" to master dict
                 delegators[delegator] = d_info
@@ -201,7 +204,7 @@ class RpcRewardApiImpl(RewardApi):
         current_balance_response = None
 
         while not current_balance_response:
-            sleep(0.4) # Be nice to public RPC
+            sleep(0.4)  # Be nice to public RPC
             try:
                 current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
             except requests.exceptions.RequestException as e:
@@ -225,13 +228,16 @@ class RpcRewardApiImpl(RewardApi):
             request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
-            level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (
-                    chosen_snapshot + 1) * self.blocks_per_roll_snapshot
+            level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot
+
+            logger.debug("Chosen snapshot {}, snapshot level {}".format(chosen_snapshot, level_snapshot_block))
+
             return level_snapshot_block
 
         else:
             logger.info("Cycle too far in the future")
             return ""
+
 
 class RpcRewardApiError(Exception):
     pass

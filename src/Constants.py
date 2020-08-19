@@ -2,6 +2,10 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 
+PUBLIC_NODE_URL = {"MAINNET": ["https://mainnet-tezos.giganode.io", "https://teznode.letzbake.com"],
+                   "ALPHANET": ["https://tezos-dev.cryptonomic-infra.tech", "https://testnet-tezos.giganode.io"],
+                   "ZERONET": ["https://rpczero.tzbeta.net"]}
+
 
 class RunMode(Enum):
     FOREVER = 1
@@ -24,7 +28,3 @@ class PaymentStatus(Enum):
 
     def __str__(self):
         return self.name
-
-PUBLIC_NODE_URL = { "MAINNET": ["https://mainnet-tezos.giganode.io", "https://teznode.letzbake.com"],
-                    "ALPHANET": ["https://tezos-dev.cryptonomic-infra.tech", "https://testnet-tezos.giganode.io"],
-                    "ZERONET": ["https://rpczero.tzbeta.net"]}
