@@ -11,6 +11,7 @@ python:
 install:
     - sudo apt-get update -y
     - sudo apt-get install libenchant1c2a -y
+    - pip install pycodestyle
     # Requirements for the software
     - pip install -r requirements.txt
     # Requirements to deploy the documentation
@@ -27,6 +28,7 @@ addons:
 # command to run tests
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
+    - pycodestyle src/
     - python3 -m unittest discover -s src
     #- make spelling
     #- make linkcheck
