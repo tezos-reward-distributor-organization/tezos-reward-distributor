@@ -6,6 +6,8 @@ PUBLIC_NODE_URL = {"MAINNET": ["https://mainnet-tezos.giganode.io", "https://tez
                    "ALPHANET": ["https://tezos-dev.cryptonomic-infra.tech", "https://testnet-tezos.giganode.io"],
                    "ZERONET": ["https://rpczero.tzbeta.net"]}
 
+TEZOS_RPC_PORT = 8732
+
 
 class RunMode(Enum):
     FOREVER = 1
