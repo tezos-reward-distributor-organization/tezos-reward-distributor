@@ -44,6 +44,7 @@ def parse_arguments():
     add_argument_background_service(parser)
     add_argument_stats(parser)
     add_argument_verbose(parser)
+    add_argument_api_base_url(parser)
     args = parser.parse_args()
     return args
 
@@ -98,7 +99,7 @@ def add_argument_node_addr(parser):
 
 
 def add_argument_provider(parser):
-    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided. The default is the use of a public archive rpc node which is https://mainnet.tezrpc.me to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!", choices=['rpc','prpc','tzstats'],
+    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided. The default is the use of a public archive rpc node which is https://mainnet.tezrpc.me to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!", choices=['rpc','prpc','tzstats', 'tzkt'],
                         default='prpc')
 
 
@@ -155,3 +156,9 @@ def add_argument_stats(parser):
 
 def add_argument_verbose(parser):
     parser.add_argument("-V", "--verbose", help="Produces a lot of logs. Good for trouble shooting.", action="store_true")
+
+
+def add_argument_api_base_url(parser: argparse.ArgumentParser):
+    parser.add_argument("-U", "--api-base-url",
+                        help="Base API url for non-rpc providers. If not set, public endpoints will be used.",
+                        type=str)
