@@ -292,6 +292,22 @@ class BatchPayer():
             logger.debug("Error in run_operation, response ->{}<-".format(runops_command_response))
             return PaymentStatus.FAIL, ""
 
+        # Parse result of run_operation and check for potential failures
+        run_ops_parsed = parse_json_response(runops_command_response, verbose=verbose)
+
+        # Check each contents object for failure
+        for op in run_ops_parsed["contents"]:
+            # https://docs.python.org/3/glossary.html#term-eafp
+            try:
+                op_status = op["metadata"]["operation_result"]["status"]
+                if op_status == "failed":
+                    op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
+                    logger.error("Error while validating operation - Status: {}, Message: {}".format(op_status, op_error))
+                    return PaymentStatus.FAIL, ""
+            except KeyError:
+                logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
+                pass
+
         # forge the operations
         logger.debug("Forging {} operations".format(len(content_list)))
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)

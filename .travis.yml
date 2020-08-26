@@ -11,13 +11,15 @@ python:
 install:
     - sudo apt-get update -y
     - sudo apt-get install libenchant1c2a -y
-    - pip install pycodestyle
     # Requirements for the software
     - pip install -r requirements.txt
     # Requirements to deploy the documentation
     - pip install sphinx_rtd_theme
     - pip install sphinxcontrib.spelling
     - pip install --upgrade recommonmark
+    # Requirements to run tests
+    - pip install pycodestyle
+    - pip install parameterized
 
 # Addons necessary for documentation.
 addons:
@@ -29,7 +31,7 @@ addons:
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
     - pycodestyle src/
-    - python3 -m unittest discover -s src
+    - python3 -m unittest discover -s src --verbose
     #- make spelling
     #- make linkcheck
     - cd docs
