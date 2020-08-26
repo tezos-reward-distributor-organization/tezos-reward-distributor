@@ -5,4 +5,9 @@ reports/
 email.ini
 docs/build/
 *.pyc
-*.idea
+venv/
+src/tzkt/logs
+src/tzkt/reports
+.pytest_cache
+.idea/
+.python-version
