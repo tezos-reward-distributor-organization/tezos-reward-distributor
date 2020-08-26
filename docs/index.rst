@@ -47,7 +47,7 @@ the commercial use of the API!
 
 .. _terms : https://tzstats.com/terms
 
-.. _Github : https://github.com/habanoz/tezos-reward-distributor
+.. _Github : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 
 .. toctree::
    :maxdepth: 2
@@ -77,6 +77,6 @@ This Github Repo_ contains logo images. If you are
 using TRD and want to let everybody know about it, feel free to place
 them in your website.
 
-.. |Build Status| image:: https://travis-ci.com/habanoz/tezos-reward-distributor.svg?branch=development
-   :target: https://travis-ci.com/habanoz/tezos-reward-distributor
-.. _Repo: https://github.com/habanoz/trd-art
+.. |Build Status| image:: https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master
+   :target: https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor
+.. _Repo: https://github.com/tezos-reward-distributor-organization/trd-art
