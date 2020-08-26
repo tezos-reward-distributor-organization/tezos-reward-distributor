@@ -95,7 +95,8 @@ def add_argument_network(parser):
 
 
 def add_argument_node_addr(parser):
-    parser.add_argument("-A", "--node_addr", help="Node (host:port pair) potentially with protocol prefix especially if tls encryption is used. Default is 127.0.0.1:8732. This is the main Tezos node used by the client for rpc queries and operation injections.", default='127.0.0.1:8732')
+    parser.add_argument("-A", "--node_addr", help="Node (host:port pair) potentially with protocol prefix especially if tls encryption is used. Default is http://127.0.0.1:8732. "
+                                                  "This is the main Tezos node used by the client for rpc queries and operation injections.", default='http://127.0.0.1:8732')
 
 
 def add_argument_provider(parser):
