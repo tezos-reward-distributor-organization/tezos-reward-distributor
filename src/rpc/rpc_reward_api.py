@@ -101,8 +101,13 @@ class RpcRewardApiImpl(RewardApi):
         sleep(0.1)  # be nice to public node service
 
         resp = requests.get(request, timeout=time_out)
+        if resp.status_code == 404:
+            raise Exception("RPC URL '{}' not found. Is this node in archive mode?".format(request))
         if resp.status_code != 200:
-            raise Exception("Request '{} failed with status code {}, after {}, unique request_id {}".format(request, resp.status_code, time_out, resp.headers['CF-RAY']))
+            message = "Request '{}' failed with status code {}, after {}s".format(request, resp.status_code, time_out)
+            if "CF-RAY" in resp.headers:
+                message += ", unique request_id: {}".format(resp.headers['CF-RAY'])
+            raise Exception(message)
 
         response = resp.json()
         if self.verbose:
