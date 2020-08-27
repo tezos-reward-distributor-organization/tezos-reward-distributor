@@ -21,3 +21,14 @@ Principles on the application evolution:
 7. More configuration parameters do not always mean more flexibility. We do not want the application to turn into configuration hell which nobody can use.
 8. The idea of community members is very important because this repo is just a sequence of statements if nobody uses and benefit.
 9. A change will be accepted if it will benefit the community. Particular requests which only very few people will take advantage will not be accepted to leave the code as simple as possible. 
+
+
+Guidelines for rewarding PRs in the context of the TRD grant:
+
+1. Payments are not granted for contributions being paid in the context of another grant or company income.
+2. The contributor should respect the process preceding a PR (start an issue and create a branch) and submit a PR in accordance with the PR template.
+3. The PR can only be merged if approved by at least one maintainer. Before approving a PR, the issue should be fully solved and the changes should be tested and documented.
+4. The PR can only be approved if an agreement about the work effort (in hrs) is made.
+5. The work efforts are paid out in a regular basis. The payments are documented in a dedicated file contributor_payments.csv .
+For each payment, the reason for payment should be documented (commit hash, review efforts, etc.).
+Additionally, the paid amount in USD, the VWAP XTZ-USD on the payment day, the pad amount in XTZ and the transaction hash are documented.
