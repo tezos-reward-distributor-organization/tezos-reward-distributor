@@ -37,13 +37,14 @@ RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config, payment_address_balance):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
         self.zero_threshold = 1    # 1 mutez = 0.000001 XTZ
+        self.payment_address_balance = payment_address_balance
 
         config = configparser.ConfigParser()
         if os.path.isfile(FEE_INI):
@@ -156,7 +157,19 @@ class BatchPayer():
         if not self.delegator_pays_xfer_fee: total_amount_to_pay += self.default_fee * len(payment_items)
 
         logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
+        logger.info("Current balance in payout address is {:,} mutez.".format(self.payment_address_balance))
         logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
+
+        if self.payment_address_balance is not None:
+            if self.payment_address_balance < total_amount_to_pay:
+                for pi in payment_items:
+                    pi.paid = PaymentStatus.FAIL
+                logger.warn("The current balance of the payout address (= {:,} mutez) is insufficient to pay the total amount of {:,} mutez".format(self.payment_address_balance, total_amount_to_pay))
+                # TODO: Send an email to ask the baker to transfer funds to payout address and retry the payment for the current cycle
+                return payment_items, 0
+            elif self.payment_address_balance < 2 * total_amount_to_pay:
+                logger.warn("The payout address will soon run out of funds and the current balance ({:,} mutez) might not be sufficient for the next cycle".format(self.payment_address_balance))
+                # TODO: Send an email to warn the baker and ask him to transfer funds to payout address to avoid problems for the next cycle
 
         total_attempts = 0
         op_counter = OpCounter()

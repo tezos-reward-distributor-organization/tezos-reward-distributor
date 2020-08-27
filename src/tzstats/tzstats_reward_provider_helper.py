@@ -152,7 +152,7 @@ class TzStatsRewardProviderHelper:
         # Fetch individual not in original batch
         if len(need_curr_balance_fetch) > 0:
             for d in need_curr_balance_fetch:
-                root["delegators_balances"][d]["current_balance"] = self.__fetch_current_balance(d, verbose)
+                root["delegators_balances"][d]["current_balance"] = self.fetch_current_balance(d, verbose)
                 curr_bal_delegators.append(d)
 
         # All done fetching balances.
@@ -168,9 +168,9 @@ class TzStatsRewardProviderHelper:
     def update_current_balances(self, reward_logs):
         """External helper for fetching current balance of addresses"""
         for rl in reward_logs:
-            rl.current_balance = self.__fetch_current_balance(rl.address)
+            rl.current_balance = self.fetch_current_balance(rl.address)
 
-    def __fetch_current_balance(self, address, verbose=False):
+    def fetch_current_balance(self, address, verbose=False):
 
         uri = self.api['API_URL'] + single_current_balance_call.format(address)
 

@@ -8,3 +8,7 @@ class RewardApi(ABC):
     @abstractmethod
     def get_rewards_for_cycle_map(self, cycle):
         pass
+
+    @abstractmethod
+    def get_address_current_balance(self, pkh):
+        pass

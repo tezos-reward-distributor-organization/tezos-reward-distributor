@@ -18,6 +18,9 @@ class TzStatsRewardApiImpl(RewardApi):
         self.logger = main_logger
         self.helper = TzStatsRewardProviderHelper(nw, baking_address)
 
+    def get_address_current_balance(self, pkh):
+        return self.helper.fetch_current_balance(pkh)
+
     def get_rewards_for_cycle_map(self, cycle, expected_reward = False):
         root = self.helper.get_rewards_for_cycle(cycle, expected_reward, self.verbose)
 
