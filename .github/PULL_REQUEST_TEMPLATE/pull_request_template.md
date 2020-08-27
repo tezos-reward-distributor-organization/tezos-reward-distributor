@@ -4,7 +4,7 @@ about: Create a pull request to contribute to the TRD
 labels: 
 
 ---
-IMPORTANT NOTICE: This PR complies with the [guidelines for contribution to the TRD](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/contributers.html) and may qualify for being compensated by the TRD grant if approved by the maintainers.
+IMPORTANT NOTICE: This PR complies with the [guidelines for contribution to the TRD](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/contributors.html) and may qualify for being compensated by the TRD grant if approved by the maintainers.
 
 This PR resolves the issue <issue ID>. The following steps were performed:
 
