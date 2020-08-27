@@ -5,8 +5,8 @@ from log_config import main_logger
 
 logger = main_logger
 
-COMM_HEAD = "http://{}/chains/main/blocks/head"
-COMM_REVELATION = "http://{}/chains/main/blocks/head/context/contracts/{}/manager_key"
+COMM_HEAD = "{}/chains/main/blocks/head"
+COMM_REVELATION = "{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
 class RpcBlockApiImpl(BlockApi):
 
