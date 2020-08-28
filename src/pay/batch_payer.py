@@ -7,7 +7,6 @@ from time import sleep
 import base58
 
 from Constants import PaymentStatus
-from NetworkConfiguration import BLOCK_TIME_IN_SEC
 from log_config import main_logger
 from util.rpc_utils import parse_json_response
 
@@ -221,7 +220,7 @@ class BatchPayer():
         return payment_items, attempt_count
 
     def wait_random(self):
-        block_time = self.network_config[BLOCK_TIME_IN_SEC]
+        block_time = self.network_config['BLOCK_TIME_IN_SEC']
         slp_tm = randint(block_time / 2, block_time)
 
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
@@ -391,7 +390,7 @@ class BatchPayer():
         logger.info("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
-            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
+            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * (CONFIRMATIONS + PATIENCE))
             logger.info("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
