@@ -83,8 +83,8 @@ def add_argument_release_override(parser):
 def add_argument_payment_offset(parser):
     parser.add_argument("-O", "--payment_offset",
                         help="Number of blocks to wait after a cycle starts before starting payments. "
-                             "This can be useful because cycle beginnings may be bussy.",
-                        default=0, type=int)
+                             "This can be useful because cycle beginnings may be busy.",
+                        default=30, type=int)
 
 
 def add_argument_network(parser):
