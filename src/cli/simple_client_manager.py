@@ -18,8 +18,8 @@ class SimpleClientManager:
             # set tls to true if node address contains https
             self.tls_on = (node_addr.find('https://') != -1)
             # Remove potential protocol prefixes
-            node_addr = node_addr.replace('https://','')
-            node_addr = node_addr.replace('http://','')
+            node_addr = node_addr.replace('https://', '')
+            node_addr = node_addr.replace('http://', '')
             parts = node_addr.split(":")
             self.node_hostname = parts[0]
             self.node_port = TEZOS_RPC_PORT if len(parts) == 1 else parts[1]
