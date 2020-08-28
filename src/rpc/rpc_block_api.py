@@ -1,12 +1,10 @@
 import requests
 
-from datetime import datetime
 from api.block_api import BlockApi
 from log_config import main_logger
 
 logger = main_logger
 
-COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_REVELATION = "{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
@@ -29,13 +27,6 @@ class RpcBlockApiImpl(BlockApi):
         logger.debug("Manager key is '{}'".format(manager_key))
         bool_revelation = manager_key and manager_key!='null'
         return bool_revelation
-
-    def get_bootstrapped(self):
-        response = requests.get(COMM_BOOTSTRAP.format(self.node_url), timeout=5)
-        boot_resp = response.json()
-        boot_time = datetime.strptime(boot_resp["timestamp"], "%Y-%m-%dT%H:%M:%SZ")
-        logger.debug("Local node bootstrap time is '{}'".format(boot_time))
-        return boot_time
 
 
 def test_get_revelation():

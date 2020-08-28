@@ -2,9 +2,9 @@ import _thread
 import csv
 import os
 import threading
+import time
 
 from time import sleep
-from datetime import datetime, timedelta
 from Constants import RunMode, PaymentStatus
 from log_config import main_logger
 from model.reward_log import RewardLog
@@ -22,8 +22,6 @@ from util.dir_utils import get_calculation_report_file, get_failed_payments_dir,
 logger = main_logger
 
 MUTEZ = 1e+6
-BOOSTRAP_SLEEP = 32
-
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
@@ -41,10 +39,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.name = name
 
-        self.node_url = node_url
         self.reward_api = provider_factory.newRewardApi(
-            network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
-        self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
+            network_config, self.baking_address, node_url, node_url_public, api_base_url)
+        self.block_api = provider_factory.newBlockApi(network_config, node_url, api_base_url)
 
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
@@ -124,15 +121,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             time.sleep(5)
 
             try:
-
-                # Check if local node is bootstrapped; sleep if needed; restart loop
-                if not node_is_bootstrapped(self.node_url):
-                    logger.info("Local node, {}, is not in sync with the Tezos network. Will sleep for {} blocks and check again."
-                                .format(self.node_url, BOOTSTRAP_SLEEP)
-                    self.wait_until_next_cycle(BOOTSTRAP_SLEEP)
-                    continue
-
-                # Local node is ready
                 current_level = self.block_api.get_current_level(verbose=self.verbose)
                 crrnt_cycle = self.block_api.level_to_cycle(current_level)
 
@@ -295,22 +283,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             if not self.life_cycle.is_running():
                 self.exit()
                 break
-
-
-    def node_is_bootstrapped(self):
-        # Get local node's bootstrap time. If bootstrap time + 2 minutes is 
-        # before local time, node is not bootstrapped.
-        try:
-            boot_time = self.block_api.get_bootstrapped()
-            utc_time = datetime.utcnow()
-            if (boot_time + datetime.timedelta(minutes=2)) < utc_time:
-                logger.info("Current time is '{}', latest block of local node is '{}'."
-                            .format(utc_time, boot_time))
-                return False
-        except ValueError:
-            logger.error("Unable to determine local node's bootstrap status. Continuing...")
-        return True
-
 
     def create_calculations_report(self, payment_logs, report_file_path, total_rewards):
         with open(report_file_path, 'w', newline='') as f:
