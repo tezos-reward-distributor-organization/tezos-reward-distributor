@@ -7,7 +7,9 @@ DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DE
 TRD is a software for distributing staking rewards of delegators introduced in detail in this [Medium article](https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7). This is not a script but a full scale application which can continuously run in the background as a Linux service. It can track cycles and make payments. However it does not have to be used as a service, but it can also be used interactively.
 The documentation can be found [here](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/).
 
-TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and [tzstats](https://tzstats.com/). Developed and tested extensively by the community.
+TRD supports complex payments, pays in batches, provides three back ends for calculations: Tezos RPC, [tzstats API](https://tzstats.com/) and TzKT API. Developed and tested extensively by the community.
+
+**[Powered by TzKT API](https://tzkt.io/)**
 
 **Important note:**
 
@@ -16,6 +18,13 @@ The [terms and conditions](https://tzstats.com/terms) of tzstats note that a lic
 > If you wish to use the Data in a manner that is primarily intended for or directed towards commercial advantage or monetary compensation (such use, “Commercial Use”), KIDTSUNAMI requires that you enter into a separate commercial license agreement. Entering into a separate commercial license allows us to protect KIDTSUNAMI’s investment in the Data and to maintain the integrity of the Data.
 >
 > Please contact us at license@kidtsunami.com for more information about Commercial Uses of our Data.
+
+In addition with the merge of [#232](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232) it is possible to use the Tezos Reward Distributor in combination with the [TzKT API](https://api.tzkt.io/) under the following terms:
+
+> TzKT API is free for everyone and for both commercial and non-commercial usage.
+>
+> If your application or service uses the TzKT API in any forms: directly on frontend or indirectly on backend, you should mention that fact on your website or
+> application by placing the label "Powered by TzKT API" with a direct link to tzkt.io.
 
 ## Requirements and Setup
 

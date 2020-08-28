@@ -74,7 +74,8 @@ def onbakingaddress(input):
         return
     provider_factory = ProviderFactory(args.reward_data_provider)
     global parser
-    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
+    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
+                                  api_base_url=args.api_base_url)
     parser.set(BAKING_ADDRESS, input)
     messages['paymentaddress']=messages['paymentaddress'].format([v['alias'] for k,v in wllt_clnt_mngr.get_addr_dict().items() if v['sk']])+" (without quotes)"
     fsm.go()
@@ -407,7 +408,8 @@ def main(args):
 
 def load_config_file(wllt_clnt_mngr, network_config, master_cfg):
     provider_factory = ProviderFactory(args.reward_data_provider)
-    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
+    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
+                                  api_base_url=args.api_base_url)
     parser.parse()
     parser.validate()
     parser.process()
