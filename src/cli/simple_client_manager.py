@@ -11,9 +11,15 @@ class SimpleClientManager:
         self.cmd_manager = CommandManager(verbose)
         self.node_hostname = "127.0.0.1"
         self.node_port = TEZOS_RPC_PORT
+        self.tls_on = False
 
         # Need to split host:port, default port to 8732 if not specified
         if node_addr is not None:
+            # set tls to true if node address contains https
+            self.tls_on = (node_addr.find('https://') != -1)
+            # Remove potential protocol prefixes
+            node_addr = node_addr.replace('https://','')
+            node_addr = node_addr.replace('http://','')
             parts = node_addr.split(":")
             self.node_hostname = parts[0]
             self.node_port = TEZOS_RPC_PORT if len(parts) == 1 else parts[1]
@@ -23,7 +29,10 @@ class SimpleClientManager:
 
     def send_request(self, cmd, verbose_override=None, timeout=None):
         # Build command with flags
-        whole_cmd = "{} -A {} -P {} {}".format(self.client_path, self.node_hostname, self.node_port, cmd)
+        if self.tls_on:
+            whole_cmd = "{} -S -A {} -P {} {}".format(self.client_path, self.node_hostname, self.node_port, cmd)
+        else:
+            whole_cmd = "{} -A {} -P {} {}".format(self.client_path, self.node_hostname, self.node_port, cmd)
         return self.cmd_manager.execute(whole_cmd, verbose_override, timeout=timeout)
 
     def sign(self, bytes, key_name, verbose_override=None):
