@@ -329,15 +329,17 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          pymnt_log.paymentaddress]
                 writer.writerow(array)
 
-                logger.debug("Reward created for %s type: %s, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: %s, skipped: %s, at-phase: %s, "
-                             "desc: %s, pay_addr: %s"
+                logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:s}, "
+                             "desc: {:s}, pay_addr: {:s}"
                              .format(pymnt_log.address, pymnt_log.type,
                                      pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
                                      pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
-                                     pymnt_log.service_fee_rate, pymnt_log.payable,
-                                     pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc, pymnt_log.paymentaddress))
+                                     pymnt_log.service_fee_rate,
+                                     "Yes" if pymnt_log.payable else "No",
+                                     "Yes" if pymnt_log.skipped else "No",
+                                     str(pymnt_log.skippedatphase), pymnt_log.desc, pymnt_log.paymentaddress))
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
