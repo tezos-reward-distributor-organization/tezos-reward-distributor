@@ -35,8 +35,7 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Run as Linux Service" href="linuxservice.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,7 +85,7 @@
             
             
               <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
@@ -94,7 +93,6 @@
 <li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">For developers</a></li>
 </ul>
 
             
@@ -147,7 +145,7 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/contributers.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/contributors.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -165,10 +163,19 @@
 <p>If you are interested in improving our project, this is just great! Our community looks forward to your contribution. Please follow this process:</p>
 <ol class="arabic simple">
 <li><p>Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.</p></li>
-<li><p>Fork the repo. Ideally, create a new branch from your fork for your contribution to make it easier to merge your changes back.</p></li>
-<li><p>Make your changes on the branch you hopefully created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.</p></li>
-<li><p>Push your changes to your fork/branch in GitHub. Don’t push it to your master! If you do it will make it harder to submit new changes later.</p></li>
-<li><p>Submit a pull request to the repo from your commit page on GitHub.</p></li>
+<li><p>Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.</p></li>
+<li><p>Branches MUST have descriptive names that start with either the <cite>fix/</cite> or <cite>feature/</cite> prefixes. Good examples are: <cite>fix/signin-issue</cite> or <cite>feature/issue-templates</cite>.</p></li>
+<li><p>Make your changes on the branch you created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.</p></li>
+<li><p>Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don’t push it to your master! If you do it will make it harder to submit new changes later.</p></li>
+<li><dl class="simple">
+<dt>Submit a pull request to the TRD repository from your commit page on GitHub.</dt><dd><ol class="loweralpha simple">
+<li><p>Give a descriptive title to your PR and mark it e.g. as <cite>[WIP]</cite> if you want it to be visible but you are not finished yet or need help.</p></li>
+<li><p>Provide a description of your changes according to the PR template.</p></li>
+<li><p>Put <cite>closes #XXXX</cite> in your comment to auto-close the issue that your PR fixes (if such).</p></li>
+</ol>
+</dd>
+</dl>
+</li>
 </ol>
 <p>Principles on the application evolution:</p>
 <ol class="arabic simple">
@@ -182,6 +189,18 @@
 <li><p>The idea of community members is very important because this repo is just a sequence of statements if nobody uses and benefit.</p></li>
 <li><p>A change will be accepted if it will benefit the community. Particular requests which only very few people will take advantage will not be accepted to leave the code as simple as possible.</p></li>
 </ol>
+<p>Disclaimer: This project started in the spirit of free and open source software with voluntary contributions without compensation.
+You can always donate your contribution free of charge!</p>
+<p>Guidelines for rewarding PRs in the context of the TRD grant:</p>
+<ol class="arabic simple">
+<li><p>Payments are not granted for contributions being paid in the context of another grant or company income.</p></li>
+<li><p>The contributor should respect the process preceding a PR (start an issue and create a branch) and submit a PR in accordance with the PR template.</p></li>
+<li><p>The PR can only be merged if approved by at least one maintainer. Before approving a PR, the issue should be fully solved and the changes should be tested and documented.</p></li>
+<li><p>The PR can only be approved if an agreement about the work effort (in hrs) is made.</p></li>
+<li><p>The PR should be merged using a squash merge, the work effort of the contributor and reviewer should be documented in the squash merge commit message.</p></li>
+<li><p>The work efforts are paid out in a regular basis. The payments are documented in a dedicated file named <cite>contributor_payments.csv</cite>.</p></li>
+<li><p>For each payment, the reason for payment should be documented (commit hash, review efforts, etc.). Additionally, the paid amount in USD, the VWAP XTZ-USD on the payment day, the payed amount in XTZ and the transaction hash are documented.</p></li>
+</ol>
 </div>
 
 
@@ -189,13 +208,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="linuxservice.html" class="btn btn-neutral float-left" title="Run as Linux Service" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
