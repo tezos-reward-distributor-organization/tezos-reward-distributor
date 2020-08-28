@@ -22,7 +22,7 @@ from util.dir_utils import get_calculation_report_file, get_failed_payments_dir,
 logger = main_logger
 
 MUTEZ = 1e+6
-BOOSTRAP_SLEEP = 32
+BOOTSTRAP_SLEEP = 32
 
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
