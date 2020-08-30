@@ -8,4 +8,3 @@ class RewardApi(ABC):
     @abstractmethod
     def get_rewards_for_cycle_map(self, cycle):
         pass
-

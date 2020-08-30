@@ -114,7 +114,6 @@ def main(args):
 
     baking_address = cfg.get_baking_address()
     payment_address = cfg.get_payment_address()
-
     logger.info(LINER)
     logger.info("BAKING ADDRESS is {}".format(baking_address))
     logger.info("PAYMENT ADDRESS is {}".format(payment_address))
