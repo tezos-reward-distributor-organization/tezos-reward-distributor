@@ -30,8 +30,6 @@ class RpcRewardApiImpl(RewardApi):
 
         self.verbose = verbose
 
-    def get_address_current_balance(self, pkh):
-        return self.__get_current_balance_of_delegator(pkh)
 
     def get_rewards_for_cycle_map(self, cycle):
         current_level, current_cycle = self.__get_current_level()

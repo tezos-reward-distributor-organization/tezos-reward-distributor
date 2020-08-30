@@ -36,10 +36,6 @@ class TzKTRewardApiImpl(RewardApi):
 
         return num_blocks * block_reward + num_endorsements * endorsement_reward
 
-    def get_address_current_balance(self, pkh):
-        account = self.api.get_account_by_address(pkh)
-        return account['balance']
-
     def get_rewards_for_cycle_map(self, cycle, expected_reward=False) -> RewardProviderModel:
         """
         Returns reward split in a specified format

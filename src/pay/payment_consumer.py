@@ -36,7 +36,7 @@ class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
                  network_config, args=None, verbose=None, dry_run=None, reactivate_zeroed=True,
                  delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None,
-                 publish_stats=True, payment_address_balance=None):
+                 publish_stats=True):
         super(PaymentConsumer, self).__init__()
 
         self.dest_map = dest_map if dest_map else {}
@@ -56,7 +56,6 @@ class PaymentConsumer(threading.Thread):
         self.publish_stats = publish_stats
         self.args = args
         self.network_config = network_config
-        self.payment_address_balance = payment_address_balance
 
         logger.info('Consumer "%s" created', self.name)
 
@@ -103,7 +102,7 @@ class PaymentConsumer(threading.Thread):
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
                                          self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
-                                         self.network_config, self.payment_address_balance, self.mm,
+                                         self.network_config, self.mm,
                                          self.dry_run)
 
                 # 3- do the payment
@@ -137,7 +136,7 @@ class PaymentConsumer(threading.Thread):
                         payment_batch.producer_ref.on_fail(payment_batch)
 
                 # 8- send email
-                if not self.dry_run:
+                if not self.dry_run and total_attempts > 0:
                     self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected, number_future_payable_cycles)
 
             except Exception:

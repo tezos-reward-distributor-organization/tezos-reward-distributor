@@ -114,8 +114,6 @@ def main(args):
 
     baking_address = cfg.get_baking_address()
     payment_address = cfg.get_payment_address()
-    payment_address_balance = provider_factory.newRewardApi(
-        network_config, baking_address, args.node_addr, args.node_addr_public, args.api_base_url).get_address_current_balance(payment_address)
 
     logger.info(LINER)
     logger.info("BAKING ADDRESS is {}".format(baking_address))
@@ -173,7 +171,7 @@ def main(args):
                             reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
-                            network_config=network_config, publish_stats=publish_stats, payment_address_balance=payment_address_balance)
+                            network_config=network_config, publish_stats=publish_stats)
         time.sleep(1)
         c.start()
 
