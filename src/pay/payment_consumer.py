@@ -102,10 +102,11 @@ class PaymentConsumer(threading.Thread):
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
                                          self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
-                                         self.network_config)
+                                         self.network_config, self.mm,
+                                         self.dry_run)
 
                 # 3- do the payment
-                payment_logs, total_attempts = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
+                payment_logs, total_attempts, number_future_payable_cycles = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
 
                 # override batch data
                 payment_batch.batch = payment_logs
@@ -135,8 +136,8 @@ class PaymentConsumer(threading.Thread):
                         payment_batch.producer_ref.on_fail(payment_batch)
 
                 # 8- send email
-                if not self.dry_run:
-                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected)
+                if not self.dry_run and total_attempts > 0:
+                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected, number_future_payable_cycles)
 
             except Exception:
                 logger.error("Error at reward payment", exc_info=True)

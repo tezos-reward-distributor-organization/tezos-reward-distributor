@@ -92,7 +92,8 @@ def main(args):
                                          verbose=args.verbose)
 
     provider_factory = ProviderFactory(args.reward_data_provider, verbose=args.verbose)
-    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr)
+    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory,
+                                  network_config, args.node_addr, api_base_url=args.api_base_url)
     parser.parse()
     parser.validate()
     parser.process()
@@ -144,7 +145,8 @@ def main(args):
                             service_fee_calc=srvc_fee_calc, release_override=0,
                             payment_offset=0, baking_cfg=cfg, life_cycle=life_cycle,
                             payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                            node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose)
+                            node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose,
+                            api_base_url=args.api_base_url)
 
         p.retry_failed_payments(args.retry_injected)
 

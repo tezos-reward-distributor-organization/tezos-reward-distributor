@@ -94,7 +94,9 @@ def main(args):
 
         logger.info("Loading baking configuration file {}".format(config_file_path))
 
-        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr, verbose=args.verbose)
+        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path),
+                                      wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
+                                      verbose=args.verbose, api_base_url=args.api_base_url)
         parser.parse()
         parser.validate()
         parser.process()
@@ -156,7 +158,8 @@ def main(args):
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                        node_url=args.node_addr, provider_factory=provider_factory, node_url_public=args.node_addr_public, verbose=args.verbose)
+                        node_url=args.node_addr, provider_factory=provider_factory,
+                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url)
     p.start()
 
     publish_stats = not args.do_not_publish_stats
@@ -167,7 +170,7 @@ def main(args):
                             reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
-                            network_config=network_config,publish_stats=publish_stats)
+                            network_config=network_config, publish_stats=publish_stats)
         time.sleep(1)
         c.start()
 
