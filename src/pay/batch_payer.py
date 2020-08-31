@@ -171,13 +171,13 @@ class BatchPayer():
                 logger.warn("The current balance of the payout address (= {:,} mutez) "
                             "is insufficient to pay the total amount of {:,} mutez".format(payment_address_balance, total_amount_to_pay))
                 if not self.dry_run:
-                    self.mm.warn_about_immediate_insufficient_funds(self.pymnt_addr, total_amount_to_pay, payment_address_balance)
+                    self.mm.warn_about_immediate_insufficient_funds(self.source, total_amount_to_pay, payment_address_balance)
                 return payment_items, 0, 0
 
             elif number_future_payable_cycles < 1:
                 logger.warn("The payout address will soon run out of funds and the current balance ({:,} mutez) might not be sufficient for the next cycle".format(payment_address_balance))
                 if not self.dry_run:
-                    self.mm.warn_about_insufficient_funds_soon(self.pymnt_addr, total_amount_to_pay, payment_address_balance)
+                    self.mm.warn_about_insufficient_funds_soon(self.source, total_amount_to_pay, payment_address_balance)
 
             else:
                 logger.info("The current payout account balance is expected to last for the next {} cycle(s)!".format(number_future_payable_cycles))
@@ -424,7 +424,7 @@ class BatchPayer():
     def __get_payment_address_balance(self):
         payment_address_balance = None
 
-        get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.pymnt_addr)
+        get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
         result, command_response = self.wllt_clnt_mngr.send_request(get_current_balance_request)
         payment_address_balance = parse_json_response(command_response)
 
