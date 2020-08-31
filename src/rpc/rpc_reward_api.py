@@ -101,8 +101,13 @@ class RpcRewardApiImpl(RewardApi):
         sleep(0.1)  # be nice to public node service
 
         resp = requests.get(request, timeout=time_out)
+        if resp.status_code == 404:
+            raise Exception("RPC URL '{}' not found. Is this node in archive mode?".format(request))
         if resp.status_code != 200:
-            raise Exception("Request '{} failed with status code {}, after {}, unique request_id {}".format(request, resp.status_code, time_out, resp.headers['CF-RAY']))
+            message = "Request '{}' failed with status code {}, after {}s".format(request, resp.status_code, time_out)
+            if "CF-RAY" in resp.headers:
+                message += ", unique request_id: {}".format(resp.headers['CF-RAY'])
+            raise Exception(message)
 
         response = resp.json()
         if self.verbose:
@@ -144,14 +149,14 @@ class RpcRewardApiImpl(RewardApi):
             response = self.do_rpc_request(get_delegates_request)
             delegate_staking_balance = int(response["staking_balance"])
 
-            # loop over delegates; get snapshot balance, and current balance
-            delegators_addresses = response["delegated_contracts"]
+            # Remove baker's address from list of delegators
+            delegators_addresses = list(filter(lambda x: x != self.baking_address, response["delegated_contracts"]))
             d_a_len = len(delegators_addresses)
             
             if d_a_len == 0:
                 raise RpcRewardApiError("No delegators found")
             
-            # Loop over delegators, get balances
+            # Loop over delegates; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses):
 
                 # create new dictionary for each delegator

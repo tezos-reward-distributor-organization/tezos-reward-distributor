@@ -3,5 +3,11 @@ reports/
 */*/__pycache__/
 */__pycache__/
 email.ini
-logs/
 docs/build/
+*.pyc
+venv/
+src/tzkt/logs
+src/tzkt/reports
+.pytest_cache
+.idea/
+.python-version
