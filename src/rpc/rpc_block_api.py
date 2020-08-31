@@ -1,4 +1,5 @@
 import requests
+import json
 
 from datetime import datetime
 from api.block_api import BlockApi
@@ -31,10 +32,24 @@ class RpcBlockApiImpl(BlockApi):
         return bool_revelation
 
     def get_bootstrapped(self):
-        response = requests.get(COMM_BOOTSTRAP.format(self.node_url), timeout=5)
-        boot_resp = response.json()
+        # /monitor/bootstrapped is a stream of data that only terminates
+        # after the node is bootstrapped. Instead, we want to grab the most
+        # recent timestamp, present message to user, sleep a bit, then try again.
+        count = 0
+        boot_resp = {}
+        response = requests.get(COMM_BOOTSTRAP.format(self.node_url), timeout=5, stream=True)
+        for line in response.iter_lines(chunk_size=256):
+            if line and count < 5:
+                boot_resp = json.loads(line)
+                logger.debug("Bootstrap Monitor: {}".format(boot_resp))
+                count += 1
+            else:
+                response.close()
+                break
+
         boot_time = datetime.strptime(boot_resp["timestamp"], "%Y-%m-%dT%H:%M:%SZ")
         logger.debug("Local node bootstrap time is '{}'".format(boot_time))
+
         return boot_time
 
 

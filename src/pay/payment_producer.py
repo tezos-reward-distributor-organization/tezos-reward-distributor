@@ -22,7 +22,7 @@ from util.dir_utils import get_calculation_report_file, get_failed_payments_dir,
 logger = main_logger
 
 MUTEZ = 1e+6
-BOOTSTRAP_SLEEP = 32
+BOOTSTRAP_SLEEP = 8
 
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
@@ -126,7 +126,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             try:
 
                 # Check if local node is bootstrapped; sleep if needed; restart loop
-                if not self.node_is_bootstrapped(self.node_url):
+                if not self.node_is_bootstrapped():
                     logger.info("Local node, {}, is not in sync with the Tezos network. Will sleep for {} blocks and check again."
                                 .format(self.node_url, BOOTSTRAP_SLEEP))
                     self.wait_until_next_cycle(BOOTSTRAP_SLEEP)
@@ -303,7 +303,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         try:
             boot_time = self.block_api.get_bootstrapped()
             utc_time = datetime.utcnow()
-            if (boot_time + datetime.timedelta(minutes=2)) < utc_time:
+            if (boot_time + timedelta(minutes=2)) < utc_time:
                 logger.info("Current time is '{}', latest block of local node is '{}'."
                             .format(utc_time, boot_time))
                 return False
