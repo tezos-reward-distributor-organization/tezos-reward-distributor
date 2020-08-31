@@ -69,7 +69,6 @@ class ReleaseOverrideAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         if not -11 <= values:
             parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
-
         setattr(namespace, "release_override", values)
 
 
@@ -81,11 +80,18 @@ def add_argument_release_override(parser):
                         default=0, type=int, action=ReleaseOverrideAction)
 
 
+class PaymentOffsetAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not (values >= 0 and values < 4096):
+            parser.error("Valid range for payment offset ({0}) is [0, 4095] ".format(option_string))
+        setattr(namespace, "payment_offset", values)
+
+
 def add_argument_payment_offset(parser):
     parser.add_argument("-O", "--payment_offset",
                         help="Number of blocks to wait after a cycle starts before starting payments. "
                              "This can be useful because cycle beginnings may be busy.",
-                        default=30, type=int)
+                        default=0, type=int, action=PaymentOffsetAction)
 
 
 def add_argument_network(parser):
