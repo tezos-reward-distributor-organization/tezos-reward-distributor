@@ -17,6 +17,7 @@ PKH_LENGTH = 36
 CONFIRMATIONS = 1
 PATIENCE = 10
 
+COMM_DELEGATE_BALANCE = "rpc get chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_HEAD = "rpc get /chains/main/blocks/head"
 COMM_COUNTER = "rpc get /chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit":"%gas_limit%","storage_limit":"%storage_limit%","amount":"%AMOUNT%"}'
@@ -37,13 +38,15 @@ RA_STORAGE = 300
 
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config, mm, dry_run):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
         self.zero_threshold = 1    # 1 mutez = 0.000001 XTZ
+        self.mm = mm
+        self.dry_run = dry_run
 
         config = configparser.ConfigParser()
         if os.path.isfile(FEE_INI):
@@ -156,8 +159,29 @@ class BatchPayer():
         if not self.delegator_pays_xfer_fee:
             total_amount_to_pay += self.default_fee * len(payment_items)
 
+        payment_address_balance = self.__get_payment_address_balance()
         logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
+        logger.info("Current balance in payout address is {:,} mutez.".format(payment_address_balance))
         logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
+
+        if payment_address_balance is not None:
+            number_future_payable_cycles = int(payment_address_balance / total_amount_to_pay) - 1
+            if number_future_payable_cycles < 0:
+                for pi in payment_items:
+                    pi.paid = PaymentStatus.FAIL
+                logger.warn("The current balance of the payout address (= {:,} mutez) "
+                            "is insufficient to pay the total amount of {:,} mutez".format(payment_address_balance, total_amount_to_pay))
+                if not self.dry_run:
+                    self.mm.warn_about_immediate_insufficient_funds(self.pymnt_addr, total_amount_to_pay, payment_address_balance)
+                return payment_items, 0, 0
+
+            elif number_future_payable_cycles < 1:
+                logger.warn("The payout address will soon run out of funds and the current balance ({:,} mutez) might not be sufficient for the next cycle".format(payment_address_balance))
+                if not self.dry_run:
+                    self.mm.warn_about_insufficient_funds_soon(self.pymnt_addr, total_amount_to_pay, payment_address_balance)
+
+            else:
+                logger.info("The current payout account balance is expected to last for the next {} cycle(s)!".format(number_future_payable_cycles))
 
         total_attempts = 0
         op_counter = OpCounter()
@@ -171,7 +195,7 @@ class BatchPayer():
             payment_logs.extend(payments_log)
             total_attempts += attempt
 
-        return payment_logs, total_attempts
+        return payment_logs, total_attempts, number_future_payable_cycles
 
     def log_processed_items(self, payment_logs):
         if payment_logs:
@@ -397,6 +421,16 @@ class BatchPayer():
             return PaymentStatus.INJECTED, operation_hash
 
         return PaymentStatus.PAID, operation_hash
+
+
+    def __get_payment_address_balance(self):
+        payment_address_balance = None
+
+        get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.pymnt_addr)
+        result, command_response = self.wllt_clnt_mngr.send_request(get_current_balance_request)
+        payment_address_balance = parse_json_response(command_response)
+
+        return int(payment_address_balance)
 
 
 class OpCounter:
