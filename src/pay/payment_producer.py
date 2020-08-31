@@ -2,8 +2,8 @@ import _thread
 import csv
 import os
 import threading
+import time
 
-from time import sleep
 from datetime import datetime, timedelta
 from Constants import RunMode, PaymentStatus
 from log_config import main_logger
