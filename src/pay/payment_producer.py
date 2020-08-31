@@ -126,7 +126,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             try:
 
                 # Check if local node is bootstrapped; sleep if needed; restart loop
-                if not node_is_bootstrapped(self.node_url):
+                if not self.node_is_bootstrapped(self.node_url):
                     logger.info("Local node, {}, is not in sync with the Tezos network. Will sleep for {} blocks and check again."
                                 .format(self.node_url, BOOTSTRAP_SLEEP))
                     self.wait_until_next_cycle(BOOTSTRAP_SLEEP)
