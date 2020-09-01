@@ -16,7 +16,7 @@ Download the application repository using git clone:
 
 ::
 
-    git clone https://github.com/habanoz/tezos-reward-distributor
+    git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 
 To install required modules, use pip with requirements.txt provided.
 
