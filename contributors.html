@@ -166,6 +166,7 @@
 <li><p>Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.</p></li>
 <li><p>Branches MUST have descriptive names that start with either the <cite>fix/</cite> or <cite>feature/</cite> prefixes. Good examples are: <cite>fix/signin-issue</cite> or <cite>feature/issue-templates</cite>.</p></li>
 <li><p>Make your changes on the branch you created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.</p></li>
+<li><p>Be sure your code style adheres to the Python PEP8 standard. Use <cite>pycodestyle</cite> to verify before submitting.</p></li>
 <li><p>Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don’t push it to your master! If you do it will make it harder to submit new changes later.</p></li>
 <li><dl class="simple">
 <dt>Submit a pull request to the TRD repository from your commit page on GitHub.</dt><dd><ol class="loweralpha simple">
@@ -180,10 +181,10 @@
 <p>Principles on the application evolution:</p>
 <ol class="arabic simple">
 <li><p>Discuss the solution with repository owners and other community members. Start the development after everybody agrees on a solution.</p></li>
-<li><p>Prefer the simpler solution. Try to make as fewer changes as possible.</p></li>
+<li><p>Prefer the simpler solution. Try to make as few changes as possible.</p></li>
 <li><p>Update documentation wherever it is meaningful.</p></li>
 <li><p>Create and run unit tests for the changes. Please do not sends PRs for untested changes. Payment domain requires the utmost responsibility.</p></li>
-<li><p>Follow naming conventions.</p></li>
+<li><p>Follow existing naming conventions.</p></li>
 <li><p>Avoid code repetition. Make use of Object Oriented design principles when possible.</p></li>
 <li><p>More configuration parameters do not always mean more flexibility. We do not want the application to turn into configuration hell which nobody can use.</p></li>
 <li><p>The idea of community members is very important because this repo is just a sequence of statements if nobody uses and benefit.</p></li>

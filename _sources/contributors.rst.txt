@@ -7,8 +7,9 @@ If you are interested in improving our project, this is just great! Our communit
 2. Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.
 3. Branches MUST have descriptive names that start with either the `fix/` or `feature/` prefixes. Good examples are: `fix/signin-issue` or `feature/issue-templates`.
 4. Make your changes on the branch you created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.
-5. Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don't push it to your master! If you do it will make it harder to submit new changes later.
-6. Submit a pull request to the TRD repository from your commit page on GitHub.
+5. Be sure your code style adheres to the Python PEP8 standard. Use `pycodestyle` to verify before submitting.
+6. Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don't push it to your master! If you do it will make it harder to submit new changes later.
+7. Submit a pull request to the TRD repository from your commit page on GitHub.
     a. Give a descriptive title to your PR and mark it e.g. as `[WIP]` if you want it to be visible but you are not finished yet or need help.
     b. Provide a description of your changes according to the PR template.
     c. Put `closes #XXXX` in your comment to auto-close the issue that your PR fixes (if such).
@@ -17,10 +18,10 @@ If you are interested in improving our project, this is just great! Our communit
 Principles on the application evolution:
 
 1. Discuss the solution with repository owners and other community members. Start the development after everybody agrees on a solution. 
-2. Prefer the simpler solution. Try to make as fewer changes as possible. 
+2. Prefer the simpler solution. Try to make as few changes as possible. 
 3. Update documentation wherever it is meaningful.
 4. Create and run unit tests for the changes. Please do not sends PRs for untested changes. Payment domain requires the utmost responsibility.
-5. Follow naming conventions.
+5. Follow existing naming conventions.
 6. Avoid code repetition. Make use of Object Oriented design principles when possible. 
 7. More configuration parameters do not always mean more flexibility. We do not want the application to turn into configuration hell which nobody can use.
 8. The idea of community members is very important because this repo is just a sequence of statements if nobody uses and benefit.
