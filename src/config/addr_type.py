@@ -10,7 +10,7 @@ class AddrType(Enum):
     @staticmethod
     def to_string(obj):
         self = obj
-        if self.value==1:
+        if self.value == 1:
             return 'KT'
         if self.value == 2:
             return 'TZ'

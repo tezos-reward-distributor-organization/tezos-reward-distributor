@@ -6,6 +6,7 @@ from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzkt.tzkt_reward_api import TzKTRewardApiImpl
 from Constants import PUBLIC_NODE_URL
 
+
 class ProviderFactory:
     def __init__(self, provider, verbose=False):
         self.provider = provider
@@ -19,7 +20,7 @@ class ProviderFactory:
         elif self.provider == 'prpc':
             if node_url_public == '':
                 node_url_public = PUBLIC_NODE_URL[network_config['NAME']][0]
-            return RpcRewardApiImpl(network_config,  baking_address, node_url_public, verbose=self.verbose)
+            return RpcRewardApiImpl(network_config, baking_address, node_url_public, verbose=self.verbose)
         elif self.provider == 'tzstats':
             return TzStatsRewardApiImpl(network_config, baking_address, verbose=self.verbose)
         elif self.provider == 'tzkt':

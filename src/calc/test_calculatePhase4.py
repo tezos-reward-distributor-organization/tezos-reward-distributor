@@ -40,8 +40,8 @@ class TestCalculatePhase4(TestCase):
         # 2 owner, 2 founders and 3 delegators
         self.assertEqual(7, len(new_rewards))
 
-        founder_ratio=0.0
-        owner_ratio=0.0
+        founder_ratio = 0.0
+        owner_ratio = 0.0
         for rl4 in new_rewards:
             if rl4.skipped:
                 continue

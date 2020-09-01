@@ -18,6 +18,7 @@ install:
     - pip install sphinxcontrib.spelling
     - pip install --upgrade recommonmark
     # Requirements to run tests
+    - pip install pycodestyle
     - pip install parameterized
 
 # Addons necessary for documentation.
@@ -29,6 +30,7 @@ addons:
 # command to run tests
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
+    - pycodestyle src/
     - python3 -m unittest discover -s src --verbose
     #- make spelling
     #- make linkcheck

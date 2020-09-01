@@ -7,6 +7,7 @@ import argparse
 LINER = "--------------------------------------------"
 logger = main_logger
 
+
 def print_banner(args, script_name):
     with open("./banner.txt", "rt") as file:
         print(file.read())
@@ -14,7 +15,7 @@ def print_banner(args, script_name):
     print("Copyright Huseyin ABANOZ 2019")
     print("huseyinabanox@gmail.com")
     print("Please leave copyright information")
-    print(LINER,flush=True)
+    print(LINER, flush=True)
 
     sleep(0.1)
 
@@ -24,6 +25,7 @@ def print_banner(args, script_name):
         logger.info(LINER)
         logger.info("DRY RUN MODE")
         logger.info(LINER)
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -95,7 +97,7 @@ def add_argument_payment_offset(parser):
 
 
 def add_argument_network(parser):
-    parser.add_argument("-N", "--network", help="Network name. Default is Mainnet, The test network of tezos is referred to as Alphanet even if the name changes with each protocol upgrade.",
+    parser.add_argument("-N", "--network", help="Network name. Default is Mainnet. The test network of tezos is referred to as Alphanet even if the name changes with each protocol upgrade.",
                         choices=['MAINNET', 'ZERONET', 'ALPHANET'],
                         default='MAINNET')
 
@@ -106,16 +108,16 @@ def add_argument_node_addr(parser):
 
 
 def add_argument_provider(parser):
-    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided. The default is the use of a public archive rpc node which is https://mainnet.tezrpc.me to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!", choices=['rpc','prpc','tzstats', 'tzkt'],
+    parser.add_argument("-P", "--reward_data_provider", help="Source of reward data. The default is the use of a public archive rpc node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!", choices=['rpc', 'prpc', 'tzstats', 'tzkt'],
                         default='prpc')
 
 
 def add_argument_node_addr_public(parser):
-    parser.add_argument("-Ap", "--node_addr_public", help="Public node base url pair with protocol prefix. i.e. https://rpc.letzbake.com. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node. (default is https://mainnet.tezrpc.me)", default='')
+    parser.add_argument("-Ap", "--node_addr_public", help="Public node base URL. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node. (Default is https://mainnet-tezos.giganode.io)", default='')
 
 
 def add_argument_reports_base(parser):
-    parser.add_argument("-r", "--reports_base", help="Base directory to create reports", default='~/pymnt/reports')
+    parser.add_argument("-r", "--reports_base", help="Directory to create reports", default='~/pymnt/reports')
 
 
 def add_argument_config_dir(parser):
@@ -137,7 +139,7 @@ def add_argument_dry_no_consumer(parser):
 def add_argument_executable_dirs(parser):
     parser.add_argument("-E", "--executable_dirs",
                         help="Comma separated list of directories to search for client executable. Prefer single "
-                             "location when setting client directory. If -d is set, point to location where tezos docker "
+                             "location when setting client directory. If -d is set, point to location where the tezos docker "
                              "script (e.g. mainnet.sh for mainnet) is found. Default value is given for minimum configuration effort.",
                         default='~/,~/tezos')
 

@@ -102,10 +102,11 @@ class PaymentConsumer(threading.Thread):
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
                                          self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
-                                         self.network_config)
+                                         self.network_config, self.mm,
+                                         self.dry_run)
 
                 # 3- do the payment
-                payment_logs, total_attempts = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
+                payment_logs, total_attempts, number_future_payable_cycles = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
 
                 # override batch data
                 payment_batch.batch = payment_logs
@@ -126,7 +127,7 @@ class PaymentConsumer(threading.Thread):
                 # 6- Clean failure reports
                 self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
 
-                # 7- notify back producer
+                # 7- notify batch producer
                 if nb_failed == 0:
                     if payment_batch.producer_ref:
                         payment_batch.producer_ref.on_success(payment_batch)
@@ -135,8 +136,8 @@ class PaymentConsumer(threading.Thread):
                         payment_batch.producer_ref.on_fail(payment_batch)
 
                 # 8- send email
-                if not self.dry_run:
-                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected)
+                if not self.dry_run and total_attempts > 0:
+                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected, number_future_payable_cycles)
 
             except Exception:
                 logger.error("Error at reward payment", exc_info=True)
@@ -165,7 +166,7 @@ class PaymentConsumer(threading.Thread):
     #
     # create report file
     def create_payment_report(self, nb_failed, nb_injected, payment_logs, payment_cycle, total_attempts):
-        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed>0 else ""))
+        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
 

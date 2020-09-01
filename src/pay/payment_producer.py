@@ -23,6 +23,7 @@ logger = main_logger
 
 MUTEZ = 1e+6
 
+
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
@@ -181,6 +182,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         logger.debug("Wait a few minutes, queue is full")
                         # wait a few minutes to let payments finish
                         time.sleep(60 * 3)
+
                 # end of payment cycle check
                 else:
                     logger.info("No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, current_cycle))
@@ -199,7 +201,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # plus offset. cycle beginnings may be busy, move payments forward
                     nb_blocks_remaining = nb_blocks_remaining + self.payment_offset
 
-                    logger.debug("Wait until next cycle, for {} blocks".format(nb_blocks_remaining))
+                    logger.debug("Waiting until next cycle; {} blocks remaining".format(nb_blocks_remaining))
 
                     # wait until current cycle ends
                     self.wait_for_blocks(nb_blocks_remaining)
@@ -218,7 +220,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle, expected_reward = False):
+    def try_to_pay(self, pymnt_cycle, expected_reward=False):
         try:
             logger.info("Payment cycle is " + str(pymnt_cycle))
 
@@ -239,7 +241,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
 
             # set cycle info
-            for rl in reward_logs: rl.cycle = pymnt_cycle
+            for rl in reward_logs:
+                rl.cycle = pymnt_cycle
             total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
 
             # 4- if total_rewards > 0, proceed with payment
@@ -354,7 +357,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                   os.listdir(failed_payments_dir) if x.endswith('.csv')]
 
         if payment_reports_failed:
-            payment_reports_failed=sorted(payment_reports_failed,key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
+            payment_reports_failed = sorted(payment_reports_failed, key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
             logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
         else:
             logger.debug("No failed payment files found under directory '{}'".format(failed_payments_dir))
@@ -387,10 +390,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # 2.3 read payments/failed/csv_report.csv file into a list of dictionaries
             batch = CsvPaymentFileParser().parse(payment_failed_report_file, cycle)
 
-            nb_paid = len(list(filter(lambda f:f.paid==PaymentStatus.PAID, batch)))
-            nb_done = len(list(filter(lambda f:f.paid==PaymentStatus.DONE, batch)))
-            nb_injected = len(list(filter(lambda f:f.paid==PaymentStatus.INJECTED, batch)))
-            nb_failed = len(list(filter(lambda f:f.paid==PaymentStatus.FAIL, batch)))
+            nb_paid = len(list(filter(lambda f: f.paid == PaymentStatus.PAID, batch)))
+            nb_done = len(list(filter(lambda f: f.paid == PaymentStatus.DONE, batch)))
+            nb_injected = len(list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch)))
+            nb_failed = len(list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch)))
 
             logger.info("Summary {} paid, {} done, {} injected, {} fail".format(nb_paid, nb_done, nb_injected, nb_failed))
 
@@ -407,7 +410,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     logger.info("{} rewards converted from injected to fail.".format(nb_converted))
 
             # 2.4 - Filter batch to only include those which failed. No need to mess with PAID/DONE
-            batch = list(filter(lambda f:f.paid == PaymentStatus.FAIL, batch))
+            batch = list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch))
 
             # 2.5 - Need to fetch current balance for addresses of any failed payments
             self.reward_api.update_current_balances(batch)

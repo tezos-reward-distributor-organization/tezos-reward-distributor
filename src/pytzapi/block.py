@@ -55,6 +55,7 @@ class BlockMetadata:
     def __init__(self):
         pass
 
+
 class Block:
     protocol = None
     chain_id = None
