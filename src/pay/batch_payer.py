@@ -422,7 +422,6 @@ class BatchPayer():
 
         return PaymentStatus.PAID, operation_hash
 
-
     def __get_payment_address_balance(self):
         payment_address_balance = None
 

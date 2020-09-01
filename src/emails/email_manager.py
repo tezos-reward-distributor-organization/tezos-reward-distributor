@@ -95,4 +95,3 @@ class EmailManager():
                                self.default["recipients"], [])
 
         logger.info("Warning email about insufficient funds sent!")
-
