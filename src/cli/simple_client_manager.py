@@ -1,3 +1,4 @@
+from Constants import TEZOS_RPC_PORT
 from cli.cmd_manager import CommandManager
 from exception.client import ClientException
 
@@ -9,7 +10,7 @@ class SimpleClientManager:
         self.client_path = client_path
         self.cmd_manager = CommandManager(verbose)
         self.node_hostname = "127.0.0.1"
-        self.node_port = 8732
+        self.node_port = TEZOS_RPC_PORT
         self.tls_on = False
 
         # Need to split host:port, default port to 8732 if not specified
@@ -17,11 +18,14 @@ class SimpleClientManager:
             # set tls to true if node address contains https
             self.tls_on = (node_addr.find('https://') != -1)
             # Remove potential protocol prefixes
-            node_addr = node_addr.replace('https://','')
-            node_addr = node_addr.replace('http://','')
+            node_addr = node_addr.replace('https://', '')
+            node_addr = node_addr.replace('http://', '')
             parts = node_addr.split(":")
             self.node_hostname = parts[0]
-            self.node_port = 8732 if len(parts) == 1 else parts[1]
+            self.node_port = TEZOS_RPC_PORT if len(parts) == 1 else parts[1]
+
+    def get_node_addr(self) -> str:
+        return "{}:{}".format(self.node_hostname, self.node_port)
 
     def send_request(self, cmd, verbose_override=None, timeout=None):
         # Build command with flags
@@ -39,6 +43,6 @@ class SimpleClientManager:
 
         for line in response.splitlines():
             if "Signature" in line:
-                return line.replace("Signature:","").strip()
+                return line.replace("Signature:", "").strip()
 
         raise ClientException("Signature not found in response '{}'. Signed with key '{}'".format(response, key_name))

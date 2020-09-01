@@ -4,7 +4,8 @@ from log_config import main_logger
 
 logger = main_logger
 
-def extract_json_part(input, verbose= None):
+
+def extract_json_part(input, verbose=None):
 
     if verbose:
         logger.debug("->will parse json response_str is '{}'".format(input))

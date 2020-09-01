@@ -11,12 +11,13 @@ COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_REVELATION = "{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
+
 class RpcBlockApiImpl(BlockApi):
 
     def __init__(self, nw, node_url):
         super(RpcBlockApiImpl, self).__init__(nw)
-
         self.node_url = node_url
+        logger.debug("RpcBlockApiImpl - node_url {}".format(self.node_url))
 
     def get_current_level(self, verbose=False):
         response = requests.get(COMM_HEAD.format(self.node_url), timeout=5)
@@ -28,7 +29,7 @@ class RpcBlockApiImpl(BlockApi):
         response = requests.get(COMM_REVELATION.format(self.node_url, pkh), timeout=5)
         manager_key = response.json()
         logger.debug("Manager key is '{}'".format(manager_key))
-        bool_revelation = manager_key and manager_key!='null'
+        bool_revelation = manager_key and manager_key != 'null'
         return bool_revelation
 
     def get_bootstrapped(self):
@@ -55,7 +56,7 @@ class RpcBlockApiImpl(BlockApi):
 
 def test_get_revelation():
 
-    address_api = RpcBlockApiImpl({"NAME":"ALPHANET"}, "127.0.0.1:8732")
+    address_api = RpcBlockApiImpl({"NAME": "ALPHANET"}, "127.0.0.1:8732")
     print(address_api.get_revelation("tz1N5cvoGZFNYWBp2NbCWhaRXuLQf6e1gZrv"))
     print(address_api.get_revelation("KT1FXQjnbdqDdKNpjeM6o8PF1w8Rn2j8BmmG"))
     print(address_api.get_revelation("tz1YVxe7FFisREKXWNxdrrwqvw3o2jeXzaNb"))
