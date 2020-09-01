@@ -179,18 +179,21 @@ class PaymentConsumer(threading.Thread):
 
         if self.publish_stats and not self.dry_run and (not self.args or is_mainnet(self.args.network)):
             stats_dict = self.create_stats_dict(nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts)
-
-            # publish
             stat_publish(stats_dict)
 
         return report_file
 
     def create_stats_dict(self, nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts):
+
+        from uuid import uuid1
+
         n_f_type = len([pl for pl in payment_logs if pl.type == TYPE_FOUNDER])
         n_o_type = len([pl for pl in payment_logs if pl.type == TYPE_OWNER])
         n_d_type = len([pl for pl in payment_logs if pl.type == TYPE_DELEGATOR])
         n_m_type = len([pl for pl in payment_logs if pl.type == TYPE_MERGED])
+
         stats_dict = {}
+        stats_dict['baker'] = uuid1()
         stats_dict['tot_amnt'] = int(sum([rl.amount for rl in payment_logs]) / 1e+9)  # in 1K tezos
         stats_dict['nb_pay'] = int(len(payment_logs) / 10)
         stats_dict['nb_failed'] = nb_failed
@@ -205,13 +208,8 @@ class PaymentConsumer(threading.Thread):
         stats_dict['trdver'] = version.version
         if self.args:
             stats_dict['m_run'] = 1 if self.args.background_service else 0
-            stats_dict['m_prov'] = 0 if self.args.reward_data_provider == 'tzscan' else 1
-            m_relov = 0
-            if self.args.release_override > 0:
-                m_relov = 1
-            elif self.args.release_override < 0:
-                m_relov = -1
-            stats_dict['m_relov'] = m_relov
-            stats_dict['m_offset'] = 1 if self.args.payment_offset != 0 else 0
+            stats_dict['m_prov'] = self.args.reward_data_provider
+            stats_dict['m_relov'] = self.args.release_override if self.args.release_override else 0
+            stats_dict['m_offset'] = self.args.payment_offset if self.args.payment_offset else 0
             stats_dict['m_clnt'] = 1 if self.args.docker else 0
         return stats_dict

@@ -4,7 +4,7 @@ import requests
 import version
 from time import sleep
 
-url = "http://35.211.164.111:8080/trd/stats/add"
+url = "https://jptpfltc1k.execute-api.us-west-2.amazonaws.com/default/TRDStats"
 headers = {'content-type': 'application/json'}
 
 
