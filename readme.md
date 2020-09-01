@@ -38,7 +38,7 @@ sudo apt-get -y install python3-pip
 Download the application repository using git clone:
 
 ```bash
-git clone https://github.com/habanoz/tezos-reward-distributor
+git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 ```
 
 To install required modules, use pip with requirements.txt provided.
