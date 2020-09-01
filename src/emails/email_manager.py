@@ -56,21 +56,23 @@ class EmailManager():
 
         with open(EMAIL_INI_PATH, "w") as f:
             f.writelines(["[DEFAULT]\n", USER + NL, PASS + NL, HOST + NL, PORT + NL, SENDER + NL,
-                          RECIPIENTS + NL + USE_SSL+NL])
+                          RECIPIENTS + NL + USE_SSL + NL])
 
-    def send_payment_mail(self, cyle, payments_file, nb_failed, nb_unknown, number_future_payable_cycles):
+    def send_payment_mail(self, cycle, payments_file, nb_failed, nb_unknown, number_future_payable_cycles):
         if not self.email_sender:
             return
 
-        title = "Payment Report for Cycle {}".format(cyle)
-        if nb_failed > 0: title + ", {} failed".format(nb_failed)
-        if nb_unknown > 0: title + ", {} final state not known".format(nb_unknown)
+        title = "Payment Report for Cycle {}".format(cycle)
+        if nb_failed > 0:
+            title + ", {} failed".format(nb_failed)
+        if nb_unknown > 0:
+            title + ", {} final state not known".format(nb_unknown)
 
         self.email_sender.send(title, "Payment for cycle {} is completed. Report file is attached. "
-                                      "The current payout account balance is expected to last for the next {} cycle(s)!".format(cyle, number_future_payable_cycles),
+                                      "The current payout account balance is expected to last for the next {} cycle(s)!".format(cycle, number_future_payable_cycles),
                                self.default["recipients"], [payments_file])
 
-        logger.debug("Report email sent for cycle {}.".format(cyle))
+        logger.debug("Report email sent for cycle {}.".format(cycle))
 
     def warn_about_immediate_insufficient_funds(self, pay_addr, pay_amt, curr_bal):
         if not self.email_sender:
