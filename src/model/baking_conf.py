@@ -1,4 +1,5 @@
 import json
+from model.custom_json_encoder import CustomJsonEncoder
 
 SERVICE_FEE = 'service_fee'
 OWNERS_MAP = 'owners_map'
@@ -12,21 +13,19 @@ MIN_DELEGATION_AMT = 'min_delegation_amt'
 REACTIVATE_ZEROED = 'reactivate_zeroed'
 DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
 DELEGATOR_PAYS_RA_FEE = 'delegator_pays_ra_fee'
-### extensions
+
+# extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
 EXCLUDED_DELEGATORS_SET_TOB = "__excluded_delegators_set_tob"
 EXCLUDED_DELEGATORS_SET_TOE = "__excluded_delegators_set_toe"
 EXCLUDED_DELEGATORS_SET_TOF = "__excluded_delegators_set_tof"
 DEST_MAP = "__destination_map"
 
-### destination map
+# destination map
 TOF = "TOF"
 TOB = "TOB"
 TOE = "TOE"
 MIN_DELEGATION_KEY = 'mindelegation'
-###
-
-from model.custom_json_encoder import CustomJsonEncoder
 
 
 class BakingConf:

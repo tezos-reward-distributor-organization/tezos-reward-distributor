@@ -1,5 +1,6 @@
 import os
 
+
 class LockFile:
     def __init__(self):
         self.lock_file_path = "./lock"
@@ -15,7 +16,7 @@ class LockFile:
         self.lock_acquired = True
 
     def tryLock(self):
-        if self.lock_acquired==False and os.path.isfile(self.lock_file_path):
+        if self.lock_acquired is False and os.path.isfile(self.lock_file_path):
             raise Exception("Lock file present. Another process is running...")
 
     def release(self):

@@ -7,7 +7,6 @@ from time import sleep
 import base58
 
 from Constants import PaymentStatus
-from NetworkConfiguration import BLOCK_TIME_IN_SEC
 from log_config import main_logger
 from util.rpc_utils import parse_json_response
 
@@ -25,7 +24,7 @@ CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
-JSON_WRAP='{"operation": %JSON%,"chain_id":"%chain_id%"}'
+JSON_WRAP = '{"operation": %JSON%,"chain_id":"%chain_id%"}'
 COMM_FORGE = "rpc post /chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
 COMM_RUNOPS = "rpc post /chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
 COMM_PREAPPLY = "rpc post /chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
@@ -36,6 +35,7 @@ FEE_INI = 'fee.ini'
 MUTEZ = 1e6
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
+
 
 class BatchPayer():
     def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config, mm, dry_run):
@@ -76,11 +76,11 @@ class BatchPayer():
         if self.delegator_pays_xfer_fee:
             self.zero_threshold += self.default_fee
 
-        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee/MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
-        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE/MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
-        logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold/MUTEZ))
+        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee / MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE / MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
+        logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold / MUTEZ))
 
-        # pymnt_addr has a length of 36 and starts with tz or KT then it is a public key has, else it is an alias
+        # If pymnt_addr has a length of 36 and starts with tz or KT then it is a public key, else it is an alias
         if len(self.pymnt_addr) == PKH_LENGTH and (
                 self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")):
             self.source = self.pymnt_addr
@@ -109,11 +109,11 @@ class BatchPayer():
         logger.info("{} payment items to process".format(len(payment_items_in)))
 
         # initialize the result list with already paid items
-        payment_logs_paid = [pi for pi in payment_items_in if pi.paid==PaymentStatus.PAID]
+        payment_logs_paid = [pi for pi in payment_items_in if pi.paid == PaymentStatus.PAID]
         if payment_logs_paid:
             logger.info("{} payment items are already paid".format(len(payment_logs_paid)))
 
-        payment_logs_done = [pi for pi in payment_items_in if pi.paid==PaymentStatus.DONE]
+        payment_logs_done = [pi for pi in payment_items_in if pi.paid == PaymentStatus.DONE]
         if payment_logs_done:
             logger.info("{} payment items are already processed".format(len(payment_logs_done)))
 
@@ -156,7 +156,8 @@ class BatchPayer():
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
         total_amount_to_pay += sum_burn_fees
-        if not self.delegator_pays_xfer_fee: total_amount_to_pay += self.default_fee * len(payment_items)
+        if not self.delegator_pays_xfer_fee:
+            total_amount_to_pay += self.default_fee * len(payment_items)
 
         payment_address_balance = self.__get_payment_address_balance()
         logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
@@ -171,13 +172,13 @@ class BatchPayer():
                 logger.warn("The current balance of the payout address (= {:,} mutez) "
                             "is insufficient to pay the total amount of {:,} mutez".format(payment_address_balance, total_amount_to_pay))
                 if not self.dry_run:
-                    self.mm.warn_about_immediate_insufficient_funds(self.pymnt_addr, total_amount_to_pay, payment_address_balance)
+                    self.mm.warn_about_immediate_insufficient_funds(self.source, total_amount_to_pay, payment_address_balance)
                 return payment_items, 0, 0
 
             elif number_future_payable_cycles < 1:
                 logger.warn("The payout address will soon run out of funds and the current balance ({:,} mutez) might not be sufficient for the next cycle".format(payment_address_balance))
                 if not self.dry_run:
-                    self.mm.warn_about_insufficient_funds_soon(self.pymnt_addr, total_amount_to_pay, payment_address_balance)
+                    self.mm.warn_about_insufficient_funds_soon(self.source, total_amount_to_pay, payment_address_balance)
 
             else:
                 logger.info("The current payout account balance is expected to last for the next {} cycle(s)!".format(number_future_payable_cycles))
@@ -212,7 +213,7 @@ class BatchPayer():
         for attempt in range(max_try):
             try:
                 status, operation_hash = self.attempt_single_batch(payment_items, op_counter, verbose, dry_run=dry_run)
-            except:
+            except Exception:
                 logger.error("batch payment attempt {}/{} for current batch failed with error".format(attempt + 1, max_try), exc_info=True)
 
             if dry_run or status.is_fail():
@@ -243,7 +244,7 @@ class BatchPayer():
         return payment_items, attempt_count
 
     def wait_random(self):
-        block_time = self.network_config[BLOCK_TIME_IN_SEC]
+        block_time = self.network_config['BLOCK_TIME_IN_SEC']
         slp_tm = randint(block_time / 2, block_time)
 
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
@@ -301,7 +302,7 @@ class BatchPayer():
         # run the operations
         logger.debug("Running {} operations".format(len(content_list)))
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
-        runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%",chain_id)
+        runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
         runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
 
         # if verbose: print("--> runops_command_str is |{}|".format(runops_command_str))
@@ -335,7 +336,7 @@ class BatchPayer():
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
 
-        #if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
+        # if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
 
         result, forge_command_response = self.wllt_clnt_mngr.send_request(forge_command_str)
         if not result:
@@ -354,7 +355,7 @@ class BatchPayer():
         preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
         preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
 
-        #if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
+        # if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
 
         result, preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
         if not result:
@@ -369,7 +370,8 @@ class BatchPayer():
         # preapplied = parse_response(preapply_command_response)
 
         # if dry_run, skip injection
-        if dry_run: return PaymentStatus.DONE, ""
+        if dry_run:
+            return PaymentStatus.DONE, ""
 
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
@@ -395,7 +397,7 @@ class BatchPayer():
         signed_operation_bytes = bytes + decoded_signature
         inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
 
-        #if verbose: print("--> inject_command_str is |{}|".format(inject_command_str))
+        # if verbose: print("--> inject_command_str is |{}|".format(inject_command_str))
 
         result, inject_command_response = self.wllt_clnt_mngr.send_request(inject_command_str)
         if not result:
@@ -412,7 +414,7 @@ class BatchPayer():
         logger.info("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
-            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config[BLOCK_TIME_IN_SEC] * (CONFIRMATIONS + PATIENCE))
+            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * (CONFIRMATIONS + PATIENCE))
             logger.info("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
@@ -420,11 +422,10 @@ class BatchPayer():
 
         return PaymentStatus.PAID, operation_hash
 
-
     def __get_payment_address_balance(self):
         payment_address_balance = None
 
-        get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.pymnt_addr)
+        get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
         result, command_response = self.wllt_clnt_mngr.send_request(get_current_balance_request)
         payment_address_balance = parse_json_response(command_response)
 
