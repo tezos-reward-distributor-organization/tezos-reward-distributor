@@ -19,7 +19,7 @@ from log_config import main_logger
 from main import LINER
 from launch_common import add_argument_network, add_argument_reports_base, add_argument_provider, add_argument_config_dir, \
     add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, add_argument_executable_dirs, \
-    add_argument_docker, add_argument_verbose, print_banner
+    add_argument_docker, add_argument_verbose, add_argument_api_base_url, print_banner
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -91,8 +91,9 @@ def main(args):
                                          verbose=args.verbose)
 
     provider_factory = ProviderFactory(args.reward_data_provider, verbose=args.verbose)
-    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory,
-                                  network_config, args.node_addr, api_base_url=args.api_base_url)
+    parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), 
+                                  wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
+                                  verbose=args.verbose, api_base_url=args.api_base_url)
     parser.parse()
     parser.validate()
     parser.process()
@@ -144,8 +145,7 @@ def main(args):
                             service_fee_calc=srvc_fee_calc, release_override=0,
                             payment_offset=0, baking_cfg=cfg, life_cycle=life_cycle,
                             payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                            node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose,
-                            api_base_url=args.api_base_url)
+                            node_url=args.node_addr, provider_factory=provider_factory, verbose=args.verbose, api_base_url=args.api_base_url)
 
         p.retry_failed_payments(args.retry_injected)
 
@@ -199,6 +199,7 @@ if __name__ == '__main__':
     add_argument_executable_dirs(parser)
     add_argument_docker(parser)
     add_argument_verbose(parser)
+    add_argument_api_base_url(parser)
 
     parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.", action="store_true")
     args = parser.parse_args()
