@@ -47,8 +47,8 @@ class RpcRewardApiImpl(RewardApi):
                      .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
 
         if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
-            unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
-            reward_data["total_rewards"] = unfrozen_rewards
+            unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
+            reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
 
         else:
             logger.warn("Please wait until the rewards and fees for cycle {} are unfrozen".format(cycle))
@@ -74,7 +74,9 @@ class RpcRewardApiImpl(RewardApi):
             if balance_update["kind"] == "freezer":
                 if balance_update["delegate"] == self.baking_address:
                     # Protocols < Athens (004) mistakenly used 'level'
-                    if (("level" in balance_update and int(balance_update["level"]) == cycle) or ("cycle" in balance_update and int(balance_update["cycle"]) == cycle)) and int(balance_update["change"]) < 0:
+                    if (("level" in balance_update and int(balance_update["level"]) == cycle)
+                       or ("cycle" in balance_update and int(balance_update["cycle"]) == cycle)) and int(balance_update["change"]) < 0:
+
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
                             logger.debug(
@@ -91,7 +93,7 @@ class RpcRewardApiImpl(RewardApi):
                             "[__get_unfrozen_rewards] Found balance update, cycle does not match or change is non-zero, not including: {}".format(
                                 balance_update))
 
-        return unfrozen_fees + unfrozen_rewards
+        return unfrozen_fees, unfrozen_rewards
 
     def do_rpc_request(self, request, time_out=120):
         if self.verbose:
@@ -132,12 +134,14 @@ class RpcRewardApiImpl(RewardApi):
     def __get_delegators_and_delgators_balances(self, cycle, current_level):
 
         # calculate the hash of the block for the chosen snapshot of the rewards cycle
-        hash_snapshot_block = self.__get_snapshot_block_hash(cycle, current_level)
-        if hash_snapshot_block == "":
-            return 0, []
+        roll_snapshot, level_snapshot_block = self.__get_roll_snapshot_block_level(cycle, current_level)
+        if level_snapshot_block == "":
+            raise RpcRewardApiError("level_snapshot_block is empty. Unable to proceed.")
+        if roll_snapshot < 0 or roll_snapshot > 15:
+            raise RpcRewardApiError("roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
 
-        # construct RPC for getting list of delegates
-        get_delegates_request = COMM_DELEGATES.format(self.node_url, hash_snapshot_block, self.baking_address)
+        # construct RPC for getting list of delegates and staking balance
+        get_delegates_request = COMM_DELEGATES.format(self.node_url, level_snapshot_block, self.baking_address)
 
         delegate_staking_balance = 0
         delegators = {}
@@ -146,6 +150,14 @@ class RpcRewardApiImpl(RewardApi):
             # get RPC response for delegates and staking balance
             response = self.do_rpc_request(get_delegates_request)
             delegate_staking_balance = int(response["staking_balance"])
+
+            # If roll_snapshot == 15, we need to adjust the baker's staking balance
+            # by subtracting unfrozen rewards due to when the snapshot is taken
+            # within the block context
+            if roll_snapshot == 15:
+                old_rewards_cycle = (level_snapshot_block / self.blocks_per_cycle) - self.preserved_cycles - 1
+                _, unfrozen_rewards = self.__get_unfrozen_rewards(level_snapshot_block, old_rewards_cycle)
+                delegate_staking_balance -= unfrozen_rewards
 
             # Remove baker's address from list of delegators
             delegators_addresses = list(filter(lambda x: x != self.baking_address, response["delegated_contracts"]))
@@ -160,7 +172,7 @@ class RpcRewardApiImpl(RewardApi):
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
 
-                get_staking_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, hash_snapshot_block, delegator)
+                get_staking_balance_request = COMM_DELEGATE_BALANCE.format(self.node_url, level_snapshot_block, delegator)
 
                 staking_balance_response = None
 
@@ -217,7 +229,7 @@ class RpcRewardApiImpl(RewardApi):
 
         return int(current_balance_response)
 
-    def __get_snapshot_block_hash(self, cycle, current_level):
+    def __get_roll_snapshot_block_level(self, cycle, current_level):
 
         snapshot_level = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
@@ -228,15 +240,16 @@ class RpcRewardApiImpl(RewardApi):
             request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
-            level_snapshot_block = (cycle - self.preserved_cycles - 2) * self.blocks_per_cycle + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot
+            level_snapshot_block = ((cycle - self.preserved_cycles - 2) * self.blocks_per_cycle
+                                    + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
 
-            logger.debug("Chosen snapshot {}, snapshot level {}".format(chosen_snapshot, level_snapshot_block))
+            logger.debug("Snapshot index {}, snapshot index level {}".format(chosen_snapshot, level_snapshot_block))
 
-            return level_snapshot_block
+            return chosen_snapshot, level_snapshot_block
 
         else:
             logger.info("Cycle too far in the future")
-            return ""
+            return 0, ""
 
 
 class RpcRewardApiError(Exception):
