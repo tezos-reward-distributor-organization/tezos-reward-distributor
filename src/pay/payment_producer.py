@@ -320,7 +320,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          pymnt_log.paymentaddress]
                 writer.writerow(array)
 
-                logger.debug("Reward created for %s type: %s, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                logger.debug("Reward created for {} type: {}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
                              "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: %s, skipped: %s, at-phase: %s, "
                              "desc: %s, pay_addr: %s"
                              .format(pymnt_log.address, pymnt_log.type,
