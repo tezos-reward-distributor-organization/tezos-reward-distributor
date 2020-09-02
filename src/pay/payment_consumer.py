@@ -3,8 +3,7 @@ import os
 import threading
 import time
 
-import version
-from Constants import EXIT_PAYMENT_TYPE, PaymentStatus
+from Constants import VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
 from NetworkConfiguration import is_mainnet
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
@@ -13,7 +12,7 @@ from emails.email_manager import EmailManager
 from log_config import main_logger
 from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from pay.batch_payer import BatchPayer
-from stats.stats_pusblisher import stat_publish
+from stats.stats_publisher import stats_publisher
 from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path, get_busy_file
 
@@ -111,18 +110,11 @@ class PaymentConsumer(threading.Thread):
                 # override batch data
                 payment_batch.batch = payment_logs
 
-                # total_attempts = 1
-                # payment_logs = []
-                # for pl in payment_items:
-                #    pl.paid=True
-                #    pl.hash='132'
-                #    payment_logs.append(pl)
-
                 # 4- count failed payments
                 nb_failed, nb_injected = count_and_log_failed(payment_logs)
 
                 # 5- create payment report file
-                report_file = self.create_payment_report(nb_failed, nb_injected, payment_logs, pymnt_cycle, total_attempts)
+                report_file = self.create_payment_report(nb_failed, payment_logs, pymnt_cycle)
 
                 # 6- Clean failure reports
                 self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
@@ -138,6 +130,12 @@ class PaymentConsumer(threading.Thread):
                 # 8- send email
                 if not self.dry_run and total_attempts > 0:
                     self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected, number_future_payable_cycles)
+
+                # 9- publish anonymous stats
+                if self.publish_stats and self.args and not self.dry_run:
+                    stats_dict = self.create_stats_dict(nb_failed, nb_injected, pymnt_cycle,
+                                                        payment_logs, total_attempts)
+                    stats_publisher(stats_dict)
 
             except Exception:
                 logger.error("Error at reward payment", exc_info=True)
@@ -165,8 +163,10 @@ class PaymentConsumer(threading.Thread):
 
     #
     # create report file
-    def create_payment_report(self, nb_failed, nb_injected, payment_logs, payment_cycle, total_attempts):
-        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
+    def create_payment_report(self, nb_failed, payment_logs, payment_cycle):
+
+        logger.info("Processing completed for {} payment items{}."
+                    .format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
 
@@ -175,11 +175,8 @@ class PaymentConsumer(threading.Thread):
         logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
-            logger.debug("Payment done for address %s type %s amount {:>10.6f} paid %s".format(pl.amount / MUTEZ), pl.address, pl.type, pl.paid)
-
-        if self.publish_stats and not self.dry_run and (not self.args or is_mainnet(self.args.network)):
-            stats_dict = self.create_stats_dict(nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts)
-            stat_publish(stats_dict)
+            logger.debug("Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}"
+                         .format(pl.address, pl.type, pl.amount / MUTEZ, pl.paid))
 
         return report_file
 
@@ -193,23 +190,27 @@ class PaymentConsumer(threading.Thread):
         n_m_type = len([pl for pl in payment_logs if pl.type == TYPE_MERGED])
 
         stats_dict = {}
-        stats_dict['baker'] = uuid1()
-        stats_dict['tot_amnt'] = int(sum([rl.amount for rl in payment_logs]) / 1e+9)  # in 1K tezos
-        stats_dict['nb_pay'] = int(len(payment_logs) / 10)
-        stats_dict['nb_failed'] = nb_failed
-        stats_dict['nb_unkwn'] = nb_injected
-        stats_dict['tot_attmpt'] = total_attempts
-        stats_dict['nb_f'] = n_f_type
-        stats_dict['nb_o'] = n_o_type
-        stats_dict['nb_m'] = n_m_type
-        stats_dict['nb_d'] = n_d_type
+        stats_dict['baker'] = str(uuid1())
         stats_dict['cycle'] = payment_cycle
-        stats_dict['m_fee'] = 1 if self.delegator_pays_xfer_fee else 0
-        stats_dict['trdver'] = version.version
+        stats_dict['network'] = self.args.network
+        stats_dict['total_amount'] = int(sum([rl.amount for rl in payment_logs]) / MUTEZ)
+        stats_dict['nb_pay'] = int(len(payment_logs))
+        stats_dict['nb_failed'] = nb_failed
+        stats_dict['nb_unknown'] = nb_injected
+        stats_dict['total_attmpts'] = total_attempts
+        stats_dict['nb_founders'] = n_f_type
+        stats_dict['nb_owners'] = n_o_type
+        stats_dict['nb_merged'] = n_m_type
+        stats_dict['nb_delegators'] = n_d_type
+        stats_dict['pay_xfer_fee'] = 1 if self.delegator_pays_xfer_fee else 0
+        stats_dict['pay_ra_fee'] = 1 if self.delegator_pays_ra_fee else 0
+        stats_dict['trdver'] = str(VERSION)
+
         if self.args:
             stats_dict['m_run'] = 1 if self.args.background_service else 0
             stats_dict['m_prov'] = self.args.reward_data_provider
             stats_dict['m_relov'] = self.args.release_override if self.args.release_override else 0
             stats_dict['m_offset'] = self.args.payment_offset if self.args.payment_offset else 0
-            stats_dict['m_clnt'] = 1 if self.args.docker else 0
+            stats_dict['m_docker'] = 1 if self.args.docker else 0
+
         return stats_dict
