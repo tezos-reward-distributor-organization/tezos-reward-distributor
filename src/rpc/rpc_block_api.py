@@ -1,13 +1,9 @@
 import requests
-import json
-
-from datetime import datetime
 from api.block_api import BlockApi
 from log_config import main_logger
 
 logger = main_logger
 
-COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_REVELATION = "{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
@@ -31,27 +27,6 @@ class RpcBlockApiImpl(BlockApi):
         logger.debug("Manager key is '{}'".format(manager_key))
         bool_revelation = manager_key and manager_key != 'null'
         return bool_revelation
-
-    def get_bootstrapped(self):
-        # /monitor/bootstrapped is a stream of data that only terminates
-        # after the node is bootstrapped. Instead, we want to grab the most
-        # recent timestamp, present message to user, sleep a bit, then try again.
-        count = 0
-        boot_resp = {}
-        response = requests.get(COMM_BOOTSTRAP.format(self.node_url), timeout=5, stream=True)
-        for line in response.iter_lines(chunk_size=256):
-            if line and count < 5:
-                boot_resp = json.loads(line)
-                logger.debug("Bootstrap Monitor: {}".format(boot_resp))
-                count += 1
-            else:
-                response.close()
-                break
-
-        boot_time = datetime.strptime(boot_resp["timestamp"], "%Y-%m-%dT%H:%M:%SZ")
-        logger.debug("Local node bootstrap time is '{}'".format(boot_time))
-
-        return boot_time
 
 
 def test_get_revelation():

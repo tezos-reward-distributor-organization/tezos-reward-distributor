@@ -25,7 +25,6 @@ MUTEZ = 1e+6
 BOOTSTRAP_SLEEP = 8
 
 
-
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
@@ -43,6 +42,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.name = name
 
         self.node_url = node_url
+        self.wllt_clnt_mngr = wllt_clnt_mngr
         self.reward_api = provider_factory.newRewardApi(
             network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
         self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
@@ -84,7 +84,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     def retry_fail_run(self):
         logger.info('Retry Fail thread "{}" started'.format(self.retry_fail_thread.name))
 
-        sleep(60)  # producer thread already tried once, wait for next try
+        time.sleep(60)  # producer thread already tried once, wait for next try
 
         while not self.exiting and self.life_cycle.is_running():
             self.retry_failed_payments()
@@ -260,7 +260,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 logger.debug("Creating calculation report (%s)", report_file_path)
 
-                sleep(5.0)
+                time.sleep(5.0)
 
                 # 6- create calculations report file. This file contains calculations details
                 self.create_calculations_report(reward_logs, report_file_path, total_amount)
@@ -288,7 +288,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             logger.error("Error at payment producer loop, will try again.", exc_info=True)
             return False
         finally:
-            sleep(10)
+            time.sleep(10)
 
     def wait_until_next_cycle(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):
@@ -299,12 +299,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.exit()
                 break
 
-
     def node_is_bootstrapped(self):
-        # Get local node's bootstrap time. If bootstrap time + 2 minutes is 
+        # Get RPC node's (-A) bootstrap time. If bootstrap time + 2 minutes is
         # before local time, node is not bootstrapped.
+        #
+        # wllt_clnt_mngr is a super class of SimpleClientManager which interfaces
+        # with the tezos-node used for txn forging/signing/injection. This is the
+        # node which we need to determine bootstrapped state
         try:
-            boot_time = self.block_api.get_bootstrapped()
+            boot_time = self.wllt_clnt_mngr.get_bootstrapped()
             utc_time = datetime.utcnow()
             if (boot_time + timedelta(minutes=2)) < utc_time:
                 logger.info("Current time is '{}', latest block of local node is '{}'."
@@ -313,7 +316,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         except ValueError:
             logger.error("Unable to determine local node's bootstrap status. Continuing...")
         return True
-
 
     def create_calculations_report(self, payment_logs, report_file_path, total_rewards):
         with open(report_file_path, 'w', newline='') as f:
@@ -348,15 +350,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          pymnt_log.paymentaddress]
                 writer.writerow(array)
 
-                logger.debug("Reward created for %s type: %s, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: %s, skipped: %s, at-phase: %s, "
-                             "desc: %s, pay_addr: %s"
+                logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                             "desc: {:s}, pay_addr: {:s}"
                              .format(pymnt_log.address, pymnt_log.type,
                                      pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
                                      pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
-                                     pymnt_log.service_fee_rate, pymnt_log.payable,
-                                     pymnt_log.skipped, pymnt_log.skippedatphase, pymnt_log.desc, pymnt_log.paymentaddress))
+                                     pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
+                                     "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase, pymnt_log.desc, pymnt_log.paymentaddress))
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
