@@ -5,7 +5,11 @@ Tezos Reward Distributor collects anonymous statistics after each payout. These 
 
 Nothing that TRD collects can be traced back to a specific delegate or delegator. The goal of the statistics is not to correlate nor discover specific bakeries that are using TRD.
 
-If you wish to opt-out of this collection, start TRD using the `--do_not_publish_stats` option.
+* We *do not* collect any implicit or originated addresses.
+* We *do not* collect any IP, or hostname related information.
+* We *do not* generate identifiers using any address information.
+
+If you wish to opt-out of this anonymous data collection, start TRD using the `--do_not_publish_stats` option.
 
 Collected Data
 --------------
