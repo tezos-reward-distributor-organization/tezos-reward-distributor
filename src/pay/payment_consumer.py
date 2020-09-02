@@ -190,7 +190,7 @@ class PaymentConsumer(threading.Thread):
         n_m_type = len([pl for pl in payment_logs if pl.type == TYPE_MERGED])
 
         stats_dict = {}
-        stats_dict['baker'] = str(uuid1())
+        stats_dict['uuid'] = str(uuid1())
         stats_dict['cycle'] = payment_cycle
         stats_dict['network'] = self.args.network
         stats_dict['total_amount'] = int(sum([rl.amount for rl in payment_logs]) / MUTEZ)
