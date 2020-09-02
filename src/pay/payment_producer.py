@@ -284,8 +284,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             logger.info("API provider error at reward loop, will try again.")
             logger.debug("API provider error at reward loop", exc_info=False)
             return False
-        except Exception:
-            logger.error("Error at payment producer loop, will try again.", exc_info=True)
+        except Exception as e:
+            logger.error("Error at payment producer loop: '{}', will try again.".format(e), exc_info=True)
             return False
         finally:
             time.sleep(10)
