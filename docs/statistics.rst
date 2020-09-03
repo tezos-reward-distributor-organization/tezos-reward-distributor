@@ -1,7 +1,7 @@
 Anonymous Statistics
 ====================
 
-Tezos Reward Distributor collects anonymous statistics after each payout. These statistics are purely for analytical purposes and potential marketing information.
+The Tezos Reward Distributor collects anonymous statistics after each payout. These statistics are purely for analytical purposes e.g. to evaluate the prioritization of feature requests or to communicate the usage data for marketing purposes.
 
 Nothing that TRD collects can be traced back to a specific delegate or delegator. The goal of the statistics is not to correlate nor discover specific bakeries that are using TRD.
 
@@ -10,6 +10,8 @@ Nothing that TRD collects can be traced back to a specific delegate or delegator
 * We *do not* generate identifiers using any address information.
 
 If you wish to opt-out of this anonymous data collection, start TRD using the `--do_not_publish_stats` option.
+
+If you have any questions about this topic feel free to create an issue.
 
 Collected Data
 --------------
