@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Anonymous Statistics &mdash; Tezos Reward Distributor 6.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Tezos Reward Distributor
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Tezos Reward Distributor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Anonymous Statistics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/statistics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="anonymous-statistics">
+<h1>Anonymous Statistics<a class="headerlink" href="#anonymous-statistics" title="Permalink to this headline">¶</a></h1>
+<p>The Tezos Reward Distributor collects anonymous statistics after each payout. These statistics are purely for analytical purposes e.g. to evaluate the prioritization of feature requests or to communicate the usage data for marketing purposes.</p>
+<p>Nothing that TRD collects can be traced back to a specific delegate or delegator. The goal of the statistics is not to correlate nor discover specific bakeries that are using TRD.</p>
+<ul class="simple">
+<li><p>We <em>do not</em> collect any implicit or originated addresses.</p></li>
+<li><p>We <em>do not</em> collect any IP, or hostname related information.</p></li>
+<li><p>We <em>do not</em> generate identifiers using any address information.</p></li>
+</ul>
+<p>If you wish to opt-out of this anonymous data collection, start TRD using the <cite>–do_not_publish_stats</cite> option.</p>
+<p>If you have any questions about this topic or if you want to have access to the statistical data feel free to open an issue.</p>
+<div class="section" id="collected-data">
+<h2>Collected Data<a class="headerlink" href="#collected-data" title="Permalink to this headline">¶</a></h2>
+<p>TRD collects the following statistics after each payout:</p>
+<ul class="simple">
+<li><p>Anonymous identifier</p></li>
+<li><p>Payout cycle</p></li>
+<li><p>Total payout amount</p></li>
+<li><p>Which network is in use (ie: mainnet, carthagenet, etc)</p></li>
+<li><p>Number of founders</p></li>
+<li><p>Number of owners</p></li>
+<li><p>Number of delegators</p></li>
+<li><p>Number of payments</p></li>
+<li><p>Number of failed transactions</p></li>
+<li><p>Number of injected transactions</p></li>
+<li><p>Number of attempts</p></li>
+<li><p>If baker pays transfer fee</p></li>
+<li><p>If baker pays reactivation fee</p></li>
+<li><p>If TRD is running as a background service</p></li>
+<li><p>Which RPC provider is in use</p></li>
+<li><p>Release override setting</p></li>
+<li><p>Payment offset setting</p></li>
+<li><p>If docker is being used</p></li>
+<li><p>Python version</p></li>
+<li><p>OS version</p></li>
+<li><p>TRD Version</p></li>
+</ul>
+</div>
+<div class="section" id="transfer">
+<h2>Transfer<a class="headerlink" href="#transfer" title="Permalink to this headline">¶</a></h2>
+<p>A POST request is sent to the following AWS Lambda endpoint:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://jptpfltc1k.execute-api.us-west-2.amazonaws.com/trdstats">https://jptpfltc1k.execute-api.us-west-2.amazonaws.com/trdstats</a></p>
+</div></blockquote>
+<p>This endpoint does not collect any information about the source of the POST. No cookies are used.</p>
+</div>
+<div class="section" id="gdpr">
+<h2>GDPR<a class="headerlink" href="#gdpr" title="Permalink to this headline">¶</a></h2>
+<p>The General Data Protection Regulation, Recital 26 provides exception to anonymous and pseudonymous information.</p>
+<p>Due to the anonymous nature of the collected data, TRD is within compliance of the GDPR.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, habanoz
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
