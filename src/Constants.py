@@ -13,6 +13,7 @@ class RunMode(Enum):
     FOREVER = 1
     PENDING = 2
     ONETIME = 3
+    RETRY_FAILED = 4
 
 
 class PaymentStatus(Enum):
