@@ -167,5 +167,6 @@ def add_argument_api_base_url(parser: argparse.ArgumentParser):
                         help="Base API url for non-rpc providers. If not set, public endpoints will be used.",
                         type=str)
 
+
 def add_argument_retry_injected(parser):
     parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.", action="store_true")
