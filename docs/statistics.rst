@@ -11,7 +11,7 @@ Nothing that TRD collects can be traced back to a specific delegate or delegator
 
 If you wish to opt-out of this anonymous data collection, start TRD using the `--do_not_publish_stats` option.
 
-If you have any questions about this topic feel free to create an issue.
+If you have any questions about this topic or if you want to have access to the statistical data feel free to open an issue.
 
 Collected Data
 --------------
