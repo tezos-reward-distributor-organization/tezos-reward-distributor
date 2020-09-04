@@ -4,7 +4,7 @@ from pprint import pformat
 from os.path import join
 from json import JSONDecodeError
 
-from version import version
+from Constants import VERSION
 from exception.api_provider import ApiProviderException
 from log_config import main_logger
 
@@ -64,7 +64,7 @@ class TzKTApi:
                 url=url,
                 params=data,
                 timeout=self.timeout,
-                headers={'User-Agent': f'trd-{version}'})
+                headers={'User-Agent': f'trd-{VERSION}'})
         except requests.Timeout:
             raise TzKTApiError('Request timeout')
         except requests.ConnectionError:
