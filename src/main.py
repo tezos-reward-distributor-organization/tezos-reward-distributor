@@ -37,7 +37,7 @@ def main(args):
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
     publish_stats = not args.do_not_publish_stats
-    loggin.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information."
+    logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information."
                 .format("will" if publish_stats else "will not"))
 
     # 1- find where configuration is
@@ -162,11 +162,9 @@ def main(args):
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider_factory=provider_factory,
-                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url)
-    if RunMode(args.run_mode) == RunMode.RETRY_FAILED:
-        p.retry_failed_payments(args.retry_injected)
-    else:
-        p.start()
+                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url,
+                        retry_injected = args.retry_injected)
+    p.start()
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
