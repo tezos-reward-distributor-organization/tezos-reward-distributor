@@ -163,7 +163,7 @@ def main(args):
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider_factory=provider_factory,
                         node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url,
-                        retry_injected = args.retry_injected)
+                        retry_injected=args.retry_injected)
     p.start()
 
     for i in range(NB_CONSUMERS):
