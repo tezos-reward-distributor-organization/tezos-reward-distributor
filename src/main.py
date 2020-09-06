@@ -37,7 +37,7 @@ def main(args):
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
     publish_stats = not args.do_not_publish_stats
-    loggin.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information."
+    logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information."
                 .format("will" if publish_stats else "will not"))
 
     # 1- find where configuration is
