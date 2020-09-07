@@ -23,7 +23,7 @@ The [terms and conditions](https://tzstats.com/terms) of tzstats note that a lic
 
 ### TzKt
 
-With [#232](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232) the backend of the Tezos Reward Distributor can be optionally [Powered by TzKT API](https:/tzkt.io/) under the following terms:
+With [#232](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232) the backend of the Tezos Reward Distributor can be optionally [Powered by TzKT API](https://tzkt.io/) under the following terms:
 
 > TzKT API is free for everyone and for both commercial and non-commercial usage.
 >
