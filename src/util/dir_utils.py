@@ -13,13 +13,15 @@ def payment_report_file_path(pymnt_root, pymnt_cycle, nb_failed):
 
 def get_successful_payments_dir(pymnt_root, create=None):
     root_dir = os.path.abspath(os.path.join(pymnt_root, PAYMENT_DONE_DIR))
-    if create and not os.path.isdir(root_dir): os.makedirs(root_dir)
+    if create and not os.path.isdir(root_dir):
+        os.makedirs(root_dir)
     return root_dir
 
 
 def get_failed_payments_dir(pymnt_root, create=None):
     root_dir = os.path.abspath(os.path.join(pymnt_root, PAYMENT_FAILED_DIR))
-    if create and not os.path.isdir(root_dir): os.makedirs(root_dir)
+    if create and not os.path.isdir(root_dir):
+        os.makedirs(root_dir)
     return root_dir
 
 
@@ -29,22 +31,24 @@ def get_busy_file(failed_payment_report_file):
 
 def get_payment_root(report_root, create=None):
     root_dir = os.path.abspath(os.path.join(report_root, PAYMENTS_ROOT_DIR))
-    if create and not os.path.isdir(root_dir): os.makedirs(root_dir)
+    if create and not os.path.isdir(root_dir):
+        os.makedirs(root_dir)
     return root_dir
 
 
 def get_calculations_root(report_root, create=None):
     root_dir = os.path.abspath(os.path.join(report_root, CALCULATIONS_ROOT_DIR))
-    if create and not os.path.isdir(root_dir): os.makedirs(root_dir)
+    if create and not os.path.isdir(root_dir):
+        os.makedirs(root_dir)
     return root_dir
 
 
 def get_calculation_report_file(calculations_root, cycle):
-    return os.path.abspath(os.path.join(calculations_root, str(cycle)+".csv"))
+    return os.path.abspath(os.path.join(calculations_root, str(cycle) + ".csv"))
 
 
 def reward_report_file_path(reward_root, pymnt_cycle):
-    return os.path.abspath(os.path.join(reward_root, str(pymnt_cycle) + '.csv'))
+    return os.path.abspath(os.path.join(reward_root, str(pymnt_cycle) + ".csv"))
 
 
 def payment_dir_c(pymnt_root, pymnt_cycle):

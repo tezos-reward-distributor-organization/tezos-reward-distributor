@@ -14,12 +14,12 @@ PKH_LENGHT = 36
 
 class BakingYamlConfParser(YamlConfParser):
     def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, verbose=None,
-                 block_api=None) -> None:
+                 block_api=None, api_base_url=None) -> None:
         super().__init__(yaml_text, verbose)
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
         if block_api is None:
-            block_api = provider_factory.newBlockApi(network_config, node_url)
+            block_api = provider_factory.newBlockApi(network_config, node_url, api_base_url=api_base_url)
         self.block_api = block_api
 
     def parse(self):
@@ -40,7 +40,6 @@ class BakingYamlConfParser(YamlConfParser):
         self.parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
         self.parse_bool(conf_obj, REACTIVATE_ZEROED, None)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_RA_FEE, None)
-        
 
     def set(self, key, value):
         self.conf_obj[key] = value
@@ -157,11 +156,11 @@ class BakingYamlConfParser(YamlConfParser):
         # if reveal information is present, do not ask
         if 'revealed' in addr_obj:
             revealed = addr_obj['revealed']
-        #else:
+        # else:
         #   revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
 
         # payment address needs to be revealed
-        #if not revealed:
+        # if not revealed:
         #   raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
         #                                "Public key is not revealed.\n"
         #                                "Use command 'reveal key for <src>' to reveal your public key. \n"
@@ -252,7 +251,7 @@ class BakingYamlConfParser(YamlConfParser):
     def parse_bool(self, conf_obj, param_name, default):
 
         if param_name not in conf_obj:
-        
+
             # If required param (ie: no default), raise exception if not defined
             if default is None:
                 raise ConfigurationException("Parameter '{}' is not present in config file. Please consult the documentation and add this parameter.".format(param_name))
@@ -261,7 +260,7 @@ class BakingYamlConfParser(YamlConfParser):
                 return
 
         # already a bool value
-        if type(conf_obj[param_name]) == type(False):
+        if isinstance(conf_obj[param_name], bool):
             return
 
         if isinstance(conf_obj[param_name], str) and "true" == conf_obj[param_name].lower():

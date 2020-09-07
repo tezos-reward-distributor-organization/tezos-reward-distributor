@@ -5,8 +5,7 @@ import sys
 import time
 
 from launch_common import print_banner, parse_arguments
-import version
-from Constants import RunMode
+from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from calc.service_fee_calculator import ServiceFeeCalculator
@@ -34,8 +33,12 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("TRD version {} is running in {} mode.".format(version.version,"daemon" if args.background_service else "interactive"))
-    logger.info("Arguments Configuration = {}".format( json.dumps(args.__dict__, indent=1)))
+    logger.info("TRD version {} is running in {} mode.".format(VERSION, "daemon" if args.background_service else "interactive"))
+    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
+
+    publish_stats = not args.do_not_publish_stats
+    logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information."
+                .format("will" if publish_stats else "will not"))
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -73,8 +76,8 @@ def main(args):
                                   args.docker, args.network, args.verbose)
 
     logger.debug("Tezos client path is {}".format(client_path))
-    
-    # 4. get network config     
+
+    # 4. get network config
     config_client_manager = SimpleClientManager(client_path, args.node_addr)
     network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
     network_config = network_config_map[args.network]
@@ -94,7 +97,9 @@ def main(args):
 
         logger.info("Loading baking configuration file {}".format(config_file_path))
 
-        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory, network_config, args.node_addr, verbose=args.verbose)
+        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path),
+                                      wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
+                                      verbose=args.verbose, api_base_url=args.api_base_url)
         parser.parse()
         parser.validate()
         parser.process()
@@ -156,10 +161,10 @@ def main(args):
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                        node_url=args.node_addr, provider_factory=provider_factory, node_url_public=args.node_addr_public, verbose=args.verbose)
+                        node_url=args.node_addr, provider_factory=provider_factory,
+                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url)
     p.start()
 
-    publish_stats = not args.do_not_publish_stats
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
@@ -167,14 +172,15 @@ def main(args):
                             reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
-                            network_config=network_config,publish_stats=publish_stats)
+                            network_config=network_config, publish_stats=publish_stats)
         time.sleep(1)
         c.start()
 
         logger.info("Application start completed")
         logger.info(LINER)
     try:
-        while life_cycle.is_running(): time.sleep(10)
+        while life_cycle.is_running():
+            time.sleep(10)
     except KeyboardInterrupt:
         logger.info("Interrupted.")
         life_cycle.stop()
@@ -207,8 +213,8 @@ def get_latest_report_file(payments_root):
 
 if __name__ == '__main__':
 
-    if not sys.version_info.major >= 3 and sys.version_info.minor>=6:
-        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major,sys.version_info.minor ))
+    if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
+        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     args = parse_arguments()
 

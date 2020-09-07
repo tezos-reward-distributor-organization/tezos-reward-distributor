@@ -2,20 +2,33 @@
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.
 
+PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR [STATISTICS POLICY](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/docs/statistics.rst) FOR MORE INFORMATION.
+
 ## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master)](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor)
 
 TRD is a software for distributing staking rewards of delegators introduced in detail in this [Medium article](https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7). This is not a script but a full scale application which can continuously run in the background as a Linux service. It can track cycles and make payments. However it does not have to be used as a service, but it can also be used interactively.
 The documentation can be found [here](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/).
 
-TRD supports complex payments, pays in batches, provides two back ends for calculations: rpc and [tzstats](https://tzstats.com/). Developed and tested extensively by the community.
+TRD supports complex payments, pays in batches, and provides three back ends for calculations: Tezos RPC, [tzstats API](https://tzstats.com/) and [TzKT API](https://api.tzkt.io/). TRD is developed and tested extensively by the community.
 
-**Important note:**
+**Provider notes:**
+
+### TZStats
 
 The [terms and conditions](https://tzstats.com/terms) of tzstats note that a license is needed for the commercial use of the API!
 
 > If you wish to use the Data in a manner that is primarily intended for or directed towards commercial advantage or monetary compensation (such use, “Commercial Use”), KIDTSUNAMI requires that you enter into a separate commercial license agreement. Entering into a separate commercial license allows us to protect KIDTSUNAMI’s investment in the Data and to maintain the integrity of the Data.
 >
 > Please contact us at license@kidtsunami.com for more information about Commercial Uses of our Data.
+
+### TzKt
+
+With the merge of [#232](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232) the backend of the Tezos Reward Distributor is additionally [Powered by TzKT API](https:/tzkt.io/) under the following terms:
+
+> TzKT API is free for everyone and for both commercial and non-commercial usage.
+>
+> If your application or service uses the TzKT API in any forms: directly on frontend or indirectly on backend, you should mention that fact on your website or
+> application by placing the label "Powered by TzKT API" with a direct link to tzkt.io.
 
 ## Requirements and Setup
 
@@ -29,7 +42,7 @@ sudo apt-get -y install python3-pip
 Download the application repository using git clone:
 
 ```bash
-git clone https://github.com/habanoz/tezos-reward-distributor
+git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 ```
 
 To install required modules, use pip with requirements.txt provided.

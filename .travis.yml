@@ -17,6 +17,9 @@ install:
     - pip install sphinx_rtd_theme
     - pip install sphinxcontrib.spelling
     - pip install --upgrade recommonmark
+    # Requirements to run tests
+    - pip install pycodestyle
+    - pip install parameterized
 
 # Addons necessary for documentation.
 addons:
@@ -27,7 +30,8 @@ addons:
 # command to run tests
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
 script: 
-    - python3 -m unittest discover -s src
+    - pycodestyle src/
+    - python3 -m unittest discover -s src --verbose
     #- make spelling
     #- make linkcheck
     - cd docs

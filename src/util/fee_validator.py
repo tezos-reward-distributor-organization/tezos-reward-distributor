@@ -5,12 +5,12 @@ class FeeValidator:
         self.specifier = specifier
 
     def validate(self, fee):
-        failed=False
+        failed = False
         try:
             if not 0 <= fee <= 100:
-                failed=True
+                failed = True
         except TypeError:
-            failed=True
+            failed = True
 
         if failed:
             raise Exception("Fee for {} cannot be {}. Valid range is [0-100]".format(self.specifier, fee))

@@ -1,8 +1,6 @@
 from calc.calculate_phase_base import CalculatePhaseBase
 from model.reward_log import RewardLog, TYPE_MERGED
 
-MUTEZ = 1e+6
-
 
 class CalculatePhase6(CalculatePhaseBase):
     """

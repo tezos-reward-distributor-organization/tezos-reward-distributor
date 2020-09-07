@@ -9,6 +9,7 @@ REGULAR_CLIENT_EXE = "tezos-client"
 
 logger = main_logger
 
+
 def get_client_path(search_paths, docker=None, network_name=None, verbose=None):
     client_exe = REGULAR_CLIENT_EXE
     if docker:
@@ -22,6 +23,7 @@ def get_client_path(search_paths, docker=None, network_name=None, verbose=None):
         logger.debug("Not found {}".format(client_path))
 
     raise Exception("Client executable not found. Review --executable_dirs, --docker and --network parameters")
+
 
 def check_response(response):
     if "Error:" in response or "error" in response or "invalid" in response or "Unexpected server answer" in response:
@@ -44,6 +46,7 @@ def clear_terminal_chars(content):
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
     result = ansi_escape.sub('', content)
     return result
+
 
 def not_indicator_line(line):
     return "Warning" not in line[0:15] and "Disclaimer" not in line[0:15]
