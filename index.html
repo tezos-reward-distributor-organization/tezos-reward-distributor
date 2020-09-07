@@ -167,6 +167,9 @@ TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN
 DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO
 RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH
 THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.</p>
+<p>PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS
+STATISTICS. PLEASE READ OUR STATISTICS <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/docs/statistics.rst">POLICY</a> FOR MORE
+INFORMATION.</p>
 <div class="section" id="what-is-tezos-reward-distributor">
 <h2>What is Tezos Reward Distributor?<a class="headerlink" href="#what-is-tezos-reward-distributor" title="Permalink to this headline">¶</a></h2>
 <p>TRD is a software for distributing staking rewards of
@@ -176,11 +179,14 @@ can continuously run in the background as a Linux service.
 It can track cycles and make payments. However it does
 not have to be used as a service, but it can also be
 used interactively.</p>
-<p>TRD supports complex payments, pays in batches, provides
-two back ends for calculations: rpc and <a class="reference external" href="https://tzstats.com/">tzstats</a>.
-Developed and tested extensively by the community and the
-source code which can be found in the following <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor">Github</a> repo.</p>
-<p><strong>Important note:</strong></p>
+<p>TRD supports complex payments, pays in batches, and provides
+three back ends for calculations: Tezos RPC, <a class="reference external" href="https://tzstats.com/">tzstats</a> API and
+<a class="reference external" href="https://api.tzkt.io/">TzKT</a> API. TRD is developed and tested extensively by the community
+and the source code which can be found in the following <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor">Github</a> repo.</p>
+<p><strong>Provider notes:</strong></p>
+</div>
+<div class="section" id="tzstats">
+<h2>TZStats<a class="headerlink" href="#tzstats" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference external" href="https://tzstats.com/terms">terms</a> of tzstats note that a license is needed for
 the commercial use of the API!</p>
 <p>&gt; If you wish to use the Data in a manner that is primarily
@@ -194,6 +200,20 @@ the commercial use of the API!</p>
 &gt;
 &gt; Please contact us at <a class="reference external" href="mailto:license&#37;&#52;&#48;kidtsunami&#46;com">license<span>&#64;</span>kidtsunami<span>&#46;</span>com</a> for more
 &gt; information about Commercial Uses of our Data.</p>
+</div>
+<div class="section" id="tzkt">
+<h2>TzKT<a class="headerlink" href="#tzkt" title="Permalink to this headline">¶</a></h2>
+<p>With #232_ the backend of the Tezos Reward Distributor
+can be optionally <strong>Powered by TzKT API_</strong> under the
+following terms:</p>
+<p>&gt; TzKT API is free for everyone and for both commercial
+&gt; and non-commercial usage.
+&gt;
+&gt; If your application or service uses the TzKT API in
+&gt; any forms: directly on frontend or indirectly on
+&gt; backend, you should mention that fact on your website or
+&gt; application by placing the label “Powered by TzKT API”
+&gt; with a direct link to tzkt.io.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
 <ul>
