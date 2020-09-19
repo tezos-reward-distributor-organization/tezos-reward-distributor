@@ -178,7 +178,7 @@ def main(args):
         time.sleep(1)
         c.start()
         p.exit()
-        #c.join()
+        c.join()
     else:
         p.start()
         time.sleep(1)

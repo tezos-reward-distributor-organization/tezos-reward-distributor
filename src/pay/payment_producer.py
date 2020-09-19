@@ -72,7 +72,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.payments_queue.put(PaymentBatch(self, 0, [self.create_exit_payment()]))
             self.exiting = True
 
-            if self.life_cycle.is_running() and threading.current_thread() is not threading.main_thread():
+            if self.life_cycle.is_running():
                 _thread.interrupt_main()
 
             if self.retry_fail_event:
