@@ -28,7 +28,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
                  dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', verbose=False,
-                 api_base_url=None, retry_injected=False):
+                 api_base_url=None):
         super(PaymentProducer, self).__init__()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
@@ -58,7 +58,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.payments_queue = payments_queue
         self.life_cycle = life_cycle
         self.dry_run = dry_run
-        self.retry_injected = retry_injected
 
         self.payment_calc = PhasedPaymentCalculator(self.founders_map, self.owners_map, self.fee_calc,
                                                     self.min_delegation_amt_in_mutez, self.rules_model)
@@ -99,86 +98,94 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         pass
 
     def run(self):
-        if self.run_mode == RunMode.RETRY_FAILED:
-            self.retry_failed_payments(self.retry_injected)
-            time.sleep(10)
-        else:
-            # call first retry if not in onetime mode.
-            # retry_failed script is more suitable for one time cases.
-            if not self.run_mode == RunMode.ONETIME:
-                self.retry_failed_payments()
+        # call first retry if not in onetime mode.
+        # retry_failed script is more suitable for one time cases.
+        if not self.run_mode == RunMode.ONETIME:
+            self.retry_failed_payments()
 
-            # first retry is done by producer thread, start retry thread for further retries
-            if self.run_mode == RunMode.FOREVER:
-                self.retry_fail_thread.start()
+        # first retry is done by producer thread, start retry thread for further retries
+        if self.run_mode == RunMode.FOREVER:
+            self.retry_fail_thread.start()
 
-            current_cycle = self.block_api.get_current_cycle()
-            pymnt_cycle = self.initial_payment_cycle
+        current_cycle = self.block_api.get_current_cycle()
+        pymnt_cycle = self.initial_payment_cycle
 
-            # if non-positive initial_payment_cycle, set initial_payment_cycle to
-            # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
-            if self.initial_payment_cycle <= 0:
-                pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
-                logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
+        # if non-positive initial_payment_cycle, set initial_payment_cycle to
+        # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
+        if self.initial_payment_cycle <= 0:
+            pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
+            logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
 
-            while not self.exiting and self.life_cycle.is_running():
+        while not self.exiting and self.life_cycle.is_running():
 
-                # take a breath
-                time.sleep(5)
+            # take a breath
+            time.sleep(5)
 
-                try:
-                    current_level = self.block_api.get_current_level(verbose=self.verbose)
-                    current_cycle = self.block_api.level_to_cycle(current_level)
-                    level_in_cycle = self.block_api.level_in_cycle(current_level)
+            try:
+                current_level = self.block_api.get_current_level(verbose=self.verbose)
+                current_cycle = self.block_api.level_to_cycle(current_level)
+                level_in_cycle = self.block_api.level_in_cycle(current_level)
 
-                    # create reports dir
-                    if self.calculations_dir and not os.path.exists(self.calculations_dir):
-                        os.makedirs(self.calculations_dir)
+                # create reports dir
+                if self.calculations_dir and not os.path.exists(self.calculations_dir):
+                    os.makedirs(self.calculations_dir)
 
-                    logger.debug("Checking for pending payments : payment_cycle <= "
-                                 "current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
-                    logger.info("Checking for pending payments : checking {} <= {} - ({} + 1) - {}".
-                                format(pymnt_cycle, current_cycle, self.nw_config['NB_FREEZE_CYCLE'],
-                                       self.release_override))
+                logger.debug("Checking for pending payments : payment_cycle <= "
+                             "current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
+                logger.info("Checking for pending payments : checking {} <= {} - ({} + 1) - {}".
+                            format(pymnt_cycle, current_cycle, self.nw_config['NB_FREEZE_CYCLE'],
+                                   self.release_override))
 
-                    # payments should not pass beyond last released reward cycle
-                    if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
-                        if not self.payments_queue.full():
+                # payments should not pass beyond last released reward cycle
+                if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
+                    if not self.payments_queue.full():
 
-                            # Paying upcoming cycles (-R in [-6, -11] )
-                            if pymnt_cycle >= current_cycle:
-                                if self.reward_api.name == 'tzstats':
-                                    logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation given by tzstats.")
-                                    result = self.try_to_pay(pymnt_cycle, expected_reward=True)
-                                else:
-                                    logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag.")
-                                    self.exit()
-                                    break
-                            # Paying cycles with frozen rewards (-R in [-1, -5] )
-                            elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
-                                if self.reward_api.name == 'tzstats':
-                                    logger.warn("Please note that you are doing payouts for frozen rewards!!!")
-                                    result = self.try_to_pay(pymnt_cycle)
-                                else:
-                                    logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag or wait until the rewards are unfrozen.")
-                                    self.exit()
-                                    break
-                            # If user wants to offset payments within a cycle, check here
-                            elif level_in_cycle < self.payment_offset:
-                                wait_offset_blocks = self.payment_offset - level_in_cycle
-                                logger.info("Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks."
-                                            .format(level_in_cycle, self.payment_offset, wait_offset_blocks))
-                                self.wait_for_blocks(wait_offset_blocks)
-                                continue  # Break/Repeat loop
-
+                        # Paying upcoming cycles (-R in [-6, -11] )
+                        if pymnt_cycle >= current_cycle:
+                            if self.reward_api.name == 'tzstats':
+                                logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation given by tzstats.")
+                                result = self.try_to_pay(pymnt_cycle, expected_reward=True)
+                            else:
+                                logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag.")
+                                self.exit()
+                                break
+                        # Paying cycles with frozen rewards (-R in [-1, -5] )
+                        elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
+                            if self.reward_api.name == 'tzstats':
+                                logger.warn("Please note that you are doing payouts for frozen rewards!!!")
+                                result = self.try_to_pay(pymnt_cycle)
+                            else:
+                                logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag or wait until the rewards are unfrozen.")
+                                self.exit()
+                                break
+                        # If user wants to offset payments within a cycle, check here
+                        elif level_in_cycle < self.payment_offset:
+                            wait_offset_blocks = self.payment_offset - level_in_cycle
+                            logger.info("Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks."
+                                        .format(level_in_cycle, self.payment_offset, wait_offset_blocks))
+                            self.wait_for_blocks(wait_offset_blocks)
+                            continue  # Break/Repeat loop
                         else:
-                            logger.debug("Wait a few minutes, queue is full")
-                            # wait a few minutes to let payments done
-                            time.sleep(60 * 3)
+                            result = self.try_to_pay(pymnt_cycle)
 
-                    # end of payment cycle check
+                        if result:
+                            # single run is done. Do not continue.
+                            if self.run_mode == RunMode.ONETIME:
+                                logger.info("Run mode ONETIME satisfied. Terminating ...")
+                                self.exit()
+                                break
+                            else:
+                                pymnt_cycle = pymnt_cycle + 1
+
+                    # end of queue size check
                     else:
-                        logger.info("No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, current_cycle))
+                        logger.debug("Wait a few minutes, queue is full")
+                        # wait a few minutes to let payments finish
+                        time.sleep(60 * 3)
+
+                # end of payment cycle check
+                else:
+                    logger.info("No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, current_cycle))
 
                     # pending payments done. Do not wait any more.
                     if self.run_mode == RunMode.PENDING:
@@ -199,11 +206,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # wait until current cycle ends
                     self.wait_for_blocks(nb_blocks_remaining)
 
-                except ApiProviderException:
-                    logger.debug("{} API error at reward loop".format(self.reward_api.name), exc_info=True)
-                    logger.info("{} API error at reward loop, will try again.".format(self.reward_api.name))
-                except Exception:
-                    logger.error("Error at payment producer loop", exc_info=True)
+            except ApiProviderException:
+                logger.debug("{} API error at reward loop".format(self.reward_api.name), exc_info=True)
+                logger.info("{} API error at reward loop, will try again.".format(self.reward_api.name))
+            except Exception:
+                logger.error("Error at payment producer loop", exc_info=True)
 
         # end of endless loop
         logger.info("Producer returning ...")
@@ -353,7 +360,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             payment_reports_failed = sorted(payment_reports_failed, key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
             logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
         else:
-            logger.info("No failed payment files found under directory '{}'".format(failed_payments_dir))
+            logger.debug("No failed payment files found under directory '{}'".format(failed_payments_dir))
 
         # 2- for each csv file with name csv_report.csv
         for payment_failed_report_file in payment_reports_failed:
