@@ -184,7 +184,6 @@ def main(args):
         time.sleep(1)
         c.start()
 
-
         logger.info("Application start completed")
         logger.info(LINER)
     try:
