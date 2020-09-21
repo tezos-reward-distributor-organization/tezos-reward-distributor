@@ -63,13 +63,21 @@ class EmailManager():
             return
 
         title = "Payment Report for Cycle {}".format(cycle)
-        if nb_failed > 0:
-            title + ", {} failed".format(nb_failed)
-        if nb_unknown > 0:
-            title + ", {} final state not known".format(nb_unknown)
 
-        self.email_sender.send(title, "Payment for cycle {} is completed. Report file is attached. "
-                                      "The current payout account balance is expected to last for the next {} cycle(s)!".format(cycle, number_future_payable_cycles),
+        status = ''
+        if nb_failed == 0 and nb_unknown == 0:
+            status = status + 'completed successfully'
+        else:
+            status = status + 'attempted'
+            if nb_failed > 0:
+                status = status + ", {} failed".format(nb_failed)
+            if nb_unknown > 0:
+                status = status + ", {} injected but final state not known".format(nb_unknown)
+        title = title + ' ' + status
+
+        self.email_sender.send(title, "Payment for cycle {} is {}. Report file is attached. "
+                                      "The current payout account balance is expected to last for the next {} cycle(s)!"
+                                      .format(cycle, status, number_future_payable_cycles),
                                self.default["recipients"], [payments_file])
 
         logger.debug("Report email sent for cycle {}.".format(cycle))
