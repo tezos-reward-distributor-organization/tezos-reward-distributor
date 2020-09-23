@@ -1,3 +1,4 @@
+import re
 import json
 
 from log_config import main_logger
@@ -32,6 +33,18 @@ def parse_json_response(client_response, verbose=None):
     response_str = extract_json_part(client_response, verbose)
 
     if response_str is None:
+        # Unable to parse JSON; look for some common error messages
+
+        # Catch 'Counter 823645 already used for contract' error
+        counter_used_re = re.compile(r"Counter (\d+) already used.*expected (\d+)")
+        counter_match = counter_used_re.match(client_response)
+        if counter_match:
+            raise Exception("Transaction counter mismatch ({:d}/{:d})"
+                            .format(counter_match.group(1), counter_match.group(2)))
+
+        # TODO Add more as discovered
+
+        # else, generic error on parsing response
         raise Exception("Unknown client response format")
 
     return json.loads(response_str)
