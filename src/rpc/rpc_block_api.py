@@ -1,5 +1,4 @@
 import requests
-
 from api.block_api import BlockApi
 from log_config import main_logger
 
