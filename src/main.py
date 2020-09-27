@@ -3,7 +3,6 @@ import os
 import queue
 import sys
 import time
-import threading
 
 from launch_common import print_banner, parse_arguments
 from Constants import RunMode, VERSION
