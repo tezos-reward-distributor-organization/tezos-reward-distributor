@@ -29,7 +29,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
                  dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', verbose=False,
-                 api_base_url=None):
+                 api_base_url=None, retry_injected=False):
         super(PaymentProducer, self).__init__()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
@@ -67,6 +67,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.retry_fail_thread = threading.Thread(target=self.retry_fail_run, name=self.name + "_retry_fail")
         self.retry_fail_event = threading.Event()
+        self.retry_injected = retry_injected
 
         logger.info('Producer "{}" started'.format(self.name))
 
@@ -105,6 +106,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         # retry_failed script is more suitable for one time cases.
         if not self.run_mode == RunMode.ONETIME:
             self.retry_failed_payments()
+            if self.run_mode == RunMode.RETRY_FAILED:
+                time.sleep(5)
+                self.exit()
+                return
 
         # first retry is done by producer thread, start retry thread for further retries
         if self.run_mode == RunMode.FOREVER:
@@ -376,7 +381,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     def create_exit_payment():
         return RewardLog.ExitInstance()
 
-    def retry_failed_payments(self, retry_injected=False):
+    def retry_failed_payments(self):
         logger.debug("retry_failed_payments started")
 
         # 1 - list csv files under payments/failed directory
@@ -389,7 +394,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             payment_reports_failed = sorted(payment_reports_failed, key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
             logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
         else:
-            logger.debug("No failed payment files found under directory '{}'".format(failed_payments_dir))
+            logger.info("No failed payment files found under directory '{}'".format(failed_payments_dir))
 
         # 2- for each csv file with name csv_report.csv
         for payment_failed_report_file in payment_reports_failed:
@@ -426,7 +431,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             logger.info("Summary {} paid, {} done, {} injected, {} fail".format(nb_paid, nb_done, nb_injected, nb_failed))
 
-            if retry_injected:
+            if self.retry_injected:
                 nb_converted = 0
                 for pl in batch:
                     if pl.paid == PaymentStatus.INJECTED:
@@ -451,6 +456,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # mark the files as in use. we do not want it to be read again
             # BUSY file will be removed, if successful payment is done
             os.rename(payment_failed_report_file, payment_failed_report_file + BUSY_FILE)
+
+        return
 
     def notify_retry_fail_thread(self):
         self.retry_fail_event.set()

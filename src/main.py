@@ -3,6 +3,7 @@ import os
 import queue
 import sys
 import time
+import threading
 
 from launch_common import print_banner, parse_arguments
 from Constants import RunMode, VERSION
@@ -162,7 +163,9 @@ def main(args):
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider_factory=provider_factory,
-                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url)
+                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url,
+                        retry_injected=args.retry_injected)
+    p.start()
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
@@ -173,14 +176,6 @@ def main(args):
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
                             network_config=network_config, publish_stats=publish_stats)
 
-    if RunMode(args.run_mode) == RunMode.RETRY_FAILED:
-        p.retry_failed_payments(args.retry_injected)
-        time.sleep(1)
-        c.start()
-        p.exit()
-        c.join()
-    else:
-        p.start()
         time.sleep(1)
         c.start()
 
