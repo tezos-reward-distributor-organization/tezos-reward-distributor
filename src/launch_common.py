@@ -47,6 +47,7 @@ def parse_arguments():
     add_argument_stats(parser)
     add_argument_verbose(parser)
     add_argument_api_base_url(parser)
+    add_argument_retry_injected(parser)
     args = parser.parse_args()
 
     #
@@ -85,8 +86,8 @@ def add_argument_mode(parser):
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. "
                              "2: Run all pending payments and exit. 3: Run for one cycle and exit. "
-                             "Suitable to use with -C option.",
-                        default=1, choices=[1, 2, 3], type=int)
+                             "Suitable to use with -C option. 4: Retry failed payments and exit",
+                        default=1, choices=[1, 2, 3, 4], type=int)
 
 
 def add_argument_release_override(parser):
@@ -179,3 +180,7 @@ def add_argument_api_base_url(parser: argparse.ArgumentParser):
     parser.add_argument("-U", "--api-base-url",
                         help="Base API url for non-rpc providers. If not set, public endpoints will be used.",
                         type=str)
+
+
+def add_argument_retry_injected(parser):
+    parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.", action="store_true")
