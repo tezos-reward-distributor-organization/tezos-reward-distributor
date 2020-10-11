@@ -11,6 +11,7 @@ rewards_split_call = '/tables/income?address={}&cycle={}'
 delegators_call = '/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000'
 batch_current_balance_call = '/tables/account?delegate={}&columns=row_id,spendable_balance,address'
 single_current_balance_call = '/tables/account?address={}&columns=row_id,spendable_balance,address'
+snapshot_cycle = '/explorer/cycle/{}'
 
 PREFIX_API = {
     'MAINNET': {'API_URL': 'http://api.tzstats.com'},
@@ -170,6 +171,19 @@ class TzStatsRewardProviderHelper:
         """External helper for fetching current balance of addresses"""
         for rl in reward_logs:
             rl.current_balance = self.__fetch_current_balance(rl.address)
+
+    def get_snapshot_level(self, cycle, verbose=False):
+
+        uri = self.api['API_URL'] + snapshot_cycle.format(cycle)
+
+        resp = requests.get(uri, timeout=5)
+
+        if resp.status_code != 200:
+            # This means something went wrong.
+            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+
+        snapshot_height = resp.json()['snapshot_cycle']['snapshot_height']
+        return snapshot_height
 
     def __fetch_current_balance(self, address, verbose=False):
 

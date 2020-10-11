@@ -46,6 +46,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.reward_api = provider_factory.newRewardApi(
             network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
         self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
+        self.reward_api.dexter_contracts_set = baking_cfg.get_contracts_set()
 
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
@@ -159,20 +160,20 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
-                            if self.reward_api.name == 'tzstats':
+                            if self.reward_api.name == 'tzstats' or self.reward_api.name == 'tzkt':
                                 logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation given by tzstats.")
                                 result = self.try_to_pay(pymnt_cycle, expected_reward=True)
                             else:
-                                logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag.")
+                                logger.error("This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
                                 self.exit()
                                 break
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
                         elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
-                            if self.reward_api.name == 'tzstats':
+                            if self.reward_api.name == 'tzstats' or self.reward_api.name == 'tzkt':
                                 logger.warn("Please note that you are doing payouts for frozen rewards!!!")
                                 result = self.try_to_pay(pymnt_cycle)
                             else:
-                                logger.error("This feature is only possible using tzstats. Please consider changing the provider using the -P flag or wait until the rewards are unfrozen.")
+                                logger.error("This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
                                 self.exit()
                                 break
                         # If user wants to offset payments within a cycle, check here

@@ -5,6 +5,7 @@ import requests
 from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
+from dexter import dexter_utils as dxtz
 
 logger = main_logger
 
@@ -13,6 +14,7 @@ COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
+COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -54,6 +56,10 @@ class RpcRewardApiImpl(RewardApi):
             logger.warn("Please wait until the rewards and fees for cycle {} are unfrozen".format(cycle))
             reward_data["total_rewards"] = 0
 
+        _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
+        for delegator in self.dexter_contracts_set:
+            dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
+
         reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
                                            reward_data["delegators"])
 
@@ -62,6 +68,17 @@ class RpcRewardApiImpl(RewardApi):
         logger.debug("delegators = {}".format(reward_data["delegators"]))
 
         return reward_model
+
+    def get_dexter_balance_map(self, contract_id, snapshot_block):
+        storage = self.get_contract_storage(contract_id, snapshot_block)
+        storage = dxtz.parse_dexter_storage(storage)
+        listLPs = dxtz.getLiquidityProvidersList_tzstats(storage['big_map_id'])
+        balanceMap = {}
+        lqdt_ttl = 0
+        for LP in listLPs:
+            balanceMap[LP] = dxtz.getBalanceFromBigMap_rpc(storage['big_map_id'], listLPs[LP], snapshot_block)
+            lqdt_ttl += balanceMap[LP]
+        return balanceMap
 
     def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
         request_metadata = COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle) + '/metadata'
@@ -124,6 +141,25 @@ class RpcRewardApiImpl(RewardApi):
                 logger.warn("update_current_balances - unexpected error: {}".format(e), exc_info=True)
                 raise e from e
 
+    def get_contract_storage(self, contract_id, block):
+        get_contract_storage_request = COMM_CONTRACT_STORAGE.format(self.node_url, block, contract_id)
+
+        contract_storage_response = None
+
+        while not contract_storage_response:
+            sleep(0.4)  # Be nice to public RPC
+            try:
+                contract_storage_response = self.do_rpc_request(get_contract_storage_request, time_out=5)
+            except requests.exceptions.RequestException as e:
+                # Catch HTTP-related errors and retry
+                logger.debug("Fetching contract storage {} failed, will retry: {}", contract_id, e)
+                sleep(2.0)
+            except Exception as e:
+                # Anything else, raise up
+                raise e from e
+
+        return contract_storage_response
+
     def __get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
@@ -168,7 +204,7 @@ class RpcRewardApiImpl(RewardApi):
 
             # Loop over delegators; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses):
-
+                print("{}/{}\r".format(idx, len(delegators_addresses)))
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
 

@@ -6,6 +6,7 @@ founders_map : {tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889: 0.3, KT1KLQbYFtFZ5mAEnfEMZ
 owners_map : {tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889: 0.3, KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS: 0.7}
 specials_map : {KT19g4JHTd3QYuYcpKFFiwViEzQ5n6ovYx1V: 7.5}
 supporters_set : {KT1SenDhs9rL9fpZV3cLRXFovEBafmGqkki8}
+contracts_set : {}
 min_delegation_amt : 1000
 reactivate_zeroed : True
 delegator_pays_xfer_fee : True

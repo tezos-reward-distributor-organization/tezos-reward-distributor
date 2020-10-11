@@ -7,6 +7,7 @@ FOUNDERS_MAP = 'founders_map'
 BAKING_ADDRESS = 'baking_address'
 SPECIALS_MAP = 'specials_map'
 RULES_MAP = 'rules_map'
+CONTRACTS_SET = 'contracts_set'
 SUPPORTERS_SET = 'supporters_set'
 PAYMENT_ADDRESS = 'payment_address'
 MIN_DELEGATION_AMT = 'min_delegation_amt'
@@ -81,6 +82,9 @@ class BakingConf:
 
     def get_rule_map(self):
         return self.get_attribute(RULES_MAP)
+
+    def get_contracts_set(self):
+        return self.get_attribute(CONTRACTS_SET)
 
     def get_dest_map(self):
         return self.get_attribute(DEST_MAP)

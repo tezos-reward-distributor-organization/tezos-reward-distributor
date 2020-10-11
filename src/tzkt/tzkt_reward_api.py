@@ -6,6 +6,7 @@ from model.reward_provider_model import RewardProviderModel
 from model.reward_log import RewardLog
 from tzkt.tzkt_api import TzKTApi
 
+from dexter import dexter_utils as dxtz
 
 class TzKTRewardApiImpl(RewardApi):
 
@@ -99,6 +100,10 @@ class TzKTRewardApiImpl(RewardApi):
             for item in split['delegators']
             if item['balance'] > 0
         }
+
+        snapshot_level = self.api.get_snapshot_level(cycle)
+        for delegator in self.dexter_contracts_set:
+            dxtz.process_original_delegators_map(delegators_balances, delegator, snapshot_level)
 
         return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances)
 
