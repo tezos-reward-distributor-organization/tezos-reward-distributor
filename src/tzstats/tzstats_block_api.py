@@ -9,7 +9,7 @@ logger = main_logger
 PREFIX_API = {
     'MAINNET': {'HEAD_API_URL': 'https://api.tzstats.com'},
     'ZERONET': {'HEAD_API_URL': 'https://api.zeronet.tzstats.com'},
-    'ALPHANET': {'HEAD_API_URL': 'https://api.babylonnet.tzstats.com'}
+    'ALPHANET': {'HEAD_API_URL': 'https://api.carthagenet.tzstats.com'}
 }
 
 
@@ -23,7 +23,7 @@ class TzStatsBlockApiImpl(BlockApi):
             raise Exception("Unknown network {}".format(nw))
 
     def get_current_level(self, verbose=False):
-        uri = self.head_api['HEAD_API_URL'] + '/explorer/block/head'
+        uri = self.head_api['HEAD_API_URL'] + '/explorer/tip'
 
         if verbose:
             logger.debug("Requesting {}".format(uri))
@@ -34,6 +34,6 @@ class TzStatsBlockApiImpl(BlockApi):
         if verbose:
             logger.debug("Response from tzstats is: {}".format(root))
 
-        current_level = int(root["height"])
+        current_level = int(root["status"]["blocks"])
 
         return current_level
