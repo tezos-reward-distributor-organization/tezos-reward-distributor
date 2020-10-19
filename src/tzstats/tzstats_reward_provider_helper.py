@@ -150,9 +150,9 @@ class TzStatsRewardProviderHelper:
         # Who was not in this result?
         need_curr_balance_fetch = list(set(staked_bal_delegators) - set(curr_bal_delegators))
 
-        def split(l, n):
-            for i in range(0, len(l), n):
-                yield l[i:i + n]
+        def split(input, n):
+            for i in range(0, len(input), n):
+                yield input[i:i + n]
 
         # Fetch individual not in original batch
         if len(need_curr_balance_fetch) > 0:
@@ -185,7 +185,6 @@ class TzStatsRewardProviderHelper:
         param_txt = param_txt[:-1]
         uri = self.api['API_URL'] + single_current_balance_call.format(param_txt)
 
-
         sleep(0.5)  # be nice to tzstats
 
         if verbose:
@@ -207,3 +206,4 @@ class TzStatsRewardProviderHelper:
             ret_list[item[idx_cb_delegator_address]] = int(1e6 * float(item[idx_cb_current_balance]))
 
         return ret_list
+    
