@@ -206,4 +206,3 @@ class TzStatsRewardProviderHelper:
             ret_list[item[idx_cb_delegator_address]] = int(1e6 * float(item[idx_cb_current_balance]))
 
         return ret_list
-    
