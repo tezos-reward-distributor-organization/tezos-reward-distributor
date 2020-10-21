@@ -43,7 +43,7 @@ class EmailSender():
             smtp = smtplib.SMTP(self.host, self.port)
 
         smtp.login(self.user, self.password)
-        smtp.sendmail(self.sender, recipient_string, msg.as_string())
+        smtp.sendmail(self.sender, [x.strip() for x in recipient_string.split(',')], msg.as_string())
         smtp.close()
 
 

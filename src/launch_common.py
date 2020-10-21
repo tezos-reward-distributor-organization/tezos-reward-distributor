@@ -1,5 +1,5 @@
 from time import sleep
-
+from NetworkConfiguration import default_network_config_map
 from log_config import main_logger
 
 import argparse
@@ -47,7 +47,30 @@ def parse_arguments():
     add_argument_stats(parser)
     add_argument_verbose(parser)
     add_argument_api_base_url(parser)
+    add_argument_retry_injected(parser)
     args = parser.parse_args()
+
+    #
+    # Basic validations
+    # You only have access to the parsed values after you parse_args()
+    #
+
+    # Validate offset within known network defaults
+    network = args.network
+    blocks_per_cycle = 0
+    payment_offset = args.payment_offset
+    if network in default_network_config_map:
+        blocks_per_cycle = default_network_config_map[network]['BLOCKS_PER_CYCLE']
+    if not (payment_offset >= 0 and payment_offset < blocks_per_cycle):
+        parser.error("Valid range for payment offset on {:s} is between 0 and {:d}".format(
+                     network, blocks_per_cycle))
+
+    # Verify cycle release override within range
+    release_override = args.release_override
+    if release_override < -11:
+        parser.error("release-override cannot be less than -11")
+
+    # All passed
     return args
 
 
@@ -63,16 +86,8 @@ def add_argument_mode(parser):
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. "
                              "2: Run all pending payments and exit. 3: Run for one cycle and exit. "
-                             "Suitable to use with -C option.",
-                        default=1, choices=[1, 2, 3], type=int)
-
-
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
-
-        setattr(namespace, "release_override", values)
+                             "Suitable to use with -C option. 4: Retry failed payments and exit",
+                        default=1, choices=[1, 2, 3, 4], type=int)
 
 
 def add_argument_release_override(parser):
@@ -80,7 +95,7 @@ def add_argument_release_override(parser):
                         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
                              "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
                              "For future payments give negative values. Valid range is [-11,)",
-                        default=0, type=int, action=ReleaseOverrideAction)
+                        default=0, type=int)
 
 
 def add_argument_payment_offset(parser):
@@ -165,3 +180,7 @@ def add_argument_api_base_url(parser: argparse.ArgumentParser):
     parser.add_argument("-U", "--api-base-url",
                         help="Base API url for non-rpc providers. If not set, public endpoints will be used.",
                         type=str)
+
+
+def add_argument_retry_injected(parser):
+    parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.", action="store_true")

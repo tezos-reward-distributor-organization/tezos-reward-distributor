@@ -5,8 +5,7 @@ import sys
 import time
 
 from launch_common import print_banner, parse_arguments
-import version
-from Constants import RunMode
+from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from calc.service_fee_calculator import ServiceFeeCalculator
@@ -34,8 +33,12 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("TRD version {} is running in {} mode.".format(version.version, "daemon" if args.background_service else "interactive"))
+    logger.info("TRD version {} is running in {} mode.".format(VERSION, "daemon" if args.background_service else "interactive"))
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
+
+    publish_stats = not args.do_not_publish_stats
+    logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information."
+                .format("will" if publish_stats else "will not"))
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -159,10 +162,10 @@ def main(args):
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider_factory=provider_factory,
-                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url)
+                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url,
+                        retry_injected=args.retry_injected)
     p.start()
 
-    publish_stats = not args.do_not_publish_stats
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
@@ -171,6 +174,7 @@ def main(args):
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
                             network_config=network_config, publish_stats=publish_stats)
+
         time.sleep(1)
         c.start()
 
