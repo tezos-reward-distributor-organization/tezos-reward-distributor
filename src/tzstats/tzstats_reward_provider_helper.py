@@ -176,7 +176,7 @@ class TzStatsRewardProviderHelper:
     def update_current_balances(self, reward_logs):
         """External helper for fetching current balance of addresses"""
         for rl in reward_logs:
-            rl.current_balance = self.__fetch_current_balance(rl.address)
+            rl.current_balance = self.__fetch_current_balance([rl.address])[rl.address]
 
     def __fetch_current_balance(self, address_list, verbose=False):
         param_txt = ''
