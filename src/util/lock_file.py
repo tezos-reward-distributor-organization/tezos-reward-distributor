@@ -1,4 +1,6 @@
-import os, sys
+import os
+import sys
+
 
 class LockFile:
     def __init__(self):
