@@ -207,9 +207,15 @@ def get_baking_configuration_file(config_dir):
 def get_latest_report_file(payments_root):
     recent = None
     if get_successful_payments_dir(payments_root):
-        files = sorted([os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))],
-                       key=lambda x: int(x))
-        recent = files[-1] if len(files) > 0 else None
+        files = [os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))]
+        paid_cycles = []
+        for x in files:
+            try:
+                paid_cycles.append(int(x))
+            except:
+                pass
+        paid_cycles = sorted(paid_cycles)
+        recent = paid_cycles[-1] if len(paid_cycles) > 0 else None
     return recent
 
 
