@@ -212,7 +212,7 @@ def get_latest_report_file(payments_root):
         for x in files:
             try:
                 paid_cycles.append(int(x))
-            except IndexError:
+            except Exception:
                 pass
         paid_cycles = sorted(paid_cycles)
         recent = paid_cycles[-1] if len(paid_cycles) > 0 else None
