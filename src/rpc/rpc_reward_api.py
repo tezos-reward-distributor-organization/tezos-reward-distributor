@@ -5,7 +5,7 @@ import requests
 from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
-from dexter import dexter_utils as dxtz
+from Dexter import dexter_utils as dxtz
 
 logger = main_logger
 

@@ -5,7 +5,7 @@ from model.reward_provider_model import RewardProviderModel
 from tzstats.tzstats_reward_provider_helper import TzStatsRewardProviderHelper
 
 logger = main_logger
-from dexter import dexter_utils as dxtz
+from Dexter import dexter_utils as dxtz
 
 
 class TzStatsRewardApiImpl(RewardApi):

@@ -6,7 +6,7 @@ from model.reward_provider_model import RewardProviderModel
 from model.reward_log import RewardLog
 from tzkt.tzkt_api import TzKTApi
 
-from dexter import dexter_utils as dxtz
+from Dexter import dexter_utils as dxtz
 
 class TzKTRewardApiImpl(RewardApi):
 

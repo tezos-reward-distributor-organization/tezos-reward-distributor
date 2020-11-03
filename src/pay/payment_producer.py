@@ -324,7 +324,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         try:
             boot_time = self.wllt_clnt_mngr.get_bootstrapped()
             utc_time = datetime.utcnow()
-            if (boot_time + timedelta(minutes=2)) < utc_time:
+            if (boot_time + timedelta(minutes=200)) < utc_time:
                 logger.info("Current time is '{}', latest block of local node is '{}'."
                             .format(utc_time, boot_time))
                 return False
