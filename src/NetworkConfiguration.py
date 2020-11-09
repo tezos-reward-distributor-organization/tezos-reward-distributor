@@ -1,5 +1,4 @@
 from log_config import main_logger
-from util.rpc_utils import parse_json_response
 import requests
 
 logger = main_logger
@@ -14,18 +13,17 @@ default_network_config_map = {
 }
 
 CONSTANTS_PATH = "/chains/main/blocks/head/context/constants"
-CONSTANTS_RPC = "rpc get " + CONSTANTS_PATH
 
 PUBLIC_NODE_BASE = "https://{}-tezos.giganode.io"
 PUBLIC_NODE_RPC = PUBLIC_NODE_BASE + CONSTANTS_PATH
 PUBLIC_NODE_PREFIX = {"MAINNET": "mainnet", "ALPHANET": "testnet", "ZERONET": "labnet"}
 
 
-def init_network_config(network_name, config_client_manager, node_addr):
+def init_network_config(network_name, config_client_manager):
     network_config_map = {}
     node_addr = config_client_manager.get_node_addr()
     try:
-        network_config_map[network_name] = get_network_config_from_local_node(config_client_manager, node_addr)
+        network_config_map[network_name] = get_network_config_from_local_node(config_client_manager)
         network_config_map[network_name]['NAME'] = network_name
         logger.debug("Network configuration constants successfully loaded from local node ({}).".format(node_addr))
         return network_config_map
@@ -49,9 +47,10 @@ def is_mainnet(nw_name):
     return nw_name == 'MAINNET'
 
 
-def get_network_config_from_local_node(config_client_manager, node_addr):
-    _, response_constants = config_client_manager.send_request(CONSTANTS_RPC)
-    constants = parse_json_response(response_constants)
+def get_network_config_from_local_node(config_client_manager):
+    url = config_client_manager.get_node_url() + CONSTANTS_PATH
+    response_constants = requests.get(url, timeout=5)
+    constants = response_constants.json()
     network_config_map = parse_constants(constants)
     return network_config_map
 

@@ -39,6 +39,27 @@ class SimpleClientManager:
         return "{}://{}:{}".format(
                "https" if self.tls_on else "http", self.node_hostname, self.node_port)
 
+    def request_url(self, cmd, verbose_override=None, timeout=None):
+        url = self.get_node_url() + cmd
+        response = requests.get(url, timeout=timeout)
+        if not (response.status_code == 200):
+            logger.debug("Error, request ->{}<-,".format(url))
+            logger.debug("---")
+            logger.debug("Error, response ->{}<-".format(response.text))
+            return response.status_code, ""
+        return response.status_code, response.json()
+
+    def request_url_post(self, cmd, json_params, verbose_override=None, timeout=None):
+        url = self.get_node_url() + cmd
+        headers = {'content-type': "application/json", 'cache-control': "no-cache"}
+        response = requests.request("POST", url, data=json_params, headers=headers)
+        if not (response.status_code == 200):
+            logger.debug("Error, request ->{}<-, params ->{}<-,".format(url, json_params))
+            logger.debug("---")
+            logger.debug("Error, response ->{}<-".format(response.text))
+            return response.status_code, ""
+        return response.status_code, response.json()
+
     def send_request(self, cmd, verbose_override=None, timeout=None):
         # Build command with flags
         if self.tls_on:
