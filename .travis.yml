@@ -20,6 +20,7 @@ install:
     # Requirements to run tests
     - pip install pycodestyle
     - pip install parameterized
+    - pip install parse
 
 # Addons necessary for documentation.
 addons:
