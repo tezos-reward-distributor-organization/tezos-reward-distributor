@@ -35,7 +35,6 @@ BUF_SIZE = 50
 payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
 
-init()
 life_cycle = ProcessLifeCycle()
 
 
