@@ -89,6 +89,12 @@ Follow this outline to generate the API tokens and secrets for the plugin:
 	* Under 'Authentication Tokens', generate 'Access Token & Secret'
 	* You can ignore 'Bearer Token'
 
+You must also install an additional Python library, [https://github.com/tweepy/tweepy](tweepy)
+
+```
+pip3 install -u tweepy
+```
+
 ### Example Config
 
 **NOTE**: All 4 pieces of keys and tokens are required.
