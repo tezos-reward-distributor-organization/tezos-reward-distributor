@@ -9,8 +9,9 @@ logger = main_logger
 
 rewards_split_call = '/tables/income?address={}&cycle={}'
 delegators_call = '/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000'
-batch_current_balance_call = '/tables/account?delegate={}&columns=row_id,spendable_balance,address'
-single_current_balance_call = '/tables/account?address={}&columns=row_id,spendable_balance,address'
+
+batch_current_balance_call = '/tables/account?delegate={}&columns=row_id,spendable_balance,address&limit=50000'
+single_current_balance_call = '/tables/account?address.in={}&columns=row_id,spendable_balance,address'
 snapshot_cycle = '/explorer/cycle/{}'
 
 PREFIX_API = {
@@ -151,11 +152,18 @@ class TzStatsRewardProviderHelper:
         # Who was not in this result?
         need_curr_balance_fetch = list(set(staked_bal_delegators) - set(curr_bal_delegators))
 
+        def split(input, n):
+            for i in range(0, len(input), n):
+                yield input[i:i + n]
+
         # Fetch individual not in original batch
         if len(need_curr_balance_fetch) > 0:
-            for d in need_curr_balance_fetch:
-                root["delegators_balances"][d]["current_balance"] = self.__fetch_current_balance(d, verbose)
-                curr_bal_delegators.append(d)
+            split_addresses = split(need_curr_balance_fetch, 50)
+            for list_address in split_addresses:
+                list_curr_balances = self.__fetch_current_balance(list_address, verbose)
+                for d in list_address:
+                    root["delegators_balances"][d]["current_balance"] = list_curr_balances[d]
+                    curr_bal_delegators.append(d)
 
         # All done fetching balances.
         # Sanity check.
@@ -170,7 +178,7 @@ class TzStatsRewardProviderHelper:
     def update_current_balances(self, reward_logs):
         """External helper for fetching current balance of addresses"""
         for rl in reward_logs:
-            rl.current_balance = self.__fetch_current_balance(rl.address)
+            rl.current_balance = self.__fetch_current_balance([rl.address])[rl.address]
 
     def get_snapshot_level(self, cycle, verbose=False):
 
@@ -185,9 +193,12 @@ class TzStatsRewardProviderHelper:
         snapshot_height = resp.json()['snapshot_cycle']['snapshot_height']
         return snapshot_height
 
-    def __fetch_current_balance(self, address, verbose=False):
-
-        uri = self.api['API_URL'] + single_current_balance_call.format(address)
+    def __fetch_current_balance(self, address_list, verbose=False):
+        param_txt = ''
+        for address in address_list:
+            param_txt += address + ','
+        param_txt = param_txt[:-1]
+        uri = self.api['API_URL'] + single_current_balance_call.format(param_txt)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -203,6 +214,10 @@ class TzStatsRewardProviderHelper:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
-        resp = resp.json()[0]
+        resp = resp.json()
 
-        return int(1e6 * float(resp[idx_cb_current_balance]))
+        ret_list = {}
+        for item in resp:
+            ret_list[item[idx_cb_delegator_address]] = int(1e6 * float(item[idx_cb_current_balance]))
+
+        return ret_list

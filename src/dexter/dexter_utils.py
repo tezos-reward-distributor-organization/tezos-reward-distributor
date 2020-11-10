@@ -113,36 +113,30 @@ def getBalanceFromBigMap_tzstats(big_map_id, LP_script_expr, snapshot_block):
             return int(resp.json()['value']['balance'])
     return 0
 
-def get_dexter_balance_map(contract_id = 'KT1Puc9St8wdNoGtLiD2WXaHbWU7styaxYhD', snapshot_block = 'BMQn5rnV1U5snTAmocdqzBgtGWd9kpUYnGHTh9zBhVWm5Mh5e5v'):
+def get_dexter_balance_map(contract_id, snapshot_block):
     print('\n\n')
     print(snapshot_block)
     print('\n\n')
     storage = getContractStorage_rpc(contract_id, snapshot_block)
     listLPs = getLiquidityProvidersList_tzstats(storage['big_map_id'], snapshot_block)
-    listLPs_head = getLiquidityProvidersList_tzstats(storage['big_map_id'], 'head')
+    #listLPs_head = getLiquidityProvidersList_tzstats(storage['big_map_id'], 'head')
     balanceMap = {}
     for LP in listLPs:
         balanceMap[LP] = {}
         #liquidity_share = getBalanceFromBigMap_tzstats(storage['big_map_id'], listLPs[LP], snapshot_block)
         #liquidity_share_ = getBalanceFromBigMap_tzstats(storage['big_map_id'], LP, snapshot_block)
         #print(LP, liquidity_share, liquidity_share_, getBalanceFromBigMap_rpc(storage['big_map_id'], listLPs[LP], 'head'))
-        current_liquidity = listLPs_head[LP] if LP in listLPs_head else 0
-        print(LP, listLPs[LP], current_liquidity)
+        #current_liquidity = listLPs_head[LP] if LP in listLPs_head else 0
+        #print(LP, listLPs[LP], current_liquidity)
         balanceMap[LP]['liquidity_share'] = listLPs[LP]
         balanceMap[LP]['current_balance'] = getCurrentBalance_rpc(LP)
     return balanceMap, int(storage['lqtTotal'])
 
 def process_original_delegators_map(delegator_map, contract_id, snapshot_block):
-    url = 'https://api.tzstats.com/tables/op?cycle=294&sender=tz1acsihTQWHEnxxNz7EEsBDLMTztoZQE9SW&limit=1000&columns=receiver,volume'
+    url = 'https://api.tzstats.com/tables/op?hash=onydXMUCP5JFQp19VfFk6WJ54LftNxo3a34sw1uE3CbbxhmMNw3&limit=1000&columns=receiver,volume'
     resp = requests.get(url, timeout=5)
     payouts = resp.json()
-    for payout in payouts:
-        addr = payout[0]
-        if addr in delegator_map:
-            print(addr, delegator_map[addr], payout[1])
-        else:
-            print(addr, payout[1])
-    addresses = [x[0] for x in payouts]
+
     contract_balance = delegator_map[contract_id]['staking_balance']
     dexter_liquidity_provider_map, totalLiquidity = get_dexter_balance_map(contract_id, snapshot_block)
     del delegator_map[contract_id]
@@ -156,11 +150,15 @@ def process_original_delegators_map(delegator_map, contract_id, snapshot_block):
             delegator_map[delegator] = {}
             delegator_map[delegator]['staking_balance'] = balance
             delegator_map[delegator]['current_balance'] = dexter_liquidity_provider_map[delegator]['current_balance']
-        if delegator in addresses:
-            print(delegator, delegator_map[delegator]['staking_balance'], payouts[addresses.index(delegator)])
-        else:
-            print(delegator, delegator_map[delegator]['staking_balance'])
         sum_delegated_liquidity += balance
+
+    for payout in payouts:
+        addr = payout[0]
+        if (addr in dexter_liquidity_provider_map) and (dexter_liquidity_provider_map[addr]['liquidity_share'] != 0):
+            print(addr, payout[1], payout[1] / (dexter_liquidity_provider_map[addr]['liquidity_share'] / totalLiquidity))
+        else:
+            print(addr, payout[1])
+
     print(sum_delegated_liquidity, contract_balance)
 
 def test_dexter_implementation(contract_id = 'KT1Puc9St8wdNoGtLiD2WXaHbWU7styaxYhD', snapshot_block = 'BMQn5rnV1U5snTAmocdqzBgtGWd9kpUYnGHTh9zBhVWm5Mh5e5v'):
