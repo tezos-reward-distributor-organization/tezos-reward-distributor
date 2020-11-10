@@ -86,7 +86,7 @@ def add_argument_verbose(parser):
 
 
 def add_argument_syslog(parser):
-    parser.add_argument("--syslog", help="Log to syslog", action="store_true")
+    parser.add_argument("--syslog", help="Log to syslog. Useful in daemon mode.", action="store_true")
 
 
 def add_argument_log_file(parser):
