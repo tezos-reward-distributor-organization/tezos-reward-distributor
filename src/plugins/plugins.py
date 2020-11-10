@@ -31,7 +31,6 @@ class PluginManager(object):
         if not self.plugins:
             logger.info("[Plugins] Not sending notification; no plugins enabled")
 
-        self.dry_run = False
         for p in self.plugins:
             if not self.dry_run:
                 try:
