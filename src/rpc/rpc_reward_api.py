@@ -69,17 +69,6 @@ class RpcRewardApiImpl(RewardApi):
 
         return reward_model
 
-    def get_dexter_balance_map(self, contract_id, snapshot_block):
-        storage = self.get_contract_storage(contract_id, snapshot_block)
-        storage = dxtz.parse_dexter_storage(storage)
-        listLPs = dxtz.getLiquidityProvidersList_tzstats(storage['big_map_id'])
-        balanceMap = {}
-        lqdt_ttl = 0
-        for LP in listLPs:
-            balanceMap[LP] = dxtz.getBalanceFromBigMap_rpc(storage['big_map_id'], listLPs[LP], snapshot_block)
-            lqdt_ttl += balanceMap[LP]
-        return balanceMap
-
     def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
         request_metadata = COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle) + '/metadata'
         metadata = self.do_rpc_request(request_metadata)

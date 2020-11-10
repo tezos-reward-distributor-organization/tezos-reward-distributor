@@ -14,11 +14,19 @@ batch_current_balance_call = '/tables/account?delegate={}&columns=row_id,spendab
 single_current_balance_call = '/tables/account?address.in={}&columns=row_id,spendable_balance,address'
 snapshot_cycle = '/explorer/cycle/{}'
 
+contract_storage = '/explorer/contract/{}/storage'
+balance_LP_call ='/explorer/bigmap/{}/values?limit=100&offset={}&block={}'
+
 PREFIX_API = {
     'MAINNET': {'API_URL': 'http://api.tzstats.com'},
     'ZERONET': {'API_URL': 'http://api.zeronet.tzstats.com'},
     'ALPHANET': {'API_URL': 'http://api.carthagenet.tzstats.com'}
 }
+
+
+def split(input, n):
+    for i in range(0, len(input), n):
+        yield input[i:i + n]
 
 
 class TzStatsRewardProviderHelper:
@@ -152,10 +160,6 @@ class TzStatsRewardProviderHelper:
         # Who was not in this result?
         need_curr_balance_fetch = list(set(staked_bal_delegators) - set(curr_bal_delegators))
 
-        def split(input, n):
-            for i in range(0, len(input), n):
-                yield input[i:i + n]
-
         # Fetch individual not in original batch
         if len(need_curr_balance_fetch) > 0:
             split_addresses = split(need_curr_balance_fetch, 50)
@@ -221,3 +225,54 @@ class TzStatsRewardProviderHelper:
             ret_list[item[idx_cb_delegator_address]] = int(1e6 * float(item[idx_cb_current_balance]))
 
         return ret_list
+
+    def getBigMapId(self, contract_id, verbose=False):
+        uri = self.api['API_URL'] + contract_storage.format(contract_id)
+        if verbose:
+            logger.debug("Requesting contract storage, {}".format(uri))
+
+        resp = requests.get(uri, timeout=5)
+
+        if verbose:
+            logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+
+        if resp.status_code != 200:
+            # This means something went wrong.
+            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+
+        resp = resp.json()
+
+        return resp['value']['accounts']
+
+    def getLiquidityProvidersList(self, big_map_id, snapshot_block, verbose=False):
+        offset = 0
+        listLPs = {}
+        resp = ' '
+        while resp != []:
+            uri = self.api['API_URL'] + balance_LP_call.format(big_map_id, offset, snapshot_block)
+            offset += 100
+
+            if verbose:
+                logger.debug("Requesting LP balances, {}".format(uri))
+
+            resp = requests.get(uri, timeout=5)
+
+            if verbose:
+                logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+
+            if resp.status_code != 200:
+                # This means something went wrong.
+                raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+
+            resp = resp.json()
+            for item in resp:
+                listLPs[item['key']] = int(item['value']['balance'])
+
+        return listLPs
+
+    def update_current_balances_dexter(self, balanceMap):
+        split_addresses = split(list(balanceMap.keys()), 50)
+        for list_address in split_addresses:
+            list_curr_balances = self.__fetch_current_balance(list_address)
+            for d in list_address:
+                balanceMap[d].update({"current_balance" : list_curr_balances[d]})

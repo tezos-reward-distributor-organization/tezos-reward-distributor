@@ -47,6 +47,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
         self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
         self.reward_api.dexter_contracts_set = baking_cfg.get_contracts_set()
+        if len(self.reward_api.dexter_contracts_set) > 0 and not (self.reward_api.name == 'tzstats'):
+            logger.warn("The Dexter funktionality is currently supported only using tzstats."
+                        "The contract address will be treated as a normal delegator.")
 
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
