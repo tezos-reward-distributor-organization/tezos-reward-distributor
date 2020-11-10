@@ -8,7 +8,6 @@ from NetworkConfiguration import is_mainnet
 from calc.calculate_phase5 import CalculatePhase5
 from calc.calculate_phase6 import CalculatePhase6
 from calc.calculate_phase7 import CalculatePhase7
-from emails.email_manager import EmailManager
 from log_config import main_logger
 from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from pay.batch_payer import BatchPayer
@@ -33,7 +32,7 @@ def count_and_log_failed(payment_logs):
 
 class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
-                 network_config, args=None, verbose=None, dry_run=None, reactivate_zeroed=True,
+                 network_config, plugins_manager, args=None, verbose=None, dry_run=None, reactivate_zeroed=True,
                  delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None,
                  publish_stats=True):
         super(PaymentConsumer, self).__init__()
@@ -47,7 +46,6 @@ class PaymentConsumer(threading.Thread):
         self.node_addr = node_addr
         self.verbose = verbose
         self.dry_run = dry_run
-        self.mm = EmailManager()
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.reactivate_zeroed = reactivate_zeroed
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
@@ -55,6 +53,7 @@ class PaymentConsumer(threading.Thread):
         self.publish_stats = publish_stats
         self.args = args
         self.network_config = network_config
+        self.plugins_manager = plugins_manager
 
         logger.info('Consumer "%s" created', self.name)
 
@@ -101,7 +100,7 @@ class PaymentConsumer(threading.Thread):
 
                 batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
                                          self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
-                                         self.network_config, self.mm,
+                                         self.network_config, self.plugins_manager,
                                          self.dry_run)
 
                 # 3- do the payment
@@ -111,7 +110,7 @@ class PaymentConsumer(threading.Thread):
                 payment_batch.batch = payment_logs
 
                 # 4- count failed payments
-                nb_failed, nb_injected = count_and_log_failed(payment_logs)
+                nb_failed, nb_unknown = count_and_log_failed(payment_logs)
 
                 # 5- create payment report file
                 report_file = self.create_payment_report(nb_failed, payment_logs, pymnt_cycle)
@@ -127,13 +126,31 @@ class PaymentConsumer(threading.Thread):
                     if payment_batch.producer_ref:
                         payment_batch.producer_ref.on_fail(payment_batch)
 
-                # 8- send email
-                if not self.dry_run and total_attempts > 0:
-                    self.mm.send_payment_mail(pymnt_cycle, report_file, nb_failed, nb_injected, number_future_payable_cycles)
+                # 8- send notification via plugins
+                if total_attempts > 0:
+
+                    subject = "Reward Payouts for Cycle {:d}".format(pymnt_cycle)
+
+                    status = ''
+                    if nb_failed == 0 and nb_unknown == 0:
+                        status = status + 'Completed Successfully!'
+                    else:
+                        status = status + 'attempted'
+                        if nb_failed > 0:
+                            status = status + ", {:d} failed".format(nb_failed)
+                        if nb_unknown > 0:
+                            status = status + ", {:d} injected but final state not known".format(nb_unknown)
+                    subject = subject + ' ' + status
+
+                    message = "Payment for cycle {:d} is {:s}. " \
+                              "The current payout account balance is expected to last for the next {:d} cycle(s)!" \
+                              .format(pymnt_cycle, status, number_future_payable_cycles)
+
+                    self.plugins_manager.send_notification(subject, message, [report_file], payment_logs)
 
                 # 9- publish anonymous stats
                 if self.publish_stats and self.args and not self.dry_run:
-                    stats_dict = self.create_stats_dict(nb_failed, nb_injected, pymnt_cycle,
+                    stats_dict = self.create_stats_dict(nb_failed, nb_unknown, pymnt_cycle,
                                                         payment_logs, total_attempts)
                     stats_publisher(stats_dict)
 
@@ -180,7 +197,7 @@ class PaymentConsumer(threading.Thread):
 
         return report_file
 
-    def create_stats_dict(self, nb_failed, nb_injected, payment_cycle, payment_logs, total_attempts):
+    def create_stats_dict(self, nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts):
 
         from uuid import uuid1
 
@@ -196,7 +213,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict['total_amount'] = int(sum([rl.amount for rl in payment_logs]) / MUTEZ)
         stats_dict['nb_pay'] = int(len(payment_logs))
         stats_dict['nb_failed'] = nb_failed
-        stats_dict['nb_unknown'] = nb_injected
+        stats_dict['nb_unknown'] = nb_unknown
         stats_dict['total_attmpts'] = total_attempts
         stats_dict['nb_founders'] = n_f_type
         stats_dict['nb_owners'] = n_o_type
