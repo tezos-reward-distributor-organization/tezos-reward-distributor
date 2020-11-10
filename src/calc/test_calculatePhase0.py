@@ -20,6 +20,7 @@ class TestCalculatePhase0(TestCase):
         }
 
         api = ProviderFactory(provider='prpc').newRewardApi(nw, BAKING_ADDRESS, '')
+        api.dexter_contracts_set = []
         model = api.get_rewards_for_cycle_map(153)
 
         phase0 = CalculatePhase0(model)
