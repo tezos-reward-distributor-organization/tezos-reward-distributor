@@ -2,8 +2,8 @@ import json
 import os
 import queue
 import sys
-import time
 
+from time import sleep
 from launch_common import print_banner, parse_arguments
 from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
@@ -182,7 +182,7 @@ def main(args):
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
                             network_config=network_config, publish_stats=publish_stats)
 
-        time.sleep(1)
+        sleep(1)
         c.start()
 
         logger.info("Application start completed")
@@ -191,7 +191,7 @@ def main(args):
     # Run forever
     try:
         while life_cycle.is_running():
-            time.sleep(10)
+            sleep(10)
     except KeyboardInterrupt:
         logger.info("Interrupted.")
         life_cycle.stop()

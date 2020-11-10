@@ -248,6 +248,16 @@ class BakingYamlConfParser(YamlConfParser):
 
         return True
 
+    def validate_plugins(self, conf_obj):
+
+        if PLUGINS_CONF not in conf_obj:
+            raise ConfigurationException("Parameter '{:s}' is not present in config file. "
+                                         "Please consult the documentation and add this parameter.".format(PLUGINS_CONF))
+
+        if conf_obj[PLUGINS_CONF] is None or "enabled" not in conf_obj[PLUGINS_CONF]:
+            raise ConfigurationException("Plugins config missing 'enabled' parameter. "
+                                         "Please consult the documentation and add this parameter.")
+
     def parse_bool(self, conf_obj, param_name, default):
 
         if param_name not in conf_obj:

@@ -1,8 +1,8 @@
 import functools
 import os
 import threading
-import time
 
+from time import sleep
 from Constants import VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
 from NetworkConfiguration import is_mainnet
 from calc.calculate_phase5 import CalculatePhase5
@@ -75,7 +75,7 @@ class PaymentConsumer(threading.Thread):
                     logger.warn("Exit signal received. Terminating...")
                     break
 
-                time.sleep(1)
+                sleep(1)
 
                 pymnt_cycle = payment_batch.cycle
 

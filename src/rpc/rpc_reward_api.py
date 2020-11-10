@@ -51,7 +51,7 @@ class RpcRewardApiImpl(RewardApi):
             reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
 
         else:
-            logger.warn("Please wait until the rewards and fees for cycle {} are unfrozen".format(cycle))
+            logger.warning("Please wait until the rewards and fees for cycle {} are unfrozen".format(cycle))
             reward_data["total_rewards"] = 0
 
         reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
@@ -121,7 +121,7 @@ class RpcRewardApiImpl(RewardApi):
             try:
                 rl.current_balance = self.__get_current_balance_of_delegator(rl.address)
             except Exception as e:
-                logger.warn("update_current_balances - unexpected error: {}".format(e), exc_info=True)
+                logger.warning("update_current_balances - unexpected error: {}".format(e), exc_info=True)
                 raise e from e
 
     def __get_current_level(self):
@@ -201,9 +201,9 @@ class RpcRewardApiImpl(RewardApi):
                 raise RpcRewardApiError("Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
 
         except RpcRewardApiError as r:
-            logger.warn("RPC API Error: {}".format(r), exc_info=True)
+            logger.warning("RPC API Error: {}".format(r), exc_info=True)
         except Exception as e:
-            logger.warn("Unexpected error: {}".format(e), exc_info=True)
+            logger.warning("Unexpected error: {}".format(e), exc_info=True)
 
         return delegate_staking_balance, delegators
 
