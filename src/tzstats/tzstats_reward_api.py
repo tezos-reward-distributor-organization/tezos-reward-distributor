@@ -3,9 +3,9 @@ from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from tzstats.tzstats_reward_provider_helper import TzStatsRewardProviderHelper
+from Dexter import dexter_utils as dxtz
 
 logger = main_logger
-from Dexter import dexter_utils as dxtz
 
 
 class TzStatsRewardApiImpl(RewardApi):

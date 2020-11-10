@@ -15,7 +15,7 @@ single_current_balance_call = '/tables/account?address.in={}&columns=row_id,spen
 snapshot_cycle = '/explorer/cycle/{}'
 
 contract_storage = '/explorer/contract/{}/storage'
-balance_LP_call ='/explorer/bigmap/{}/values?limit=100&offset={}&block={}'
+balance_LP_call = '/explorer/bigmap/{}/values?limit=100&offset={}&block={}'
 
 PREFIX_API = {
     'MAINNET': {'API_URL': 'http://api.tzstats.com'},
@@ -275,4 +275,4 @@ class TzStatsRewardProviderHelper:
         for list_address in split_addresses:
             list_curr_balances = self.__fetch_current_balance(list_address)
             for d in list_address:
-                balanceMap[d].update({"current_balance" : list_curr_balances[d]})
+                balanceMap[d].update({"current_balance": list_curr_balances[d]})
