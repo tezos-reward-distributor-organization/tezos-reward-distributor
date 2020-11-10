@@ -1,9 +1,10 @@
 from time import sleep
 
-from log_config import main_logger
+from log_config import main_logger, DEFAULT_LOG_FILE
 
 LINER = "--------------------------------------------"
 logger = main_logger
+
 
 def print_banner(args, script_name):
     with open("./banner.txt", "rt") as file:
@@ -12,7 +13,7 @@ def print_banner(args, script_name):
     print("Copyright Huseyin ABANOZ 2019")
     print("huseyinabanox@gmail.com")
     print("Please leave copyright information")
-    print(LINER,flush=True)
+    print(LINER, flush=True)
 
     sleep(0.1)
 
@@ -22,6 +23,7 @@ def print_banner(args, script_name):
         logger.info(LINER)
         logger.info("DRY RUN MODE")
         logger.info(LINER)
+
 
 def add_argument_network(parser):
     parser.add_argument("-N", "--network", help="network name", choices=['ZERONET', 'ALPHANET', 'MAINNET'],
@@ -33,7 +35,8 @@ def add_argument_reports_base(parser):
 
 
 def add_argument_provider(parser):
-    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided. prpc=public rpc", choices=['rpc','prpc','tzstats'],
+    parser.add_argument("-P", "--reward_data_provider", help="where reward data is provided. prpc=public rpc",
+                        choices=['rpc', 'prpc', 'tzstats'],
                         default='prpc')
 
 
@@ -44,8 +47,11 @@ def add_argument_config_dir(parser):
 def add_argument_node_addr(parser):
     parser.add_argument("-A", "--node_addr", help="Node host:port pair", default='127.0.0.1:8732')
 
+
 def add_argument_node_addr_public(parser):
-    parser.add_argument("-Ap", "--node_addr_public", help="Public node base url pair with protocol prefix. i.e. https://rpc.letzbake.com", default='https://mainnet.tezrpc.me')
+    parser.add_argument("-Ap", "--node_addr_public",
+                        help="Public node base url pair with protocol prefix. i.e. https://rpc.letzbake.com",
+                        default='https://mainnet.tezrpc.me')
 
 
 def add_argument_dry(parser):
@@ -75,4 +81,13 @@ def add_argument_docker(parser):
 
 
 def add_argument_verbose(parser):
-    parser.add_argument("-V", "--verbose", help="Produces a lot of logs. Good for trouble shooting.", action="store_true")
+    parser.add_argument("-V", "--verbose", help="Produces a lot of logs. Good for trouble shooting.",
+                        action="store_true")
+
+
+def add_argument_syslog(parser):
+    parser.add_argument("--syslog", help="Log to syslog", action="store_true")
+
+
+def add_argument_log_file(parser):
+    parser.add_argument("--log-file", help="Log output file", default=DEFAULT_LOG_FILE)

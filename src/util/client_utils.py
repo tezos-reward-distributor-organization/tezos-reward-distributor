@@ -1,6 +1,5 @@
 import os
 import re
-
 from log_config import main_logger
 
 DOCKER_CLIENT_EXE = "%network%.sh"
