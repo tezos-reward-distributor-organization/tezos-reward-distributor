@@ -1,6 +1,6 @@
 from time import sleep
 from NetworkConfiguration import default_network_config_map
-from log_config import main_logger
+from log_config import main_logger, DEFAULT_LOG_FILE
 
 import argparse
 
@@ -48,6 +48,9 @@ def parse_arguments():
     add_argument_verbose(parser)
     add_argument_api_base_url(parser)
     add_argument_retry_injected(parser)
+    add_argument_syslog(parser)
+    add_argument_log_file(parser)
+
     args = parser.parse_args()
 
     #
@@ -184,3 +187,11 @@ def add_argument_api_base_url(parser: argparse.ArgumentParser):
 
 def add_argument_retry_injected(parser):
     parser.add_argument("-inj", "--retry_injected", help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.", action="store_true")
+
+
+def add_argument_syslog(parser):
+    parser.add_argument("--syslog", help="Log to syslog. Useful in daemon mode.", action="store_true")
+
+
+def add_argument_log_file(parser):
+    parser.add_argument("--log-file", help="Log output file", default=DEFAULT_LOG_FILE)
