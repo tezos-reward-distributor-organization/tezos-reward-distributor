@@ -14,7 +14,7 @@ from cli.wallet_client_manager import WalletClientManager
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
-from log_config import main_logger
+from log_config import main_logger, init
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -236,5 +236,7 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     print_banner(args, script_name="")
+
+    init(args.syslog, args.log_file)
 
     main(args)
