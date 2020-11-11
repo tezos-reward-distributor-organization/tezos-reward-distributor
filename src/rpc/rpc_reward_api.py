@@ -217,7 +217,6 @@ class RpcRewardApiImpl(RewardApi):
         except Exception as e:
             logger.error("Unexpected error: {}".format(e), exc_info=True)
 
-
         return delegate_staking_balance, delegators
 
     def __get_current_balance_of_delegator(self, address):
