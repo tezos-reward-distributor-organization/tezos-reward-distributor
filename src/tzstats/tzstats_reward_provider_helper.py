@@ -226,7 +226,7 @@ class TzStatsRewardProviderHelper:
 
         return ret_list
 
-    def getBigMapId(self, contract_id, verbose=False):
+    def get_big_map_id(self, contract_id, verbose=False):
         uri = self.api['API_URL'] + contract_storage.format(contract_id)
         if verbose:
             logger.debug("Requesting contract storage, {}".format(uri))
@@ -244,7 +244,7 @@ class TzStatsRewardProviderHelper:
 
         return resp['value']['accounts']
 
-    def getLiquidityProvidersList(self, big_map_id, snapshot_block, verbose=False):
+    def get_liquidity_providers_list(self, big_map_id, snapshot_block, verbose=False):
         offset = 0
         listLPs = {}
         resp = ' '

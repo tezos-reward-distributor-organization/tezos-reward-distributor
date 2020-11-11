@@ -2,10 +2,13 @@ from time import sleep
 import requests
 from parse import parse
 
+from log_config import main_logger
+logger = main_logger
+
 
 def get_dexter_balance_map(contract_id, snapshot_block, api_provider):
-    big_map_id = api_provider.getBigMapId(contract_id)
-    listLPs = api_provider.getLiquidityProvidersList(big_map_id, snapshot_block)
+    big_map_id = api_provider.get_big_map_id(contract_id)
+    listLPs = api_provider.get_liquidity_providers_list(big_map_id, snapshot_block)
     balanceMap = {}
     totalLiquidity = 0
     for LP in listLPs:
@@ -22,7 +25,6 @@ def process_original_delegators_map(delegator_map, contract_id, snapshot_block, 
 
     del delegator_map[contract_id]
 
-    # sum_delegated_liquidity = 0
     for delegator in dexter_liquidity_provider_map:
         balance = int(dexter_liquidity_provider_map[delegator]['liquidity_share'] * contract_balance / totalLiquidity)
         if delegator in delegator_map:
@@ -31,7 +33,6 @@ def process_original_delegators_map(delegator_map, contract_id, snapshot_block, 
             delegator_map[delegator] = {}
             delegator_map[delegator]['staking_balance'] = balance
             delegator_map[delegator]['current_balance'] = dexter_liquidity_provider_map[delegator]['current_balance']
-        # sum_delegated_liquidity += balance
 
     # url = 'https://api.tzstats.com/tables/op?hash=onydXMUCP5JFQp19VfFk6WJ54LftNxo3a34sw1uE3CbbxhmMNw3&limit=1000&columns=receiver,volume'
     # resp = requests.get(url, timeout=5)
@@ -44,67 +45,22 @@ def process_original_delegators_map(delegator_map, contract_id, snapshot_block, 
     #        print(addr, payout[1])
     # print(sum_delegated_liquidity, contract_balance)
 
-#######################################################################################
-# Functions for rpc support for the dexter functionality (for future implementation)
-#######################################################################################
-
-
-# def test_dexter_implementation(contract_id = 'KT1Puc9St8wdNoGtLiD2WXaHbWU7styaxYhD', snapshot_block = 'BMQn5rnV1U5snTAmocdqzBgtGWd9kpUYnGHTh9zBhVWm5Mh5e5v'):
-#     print('Start')
-#     storage = getContractStorage_rpc(contract_id, snapshot_block)
-#     print(storage)
-#     listLPs = getLiquidityProvidersList_tzstats(storage['big_map_id'])
-#     balanceMap = {}
-#     lqdt_ttl = 0
-#     for i, LP in enumerate(listLPs):
-#         print("{}/{}".format(i, len(listLPs)))
-#         balanceMap[LP] = getBalanceFromBigMap_rpc(storage['big_map_id'], listLPs[LP], snapshot_block)
-#         lqdt_ttl += balanceMap[LP]
-#     assert(lqdt_ttl == int(storage['lqtTotal']))
-
-def getContractStorage_rpc(contract_id, snapshot_block):
-    uri = "https://mainnet-tezos.giganode.io/chains/main/blocks/{}/context/contracts/{}/storage".format(snapshot_block, contract_id)
-    resp = requests.get(uri, timeout=5)
-    storage_data = resp.json()
-    return parse_dexter_storage(storage_data)
-
-
-def getContractBalance_rpc(contract_id, snapshot_block):
-    uri = "https://mainnet-tezos.giganode.io/chains/main/blocks/{}/context/contracts/{}/balance".format(snapshot_block, contract_id)
-    resp = requests.get(uri, timeout=5)
-    return resp.json()
-
-
-def getCurrentBalance_rpc(acc):
-    uri = "https://mainnet-tezos.giganode.io/chains/main/blocks/head/context/contracts/{}/balance".format(acc)
-    resp = requests.get(uri, timeout=5)
-    return int(resp.json())
-
-
-def getBalanceFromBigMap_rpc(big_map_id, LP_script_expr, snapshot_block):
-    uri = "https://mainnet-tezos.giganode.io/chains/main/blocks/{}/context/big_maps/{}/{}".format(snapshot_block, big_map_id, LP_script_expr)
-    for trial in range(3):
-        resp = requests.get(uri, timeout=5)
-        if resp.status_code == 200:
-            sleep(0.5)
-            return int(resp.json()['args'][0]['int'])
-    return 0
-
-# ExchangeContractV1 represents a liquidity pool contract
-# storage (pair (big_map %accounts (address :owner)
-#                                  (pair (nat :balance)
-#                                        (map (address :spender)
-#                                             (nat :allowance))))
-#               (pair (pair (bool :selfIsUpdatingTokenPool)
-#                           (pair (bool :freezeBaker)
-#                                 (nat :lqtTotal)))
-#                     (pair (pair (address :manager)
-#                                 (address :tokenAddress))
-#                           (pair (nat :tokenPool)
-#                                 (mutez :xtzPool)))));
-
 
 def parse_dexter_storage(storage_input):
+    '''
+    Dexter Exchange Contract represents a liquidity pool contract and has the following form
+    storage (pair (big_map %accounts (address :owner)
+                                 (pair (nat :balance)
+                                       (map (address :spender)
+                                            (nat :allowance))))
+              (pair (pair (bool :selfIsUpdatingTokenPool)
+                          (pair (bool :freezeBaker)
+                                (nat :lqtTotal)))
+                    (pair (pair (address :manager)
+                                (address :tokenAddress))
+                          (pair (nat :tokenPool)
+                                (mutez :xtzPool)))));
+    '''
     storage = {}
     try:  # Json map format
         storage['big_map_id'] = storage_input['args'][0]['int']
@@ -122,7 +78,7 @@ def parse_dexter_storage(storage_input):
         return storage
 
     except Exception:
-        try:
+        try:  # storage through rpc query
             data = parse('Pair {} (Pair (Pair {} (Pair {} {})) (Pair (Pair "{}" "{}") (Pair {} {})))', storage_input)
             storage_fields = ['big_map_id', 'selfIsUpdatingTokenPool', 'freezeBaker', 'lqtTotal', 'manager', 'tokenAddress',
                               'tokenPool', 'xtzPool']
@@ -132,3 +88,15 @@ def parse_dexter_storage(storage_input):
         except Exception:
             logger.warn('Parsing dexter storage not successful')
             return storage
+
+
+# def test_dexter_implementation(contract_id = 'KT1Puc9St8wdNoGtLiD2WXaHbWU7styaxYhD', snapshot_block = 'BMQn5rnV1U5snTAmocdqzBgtGWd9kpUYnGHTh9zBhVWm5Mh5e5v'):
+#     storage = getContractStorage_rpc(contract_id, snapshot_block)
+#     listLPs = getLiquidityProvidersList_tzstats(storage['big_map_id'])
+#     balanceMap = {}
+#     lqdt_ttl = 0
+#     for i, LP in enumerate(listLPs):
+#         print("{}/{}".format(i, len(listLPs)))
+#         balanceMap[LP] = getBalanceFromBigMap_rpc(storage['big_map_id'], listLPs[LP], snapshot_block)
+#         lqdt_ttl += balanceMap[LP]
+#     assert(lqdt_ttl == int(storage['lqtTotal']))
