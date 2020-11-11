@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plugins &mdash; Tezos Reward Distributor 6.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Tezos Reward Distributor
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Tezos Reward Distributor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Plugins</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/plugins.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="plugins">
+<h1>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h1>
+<p>The Tezos Reward Distributor uses a plugin style subsystem for sending out payment notifications.</p>
+<p>Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.</p>
+<p>The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at <a class="reference external" href="examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml">the example config</a>.</p>
+<p>Individual plugins will not load if not properly configured.</p>
+<p>You must specify which plugins to enable by adding their name to the “enabled” list. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">enabled</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">email</span>
+    <span class="o">-</span> <span class="n">webhook</span>
+</pre></div>
+</div>
+<p>No plugins are enabled by default.</p>
+<hr class="docutils" />
+<div class="section" id="email-plugin">
+<h2>Email Plugin<a class="headerlink" href="#email-plugin" title="Permalink to this headline">¶</a></h2>
+<p>This plugin will send the configured recipients an email of payouts status with a CSV report attached.</p>
+<div class="section" id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>smtp_user: The username for SMTP authentication</p></li>
+<li><p>smtp_pass: The password or application token for SMTP authentication</p></li>
+<li><p>smtp_host: The host of your SMTP server</p></li>
+<li><p>smtp_port: The port for communication to your SMTP server. TLS uses 587.</p></li>
+<li><p>smtp_tls: true/false. Only TLS is supported as SSL is usually deprecated in email servers.</p></li>
+<li><p>smtp_sender: The address for ‘From’ in the email</p></li>
+<li><p>smtp_recipients: A YAML list containing email addresses of intended recipients. Must be list format even if 1 recipient.</p></li>
+</ul>
+</div>
+<div class="section" id="example-config">
+<h3>Example Config<a class="headerlink" href="#example-config" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">email</span><span class="p">:</span>
+    <span class="n">smtp_user</span><span class="p">:</span> <span class="n">user</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">smtp_pass</span><span class="p">:</span> <span class="n">horsebatterystaple2</span>
+    <span class="n">smtp_host</span><span class="p">:</span> <span class="n">smtp</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">smtp_port</span><span class="p">:</span> <span class="mi">587</span>
+    <span class="n">smtp_tls</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">smtp_sender</span><span class="p">:</span> <span class="n">trdnotice</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">smtp_recipients</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">bob</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
+      <span class="o">-</span> <span class="n">alice</span><span class="nd">@hotmail</span><span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="telegram-plugin">
+<h2>Telegram Plugin<a class="headerlink" href="#telegram-plugin" title="Permalink to this headline">¶</a></h2>
+<p>This plugin allows payouts notifications to be sent via Telegram bot to specific chatIds, including groups.</p>
+<p>You must first create a Telegram bot to generate the <em>bot_api_key</em> and you must discover your, or your groups’, <em>chat_id</em>. There are many guides/tutorials on the internet for how to do this.</p>
+<p>The Telegram plugin does not need read access to any messages and the bot will not respond to any commands. This is a “send only” style of bot.</p>
+<div class="section" id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>chat_ids: A YAML list containing chat IDs of users and/or group IDs for groups. Group IDs typically start with a - (negative/dash) symbol. Must be list format even if only 1 ID.</p></li>
+<li><p>bot_api_key: This is the API token that you get from &#64;TheBotFather after creating your bot.</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Example Config<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">telegram</span><span class="p">:</span>
+    <span class="n">chat_ids</span><span class="p">:</span>
+      <span class="o">-</span> <span class="mi">123456789</span>
+      <span class="o">-</span> <span class="o">-</span><span class="mi">13134455</span>
+    <span class="n">bot_api_key</span><span class="p">:</span> <span class="mi">988877766</span><span class="p">:</span><span class="n">SKDJFLSJDFJLJSKDFJLKSDJFLKJDF</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="twitter-plugin">
+<h2>Twitter Plugin<a class="headerlink" href="#twitter-plugin" title="Permalink to this headline">¶</a></h2>
+<p>This plugin allows payout notifications to be sent via a Twitter tweet. This plugin does not read existing tweets, or read any DMs. The plugin supports adding hashtags to your tweet. The plugin posts tweets “as you”, meaning your &#64;-handle will be the author of the post. No other information is submitted to the tweet.</p>
+<p>Follow this outline to generate the API tokens and secrets for the plugin:</p>
+<ol class="simple">
+<li><p>Sign up as a developer at https://developer.twitter.com/</p></li>
+<li><p>Create a Twitter app</p></li>
+<li><p>Enable Read and Write permissions on the app</p></li>
+<li><p>Under ‘Keys and Tokens’ there are two sections: Consumer Keys, and Authentication Tokens</p>
+<ul class="simple">
+<li><p>Under ‘Consumer Keys’, generate ‘API Key and Secret’</p></li>
+<li><p>Under ‘Authentication Tokens’, generate ‘Access Token &amp; Secret’</p></li>
+<li><p>You can ignore ‘Bearer Token’</p></li>
+</ul>
+</li>
+</ol>
+<p>You must also install an additional Python library, <a class="reference external" href="https://github.com/tweepy/tweepy">tweepy</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">u</span> <span class="n">tweepy</span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3>Example Config<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p><strong>NOTE</strong>: All 4 pieces of keys and tokens are required.</p>
+<p><strong>NOTE</strong>: Hashtags <em>must</em> include ‘#’ and <em>must</em> be inside quotation “” marks</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">twitter</span><span class="p">:</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="n">XXXXXXXX</span>
+    <span class="n">api_secret</span><span class="p">:</span> <span class="n">ZZZZZZZZ</span>
+    <span class="n">access_token</span><span class="p">:</span> <span class="n">YYYYYYYY</span>
+    <span class="n">access_secret</span><span class="p">:</span> <span class="n">WWWWWWWW</span>
+    <span class="n">extra_tags</span><span class="p">:</span>
+      <span class="o">-</span> <span class="s2">&quot;#our_baker&quot;</span>
+      <span class="o">-</span> <span class="s2">&quot;#tezos&quot;</span>
+      <span class="o">-</span> <span class="s2">&quot;#rewards&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="webhook-plugin">
+<h2>Webhook Plugin<a class="headerlink" href="#webhook-plugin" title="Permalink to this headline">¶</a></h2>
+<p>This plugin makes an HTTP POST request to an endpoint. This endpoint will receive a JSON object containing the reward data.</p>
+<p>For simple security, configure a random token (alphanumeric string) to be included in the root JSON object. Your receiver script should verify this token before accepting data.</p>
+<p>Your script can return a short message in the response body. This will be displayed on the TRD console and written to the TRD logs.</p>
+<div class="section" id="example-json-object">
+<h3>Example JSON Object<a class="headerlink" href="#example-json-object" title="Permalink to this headline">¶</a></h3>
+<p>“payouts” is a JSON array of objects, each object representing the status of a payout. All Tez amounts are in mutez.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="mi">1604982374</span><span class="p">,</span>
+  <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="s2">&quot;Xynl6svphysd3BhjLP6IS&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;payouts&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;tz1LrHNbbCLgNJZsEsTUYFvWz2THgJC8fHyX&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;paymentAddress&quot;</span><span class="p">:</span> <span class="s2">&quot;tz1LrHNbbCLgNJZsEsTUYFvWz2THgJC8fHyX&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;addressType&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;cycle&quot;</span><span class="p">:</span> <span class="mi">415</span><span class="p">,</span>
+      <span class="s2">&quot;stakingBalance&quot;</span><span class="p">:</span> <span class="mi">65116664916</span><span class="p">,</span>
+      <span class="s2">&quot;ratio&quot;</span><span class="p">:</span> <span class="mf">0.16080255</span><span class="p">,</span>
+      <span class="s2">&quot;feeRatio&quot;</span><span class="p">:</span> <span class="mf">0.01398283</span><span class="p">,</span>
+      <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">207756875</span><span class="p">,</span>
+      <span class="s2">&quot;feeAmount&quot;</span><span class="p">:</span> <span class="mi">18065815</span><span class="p">,</span>
+      <span class="s2">&quot;feeRate&quot;</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span>
+      <span class="s2">&quot;payable&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+      <span class="s2">&quot;opHash&quot;</span><span class="p">:</span> <span class="s2">&quot;oo4Gikxyj8cMqM8xzgWxqnsxXoGwfhZqHDrLqpA6ENmMVoYUnVd&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;neededActivation&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+      <span class="s2">&quot;paymentStatus&quot;</span><span class="p">:</span> <span class="s2">&quot;DONE&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Example Config<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">webhook</span><span class="p">:</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mydomain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">webhook</span><span class="o">.</span><span class="n">php</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Xynl6svphysd3BhjLP6IS</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, habanoz
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
