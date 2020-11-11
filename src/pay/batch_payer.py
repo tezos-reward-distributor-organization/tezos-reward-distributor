@@ -38,14 +38,14 @@ RA_STORAGE = 300
 
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config, mm, dry_run):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config, plugins_manager, dry_run):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
         self.zero_threshold = 1    # 1 mutez = 0.000001 XTZ
-        self.mm = mm
+        self.plugins_manager = plugins_manager
         self.dry_run = dry_run
 
         config = configparser.ConfigParser()
@@ -165,23 +165,37 @@ class BatchPayer():
         logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
 
         if payment_address_balance is not None:
+
             number_future_payable_cycles = int(payment_address_balance / total_amount_to_pay) - 1
+
             if number_future_payable_cycles < 0:
+
                 for pi in payment_items:
                     pi.paid = PaymentStatus.FAIL
-                logger.warn("The current balance of the payout address (= {:,} mutez) "
-                            "is insufficient to pay the total amount of {:,} mutez".format(payment_address_balance, total_amount_to_pay))
-                if not self.dry_run:
-                    self.mm.warn_about_immediate_insufficient_funds(self.source, total_amount_to_pay, payment_address_balance)
+
+                subject = "FAILED Payouts - Insufficient Funds"
+                message = "Payment attempt failed because of insufficient funds in the payout address. " \
+                          "The current balance, {:,} mutez, is insufficient to pay cycle rewards of {:,} mutez" \
+                          .format(payment_address_balance, total_amount_to_pay)
+
+                # Output to CLI, send notification using plugins
+                logger.error(message)
+                self.plugins_manager.send_notification(subject, message)
+
+                # Exit early since nothing can be paid
                 return payment_items, 0, 0
 
             elif number_future_payable_cycles < 1:
-                logger.warn("The payout address will soon run out of funds and the current balance ({:,} mutez) might not be sufficient for the next cycle".format(payment_address_balance))
-                if not self.dry_run:
-                    self.mm.warn_about_insufficient_funds_soon(self.source, total_amount_to_pay, payment_address_balance)
+
+                subject = "Low Payment Address Funds Warning"
+                message = "The payout address will soon run out of funds. The current balance, {:,} mutez, " \
+                          "might not be sufficient for the next cycle".format(payment_address_balance)
+
+                logger.warn(message)
+                self.plugins_manager.send_notification(subject, message)
 
             else:
-                logger.info("The current payout account balance is expected to last for the next {} cycle(s)!".format(number_future_payable_cycles))
+                logger.info("The payout account balance is expected to last for the next {:d} cycle(s)".format(number_future_payable_cycles))
 
         total_attempts = 0
         op_counter = OpCounter()

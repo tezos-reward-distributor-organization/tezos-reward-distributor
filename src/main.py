@@ -2,8 +2,8 @@ import json
 import os
 import queue
 import sys
-import time
 
+from time import sleep
 from launch_common import print_banner, parse_arguments
 from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
@@ -14,7 +14,7 @@ from cli.wallet_client_manager import WalletClientManager
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
-from log_config import main_logger
+from log_config import main_logger, init
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -23,6 +23,7 @@ from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
 from exception.configuration import ConfigurationException
+from plugins import plugins
 
 LINER = "--------------------------------------------"
 NB_CONSUMERS = 1
@@ -71,7 +72,6 @@ def main(args):
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
     # 3- get client path
-
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
                                   args.docker, args.network, args.verbose)
 
@@ -117,6 +117,7 @@ def main(args):
 
     baking_address = cfg.get_baking_address()
     payment_address = cfg.get_payment_address()
+
     logger.info(LINER)
     logger.info("BAKING ADDRESS is {}".format(baking_address))
     logger.info("PAYMENT ADDRESS is {}".format(payment_address))
@@ -130,6 +131,7 @@ def main(args):
 
     # 7- get reporting directories
     reports_base = os.path.expanduser(args.reports_base)
+
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
@@ -156,6 +158,10 @@ def main(args):
 
         logger.info("initial_cycle set to {}".format(args.initial_cycle))
 
+    # 10- load plugins
+    plugins_manager = plugins.PluginManager(cfg.get_plugins_conf(), args.verbose, dry_run)
+
+    # 11- Start producer and consumer
     p = PaymentProducer(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
                         payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
                         service_fee_calc=srvc_fee_calc, release_override=args.release_override,
@@ -169,20 +175,23 @@ def main(args):
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, args=args, verbose=args.verbose, dry_run=dry_run,
+                            wllt_clnt_mngr=wllt_clnt_mngr, plugins_manager=plugins_manager, args=args,
+                            verbose=args.verbose, dry_run=dry_run,
                             reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
                             network_config=network_config, publish_stats=publish_stats)
 
-        time.sleep(1)
+        sleep(1)
         c.start()
 
         logger.info("Application start completed")
         logger.info(LINER)
+
+    # Run forever
     try:
         while life_cycle.is_running():
-            time.sleep(10)
+            sleep(10)
     except KeyboardInterrupt:
         logger.info("Interrupted.")
         life_cycle.stop()
@@ -227,5 +236,7 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     print_banner(args, script_name="")
+
+    init(args.syslog, args.log_file)
 
     main(args)
