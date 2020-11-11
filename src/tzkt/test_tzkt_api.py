@@ -5,6 +5,7 @@ from typing import Optional
 from unittest.mock import patch, MagicMock
 from os.path import dirname, join
 from parameterized import parameterized
+from datetime import datetime
 
 from main import main
 from rpc.rpc_reward_api import RpcRewardApiImpl
@@ -71,6 +72,7 @@ class Args:
         self.docker = True
         self.background_service = False
         self.do_not_publish_stats = False
+        self.retry_injected = False
         self.verbose = True
         self.api_base_url = api_base_url
 
@@ -89,17 +91,19 @@ def make_config(baking_address, payment_address, service_fee: int,
            f'reactivate_zeroed: True\n' \
            f'delegator_pays_xfer_fee: {delegator_pays_xfer_fee}\n' \
            f'delegator_pays_ra_fee: False\n' \
-           f'rules_map:\n  mindelegation: TOB'
+           f'rules_map:\n  mindelegation: TOB\n' \
+           f'plugins:\n  enabled:\n'
 
 
 @unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 @patch('pay.payment_producer.sleep', MagicMock())
-@patch('pay.payment_producer.time', MagicMock(sleep=MagicMock()))
-@patch('main.time', MagicMock(sleep=MagicMock()))
-@patch('main.get_client_path', MagicMock())
+@patch('main.sleep', MagicMock(sleep=MagicMock()))
+@patch('main.get_client_path', MagicMock(return_value='/bin/false'))
 @patch('main.get_baking_configuration_file', MagicMock(return_value=''))
 @patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
-@patch('main.WalletClientManager', MagicMock(get_addr_dict_by_pkh=MagicMock(return_value=dummy_addr_dict)))
+@patch.multiple('main.WalletClientManager',
+                get_addr_dict_by_pkh=MagicMock(return_value=dummy_addr_dict),
+                get_bootstrapped=MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('main.ConfigParser')
 class IntegrationTests(unittest.TestCase):
 

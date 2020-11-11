@@ -159,3 +159,16 @@ class TestYamlAppConfParser(TestCase):
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
+
+    def test_validate_plugins(self):
+        data = """
+        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        plugins:
+          enabled:
+        """
+
+        block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
+        cnf_prsr = BakingYamlConfParser(data, wllt_clnt_mngr=None, provider_factory=None,
+                                        network_config=None, node_url="", block_api=block_api)
+        cnf_prsr.parse()
+        cnf_prsr.validate_plugins(cnf_prsr.get_conf_obj())
