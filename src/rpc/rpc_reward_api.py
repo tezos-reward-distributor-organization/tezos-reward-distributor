@@ -193,7 +193,6 @@ class RpcRewardApiImpl(RewardApi):
 
             # Loop over delegators; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses):
-                print("{}/{}\r".format(idx, len(delegators_addresses)))
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
 
