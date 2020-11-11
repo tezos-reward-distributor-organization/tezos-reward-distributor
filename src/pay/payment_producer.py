@@ -2,8 +2,8 @@ import _thread
 import csv
 import os
 import threading
-import time
 
+from time import sleep
 from datetime import datetime, timedelta
 from Constants import RunMode, PaymentStatus
 from log_config import main_logger
@@ -85,7 +85,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     def retry_fail_run(self):
         logger.info('Retry Fail thread "{}" started'.format(self.retry_fail_thread.name))
 
-        time.sleep(60)  # producer thread already tried once, wait for next try
+        sleep(60)  # producer thread already tried once, wait for next try
 
         while not self.exiting and self.life_cycle.is_running():
             self.retry_failed_payments()
@@ -107,7 +107,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         if not self.run_mode == RunMode.ONETIME:
             self.retry_failed_payments()
             if self.run_mode == RunMode.RETRY_FAILED:
-                time.sleep(5)
+                sleep(5)
                 self.exit()
                 return
 
@@ -127,7 +127,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         while not self.exiting and self.life_cycle.is_running():
 
             # take a breath
-            time.sleep(5)
+            sleep(5)
 
             try:
 
@@ -198,7 +198,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     else:
                         logger.debug("Wait a few minutes, queue is full")
                         # wait a few minutes to let payments finish
-                        time.sleep(60 * 3)
+                        sleep(60 * 3)
 
                 # end of payment cycle check
                 else:
@@ -210,7 +210,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         self.exit()
                         break
 
-                    time.sleep(10)
+                    sleep(10)
 
                     # calculate number of blocks until end of current cycle
                     nb_blocks_remaining = (current_cycle + 1) * self.nw_config['BLOCKS_PER_CYCLE'] - current_level
@@ -274,7 +274,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 logger.debug("Creating calculation report (%s)", report_file_path)
 
-                time.sleep(5.0)
+                sleep(5.0)
 
                 # 6- create calculations report file. This file contains calculations details
                 self.create_calculations_report(reward_logs, report_file_path, total_amount)
@@ -302,11 +302,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             logger.error("Error at payment producer loop: '{}', will try again.".format(e), exc_info=True)
             return False
         finally:
-            time.sleep(10)
+            sleep(10)
 
     def wait_for_blocks(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):
-            time.sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
+            sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
 
             # if shutting down, exit
             if not self.life_cycle.is_running():
@@ -417,7 +417,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # make sure the queue is not full
             while self.payments_queue.full():
                 logger.debug("Payments queue is full. Wait a few minutes.")
-                time.sleep(60 * 3)
+                sleep(60 * 3)
 
             cycle = int(os.path.splitext(os.path.basename(payment_failed_report_file))[0])
 

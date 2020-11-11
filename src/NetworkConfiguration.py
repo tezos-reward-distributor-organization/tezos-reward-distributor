@@ -32,13 +32,14 @@ def init_network_config(network_name, config_client_manager, node_addr):
     except Exception:
         logger.debug("Failed to get network configuration constants from a local node ({}).".format(node_addr))
 
+    pub_node_url = PUBLIC_NODE_BASE.format(PUBLIC_NODE_PREFIX[network_name])
     try:
         network_config_map[network_name] = get_network_config_from_public_node(network_name)
         network_config_map[network_name]['NAME'] = network_name
-        logger.debug("Network configuration constants successfully loaded from a public node ({}).".format(PUBLIC_NODE_BASE))
+        logger.debug("Network configuration constants successfully loaded from a public node ({}).".format(pub_node_url))
         return network_config_map
     except Exception:
-        logger.debug("Failed to get network configuration constants from a public node ({}).".format(PUBLIC_NODE_BASE))
+        logger.debug("Failed to get network configuration constants from a public node ({}).".format(pub_node_url))
 
     logger.debug("Default network configuration constants will be used.")
 

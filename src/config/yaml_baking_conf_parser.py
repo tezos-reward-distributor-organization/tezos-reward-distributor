@@ -5,7 +5,7 @@ from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTE
     FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, REACTIVATE_ZEROED, DELEGATOR_PAYS_RA_FEE, \
     RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
-    EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP
+    EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP, PLUGINS_CONF
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -247,6 +247,16 @@ class BakingYamlConfParser(YamlConfParser):
             return False
 
         return True
+
+    def validate_plugins(self, conf_obj):
+
+        if PLUGINS_CONF not in conf_obj:
+            raise ConfigurationException("Parameter '{:s}' is not present in config file. "
+                                         "Please consult the documentation and add this parameter.".format(PLUGINS_CONF))
+
+        if conf_obj[PLUGINS_CONF] is None or "enabled" not in conf_obj[PLUGINS_CONF]:
+            raise ConfigurationException("Plugins config missing 'enabled' parameter. "
+                                         "Please consult the documentation and add this parameter.")
 
     def parse_bool(self, conf_obj, param_name, default):
 
