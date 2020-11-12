@@ -1,4 +1,4 @@
-Tezos Reward Distributor (Run & Forget) |Build Status|
+Tezos Reward Distributor |Build Status|
 ======================================================
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS.
@@ -34,37 +34,37 @@ TZStats
 -----------
 
 The terms_ of tzstats note that a license is needed for
-the commercial use of the API!
+the commercial use of their API:
 
-> If you wish to use the Data in a manner that is primarily
-> intended for or directed towards commercial advantage or
-> monetary compensation (such use, “Commercial Use”),
-> KIDTSUNAMI requires that you enter into a separate
-> commercial license agreement. Entering into a separate
-> commercial license allows us to protect KIDTSUNAMI’s
-> investment in the Data and to maintain the integrity of
->the Data.
->
-> Please contact us at license@kidtsunami.com for more
-> information about Commercial Uses of our Data.
+    If you wish to use the Data in a manner that is primarily
+    intended for or directed towards commercial advantage or
+    monetary compensation (such use, “Commercial Use”),
+    KIDTSUNAMI requires that you enter into a separate
+    commercial license agreement. Entering into a separate
+    commercial license allows us to protect KIDTSUNAMI’s
+    investment in the Data and to maintain the integrity of
+    the Data.
+    
+    Please contact us at license@kidtsunami.com for more
+    information about Commercial Uses of our Data.
 
 TzKT
 -----------
 
-With #232_ the backend of the Tezos Reward Distributor
+With PR232_ the backend of the Tezos Reward Distributor
 can be optionally **Powered by TzKT API_** under the
 following terms:
 
-> TzKT API is free for everyone and for both commercial
-> and non-commercial usage.
->
-> If your application or service uses the TzKT API in
-> any forms: directly on frontend or indirectly on
-> backend, you should mention that fact on your website or
-> application by placing the label "Powered by TzKT API"
-> with a direct link to tzkt.io.
+    TzKT API is free for everyone and for both commercial
+    and non-commercial usage.
+    
+    If your application or service uses the TzKT API in
+    any forms: directly on frontend or indirectly on
+    backend, you should mention that fact on your website or
+    application by placing the label "Powered by TzKT API"
+    with a direct link to tzkt.io.
 
-.. _POLICY : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/docs/statistics.rst
+.. _POLICY : statistics.html
 
 .. _article : https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7
 
@@ -76,7 +76,7 @@ following terms:
 
 .. _Github : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 
-.. _#232 : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232
+.. _PR232 : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232
 
 .. _API : https://tzkt.io/
 
@@ -98,10 +98,9 @@ following terms:
 Funding
 ------------------------
 
-TRD is an open source project and will stay like this. It is not funded
-by any organization. A grant request is rejected by Tezos Foundation.
-However, I will try to continue to enhance the software and support the
-community.
+TRD is an open source, GPL licensed project. It is maintained by various
+community members. A grant by the Tezos Foundation was approved in 
+October 2020 to fund development through 2021.
 
 TRD Art Work
 ------------------------
