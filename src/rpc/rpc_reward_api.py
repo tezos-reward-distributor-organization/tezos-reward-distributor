@@ -213,9 +213,9 @@ class RpcRewardApiImpl(RewardApi):
                 raise RpcRewardApiError("Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
 
         except RpcRewardApiError as r:
-            logger.warning("RPC API Error: {}".format(r), exc_info=True)
+            logger.error("RPC API Error: {}".format(r))
         except Exception as e:
-            logger.warning("Unexpected error: {}".format(e), exc_info=True)
+            logger.error("Unexpected error: {}".format(e), exc_info=True)
 
         return delegate_staking_balance, delegators
 
