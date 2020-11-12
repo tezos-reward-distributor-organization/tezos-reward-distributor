@@ -137,14 +137,17 @@ Available configuration parameters are:
   The rules_map is needed to redirect payments. A pre-defined source (left side) is 
   mindelegation. Pre-defined destinations (right side) are TOF = to founders balance, 
   TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are 
-  PKHs.
+  PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.
   
   Example:  
   rules_map:  
-  PKH: TOF (redirects payment from PKH to TOF)  
-  PHK: TOB (payment will be kept in the baking_address)  
-  PKH: PKH (redirects payment from PKH to PKH)  
-  mindelegation: TOE (mindelegation will be shared with everyone)  
+  PKH: TOF (redirects payment from PKH to TOF)
+  
+  PHK: TOB (payment will be kept in the baking_address)
+  
+  PKH: PKH (redirects payment from PKH to PKH)
+  
+  mindelegation: TOE (mindelegation will be shared with everyone)
   
 **plugins**
   This section of the configuration file, along with 'enabled' noted in the example below,
