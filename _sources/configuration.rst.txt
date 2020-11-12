@@ -4,8 +4,8 @@ How to configure Tezos Reward Distributor?
 Email Setup
 ------------------------
 
-Get emails for payment reports at each cycle. Fill email.ini file with
-your email details to receive payment emails.
+Various notifications, such as completed cycle payouts, can be delivered to you via email.
+Please see docs/plugins.md for information on configuring this plugin.
 
 Fee Setup
 ------------------------
@@ -146,3 +146,13 @@ Available configuration parameters are:
   PKH: PKH (redirects payment from PKH to PKH)  
   mindelegation: TOE (mindelegation will be shared with everyone)  
   
+**plugins**
+  This section of the configuration file, along with 'enabled' noted in the example below,
+  is required, even if you are not using any of the included plugins.
+
+  Minimum configuration::
+
+    plugins:
+      enabled:
+
+  Please consult docs/plugins.md for more details on the configuring the various plugins.

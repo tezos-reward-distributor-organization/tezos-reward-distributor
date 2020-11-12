@@ -36,7 +36,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Payment Address" href="paymentaddress.html" />
+    <link rel="next" title="Plugins" href="plugins.html" />
     <link rel="prev" title="How to get and install Tezos Reward Distributor?" href="installation.html" /> 
 </head>
 
@@ -95,11 +95,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#baker-configuration">Baker Configuration:</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">For developers</a></li>
 </ul>
 
             
@@ -169,8 +172,8 @@
 <h1>How to configure Tezos Reward Distributor?<a class="headerlink" href="#how-to-configure-tezos-reward-distributor" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="email-setup">
 <h2>Email Setup<a class="headerlink" href="#email-setup" title="Permalink to this headline">¶</a></h2>
-<p>Get emails for payment reports at each cycle. Fill email.ini file with
-your email details to receive payment emails.</p>
+<p>Various notifications, such as completed cycle payouts, can be delivered to you via email.
+Please see docs/plugins.md for information on configuring this plugin.</p>
 </div>
 <div class="section" id="fee-setup">
 <h2>Fee Setup<a class="headerlink" href="#fee-setup" title="Permalink to this headline">¶</a></h2>
@@ -290,6 +293,15 @@ PHK: TOB (payment will be kept in the baking_address)
 PKH: PKH (redirects payment from PKH to PKH)
 mindelegation: TOE (mindelegation will be shared with everyone)</p>
 </dd>
+<dt><strong>plugins</strong></dt><dd><p>This section of the configuration file, along with ‘enabled’ noted in the example below,
+is required, even if you are not using any of the included plugins.</p>
+<p>Minimum configuration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">enabled</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>Please consult docs/plugins.md for more details on the configuring the various plugins.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -302,7 +314,7 @@ mindelegation: TOE (mindelegation will be shared with everyone)</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="paymentaddress.html" class="btn btn-neutral float-right" title="Payment Address" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="plugins.html" class="btn btn-neutral float-right" title="Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral float-left" title="How to get and install Tezos Reward Distributor?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
