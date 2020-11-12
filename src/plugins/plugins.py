@@ -1,7 +1,10 @@
 import importlib
 import logging
+from os import path, rename
 
 logger = logging.getLogger("main.plugins")
+
+EMAIL_INI_PATH = "./email.ini"
 
 
 # Manager class for the plugin subsystem
@@ -11,6 +14,12 @@ class PluginManager(object):
         self.plugins = []
         self.verbose = verbose
         self.dry_run = dry_run
+
+        # Temporary message to notify of upgrade. Should be removed on next release.
+        # Look for older email.ini file and print notice of upgrade
+        if path.isfile(EMAIL_INI_PATH):
+            logger.warning("[Plugins] Detected obselete email config file. Please convert to the new plugins system. 'email.ini' renamed 'email.ini.old'")
+            rename(EMAIL_INI_PATH, "{:s}.old".format(EMAIL_INI_PATH))
 
         # Get the list of enabled plugins, and attempt to load
         if cfg["enabled"] is not None:
