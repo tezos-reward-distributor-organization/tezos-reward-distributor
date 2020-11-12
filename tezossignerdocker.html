@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tezos Signer with Docker &mdash; Tezos Reward Distributor 6.0 documentation</title>
+  <title>Tezos Signer with Docker &mdash; Tezos Reward Distributor 8.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0
+                8.0
               </div>
             
           
@@ -94,9 +94,11 @@
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tezos Signer with Docker</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#setup-tezos-docker-image">1- Setup Tezos Docker Image</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#configure-tezos-signer">2- Configure Tezos Signer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#configure-tezos-client">3- Configure Tezos Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-tezos-docker-image">1 - Setup Tezos Docker Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configure-tezos-signer">2 - Configure Tezos Signer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configure-tezos-client">3 - Configure Tezos Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configure-baker-and-endorser">4 - Configure baker and endorser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test">5 - Test</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
@@ -199,7 +201,7 @@ DANGERS.</p>
 Tezos test network. Some commands and filenames may have
 changed!</p>
 <div class="section" id="setup-tezos-docker-image">
-<h2>1- Setup Tezos Docker Image<a class="headerlink" href="#setup-tezos-docker-image" title="Permalink to this headline">¶</a></h2>
+<h2>1 - Setup Tezos Docker Image<a class="headerlink" href="#setup-tezos-docker-image" title="Permalink to this headline">¶</a></h2>
 <p>Example command is for <em>babylonnet</em>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">O</span> <span class="n">babylonnet</span><span class="o">.</span><span class="n">sh</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">tezos</span><span class="o">/</span><span class="n">tezos</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="n">babylonnet</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">alphanet</span><span class="o">.</span><span class="n">sh</span>
 <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="n">babylonnet</span><span class="o">.</span><span class="n">sh</span>
@@ -211,7 +213,7 @@ changed!</p>
 and have a look at the official Tezos <a class="reference external" href="http://tezos.gitlab.io/introduction/howtoget.html?highlight=docker#docker-images">docker</a> documentation.</p>
 </div>
 <div class="section" id="configure-tezos-signer">
-<h2>2- Configure Tezos Signer<a class="headerlink" href="#configure-tezos-signer" title="Permalink to this headline">¶</a></h2>
+<h2>2 - Configure Tezos Signer<a class="headerlink" href="#configure-tezos-signer" title="Permalink to this headline">¶</a></h2>
 <p>For mainnet replace “babylonnet” with “mainnet”. Replace
 “myaddressalias” with your alias. Replace
 “edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX” with your
@@ -225,14 +227,16 @@ from docker ps.</p>
 </div>
 </div>
 <div class="section" id="configure-tezos-client">
-<h2>3- Configure Tezos Client<a class="headerlink" href="#configure-tezos-client" title="Permalink to this headline">¶</a></h2>
+<h2>3 - Configure Tezos Client<a class="headerlink" href="#configure-tezos-client" title="Permalink to this headline">¶</a></h2>
 <p>Replace “myaddressalias” with your alias. Replace
 “tz1PKH” with your public key hash. It is up to you
 to select host IP and port.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="n">myaddressalias</span> <span class="n">tcp</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">22000</span><span class="o">/</span><span class="n">tz1PKH</span> <span class="o">-</span><span class="n">f</span>
 </pre></div>
 </div>
-<p>## 4- Configure baker and endorser</p>
+</div>
+<div class="section" id="configure-baker-and-endorser">
+<h2>4 - Configure baker and endorser<a class="headerlink" href="#configure-baker-and-endorser" title="Permalink to this headline">¶</a></h2>
 <p>Replace “myaddressalias” with your alias. Replace “tz1PKH”
 with your public key hash. “~/.tezos-node/” is where node
 data is stored and may be different in your system. Also,
@@ -242,8 +246,10 @@ active protocol.</p>
 <span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">endorser</span><span class="o">-</span><span class="mi">003</span><span class="o">-</span><span class="n">PsddFKi3</span> <span class="o">-</span><span class="n">R</span> <span class="n">tcp</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">22000</span><span class="o">/</span><span class="n">tz1PKH</span> <span class="n">run</span> <span class="n">myaddressalias</span>
 </pre></div>
 </div>
-<p>## 5- Test
-To make sure that tezos-signer can survive terminal session
+</div>
+<div class="section" id="test">
+<h2>5 - Test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h2>
+<p>To make sure that tezos-signer can survive terminal session
 death, run tests after terminating the session the signer
 is launched.</p>
 <p>You must see tezos-signer process after running following command.</p>
@@ -279,7 +285,7 @@ that tezos-signer is signing operations.</p>
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2019, habanoz
+        &copy; Copyright 2019, habanoz, utdrmac, amzid, jdsika
 
     </p>
   </div>
