@@ -221,6 +221,10 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[set_name] = set()
             return
 
+        if conf_obj[set_name] is None:
+            conf_obj[set_name] = set()
+            return
+
         if isinstance(conf_obj[set_name], str) and conf_obj[set_name].lower() == 'none':
             conf_obj[set_name] = set()
             return
