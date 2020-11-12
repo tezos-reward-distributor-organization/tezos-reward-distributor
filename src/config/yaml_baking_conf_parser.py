@@ -37,6 +37,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.validate_address_set(conf_obj, SUPPORTERS_SET)
         self.validate_specials_map(conf_obj)
         self.validate_dest_map(conf_obj)
+        self.validate_plugins(conf_obj)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
         self.parse_bool(conf_obj, REACTIVATE_ZEROED, None)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_RA_FEE, None)
