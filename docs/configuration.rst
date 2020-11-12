@@ -158,3 +158,4 @@ Available configuration parameters are:
   Please consult the `plugins docs`_ for more details on the configuring the various plugins.
 
 .. _plugins docs : plugins.html
+
