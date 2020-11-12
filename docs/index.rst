@@ -76,7 +76,7 @@ following terms:
 
 .. _Github : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 
-.. _#232 https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232
+.. _#232 : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232
 
 .. _API : https://tzkt.io/
 
@@ -86,12 +86,14 @@ following terms:
 
    installation
    configuration
+   plugins
    paymentaddress
    tezossigner
    tezossignerdocker
    run
    linuxservice
-   contributers
+   statistics
+   contributors
 
 Funding
 ------------------------

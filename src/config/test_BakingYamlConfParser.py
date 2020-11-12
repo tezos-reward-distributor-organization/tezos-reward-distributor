@@ -24,6 +24,8 @@ class TestYamlAppConfParser(TestCase):
         service_fee: 4.53
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -71,6 +73,8 @@ class TestYamlAppConfParser(TestCase):
         service_fee: 4.5
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
@@ -118,6 +122,8 @@ class TestYamlAppConfParser(TestCase):
         min_delegation_amt: 100
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
