@@ -100,6 +100,10 @@ class TzKTRewardApiImpl(RewardApi):
             if item['balance'] > 0
         }
 
+        # snapshot_level = self.api.get_snapshot_level(cycle)
+        # for delegator in self.dexter_contracts_set:
+        #    dxtz.process_original_delegators_map(delegators_balances, delegator, snapshot_level)
+
         return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances)
 
     def update_current_balances(self, reward_logs: List[RewardLog]):

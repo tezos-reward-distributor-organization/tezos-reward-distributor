@@ -5,7 +5,8 @@ from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTE
     FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, REACTIVATE_ZEROED, DELEGATOR_PAYS_RA_FEE, \
     RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
-    EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP, PLUGINS_CONF
+    EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP, PLUGINS_CONF, DEXTER, \
+    CONTRACTS_SET
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -57,6 +58,8 @@ class BakingYamlConfParser(YamlConfParser):
 
         addr_validator = AddressValidator("dest_map")
         conf_obj[DEST_MAP] = {k: v for k, v in conf_obj[RULES_MAP].items() if addr_validator.isaddress(v)}
+
+        conf_obj[CONTRACTS_SET] = set([k for k, v in conf_obj[RULES_MAP].items() if v.lower() == DEXTER])
 
         # default destination for min_delegation filtered account rewards
         if MIN_DELEGATION_KEY not in conf_obj[RULES_MAP]:
