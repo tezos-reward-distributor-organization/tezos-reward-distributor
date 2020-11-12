@@ -292,3 +292,6 @@ class TzKTApi:
         }
         """
         return self._request(f'protocols/cycles/{cycle}')
+
+    def get_snapshot_level(self, cycle):
+        return self._request(f'cycles/{cycle}')['snapshotLevel']
