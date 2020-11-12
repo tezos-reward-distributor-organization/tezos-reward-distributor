@@ -5,7 +5,7 @@ Email Setup
 ------------------------
 
 Various notifications, such as completed cycle payouts, can be delivered to you via email.
-Please see docs/plugins.md for information on configuring this plugin.
+Please see the `plugins docs`_ for information on configuring this plugin.
 
 Fee Setup
 ------------------------
@@ -155,4 +155,6 @@ Available configuration parameters are:
     plugins:
       enabled:
 
-  Please consult docs/plugins.md for more details on the configuring the various plugins.
+  Please consult the `plugins docs`_ for more details on the configuring the various plugins.
+
+.. _plugins docs : plugins.html
