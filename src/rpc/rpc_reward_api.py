@@ -32,13 +32,20 @@ class RpcRewardApiImpl(RewardApi):
         self.verbose = verbose
 
     def get_rewards_for_cycle_map(self, cycle):
-        current_level, current_cycle = self.__get_current_level()
-        logger.debug("Current level {}, current cycle {}".format(current_level, current_cycle))
 
-        reward_data = {}
-        reward_data["delegate_staking_balance"], reward_data[
-            "delegators"] = self.__get_delegators_and_delgators_balances(cycle, current_level)
-        reward_data["delegators_nb"] = len(reward_data["delegators"])
+        try:
+            current_level, current_cycle = self.__get_current_level()
+            logger.debug("Current level {}, current cycle {}".format(current_level, current_cycle))
+
+            reward_data = {}
+            reward_data["delegate_staking_balance"], reward_data[
+                "delegators"] = self.__get_delegators_and_delgators_balances(cycle, current_level)
+            reward_data["delegators_nb"] = len(reward_data["delegators"])
+
+        except Exception as e:
+            # We should abort here on any exception as we did not fetch all
+            # necessary data to properly compute rewards
+            raise e from e
 
         # Get last block in cycle where rewards are unfrozen
         level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
@@ -102,17 +109,21 @@ class RpcRewardApiImpl(RewardApi):
         sleep(0.1)  # be nice to public node service
 
         resp = requests.get(request, timeout=time_out)
+
         if resp.status_code == 404:
-            raise Exception("RPC URL '{}' not found. Is this node in archive mode?".format(request))
+            raise RpcRewardApiError("RPC URL '{}' not found. Is this node in archive mode?".format(request))
+
         if resp.status_code != 200:
-            message = "Request '{}' failed with status code {}, after {}s".format(request, resp.status_code, time_out)
+            message = "Request '{}' failed ({}), after {}s".format(request, resp.status_code, time_out)
             if "CF-RAY" in resp.headers:
                 message += ", unique request_id: {}".format(resp.headers['CF-RAY'])
-            raise Exception(message)
+            raise RpcRewardApiError(message)
 
         response = resp.json()
+
         if self.verbose:
             logger.debug("[do_rpc_request] Response {}".format(response))
+
         return response
 
     def update_current_balances(self, reward_logs):
@@ -181,6 +192,7 @@ class RpcRewardApiImpl(RewardApi):
                         staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
                     except Exception as e:
                         logger.debug("Fetching delegator {} staking balance failed, will retry: {}, will retry", delegator, e)
+                        sleep(0.4)  # Sleep between failure
 
                 d_info["staking_balance"] = int(staking_balance_response)
 
@@ -219,9 +231,9 @@ class RpcRewardApiImpl(RewardApi):
             sleep(0.4)  # Be nice to public RPC
             try:
                 current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
-            except requests.exceptions.RequestException as e:
+            except RpcRewardApiError as e:
                 # Catch HTTP-related errors and retry
-                logger.debug("Fetching delegator {} current balance failed, will retry: {}", address, e)
+                logger.warn("Fetching delegator {} current balance failed, will retry: {}", address, e)
                 sleep(2.0)
             except Exception as e:
                 # Anything else, raise up
