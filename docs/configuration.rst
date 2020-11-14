@@ -77,7 +77,7 @@ Available configuration parameters are:
   total baking balance. Implicit or originated addresses are
   accepted. It is important that the sum of all ratios equals
   to 1. This map is optional if owners do not want to be paid
-  for baking rewards, in this case, service fee remains in
+  for baking rewards, in this case, baking rewards remain in
   baking balance.
   
   Example::
