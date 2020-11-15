@@ -72,5 +72,5 @@ class TwitterPlugin(plugins.Plugin):
         if self.extra_tags is None:
             logger.info("[TwitterPlugin] No hashtags defined; Just letting you know")
 
-        elif self.extra_tags is not None and self.extra_tags is not isinstance(self.extra_tags, list):
+        elif self.extra_tags is not None and not isinstance(self.extra_tags, list):
             raise plugins.PluginConfigurationError("[{:s}] 'extra_tags' not configured correctly".format(self.name))
