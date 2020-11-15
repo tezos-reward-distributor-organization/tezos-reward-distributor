@@ -4,7 +4,7 @@ from calc.calculate_phase0 import CalculatePhase0
 from model import reward_log
 from api.provider_factory import ProviderFactory
 
-BAKING_ADDRESS = "tz1MTZEJE7YH3wzo8YYiAGd8sgiCTxNRHczR"
+BAKING_ADDRESS = "tz1RomaiWJV3NFDZWTMVR2aEeHknsn3iF5Gi"
 
 
 class TestCalculatePhase0(TestCase):
