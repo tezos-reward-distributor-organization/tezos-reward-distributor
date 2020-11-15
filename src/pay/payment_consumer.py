@@ -5,9 +5,9 @@ import threading
 from time import sleep
 from Constants import VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
 from NetworkConfiguration import is_mainnet
-from calc.calculate_phase5 import CalculatePhase5
-from calc.calculate_phase6 import CalculatePhase6
-from calc.calculate_phase7 import CalculatePhase7
+from calc.calculate_phaseMapping import CalculatePhaseMapping
+from calc.calculate_phaseMerge import CalculatePhaseMerge
+from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 from log_config import main_logger
 from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from pay.batch_payer import BatchPayer
@@ -81,17 +81,17 @@ class PaymentConsumer(threading.Thread):
 
                 logger.info("Starting payments for cycle {}".format(pymnt_cycle))
 
-                # Handle remapping of payment to alternate address
-                phase5 = CalculatePhase5(self.dest_map)
-                payment_items, _ = phase5.calculate(payment_items, None)
-
                 # Merge payments to same address
-                phase6 = CalculatePhase6(addr_dest_dict=self.dest_map)
-                payment_items, _ = phase6.calculate(payment_items, None)
+                phaseMerge = CalculatePhaseMerge()
+                payment_items = phaseMerge.calculate(payment_items)
+
+                # Handle remapping of payment to alternate address
+                phaseMapping = CalculatePhaseMapping()
+                payment_items = phaseMapping.calculate(payment_items, self.dest_map)
 
                 # Filter zero-balance addresses based on config
-                phase7 = CalculatePhase7(self.reactivate_zeroed)
-                payment_items = phase7.calculate(payment_items)
+                phaseZeroBalance = CalculatePhaseZeroBalance()
+                payment_items = phaseZeroBalance.calculate(payment_items, self.reactivate_zeroed)
 
                 # Filter out non-payable items
                 payment_items = [pi for pi in payment_items if pi.payable]
