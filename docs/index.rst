@@ -52,7 +52,7 @@ TzKT
 -----------
 
 With PR232_ the backend of the Tezos Reward Distributor
-can be optionally **Powered by TzKT API_** under the
+can be optionally `Powered by TzKT API`__ under the
 following terms:
 
     TzKT API is free for everyone and for both commercial
@@ -79,6 +79,8 @@ following terms:
 .. _PR232 : https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232
 
 .. _API : https://tzkt.io/
+
+__ API_
 
 .. toctree::
    :maxdepth: 2
