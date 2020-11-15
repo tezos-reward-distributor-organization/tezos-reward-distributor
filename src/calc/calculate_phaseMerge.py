@@ -49,4 +49,4 @@ class CalculatePhaseMerge(CalculatePhaseBase):
             else:
                 reward_data6.append(rl_list[0])
 
-        return reward_data6, total_amount
+        return reward_data6
