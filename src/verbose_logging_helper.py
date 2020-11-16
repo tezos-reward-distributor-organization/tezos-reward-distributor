@@ -5,12 +5,12 @@ from zipfile import ZipFile
 
 
 class VerboseLoggingHelper:
-    def __init__(self, logging_dir, enabled, logger, formatter):
+    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most=100):
         self.logging_dir = logging_dir
         self.formatter = formatter
         self.logger = logger
         self.logger.setLevel(logging.DEBUG)
-
+        self.keep_at_most = keep_at_most
         self.archive_old_log_file()
 
         if enabled:
@@ -47,7 +47,14 @@ class VerboseLoggingHelper:
         archive_file = os.path.join(archive_dir, os.path.splitext(os.path.basename(path))[0] + '.zip')
 
         with ZipFile(archive_file, 'w') as arch_zip:
-            arch_zip.write(path)
+            arch_zip.write(path, arcname=os.path.basename(path))
+        os.remove(path)
+
+    def remove_oldest(self):
+        sorted_files = sorted(filter(os.path.isfile, os.listdir('.')), key=os.path.getmtime)
+
+        if len(sorted_files) > self.keep_at_most:
+            os.remove(sorted_files[-1])
 
     def get_logger(self):
         return self.logger
