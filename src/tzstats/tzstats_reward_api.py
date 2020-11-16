@@ -3,6 +3,7 @@ from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from tzstats.tzstats_reward_provider_helper import TzStatsRewardProviderHelper
+from Dexter import dexter_utils as dxtz
 
 logger = main_logger
 
@@ -24,6 +25,10 @@ class TzStatsRewardApiImpl(RewardApi):
         delegate_staking_balance = root["delegate_staking_balance"]
         total_reward_amount = root["total_reward_amount"]
         delegators_balances_dict = root["delegators_balances"]
+
+        snapshot_level = self.helper.get_snapshot_level(cycle)
+        for delegator in self.dexter_contracts_set:
+            dxtz.process_original_delegators_map(delegators_balances_dict, delegator, snapshot_level, self.helper)
 
         return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances_dict)
 

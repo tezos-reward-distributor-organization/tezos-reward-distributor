@@ -1,10 +1,10 @@
 from unittest import TestCase
 
-from calc.calculate_phase5 import CalculatePhase5
+from calc.calculate_phaseMapping import CalculatePhaseMapping
 from model.reward_log import RewardLog, TYPE_MERGED
 
 
-class TestCalculatePhase5(TestCase):
+class TestCalculatePhaseMapping(TestCase):
     def test_calculate(self):
         rewards = []
         ratios = [0.25, 0.05, 0.3, 0.15, 0.25]
@@ -18,15 +18,11 @@ class TestCalculatePhase5(TestCase):
 
         rewards.append(RewardLog("addrdummy", "D", 0, 0).skip("skipped for testing", 4))
 
-        phase5 = CalculatePhase5({"addr2": "addr1"})
-
-        new_rewards, new_total_reward = phase5.calculate(rewards, total_reward)
+        phaseMapping = CalculatePhaseMapping()
+        new_rewards = phaseMapping.calculate(rewards, {"addr2": "addr1"})
 
         # filter out skipped records
         new_rewards = list(rl for rl in new_rewards if not rl.skipped)
-
-        # new_total_reward = total_reward
-        self.assertEqual(total_reward, new_total_reward)
 
         # check new ratios sum up to 1
         # old and new reward amount is the same

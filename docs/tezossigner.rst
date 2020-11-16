@@ -8,6 +8,7 @@ the signer, second tell the client that it can use
 particular signer to sign the operations.
 
 1. Configure Signer
+
   Replace "`<myaddressalias>`" with your alias.
   Replace "edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   with your encryped private key. IP address and port
@@ -19,6 +20,7 @@ particular signer to sign the operations.
       ./tezos-signer launch socket signer -a 127.0.0.1 -p 22000 -W
 
 2. Configure Client
+
   Replace "`<myaddressalias>`" with your alias.
   Replace "`<PKH>`" with your public key hash.
   Use the same host port combination from the previous step.

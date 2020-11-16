@@ -2,7 +2,7 @@
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.
 
-PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR [STATISTICS POLICY](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/docs/statistics.rst) FOR MORE INFORMATION.
+PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR [STATISTICS POLICY](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/statistics.html) FOR MORE INFORMATION.
 
 ## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master)](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor)
 

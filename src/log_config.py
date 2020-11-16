@@ -6,6 +6,7 @@ DEFAULT_LOG_FILE = 'logs/app.log'
 
 main_logger = logging.getLogger('main')
 
+
 def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE):
     main_logger.setLevel(logging.DEBUG)
 

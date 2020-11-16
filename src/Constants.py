@@ -8,7 +8,7 @@ PUBLIC_NODE_URL = {"MAINNET": ["https://mainnet-tezos.giganode.io", "https://tez
 
 TEZOS_RPC_PORT = 8732
 
-VERSION = 7.0
+VERSION = 8.0
 
 
 class RunMode(Enum):
