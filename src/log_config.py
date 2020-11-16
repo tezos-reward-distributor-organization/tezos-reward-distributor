@@ -10,7 +10,7 @@ FORMATTER = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
 main_logger = logging.getLogger('main')
 verbose_logger = logging.getLogger('verbose')
 
-verbose_logging_helper = None
+verbose_log_helper = None
 
 
 def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False):
@@ -40,5 +40,5 @@ def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False):
         syslog_handler = logging.handlers.SysLogHandler(address='/dev/log')
         main_logger.addHandler(syslog_handler)
 
-    global verbose_logging_helper
-    verbose_logging_helper = VerboseLoggingHelper(log_dir, init_verbose, verbose_logger, FORMATTER)
+    global verbose_log_helper
+    verbose_log_helper = VerboseLoggingHelper(log_dir, init_verbose, verbose_logger, FORMATTER)
