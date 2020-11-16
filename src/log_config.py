@@ -2,7 +2,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
-from src.verbose_logging_helper import VerboseLoggingHelper
+from verbose_logging_helper import VerboseLoggingHelper
 
 DEFAULT_LOG_FILE = 'logs/app.log'
 FORMATTER = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
