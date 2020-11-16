@@ -23,12 +23,15 @@ class VerboseLoggingHelper:
         self.logger.addHandler(self.handler)
 
     def archive_old_log_file(self):
-        for file_name in os.listdir(self.logging_dir):
-            if self.is_archive_file(file_name):
-                self.archive(os.path.join(self.logging_dir, file_name))
+        for file_base_name in os.listdir(self.logging_dir):
+            if self.is_log_file(file_base_name):
+                self.archive(os.path.join(self.logging_dir, file_base_name))
 
-    def is_archive_file(self, file_name):
-        return file_name.endswith(".log") and file_name.startswith("app_verbose_")
+    def is_archive_file(self, base_name):
+        return base_name.endswith(".zip") and base_name.startswith("app_verbose_")
+
+    def is_log_file(self, base_name):
+        return base_name.endswith(".log") and base_name.startswith("app_verbose_")
 
     def get_log_file_path(self, cycle):
         formatted_date = datetime.now().strftime("%Y%m%d%H%M%S")
