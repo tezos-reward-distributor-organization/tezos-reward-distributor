@@ -53,10 +53,8 @@ class VerboseLoggingHelper:
         self.remove_oldest(archive_dir)
 
     def remove_oldest(self, archive_dir):
-        sorted_files = sorted(filter(os.path.isfile, os.listdir(archive_dir)), key=os.path.getmtime)
-        print(os.listdir(archive_dir))
-        print(filter(os.path.isfile, os.listdir(archive_dir)))
-        print(archive_dir)
+        archive_dir = os.path.join(self.logging_dir, 'verbose_backup')
+        sorted_files = sorted([ f for f in os.listdir(archive_dir) if f.endswith(".zip") and f.startswith("app_verbose_") ], key=os.path.getmtime)
         print(sorted_files)
         print(len(sorted_files))
         print(self.keep_at_most)
