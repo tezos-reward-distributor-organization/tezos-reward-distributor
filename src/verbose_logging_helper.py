@@ -65,7 +65,7 @@ class VerboseLoggingHelper:
         print(sorted_files[0])
 
         if len(sorted_files) > self.keep_at_most:
-            os.remove(sorted_files[-1])
+            os.remove(sorted_files[0])
 
     def get_logger(self):
         return self.logger
