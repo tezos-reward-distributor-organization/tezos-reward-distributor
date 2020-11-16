@@ -7,7 +7,7 @@ from time import sleep
 from datetime import datetime, timedelta
 
 from Constants import RunMode, PaymentStatus
-from log_config import main_logger, verbose_log_helper
+from log_config import main_logger, get_verbose_log_helper
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
 from exception.api_provider import ApiProviderException
@@ -130,7 +130,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
             logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
 
-        verbose_log_helper.reset(pymnt_cycle)
+        get_verbose_log_helper().reset(pymnt_cycle)
 
         while not self.exiting and self.life_cycle.is_running():
 
@@ -206,7 +206,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                 break
                             else:
                                 pymnt_cycle = pymnt_cycle + 1
-                                verbose_log_helper.reset(pymnt_cycle)
+                                get_verbose_log_helper().reset(pymnt_cycle)
 
                     # end of queue size check
                     else:

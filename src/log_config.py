@@ -13,6 +13,10 @@ verbose_logger = logging.getLogger('verbose')
 verbose_log_helper = None
 
 
+def get_verbose_log_helper():
+    return verbose_log_helper
+
+
 def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False):
     main_logger.setLevel(logging.DEBUG)
 
@@ -42,3 +46,5 @@ def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False):
 
     global verbose_log_helper
     verbose_log_helper = VerboseLoggingHelper(log_dir, init_verbose, verbose_logger, FORMATTER)
+
+    print(verbose_log_helper)
