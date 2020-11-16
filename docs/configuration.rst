@@ -4,8 +4,8 @@ How to configure Tezos Reward Distributor?
 Email Setup
 ------------------------
 
-Get emails for payment reports at each cycle. Fill email.ini file with
-your email details to receive payment emails.
+Various notifications, such as completed cycle payouts, can be delivered to you via email.
+Please see the `plugins docs`_ for information on configuring this plugin.
 
 Fee Setup
 ------------------------
@@ -77,7 +77,7 @@ Available configuration parameters are:
   total baking balance. Implicit or originated addresses are
   accepted. It is important that the sum of all ratios equals
   to 1. This map is optional if owners do not want to be paid
-  for baking rewards, in this case, service fee remains in
+  for baking rewards, in this case, baking rewards remain in
   baking balance.
   
   Example::
@@ -137,12 +137,28 @@ Available configuration parameters are:
   The rules_map is needed to redirect payments. A pre-defined source (left side) is 
   mindelegation. Pre-defined destinations (right side) are TOF = to founders balance, 
   TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are 
-  PKHs.
+  PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.
   
   Example:  
   rules_map:  
-  PKH: TOF (redirects payment from PKH to TOF)  
-  PHK: TOB (payment will be kept in the baking_address)  
-  PKH: PKH (redirects payment from PKH to PKH)  
-  mindelegation: TOE (mindelegation will be shared with everyone)  
+  PKH: TOF (redirects payment from PKH to TOF)
   
+  PHK: TOB (payment will be kept in the baking_address)
+  
+  PKH: PKH (redirects payment from PKH to PKH)
+  
+  mindelegation: TOE (mindelegation will be shared with everyone)
+  
+**plugins**
+  This section of the configuration file, along with 'enabled' noted in the example below,
+  is required, even if you are not using any of the included plugins.
+
+  Minimum configuration::
+
+    plugins:
+      enabled:
+
+  Please consult the `plugins docs`_ for more details on the configuring the various plugins.
+
+.. _plugins docs : plugins.html
+

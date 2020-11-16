@@ -4,7 +4,7 @@ from calc.calculate_phase0 import CalculatePhase0
 from model import reward_log
 from api.provider_factory import ProviderFactory
 
-BAKING_ADDRESS = "tz1MTZEJE7YH3wzo8YYiAGd8sgiCTxNRHczR"
+BAKING_ADDRESS = "tz1RomaiWJV3NFDZWTMVR2aEeHknsn3iF5Gi"
 
 
 class TestCalculatePhase0(TestCase):
@@ -20,7 +20,8 @@ class TestCalculatePhase0(TestCase):
         }
 
         api = ProviderFactory(provider='prpc').newRewardApi(nw, BAKING_ADDRESS, '')
-        model = api.get_rewards_for_cycle_map(410)
+
+        model = api.get_rewards_for_cycle_map(90)
 
         phase0 = CalculatePhase0(model)
         reward_data, total_rewards = phase0.calculate()

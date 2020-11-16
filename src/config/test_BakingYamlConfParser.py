@@ -21,9 +21,12 @@ class TestYamlAppConfParser(TestCase):
         payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         founders_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
+        supporters_set:
         service_fee: 4.53
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -68,9 +71,12 @@ class TestYamlAppConfParser(TestCase):
         baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
+        supporters_set: None
         service_fee: 4.5
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
@@ -118,6 +124,8 @@ class TestYamlAppConfParser(TestCase):
         min_delegation_amt: 100
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',

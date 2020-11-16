@@ -5,6 +5,7 @@ import requests
 from api.reward_api import RewardApi
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
+from Dexter import dexter_utils as dxtz
 
 logger = main_logger
 
@@ -13,6 +14,8 @@ COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
+COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
+COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -35,7 +38,7 @@ class RpcRewardApiImpl(RewardApi):
 
         try:
             current_level, current_cycle = self.__get_current_level()
-            logger.debug("Current level {}, current cycle {}".format(current_level, current_cycle))
+            logger.debug("Current level {:d}, current cycle {:d}".format(current_level, current_cycle))
 
             reward_data = {}
             reward_data["delegate_staking_balance"], reward_data[
@@ -50,7 +53,7 @@ class RpcRewardApiImpl(RewardApi):
         # Get last block in cycle where rewards are unfrozen
         level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
 
-        logger.debug("Cycle {}, preserved cycles {}, blocks per cycle {}, last block of cycle {}"
+        logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}"
                      .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
 
         if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
@@ -58,13 +61,17 @@ class RpcRewardApiImpl(RewardApi):
             reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
 
         else:
-            logger.warning("Please wait until the rewards and fees for cycle {} are unfrozen".format(cycle))
+            logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
             reward_data["total_rewards"] = 0
+
+        _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
+        for delegator in self.dexter_contracts_set:
+            dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
 
         reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
                                            reward_data["delegators"])
 
-        logger.debug("delegate_staking_balance = {}, total_rewards = {}"
+        logger.debug("delegate_staking_balance = {:d}, total_rewards = {:d}"
                      .format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
         logger.debug("delegators = {}".format(reward_data["delegators"]))
 
@@ -86,19 +93,15 @@ class RpcRewardApiImpl(RewardApi):
 
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
-                            logger.debug(
-                                "[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
                         elif balance_update["category"] == "fees":
                             unfrozen_fees = -int(balance_update["change"])
-                            logger.debug(
-                                "[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
                         else:
-                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(
-                                balance_update))
+                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(balance_update))
                     else:
-                        logger.debug(
-                            "[__get_unfrozen_rewards] Found balance update, cycle does not match or change is non-zero, not including: {}".format(
-                                balance_update))
+                        logger.debug("[__get_unfrozen_rewards] Found balance update, cycle does not match or "
+                                     "change is non-zero, not including: {}".format(balance_update))
 
         return unfrozen_fees, unfrozen_rewards
 
@@ -132,10 +135,66 @@ class RpcRewardApiImpl(RewardApi):
             try:
                 rl.current_balance = self.__get_current_balance_of_delegator(rl.address)
             except Exception as e:
-                logger.warning("update_current_balances - unexpected error: {}".format(e), exc_info=True)
+                logger.warning("update_current_balances - unexpected error: {}".format(str(e)), exc_info=True)
                 raise e from e
 
+    def get_contract_storage(self, contract_id, block):
+        get_contract_storage_request = COMM_CONTRACT_STORAGE.format(self.node_url, block, contract_id)
+
+        contract_storage_response = None
+
+        while not contract_storage_response:
+            sleep(0.4)  # Be nice to public RPC
+            try:
+                contract_storage_response = self.do_rpc_request(get_contract_storage_request, time_out=5)
+            except requests.exceptions.RequestException as e:
+                # Catch HTTP-related errors and retry
+                logger.debug("Fetching contract storage {:s} failed, will retry: {:s}".format(contract_id, str(e)))
+                sleep(2.0)
+            except Exception as e:
+                # Anything else, raise up
+                raise e from e
+
+        return contract_storage_response
+
+    def get_big_map_id(self, contract_id):
+        storage = self.get_contract_storage(contract_id, 'head')
+        parsed_storage = dxtz.parse_dexter_storage(storage)
+        return parsed_storage['big_map_id']
+
+    def get_address_value_from_big_map(self, big_map_id, address_script_expr, snapshot_block):
+        get_address_value_request = COMM_BIGMAP_QUERY.format(self.node_url, snapshot_block, big_map_id, address_script_expr)
+
+        address_value_response = None
+
+        while not address_value_response:
+            sleep(0.4)  # Be nice to public RPC
+            try:
+                address_value_response = self.do_rpc_request(get_address_value_request, time_out=5)
+            except requests.exceptions.RequestException as e:
+                # Catch HTTP-related errors and retry
+                logger.debug("Fetching address value {} failed, will retry: {:s}".format(address_script_expr, str(e)))
+                sleep(2.0)
+            except Exception as e:
+                # Anything else, raise up
+                raise e from e
+
+        return address_value_response
+
+    def get_liquidity_provider_balance(self, big_map_id, address_script_expr, snapshot_block):
+        big_map_value = self.get_address_value_from_big_map(big_map_id, address_script_expr, snapshot_block)
+        int(big_map_value.json()['args'][0]['int'])
+
+    def get_liquidity_providers_list(self, big_map_id, snapshot_block, verbose=False):
+        pass
+
+    def update_current_balances_dexter(self, balanceMap):
+        for address in balanceMap:
+            curr_balance = self.__get_current_balance_of_delegator(address)
+            balanceMap[address].update({"current_balance": curr_balance})
+
     def __get_current_level(self):
+        print("### {}".format(COMM_HEAD.format(self.node_url)))
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
         current_cycle = int(head["metadata"]["level"]["cycle"])
@@ -179,7 +238,6 @@ class RpcRewardApiImpl(RewardApi):
 
             # Loop over delegators; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses):
-
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
 
@@ -191,7 +249,7 @@ class RpcRewardApiImpl(RewardApi):
                     try:
                         staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
                     except Exception as e:
-                        logger.debug("Fetching delegator {} staking balance failed, will retry: {}, will retry", delegator, e)
+                        logger.debug("Fetching delegator {:s} staking balance failed, will retry: {:s}, will retry".format(delegator, str(e)))
                         sleep(0.4)  # Sleep between failure
 
                 d_info["staking_balance"] = int(staking_balance_response)
@@ -213,9 +271,9 @@ class RpcRewardApiImpl(RewardApi):
                 raise RpcRewardApiError("Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
 
         except RpcRewardApiError as r:
-            logger.error("RPC API Error: {}".format(r))
+            logger.error("RPC API Error: {}".format(str(r)))
         except Exception as e:
-            logger.error("Unexpected error: {}".format(e), exc_info=True)
+            logger.error("Unexpected error: {}".format(str(e)), exc_info=True)
 
         return delegate_staking_balance, delegators
 
@@ -233,7 +291,7 @@ class RpcRewardApiImpl(RewardApi):
                 current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
             except RpcRewardApiError as e:
                 # Catch HTTP-related errors and retry
-                logger.warn("Fetching delegator {} current balance failed, will retry: {}", address, e)
+                logger.warning("Fetching delegator {:s} current balance failed, will retry: {:s}".format(address, str(e)))
                 sleep(2.0)
             except Exception as e:
                 # Anything else, raise up

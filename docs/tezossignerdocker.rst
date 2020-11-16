@@ -35,8 +35,8 @@ This need to be tested again for the current version of the
 Tezos test network. Some commands and filenames may have
 changed!
 
-1- Setup Tezos Docker Image
----------------------------
+1 - Setup Tezos Docker Image
+----------------------------
 
 Example command is for *babylonnet*:
 
@@ -50,8 +50,8 @@ Example command is for *babylonnet*:
 For mainnet, replace first "babylonnet.sh" with "mainnet.sh"
 and have a look at the official Tezos docker_ documentation.
 
-2- Configure Tezos Signer
-----------------------------
+2 - Configure Tezos Signer
+--------------------------
 
 For mainnet replace "babylonnet" with "mainnet". Replace
 "myaddressalias" with your alias. Replace
@@ -66,7 +66,7 @@ from docker ps.
     docker commit 8fa665779b7b tezos-babylonnet-signer
     docker run --net=host -it tezos-babylonnet-signer tezos-signer launch socket signer -a 127.0.0.1 -p 22000 -W
 
-3- Configure Tezos Client
+3 - Configure Tezos Client
 --------------------------
 
 Replace "myaddressalias" with your alias. Replace
@@ -77,7 +77,8 @@ to select host IP and port.
 
     ./tezos-client import secret key myaddressalias tcp://127.0.0.1:22000/tz1PKH -f
 
-## 4- Configure baker and endorser
+4 - Configure baker and endorser
+--------------------------------
 
 Replace "myaddressalias" with your alias. Replace "tz1PKH"
 with your public key hash. "~/.tezos-node/" is where node
@@ -90,7 +91,9 @@ active protocol.
     ./tezos-baker-003-PsddFKi3 -R tcp://127.0.0.1:22000/tz1PKH run with local node ~/.tezos-node/ myaddressalias
     ./tezos-endorser-003-PsddFKi3 -R tcp://127.0.0.1:22000/tz1PKH run myaddressalias
 
-## 5- Test
+5 - Test
+--------
+
 To make sure that tezos-signer can survive terminal session
 death, run tests after terminating the session the signer
 is launched.
