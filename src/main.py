@@ -172,7 +172,6 @@ def main(args):
                         retry_injected=args.retry_injected)
     p.start()
 
-    global NB_CONSUMERS
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
