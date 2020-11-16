@@ -45,37 +45,37 @@ class RpcRewardApiImpl(RewardApi):
                 "delegators"] = self.__get_delegators_and_delgators_balances(cycle, current_level)
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
+            # Get last block in cycle where rewards are unfrozen
+            level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
+
+            logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}"
+                         .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
+
+            if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
+                unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
+                reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
+
+            else:
+                logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
+                reward_data["total_rewards"] = 0
+
+            _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
+            for delegator in self.dexter_contracts_set:
+                dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
+
+            reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
+                                               reward_data["delegators"])
+
+            logger.debug("delegate_staking_balance = {:d}, total_rewards = {:d}"
+                         .format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
+            logger.debug("delegators = {}".format(reward_data["delegators"]))
+
+            return reward_model
+
         except Exception as e:
             # We should abort here on any exception as we did not fetch all
             # necessary data to properly compute rewards
             raise e from e
-
-        # Get last block in cycle where rewards are unfrozen
-        level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
-
-        logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}"
-                     .format(cycle, self.preserved_cycles, self.blocks_per_cycle, level_of_last_block_in_unfreeze_cycle))
-
-        if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
-            unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
-            reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
-
-        else:
-            logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
-            reward_data["total_rewards"] = 0
-
-        _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
-        for delegator in self.dexter_contracts_set:
-            dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
-
-        reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
-                                           reward_data["delegators"])
-
-        logger.debug("delegate_staking_balance = {:d}, total_rewards = {:d}"
-                     .format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
-        logger.debug("delegators = {}".format(reward_data["delegators"]))
-
-        return reward_model
 
     def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
         request_metadata = COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle) + '/metadata'
