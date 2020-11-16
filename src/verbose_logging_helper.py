@@ -24,8 +24,11 @@ class VerboseLoggingHelper:
 
     def archive_old_log_file(self):
         for file_name in os.listdir(self.logging_dir):
-            if file_name.endswith(".log") and file_name.startswith("app_verbose_"):
+            if self.is_archive_file(file_name):
                 self.archive(os.path.join(self.logging_dir, file_name))
+
+    def is_archive_file(self, file_name):
+        return file_name.endswith(".log") and file_name.startswith("app_verbose_")
 
     def get_log_file_path(self, cycle):
         formatted_date = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -53,13 +56,10 @@ class VerboseLoggingHelper:
         self.remove_oldest(archive_dir)
 
     def remove_oldest(self, archive_dir):
-        archive_dir = os.path.join(self.logging_dir, 'verbose_backup')
-        sorted_files = sorted([ os.path.join(archive_dir,f) for f in os.listdir(archive_dir) if f.endswith(".zip") and f.startswith("app_verbose_") ], key=os.path.getmtime)
-        print(sorted_files)
-        print(len(sorted_files))
-        print(self.keep_at_most)
-        print(len(sorted_files) > self.keep_at_most)
-        print(sorted_files[-1])
+        files = [os.path.join(archive_dir, f) for f in os.listdir(archive_dir) if self.is_archive_file(f)]
+        sorted_files = sorted(files, key=os.path.getmtime)
+
+        print(sorted_files[0])
 
         if len(sorted_files) > self.keep_at_most:
             os.remove(sorted_files[-1])
