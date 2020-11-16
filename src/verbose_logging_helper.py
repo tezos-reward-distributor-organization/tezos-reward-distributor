@@ -54,6 +54,11 @@ class VerboseLoggingHelper:
 
     def remove_oldest(self, archive_dir):
         sorted_files = sorted(filter(os.path.isfile, os.listdir(archive_dir)), key=os.path.getmtime)
+        print(sorted_files)
+        print(len(sorted_files))
+        print(self.keep_at_most)
+        print(len(sorted_files) > self.keep_at_most)
+        print(sorted_files[-1])
 
         if len(sorted_files) > self.keep_at_most:
             os.remove(sorted_files[-1])
