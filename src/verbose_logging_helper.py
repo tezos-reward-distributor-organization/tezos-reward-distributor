@@ -9,6 +9,7 @@ class VerboseLoggingHelper:
         self.logging_dir = logging_dir
         self.formatter = formatter
         self.logger = logger
+        self.logger.setLevel(logging.DEBUG)
 
         if enabled:
             self.log_file_path = self.get_log_file_path('init')

@@ -9,6 +9,7 @@ FORMATTER = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
 
 main_logger = logging.getLogger('main')
 verbose_logger = logging.getLogger('verbose')
+print(verbose_logger)
 verbose_logging_helper = None
 
 
