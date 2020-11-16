@@ -5,7 +5,7 @@ from zipfile import ZipFile
 
 
 class VerboseLoggingHelper:
-    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most=100):
+    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most=3):
         self.logging_dir = logging_dir
         self.formatter = formatter
         self.logger = logger
