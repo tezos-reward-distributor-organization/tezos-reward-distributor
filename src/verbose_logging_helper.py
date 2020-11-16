@@ -62,12 +62,9 @@ class VerboseLoggingHelper:
         files = [os.path.join(archive_dir, f) for f in os.listdir(archive_dir) if self.is_archive_file(f)]
         sorted_files = sorted(files, key=os.path.getmtime)
 
-        print(sorted_files)
-        print(sorted_files[0])
-
         if len(sorted_files) > self.keep_at_most:
             os.remove(sorted_files[0])
-            print(sorted_files[0])
+
 
     def get_logger(self):
         return self.logger
