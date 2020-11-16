@@ -12,11 +12,10 @@ COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 
 
 class SimpleClientManager:
-    def __init__(self, client_path, node_addr, verbose=None) -> None:
+    def __init__(self, client_path, node_addr) -> None:
         super().__init__()
-        self.verbose = verbose
         self.client_path = client_path
-        self.cmd_manager = CommandManager(verbose)
+        self.cmd_manager = CommandManager()
         self.node_hostname = "127.0.0.1"
         self.node_port = TEZOS_RPC_PORT
         self.tls_on = False

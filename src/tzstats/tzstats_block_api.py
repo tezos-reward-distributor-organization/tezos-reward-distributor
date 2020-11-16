@@ -1,8 +1,7 @@
 import requests
 
 from api.block_api import BlockApi
-from exception.api_provider import ApiProviderException
-from log_config import main_logger
+from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
@@ -22,17 +21,15 @@ class TzStatsBlockApiImpl(BlockApi):
         if self.head_api is None:
             raise Exception("Unknown network {}".format(nw))
 
-    def get_current_level(self, verbose=False):
+    def get_current_level(self):
         uri = self.head_api['HEAD_API_URL'] + '/explorer/tip'
 
-        if verbose:
-            logger.debug("Requesting {}".format(uri))
+        verbose_logger.debug("Requesting {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
         root = resp.json()
 
-        if verbose:
-            logger.debug("Response from tzstats is: {}".format(root))
+        verbose_logger.debug("Response from tzstats is: {}".format(root))
 
         current_level = int(root["status"]["blocks"])
 

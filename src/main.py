@@ -34,7 +34,8 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info("TRD version {} is running in {} mode.".format(VERSION, "daemon" if args.background_service else "interactive"))
+    logger.info(
+        "TRD version {} is running in {} mode.".format(VERSION, "daemon" if args.background_service else "interactive"))
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
     publish_stats = not args.do_not_publish_stats
@@ -73,7 +74,7 @@ def main(args):
 
     # 3- get client path
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network, args.verbose)
+                                  args.docker, args.network)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
@@ -85,21 +86,20 @@ def main(args):
     logger.debug("Network config {}".format(network_config))
 
     # Load the payment wallet
-    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers,
-                                         verbose=args.verbose)
+    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers)
 
     # Setup provider to fetch RPCs
-    provider_factory = ProviderFactory(args.reward_data_provider, verbose=args.verbose)
+    provider_factory = ProviderFactory(args.reward_data_provider)
 
     # 5- load and verify baking configuration file
+    config_file_path = None
     try:
         config_file_path = get_baking_configuration_file(config_dir)
 
         logger.info("Loading baking configuration file {}".format(config_file_path))
 
-        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path),
-                                      wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
-                                      verbose=args.verbose, api_base_url=args.api_base_url)
+        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory,
+                                      network_config, args.node_addr, api_base_url=args.api_base_url)
         parser.parse()
         parser.validate()
         parser.process()
@@ -159,7 +159,7 @@ def main(args):
         logger.info("initial_cycle set to {}".format(args.initial_cycle))
 
     # 10- load plugins
-    plugins_manager = plugins.PluginManager(cfg.get_plugins_conf(), args.verbose, dry_run)
+    plugins_manager = plugins.PluginManager(cfg.get_plugins_conf(), dry_run)
 
     # 11- Start producer and consumer
     p = PaymentProducer(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
@@ -168,16 +168,16 @@ def main(args):
                         payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
                         payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
                         node_url=args.node_addr, provider_factory=provider_factory,
-                        node_url_public=args.node_addr_public, verbose=args.verbose, api_base_url=args.api_base_url,
+                        node_url_public=args.node_addr_public, api_base_url=args.api_base_url,
                         retry_injected=args.retry_injected)
     p.start()
 
+    global NB_CONSUMERS
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
                             wllt_clnt_mngr=wllt_clnt_mngr, plugins_manager=plugins_manager, args=args,
-                            verbose=args.verbose, dry_run=dry_run,
-                            reactivate_zeroed=cfg.get_reactivate_zeroed(),
+                            dry_run=dry_run, reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
                             network_config=network_config, publish_stats=publish_stats)
@@ -231,12 +231,13 @@ def get_latest_report_file(payments_root):
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
-        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+        raise Exception(
+            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     args = parse_arguments()
 
     print_banner(args, script_name="")
 
-    init(args.syslog, args.log_file)
+    init(args.syslog, args.log_file, args.verbose)
 
     main(args)

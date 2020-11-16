@@ -1,6 +1,6 @@
 from cli.simple_client_manager import SimpleClientManager
 from exception.client import ClientException
-from log_config import main_logger
+from log_config import main_logger, verbose_logger
 from util.address_validator import AddressValidator
 from util.client_utils import not_indicator_line
 
@@ -10,8 +10,8 @@ logger = main_logger
 class WalletClientManager(SimpleClientManager):
 
     def __init__(self, client_path, node_addr, contr_dict_by_alias=None,
-                 addr_dict_by_pkh=None, managers=None, verbose=None) -> None:
-        super().__init__(client_path, node_addr, verbose)
+                 addr_dict_by_pkh=None, managers=None) -> None:
+        super().__init__(client_path, node_addr)
 
         self.managers = managers
         if self.managers is None:
@@ -50,8 +50,7 @@ class WalletClientManager(SimpleClientManager):
                 manager, alias_plus = line.split(":", maxsplit=1)
                 break
 
-        if self.verbose:
-            logger.debug("Manager address is : {}".format(manager))
+        verbose_logger.debug("Manager address is : {}".format(manager))
 
         return manager
 
@@ -178,8 +177,7 @@ class WalletClientManager(SimpleClientManager):
                 alias = alias.strip()
                 dict[pkh] = {"alias": alias, "sk": sk_known}
 
-        if self.verbose:
-            logger.debug("known addresses: {}".format(dict))
+            verbose_logger.debug("known addresses: {}".format(dict))
 
         return dict
 
@@ -190,6 +188,7 @@ class WalletClientManager(SimpleClientManager):
             if ":" in line and not_indicator_line(line):
                 alias, pkh = line.split(":", maxsplit=1)
                 dict[alias.strip()] = pkh.strip()
-        if self.verbose:
-            logger.debug("known contracts: {}".format(dict))
+
+            verbose_logger.debug("known contracts: {}".format(dict))
+
         return dict

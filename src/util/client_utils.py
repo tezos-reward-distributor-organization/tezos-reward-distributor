@@ -1,6 +1,5 @@
 import os
 import re
-
 from log_config import main_logger
 
 DOCKER_CLIENT_EXE = "%network%.sh"
@@ -10,7 +9,7 @@ REGULAR_CLIENT_EXE = "tezos-client"
 logger = main_logger
 
 
-def get_client_path(search_paths, docker=None, network_name=None, verbose=None):
+def get_client_path(search_paths, docker=None, network_name=None):
     client_exe = REGULAR_CLIENT_EXE
     if docker:
         client_exe = DOCKER_CLIENT_EXE.replace("%network%", network_name.lower())

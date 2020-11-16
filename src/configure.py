@@ -388,7 +388,7 @@ def main(args):
     # 3- get client path
 
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network, args.verbose)
+                                  args.docker, args.network)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
@@ -401,7 +401,7 @@ def main(args):
     logger.debug("Network config {}".format(network_config))
 
     global wllt_clnt_mngr
-    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers, verbose=args.verbose)
+    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers)
 
     # hello state
     command = input("{} >".format(messages['hello'])).strip()

@@ -32,9 +32,8 @@ def count_and_log_failed(payment_logs):
 
 class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
-                 network_config, plugins_manager, args=None, verbose=None, dry_run=None, reactivate_zeroed=True,
-                 delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None,
-                 publish_stats=True):
+                 network_config, plugins_manager, args=None, dry_run=None, reactivate_zeroed=True,
+                 delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None, publish_stats=True):
         super(PaymentConsumer, self).__init__()
 
         self.dest_map = dest_map if dest_map else {}
@@ -44,7 +43,6 @@ class PaymentConsumer(threading.Thread):
         self.client_path = client_path
         self.payments_queue = payments_queue
         self.node_addr = node_addr
-        self.verbose = verbose
         self.dry_run = dry_run
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.reactivate_zeroed = reactivate_zeroed
@@ -104,7 +102,8 @@ class PaymentConsumer(threading.Thread):
                                          self.dry_run)
 
                 # 3- do the payment
-                payment_logs, total_attempts, number_future_payable_cycles = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
+                payment_logs, total_attempts, number_future_payable_cycles = \
+                    batch_payer.pay(payment_items, dry_run=self.dry_run)
 
                 # override batch data
                 payment_batch.batch = payment_logs
@@ -144,7 +143,7 @@ class PaymentConsumer(threading.Thread):
 
                     message = "Payment for cycle {:d} is {:s}. " \
                               "The current payout account balance is expected to last for the next {:d} cycle(s)!" \
-                              .format(pymnt_cycle, status, number_future_payable_cycles)
+                        .format(pymnt_cycle, status, number_future_payable_cycles)
 
                     self.plugins_manager.send_notification(subject, message, [report_file], payment_logs)
 

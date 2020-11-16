@@ -87,15 +87,13 @@ def main(args):
     # 3- get client path
 
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network,
-                                  args.verbose)
+                                  args.docker, args.network)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
     # 4- get client path
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network,
-                                  args.verbose)
+                                  args.docker, args.network)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
@@ -121,8 +119,8 @@ def main(args):
         c = PaymentConsumer(name='manual_payment_consumer', payments_dir=payments_root,
                             key_name=args.paymentaddress,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, verbose=args.verbose, dry_run=dry_run,
-                            reactivate_zeroed=False, delegator_pays_ra_fee=False, delegator_pays_xfer_fee=False)
+                            wllt_clnt_mngr=wllt_clnt_mngr, dry_run=dry_run, reactivate_zeroed=False,
+                            delegator_pays_ra_fee=False, delegator_pays_xfer_fee=False)
         time.sleep(1)
         c.start()
 
@@ -181,7 +179,8 @@ class ReleaseOverrideAction(argparse.Action):
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
-        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+        raise Exception(
+            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     parser = argparse.ArgumentParser()
     add_argument_network(parser)

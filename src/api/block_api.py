@@ -8,7 +8,7 @@ class BlockApi(ABC):
         self.nw = nw
 
     @abstractmethod
-    def get_current_level(self, verbose=False):
+    def get_current_level(self):
         pass
 
     def level_to_cycle(self, level):
