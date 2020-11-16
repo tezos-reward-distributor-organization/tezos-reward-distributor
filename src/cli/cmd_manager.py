@@ -18,8 +18,10 @@ class CommandManager:
 
         if verbose_override is None:
             verbose_override = True
-        print(verbose_logger)
+
         if verbose_override:
+            print(verbose_logger)
+            print(verbose_logger.debug)
             verbose_logger.debug("--> Verbose : Command is |{}|".format(cmd))
 
         try:
