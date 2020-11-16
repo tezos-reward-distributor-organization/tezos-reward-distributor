@@ -50,8 +50,10 @@ class VerboseLoggingHelper:
             arch_zip.write(path, arcname=os.path.basename(path))
         os.remove(path)
 
-    def remove_oldest(self):
-        sorted_files = sorted(filter(os.path.isfile, os.listdir('.')), key=os.path.getmtime)
+        self.remove_oldest(archive_dir)
+
+    def remove_oldest(self, archive_dir):
+        sorted_files = sorted(filter(os.path.isfile, os.listdir(archive_dir)), key=os.path.getmtime)
 
         if len(sorted_files) > self.keep_at_most:
             os.remove(sorted_files[-1])
