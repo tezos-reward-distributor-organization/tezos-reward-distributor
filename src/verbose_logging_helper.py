@@ -11,6 +11,8 @@ class VerboseLoggingHelper:
         self.logger = logger
         self.logger.setLevel(logging.DEBUG)
 
+        self.archive_old_log_file()
+
         if enabled:
             self.log_file_path = self.get_log_file_path('init')
             self.handler = logging.FileHandler(self.log_file_path, 'a')
