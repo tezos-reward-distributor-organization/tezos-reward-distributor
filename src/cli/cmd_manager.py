@@ -19,7 +19,8 @@ class CommandManager:
         if verbose_override is None:
             verbose_override = True
 
-        verbose_logger.debug("--> Verbose : Command is |{}|".format(cmd))
+        if verbose_override:
+            verbose_logger.debug("--> Verbose : Command is |{}|".format(cmd))
 
         try:
             os.environ["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
@@ -35,6 +36,6 @@ class CommandManager:
         output = clear_terminal_chars(output)
         output = output.strip()
 
-        verbose_override.debug("<-- Verbose : Answer is |{}|".format(output))
+        verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
 
         return True, output
