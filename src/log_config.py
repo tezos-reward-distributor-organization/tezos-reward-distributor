@@ -17,7 +17,7 @@ def get_verbose_log_helper():
     return verbose_log_helper
 
 
-def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False):
+def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False, keep_at_most=60, mode='init'):
     main_logger.setLevel(logging.DEBUG)
 
     # create file handler which logs even debug messages
@@ -45,6 +45,6 @@ def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False):
         main_logger.addHandler(syslog_handler)
 
     global verbose_log_helper
-    verbose_log_helper = VerboseLoggingHelper(log_dir, init_verbose, verbose_logger, FORMATTER)
+    verbose_log_helper = VerboseLoggingHelper(log_dir, init_verbose, verbose_logger, FORMATTER, keep_at_most, mode)
 
     print(verbose_log_helper)

@@ -5,7 +5,7 @@ from zipfile import ZipFile
 
 
 class VerboseLoggingHelper:
-    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most=60):
+    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most, mode):
         self.logging_dir = logging_dir
         self.formatter = formatter
         self.logger = logger
@@ -14,7 +14,7 @@ class VerboseLoggingHelper:
         self.archive_old_log_file()
 
         if enabled:
-            self.log_file_path = self.get_log_file_path('init')
+            self.log_file_path = self.get_log_file_path(mode)
             self.handler = logging.FileHandler(self.log_file_path, 'a')
         else:
             self.log_file_path = None
@@ -27,10 +27,12 @@ class VerboseLoggingHelper:
             if self.is_log_file(file_base_name):
                 self.archive(os.path.join(self.logging_dir, file_base_name))
 
-    def is_archive_file(self, base_name):
+    @staticmethod
+    def is_archive_file(base_name):
         return base_name.endswith(".zip") and base_name.startswith("app_verbose_")
 
-    def is_log_file(self, base_name):
+    @staticmethod
+    def is_log_file(base_name):
         return base_name.endswith(".log") and base_name.startswith("app_verbose_")
 
     def get_log_file_path(self, cycle):

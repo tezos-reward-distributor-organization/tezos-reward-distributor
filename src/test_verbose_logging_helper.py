@@ -23,20 +23,23 @@ class TestVerboseLoggingHelper(TestCase):
         self.assertTrue(len(self.get_log_files(self.logging_dir)) == 0)
 
         self.verbose_logging_helper = VerboseLoggingHelper(self.logging_dir, True, logging.getLogger('verbose'),
-                                                           FORMATTER, self.keep_at_most)
+                                                           FORMATTER, self.keep_at_most, 'init')
         self.verbose_logging_helper.get_logger().debug("verbose logger started")
 
         self.assertTrue(len(self.get_log_files(self.logging_dir)) == 1)
 
+    def tearDown(self) -> None:
+        self.verbose_logging_helper.close_current_handler()
+
     def get_log_files(self, path):
         if not os.path.isdir(path):
             return []
-        return [os.path.join(path, f) for f in os.listdir(path) if self.verbose_logging_helper.is_log_file(f)]
+        return [os.path.join(path, f) for f in os.listdir(path) if VerboseLoggingHelper.is_log_file(f)]
 
     def get_archive_files(self, path):
         if not os.path.isdir(path):
             return []
-        return [os.path.join(path, f) for f in os.listdir(path) if self.verbose_logging_helper.is_archive_file(f)]
+        return [os.path.join(path, f) for f in os.listdir(path) if VerboseLoggingHelper.is_archive_file(f)]
 
     def test_reset(self):
         cycle = 10
