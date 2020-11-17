@@ -12,8 +12,9 @@ class VerboseLoggingHelper:
         self.logger.setLevel(logging.DEBUG)
         self.keep_at_most = keep_at_most
         self.archive_old_log_file()
+        self.enabled = enabled
 
-        if enabled:
+        if self.enabled:
             self.log_file_path = self.get_log_file_path(mode)
             self.handler = logging.FileHandler(self.log_file_path, 'a')
         else:
@@ -40,6 +41,9 @@ class VerboseLoggingHelper:
         return os.path.join(self.logging_dir, f'app_verbose_{cycle}_{formatted_date}.log')
 
     def reset(self, cycle):
+        if not self.enabled:
+            return
+
         self.close_current_handler()
 
         old_path = self.log_file_path
