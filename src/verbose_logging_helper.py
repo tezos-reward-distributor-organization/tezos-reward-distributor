@@ -5,7 +5,7 @@ from zipfile import ZipFile
 
 
 class VerboseLoggingHelper:
-    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most=3):
+    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most=60):
         self.logging_dir = logging_dir
         self.formatter = formatter
         self.logger = logger
@@ -38,13 +38,18 @@ class VerboseLoggingHelper:
         return os.path.join(self.logging_dir, f'app_verbose_{cycle}_{formatted_date}.log')
 
     def reset(self, cycle):
-        self.logger.removeHandler(self.handler)
+        self.close_current_handler()
+
         old_path = self.log_file_path
         self.log_file_path = self.get_log_file_path(cycle)
         self.handler = logging.FileHandler(self.log_file_path, 'a')
         self.logger.addHandler(self.handler)
 
         self.archive(old_path)
+
+    def close_current_handler(self):
+        self.logger.removeHandler(self.handler)
+        self.handler.close()
 
     def archive(self, path):
         archive_dir = os.path.join(self.logging_dir, 'verbose_backup')
@@ -64,7 +69,10 @@ class VerboseLoggingHelper:
 
         if len(sorted_files) > self.keep_at_most:
             os.remove(sorted_files[0])
-
+            self.remove_oldest(archive_dir)
 
     def get_logger(self):
         return self.logger
+
+    def get_current_log_file_path(self):
+        return self.log_file_path
