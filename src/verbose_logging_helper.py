@@ -36,7 +36,7 @@ class VerboseLoggingHelper:
         return base_name.endswith(".log") and base_name.startswith("app_verbose_")
 
     def get_log_file_path(self, cycle):
-        formatted_date = datetime.now().strftime("%Y%m%d%H%M%S")
+        formatted_date = datetime.now().strftime("%Y%m%d_%H%M%S")
         return os.path.join(self.logging_dir, f'app_verbose_{cycle}_{formatted_date}.log')
 
     def reset(self, cycle):
