@@ -19,7 +19,7 @@ from config.yaml_conf_parser import YamlConfParser
 from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_executable_dirs, add_argument_docker, \
     add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url
-from log_config import main_logger
+from log_config import main_logger, init
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
     REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET
@@ -32,7 +32,6 @@ from util.fee_validator import FeeValidator
 LINER = "--------------------------------------------"
 
 logger = main_logger
-
 
 messages = {
     'hello': 'This application will help you configure TRD payouts for your bakery. Type enter to continue',
@@ -81,7 +80,8 @@ def onbakingaddress(input):
     parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
                                   api_base_url=args.api_base_url)
     parser.set(BAKING_ADDRESS, input)
-    messages['paymentaddress'] = messages['paymentaddress'].format([v['alias'] for k, v in wllt_clnt_mngr.get_addr_dict().items() if v['sk']]) + " (without quotes)"
+    messages['paymentaddress'] = messages['paymentaddress'].format(
+        [v['alias'] for k, v in wllt_clnt_mngr.get_addr_dict().items() if v['sk']]) + " (without quotes)"
     fsm.go()
 
 
@@ -496,7 +496,8 @@ class ReleaseOverrideAction(argparse.Action):
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
-        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+        raise Exception(
+            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     parser = argparse.ArgumentParser()
 
@@ -512,6 +513,9 @@ if __name__ == '__main__':
     add_argument_api_base_url(parser)
 
     args = parser.parse_args()
+
+    init(args.syslog, args.log_file, args.verbose == 'on', mode='configure')
+
     script_name = " Baker Configuration Tool"
     args.dry_run = False
     print_banner(args, script_name)

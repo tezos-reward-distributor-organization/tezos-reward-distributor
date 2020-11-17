@@ -9,7 +9,7 @@ from datetime import datetime
 from cli.wallet_client_manager import WalletClientManager
 from config.config_parser import ConfigParser
 from config.yaml_conf_parser import YamlConfParser
-from log_config import main_logger
+from log_config import main_logger, init
 from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, \
     add_argument_executable_dirs, add_argument_docker, add_argument_verbose
@@ -201,6 +201,9 @@ if __name__ == '__main__':
                                               "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33")
 
     args = parser.parse_args()
+
+    init(args.syslog, args.log_file, args.verbose == 'on', mode='payfor')
+
     script_name = " - Pay For Script"
     print_banner(args, script_name)
 

@@ -235,8 +235,8 @@ if __name__ == '__main__':
 
     args = parse_arguments()
 
-    print_banner(args, script_name="")
+    init(args.syslog, args.log_file, args.verbose == 'on')
 
-    init(args.syslog, args.log_file, args.verbose, '')
+    print_banner(args, script_name="")
 
     main(args)

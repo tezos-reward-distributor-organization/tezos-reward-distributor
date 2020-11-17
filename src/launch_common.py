@@ -188,7 +188,8 @@ def add_argument_verbose(parser):
                              "file. App verbose log file is named with cycle number and creation date. "
                              "For each cycle a new file is created and old file is moved to archive_backup "
                              "directory after being zipped.",
-                        action="store_true")
+                        choices=['on', 'off'],
+                        default='on')
 
 
 def add_argument_api_base_url(parser: argparse.ArgumentParser):
