@@ -107,25 +107,30 @@ class RpcRewardApiImpl(RewardApi):
 
     def do_rpc_request(self, request, time_out=120):
         if self.verbose:
-            logger.debug("[do_rpc_request] Requesting URL {}".format(request))
+            logger.debug("[do_rpc_request] Requesting URL '{:s}'".format(request))
 
         sleep(0.1)  # be nice to public node service
 
-        resp = requests.get(request, timeout=time_out)
+        try:
+            resp = requests.get(request, timeout=time_out)
+        except (ReadTimeout, ConnectTimeout) as e:
+            message = "[do_rpc_request] Requesting URL '{:s}' timed out after {:d}s".format(request, time_out)
+            logger.error(message)
+            raise RpcRewardApiError(message)
 
         if resp.status_code == 404:
             raise RpcRewardApiError("RPC URL '{}' not found. Is this node in archive mode?".format(request))
 
         if resp.status_code != 200:
-            message = "Request '{}' failed ({}), after {}s".format(request, resp.status_code, time_out)
+            message = "[do_rpc_request] Requesting URL '{:s}' failed ({:d})".format(request, resp.status_code)
             if "CF-RAY" in resp.headers:
-                message += ", unique request_id: {}".format(resp.headers['CF-RAY'])
+                message += ", unique request_id: {:s}".format(resp.headers['CF-RAY'])
             raise RpcRewardApiError(message)
 
         response = resp.json()
 
         if self.verbose:
-            logger.debug("[do_rpc_request] Response {}".format(response))
+            logger.debug("[do_rpc_request] Response {:s}".format(response))
 
         return response
 
