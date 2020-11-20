@@ -263,7 +263,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
 
-            # set cycle info
+            # 3- set cycle info
             for rl in reward_logs:
                 rl.cycle = pymnt_cycle
             total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])

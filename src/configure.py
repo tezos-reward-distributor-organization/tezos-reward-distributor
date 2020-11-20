@@ -35,13 +35,13 @@ logger = main_logger
 
 
 messages = {
-    'hello': 'This application will help you configure TRD payouts for your bakery. Type enter to continue',
+    'hello': 'This application will help you configure TRD to manage payouts for your bakery. Type enter to continue',
     'bakingaddress': 'Specify your baking address public key hash (Processing may take a few seconds)',
     'paymentaddress': 'Specify your payment PKH/alias. Available aliases:{}',
     'servicefee': 'Specify bakery fee [0:100]',
     'foundersmap': "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
     'ownersmap': "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
-    'mindelegation': "Specify minimum delegation amount in tezos. Type enter for 0",
+    'mindelegation': "Specify minimum delegation amount in tez. Type enter for 0",
     'mindelegationtarget': "Specify where the reward for delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB",
     'exclude': "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip",
     'redirect': "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
@@ -390,7 +390,7 @@ def main(args):
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
                                   args.docker, args.network, args.verbose)
 
-    logger.debug("Tezos client path is {}".format(client_path))
+    logger.debug("tezos-client path is {}".format(client_path))
 
     # 4. get network config
     config_client_manager = SimpleClientManager(client_path, args.node_addr)

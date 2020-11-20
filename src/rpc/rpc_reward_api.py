@@ -106,6 +106,7 @@ class RpcRewardApiImpl(RewardApi):
         return unfrozen_fees, unfrozen_rewards
 
     def do_rpc_request(self, request, time_out=120):
+
         if self.verbose:
             logger.debug("[do_rpc_request] Requesting URL {}".format(request))
 
@@ -194,7 +195,6 @@ class RpcRewardApiImpl(RewardApi):
             balanceMap[address].update({"current_balance": curr_balance})
 
     def __get_current_level(self):
-        print("### {}".format(COMM_HEAD.format(self.node_url)))
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level"]["level"])
         current_cycle = int(head["metadata"]["level"]["cycle"])

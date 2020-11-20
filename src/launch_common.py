@@ -125,7 +125,7 @@ def add_argument_provider(parser):
 
 
 def add_argument_node_addr_public(parser):
-    parser.add_argument("-Ap", "--node_addr_public", help="Public node base URL. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node. (Default is https://mainnet-tezos.giganode.io)", default='')
+    parser.add_argument("-Ap", "--node_addr_public", help="Public node base URL. This argument will only be used when reward_data_provider is set to 'prpc'. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node. (Default is https://mainnet-tezos.giganode.io)", default='')
 
 
 def add_argument_reports_base(parser):
@@ -133,7 +133,7 @@ def add_argument_reports_base(parser):
 
 
 def add_argument_config_dir(parser):
-    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
+    parser.add_argument("-f", "--config_dir", help="Directory to find baking configuration", default='~/pymnt/cfg')
 
 
 def add_argument_dry(parser):
