@@ -434,8 +434,8 @@ class BatchPayer():
                 operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
-            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * (
-                    CONFIRMATIONS + PATIENCE))
+            self.wllt_clnt_mngr.send_request(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] *
+                                                          (CONFIRMATIONS + PATIENCE))
             logger.info("Operation {} is included".format(operation_hash))
         except TimeoutExpired:
             logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
