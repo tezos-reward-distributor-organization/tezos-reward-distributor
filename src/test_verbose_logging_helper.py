@@ -13,7 +13,8 @@ class TestVerboseLoggingHelper(TestCase):
         self.logging_dir = os.path.join(os.path.join(os.path.abspath('.'), '..'), 'logs')
         self.backup_dir = os.path.join(self.logging_dir, 'verbose_backup')
 
-        shutil.rmtree(self.logging_dir)
+        if os.path.isdir(self.logging_dir):
+            shutil.rmtree(self.logging_dir)
 
         os.makedirs(self.logging_dir, exist_ok=True)
 
