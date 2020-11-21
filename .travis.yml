@@ -29,12 +29,10 @@ addons:
             - python3-sphinx
 
 # command to run tests
-before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
+before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 script: 
     - pycodestyle src/
-    - python3 -m unittest discover -s src --verbose
-    #- make spelling
-    #- make linkcheck
+    - python3 -m unittest discover -s tests/ --verbose
     - cd docs
     - sphinx-build -b html ./ ./build/
     - touch build/.nojekyll
