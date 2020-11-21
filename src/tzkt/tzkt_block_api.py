@@ -19,6 +19,6 @@ class TzKTBlockApiImpl(BlockApi):
         """
         head = self.api.get_head()
         if not head.get('synced'):
-            raise TzKTApiError(f'Not synced')
+            raise TzKTApiError('Not synced')
 
         return int(head['level'])

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from calc.calculate_phaseMapping import CalculatePhaseMapping
-from model.reward_log import RewardLog, TYPE_MERGED
+from model.reward_log import RewardLog
 
 
 class TestCalculatePhaseMapping(TestCase):

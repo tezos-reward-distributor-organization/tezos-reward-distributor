@@ -3,7 +3,10 @@ import requests
 from time import sleep
 from exception.api_provider import ApiProviderException
 from log_config import main_logger
-from tzstats.tzstats_api_constants import *
+from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income_baking_income, idx_income_endorsing_income, \
+    idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
+    idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
+    idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance
 
 logger = main_logger
 

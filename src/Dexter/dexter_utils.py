@@ -1,5 +1,3 @@
-from time import sleep
-import requests
 from parse import parse
 
 from log_config import main_logger
