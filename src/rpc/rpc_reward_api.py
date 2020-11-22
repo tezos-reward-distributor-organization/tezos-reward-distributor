@@ -139,7 +139,6 @@ class RpcRewardApiImpl(RewardApi):
         # URL fetch succeeded; parse to JSON object
         response = resp.json()
 
-    
         if self.verbose:
             logger.debug("[do_rpc_request] Response {:s}".format(response))
 
