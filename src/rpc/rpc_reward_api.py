@@ -140,7 +140,7 @@ class RpcRewardApiImpl(RewardApi):
         response = resp.json()
 
         if self.verbose:
-            logger.debug("[do_rpc_request] Response {:s}".format(response))
+            logger.debug("[do_rpc_request] Response {:s}".format(str(response)))
 
         return response
 
