@@ -230,19 +230,22 @@ def get_latest_report_file(payments_root):
         recent = paid_cycles[-1] if len(paid_cycles) > 0 else None
     return recent
 
+
 def install(package):
     if hasattr(pip, 'main'):
         pip.main(['install', package])
     else:
         pip._internal.main(['install', package])
 
+
 def check_requirements():
     with open(REQUIREMENTS_FILE_PATH, 'r') as requirements:
         for requirement in requirements:
             try:
                 pkg_resources.require(requirement)
-            except:
+            except Exception:
                 install(requirement)
+
 
 if __name__ == '__main__':
 

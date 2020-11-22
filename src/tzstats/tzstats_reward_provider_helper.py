@@ -1,6 +1,6 @@
 import requests
-
 from time import sleep
+
 from exception.api_provider import ApiProviderException
 from log_config import main_logger
 from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income_baking_income, idx_income_endorsing_income, \
