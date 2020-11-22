@@ -114,21 +114,32 @@ class RpcRewardApiImpl(RewardApi):
         try:
             resp = requests.get(request, timeout=time_out)
         except requests.exceptions.Timeout as e:
+            # Catches both ConnectTimeout and ReadTimeout
             message = "[do_rpc_request] Requesting URL '{:s}' timed out after {:d}s".format(request, time_out)
             logger.error(message)
             raise RpcRewardApiError(message)
+        except requests.exceptions.RequestException as e:
+            # Catches all other requests exceptions
+            message = "[do_rpc_request] Requesting URL '{:s}' Generic Error: {:s}".format(request, str(e))
+            logger.error(message)
+            raise RpcRewardApiError(message)
 
+        # URL not found
         if resp.status_code == 404:
             raise RpcRewardApiError("RPC URL '{}' not found. Is this node in archive mode?".format(request))
 
+        # URL returned something broken
         if resp.status_code != 200:
             message = "[do_rpc_request] Requesting URL '{:s}' failed ({:d})".format(request, resp.status_code)
             if "CF-RAY" in resp.headers:
+
                 message += ", unique request_id: {:s}".format(resp.headers['CF-RAY'])
             raise RpcRewardApiError(message)
 
+        # URL fetch succeeded; parse to JSON object
         response = resp.json()
 
+    
         if self.verbose:
             logger.debug("[do_rpc_request] Response {:s}".format(response))
 
@@ -210,14 +221,15 @@ class RpcRewardApiImpl(RewardApi):
         # calculate the hash of the block for the chosen snapshot of the rewards cycle
         roll_snapshot, level_snapshot_block = self.__get_roll_snapshot_block_level(cycle, current_level)
         if level_snapshot_block == "":
-            raise RpcRewardApiError("level_snapshot_block is empty. Unable to proceed.")
+            raise RpcRewardApiError("[get_d_d_b] level_snapshot_block is empty. Unable to proceed.")
         if roll_snapshot < 0 or roll_snapshot > 15:
-            raise RpcRewardApiError("roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
+            raise RpcRewardApiError("[get_d_d_b] roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
 
         # construct RPC for getting list of delegates and staking balance
         get_delegates_request = COMM_DELEGATES.format(self.node_url, level_snapshot_block, self.baking_address)
 
         delegate_staking_balance = 0
+        d_a_len = 0
         delegators = {}
 
         try:
@@ -238,7 +250,7 @@ class RpcRewardApiImpl(RewardApi):
             d_a_len = len(delegators_addresses)
 
             if d_a_len == 0:
-                raise RpcRewardApiError("No delegators found")
+                raise RpcRewardApiError("[get_d_d_b] No delegators found")
 
             # Loop over delegators; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses):
@@ -253,12 +265,12 @@ class RpcRewardApiImpl(RewardApi):
                     try:
                         staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
                     except Exception as e:
-                        logger.debug("Fetching delegator {:s} staking balance failed, will retry: {:s}, will retry".format(delegator, str(e)))
-                        sleep(0.4)  # Sleep between failure
+                        logger.debug("[get_d_d_b] Fetching delegator {:s} staking balance failed, will retry: {:s}, will retry".format(delegator, str(e)))
+                        sleep(1.0)  # Sleep between failure
 
                 d_info["staking_balance"] = int(staking_balance_response)
 
-                sleep(0.4)  # Be nice to public RPC since we are now making 2x the amount of RPC calls
+                sleep(0.5)  # Be nice to public RPC since we are now making 2x the amount of RPC calls
 
                 d_info["current_balance"] = self.__get_current_balance_of_delegator(delegator)
 
@@ -269,15 +281,17 @@ class RpcRewardApiImpl(RewardApi):
                 # "append" to master dict
                 delegators[delegator] = d_info
 
-            # Sanity check. We should have fetched info for all delegates. If we didn't, something went wrong
-            d_len = len(delegators)
-            if d_a_len != d_len:
-                raise RpcRewardApiError("Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
-
         except RpcRewardApiError as r:
-            logger.error("RPC API Error: {}".format(str(r)))
+            logger.error("[get_d_d_b] RPC API Error: {}".format(str(r)))
+            raise r from r
         except Exception as e:
-            logger.error("Unexpected error: {}".format(str(e)), exc_info=True)
+            logger.error("[get_d_d_b] Unexpected error: {}".format(str(e)), exc_info=True)
+            raise e from e
+
+        # Sanity check. We should have fetched info for all delegates. If we didn't, something went wrong
+        d_len = len(delegators)
+        if d_a_len != d_len:
+            raise RpcRewardApiError("[get_d_d_b] Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
 
         return delegate_staking_balance, delegators
 
