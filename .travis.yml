@@ -20,7 +20,6 @@ install:
     # Requirements to run tests
     - pip install flake8
     - pip install parameterized
-    - pip install parse
 
 # Addons necessary for documentation.
 addons:
