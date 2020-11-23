@@ -1,4 +1,3 @@
-import json
 import requests
 from log_config import main_logger
 from platform import platform
