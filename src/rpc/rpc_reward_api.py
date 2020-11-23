@@ -108,13 +108,8 @@ class RpcRewardApiImpl(RewardApi):
         return unfrozen_fees, unfrozen_rewards
 
     def do_rpc_request(self, request, time_out=120):
-<<<<<<< HEAD
 
-        if self.verbose:
-            logger.debug("[do_rpc_request] Requesting URL '{:s}'".format(request))
-=======
-        verbose_logger.debug("[do_rpc_request] Requesting URL {}".format(request))
->>>>>>> master
+        verbose_logger.debug("[do_rpc_request] Requesting URL {:s}".format(request))
 
         sleep(0.1)  # be nice to public node service
 
@@ -229,13 +224,7 @@ class RpcRewardApiImpl(RewardApi):
         if level_snapshot_block == "":
             raise ApiProviderException("[get_d_d_b] level_snapshot_block is empty. Unable to proceed.")
         if roll_snapshot < 0 or roll_snapshot > 15:
-<<<<<<< HEAD
             raise ApiProviderException("[get_d_d_b] roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
-=======
-
-            raise RpcRewardApiError(
-                "[get_d_d_b] roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
->>>>>>> master
 
         # construct RPC for getting list of delegates and staking balance
         get_delegates_request = COMM_DELEGATES.format(self.node_url, level_snapshot_block, self.baking_address)
@@ -278,13 +267,7 @@ class RpcRewardApiImpl(RewardApi):
                     try:
                         staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
                     except Exception as e:
-<<<<<<< HEAD
                         logger.debug("[get_d_d_b] Fetching delegator {:s} staking balance failed: {:s}, will retry".format(delegator, str(e)))
-=======
-                        logger.debug(
-                            "[get_d_d_b] Fetching delegator {:s} staking balance failed, will retry: {:s}, will retry".format(
-                                delegator, str(e)))
->>>>>>> master
                         sleep(1.0)  # Sleep between failure
 
                 d_info["staking_balance"] = int(staking_balance_response)
