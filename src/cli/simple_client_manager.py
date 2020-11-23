@@ -82,7 +82,7 @@ class SimpleClientManager:
 
             return boot_time
 
-        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
             logger.debug("RPC node bootstrap timeout. Will try again.")
 
         # Return unix epoch if cannot determine

@@ -114,7 +114,7 @@ class RpcRewardApiImpl(RewardApi):
 
         try:
             resp = requests.get(request, timeout=time_out)
-        except requests.exceptions.Timeout as e:
+        except requests.exceptions.Timeout:
             # Catches both ConnectTimeout and ReadTimeout
             message = "[do_rpc_request] Requesting URL '{:s}' timed out after {:d}s".format(request, time_out)
             logger.error(message)

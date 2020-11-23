@@ -18,9 +18,8 @@ install:
     - pip install sphinxcontrib.spelling
     - pip install --upgrade recommonmark
     # Requirements to run tests
-    - pip install pycodestyle
+    - pip install flake8
     - pip install parameterized
-    - pip install parse
 
 # Addons necessary for documentation.
 addons:
@@ -31,8 +30,10 @@ addons:
 # command to run tests
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 script: 
-    - pycodestyle src/
-    - python3 -m unittest discover -s tests/ --verbose
+    - flake8 src/
+    - python3 -m unittest discover -s src --verbose
+    #- make spelling
+    #- make linkcheck
     - cd docs
     - sphinx-build -b html ./ ./build/
     - touch build/.nojekyll

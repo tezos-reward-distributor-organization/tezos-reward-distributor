@@ -2,6 +2,8 @@ import json
 import os
 import queue
 import sys
+import pip
+import pkg_resources
 
 from time import sleep
 from launch_common import print_banner, parse_arguments
@@ -25,6 +27,7 @@ from util.process_life_cycle import ProcessLifeCycle
 from exception.configuration import ConfigurationException
 from plugins import plugins
 
+REQUIREMENTS_FILE_PATH = 'requirements.txt'
 LINER = "--------------------------------------------"
 NB_CONSUMERS = 1
 BUF_SIZE = 50
@@ -228,10 +231,28 @@ def get_latest_report_file(payments_root):
     return recent
 
 
+def install(package):
+    if hasattr(pip, 'main'):
+        pip.main(['install', package])
+    else:
+        pip._internal.main(['install', package])
+
+
+def check_requirements():
+    with open(REQUIREMENTS_FILE_PATH, 'r') as requirements:
+        for requirement in requirements:
+            try:
+                pkg_resources.require(requirement)
+            except Exception:
+                install(requirement)
+
+
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
         raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+
+    check_requirements()
 
     args = parse_arguments()
 
