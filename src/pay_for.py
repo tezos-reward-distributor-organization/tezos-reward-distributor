@@ -147,7 +147,7 @@ def get_baking_configuration_file(config_dir):
     for file in os.listdir(config_dir):
         if file.endswith(".yaml") and not file.startswith("master"):
             if config_file:
-                raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format( config_file, file))
+                raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format(config_file, file))
             config_file = file
     if config_file is None:
         raise Exception("Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
