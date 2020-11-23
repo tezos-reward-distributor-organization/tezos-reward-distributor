@@ -4,7 +4,6 @@ import threading
 
 from time import sleep
 from Constants import VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
-from NetworkConfiguration import is_mainnet
 from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance

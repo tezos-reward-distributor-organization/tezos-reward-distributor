@@ -45,6 +45,7 @@ class TwitterPlugin(plugins.Plugin):
 
         resp = self.twitter.update_status(message)
         logger.info("[TwitterPlugin] Notification '{:s}' sent".format(title))
+        logger.debug("[TwitterPlugin] Response '{:s}'".format(str(resp)))
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary

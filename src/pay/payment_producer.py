@@ -11,6 +11,7 @@ from log_config import main_logger, get_verbose_log_helper
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
 from exception.api_provider import ApiProviderException
+from rpc.rpc_reward_api import RpcRewardApiError
 from requests import ReadTimeout, ConnectTimeout
 from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
@@ -47,10 +48,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.reward_api = provider_factory.newRewardApi(
             network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
         self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
+
         dexter_contracts_set = baking_cfg.get_contracts_set()
         if len(dexter_contracts_set) > 0 and not (self.reward_api.name == 'tzstats'):
-            logger.warn("The Dexter funktionality is currently supported only using tzstats."
-                        "The contract address will be treated as a normal delegator.")
+            logger.warning("The Dexter functionality is currently only supported using tzstats."
+                           "The contract address will be treated as a normal delegator.")
         else:
             self.reward_api.set_dexter_contracts_set(dexter_contracts_set)
 
@@ -238,11 +240,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # wait until current cycle ends
                     self.wait_for_blocks(nb_blocks_remaining)
 
-            except ApiProviderException:
-                logger.debug("{} API error at reward loop".format(self.reward_api.name), exc_info=True)
-                logger.info("{} API error at reward loop, will try again.".format(self.reward_api.name))
-            except Exception:
-                logger.error("Error at payment producer loop", exc_info=True)
+            except (ApiProviderException, RpcRewardApiError, ReadTimeout, ConnectTimeout) as e:
+                logger.debug("{:s} error at payment producer loop".format(self.reward_api.name), exc_info=True)
+                logger.warning("{:s} error at payment producer loop: '{:s}', will try again.".format(
+                               self.reward_api.name, str(e)))
+
+            except Exception as e:
+                logger.debug("Unknown error in payment producer loop: {:s}".format(str(e)), exc_info=True)
+                logger.error("Unknown error in payment producer loop: {:s}, will try again.".format(str(e)))
 
         # end of endless loop
         logger.info("Producer returning ...")
@@ -302,23 +307,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 logger.info("Total payment amount is 0. Nothing to pay!")
 
             return True
-        except ReadTimeout:
-            logger.info("API provider call failed, will try again.")
-            logger.debug("API provider call failed", exc_info=False)
-            return False
-        except ConnectTimeout:
-            logger.info("API provider connection failed, will try again.")
-            logger.debug("API provider connection failed", exc_info=False)
-            return False
-        except ApiProviderException:
-            logger.info("API provider error at reward loop, will try again.")
-            logger.debug("API provider error at reward loop", exc_info=False)
-            return False
+
         except Exception as e:
-            logger.error("Error at payment producer loop: '{}', will try again.".format(e), exc_info=True)
-            return False
-        finally:
-            sleep(10)
+            raise e from e
 
     def wait_for_blocks(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):
