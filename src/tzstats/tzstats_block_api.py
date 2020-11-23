@@ -11,6 +11,7 @@ PREFIX_API = {
     'ALPHANET': {'HEAD_API_URL': 'https://api.carthagenet.tzstats.com'}
 }
 
+
 class TzStatsBlockApiImpl(BlockApi):
 
     def __init__(self, nw):
