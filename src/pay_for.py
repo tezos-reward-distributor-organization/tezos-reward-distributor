@@ -136,8 +136,7 @@ def main(args):
         pi.payment = pi.payment * MUTEZ
         payment_items.append(pi)
 
-        logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s",
-                    pi.cycle, pi.address, pi.payment, pi.fee, pi.type)
+        logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s", pi.cycle, pi.address, pi.payment, pi.fee, pi.type)
 
     payments_queue.put(PaymentBatch(None, 0, payment_items))
     payments_queue.put(PaymentBatch(None, 0, [RewardLog.ExitInstance()]))
@@ -148,13 +147,10 @@ def get_baking_configuration_file(config_dir):
     for file in os.listdir(config_dir):
         if file.endswith(".yaml") and not file.startswith("master"):
             if config_file:
-                raise Exception(
-                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
-                        config_file, file))
+                raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format( config_file, file))
             config_file = file
     if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
+        raise Exception("Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
 
     return os.path.join(config_dir, config_file)
 
@@ -179,8 +175,7 @@ class ReleaseOverrideAction(argparse.Action):
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
-        raise Exception(
-            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     parser = argparse.ArgumentParser()
     add_argument_network(parser)

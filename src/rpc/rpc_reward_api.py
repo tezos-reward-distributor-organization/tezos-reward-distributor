@@ -38,8 +38,7 @@ class RpcRewardApiImpl(RewardApi):
             logger.debug("Current level {:d}, current cycle {:d}".format(current_level, current_cycle))
 
             reward_data = {}
-            reward_data["delegate_staking_balance"], reward_data[
-                "delegators"] = self.__get_delegators_and_delgators_balances(cycle, current_level)
+            reward_data["delegate_staking_balance"], reward_data["delegators"] = self.__get_delegators_and_delgators_balances(cycle, current_level)
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
         except Exception as e:
@@ -51,8 +50,7 @@ class RpcRewardApiImpl(RewardApi):
         level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
 
         logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}"
-                     .format(cycle, self.preserved_cycles, self.blocks_per_cycle,
-                             level_of_last_block_in_unfreeze_cycle))
+                     .format(cycle, self.preserved_cycles, self.blocks_per_cycle,level_of_last_block_in_unfreeze_cycle))
 
         if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
             unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
@@ -66,11 +64,9 @@ class RpcRewardApiImpl(RewardApi):
         for delegator in self.dexter_contracts_set:
             dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
 
-        reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
-                                           reward_data["delegators"])
+        reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"], reward_data["delegators"])
 
-        logger.debug("delegate_staking_balance = {:d}, total_rewards = {:d}"
-                     .format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
+        logger.debug("delegate_staking_balance = {:d}, total_rewards = {:d}".format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
         logger.debug("delegators = {}".format(reward_data["delegators"]))
 
         return reward_model
@@ -92,15 +88,12 @@ class RpcRewardApiImpl(RewardApi):
 
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
-                            logger.debug(
-                                "[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
                         elif balance_update["category"] == "fees":
                             unfrozen_fees = -int(balance_update["change"])
-                            logger.debug(
-                                "[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
+                            logger.debug("[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
                         else:
-                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(
-                                balance_update))
+                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(balance_update))
                     else:
                         logger.debug("[__get_unfrozen_rewards] Found balance update, cycle does not match or "
                                      "change is non-zero, not including: {}".format(balance_update))
@@ -208,8 +201,7 @@ class RpcRewardApiImpl(RewardApi):
         if level_snapshot_block == "":
             raise RpcRewardApiError("level_snapshot_block is empty. Unable to proceed.")
         if roll_snapshot < 0 or roll_snapshot > 15:
-            raise RpcRewardApiError(
-                "roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
+            raise RpcRewardApiError("roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
 
         # construct RPC for getting list of delegates and staking balance
         get_delegates_request = COMM_DELEGATES.format(self.node_url, level_snapshot_block, self.baking_address)
@@ -251,9 +243,7 @@ class RpcRewardApiImpl(RewardApi):
                     try:
                         staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
                     except Exception as e:
-                        logger.debug(
-                            "Fetching delegator {:s} staking balance failed, will retry: {:s}, will retry".format(
-                                delegator, str(e)))
+                        logger.debug("Fetching delegator {:s} staking balance failed, will retry: {:s}, will retry".format(delegator, str(e)))
                         sleep(0.4)  # Sleep between failure
 
                 d_info["staking_balance"] = int(staking_balance_response)
@@ -262,9 +252,8 @@ class RpcRewardApiImpl(RewardApi):
 
                 d_info["current_balance"] = self.__get_current_balance_of_delegator(delegator)
 
-                logger.debug(
-                    "Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} ".format(
-                        idx + 1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
+                logger.debug("Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} "
+                             .format(idx + 1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
 
                 # "append" to master dict
                 delegators[delegator] = d_info
@@ -295,8 +284,7 @@ class RpcRewardApiImpl(RewardApi):
                 current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
             except RpcRewardApiError as e:
                 # Catch HTTP-related errors and retry
-                logger.warning(
-                    "Fetching delegator {:s} current balance failed, will retry: {:s}".format(address, str(e)))
+                logger.warning("Fetching delegator {:s} current balance failed, will retry: {:s}".format(address, str(e)))
                 sleep(2.0)
             except Exception as e:
                 # Anything else, raise up

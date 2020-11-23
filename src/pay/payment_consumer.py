@@ -141,8 +141,7 @@ class PaymentConsumer(threading.Thread):
                             status = status + ", {:d} injected but final state not known".format(nb_unknown)
                     subject = subject + ' ' + status
 
-                    message = "Payment for cycle {:d} is {:s}. " \
-                              "The current payout account balance is expected to last for the next {:d} cycle(s)!" \
+                    message = "Payment for cycle {:d} is {:s}. The current payout account balance is expected to last for the next {:d} cycle(s)!"\
                         .format(pymnt_cycle, status, number_future_payable_cycles)
 
                     self.plugins_manager.send_notification(subject, message, [report_file], payment_logs)
@@ -181,8 +180,7 @@ class PaymentConsumer(threading.Thread):
     # create report file
     def create_payment_report(self, nb_failed, payment_logs, payment_cycle):
 
-        logger.info("Processing completed for {} payment items{}."
-                    .format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
+        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
 
@@ -191,8 +189,7 @@ class PaymentConsumer(threading.Thread):
         logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
-            logger.debug("Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}"
-                         .format(pl.address, pl.type, pl.amount / MUTEZ, pl.paid))
+            logger.debug("Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}".format(pl.address, pl.type, pl.amount / MUTEZ, pl.paid))
 
         return report_file
 
