@@ -157,8 +157,8 @@ class BakingYamlConfParser(YamlConfParser):
                                              "If it is an alias import it first. ".format(pymnt_addr))
 
         # if reveal information is present, do not ask
-        if 'revealed' in addr_obj:
-            revealed = addr_obj['revealed']
+        # if 'revealed' in addr_obj:
+        #    revealed = addr_obj['revealed']
         # else:
         #   revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
 

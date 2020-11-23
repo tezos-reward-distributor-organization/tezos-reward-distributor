@@ -25,8 +25,7 @@ from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVI
     REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET
 from util.address_validator import AddressValidator
 from util.client_utils import get_client_path
-from util.dir_utils import get_payment_root, \
-    get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
+from util.dir_utils import get_payment_root, get_successful_payments_dir, get_failed_payments_dir
 from util.fee_validator import FeeValidator
 
 LINER = "--------------------------------------------"
@@ -68,7 +67,7 @@ def start():
 def onbakingaddress(input):
     try:
         AddressValidator("bakingaddress").validate(input)
-    except Exception as e:
+    except Exception:
         printe("Invalid baking address: " + traceback.format_exc())
         return
 
@@ -455,7 +454,6 @@ def load_config_file(wllt_clnt_mngr, network_config, master_cfg):
     reports_dir = os.path.join(reports_dir, baking_address)
 
     payments_root = get_payment_root(reports_dir, create=True)
-    calculations_root = get_calculations_root(reports_dir, create=True)
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 

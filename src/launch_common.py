@@ -210,11 +210,3 @@ def add_argument_syslog(parser):
 
 def add_argument_log_file(parser):
     parser.add_argument("--log-file", help="Log output file", default=DEFAULT_LOG_FILE)
-
-
-def add_argument_syslog(parser):
-    parser.add_argument("--syslog", help="Log to syslog. Useful in daemon mode.", action="store_true")
-
-
-def add_argument_log_file(parser):
-    parser.add_argument("--log-file", help="Log output file", default=DEFAULT_LOG_FILE)

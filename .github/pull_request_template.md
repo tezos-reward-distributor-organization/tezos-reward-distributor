@@ -21,14 +21,10 @@ This PR resolves the issue <issue ID>. The following steps were performed:
 
 * **Check list**:
 
-[ ] I extended the Travis CI test units with the corresponding tests for this new feature (if needed).
-
-[ ] I extended the Sphinx documentation (if needed).
-
-[ ] I extended the help section (if needed).
-
-[ ] I changed the README file (if needed).
-
-[ ] I created a new issue if there is further work left to be done (if needed).
+- [ ] I extended the Travis CI test units with the corresponding tests for this new feature (if needed).
+- [ ] I extended the Sphinx documentation (if needed).
+- [ ] I extended the help section (if needed).
+- [ ] I changed the README file (if needed).
+- [ ] I created a new issue if there is further work left to be done (if needed).
 
 **Work effort**: Give your estimate of the work effort in hours. This might be adjusted or discussed by the other contributors in order to keep a fair rewarding process for the efforts.
