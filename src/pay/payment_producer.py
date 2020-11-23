@@ -10,7 +10,6 @@ from log_config import main_logger
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
 from exception.api_provider import ApiProviderException
-from rpc.rpc_reward_api import RpcRewardApiError
 from requests import ReadTimeout, ConnectTimeout
 from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
@@ -231,10 +230,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # wait until current cycle ends
                     self.wait_for_blocks(nb_blocks_remaining)
 
-            except (ApiProviderException, RpcRewardApiError, ReadTimeout, ConnectTimeout) as e:
-                logger.debug("{:s} error at payment producer loop".format(self.reward_api.name), exc_info=True)
-                logger.warning("{:s} error at payment producer loop: '{:s}', will try again.".format(
-                               self.reward_api.name, str(e)))
+            except (ApiProviderException, ReadTimeout, ConnectTimeout) as e:
+                logger.debug("{:s} error at payment producer loop: '{:s}'".format(self.reward_api.name, str(e)), exc_info=True)
+                logger.error("{:s} error at payment producer loop: '{:s}', will try again.".format(
+                             self.reward_api.name, str(e)))
 
             except Exception as e:
                 logger.debug("Unknown error in payment producer loop: {:s}".format(str(e)), exc_info=True)
@@ -296,10 +295,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             elif total_amount_to_pay == 0:
                 logger.info("Total payment amount is 0. Nothing to pay!")
 
-            return True
-
+        except ApiProviderException as a:
+            logger.error("[try_to_pay] API provider error {:s}".format(str(a)))
+            raise a from a
         except Exception as e:
+            logger.error("[try_to_pay] Generic exception {:s}".format(str(e)))
             raise e from e
+
+        # Either succeeded or raised exception
+        return True
 
     def wait_for_blocks(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):

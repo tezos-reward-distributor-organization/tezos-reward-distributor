@@ -30,8 +30,8 @@ addons:
 # command to run tests
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 script: 
-    - flake8 src/
-    - python3 -m unittest discover -s src --verbose
+    - flake8 src/ tests/
+    - python3 -m unittest discover -s tests/ --verbose
     #- make spelling
     #- make linkcheck
     - cd docs

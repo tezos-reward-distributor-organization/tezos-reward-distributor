@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 from urllib.parse import urlparse
@@ -10,12 +11,12 @@ from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 from calc.service_fee_calculator import ServiceFeeCalculator
 from config.yaml_baking_conf_parser import BakingYamlConfParser
+from exception.api_provider import ApiProviderException
 from functools import cmp_to_key
 from model.rules_model import RulesModel
 from model.baking_conf import BakingConf
 from model.reward_log import cmp_by_type_balance
 from NetworkConfiguration import default_network_config_map
-from rpc.rpc_reward_api import RpcRewardApiImpl
 
 PAYOUT_CYCLE = 90
 MUTEZ = 1e6
@@ -25,17 +26,17 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
 
-def mock_do_rpc_request(*args, **kwargs):
+def mock_request_get(url, timeout):
 
-    path = urlparse(args[0]).path
+    path = urlparse(url).path
     # logger.debug("Mock URL: {}".format(path))
 
     if path == "/chains/main/blocks/head":
-        return {"metadata": {"level": {"level": 208114, "level_position": 208113, "cycle": 101}}}
+        return MagicMock(status_code=200, json=lambda: {"metadata": {"level": {"level": 208114, "level_position": 208113, "cycle": 101}}})
     if path == "/chains/main/blocks/184321/context/raw/json/cycle/90/roll_snapshot":
-        return 10
+        return MagicMock(status_code=200, json=lambda: 10)
     if path == "/chains/main/blocks/175488/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V":
-        return {
+        return MagicMock(status_code=200, json=lambda: {
             "balance": "15218028669",
             "staking_balance": "191368330803",
             "delegated_contracts": [
@@ -48,39 +49,39 @@ def mock_do_rpc_request(*args, **kwargs):
                 "tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP"
             ],
             "delegated_balance": "176617802134"
-        }
+        })
     if path == "/chains/main/blocks/175488/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance":
-        return 25689884573
+        return MagicMock(status_code=200, json=lambda: "25689884573")
     if path == "/chains/main/blocks/175488/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance":
-        return 62657825729
+        return MagicMock(status_code=200, json=lambda: "62657825729")
     if path == "/chains/main/blocks/175488/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance":
-        return 24916325758
+        return MagicMock(status_code=200, json=lambda: "24916325758")
     if path == "/chains/main/blocks/175488/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance":
-        return 55646701807
+        return MagicMock(status_code=200, json=lambda: "55646701807")
     if path == "/chains/main/blocks/175488/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance":
-        return 981635036
+        return MagicMock(status_code=200, json=lambda: "981635036")
     if path == "/chains/main/blocks/175488/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance":
-        return 30527208
+        return MagicMock(status_code=200, json=lambda: "30527208")
     if path == "/chains/main/blocks/175488/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance":
-        return 6725429231
+        return MagicMock(status_code=200, json=lambda: "6725429231")
     if path == "/chains/main/blocks/192512/metadata":
-        return {
+        return MagicMock(status_code=200, json=lambda: {
             "balance_updates": [
                 {"kind": "freezer", "category": "deposits", "delegate": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "cycle": 90, "change": "-14272000000"},
                 {"kind": "freezer", "category": "fees", "delegate": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "cycle": 90, "change": "-8374"},
                 {"kind": "freezer", "category": "rewards", "delegate": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "cycle": 90, "change": "-354166658"},
                 {"kind": "contract", "contract": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "change": "14626175032"}
             ]
-        }
+        })
 
-    raise Exception("Not found")
+    raise MagicMock(status_code=404, json=lambda: {"Not Found"})
 
 
 class TestCalculatePhases(TestCase):
@@ -107,12 +108,13 @@ class TestCalculatePhases(TestCase):
         "plugins:\n" \
         "  enabled:\n"
 
-    @patch.object(RpcRewardApiImpl, 'do_rpc_request', MagicMock(side_effect=mock_do_rpc_request))
+    @patch('rpc.rpc_reward_api.requests.get', MagicMock(side_effect=mock_request_get))
     @patch('rpc.rpc_reward_api.logger', MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)))
     @patch('pay.payment_producer.logger', MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)))
     @patch('calc.phased_payment_calculator.logger', MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)))
     def test_process_payouts(self):
 
+        logger.debug("")  # Console formatting
         factory = ProviderFactory(provider='prpc', verbose=True)
         parser = BakingYamlConfParser(self.baking_config, None, None, None, None,
                                       verbose=True, block_api=factory, api_base_url=None)
@@ -130,15 +132,28 @@ class TestCalculatePhases(TestCase):
 
         rewardApi = factory.newRewardApi(default_network_config_map["ALPHANET"], baking_cfg.get_baking_address(), "")
 
-        # Reward data
-        # Fetch cycle 90 of delphinet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
-        reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE)
+        # Simulate logic in payment_producer
+        reward_logs = []
+        attempts = 0
+        exiting = False
+        while not exiting and attempts < 2:
+            attempts += 1
+            try:
+                # Reward data
+                # Fetch cycle 90 of delphinet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
+                reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE)
 
-        # Calculate rewards - payment_producer.py
-        reward_logs, total_amount = payment_calc.calculate(reward_model)
+                # Calculate rewards - payment_producer.py
+                reward_logs, total_amount = payment_calc.calculate(reward_model)
 
-        # Check total reward amount matches sums of records
-        self.assertTrue(total_amount, sum([rl.amount for rl in reward_logs if rl.payable]))
+                # Check total reward amount matches sums of records
+                self.assertTrue(total_amount, sum([rl.amount for rl in reward_logs if rl.payable]))
+
+                exiting = True
+
+            except ApiProviderException as e:
+                logger.error("{:s} error at payment producer loop: '{:s}', will try again.".format("RPC", str(e)))
+                sleep(5)
 
         #
         # The next 3 phases happen in payment_consumer.py

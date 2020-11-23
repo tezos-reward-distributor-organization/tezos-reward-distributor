@@ -3,6 +3,7 @@ from time import sleep
 import requests
 
 from api.reward_api import RewardApi
+from exception.api_provider import ApiProviderException
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from Dexter import dexter_utils as dxtz
@@ -118,16 +119,16 @@ class RpcRewardApiImpl(RewardApi):
             # Catches both ConnectTimeout and ReadTimeout
             message = "[do_rpc_request] Requesting URL '{:s}' timed out after {:d}s".format(request, time_out)
             logger.error(message)
-            raise RpcRewardApiError(message)
+            raise ApiProviderException(message)
         except requests.exceptions.RequestException as e:
             # Catches all other requests exceptions
             message = "[do_rpc_request] Requesting URL '{:s}' Generic Error: {:s}".format(request, str(e))
             logger.error(message)
-            raise RpcRewardApiError(message)
+            raise ApiProviderException(message)
 
         # URL not found
         if resp.status_code == 404:
-            raise RpcRewardApiError("RPC URL '{}' not found. Is this node in archive mode?".format(request))
+            raise ApiProviderException("RPC URL '{}' not found. Is this node in archive mode?".format(request))
 
         # URL returned something broken
         if resp.status_code != 200:
@@ -135,7 +136,7 @@ class RpcRewardApiImpl(RewardApi):
             if "CF-RAY" in resp.headers:
 
                 message += ", unique request_id: {:s}".format(resp.headers['CF-RAY'])
-            raise RpcRewardApiError(message)
+            raise ApiProviderException(message)
 
         # URL fetch succeeded; parse to JSON object
         response = resp.json()
@@ -221,9 +222,9 @@ class RpcRewardApiImpl(RewardApi):
         # calculate the hash of the block for the chosen snapshot of the rewards cycle
         roll_snapshot, level_snapshot_block = self.__get_roll_snapshot_block_level(cycle, current_level)
         if level_snapshot_block == "":
-            raise RpcRewardApiError("[get_d_d_b] level_snapshot_block is empty. Unable to proceed.")
+            raise ApiProviderException("[get_d_d_b] level_snapshot_block is empty. Unable to proceed.")
         if roll_snapshot < 0 or roll_snapshot > 15:
-            raise RpcRewardApiError("[get_d_d_b] roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
+            raise ApiProviderException("[get_d_d_b] roll_snapshot is outside allowable range: {} Unable to proceed.".format(roll_snapshot))
 
         # construct RPC for getting list of delegates and staking balance
         get_delegates_request = COMM_DELEGATES.format(self.node_url, level_snapshot_block, self.baking_address)
@@ -250,7 +251,7 @@ class RpcRewardApiImpl(RewardApi):
             d_a_len = len(delegators_addresses)
 
             if d_a_len == 0:
-                raise RpcRewardApiError("[get_d_d_b] No delegators found")
+                raise ApiProviderException("[get_d_d_b] No delegators found")
 
             # Loop over delegators; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses):
@@ -265,7 +266,7 @@ class RpcRewardApiImpl(RewardApi):
                     try:
                         staking_balance_response = self.do_rpc_request(get_staking_balance_request, time_out=5)
                     except Exception as e:
-                        logger.debug("[get_d_d_b] Fetching delegator {:s} staking balance failed, will retry: {:s}, will retry".format(delegator, str(e)))
+                        logger.debug("[get_d_d_b] Fetching delegator {:s} staking balance failed: {:s}, will retry".format(delegator, str(e)))
                         sleep(1.0)  # Sleep between failure
 
                 d_info["staking_balance"] = int(staking_balance_response)
@@ -281,7 +282,7 @@ class RpcRewardApiImpl(RewardApi):
                 # "append" to master dict
                 delegators[delegator] = d_info
 
-        except RpcRewardApiError as r:
+        except ApiProviderException as r:
             logger.error("[get_d_d_b] RPC API Error: {}".format(str(r)))
             raise r from r
         except Exception as e:
@@ -291,7 +292,7 @@ class RpcRewardApiImpl(RewardApi):
         # Sanity check. We should have fetched info for all delegates. If we didn't, something went wrong
         d_len = len(delegators)
         if d_a_len != d_len:
-            raise RpcRewardApiError("[get_d_d_b] Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
+            raise ApiProviderException("[get_d_d_b] Did not collect info for all delegators, {}/{}".format(d_a_len, d_len))
 
         return delegate_staking_balance, delegators
 
@@ -307,7 +308,7 @@ class RpcRewardApiImpl(RewardApi):
             sleep(0.4)  # Be nice to public RPC
             try:
                 current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
-            except RpcRewardApiError as e:
+            except ApiProviderException as e:
                 # Catch HTTP-related errors and retry
                 logger.warning("Fetching delegator {:s} current balance failed, will retry: {:s}".format(address, str(e)))
                 sleep(2.0)
@@ -338,7 +339,3 @@ class RpcRewardApiImpl(RewardApi):
         else:
             logger.info("Cycle too far in the future")
             return 0, ""
-
-
-class RpcRewardApiError(Exception):
-    pass
