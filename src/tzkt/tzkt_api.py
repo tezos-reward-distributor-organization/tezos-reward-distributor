@@ -6,7 +6,7 @@ from json import JSONDecodeError
 
 from Constants import VERSION
 from exception.api_provider import ApiProviderException
-from log_config import main_logger
+from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
@@ -20,18 +20,16 @@ class TzKTApi:
     max_sequent_calls = 257  # to prevent possible endless looping
     delay_between_calls = 0.1  # in seconds
 
-    def __init__(self, base_url, timeout, verbose):
+    def __init__(self, base_url, timeout):
         self.base_url = base_url
         self.timeout = timeout
-        self.verbose = verbose
 
     @staticmethod
-    def from_network(network, timeout=30, verbose=False):
+    def from_network(network, timeout=30):
         """
         Create new API instance
         :param network: one of `mainnet`, `carthagenet`, `zeronet`
         :param timeout: request timeout in seconds (default = 30)
-        :param verbose: print requested url and JSON response
         """
         base_urls = dict(
             mainnet='https://api.tzkt.io/v1',
@@ -40,24 +38,22 @@ class TzKTApi:
             alphanet='https://api.carthage.tzkt.io/v1'  # backward compatibility, current active test network
         )
         assert network in base_urls, f'Unsupported network {network}'
-        return TzKTApi(base_url=base_urls[network], timeout=timeout, verbose=verbose)
+        return TzKTApi(base_url=base_urls[network], timeout=timeout)
 
     @staticmethod
-    def from_url(base_url, timeout=30, verbose=False):
+    def from_url(base_url, timeout=30):
         """
         Create new API instance
         :param base_url: base API url, i.e. http://localhost:5000/v1
         :param timeout: request timeout in seconds (default = 30)
-        :param verbose: print requested url and JSON response
         """
-        return TzKTApi(base_url=base_url, timeout=timeout, verbose=verbose)
+        return TzKTApi(base_url=base_url, timeout=timeout)
 
     def _request(self, path, **params):
         data = {key: value for key, value in params.items() if value is not None}
         url = join(self.base_url, path)
 
-        if self.verbose:
-            logger.debug("Requesting {}".format(url))
+        verbose_logger.debug("Requesting {}".format(url))
 
         try:
             response = requests.get(
@@ -82,8 +78,7 @@ class TzKTApi:
         except JSONDecodeError:
             raise TzKTApiError(f'Failed to decode JSON:\n{response.text}')
 
-        if self.verbose:
-            logger.debug(f'Response from TzKT is:\n{pformat(res)}')
+        verbose_logger.debug(f'Response from TzKT is:\n{pformat(res)}')
 
         return res
 

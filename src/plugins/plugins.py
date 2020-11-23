@@ -10,9 +10,8 @@ EMAIL_INI_PATH = "./email.ini"
 # Manager class for the plugin subsystem
 class PluginManager(object):
 
-    def __init__(self, cfg, verbose=False, dry_run=False):
+    def __init__(self, cfg, dry_run=False):
         self.plugins = []
-        self.verbose = verbose
         self.dry_run = dry_run
 
         # Temporary message to notify of upgrade. Should be removed on next release.
@@ -62,7 +61,7 @@ class PluginManager(object):
             # Create instance of plugin, dynamically, passing config object
             # config object should be parsed/validated by each plugin and
             # plugin should throw PluginConfigurationError if config is invalid
-            plugin = plugin_(cfg, self.verbose)
+            plugin = plugin_(cfg)
 
             # Add plugin instance to manager
             self.plugins.append(plugin)
