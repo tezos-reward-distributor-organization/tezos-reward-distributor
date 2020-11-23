@@ -5,7 +5,7 @@ from log_config import FORMATTER
 from verbose_logging_helper import VerboseLoggingHelper
 import logging
 import os
-import encodings
+
 
 class TestVerboseLoggingHelper(TestCase):
     def setUp(self):

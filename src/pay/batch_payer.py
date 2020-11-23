@@ -75,8 +75,10 @@ class BatchPayer():
         if self.delegator_pays_xfer_fee:
             self.zero_threshold += self.default_fee
 
-        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee / MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
-        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE / MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
+        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee / MUTEZ,
+                                                                          "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE / MUTEZ,
+                                                                              "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
         logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold / MUTEZ))
 
         # If pymnt_addr has a length of 36 and starts with tz or KT then it is a public key, else it is an alias
@@ -195,7 +197,8 @@ class BatchPayer():
                 self.plugins_manager.send_notification(subject, message)
 
             else:
-                logger.info("The payout account balance is expected to last for the next {:d} cycle(s)".format(number_future_payable_cycles))
+                logger.info("The payout account balance is expected to last for the next {:d} cycle(s)".format(
+                    number_future_payable_cycles))
 
         total_attempts = 0
         op_counter = OpCounter()
@@ -214,7 +217,8 @@ class BatchPayer():
     def log_processed_items(self, payment_logs):
         if payment_logs:
             for pl in payment_logs:
-                logger.debug("Reward already %s for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
+                logger.debug("Reward already %s for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle,
+                             pl.address, pl.amount, pl.type)
 
     def pay_single_batch(self, payment_items, op_counter, dry_run=None):
 
@@ -228,7 +232,9 @@ class BatchPayer():
             try:
                 status, operation_hash = self.attempt_single_batch(payment_items, op_counter, dry_run=dry_run)
             except Exception:
-                logger.error("batch payment attempt {}/{} for current batch failed with error".format(attempt + 1, max_try), exc_info=True)
+                logger.error(
+                    "batch payment attempt {}/{} for current batch failed with error".format(attempt + 1, max_try),
+                    exc_info=True)
 
             if dry_run or status.is_fail():
                 op_counter.rollback()
@@ -297,14 +303,16 @@ class BatchPayer():
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
-                logger.debug("Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
+                logger.debug(
+                    "Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
             op_counter.inc()
 
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
-                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", str(storage))
+                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace(
+                "%storage_limit%", str(storage))
 
             content_list.append(content)
 
@@ -336,7 +344,8 @@ class BatchPayer():
                 op_status = op["metadata"]["operation_result"]["status"]
                 if op_status == "failed":
                     op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-                    logger.error("Error while validating operation - Status: {}, Message: {}".format(op_status, op_error))
+                    logger.error(
+                        "Error while validating operation - Status: {}, Message: {}".format(op_status, op_error))
                     return PaymentStatus.FAIL, ""
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
@@ -361,7 +370,8 @@ class BatchPayer():
 
         # pre-apply operations
         logger.debug("Preapplying the operations")
-        preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
+        preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace(
+            "%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
         preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
 
         result, preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
@@ -398,7 +408,8 @@ class BatchPayer():
 
         if len(decoded_signature) != 128:  # must be 64 bytes
             # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            logger.warn("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
+            logger.warn(
+                "Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
             # return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
@@ -416,7 +427,9 @@ class BatchPayer():
         logger.info("Operation hash is {}".format(operation_hash))
 
         # wait for inclusion
-        logger.info("Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(operation_hash, CONFIRMATIONS))
+        logger.info(
+            "Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(
+                operation_hash, CONFIRMATIONS))
         try:
             cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
             self.wllt_clnt_mngr.send_request(cmd, timeout=self.get_confirmation_timeout())

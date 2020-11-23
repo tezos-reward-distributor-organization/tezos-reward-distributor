@@ -102,7 +102,8 @@ class TzStatsRewardProviderHelper:
         for delegator in resp:
 
             if delegator[idx_delegator_address] == self.baking_address:
-                root["delegate_staking_balance"] = int(1e6 * (float(delegator[idx_balance]) + float(delegator[idx_baker_delegated])))
+                root["delegate_staking_balance"] = int(
+                    1e6 * (float(delegator[idx_balance]) + float(delegator[idx_baker_delegated])))
             else:
                 delegator_info = {"staking_balance": 0, "current_balance": 0}
                 delegator_info["staking_balance"] = int(1e6 * float(delegator[idx_balance]))
@@ -149,7 +150,8 @@ class TzStatsRewardProviderHelper:
             if delegator_addr not in staked_bal_delegators:
                 continue
 
-            root["delegators_balances"][delegator_addr]["current_balance"] = int(1e6 * float(delegator[idx_cb_current_balance]))
+            root["delegators_balances"][delegator_addr]["current_balance"] = int(
+                1e6 * float(delegator[idx_cb_current_balance]))
             curr_bal_delegators.append(delegator_addr)
 
         # Phase 2

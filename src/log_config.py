@@ -48,3 +48,5 @@ def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False, kee
     verbose_log_helper = VerboseLoggingHelper(log_dir, init_verbose, verbose_logger, main_logger, FORMATTER, keep_at_most, mode)
 
     print(verbose_log_helper)
+
+    global verbose_log_helper

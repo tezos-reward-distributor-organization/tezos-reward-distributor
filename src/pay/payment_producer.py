@@ -331,8 +331,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
             writer.writerow(
-                ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount",
-                 "fee_rate", "payable",
+                ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
                  "skipped", "atphase", "desc", "payment_address"])
 
             writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
@@ -360,17 +359,16 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          pymnt_log.paymentaddress]
                 writer.writerow(array)
 
-                logger.debug(
-                    "Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                    "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
-                    "desc: {:s}, pay_addr: {:s}"
-                    .format(pymnt_log.address, pymnt_log.type,
-                            pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
-                            pymnt_log.ratio, pymnt_log.service_fee_ratio,
-                            pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
-                            pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
-                            "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
-                            pymnt_log.desc, pymnt_log.paymentaddress))
+                logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                             "desc: {:s}, pay_addr: {:s}"
+                             .format(pymnt_log.address, pymnt_log.type,
+                                     pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
+                                     pymnt_log.ratio, pymnt_log.service_fee_ratio,
+                                     pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
+                                     pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
+                                     "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
+                                     pymnt_log.desc, pymnt_log.paymentaddress))
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
@@ -388,8 +386,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                   os.listdir(failed_payments_dir) if x.endswith('.csv')]
 
         if payment_reports_failed:
-            payment_reports_failed = sorted(payment_reports_failed,
-                                            key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
+            payment_reports_failed = sorted(payment_reports_failed, key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
             logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
         else:
             logger.info("No failed payment files found under directory '{}'".format(failed_payments_dir))

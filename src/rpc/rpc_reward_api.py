@@ -91,12 +91,15 @@ class RpcRewardApiImpl(RewardApi):
 
                         if balance_update["category"] == "rewards":
                             unfrozen_rewards = -int(balance_update["change"])
-                            logger.debug("[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
+                            logger.debug(
+                                "[__get_unfrozen_rewards] Found balance update for reward {}".format(balance_update))
                         elif balance_update["category"] == "fees":
                             unfrozen_fees = -int(balance_update["change"])
-                            logger.debug("[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
+                            logger.debug(
+                                "[__get_unfrozen_rewards] Found balance update for fee {}".format(balance_update))
                         else:
-                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(balance_update))
+                            logger.debug("[__get_unfrozen_rewards] Found balance update, not including: {}".format(
+                                balance_update))
                     else:
                         logger.debug("[__get_unfrozen_rewards] Found balance update, cycle does not match or "
                                      "change is non-zero, not including: {}".format(balance_update))
@@ -309,7 +312,8 @@ class RpcRewardApiImpl(RewardApi):
                 current_balance_response = self.do_rpc_request(get_current_balance_request, time_out=5)
             except RpcRewardApiError as e:
                 # Catch HTTP-related errors and retry
-                logger.warning("Fetching delegator {:s} current balance failed, will retry: {:s}".format(address, str(e)))
+                logger.warning(
+                    "Fetching delegator {:s} current balance failed, will retry: {:s}".format(address, str(e)))
                 sleep(2.0)
             except Exception as e:
                 # Anything else, raise up
