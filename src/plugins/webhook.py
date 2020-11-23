@@ -14,9 +14,8 @@ class WebhookPlugin(plugins.Plugin):
 
     _req_cfg_keys = ["endpoint", "token"]
 
-    def __init__(self, cfg, verbose=False):
+    def __init__(self, cfg):
         super().__init__("Webhook", cfg["webhook"])
-        self.verbose = verbose
 
         logger.info("[WebhookPlugin] Endpoint: {:s}".format(self.endpoint))
 

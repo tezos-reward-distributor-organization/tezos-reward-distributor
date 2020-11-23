@@ -73,7 +73,6 @@ class Args:
         self.background_service = False
         self.do_not_publish_stats = False
         self.retry_injected = False
-        self.verbose = True
         self.api_base_url = api_base_url
 
 

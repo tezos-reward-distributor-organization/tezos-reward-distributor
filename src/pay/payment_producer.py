@@ -5,8 +5,9 @@ import threading
 
 from time import sleep
 from datetime import datetime, timedelta
+
 from Constants import RunMode, PaymentStatus
-from log_config import main_logger
+from log_config import main_logger, get_verbose_log_helper
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
 from exception.api_provider import ApiProviderException
@@ -28,8 +29,8 @@ BOOTSTRAP_SLEEP = 8
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', verbose=False,
-                 api_base_url=None, retry_injected=False):
+                 dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', api_base_url=None,
+                 retry_injected=False):
         super(PaymentProducer, self).__init__()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
@@ -64,7 +65,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.release_override = release_override
         self.payment_offset = payment_offset
-        self.verbose = verbose
         self.payments_queue = payments_queue
         self.life_cycle = life_cycle
         self.dry_run = dry_run
@@ -131,6 +131,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
             logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
 
+        get_verbose_log_helper().reset(pymnt_cycle)
+
         while not self.exiting and self.life_cycle.is_running():
 
             # take a breath
@@ -140,13 +142,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 # Check if local node is bootstrapped; sleep if needed; restart loop
                 if not self.node_is_bootstrapped():
-                    logger.info("Local node, {}, is not in sync with the Tezos network. Will sleep for {} blocks and check again."
-                                .format(self.node_url, BOOTSTRAP_SLEEP))
+                    logger.info(
+                        "Local node, {}, is not in sync with the Tezos network. Will sleep for {} blocks and check again."
+                        .format(self.node_url, BOOTSTRAP_SLEEP))
                     self.wait_for_blocks(BOOTSTRAP_SLEEP)
                     continue
 
                 # Local node is ready
-                current_level = self.block_api.get_current_level(verbose=self.verbose)
+                current_level = self.block_api.get_current_level()
                 current_cycle = self.block_api.level_to_cycle(current_level)
                 level_in_cycle = self.block_api.level_in_cycle(current_level)
 
@@ -167,10 +170,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
                             if self.reward_api.name == 'tzstats' or self.reward_api.name == 'tzkt':
-                                logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation given by tzstats.")
+                                logger.warn(
+                                    "Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation given by tzstats.")
                                 result = self.try_to_pay(pymnt_cycle, expected_reward=True)
                             else:
-                                logger.error("This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
+                                logger.error(
+                                    "This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
                                 self.exit()
                                 break
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
@@ -179,14 +184,16 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                 logger.warn("Please note that you are doing payouts for frozen rewards!!!")
                                 result = self.try_to_pay(pymnt_cycle)
                             else:
-                                logger.error("This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
+                                logger.error(
+                                    "This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
                                 self.exit()
                                 break
                         # If user wants to offset payments within a cycle, check here
                         elif level_in_cycle < self.payment_offset:
                             wait_offset_blocks = self.payment_offset - level_in_cycle
-                            logger.info("Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks."
-                                        .format(level_in_cycle, self.payment_offset, wait_offset_blocks))
+                            logger.info(
+                                "Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks."
+                                .format(level_in_cycle, self.payment_offset, wait_offset_blocks))
                             self.wait_for_blocks(wait_offset_blocks)
                             continue  # Break/Repeat loop
                         else:
@@ -200,6 +207,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                 break
                             else:
                                 pymnt_cycle = pymnt_cycle + 1
+                                get_verbose_log_helper().reset(pymnt_cycle)
 
                     # end of queue size check
                     else:
@@ -209,7 +217,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 # end of payment cycle check
                 else:
-                    logger.info("No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, current_cycle))
+                    logger.info(
+                        "No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, current_cycle))
 
                     # pending payments done. Do not wait any more.
                     if self.run_mode == RunMode.PENDING:
@@ -290,7 +299,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.create_calculations_report(reward_logs, report_file_path, total_amount)
 
                 # 7- processing of cycle is done
-                logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
+                logger.info(
+                    "Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
 
             elif total_amount_to_pay == 0:
                 logger.info("Total payment amount is 0. Nothing to pay!")
@@ -337,7 +347,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # write headers and total rewards
             writer.writerow(
-                ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
+                ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount",
+                 "fee_rate", "payable",
                  "skipped", "atphase", "desc", "payment_address"])
 
             writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
@@ -365,16 +376,17 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          pymnt_log.paymentaddress]
                 writer.writerow(array)
 
-                logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
-                             "desc: {:s}, pay_addr: {:s}"
-                             .format(pymnt_log.address, pymnt_log.type,
-                                     pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
-                                     pymnt_log.ratio, pymnt_log.service_fee_ratio,
-                                     pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
-                                     pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
-                                     "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
-                                     pymnt_log.desc, pymnt_log.paymentaddress))
+                logger.debug(
+                    "Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                    "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                    "desc: {:s}, pay_addr: {:s}"
+                    .format(pymnt_log.address, pymnt_log.type,
+                            pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
+                            pymnt_log.ratio, pymnt_log.service_fee_ratio,
+                            pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
+                            pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
+                            "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
+                            pymnt_log.desc, pymnt_log.paymentaddress))
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
@@ -392,7 +404,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                   os.listdir(failed_payments_dir) if x.endswith('.csv')]
 
         if payment_reports_failed:
-            payment_reports_failed = sorted(payment_reports_failed, key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
+            payment_reports_failed = sorted(payment_reports_failed,
+                                            key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
             logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
         else:
             logger.info("No failed payment files found under directory '{}'".format(failed_payments_dir))
@@ -405,7 +418,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             if os.path.isfile(payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)):
                 # remove payments/failed/csv_report.csv
                 os.remove(payment_failed_report_file)
-                logger.info("Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
+                logger.info(
+                    "Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
 
                 # remove payments/failed/csv_report.csv.BUSY
                 # if there is a busy failed payment report file, remove it.
@@ -430,7 +444,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             nb_injected = len(list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch)))
             nb_failed = len(list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch)))
 
-            logger.info("Summary {} paid, {} done, {} injected, {} fail".format(nb_paid, nb_done, nb_injected, nb_failed))
+            logger.info(
+                "Summary {} paid, {} done, {} injected, {} fail".format(nb_paid, nb_done, nb_injected, nb_failed))
 
             if self.retry_injected:
                 nb_converted = 0

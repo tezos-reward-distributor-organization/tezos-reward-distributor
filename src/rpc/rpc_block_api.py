@@ -15,13 +15,13 @@ class RpcBlockApiImpl(BlockApi):
         self.node_url = node_url
         logger.debug("RpcBlockApiImpl - node_url {}".format(self.node_url))
 
-    def get_current_level(self, verbose=False):
+    def get_current_level(self):
         response = requests.get(COMM_HEAD.format(self.node_url), timeout=5)
         head = response.json()
         current_level = int(head["metadata"]["level"]["level"])
         return current_level
 
-    def get_revelation(self, pkh, verbose=False):
+    def get_revelation(self, pkh):
         response = requests.get(COMM_REVELATION.format(self.node_url, pkh), timeout=5)
         manager_key = response.json()
         logger.debug("Manager key is '{}'".format(manager_key))
