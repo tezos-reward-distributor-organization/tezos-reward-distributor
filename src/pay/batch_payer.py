@@ -61,12 +61,10 @@ class BatchPayer():
         self.default_fee = int(kttx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
-        self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee',
-                                                         fallback=True)  # Must use getboolean otherwise parses as string
+        self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee', fallback=True)  # Must use getboolean otherwise parses as string
 
         if not self.delegator_pays_xfer_fee:
-            raise Exception(
-                "delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
+            raise Exception("delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
 
         self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
