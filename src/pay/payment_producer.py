@@ -20,7 +20,7 @@ from calc.phased_payment_calculator import PhasedPaymentCalculator
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
 
-logger = main_logger
+logger = main_logger.getChild("payment_producer")
 
 MUTEZ = 1e+6
 BOOTSTRAP_SLEEP = 8
@@ -122,8 +122,13 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         if self.run_mode == RunMode.FOREVER:
             self.retry_fail_thread.start()
 
-        current_cycle = self.block_api.get_current_cycle()
-        pymnt_cycle = self.initial_payment_cycle
+        try:
+            current_cycle = self.block_api.get_current_cycle()
+            pymnt_cycle = self.initial_payment_cycle
+        except ApiProviderException as a:
+            logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))
+            self.exit()
+            return
 
         # if non-positive initial_payment_cycle, set initial_payment_cycle to
         # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'

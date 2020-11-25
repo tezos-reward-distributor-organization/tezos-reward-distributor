@@ -9,7 +9,7 @@ from calc.calculate_phase_final import CalculatePhaseFinal
 from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_type_balance
 from log_config import main_logger
 
-logger = main_logger
+logger = main_logger.getChild("phased_calculator")
 
 MINOR_DIFF = 10
 MINOR_RATIO_DIFF = 1e-6

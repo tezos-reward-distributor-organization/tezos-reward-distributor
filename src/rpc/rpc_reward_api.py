@@ -8,7 +8,7 @@ from log_config import main_logger, verbose_logger
 from model.reward_provider_model import RewardProviderModel
 from Dexter import dexter_utils as dxtz
 
-logger = main_logger
+logger = main_logger.getChild("rpc_reward_api")
 
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"

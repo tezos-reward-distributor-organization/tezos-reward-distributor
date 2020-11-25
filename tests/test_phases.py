@@ -187,6 +187,7 @@ class TestCalculatePhases(TestCase):
         # tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace type: F, stake bal:       0.00, cur bal:       0.00, ratio: 0.018889, fee_ratio: 0.000000, amount:   4.499450, fee_amount: 0.000000, fee_rate: 0.00, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace
 
         # Final records before creating transactions
+        # These values are known to be correct
         cr = {}
         cr["tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ"] = {"type": "D", "amount": 42791010, "pay_addr": "tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ"}
         cr["tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP"] = {"type": "D", "amount": 11202382, "pay_addr": "tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs"}

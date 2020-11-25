@@ -14,7 +14,7 @@ from stats.stats_publisher import stats_publisher
 from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path, get_busy_file
 
-logger = main_logger
+logger = main_logger.getChild("payment_consumer")
 MUTEZ = 1e6
 
 
