@@ -278,9 +278,8 @@ class RpcRewardApiImpl(RewardApi):
 
                 d_info["current_balance"] = self.__get_current_balance_of_delegator(delegator)
 
-                logger.debug(
-                    "Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} ".format(
-                        idx + 1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
+                logger.debug("Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} "
+                             .format(idx + 1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
 
                 # "append" to master dict
                 delegators[delegator] = d_info

@@ -37,8 +37,7 @@ life_cycle = ProcessLifeCycle()
 
 
 def main(args):
-    logger.info(
-        "TRD version {} is running in {} mode.".format(VERSION, "daemon" if args.background_service else "interactive"))
+    logger.info("TRD version {} is running in {} mode.".format(VERSION, "daemon" if args.background_service else "interactive"))
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
     publish_stats = not args.do_not_publish_stats
@@ -76,8 +75,7 @@ def main(args):
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
     # 3- get client path
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network)
+    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, args.network)
 
     logger.debug("Tezos client path is {}".format(client_path))
 
@@ -204,13 +202,10 @@ def get_baking_configuration_file(config_dir):
     for file in os.listdir(config_dir):
         if file.endswith(".yaml") and not file.startswith("master"):
             if config_file:
-                raise Exception(
-                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
-                        config_file, file))
+                raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format(config_file, file))
             config_file = file
     if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
+        raise Exception("Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
 
     return os.path.join(config_dir, config_file)
 
@@ -249,8 +244,7 @@ def check_requirements():
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
-        raise Exception(
-            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     check_requirements()
 

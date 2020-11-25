@@ -22,9 +22,9 @@ class TestVerboseLoggingHelper(TestCase):
             os.remove(log_file)
 
         self.assertTrue(len(self.get_log_files(self.logging_dir)) == 0)
-
+        self.main_logger = logging.getLogger('main')
         self.verbose_logging_helper = VerboseLoggingHelper(self.logging_dir, True, logging.getLogger('verbose'),
-                                                           FORMATTER, self.keep_at_most, 'init')
+                                                           self.main_logger, FORMATTER, self.keep_at_most, 'init')
         self.verbose_logging_helper.get_logger().debug("verbose logger started")
 
         self.assertTrue(len(self.get_log_files(self.logging_dir)) == 1)

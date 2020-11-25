@@ -5,10 +5,11 @@ from zipfile import ZipFile
 
 
 class VerboseLoggingHelper:
-    def __init__(self, logging_dir, enabled, logger, formatter, keep_at_most, mode):
+    def __init__(self, logging_dir, enabled, verbose_logger, main_logger, formatter, keep_at_most, mode):
+        self.main_logger = main_logger
         self.logging_dir = logging_dir
         self.formatter = formatter
-        self.logger = logger
+        self.logger = verbose_logger
         self.logger.setLevel(logging.DEBUG)
         self.keep_at_most = keep_at_most
         self.enabled = enabled
@@ -17,6 +18,7 @@ class VerboseLoggingHelper:
             self.archive_old_log_file()
             self.log_file_path = self.get_log_file_path(mode)
             self.handler = logging.FileHandler(self.log_file_path, 'a')
+            self.main_logger.addHandler(self.handler)
         else:
             self.log_file_path = None
             self.handler = logging.NullHandler()
@@ -49,12 +51,14 @@ class VerboseLoggingHelper:
         old_path = self.log_file_path
         self.log_file_path = self.get_log_file_path(cycle)
         self.handler = logging.FileHandler(self.log_file_path, 'a')
+        self.main_logger.addHandler(self.handler)
         self.logger.addHandler(self.handler)
 
         self.archive(old_path)
 
     def close_current_handler(self):
         self.logger.removeHandler(self.handler)
+        self.main_logger.removeHandler(self.handler)
         self.handler.close()
 
     def archive(self, path):
