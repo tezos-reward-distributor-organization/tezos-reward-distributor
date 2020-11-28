@@ -31,7 +31,7 @@ addons:
 before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 script: 
     - flake8 src/ tests/
-    - python3 -m unittest discover -s tests/ --verbose
+    - python3 -m pytest -s tests/ --verbose
     #- make spelling
     #- make linkcheck
     - cd docs
