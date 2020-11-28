@@ -12,7 +12,7 @@ class TestCalculatePhase0(TestCase):
     def test_calculate(self):
 
         nw = {
-            'NAME': 'ALPHANET',
+            'NAME': 'DELPHINET',
             'NB_FREEZE_CYCLE': 3,
             'BLOCK_TIME_IN_SEC': 30,
             'BLOCKS_PER_CYCLE': 2048,

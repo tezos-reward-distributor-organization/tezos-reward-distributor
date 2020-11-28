@@ -115,9 +115,9 @@ class TestCalculatePhases(TestCase):
     def test_process_payouts(self):
 
         logger.debug("")  # Console formatting
-        factory = ProviderFactory(provider='prpc', verbose=True)
+        factory = ProviderFactory(provider='prpc')
         parser = BakingYamlConfParser(self.baking_config, None, None, None, None,
-                                      verbose=True, block_api=factory, api_base_url=None)
+                                      block_api=factory, api_base_url=None)
         parser.parse()
         parser.process()
 
@@ -130,7 +130,7 @@ class TestCalculatePhases(TestCase):
         payment_calc = PhasedPaymentCalculator(baking_cfg.get_founders_map(), baking_cfg.get_owners_map(), srvc_fee_calc,
                                                baking_cfg.get_min_delegation_amount() * MUTEZ, rules_model)
 
-        rewardApi = factory.newRewardApi(default_network_config_map["ALPHANET"], baking_cfg.get_baking_address(), "")
+        rewardApi = factory.newRewardApi(default_network_config_map["DELPHINET"], baking_cfg.get_baking_address(), "")
 
         # Simulate logic in payment_producer
         reward_logs = []

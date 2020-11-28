@@ -136,7 +136,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1)
             logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
 
-        get_verbose_log_helper().reset(pymnt_cycle)
+        if get_verbose_log_helper() is not None:
+            get_verbose_log_helper().reset(pymnt_cycle)
 
         while not self.exiting and self.life_cycle.is_running():
 
