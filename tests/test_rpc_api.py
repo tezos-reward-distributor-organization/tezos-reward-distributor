@@ -16,7 +16,7 @@ class Args:
         self.run_mode = 3
         self.release_override = 0
         self.payment_offset = 0
-        self.network = 'ALPHANET'
+        self.network = 'DELPHINET'
         self.node_addr = ''
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = node_addr_public
