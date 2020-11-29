@@ -20,6 +20,7 @@ class CalculatePhaseMerge(CalculatePhaseBase):
 
         address_set = set(rl.paymentaddress for rl in self.filterskipped(reward_logs))
         payment_address_list_dict = {addr: [] for addr in address_set}
+
         # group payments by paymentaddress
         for rl in self.filterskipped(reward_logs):
             payment_address_list_dict[rl.paymentaddress].append(rl)
