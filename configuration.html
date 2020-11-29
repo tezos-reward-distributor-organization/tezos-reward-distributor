@@ -283,15 +283,18 @@ and delegator_pays_ra_fee: True but the reward is smaller than the burn fee,
 their rewards will be ignored and will simply remain at the bakers address.</p>
 </dd>
 <dt><strong>rules_map</strong></dt><dd><p>The rules_map is needed to redirect payments. A pre-defined source (left side) is
-mindelegation. Pre-defined destinations (right side) are TOF = to founders balance,
-TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are
+mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance,
+TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are
 PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.</p>
-<p>Example:
-rules_map:
-PKH: TOF (redirects payment from PKH to TOF)</p>
-<p>PHK: TOB (payment will be kept in the baking_address)</p>
-<p>PKH: PKH (redirects payment from PKH to PKH)</p>
-<p>mindelegation: TOE (mindelegation will be shared with everyone)</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rules_map</span><span class="p">:</span>
+  <span class="n">tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ</span><span class="p">:</span> <span class="n">TOF</span>                                         <span class="p">(</span><span class="n">redirects</span> <span class="n">payment</span> <span class="kn">from</span> <span class="nn">tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ</span> <span class="n">to</span> <span class="n">founders</span><span class="p">)</span>
+  <span class="n">tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace</span><span class="p">:</span> <span class="n">TOB</span>                                         <span class="p">(</span><span class="n">payment</span> <span class="n">to</span> <span class="n">tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace</span> <span class="n">will</span> <span class="n">remain</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">bakers</span> <span class="n">balance</span><span class="p">)</span>
+  <span class="n">tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT</span><span class="p">:</span> <span class="n">tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7</span>        <span class="p">(</span><span class="n">redirects</span> <span class="n">payment</span> <span class="kn">from</span> <span class="nn">tz1V9S...</span> <span class="n">to</span> <span class="n">tz1fgX</span><span class="o">...</span><span class="p">)</span>
+  <span class="n">tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs</span><span class="p">:</span> <span class="n">Dexter</span>                                      <span class="p">(</span><span class="n">indicates</span> <span class="n">address</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">dexter</span> <span class="n">pool</span><span class="p">;</span> <span class="n">TRD</span> <span class="n">will</span> <span class="n">send</span> <span class="n">rewards</span> <span class="n">to</span> <span class="n">pool</span> <span class="n">members</span><span class="p">)</span>
+  <span class="n">mindelegation</span><span class="p">:</span> <span class="n">TOE</span>                                                                <span class="p">(</span><span class="n">mindelegation</span> <span class="n">will</span> <span class="n">be</span> <span class="n">shared</span> <span class="k">with</span> <span class="n">everyone</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd>
 <dt><strong>plugins</strong></dt><dd><p>This section of the configuration file, along with ‘enabled’ noted in the example below,
 is required, even if you are not using any of the included plugins.</p>

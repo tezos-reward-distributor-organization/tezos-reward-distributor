@@ -135,19 +135,18 @@ Available configuration parameters are:
 
 **rules_map**
   The rules_map is needed to redirect payments. A pre-defined source (left side) is 
-  mindelegation. Pre-defined destinations (right side) are TOF = to founders balance, 
-  TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are 
+  mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, 
+  TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are 
   PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.
-  
-  Example:  
-  rules_map:  
-  PKH: TOF (redirects payment from PKH to TOF)
-  
-  PHK: TOB (payment will be kept in the baking_address)
-  
-  PKH: PKH (redirects payment from PKH to PKH)
-  
-  mindelegation: TOE (mindelegation will be shared with everyone)
+
+  Example::
+
+     rules_map:
+       tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ: TOF                                         (redirects payment from tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ to founders)
+       tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace: TOB                                         (payment to tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace will remain in the bakers balance)
+       tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7        (redirects payment from tz1V9S... to tz1fgX...)
+       tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs: Dexter                                      (indicates address is a dexter pool; TRD will send rewards to pool members)
+       mindelegation: TOE                                                                (mindelegation will be shared with everyone)
   
 **plugins**
   This section of the configuration file, along with 'enabled' noted in the example below,
