@@ -11,7 +11,6 @@ from log_config import main_logger, get_verbose_log_helper
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
 from exception.api_provider import ApiProviderException
-from rpc.rpc_reward_api import RpcRewardApiError
 from requests import ReadTimeout, ConnectTimeout
 from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
@@ -21,7 +20,7 @@ from calc.phased_payment_calculator import PhasedPaymentCalculator
 from util.dir_utils import get_calculation_report_file, get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, \
     remove_busy_file, BUSY_FILE
 
-logger = main_logger
+logger = main_logger.getChild("payment_producer")
 
 MUTEZ = 1e+6
 BOOTSTRAP_SLEEP = 8
@@ -123,8 +122,13 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         if self.run_mode == RunMode.FOREVER:
             self.retry_fail_thread.start()
 
-        current_cycle = self.block_api.get_current_cycle()
-        pymnt_cycle = self.initial_payment_cycle
+        try:
+            current_cycle = self.block_api.get_current_cycle()
+            pymnt_cycle = self.initial_payment_cycle
+        except ApiProviderException as a:
+            logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))
+            self.exit()
+            return
 
         # if non-positive initial_payment_cycle, set initial_payment_cycle to
         # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
@@ -157,7 +161,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     os.makedirs(self.calculations_dir)
 
                 logger.debug("Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
-                logger.info("Checking for pending payments : checking {} <= {} - ({} + 1) - {}". format(pymnt_cycle, current_cycle, self.nw_config['NB_FREEZE_CYCLE'], self.release_override))
+                logger.info("Checking for pending payments : checking {} <= {} - ({} + 1) - {}".format(pymnt_cycle, current_cycle, self.nw_config['NB_FREEZE_CYCLE'], self.release_override))
 
                 # payments should not pass beyond last released reward cycle
                 if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
@@ -229,10 +233,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # wait until current cycle ends
                     self.wait_for_blocks(nb_blocks_remaining)
 
-            except (ApiProviderException, RpcRewardApiError, ReadTimeout, ConnectTimeout) as e:
-                logger.debug("{:s} error at payment producer loop".format(self.reward_api.name), exc_info=True)
-                logger.warning("{:s} error at payment producer loop: '{:s}', will try again.".format(
-                               self.reward_api.name, str(e)))
+            except (ApiProviderException, ReadTimeout, ConnectTimeout) as e:
+                logger.debug("{:s} error at payment producer loop: '{:s}'".format(self.reward_api.name, str(e)), exc_info=True)
+                logger.error("{:s} error at payment producer loop: '{:s}', will try again.".format(
+                             self.reward_api.name, str(e)))
 
             except Exception as e:
                 logger.debug("Unknown error in payment producer loop: {:s}".format(str(e)), exc_info=True)
@@ -266,7 +270,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
 
-            # set cycle info
+            # 3- set cycle info
             for rl in reward_logs:
                 rl.cycle = pymnt_cycle
             total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
@@ -294,10 +298,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             elif total_amount_to_pay == 0:
                 logger.info("Total payment amount is 0. Nothing to pay!")
 
-            return True
-
+        except ApiProviderException as a:
+            logger.error("[try_to_pay] API provider error {:s}".format(str(a)))
+            raise a from a
         except Exception as e:
+            logger.error("[try_to_pay] Generic exception {:s}".format(str(e)))
             raise e from e
+
+        # Either succeeded or raised exception
+        return True
 
     def wait_for_blocks(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):

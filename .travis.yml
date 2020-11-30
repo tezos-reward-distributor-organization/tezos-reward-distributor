@@ -28,10 +28,10 @@ addons:
             - python3-sphinx
 
 # command to run tests
-before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)
+before_script: export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 script: 
-    - flake8 src/
-    - python3 -m unittest discover -s src --verbose
+    - flake8 src/ tests/
+    - python3 -m pytest -s tests/ --verbose
     #- make spelling
     #- make linkcheck
     - cd docs

@@ -61,9 +61,9 @@ class RewardLog:
         return self
 
     def __repr__(self) -> str:
-        return "Address: {} ({}), Type: {}, SB: {}, CB: {}, Skipped: {}, NA: {}".format(
+        return "Address: {} ({}), T: {}, SB: {}, CB: {}, Amt: {}, Skp: {}, NA: {}".format(
             self.address, self.paymentaddress, self.type,
-            self.staking_balance, self.current_balance,
+            self.staking_balance, self.current_balance, self.amount,
             self.skipped, self.needs_activation)
 
     @staticmethod
