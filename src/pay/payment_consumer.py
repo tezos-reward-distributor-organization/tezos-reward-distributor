@@ -19,14 +19,18 @@ MUTEZ = 1e6
 
 
 def count_and_log_failed(payment_logs):
-    nb_failed = 0
-    nb_injected = 0
+
+    nb_paid = nb_failed = nb_injected = 0
+
     for pymnt_itm in payment_logs:
-        if pymnt_itm.paid == PaymentStatus.FAIL:
-            nb_failed = nb_failed + 1
+        if pymnt_itm.paid == PaymentStatus.PAID:
+            nb_paid += 1
+        elif pymnt_itm.paid == PaymentStatus.FAIL:
+            nb_failed += 1
         elif pymnt_itm.paid == PaymentStatus.INJECTED:
-            nb_injected = nb_injected + 1
-    return nb_failed, nb_injected
+            nb_injected += 1
+
+    return nb_paid, nb_failed, nb_injected
 
 
 class PaymentConsumer(threading.Thread):
@@ -101,14 +105,14 @@ class PaymentConsumer(threading.Thread):
                                          self.dry_run)
 
                 # 3- do the payment
-                payment_logs, total_attempts, number_future_payable_cycles = \
+                payment_logs, total_attempts, total_payout_amount, number_future_payable_cycles = \
                     batch_payer.pay(payment_items, dry_run=self.dry_run)
 
                 # override batch data
                 payment_batch.batch = payment_logs
 
                 # 4- count failed payments
-                nb_failed, nb_unknown = count_and_log_failed(payment_logs)
+                nb_paid, nb_failed, nb_unknown = count_and_log_failed(payment_logs)
 
                 # 5- create payment report file
                 report_file = self.create_payment_report(nb_failed, payment_logs, pymnt_cycle)
@@ -140,10 +144,14 @@ class PaymentConsumer(threading.Thread):
                             status = status + ", {:d} injected but final state not known".format(nb_unknown)
                     subject = subject + ' ' + status
 
-                    message = "Payment for cycle {:d} is {:s}. The current payout account balance is expected to last for the next {:d} cycle(s)!"\
+                    admin_message = "Payment for cycle {:d} is {:s}. The current payout account balance is expected to last for the next {:d} cycle(s)!"\
                         .format(pymnt_cycle, status, number_future_payable_cycles)
 
-                    self.plugins_manager.send_notification(subject, message, [report_file], payment_logs)
+                    # Payout notification receives cycle, rewards total, number of delegators
+                    self.plugins_manager.send_payout_notification(pymnt_cycle, total_payout_amount, (nb_paid + nb_failed + nb_unknown))
+
+                    # Admin notification receives subject, message, CSV report, raw log objects
+                    self.plugins_manager.send_admin_notification(subject, admin_message, [report_file], payment_logs)
 
                 # 9- publish anonymous stats
                 if self.publish_stats and self.args and not self.dry_run:
