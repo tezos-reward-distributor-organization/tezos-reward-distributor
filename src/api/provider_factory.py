@@ -36,4 +36,5 @@ class ProviderFactory:
             return TzStatsBlockApiImpl(network_config)
         elif self.provider == 'tzkt':
             return TzKTBlockApiImpl(network_config, base_url=api_base_url)
+
         raise Exception("No supported reward data provider : {}".format(self.provider))

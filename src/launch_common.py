@@ -110,8 +110,8 @@ def add_argument_payment_offset(parser):
 
 def add_argument_network(parser):
     parser.add_argument("-N", "--network",
-                        help="Network name. Default is Mainnet. The test network of tezos is referred to as Alphanet even if the name changes with each protocol upgrade.",
-                        choices=['MAINNET', 'ZERONET', 'ALPHANET'],
+                        help="Network name. Default is Mainnet. The current test network of tezos is DELPHINET.",
+                        choices=['MAINNET', 'DELPHINET'],
                         default='MAINNET')
 
 
@@ -140,7 +140,7 @@ def add_argument_reports_base(parser):
 
 
 def add_argument_config_dir(parser):
-    parser.add_argument("-f", "--config_dir", help="Directory to find baking configurations", default='~/pymnt/cfg')
+    parser.add_argument("-f", "--config_dir", help="Directory to find baking configuration", default='~/pymnt/cfg')
 
 
 def add_argument_dry(parser):
