@@ -61,18 +61,25 @@ The Telegram plugin does not need read access to any messages and the bot will n
 
 ### Parameters
 
-* chat_ids: A YAML list containing chat IDs of users and/or group IDs for groups. Group IDs typically start with a - (negative/dash) symbol. Must be list format even if only 1 ID.
+* admin_chat_ids: A required YAML list containing chat IDs of users and/or groups to receive administrative-related messages. This might include failed payouts, or lack of funds messages.  Must be list format even if only 1 ID.
+* public_chat_ids: An, optional, YAML list containing chat IDs of users and/or groups to receive completed payouts message as defined by `telegram_text`. Must be list format even if only 1 ID.
 * bot_api_key: This is the API token that you get from @TheBotFather after creating your bot.
+* telegram_text: This text will be passed through a filter to replace the following placeholders: `%CYCLE%`, `%NDELEGATORS%`, `%TREWARDS%`. Basic HTML formatting is supported; see Telegram Docs for supported HTML tags. Emojis and other unicode characters are supported.
 
 ### Example Config
 
 ```
 plugins:
   telegram:
-    chat_ids:
+    admin_chat_ids:
       - 123456789
+      - 345112344
+    public_chat_ids:
       - -13134455
+      - 827384777
     bot_api_key: 988877766:SKDJFLSJDFJLJSKDFJLKSDJFLKJDF
+    telegram_text: >
+      &#x2728; Reward for cycle %CYCLE% <b>complete</b>! We had %NDELEGATORS% <i>delegators</i> in the cycle and paid out %TREWARDS% XTZ in rewards!
 ```
 
 ## Twitter Plugin
@@ -99,7 +106,7 @@ pip3 install -u tweepy
 
 **NOTE**: All 4 pieces of keys and tokens are required.
 
-**NOTE**: Hashtags *must* include '#' and *must* be inside quotation "" marks
+**NOTE**: `tweet_text` will be passed through a filter to replace the following placeholders: `%CYCLE%`, `%NDELEGATORS%`, `%TREWARDS%`
 
 ```
 plugins:
@@ -108,11 +115,18 @@ plugins:
     api_secret: ZZZZZZZZ
     access_token: YYYYYYYY
     access_secret: WWWWWWWW
-    extra_tags:
-      - "#our_baker"
-      - "#tezos"
-      - "#rewards"
+    tweet_text: >
+      Reward for cycle %CYCLE% complete! We had %NDELEGATORS% delegators in the cycle and paid out %TREWARDS% XTZ in rewards. #ourbakery #rewards #tezos
 ```
+
+The above example configuration will produce a tweet that looks like this:
+
+```
+Reward for cycle 290 complete! We had 133 delegators
+in the cycle and paid out 1234.98 XTZ in rewards.
+#ourbakery #rewards #tezos
+```
+
 
 ## Webhook Plugin
 
@@ -130,6 +144,8 @@ Your script can return a short message in the response body. This will be displa
 {
   "timestamp": 1604982374,
   "token": "Xynl6svphysd3BhjLP6IS",
+  "subject": "Payouts of cycle 22 completed",
+  "message": "Much longer message example containing more information",
   "payouts": [
     {
       "address": "tz1LrHNbbCLgNJZsEsTUYFvWz2THgJC8fHyX",

@@ -7,31 +7,47 @@ from plugins import plugins
 import requests
 
 logger = logging.getLogger("main.plugins.telegram")
+MUTEZ = 1e6
 
 plugin_name = 'TelegramPlugin'
 
 
 class TelegramPlugin(plugins.Plugin):
 
-    _req_cfg_keys = ["chat_ids", "bot_api_key"]
+    _req_cfg_keys = ["admin_chat_ids", "payouts_chat_ids", "bot_api_key", "telegram_text"]
     _base_api_url = "https://api.telegram.org/bot{:s}/sendMessage"
 
     def __init__(self, cfg):
         super().__init__("Telegram", cfg["telegram"])
         self.api_url = self._base_api_url.format(self.bot_api_key)
 
-    def send_notification(self, title, message, attachments=None, reward_data=None):
+    def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
+
+        admin_text = "<b>{:s}</b>\n{:s}".format(subject, message)
+
+        for c in self.admin_chat_ids:
+            payload = {"chat_id": c, "parse_mode": "html", "text": admin_text}
+            resp = requests.post(self.api_url, params=payload)
+
+        verbose_logger.debug("[TelegramPlugin] Admin Response: {:}".format(resp.json()))
+
+        logger.info("[TelegramPlugin] Admin Notification '{:s}' sent".format(subject))
+
+    def send_payout_notification(self, cycle, payout_amount, nb_delegators):
 
         # Add sparkles emoji to message
-        message = "&#x2728; <b>{:s}</b>\n{:s}".format(title, message)
+        message = self.telegram_text \
+            .replace("%CYCLE%", cycle) \
+            .replace("%TREWARDS%", round(payout_amount / MUTEZ, 2)) \
+            .replace("%NDELEGATORS%", nb_delegators)
 
-        for c in self.chat_ids:
+        for c in self.payouts_chat_ids:
             payload = {"chat_id": c, "parse_mode": "html", "text": message}
             resp = requests.post(self.api_url, params=payload)
 
-        verbose_logger.debug("[TelegramPlugin] Response: {:}".format(resp.json()))
+        verbose_logger.debug("[TelegramPlugin] Public Response: {:}".format(resp.json()))
 
-        logger.info("[TelegramPlugin] Notification '{:s}' sent".format(title))
+        logger.info("[TelegramPlugin] Public Notification '{:s}...' sent".format(message[20:]))
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
@@ -39,18 +55,29 @@ class TelegramPlugin(plugins.Plugin):
         """
         cfg_keys = self.cfg.keys()
 
+        # Upgrade notification
+        if "chat_ids" in cfg_keys:
+            raise plugins.PluginConfigurationError("[{:s}] 'chat_ids' no longer supported; Please see upgrading instructions.".format(self.name))
+
+        # Check for required config parameters
         for k in self._req_cfg_keys:
             if k not in cfg_keys:
                 raise plugins.PluginConfigurationError("[{:s}] '{:s}' setting not found".format(self.name, k))
 
         # Set config
-        self.chat_ids = self.cfg["chat_ids"]
+        self.admin_chat_ids = self.cfg["admin_chat_ids"]
+        self.payouts_chat_ids = self.cfg["payouts_chat_ids"]
         self.bot_api_key = self.cfg["bot_api_key"]
+        self.telegram_text = self.cfg["telegram_text"]
 
-        # Sanity
-        if self.chat_ids is None or self.bot_api_key is None:
+        # Sanity; Admin chat ids required at minimum
+        if self.admin_chat_ids is None or self.bot_api_key is None:
             raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
 
-        # ChatIds must be a list
-        if not isinstance(self.chat_ids, list):
-            raise plugins.PluginConfigurationError("[{:s}] 'chat_ids' must be in list format".format(self.name))
+        # adminChatIds must be a list
+        if not isinstance(self.admin_chat_ids, list):
+            raise plugins.PluginConfigurationError("[{:s}] 'admin_chat_ids' must be in list format".format(self.name))
+
+        # Same for publicChatIds
+        if not isinstance(self.payouts_chat_ids, list):
+            raise plugins.PluginConfigurationError("[{:s}] 'payouts_chat_ids' must be in list format".format(self.name))
