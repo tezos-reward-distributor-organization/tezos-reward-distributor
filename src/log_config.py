@@ -10,7 +10,7 @@ FORMATTER = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
 main_logger = logging.getLogger('main')
 verbose_logger = logging.getLogger('verbose')
 
-verbose_log_helper = None
+verbose_log_helper = VerboseLoggingHelper(DEFAULT_LOG_FILE, False, verbose_logger, main_logger, FORMATTER, 100, 'OFF')
 
 
 def get_verbose_log_helper():
