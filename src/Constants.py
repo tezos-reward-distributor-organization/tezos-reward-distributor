@@ -3,18 +3,19 @@ from enum import Enum
 EXIT_PAYMENT_TYPE = "exit"
 
 PUBLIC_NODE_URL = {"MAINNET": ["https://mainnet-tezos.giganode.io", "https://teznode.letzbake.com"],
-                   "ALPHANET": ["https://tezos-dev.cryptonomic-infra.tech", "https://testnet-tezos.giganode.io"],
-                   "ZERONET": ["https://rpczero.tzbeta.net"]}
+                   "DELPHINET": ["https://tezos-dev.cryptonomic-infra.tech", "https://delphinet-tezos.giganode.io"]
+                   }
 
 TEZOS_RPC_PORT = 8732
 
-VERSION = 5.13
+VERSION = 8.0
 
 
 class RunMode(Enum):
     FOREVER = 1
     PENDING = 2
     ONETIME = 3
+    RETRY_FAILED = 4
 
 
 class PaymentStatus(Enum):

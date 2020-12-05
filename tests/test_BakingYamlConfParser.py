@@ -21,9 +21,12 @@ class TestYamlAppConfParser(TestCase):
         payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         founders_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
+        supporters_set:
         service_fee: 4.53
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -68,9 +71,12 @@ class TestYamlAppConfParser(TestCase):
         baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
+        supporters_set: None
         service_fee: 4.5
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
@@ -118,6 +124,8 @@ class TestYamlAppConfParser(TestCase):
         min_delegation_amt: 100
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -159,3 +167,16 @@ class TestYamlAppConfParser(TestCase):
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
+
+    def test_validate_plugins(self):
+        data = """
+        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        plugins:
+          enabled:
+        """
+
+        block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
+        cnf_prsr = BakingYamlConfParser(data, wllt_clnt_mngr=None, provider_factory=None,
+                                        network_config=None, node_url="", block_api=block_api)
+        cnf_prsr.parse()
+        cnf_prsr.validate_plugins(cnf_prsr.get_conf_obj())

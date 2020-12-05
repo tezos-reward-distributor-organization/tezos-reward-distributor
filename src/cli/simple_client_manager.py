@@ -1,14 +1,21 @@
+import requests
+import json
+from datetime import datetime
 from Constants import TEZOS_RPC_PORT
 from cli.cmd_manager import CommandManager
 from exception.client import ClientException
+from log_config import main_logger
+
+logger = main_logger
+
+COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 
 
 class SimpleClientManager:
-    def __init__(self, client_path, node_addr, verbose=None) -> None:
+    def __init__(self, client_path, node_addr) -> None:
         super().__init__()
-        self.verbose = verbose
         self.client_path = client_path
-        self.cmd_manager = CommandManager(verbose)
+        self.cmd_manager = CommandManager()
         self.node_hostname = "127.0.0.1"
         self.node_port = TEZOS_RPC_PORT
         self.tls_on = False
@@ -26,6 +33,10 @@ class SimpleClientManager:
 
     def get_node_addr(self) -> str:
         return "{}:{}".format(self.node_hostname, self.node_port)
+
+    def get_node_url(self) -> str:
+        return "{}://{}:{}".format(
+               "https" if self.tls_on else "http", self.node_hostname, self.node_port)
 
     def send_request(self, cmd, verbose_override=None, timeout=None):
         # Build command with flags
@@ -46,3 +57,32 @@ class SimpleClientManager:
                 return line.replace("Signature:", "").strip()
 
         raise ClientException("Signature not found in response '{}'. Signed with key '{}'".format(response, key_name))
+
+    def get_bootstrapped(self):
+        # /monitor/bootstrapped is a stream of data that only terminates
+        # after the node is bootstrapped. Instead, we want to grab the most
+        # recent timestamp, present message to user, sleep a bit, then try again.
+        count = 0
+        boot_resp = {}
+
+        try:
+            response = requests.get(COMM_BOOTSTRAP.format(self.get_node_url()), timeout=5, stream=True)
+            for line in response.iter_lines(chunk_size=256):
+                if line and count < 5:
+                    boot_resp = json.loads(line)
+                    logger.debug("Bootstrap Monitor: {}".format(boot_resp))
+                    count += 1
+                else:
+                    response.close()
+                    break
+
+            boot_time = datetime.strptime(boot_resp["timestamp"], "%Y-%m-%dT%H:%M:%SZ")
+            logger.debug("RPC node bootstrap time is '{}'".format(boot_time))
+
+            return boot_time
+
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+            logger.debug("RPC node bootstrap timeout. Will try again.")
+
+        # Return unix epoch if cannot determine
+        return datetime.min

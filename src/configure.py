@@ -18,30 +18,28 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_executable_dirs, add_argument_docker, \
-    add_argument_verbose, add_argument_dry, add_argument_provider
-from log_config import main_logger
+    add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url
+from log_config import main_logger, init
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
     REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET
 from util.address_validator import AddressValidator
 from util.client_utils import get_client_path
-from util.dir_utils import get_payment_root, \
-    get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
+from util.dir_utils import get_payment_root, get_successful_payments_dir, get_failed_payments_dir
 from util.fee_validator import FeeValidator
 
 LINER = "--------------------------------------------"
 
 logger = main_logger
 
-
 messages = {
-    'hello': 'This application will help you configure TRD payouts for your bakery. Type enter to continue',
+    'hello': 'This application will help you configure TRD to manage payouts for your bakery. Type enter to continue',
     'bakingaddress': 'Specify your baking address public key hash (Processing may take a few seconds)',
     'paymentaddress': 'Specify your payment PKH/alias. Available aliases:{}',
     'servicefee': 'Specify bakery fee [0:100]',
     'foundersmap': "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
     'ownersmap': "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
-    'mindelegation': "Specify minimum delegation amount in tezos. Type enter for 0",
+    'mindelegation': "Specify minimum delegation amount in tez. Type enter for 0",
     'mindelegationtarget': "Specify where the reward for delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB",
     'exclude': "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip",
     'redirect': "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
@@ -69,7 +67,7 @@ def start():
 def onbakingaddress(input):
     try:
         AddressValidator("bakingaddress").validate(input)
-    except Exception as e:
+    except Exception:
         printe("Invalid baking address: " + traceback.format_exc())
         return
 
@@ -81,7 +79,8 @@ def onbakingaddress(input):
     parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
                                   api_base_url=args.api_base_url)
     parser.set(BAKING_ADDRESS, input)
-    messages['paymentaddress'] = messages['paymentaddress'].format([v['alias'] for k, v in wllt_clnt_mngr.get_addr_dict().items() if v['sk']]) + " (without quotes)"
+    messages['paymentaddress'] = messages['paymentaddress'].format(
+        [v['alias'] for k, v in wllt_clnt_mngr.get_addr_dict().items() if v['sk']]) + " (without quotes)"
     fsm.go()
 
 
@@ -388,9 +387,9 @@ def main(args):
     # 3- get client path
 
     client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network, args.verbose)
+                                  args.docker, args.network)
 
-    logger.debug("Tezos client path is {}".format(client_path))
+    logger.debug("tezos-client path is {}".format(client_path))
 
     # 4. get network config
     config_client_manager = SimpleClientManager(client_path, args.node_addr)
@@ -401,7 +400,7 @@ def main(args):
     logger.debug("Network config {}".format(network_config))
 
     global wllt_clnt_mngr
-    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers, verbose=args.verbose)
+    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers)
 
     # hello state
     command = input("{} >".format(messages['hello'])).strip()
@@ -455,7 +454,6 @@ def load_config_file(wllt_clnt_mngr, network_config, master_cfg):
     reports_dir = os.path.join(reports_dir, baking_address)
 
     payments_root = get_payment_root(reports_dir, create=True)
-    calculations_root = get_calculations_root(reports_dir, create=True)
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 
@@ -496,7 +494,8 @@ class ReleaseOverrideAction(argparse.Action):
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
-        raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+        raise Exception(
+            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     parser = argparse.ArgumentParser()
 
@@ -509,8 +508,12 @@ if __name__ == '__main__':
     add_argument_docker(parser)
     add_argument_verbose(parser)
     add_argument_dry(parser)
+    add_argument_api_base_url(parser)
 
     args = parser.parse_args()
+
+    init(args.syslog, args.log_file, args.verbose == 'on', mode='configure')
+
     script_name = " Baker Configuration Tool"
     args.dry_run = False
     print_banner(args, script_name)

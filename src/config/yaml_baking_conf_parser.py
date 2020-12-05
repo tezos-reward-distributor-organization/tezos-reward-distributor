@@ -5,7 +5,8 @@ from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTE
     FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, REACTIVATE_ZEROED, DELEGATOR_PAYS_RA_FEE, \
     RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
-    EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP
+    EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP, PLUGINS_CONF, DEXTER, \
+    CONTRACTS_SET
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -13,9 +14,8 @@ PKH_LENGHT = 36
 
 
 class BakingYamlConfParser(YamlConfParser):
-    def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, verbose=None,
-                 block_api=None, api_base_url=None) -> None:
-        super().__init__(yaml_text, verbose)
+    def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, block_api=None, api_base_url=None) -> None:
+        super().__init__(yaml_text)
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
         if block_api is None:
@@ -37,6 +37,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.validate_address_set(conf_obj, SUPPORTERS_SET)
         self.validate_specials_map(conf_obj)
         self.validate_dest_map(conf_obj)
+        self.validate_plugins(conf_obj)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
         self.parse_bool(conf_obj, REACTIVATE_ZEROED, None)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_RA_FEE, None)
@@ -56,6 +57,8 @@ class BakingYamlConfParser(YamlConfParser):
 
         addr_validator = AddressValidator("dest_map")
         conf_obj[DEST_MAP] = {k: v for k, v in conf_obj[RULES_MAP].items() if addr_validator.isaddress(v)}
+
+        conf_obj[CONTRACTS_SET] = set([k for k, v in conf_obj[RULES_MAP].items() if v.lower() == DEXTER])
 
         # default destination for min_delegation filtered account rewards
         if MIN_DELEGATION_KEY not in conf_obj[RULES_MAP]:
@@ -154,8 +157,8 @@ class BakingYamlConfParser(YamlConfParser):
                                              "If it is an alias import it first. ".format(pymnt_addr))
 
         # if reveal information is present, do not ask
-        if 'revealed' in addr_obj:
-            revealed = addr_obj['revealed']
+        # if 'revealed' in addr_obj:
+        #    revealed = addr_obj['revealed']
         # else:
         #   revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
 
@@ -217,6 +220,10 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[set_name] = set()
             return
 
+        if conf_obj[set_name] is None:
+            conf_obj[set_name] = set()
+            return
+
         if isinstance(conf_obj[set_name], str) and conf_obj[set_name].lower() == 'none':
             conf_obj[set_name] = set()
             return
@@ -247,6 +254,16 @@ class BakingYamlConfParser(YamlConfParser):
             return False
 
         return True
+
+    def validate_plugins(self, conf_obj):
+
+        if PLUGINS_CONF not in conf_obj:
+            raise ConfigurationException("Parameter '{:s}' is not present in config file. "
+                                         "Please consult the documentation and add this parameter.".format(PLUGINS_CONF))
+
+        if conf_obj[PLUGINS_CONF] is None or "enabled" not in conf_obj[PLUGINS_CONF]:
+            raise ConfigurationException("Plugins config missing 'enabled' parameter. "
+                                         "Please consult the documentation and add this parameter.")
 
     def parse_bool(self, conf_obj, param_name, default):
 

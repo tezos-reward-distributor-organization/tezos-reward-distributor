@@ -1,0 +1,88 @@
+import logging
+import os
+from datetime import datetime
+from zipfile import ZipFile
+
+
+class VerboseLoggingHelper:
+    def __init__(self, logging_dir, enabled, verbose_logger, main_logger, formatter, keep_at_most, mode):
+        self.main_logger = main_logger
+        self.logging_dir = logging_dir
+        self.formatter = formatter
+        self.logger = verbose_logger
+        self.logger.setLevel(logging.DEBUG)
+        self.keep_at_most = keep_at_most
+        self.enabled = enabled
+
+        if self.enabled:
+            self.archive_old_log_file()
+            self.log_file_path = self.get_log_file_path(mode)
+            self.handler = logging.FileHandler(self.log_file_path, 'a')
+            self.main_logger.addHandler(self.handler)
+        else:
+            self.log_file_path = None
+            self.handler = logging.NullHandler()
+
+        self.logger.addHandler(self.handler)
+
+    def archive_old_log_file(self):
+        for file_base_name in os.listdir(self.logging_dir):
+            if self.is_log_file(file_base_name):
+                self.archive(os.path.join(self.logging_dir, file_base_name))
+
+    @staticmethod
+    def is_archive_file(base_name):
+        return base_name.endswith(".zip") and base_name.startswith("app_verbose_")
+
+    @staticmethod
+    def is_log_file(base_name):
+        return base_name.endswith(".log") and base_name.startswith("app_verbose_")
+
+    def get_log_file_path(self, cycle):
+        formatted_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+        return os.path.join(self.logging_dir, f'app_verbose_{cycle}_{formatted_date}.log')
+
+    def reset(self, cycle):
+        if not self.enabled:
+            return
+
+        self.close_current_handler()
+
+        old_path = self.log_file_path
+        self.log_file_path = self.get_log_file_path(cycle)
+        self.handler = logging.FileHandler(self.log_file_path, 'a')
+        self.main_logger.addHandler(self.handler)
+        self.logger.addHandler(self.handler)
+
+        self.archive(old_path)
+
+    def close_current_handler(self):
+        self.logger.removeHandler(self.handler)
+        self.main_logger.removeHandler(self.handler)
+        self.handler.close()
+
+    def archive(self, path):
+        archive_dir = os.path.join(self.logging_dir, 'verbose_backup')
+        os.makedirs(archive_dir, exist_ok=True)
+
+        archive_file = os.path.join(archive_dir, os.path.splitext(os.path.basename(path))[0] + '.zip')
+
+        with ZipFile(archive_file, 'w') as arch_zip:
+            arch_zip.write(path, arcname=os.path.basename(path))
+        os.remove(path)
+
+        self.remove_oldest(archive_dir)
+
+    def remove_oldest(self, archive_dir):
+        files = [os.path.join(archive_dir, f) for f in os.listdir(archive_dir) if self.is_archive_file(f)]
+        sorted_files = sorted(files, key=os.path.getmtime)
+
+        if len(sorted_files) > self.keep_at_most:
+            os.remove(sorted_files[0])
+            self.remove_oldest(archive_dir)
+
+    def get_logger(self):
+        return self.logger
+
+    def get_current_log_file_path(self):
+        return self.log_file_path

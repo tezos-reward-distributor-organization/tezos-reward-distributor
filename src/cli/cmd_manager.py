@@ -1,6 +1,6 @@
 import os
 from subprocess import STDOUT, check_output, TimeoutExpired, CalledProcessError
-from log_config import main_logger
+from log_config import main_logger, verbose_logger
 from util.client_utils import clear_terminal_chars
 
 TIMEOUT = "SUBPROCESS_TIMEOUT"
@@ -8,22 +8,19 @@ logger = main_logger
 
 
 class CommandManager:
-    def __init__(self, verbose=None) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.verbose = verbose
 
     def exec(self, cmd, verbose_override=None, timeout=None):
         return self.execute(cmd, verbose_override, timeout)[1]
 
     def execute(self, cmd, verbose_override=None, timeout=None):
 
-        verbose = self.verbose
+        if verbose_override is None:
+            verbose_override = True
 
-        if verbose_override is not None:
-            verbose = verbose_override
-
-        if verbose:
-            logger.debug("--> Verbose : Command is |{}|".format(cmd))
+        if verbose_override:
+            verbose_logger.debug("--> Verbose : Command is |{}|".format(cmd))
 
         try:
             os.environ["TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER"] = "Y"
@@ -39,7 +36,6 @@ class CommandManager:
         output = clear_terminal_chars(output)
         output = output.strip()
 
-        if verbose:
-            logger.debug("<-- Verbose : Answer is |{}|".format(output))
+        verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
 
         return True, output

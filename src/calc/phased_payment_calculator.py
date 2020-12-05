@@ -7,7 +7,9 @@ from calc.calculate_phase3 import CalculatePhase3
 from calc.calculate_phase4 import CalculatePhase4
 from calc.calculate_phase_final import CalculatePhaseFinal
 from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_type_balance
-from pay.payment_consumer import logger
+from log_config import main_logger
+
+logger = main_logger.getChild("phased_calculator")
 
 MINOR_DIFF = 10
 MINOR_RATIO_DIFF = 1e-6
@@ -41,6 +43,7 @@ class PhasedPaymentCalculator:
     # founders reward = delegators fee = total reward - delegators reward
     ####
     def calculate(self, reward_provider_model):
+
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs, total_rwrd_amnt = phase0.calculate()
 
@@ -95,18 +98,13 @@ class PhasedPaymentCalculator:
 
         # check if there is difference between sum of calculated amounts and total_rewards
         total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
-        error = abs(total_rwrd_amnt - total_amount_to_pay)
+        amnt_pay_diff = abs(total_rwrd_amnt - total_amount_to_pay)
 
-        logger.info("Total rewards after  processing is {:,} mutez.".format(total_rwrd_amnt))
-
-        logger.debug("Total amount to pay is {:,} mutez".format(total_amount_to_pay))
-
-        if error:
-            logger.debug("Difference between total rewards and total payment amount is {} mutez. "
-                         "This is due to floating point arithmetic. (max allowed diff is {})"
-                         .format(error, MINOR_DIFF))
-
-        # assert error <= MINOR_DIFF
+        logger.info("Total rewards after processing is {:,} mutez.".format(total_rwrd_amnt))
+        logger.info("Total amount to pay is {:,} mutez".format(total_amount_to_pay))
+        logger.info("Difference between total rewards and total payment amount is {:,} mutez. "
+                    "This is due to floating point arithmetic. (max allowed diff is {:,})"
+                    .format(amnt_pay_diff, MINOR_DIFF))
 
         return rwrd_logs, total_rwrd_amnt
 

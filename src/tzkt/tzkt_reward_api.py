@@ -9,12 +9,12 @@ from tzkt.tzkt_api import TzKTApi
 
 class TzKTRewardApiImpl(RewardApi):
 
-    def __init__(self, nw, baking_address, verbose=False, base_url=None):
+    def __init__(self, nw, baking_address, base_url=None):
         super(TzKTRewardApiImpl, self).__init__()
         if base_url is None:
-            self.api = TzKTApi.from_network(nw['NAME'].lower(), verbose=verbose)
+            self.api = TzKTApi.from_network(nw['NAME'].lower())
         else:
-            self.api = TzKTApi.from_url(base_url, verbose=verbose)
+            self.api = TzKTApi.from_url(base_url)
         self.baking_address = baking_address
         self.name = 'tzkt'
 
@@ -99,6 +99,10 @@ class TzKTRewardApiImpl(RewardApi):
             for item in split['delegators']
             if item['balance'] > 0
         }
+
+        # snapshot_level = self.api.get_snapshot_level(cycle)
+        # for delegator in self.dexter_contracts_set:
+        #    dxtz.process_original_delegators_map(delegators_balances, delegator, snapshot_level)
 
         return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances)
 
