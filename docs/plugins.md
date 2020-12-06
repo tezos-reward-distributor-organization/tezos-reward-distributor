@@ -23,7 +23,7 @@ No plugins are enabled by default.
 
 ## Email Plugin
 
-This plugin will send the configured recipients an email of payouts status with a CSV report attached.
+This plugin will send the configured recipients an 'administrative style' email of payouts status with a CSV report attached.
 
 ### Parameters
 
@@ -84,6 +84,14 @@ plugins:
       &#x2728; Reward for cycle %CYCLE% <b>complete</b>! We had %NDELEGATORS% <i>delegators</i> in the cycle and paid out %TREWARDS% XTZ in rewards!
 ```
 
+### Example Result
+
+Admin Message:
+![Admin Image](https://i.imgur.com/57Lim8s.png)
+
+Payouts Message (using above example config text):
+![Payouts Image](https://i.imgur.com/7ES9m2e.png)
+
 ## Twitter Plugin
 
 This plugin allows payout notifications to be sent via a Twitter tweet. This plugin does not read existing tweets, or read any DMs. The plugin supports adding hashtags to your tweet. The plugin posts tweets "as you", meaning your @-handle will be the author of the post. No other information is submitted to the tweet.
@@ -109,6 +117,8 @@ pip3 install -u tweepy
 **NOTE**: All 4 pieces of keys and tokens are required.
 
 **NOTE**: `tweet_text` will be passed through a filter to replace the following placeholders: `%CYCLE%`, `%NDELEGATORS%`, `%TREWARDS%`
+
+**NOTE**: The twitter plugin only supports payouts notifications; administrative notifications will not be sent via twitter plugin
 
 ```
 plugins:
@@ -137,6 +147,8 @@ This plugin makes an HTTP POST request to an endpoint. This endpoint will receiv
 For simple security, configure a random token (alphanumeric string) to be included in the root JSON object. Your receiver script should verify this token before accepting data.
 
 Your script can return a short message in the response body. This will be displayed on the TRD console and written to the TRD logs.
+
+**NOTE**: The webhook plugin supports administrative notifications which includes 'subject', 'message', and payouts records.
 
 ### Example JSON Object
 
