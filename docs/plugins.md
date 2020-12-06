@@ -66,7 +66,7 @@ This plugin supports two notification styles: admin notifications, and payouts n
 * admin_chat_ids: A required YAML list containing chat IDs of users and/or groups to receive administrative-related messages. This might include failed payouts, or lack of funds messages.  Must be list format even if only 1 ID.
 * public_chat_ids: An, optional, YAML list containing chat IDs of users and/or groups to receive completed payouts message as defined by `telegram_text`. Must be list format even if only 1 ID.
 * bot_api_key: This is the API token that you get from @TheBotFather after creating your bot.
-* telegram_text: This text will be passed through a filter to replace the following placeholders: `%CYCLE%`, `%NDELEGATORS%`, `%TREWARDS%`. Basic HTML formatting is supported; see Telegram Docs for supported HTML tags. Emojis and other unicode characters are supported.
+* telegram_text: This text will be sent to all chat ids list in 'payouts_chat_ids'. The text will be passed through a filter to replace the following placeholders: `%CYCLE%`, `%NDELEGATORS%`, `%TREWARDS%`. Basic HTML formatting is supported; see Telegram Docs for supported HTML tags. Emojis and other unicode characters are supported.
 
 ### Example Config
 

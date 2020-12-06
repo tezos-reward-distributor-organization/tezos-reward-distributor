@@ -37,9 +37,9 @@ class TelegramPlugin(plugins.Plugin):
 
         # Add sparkles emoji to message
         message = self.telegram_text \
-            .replace("%CYCLE%", cycle) \
-            .replace("%TREWARDS%", round(payout_amount / MUTEZ, 2)) \
-            .replace("%NDELEGATORS%", nb_delegators)
+            .replace("%CYCLE%", str(cycle)) \
+            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ, 2))) \
+            .replace("%NDELEGATORS%", str(nb_delegators))
 
         for c in self.payouts_chat_ids:
             payload = {"chat_id": c, "parse_mode": "html", "text": message}
@@ -47,7 +47,7 @@ class TelegramPlugin(plugins.Plugin):
 
         verbose_logger.debug("[TelegramPlugin] Public Response: {:}".format(resp.json()))
 
-        logger.info("[TelegramPlugin] Public Notification '{:s}...' sent".format(message[20:]))
+        logger.info("[TelegramPlugin] Public Notification '{:s}...' sent".format(message[:20]))
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
@@ -81,3 +81,7 @@ class TelegramPlugin(plugins.Plugin):
         # Same for publicChatIds
         if not isinstance(self.payouts_chat_ids, list):
             raise plugins.PluginConfigurationError("[{:s}] 'payouts_chat_ids' must be in list format".format(self.name))
+
+        # Text must be longer than 10 characters
+        if len(self.telegram_text) < 10:
+            raise plugins.PluginConfigurationError("[{:s}] 'telegram_text' must longer than 10 characters".format(self.name))
