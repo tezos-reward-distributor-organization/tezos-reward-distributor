@@ -59,6 +59,8 @@ You must first create a Telegram bot to generate the *bot_api_key* and you must 
 
 The Telegram plugin does not need read access to any messages and the bot will not respond to any commands. This is a "send only" style of bot.
 
+This plugin supports two notification styles: admin notifications, and payouts notifications
+
 ### Parameters
 
 * admin_chat_ids: A required YAML list containing chat IDs of users and/or groups to receive administrative-related messages. This might include failed payouts, or lack of funds messages.  Must be list format even if only 1 ID.
@@ -74,7 +76,7 @@ plugins:
     admin_chat_ids:
       - 123456789
       - 345112344
-    public_chat_ids:
+    payouts_chat_ids:
       - -13134455
       - 827384777
     bot_api_key: 988877766:SKDJFLSJDFJLJSKDFJLKSDJFLKJDF
