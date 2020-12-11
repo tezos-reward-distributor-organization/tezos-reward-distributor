@@ -17,6 +17,8 @@ COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
+COMM_BAKING_RIGHTS = "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}"
+COMM_ENDORSING_RIGHTS = "{}/chains/main/blocks/{}/helpers/endorsing_rights?cycle={}&delegate={}"
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -29,11 +31,13 @@ class RpcRewardApiImpl(RewardApi):
         self.blocks_per_cycle = nw['BLOCKS_PER_CYCLE']
         self.preserved_cycles = nw['NB_FREEZE_CYCLE']
         self.blocks_per_roll_snapshot = nw['BLOCKS_PER_ROLL_SNAPSHOT']
+        self.block_reward = nw['BLOCK_REWARD']
+        self.endorsement_reward = nw['ENDORSEMENT_REWARD']
 
         self.baking_address = baking_address
         self.node_url = node_url
 
-    def get_rewards_for_cycle_map(self, cycle):
+    def get_rewards_for_cycle_map(self, cycle, expected_rewards=False):
         try:
             current_level, current_cycle = self.__get_current_level()
             logger.debug("Current level {:d}, current cycle {:d}".format(current_level, current_cycle))
@@ -45,17 +49,39 @@ class RpcRewardApiImpl(RewardApi):
 
             # Get last block in cycle where rewards are unfrozen
             level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
+            level_of_last_block_in_cycle = (cycle * self.blocks_per_cycle)
 
-            logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}"
+            logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
+                         "last block unfreeze cycle {:d}"
                          .format(cycle, self.preserved_cycles, self.blocks_per_cycle,
-                                 level_of_last_block_in_unfreeze_cycle))
+                                 level_of_last_block_in_cycle, level_of_last_block_in_unfreeze_cycle))
 
-            if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
-                unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
-                reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
+            # Decide on if paying actual rewards earned, or paying expected/ideal rewards
+            if expected_rewards:
+
+                # Determine how many priority 0 baking rights delegate had
+                nb_blocks = self.__get_number_of_baking_rights(cycle, level_of_last_block_in_cycle)
+                nb_endorsements = self.__get_number_of_endorsement_rights(cycle, level_of_last_block_in_cycle)
+
+                # "ideally", the baker baked every priority 0 block they had rights for,
+                # and every block they baked contained 32 endorsements
+                total_block_reward = nb_blocks * self.block_reward
+                total_endorsement_reward = nb_endorsements * self.endorsement_reward
+
+                logger.info("Ideal rewards for cycle {:d}, {:,} block rewards ({:d} blocks), {:,} endorsing rewards ({:d} slots)".format(
+                            cycle, total_block_reward, nb_blocks, total_endorsement_reward, nb_endorsements))
+
+                reward_data["total_rewards"] = total_block_reward + total_endorsement_reward
+
+            # Calculate actual rewards
             else:
-                logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
-                reward_data["total_rewards"] = 0
+
+                if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
+                    unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
+                    reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
+                else:
+                    logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
+                    reward_data["total_rewards"] = 0
 
             _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
             for delegator in self.dexter_contracts_set:
@@ -73,6 +99,41 @@ class RpcRewardApiImpl(RewardApi):
         except Exception as e:
             # We should abort here on any exception as we did not fetch all
             # necessary data to properly compute rewards
+            raise e from e
+
+    def __get_number_of_baking_rights(self, cycle, level):
+
+        try:
+            baking_rights_rpc = COMM_BAKING_RIGHTS.format(self.node_url, level, cycle, self.baking_address)
+            baking_rights = self.do_rpc_request(baking_rights_rpc)
+
+            nb_rights = 0
+
+            # Count all of the priority 0 rights
+            for r in baking_rights:
+                if r["priority"] == 0:
+                    nb_rights += 1
+
+            return nb_rights
+
+        except ApiProviderException as e:
+            raise e from e
+
+    def __get_number_of_endorsement_rights(self, cycle, level):
+
+        try:
+            endorsing_rights_rpc = COMM_ENDORSING_RIGHTS.format(self.node_url, level, cycle, self.baking_address)
+            endorsing_rights = self.do_rpc_request(endorsing_rights_rpc)
+
+            nb_rights = 0
+
+            # Count all of the slots in each endorsing right
+            for r in endorsing_rights:
+                nb_rights += len(r["slots"])
+
+            return nb_rights
+
+        except ApiProviderException as e:
             raise e from e
 
     def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):

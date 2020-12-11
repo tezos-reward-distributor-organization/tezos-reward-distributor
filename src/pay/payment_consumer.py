@@ -3,7 +3,7 @@ import os
 import threading
 
 from time import sleep
-from Constants import VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
+from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
 from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
@@ -15,7 +15,6 @@ from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path, get_busy_file
 
 logger = main_logger.getChild("payment_consumer")
-MUTEZ = 1e6
 
 
 def count_and_log_failed(payment_logs):
@@ -31,7 +30,7 @@ def count_and_log_failed(payment_logs):
 
 class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
-                 network_config, plugins_manager, args=None, dry_run=None, reactivate_zeroed=True,
+                 network_config, plugins_manager, rewards_type, args=None, dry_run=None, reactivate_zeroed=True,
                  delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None, publish_stats=True):
         super(PaymentConsumer, self).__init__()
 
@@ -51,6 +50,7 @@ class PaymentConsumer(threading.Thread):
         self.args = args
         self.network_config = network_config
         self.plugins_manager = plugins_manager
+        self.rewards_type = rewards_type
 
         logger.info('Consumer "%s" created', self.name)
 
@@ -216,6 +216,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict['nb_delegators'] = n_d_type
         stats_dict['pay_xfer_fee'] = 1 if self.delegator_pays_xfer_fee else 0
         stats_dict['pay_ra_fee'] = 1 if self.delegator_pays_ra_fee else 0
+        stats_dict['rewards_type'] = "I" if self.rewards_type.isIdeal() else "A"
         stats_dict['trdver'] = str(VERSION)
 
         if self.args:
