@@ -49,19 +49,19 @@ class RpcRewardApiImpl(RewardApi):
 
             # Get last block in cycle where rewards are unfrozen
             level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
-            level_of_last_block_in_cycle = (cycle * self.blocks_per_cycle)
+            level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
 
-            logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
+            logger.info("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
                          "last block unfreeze cycle {:d}"
                          .format(cycle, self.preserved_cycles, self.blocks_per_cycle,
-                                 level_of_last_block_in_cycle, level_of_last_block_in_unfreeze_cycle))
+                                 level_of_first_block_in_preserved_cycles, level_of_last_block_in_unfreeze_cycle))
 
             # Decide on if paying actual rewards earned, or paying expected/ideal rewards
             if expected_rewards:
 
                 # Determine how many priority 0 baking rights delegate had
-                nb_blocks = self.__get_number_of_baking_rights(cycle, level_of_last_block_in_cycle)
-                nb_endorsements = self.__get_number_of_endorsement_rights(cycle, level_of_last_block_in_cycle)
+                nb_blocks = self.__get_number_of_baking_rights(cycle, level_of_first_block_in_preserved_cycles)
+                nb_endorsements = self.__get_number_of_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles)
 
                 # "ideally", the baker baked every priority 0 block they had rights for,
                 # and every block they baked contained 32 endorsements
@@ -385,10 +385,8 @@ class RpcRewardApiImpl(RewardApi):
         snapshot_level = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
 
-        block_level = cycle * self.blocks_per_cycle + 1
-
         if current_level - snapshot_level >= 0:
-            request = COMM_SNAPSHOT.format(self.node_url, block_level, cycle)
+            request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
             level_snapshot_block = ((cycle - self.preserved_cycles - 2) * self.blocks_per_cycle

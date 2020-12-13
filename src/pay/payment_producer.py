@@ -168,30 +168,27 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                     if not self.payments_queue.full():
 
+                        expected_rewards = False
+
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
                             logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation.")
-                            result = self.try_to_pay(pymnt_cycle, expected_reward=True)
+                            expected_rewards = True
 
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
                         elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
-                            if self.reward_api.name == 'tzstats' or self.reward_api.name == 'tzkt':
-                                logger.warn("Please note that you are doing payouts for frozen rewards!!!")
-                                result = self.try_to_pay(pymnt_cycle)
-                            else:
-                                logger.error("This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
-                                self.exit()
-                                break
+                            logger.warn("Please note that you are doing payouts for frozen rewards!!!")
+                            expected_rewards = True if self.reward_api.name == 'RPC' else False
 
                         # If user wants to offset payments within a cycle, check here
-                        elif level_in_cycle < self.payment_offset:
+                        if level_in_cycle < self.payment_offset:
                             wait_offset_blocks = self.payment_offset - level_in_cycle
                             logger.info("Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks." .format(level_in_cycle, self.payment_offset, wait_offset_blocks))
                             self.wait_for_blocks(wait_offset_blocks)
                             continue  # Break/Repeat loop
 
                         else:
-                            result = self.try_to_pay(pymnt_cycle)
+                            result = self.try_to_pay(pymnt_cycle, expected_rewards=expected_rewards)
 
                         if result:
                             # single run is done. Do not continue.
