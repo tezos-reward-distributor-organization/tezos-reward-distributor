@@ -1,0 +1,172 @@
+<!-- This HTML file powers the TRD stats browser. You can upload it to an S3 bucket for static website use.  //-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TRD Statistics</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+  <style>
+  body { margin: 1em 1em; }
+  table.paleBlueRows {
+    width: 100%;
+  }
+  table.paleBlueRows thead {
+    background: #0B6FA4;
+  }
+  table.paleBlueRows thead th {
+    font-size: 17px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-align: center;
+  }
+  table.paleBlueRows tfoot td {
+    font-size: 14px;
+  }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script>
+  function getStats()
+  {
+    $("#errmsg").hide()
+    $("#statsTableBody").empty()
+
+    network = $("select[name='network']").val()
+    cycle = $("input[name='cycle']").val()
+
+    if (cycle == "") {
+      showError("Cycle cannot be blank")
+      return false
+    }
+
+    // get servers from AWS API Gateway
+    $.ajax({
+      dataType: "json",
+      url: "https://jptpfltc1k.execute-api.us-west-2.amazonaws.com/trdstats",
+      data: { "network": network, "cycle": cycle },
+      beforeSend: function() {
+        $("#loaderDiv").show();
+      },
+      complete: function() {
+        $("#loaderDiv").hide();
+      },
+      success: function(data) {
+
+        if (data.length < 1) {
+          showError("No data found")
+          return
+        }
+        
+        // Some globals
+        var tbody = $("#statsTableBody")
+        var oddRow = true
+        
+        // Loop over data from DynamoDB and construct table.
+        $.each(data, function(i, o) {
+
+          var row = $("<tr/>")
+          
+          row.append($("<td/>").text(o["cycle"]))
+          row.append($("<td/>").text(o["total_amount"]))
+          row.append($("<td/>").text(o["m_prov"]))
+
+          row.append($("<td/>").text(o["nb_delegators"]))
+          row.append($("<td/>").text(o["nb_pay"]))
+          row.append($("<td/>").text(o["nb_failed"]))
+          row.append($("<td/>").text(o["nb_unknown"]))
+          row.append($("<td/>").text(o["nb_merged"]))
+
+          row.append($("<td/>").text(o["nb_owners"]))
+          row.append($("<td/>").text(o["nb_founders"]))
+
+          row.append($("<td/>").text(o["pay_xfer_fee"]))
+          row.append($("<td/>").text(o["pay_ra_fee"]))
+
+          row.append($("<td/>").text(o["m_relov"]))
+          row.append($("<td/>").text(o["m_offset"]))
+
+          row.append($("<td/>").text(o["pythonver"]))
+          row.append($("<td/>").text(o["m_run"]))
+          row.append($("<td/>").text(o["m_docker"]))
+
+          // append the created rows to the main table
+          tbody.append(row)
+          
+          oddRow = (!oddRow)
+        });
+        
+      },
+      error: function(xhr, e, d) {
+        showError(xhr.responseText)
+      }
+    });
+  }
+  
+  
+  function handleNoTag() {
+    $("body").append("p").text("No cycle.")
+  }
+
+  
+  function showError(msg)
+  {
+    $("#errmsg").text(msg)
+    $("#errmsg").show()
+  }
+  </script>
+</head>
+<body>
+
+  <div class="pure-g">
+      <div class="pure-u-3-5"><h1>Tezos Reward Distributor Anonymous Statistics</h1></div>
+      <div class="pure-u-2-5">
+        <form class="pure-form">
+            <fieldset>
+                <legend>Search Parameters</legend>
+                <select name="network"/><option value="MAINNET">MAINNET</option><option value="ALPHANET">ALPHANET</option><option value="DELPHINET">DELPHINET</option></select>
+                <input type="text" name="cycle" placeholder="Cycle" />
+                <button type="button" onclick="getStats();" class="pure-button pure-button-primary">Display Results</button>
+            </fieldset>
+        </form>
+        <p id="errmsg" style="display: none; font-size: small; font-weight: bold; color: red;"></p>
+      </div>
+  </div>
+
+  <hr/>
+
+  <div class="pure-g">
+    <div class="pure-u-5-5">
+      <table class="paleBlueRows" id="statsTable">
+      <thead id="statsTableHead">
+        <th>Cycle</th>
+        <th>Rewards (XTZ)</th>
+        <th>Provdr</th>
+
+        <th>Dele</th>
+        <th>Paid</th>
+        <th>Fail</th>
+        <th>Unk</th>
+        <th>Mrgd</th>
+
+        <th>Ownrs</th>
+        <th>Fndrs</th>
+
+        <th>Txn Fee</th>
+        <th>RA Fee</th>
+
+        <th>Rel Ovride</th>
+        <th>Lvl Offset</th>
+
+        <th>PyVer</th>
+        <th>RunMode</th>
+        <th>Docker</th>
+      </thead>
+      <tbody id="statsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-2-5">&nbsp;</div>
+    <div class="pure-u-3-5" style="display:none;" id="loaderDiv"><img src="loading.png"/></div>
+  </div>
+
+</body>
+</html>
