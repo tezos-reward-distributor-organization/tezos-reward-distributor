@@ -51,7 +51,7 @@ class RpcRewardApiImpl(RewardApi):
             level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
             level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
 
-            logger.info("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
+            logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
                          "last block unfreeze cycle {:d}"
                          .format(cycle, self.preserved_cycles, self.blocks_per_cycle,
                                  level_of_first_block_in_preserved_cycles, level_of_last_block_in_unfreeze_cycle))
