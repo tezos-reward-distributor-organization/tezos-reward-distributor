@@ -276,10 +276,12 @@ def ondelegatorpaysxfrfee(input):
     try:
         if not input:
             input = "0"
+        if input != "0" and input != "1":
+          raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(DELEGATOR_PAYS_XFER_FEE, input != "1")
-    except Exception:
-        printe("Invalid input: " + traceback.format_exc())
+    except Exception as e:
+        printe("Invalid input: {}".format(str(e)))
         return
     fsm.go()
 
@@ -288,10 +290,12 @@ def ondelegatorpaysrafee(input):
     try:
         if not input:
             input = "0"
+        if input != "0" and input != "1":
+          raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(DELEGATOR_PAYS_RA_FEE, input != "1")
-    except Exception:
-        printe("Invalid input: " + traceback.format_exc())
+    except Exception as e:
+        printe("Invalid input: {}".format(str(e)))
         return
     fsm.go()
 
@@ -300,10 +304,12 @@ def onreactivatezeroed(input):
     try:
         if not input:
             input = "0"
+        if input != "0" and input != "1":
+          raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(REACTIVATE_ZEROED, input != "1")
-    except Exception:
-        printe("Invalid input: " + traceback.format_exc())
+    except Exception as e:
+        printe("Invalid input: {}".format(str(e)))
         return
     fsm.go()
 
