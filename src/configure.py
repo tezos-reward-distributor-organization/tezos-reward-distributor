@@ -18,7 +18,8 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_executable_dirs, add_argument_docker, \
-    add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url
+    add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url, \
+    add_argument_syslog, add_argument_log_file
 from log_config import main_logger, init
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
@@ -48,7 +49,7 @@ messages = {
     'delegatorpaysrafee': "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
     'supporters': "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
     'specials': "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
-    'final': "Add excluded address in form of 'PKH,target'. Possbile targets are: TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip"
+    'final': ""
 }
 
 parser = None
@@ -286,7 +287,7 @@ def ondelegatorpaysxfrfee(input):
 def ondelegatorpaysrafee(input):
     try:
         if not input:
-            input = "1"
+            input = "0"
         global parser
         parser.set(DELEGATOR_PAYS_RA_FEE, input != "1")
     except Exception:
@@ -298,7 +299,7 @@ def ondelegatorpaysrafee(input):
 def onreactivatezeroed(input):
     try:
         if not input:
-            input = "1"
+            input = "0"
         global parser
         parser.set(REACTIVATE_ZEROED, input != "1")
     except Exception:
@@ -508,7 +509,9 @@ if __name__ == '__main__':
     add_argument_docker(parser)
     add_argument_verbose(parser)
     add_argument_dry(parser)
+    add_argument_syslog(parser)
     add_argument_api_base_url(parser)
+    add_argument_log_file(parser)
 
     args = parser.parse_args()
 
