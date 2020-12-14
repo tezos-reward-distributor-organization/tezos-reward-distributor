@@ -18,7 +18,7 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_addr, add_argument_executable_dirs, add_argument_docker, \
-    add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url
+    add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url, add_argument_log_file
 from log_config import main_logger, init
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
@@ -509,10 +509,11 @@ if __name__ == '__main__':
     add_argument_verbose(parser)
     add_argument_dry(parser)
     add_argument_api_base_url(parser)
+    add_argument_log_file(parser)
 
     args = parser.parse_args()
 
-    init(args.syslog, args.log_file, args.verbose == 'on', mode='configure')
+    init(False, args.log_file, args.verbose == 'on', mode='configure')
 
     script_name = " Baker Configuration Tool"
     args.dry_run = False
