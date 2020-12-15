@@ -8,16 +8,30 @@ The configuration parameters for all plugins are located in the bakers .yaml con
 
 Individual plugins will not load if not properly configured.
 
-You must specify which plugins to enable by adding their name to the "enabled" list. Example:
+You must specify which plugins to enable by adding their name to the "enabled" list. No plugins are enabled by default.
+
+In this example, even though the webhook plugin is properly configured, it is *not* listed in the 'enabled' section, and therefor will not activate.
 
 ```
 plugins:
   enabled:
-    - email
-    - webhook
+  webhook:
+    endpoint: https://mydomain.com/webhook.php
+    token: Xynl6svphysd3BhjLP6IS
 ```
 
-No plugins are enabled by default.
+In order to activate the webhook plugin, you must add the name of the plugin to the *enabled* section as shown here:
+
+```
+plugins:
+  enabled:
+  - webhook
+  webhook:
+    endpoint: https://mydomain.com/webhook.php
+    token: Xynl6svphysd3BhjLP6IS
+```
+
+If that doesn't make sense to you, please read the [YAML format documentation](https://yaml.org/spec/history/2001-05-26.html).
 
 ---
 

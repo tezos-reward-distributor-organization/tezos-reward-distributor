@@ -16,7 +16,9 @@ class TestCalculatePhase0(TestCase):
             'NB_FREEZE_CYCLE': 3,
             'BLOCK_TIME_IN_SEC': 30,
             'BLOCKS_PER_CYCLE': 2048,
-            'BLOCKS_PER_ROLL_SNAPSHOT': 256
+            'BLOCKS_PER_ROLL_SNAPSHOT': 256,
+            'BLOCK_REWARD': 40000000,
+            'ENDORSEMENT_REWARD': 1250000
         }
 
         api = ProviderFactory(provider='prpc').newRewardApi(nw, BAKING_ADDRESS, '')
