@@ -190,14 +190,25 @@
 <p>Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.</p>
 <p>The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml">the example config</a>.</p>
 <p>Individual plugins will not load if not properly configured.</p>
-<p>You must specify which plugins to enable by adding their name to the “enabled” list. Example:</p>
+<p>You must specify which plugins to enable by adding their name to the “enabled” list. No plugins are enabled by default.</p>
+<p>In this example, even though the webhook plugin is properly configured, it is <em>not</em> listed in the ‘enabled’ section, and therefor will not activate.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
   <span class="n">enabled</span><span class="p">:</span>
-    <span class="o">-</span> <span class="n">email</span>
-    <span class="o">-</span> <span class="n">webhook</span>
+  <span class="n">webhook</span><span class="p">:</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mydomain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">webhook</span><span class="o">.</span><span class="n">php</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Xynl6svphysd3BhjLP6IS</span>
 </pre></div>
 </div>
-<p>No plugins are enabled by default.</p>
+<p>In order to activate the webhook plugin, you must add the name of the plugin to the <em>enabled</em> section as shown here:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">enabled</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">webhook</span>
+  <span class="n">webhook</span><span class="p">:</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mydomain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">webhook</span><span class="o">.</span><span class="n">php</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Xynl6svphysd3BhjLP6IS</span>
+</pre></div>
+</div>
+<p>If that doesn’t make sense to you, please read the <a class="reference external" href="https://yaml.org/spec/history/2001-05-26.html">YAML format documentation</a>.</p>
 <hr class="docutils" />
 <div class="section" id="email-plugin">
 <h2>Email Plugin<a class="headerlink" href="#email-plugin" title="Permalink to this headline">¶</a></h2>
