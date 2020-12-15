@@ -276,7 +276,7 @@ def ondelegatorpaysxfrfee(input):
         if not input:
             input = "0"
         if input != "0" and input != "1":
-          raise Exception("Please enter '0' or '1'")
+            raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(DELEGATOR_PAYS_XFER_FEE, input != "1")
     except Exception as e:
@@ -290,7 +290,7 @@ def ondelegatorpaysrafee(input):
         if not input:
             input = "0"
         if input != "0" and input != "1":
-          raise Exception("Please enter '0' or '1'")
+            raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(DELEGATOR_PAYS_RA_FEE, input != "1")
     except Exception as e:
@@ -304,7 +304,7 @@ def onreactivatezeroed(input):
         if not input:
             input = "0"
         if input != "0" and input != "1":
-          raise Exception("Please enter '0' or '1'")
+            raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(REACTIVATE_ZEROED, input != "1")
     except Exception as e:
