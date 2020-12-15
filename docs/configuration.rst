@@ -43,7 +43,27 @@ Available configuration parameters are:
   or alias of implicit or originated account is accepted. For
   more information on the payment address configuration please
   refer to the next section.
+
+**rewards_type**
+  There are two options for calculating the total rewards earned by
+  a baker at the end of each cycle. If this parameter is missing,
+  'actual' rewards take affect.
   
+  'ideal': Rewards are calculated using the number of baking rights
+  granted at priority 0, plus the count of all endorsing slots. If a
+  bake or endorsement is missed, rewards are calculated as if there
+  was no miss. No additional block rewards or transaction fees are
+  included in this method.
+
+  'actual': Rewards are calculated based on the actual number of bakes,
+  at any priority, and any endorsements. If a bake or endorsement is missed,
+  rewards are not earned and therefor not included. Transaction fees
+  and other block rewards are included in the rewards.
+
+  Example::
+
+    rewards_type: actual
+
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee.
   This is evaluated as a percentage value. Example: If set to 5,
@@ -149,14 +169,6 @@ Available configuration parameters are:
        mindelegation: TOE                                                                (mindelegation will be shared with everyone)
   
 **plugins**
-  This section of the configuration file, along with 'enabled' noted in the example below,
-  is required, even if you are not using any of the included plugins.
-
-  Minimum configuration::
-
-    plugins:
-      enabled:
-
   Please consult the `plugins docs`_ for more details on the configuring the various plugins.
 
 .. _plugins docs : plugins.html
