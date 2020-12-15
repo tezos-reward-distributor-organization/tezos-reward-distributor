@@ -46,7 +46,7 @@ class TzStatsRewardProviderHelper:
 
         self.baking_address = baking_address
 
-    def get_rewards_for_cycle(self, cycle, expected_reward=False):
+    def get_rewards_for_cycle(self, cycle, expected_rewards=False):
 
         root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balances": {}}
 
@@ -68,7 +68,7 @@ class TzStatsRewardProviderHelper:
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
-        if expected_reward:
+        if expected_rewards:
             root["total_reward_amount"] = int(1e6 * float(resp[idx_income_expected_income]))
         else:
             root["total_reward_amount"] = int(1e6 * (float(resp[idx_income_baking_income])

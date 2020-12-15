@@ -6,7 +6,7 @@ from time import sleep
 
 import base58
 
-from Constants import PaymentStatus
+from Constants import MUTEZ, PaymentStatus
 from log_config import main_logger, verbose_logger
 from util.rpc_utils import parse_json_response
 
@@ -32,7 +32,6 @@ COMM_INJECT = "rpc post /injection/operation with '\"%OPERATION_HASH%\"'"
 COMM_WAIT = "wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
 
 FEE_INI = 'fee.ini'
-MUTEZ = 1e6
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 

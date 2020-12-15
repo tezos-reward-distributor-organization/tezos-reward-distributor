@@ -26,6 +26,8 @@ rules_map:
   mindelegation: TOB
 plugins:
   enabled:
+  - email
+  - telegram
   email:
     smtp_user: user@domain.com
     smtp_pass: horsebatterystaple2
