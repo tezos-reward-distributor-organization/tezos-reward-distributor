@@ -1,11 +1,42 @@
-from time import sleep
-from NetworkConfiguration import default_network_config_map
-from log_config import main_logger, DEFAULT_LOG_FILE
-
 import argparse
+from time import sleep
+import pip
+import pkg_resources
 
+from log_config import main_logger, DEFAULT_LOG_FILE
+from NetworkConfiguration import default_network_config_map
+
+
+REQUIREMENTS_FILE_PATH = 'requirements.txt'
 LINER = "--------------------------------------------"
 logger = main_logger
+
+
+def install(package):
+    if hasattr(pip, 'main'):
+        pip.main(['install', package])
+    else:
+        pip._internal.main(['install', package])
+
+
+def check_requirements():
+    with open(REQUIREMENTS_FILE_PATH, 'r') as requirements:
+        for requirement in requirements:
+            try:
+                pkg_resources.require(requirement)
+            except Exception as e:
+                requirement = requirement.replace('\n', '')
+                print('The requirement {} was not found: {}\nWould you like to install {}? (y/n)'.format(requirement, e, requirement))
+                value = input().lower()
+                if value == 'y':
+                    install(requirement)
+                else:
+                    print('Please make sure to install all the required packages before using the TRD.\n'
+                          'To install the requirements: pip3 install -r requirements.txt')
+                    exit()
+
+
+check_requirements()
 
 
 def print_banner(args, script_name):
