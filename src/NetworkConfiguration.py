@@ -42,7 +42,7 @@ def init_network_config(network_name, config_client_manager):
     return default_network_config_map
 
 
-def get_network_config_from_local_node(config_client_manager, node_addr):
+def get_network_config_from_local_node(config_client_manager):
     _, response_constants = config_client_manager.request_url(CONSTANTS_PATH)
     network_config_map = parse_constants(response_constants)
     return network_config_map
