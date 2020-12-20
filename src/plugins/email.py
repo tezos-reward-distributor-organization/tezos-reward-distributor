@@ -19,9 +19,8 @@ class EmailPlugin(plugins.Plugin):
 
     _req_cfg_keys = ["smtp_user", "smtp_pass", "smtp_host", "smtp_port", "smtp_tls", "smtp_sender", "smtp_recipients"]
 
-    def __init__(self, cfg, verbose=False):
+    def __init__(self, cfg):
         super().__init__("Email", cfg["email"])
-        self.verbose = verbose
 
         logger.info("[EmailPlugin] From: {:s}, To: [{:s}], Via: {:s}:{:d} ({:s}SSL/TLS)".format(
                     self.sender, ", ".join(self.recipients), self.host, self.port, "" if self.use_tls else "No "))

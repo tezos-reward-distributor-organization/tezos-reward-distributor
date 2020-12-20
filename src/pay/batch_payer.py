@@ -1,7 +1,6 @@
 import configparser
 import os
 from random import randint
-from subprocess import TimeoutExpired
 from time import sleep
 
 import base58
@@ -32,19 +31,19 @@ COMM_INJECT = "/injection/operation"
 COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 
 FEE_INI = 'fee.ini'
-MUTEZ = 1e6
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee, network_config, plugins_manager, dry_run):
+    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee,
+                 network_config, plugins_manager, dry_run):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.network_config = network_config
-        self.zero_threshold = 1    # 1 mutez = 0.000001 XTZ
+        self.zero_threshold = 1  # 1 mutez = 0.000001 XTZ
         self.plugins_manager = plugins_manager
         self.dry_run = dry_run
 
@@ -60,12 +59,10 @@ class BatchPayer():
         self.default_fee = int(kttx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
-        self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee',
-                                                         fallback=True)  # Must use getboolean otherwise parses as string
+        self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee', fallback=True)  # Must use getboolean otherwise parses as string
 
         if not self.delegator_pays_xfer_fee:
-            raise Exception(
-                "delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
+            raise Exception("delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
 
         self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
@@ -76,8 +73,10 @@ class BatchPayer():
         if self.delegator_pays_xfer_fee:
             self.zero_threshold += self.default_fee
 
-        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee / MUTEZ, "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
-        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE / MUTEZ, "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
+        logger.info("Transfer fee is {:.6f} XTZ and is paid by {}".format(self.default_fee / MUTEZ,
+                                                                          "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
+        logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE / MUTEZ,
+                                                                              "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
         logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold / MUTEZ))
 
         # If pymnt_addr has a length of 36 and starts with tz or KT then it is a public key, else it is an alias
@@ -105,7 +104,7 @@ class BatchPayer():
         self.comm_inject = COMM_INJECT
         self.comm_wait = COMM_WAIT
 
-    def pay(self, payment_items_in, verbose=None, dry_run=None):
+    def pay(self, payment_items_in, dry_run=None):
         logger.info("{} payment items to process".format(len(payment_items_in)))
 
         # initialize the result list with already paid items
@@ -152,7 +151,8 @@ class BatchPayer():
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
-        payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in range(0, len(payment_items), MAX_TX_PER_BLOCK)]
+        payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in
+                                range(0, len(payment_items), MAX_TX_PER_BLOCK)]
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
         total_amount_to_pay += sum_burn_fees
@@ -176,7 +176,7 @@ class BatchPayer():
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = "Payment attempt failed because of insufficient funds in the payout address. " \
                           "The current balance, {:,} mutez, is insufficient to pay cycle rewards of {:,} mutez" \
-                          .format(payment_address_balance, total_amount_to_pay)
+                    .format(payment_address_balance, total_amount_to_pay)
 
                 # Output to CLI, send notification using plugins
                 logger.error(message)
@@ -195,14 +195,15 @@ class BatchPayer():
                 self.plugins_manager.send_notification(subject, message)
 
             else:
-                logger.info("The payout account balance is expected to last for the next {:d} cycle(s)".format(number_future_payable_cycles))
+                logger.info("The payout account balance is expected to last for the next {:d} cycle(s)".format(
+                    number_future_payable_cycles))
 
         total_attempts = 0
         op_counter = OpCounter()
 
         for i_batch, payment_items_chunk in enumerate(payment_items_chunks):
             logger.debug("Payment of batch {} started".format(i_batch + 1))
-            payments_log, attempt = self.pay_single_batch(payment_items_chunk, verbose=verbose, dry_run=dry_run, op_counter=op_counter)
+            payments_log, attempt = self.pay_single_batch(payment_items_chunk, dry_run=dry_run, op_counter=op_counter)
 
             logger.info("Payment of batch {} is complete, in {} attempt(s)".format(i_batch + 1, attempt))
 
@@ -214,9 +215,10 @@ class BatchPayer():
     def log_processed_items(self, payment_logs):
         if payment_logs:
             for pl in payment_logs:
-                logger.debug("Reward already %s for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
+                logger.debug("Reward already %s for cycle %s address %s amount %f tz type %s", pl.paid, pl.cycle,
+                             pl.address, pl.amount, pl.type)
 
-    def pay_single_batch(self, payment_items, op_counter, verbose=None, dry_run=None):
+    def pay_single_batch(self, payment_items, op_counter, dry_run=None):
 
         max_try = 3
         status = PaymentStatus.FAIL
@@ -226,9 +228,11 @@ class BatchPayer():
         # for failed operations, trying after some time should be OK
         for attempt in range(max_try):
             try:
-                status, operation_hash = self.attempt_single_batch(payment_items, op_counter, verbose, dry_run=dry_run)
+                status, operation_hash = self.attempt_single_batch(payment_items, op_counter, dry_run=dry_run)
             except Exception:
-                logger.error("batch payment attempt {}/{} for current batch failed with error".format(attempt + 1, max_try), exc_info=True)
+                logger.error(
+                    "batch payment attempt {}/{} for current batch failed with error".format(attempt + 1, max_try),
+                    exc_info=True)
 
             if dry_run or status.is_fail():
                 op_counter.rollback()
@@ -265,7 +269,7 @@ class BatchPayer():
 
         sleep(slp_tm)
 
-    def attempt_single_batch(self, payment_records, op_counter, verbose=None, dry_run=None):
+    def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
             _,counter = self.wllt_clnt_mngr.request_url(self.comm_counter)
             counter = int(counter)
@@ -295,19 +299,20 @@ class BatchPayer():
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
-                logger.debug("Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
+                logger.debug(
+                    "Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
             op_counter.inc()
 
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
-                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace("%storage_limit%", str(storage))
+                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace(
+                "%storage_limit%", str(storage))
 
             content_list.append(content)
 
-            if verbose:
-                logger.info("Payment content: {}".format(content))
+            verbose_logger.info("Payment content: {}".format(content))
 
         contents_string = ",".join(content_list)
 
@@ -328,7 +333,8 @@ class BatchPayer():
                 op_status = op["metadata"]["operation_result"]["status"]
                 if op_status == "failed":
                     op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-                    logger.error("Error while validating operation - Status: {}, Message: {}".format(op_status, op_error))
+                    logger.error(
+                        "Error while validating operation - Status: {}, Message: {}".format(op_status, op_error))
                     return PaymentStatus.FAIL, ""
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
@@ -381,7 +387,8 @@ class BatchPayer():
 
         if len(decoded_signature) != 128:  # must be 64 bytes
             # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            logger.warn("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
+            logger.warn(
+                "Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
             # return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
@@ -409,6 +416,9 @@ class BatchPayer():
 
         logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
         return PaymentStatus.INJECTED, operation_hash
+
+    def get_confirmation_timeout(self):
+        return self.network_config['BLOCK_TIME_IN_SEC'] * (CONFIRMATIONS + PATIENCE)
 
     def __get_payment_address_balance(self):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)

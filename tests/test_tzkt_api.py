@@ -16,7 +16,7 @@ from NetworkConfiguration import default_network_config_map
 
 
 def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
-    path = join(dirname(__file__), f'data/{address}_{cycle}_{suffix}.json')
+    path = join(dirname(__file__), f'tzkt_data/{address}_{cycle}_{suffix}.json')
     if os.path.exists(path):
         with open(path, 'r') as f:
             data = json.loads(f.read())
@@ -29,7 +29,7 @@ def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
 
 
 def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
-    path = join(dirname(__file__), f'data/{address}_{cycle}_{suffix}.json')
+    path = join(dirname(__file__), f'tzkt_data/{address}_{cycle}_{suffix}.json')
     data = dict(
         delegate_staking_balance=model.delegate_staking_balance,
         total_reward_amount=model.total_reward_amount,
@@ -73,7 +73,6 @@ class Args:
         self.background_service = False
         self.do_not_publish_stats = False
         self.retry_injected = False
-        self.verbose = True
         self.api_base_url = api_base_url
 
 

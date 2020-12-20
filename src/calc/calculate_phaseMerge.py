@@ -2,32 +2,31 @@ from calc.calculate_phase_base import CalculatePhaseBase
 from model.reward_log import RewardLog, TYPE_MERGED
 
 
-class CalculatePhase6(CalculatePhaseBase):
+class CalculatePhaseMerge(CalculatePhaseBase):
     """
-    -- Phase6 : Merge Phase --
+    -- Merge Phase --
 
-    At stage 6, merge payments.
     Payments to the same destination are merged.
     """
 
-    def __init__(self, addr_dest_dict) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.addr_dest_dict = addr_dest_dict
 
-    def calculate(self, reward_data5, total_amount):
+    def calculate(self, reward_logs):
         # if address is in address destination dictionary;
         # then set payment address to mapped address value
-        for rl in self.filterskipped(reward_data5):
+        for rl in self.filterskipped(reward_logs):
             rl.ratio6 = rl.ratio
 
-        address_set = set(rl.paymentaddress for rl in self.filterskipped(reward_data5))
+        address_set = set(rl.paymentaddress for rl in self.filterskipped(reward_logs))
         payment_address_list_dict = {addr: [] for addr in address_set}
+
         # group payments by paymentaddress
-        for rl in self.filterskipped(reward_data5):
+        for rl in self.filterskipped(reward_logs):
             payment_address_list_dict[rl.paymentaddress].append(rl)
 
         reward_data6 = []
-        for rl in self.iterateskipped(reward_data5):
+        for rl in self.iterateskipped(reward_logs):
             reward_data6.append(rl)
 
         for addr, rl_list in payment_address_list_dict.items():
@@ -51,4 +50,4 @@ class CalculatePhase6(CalculatePhaseBase):
             else:
                 reward_data6.append(rl_list[0])
 
-        return reward_data6, total_amount
+        return reward_data6

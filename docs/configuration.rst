@@ -4,8 +4,8 @@ How to configure Tezos Reward Distributor?
 Email Setup
 ------------------------
 
-Get emails for payment reports at each cycle. Fill email.ini file with
-your email details to receive payment emails.
+Various notifications, such as completed cycle payouts, can be delivered to you via email.
+Please see the `plugins docs`_ for information on configuring this plugin.
 
 Fee Setup
 ------------------------
@@ -43,7 +43,27 @@ Available configuration parameters are:
   or alias of implicit or originated account is accepted. For
   more information on the payment address configuration please
   refer to the next section.
+
+**rewards_type**
+  There are two options for calculating the total rewards earned by
+  a baker at the end of each cycle. If this parameter is missing,
+  'actual' rewards take affect.
   
+  'ideal': Rewards are calculated using the number of baking rights
+  granted at priority 0, plus the count of all endorsing slots. If a
+  bake or endorsement is missed, rewards are calculated as if there
+  was no miss. No additional block rewards or transaction fees are
+  included in this method.
+
+  'actual': Rewards are calculated based on the actual number of bakes,
+  at any priority, and any endorsements. If a bake or endorsement is missed,
+  rewards are not earned and therefor not included. Transaction fees
+  and other block rewards are included in the rewards.
+
+  Example::
+
+    rewards_type: actual
+
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee.
   This is evaluated as a percentage value. Example: If set to 5,
@@ -77,7 +97,7 @@ Available configuration parameters are:
   total baking balance. Implicit or originated addresses are
   accepted. It is important that the sum of all ratios equals
   to 1. This map is optional if owners do not want to be paid
-  for baking rewards, in this case, service fee remains in
+  for baking rewards, in this case, baking rewards remain in
   baking balance.
   
   Example::
@@ -135,14 +155,21 @@ Available configuration parameters are:
 
 **rules_map**
   The rules_map is needed to redirect payments. A pre-defined source (left side) is 
-  mindelegation. Pre-defined destinations (right side) are TOF = to founders balance, 
-  TOB = to bakers balance and TOE = to everyone. Variable sources and destinations are 
-  PKHs.
+  mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, 
+  TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are 
+  PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.
+
+  Example::
+
+     rules_map:
+       tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ: TOF                                         (redirects payment from tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ to founders)
+       tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace: TOB                                         (payment to tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace will remain in the bakers balance)
+       tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7        (redirects payment from tz1V9S... to tz1fgX...)
+       tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs: Dexter                                      (indicates address is a dexter pool; TRD will send rewards to pool members)
+       mindelegation: TOE                                                                (mindelegation will be shared with everyone)
   
-  Example:  
-  rules_map:  
-  PKH: TOF (redirects payment from PKH to TOF)  
-  PHK: TOB (payment will be kept in the baking_address)  
-  PKH: PKH (redirects payment from PKH to PKH)  
-  mindelegation: TOE (mindelegation will be shared with everyone)  
-  
+**plugins**
+  Please consult the `plugins docs`_ for more details on the configuring the various plugins.
+
+.. _plugins docs : plugins.html
+

@@ -3,12 +3,14 @@ from enum import Enum
 EXIT_PAYMENT_TYPE = "exit"
 
 PUBLIC_NODE_URL = {"MAINNET": ["https://mainnet-tezos.giganode.io", "https://teznode.letzbake.com"],
-                   "ALPHANET": ["https://tezos-dev.cryptonomic-infra.tech", "https://testnet-tezos.giganode.io"],
-                   "ZERONET": ["https://rpczero.tzbeta.net"]}
+                   "DELPHINET": ["https://tezos-dev.cryptonomic-infra.tech", "https://delphinet-tezos.giganode.io"]
+                   }
 
 TEZOS_RPC_PORT = 8732
 
-VERSION = 7.0
+MUTEZ = 1e6
+
+VERSION = 8.0
 
 
 class RunMode(Enum):
@@ -33,3 +35,17 @@ class PaymentStatus(Enum):
 
     def __str__(self):
         return self.name
+
+
+class RewardsType(Enum):
+    ACTUAL = 'actual'
+    IDEAL = 'ideal'
+
+    def isIdeal(self):
+        return self == RewardsType.IDEAL
+
+    def isActual(self):
+        return self == RewardsType.ACTUAL
+
+    def __str__(self):
+        return self.value

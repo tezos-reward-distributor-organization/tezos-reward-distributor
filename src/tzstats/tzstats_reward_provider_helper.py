@@ -1,22 +1,36 @@
 import requests
-
 from time import sleep
+
 from exception.api_provider import ApiProviderException
-from log_config import main_logger
-from tzstats.tzstats_api_constants import *
+
+from log_config import main_logger, verbose_logger
+from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income_baking_income, idx_income_endorsing_income, \
+    idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
+    idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
+    idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance
 
 logger = main_logger
 
 rewards_split_call = '/tables/income?address={}&cycle={}'
 delegators_call = '/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000'
+
 batch_current_balance_call = '/tables/account?delegate={}&columns=row_id,spendable_balance,address&limit=50000'
 single_current_balance_call = '/tables/account?address.in={}&columns=row_id,spendable_balance,address'
+snapshot_cycle = '/explorer/cycle/{}'
+
+contract_storage = '/explorer/contract/{}/storage'
+balance_LP_call = '/explorer/bigmap/{}/values?limit=100&offset={}&block={}'
 
 PREFIX_API = {
     'MAINNET': {'API_URL': 'http://api.tzstats.com'},
     'ZERONET': {'API_URL': 'http://api.zeronet.tzstats.com'},
     'ALPHANET': {'API_URL': 'http://api.carthagenet.tzstats.com'}
 }
+
+
+def split(input, n):
+    for i in range(0, len(input), n):
+        yield input[i:i + n]
 
 
 class TzStatsRewardProviderHelper:
@@ -32,7 +46,7 @@ class TzStatsRewardProviderHelper:
 
         self.baking_address = baking_address
 
-    def get_rewards_for_cycle(self, cycle, expected_reward=False, verbose=False):
+    def get_rewards_for_cycle(self, cycle, expected_rewards=False):
 
         root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balances": {}}
 
@@ -43,20 +57,18 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        if verbose:
-            logger.debug("Requesting rewards breakdown, {}".format(uri))
+        verbose_logger.debug("Requesting rewards breakdown, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        if verbose:
-            logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != 200:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
-        if expected_reward:
+        if expected_rewards:
             root["total_reward_amount"] = int(1e6 * float(resp[idx_income_expected_income]))
         else:
             root["total_reward_amount"] = int(1e6 * (float(resp[idx_income_baking_income])
@@ -75,13 +87,11 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        if verbose:
-            logger.debug("Requesting staking balances of delegators, {}".format(uri))
+        verbose_logger.debug("Requesting staking balances of delegators, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        if verbose:
-            logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != 200:
             # This means something went wrong.
@@ -92,7 +102,8 @@ class TzStatsRewardProviderHelper:
         for delegator in resp:
 
             if delegator[idx_delegator_address] == self.baking_address:
-                root["delegate_staking_balance"] = int(1e6 * (float(delegator[idx_balance]) + float(delegator[idx_baker_delegated])))
+                root["delegate_staking_balance"] = int(
+                    1e6 * (float(delegator[idx_balance]) + float(delegator[idx_baker_delegated])))
             else:
                 delegator_info = {"staking_balance": 0, "current_balance": 0}
                 delegator_info["staking_balance"] = int(1e6 * float(delegator[idx_balance]))
@@ -114,13 +125,11 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        if verbose:
-            logger.debug("Requesting current balance of delegators, phase 1, {}".format(uri))
+        verbose_logger.debug("Requesting current balance of delegators, phase 1, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        if verbose:
-            logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != 200:
             # This means something went wrong.
@@ -141,7 +150,8 @@ class TzStatsRewardProviderHelper:
             if delegator_addr not in staked_bal_delegators:
                 continue
 
-            root["delegators_balances"][delegator_addr]["current_balance"] = int(1e6 * float(delegator[idx_cb_current_balance]))
+            root["delegators_balances"][delegator_addr]["current_balance"] = int(
+                1e6 * float(delegator[idx_cb_current_balance]))
             curr_bal_delegators.append(delegator_addr)
 
         # Phase 2
@@ -150,15 +160,11 @@ class TzStatsRewardProviderHelper:
         # Who was not in this result?
         need_curr_balance_fetch = list(set(staked_bal_delegators) - set(curr_bal_delegators))
 
-        def split(input, n):
-            for i in range(0, len(input), n):
-                yield input[i:i + n]
-
         # Fetch individual not in original batch
         if len(need_curr_balance_fetch) > 0:
             split_addresses = split(need_curr_balance_fetch, 50)
             for list_address in split_addresses:
-                list_curr_balances = self.__fetch_current_balance(list_address, verbose)
+                list_curr_balances = self.__fetch_current_balance(list_address)
                 for d in list_address:
                     root["delegators_balances"][d]["current_balance"] = list_curr_balances[d]
                     curr_bal_delegators.append(d)
@@ -178,7 +184,20 @@ class TzStatsRewardProviderHelper:
         for rl in reward_logs:
             rl.current_balance = self.__fetch_current_balance([rl.address])[rl.address]
 
-    def __fetch_current_balance(self, address_list, verbose=False):
+    def get_snapshot_level(self, cycle):
+
+        uri = self.api['API_URL'] + snapshot_cycle.format(cycle)
+
+        resp = requests.get(uri, timeout=5)
+
+        if resp.status_code != 200:
+            # This means something went wrong.
+            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+
+        snapshot_height = resp.json()['snapshot_cycle']['snapshot_height']
+        return snapshot_height
+
+    def __fetch_current_balance(self, address_list):
         param_txt = ''
         for address in address_list:
             param_txt += address + ','
@@ -187,13 +206,11 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        if verbose:
-            logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
+        verbose_logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        if verbose:
-            logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != 200:
             # This means something went wrong.
@@ -206,3 +223,51 @@ class TzStatsRewardProviderHelper:
             ret_list[item[idx_cb_delegator_address]] = int(1e6 * float(item[idx_cb_current_balance]))
 
         return ret_list
+
+    def get_big_map_id(self, contract_id):
+        uri = self.api['API_URL'] + contract_storage.format(contract_id)
+
+        verbose_logger.debug("Requesting contract storage, {}".format(uri))
+
+        resp = requests.get(uri, timeout=5)
+
+        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+
+        if resp.status_code != 200:
+            # This means something went wrong.
+            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+
+        resp = resp.json()
+
+        return resp['value']['accounts']
+
+    def get_liquidity_providers_list(self, big_map_id, snapshot_block):
+        offset = 0
+        listLPs = {}
+        resp = ' '
+        while resp != []:
+            uri = self.api['API_URL'] + balance_LP_call.format(big_map_id, offset, snapshot_block)
+            offset += 100
+
+            verbose_logger.debug("Requesting LP balances, {}".format(uri))
+
+            resp = requests.get(uri, timeout=5)
+
+            verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+
+            if resp.status_code != 200:
+                # This means something went wrong.
+                raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+
+            resp = resp.json()
+            for item in resp:
+                listLPs[item['key']] = int(item['value']['balance'])
+
+        return listLPs
+
+    def update_current_balances_dexter(self, balanceMap):
+        split_addresses = split(list(balanceMap.keys()), 50)
+        for list_address in split_addresses:
+            list_curr_balances = self.__fetch_current_balance(list_address)
+            for d in list_address:
+                balanceMap[d].update({"current_balance": list_curr_balances[d]})

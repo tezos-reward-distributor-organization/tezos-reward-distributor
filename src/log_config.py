@@ -1,13 +1,23 @@
-import os
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 
+from verbose_logging_helper import VerboseLoggingHelper
+
 DEFAULT_LOG_FILE = 'logs/app.log'
+FORMATTER = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
 
 main_logger = logging.getLogger('main')
+verbose_logger = logging.getLogger('verbose')
+
+verbose_log_helper = VerboseLoggingHelper(DEFAULT_LOG_FILE, False, verbose_logger, main_logger, FORMATTER, 100, 'OFF')
 
 
-def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE):
+def get_verbose_log_helper():
+    return verbose_log_helper
+
+
+def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE, init_verbose=False, keep_at_most=60, mode='init'):
     main_logger.setLevel(logging.DEBUG)
 
     # create file handler which logs even debug messages
@@ -23,9 +33,8 @@ def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE):
     ch.setLevel(logging.INFO)
 
     # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
-    ch.setFormatter(formatter)
-    fh.setFormatter(formatter)
+    ch.setFormatter(FORMATTER)
+    fh.setFormatter(FORMATTER)
 
     # add the handlers to logger
     main_logger.addHandler(ch)
@@ -34,3 +43,6 @@ def init(log_to_syslog=False, log_file=DEFAULT_LOG_FILE):
     if log_to_syslog:
         syslog_handler = logging.handlers.SysLogHandler(address='/dev/log')
         main_logger.addHandler(syslog_handler)
+
+    global verbose_log_helper
+    verbose_log_helper = VerboseLoggingHelper(log_dir, init_verbose, verbose_logger, main_logger, FORMATTER, keep_at_most, mode)

@@ -1,4 +1,6 @@
 import logging
+
+from log_config import verbose_logger
 from plugins import plugins
 
 # Plugin specific libs
@@ -14,9 +16,8 @@ class TelegramPlugin(plugins.Plugin):
     _req_cfg_keys = ["chat_ids", "bot_api_key"]
     _base_api_url = "https://api.telegram.org/bot{:s}/sendMessage"
 
-    def __init__(self, cfg, verbose=False):
+    def __init__(self, cfg):
         super().__init__("Telegram", cfg["telegram"])
-        self.verbose = verbose
         self.api_url = self._base_api_url.format(self.bot_api_key)
 
     def send_notification(self, title, message, attachments=None, reward_data=None):
@@ -28,8 +29,7 @@ class TelegramPlugin(plugins.Plugin):
             payload = {"chat_id": c, "parse_mode": "html", "text": message}
             resp = requests.post(self.api_url, params=payload)
 
-        if self.verbose:
-            logger.debug("[TelegramPlugin] Response: {:}".format(resp.json()))
+        verbose_logger.debug("[TelegramPlugin] Response: {:}".format(resp.json()))
 
         logger.info("[TelegramPlugin] Notification '{:s}' sent".format(title))
 

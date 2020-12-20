@@ -5,20 +5,19 @@ from calc.calculate_phase_base import CalculatePhaseBase, BY_ZERO_BALANCE
 logger = main_logger
 
 
-class CalculatePhase7(CalculatePhaseBase):
+class CalculatePhaseZeroBalance(CalculatePhaseBase):
     """
-    -- Phase7 : Check if current delegator balance is 0 --
+    -- Check if current delegator balance is 0 --
 
-    At stage 7, check each delegate's current balance. If 0, and baker is not reactivating,
+    Check each delegator's current balance. If 0, and baker is not reactivating,
     then mark payment as not-payable
     """
 
-    def __init__(self, reactivate_zeroed) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.reactivate_zeroed = reactivate_zeroed
         self.phase = 7
 
-    def calculate(self, reward_logs):
+    def calculate(self, reward_logs, reactivate_zeroed):
 
         reward_data7 = []
 
@@ -34,7 +33,7 @@ class CalculatePhase7(CalculatePhaseBase):
                     and delegate.current_balance == 0
                     and not delegate.paymentaddress.startswith("KT1")):
 
-                if self.reactivate_zeroed:
+                if reactivate_zeroed:
                     delegate.needs_activation = True
                 else:
                     delegate.skip(BY_ZERO_BALANCE, self.phase)

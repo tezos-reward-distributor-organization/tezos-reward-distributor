@@ -3,11 +3,10 @@ import os
 import threading
 
 from time import sleep
-from Constants import VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
-from NetworkConfiguration import is_mainnet
-from calc.calculate_phase5 import CalculatePhase5
-from calc.calculate_phase6 import CalculatePhase6
-from calc.calculate_phase7 import CalculatePhase7
+from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
+from calc.calculate_phaseMapping import CalculatePhaseMapping
+from calc.calculate_phaseMerge import CalculatePhaseMerge
+from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 from log_config import main_logger
 from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from pay.batch_payer import BatchPayer
@@ -15,8 +14,7 @@ from stats.stats_publisher import stats_publisher
 from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path, get_busy_file
 
-logger = main_logger
-MUTEZ = 1e6
+logger = main_logger.getChild("payment_consumer")
 
 
 def count_and_log_failed(payment_logs):
@@ -32,9 +30,8 @@ def count_and_log_failed(payment_logs):
 
 class PaymentConsumer(threading.Thread):
     def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
-                 network_config, plugins_manager, args=None, verbose=None, dry_run=None, reactivate_zeroed=True,
-                 delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None,
-                 publish_stats=True):
+                 network_config, plugins_manager, rewards_type, args=None, dry_run=None, reactivate_zeroed=True,
+                 delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None, publish_stats=True):
         super(PaymentConsumer, self).__init__()
 
         self.dest_map = dest_map if dest_map else {}
@@ -44,7 +41,6 @@ class PaymentConsumer(threading.Thread):
         self.client_path = client_path
         self.payments_queue = payments_queue
         self.node_addr = node_addr
-        self.verbose = verbose
         self.dry_run = dry_run
         self.wllt_clnt_mngr = wllt_clnt_mngr
         self.reactivate_zeroed = reactivate_zeroed
@@ -54,6 +50,7 @@ class PaymentConsumer(threading.Thread):
         self.args = args
         self.network_config = network_config
         self.plugins_manager = plugins_manager
+        self.rewards_type = rewards_type
 
         logger.info('Consumer "%s" created', self.name)
 
@@ -81,17 +78,17 @@ class PaymentConsumer(threading.Thread):
 
                 logger.info("Starting payments for cycle {}".format(pymnt_cycle))
 
-                # Handle remapping of payment to alternate address
-                phase5 = CalculatePhase5(self.dest_map)
-                payment_items, _ = phase5.calculate(payment_items, None)
-
                 # Merge payments to same address
-                phase6 = CalculatePhase6(addr_dest_dict=self.dest_map)
-                payment_items, _ = phase6.calculate(payment_items, None)
+                phaseMerge = CalculatePhaseMerge()
+                payment_items = phaseMerge.calculate(payment_items)
+
+                # Handle remapping of payment to alternate address
+                phaseMapping = CalculatePhaseMapping()
+                payment_items = phaseMapping.calculate(payment_items, self.dest_map)
 
                 # Filter zero-balance addresses based on config
-                phase7 = CalculatePhase7(self.reactivate_zeroed)
-                payment_items = phase7.calculate(payment_items)
+                phaseZeroBalance = CalculatePhaseZeroBalance()
+                payment_items = phaseZeroBalance.calculate(payment_items, self.reactivate_zeroed)
 
                 # Filter out non-payable items
                 payment_items = [pi for pi in payment_items if pi.payable]
@@ -104,7 +101,8 @@ class PaymentConsumer(threading.Thread):
                                          self.dry_run)
 
                 # 3- do the payment
-                payment_logs, total_attempts, number_future_payable_cycles = batch_payer.pay(payment_items, self.verbose, dry_run=self.dry_run)
+                payment_logs, total_attempts, number_future_payable_cycles = \
+                    batch_payer.pay(payment_items, dry_run=self.dry_run)
 
                 # override batch data
                 payment_batch.batch = payment_logs
@@ -142,9 +140,8 @@ class PaymentConsumer(threading.Thread):
                             status = status + ", {:d} injected but final state not known".format(nb_unknown)
                     subject = subject + ' ' + status
 
-                    message = "Payment for cycle {:d} is {:s}. " \
-                              "The current payout account balance is expected to last for the next {:d} cycle(s)!" \
-                              .format(pymnt_cycle, status, number_future_payable_cycles)
+                    message = "Payment for cycle {:d} is {:s}. The current payout account balance is expected to last for the next {:d} cycle(s)!"\
+                        .format(pymnt_cycle, status, number_future_payable_cycles)
 
                     self.plugins_manager.send_notification(subject, message, [report_file], payment_logs)
 
@@ -182,8 +179,7 @@ class PaymentConsumer(threading.Thread):
     # create report file
     def create_payment_report(self, nb_failed, payment_logs, payment_cycle):
 
-        logger.info("Processing completed for {} payment items{}."
-                    .format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
+        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
 
@@ -192,8 +188,7 @@ class PaymentConsumer(threading.Thread):
         logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
-            logger.debug("Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}"
-                         .format(pl.address, pl.type, pl.amount / MUTEZ, pl.paid))
+            logger.debug("Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}".format(pl.address, pl.type, pl.amount / MUTEZ, pl.paid))
 
         return report_file
 
@@ -221,6 +216,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict['nb_delegators'] = n_d_type
         stats_dict['pay_xfer_fee'] = 1 if self.delegator_pays_xfer_fee else 0
         stats_dict['pay_ra_fee'] = 1 if self.delegator_pays_ra_fee else 0
+        stats_dict['rewards_type'] = "I" if self.rewards_type.isIdeal() else "A"
         stats_dict['trdver'] = str(VERSION)
 
         if self.args:

@@ -14,6 +14,7 @@ REACTIVATE_ZEROED = 'reactivate_zeroed'
 DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
 DELEGATOR_PAYS_RA_FEE = 'delegator_pays_ra_fee'
 PLUGINS_CONF = 'plugins'
+REWARDS_TYPE = 'rewards_type'
 
 # extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
@@ -21,12 +22,14 @@ EXCLUDED_DELEGATORS_SET_TOB = "__excluded_delegators_set_tob"
 EXCLUDED_DELEGATORS_SET_TOE = "__excluded_delegators_set_toe"
 EXCLUDED_DELEGATORS_SET_TOF = "__excluded_delegators_set_tof"
 DEST_MAP = "__destination_map"
+CONTRACTS_SET = '__contracts_set'
 
 # destination map
 TOF = "TOF"
 TOB = "TOB"
 TOE = "TOE"
 MIN_DELEGATION_KEY = 'mindelegation'
+DEXTER = 'dexter'
 
 
 class BakingConf:
@@ -83,6 +86,9 @@ class BakingConf:
     def get_rule_map(self):
         return self.get_attribute(RULES_MAP)
 
+    def get_contracts_set(self):
+        return self.get_attribute(CONTRACTS_SET)
+
     def get_dest_map(self):
         return self.get_attribute(DEST_MAP)
 
@@ -97,6 +103,9 @@ class BakingConf:
 
     def get_plugins_conf(self):
         return self.get_attribute(PLUGINS_CONF)
+
+    def get_rewards_type(self):
+        return self.get_attribute(REWARDS_TYPE)
 
     def __repr__(self) -> str:
         return json.dumps(self.__dict__, cls=CustomJsonEncoder, indent=1)

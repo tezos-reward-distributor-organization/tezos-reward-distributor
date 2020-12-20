@@ -3,8 +3,8 @@ from unittest import TestCase
 from cli.wallet_client_manager import WalletClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
+from Constants import PUBLIC_NODE_URL, RewardsType
 from rpc.rpc_block_api import RpcBlockApiImpl
-from Constants import PUBLIC_NODE_URL
 
 network = {'NAME': 'MAINNET'}
 
@@ -21,9 +21,12 @@ class TestYamlAppConfParser(TestCase):
         payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         founders_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
+        supporters_set:
         service_fee: 4.53
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        plugins:
+          enabled:
         """
 
         managers = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -62,15 +65,21 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
 
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.ACTUAL)
+
     def test_validate_no_founders_map(self):
         data_no_founders = """
         version: 1.0
         baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
+        supporters_set: None
         service_fee: 4.5
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        rewards_type:
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj'}
@@ -108,6 +117,8 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
 
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.ACTUAL)
+
     def test_validate_pymnt_alias(self):
         data_no_founders = """
         version: 1.0
@@ -118,6 +129,9 @@ class TestYamlAppConfParser(TestCase):
         min_delegation_amt: 100
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        rewards_type: ideal
+        plugins:
+          enabled:
         """
 
         managers_map = {'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj',
@@ -159,6 +173,8 @@ class TestYamlAppConfParser(TestCase):
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
+
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.IDEAL)
 
     def test_validate_plugins(self):
         data = """

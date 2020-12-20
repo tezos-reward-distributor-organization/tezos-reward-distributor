@@ -4,8 +4,8 @@ from config.config_parser import ConfigParser
 
 
 class YamlConfParser(ConfigParser):
-    def __init__(self, yaml_text, verbose=None) -> None:
-        super().__init__(yaml_text, verbose)
+    def __init__(self, yaml_text) -> None:
+        super().__init__(yaml_text)
 
     def parse(self):
         self.set_conf_obj(yaml.safe_load(self.conf_text))

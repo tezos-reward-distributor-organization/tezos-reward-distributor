@@ -10,15 +10,13 @@ plugin_name = 'TwitterPlugin'
 
 
 class TwitterPlugin(plugins.Plugin):
-
     MAX_TWEET_LEN = 280
 
     _req_cfg_keys = ["api_key", "api_secret", "access_token", "access_secret"]
     _base_api_url = "https://api.twitter.com/1.1/statuses/update.json"
 
-    def __init__(self, cfg, verbose=False):
+    def __init__(self, cfg):
         super().__init__("Twitter", cfg["twitter"])
-        self.verbose = verbose
 
         # Must auth against Twitter API to get Token
         auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
@@ -47,6 +45,7 @@ class TwitterPlugin(plugins.Plugin):
 
         resp = self.twitter.update_status(message)
         logger.info("[TwitterPlugin] Notification '{:s}' sent".format(title))
+        logger.debug("[TwitterPlugin] Response '{:s}'".format(str(resp)))
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
@@ -72,5 +71,5 @@ class TwitterPlugin(plugins.Plugin):
         if self.extra_tags is None:
             logger.info("[TwitterPlugin] No hashtags defined; Just letting you know")
 
-        elif self.extra_tags is not None and self.extra_tags is not isinstance(self.extra_tags, list):
+        elif self.extra_tags is not None and not isinstance(self.extra_tags, list):
             raise plugins.PluginConfigurationError("[{:s}] 'extra_tags' not configured correctly".format(self.name))

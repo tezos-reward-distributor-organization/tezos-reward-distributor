@@ -4,20 +4,34 @@ The Tezos Reward Distributor uses a plugin style subsystem for sending out payme
 
 Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.
 
-The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at [the example config](examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).
+The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at [the example config](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).
 
 Individual plugins will not load if not properly configured.
 
-You must specify which plugins to enable by adding their name to the "enabled" list. Example:
+You must specify which plugins to enable by adding their name to the "enabled" list. No plugins are enabled by default.
+
+In this example, even though the webhook plugin is properly configured, it is *not* listed in the 'enabled' section, and therefor will not activate.
 
 ```
 plugins:
   enabled:
-    - email
-    - webhook
+  webhook:
+    endpoint: https://mydomain.com/webhook.php
+    token: Xynl6svphysd3BhjLP6IS
 ```
 
-No plugins are enabled by default.
+In order to activate the webhook plugin, you must add the name of the plugin to the *enabled* section as shown here:
+
+```
+plugins:
+  enabled:
+  - webhook
+  webhook:
+    endpoint: https://mydomain.com/webhook.php
+    token: Xynl6svphysd3BhjLP6IS
+```
+
+If that doesn't make sense to you, please read the [YAML format documentation](https://yaml.org/spec/history/2001-05-26.html).
 
 ---
 
