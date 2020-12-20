@@ -6,8 +6,8 @@ from time import sleep
 import base58
 import json
 
-from Constants import PaymentStatus
-from log_config import main_logger
+from Constants import PaymentStatus, MUTEZ
+from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
@@ -271,11 +271,11 @@ class BatchPayer():
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
-            _,counter = self.wllt_clnt_mngr.request_url(self.comm_counter)
+            _, counter = self.wllt_clnt_mngr.request_url(self.comm_counter)
             counter = int(counter)
             op_counter.set(counter)
 
-        _,head = self.wllt_clnt_mngr.request_url(self.comm_head, verbose_override=False)
+        _, head = self.wllt_clnt_mngr.request_url(self.comm_head, verbose_override=False)
         branch = head["hash"]
         chain_id = head["chain_id"]
         protocol = head["metadata"]["protocol"]
@@ -405,7 +405,7 @@ class BatchPayer():
 
         # wait for inclusion
         logger.info("Waiting for operation {} to be included...".format(operation_hash))
-        for i in range(last_level_before_injection+1, last_level_before_injection+6):
+        for i in range(last_level_before_injection + 1, last_level_before_injection + 6):
             sleep(self.network_config['BLOCK_TIME_IN_SEC'])
             cmd = self.comm_wait.replace("%BLOCK_HASH%", 'head')
             status, list_op_hash = self.wllt_clnt_mngr.request_url(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * PATIENCE)
@@ -416,9 +416,6 @@ class BatchPayer():
 
         logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
         return PaymentStatus.INJECTED, operation_hash
-
-    def get_confirmation_timeout(self):
-        return self.network_config['BLOCK_TIME_IN_SEC'] * (CONFIRMATIONS + PATIENCE)
 
     def __get_payment_address_balance(self):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)

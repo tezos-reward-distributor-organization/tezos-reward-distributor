@@ -43,9 +43,8 @@ def init_network_config(network_name, config_client_manager):
 
 
 def get_network_config_from_local_node(config_client_manager, node_addr):
-    _, response_constants = config_client_manager.send_request(CONSTANTS_RPC)
-    constants = parse_json_response(response_constants)
-    network_config_map = parse_constants(constants)
+    _, response_constants = config_client_manager.request_url(CONSTANTS_PATH)
+    network_config_map = parse_constants(response_constants)
     return network_config_map
 
 
