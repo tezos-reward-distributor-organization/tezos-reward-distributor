@@ -12,7 +12,7 @@ network = {'NAME': 'MAINNET'}
 class TestYamlAppConfParser(TestCase):
 
     def setUp(self):
-        self.mainnet_public_node_url = PUBLIC_NODE_URL["MAINNET"][0]
+        self.mainnet_public_node_url = PUBLIC_NODE_URL["MAINNET"]
 
     def test_validate(self):
         data_fine = """

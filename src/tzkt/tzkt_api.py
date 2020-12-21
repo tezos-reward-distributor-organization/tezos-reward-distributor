@@ -4,7 +4,7 @@ from pprint import pformat
 from os.path import join
 from json import JSONDecodeError
 
-from Constants import VERSION
+from Constants import VERSION, TZKT_API_PREFIX
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 
@@ -28,15 +28,10 @@ class TzKTApi:
     def from_network(network, timeout=30):
         """
         Create new API instance
-        :param network: one of `mainnet`, `carthagenet`, `zeronet`
+        :param network: one of `mainnet`, current testnet
         :param timeout: request timeout in seconds (default = 30)
         """
-        base_urls = dict(
-            mainnet='https://api.tzkt.io/v1',
-            zeronet='https://api.zeronet.tzkt.io/v1',
-            carthagenet='https://api.carthage.tzkt.io/v1',
-            alphanet='https://api.carthage.tzkt.io/v1'  # backward compatibility, current active test network
-        )
+        base_urls = TZKT_API_PREFIX
         assert network in base_urls, f'Unsupported network {network}'
         return TzKTApi(base_url=base_urls[network], timeout=timeout)
 
