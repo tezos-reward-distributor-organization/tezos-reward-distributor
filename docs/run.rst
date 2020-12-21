@@ -36,11 +36,11 @@ Make pending payments beginning from a cycle and stop:
 
     python3 src/main.py -C 30 -M 2
 
-Run in dry-run mode in zeronet, make payments from cycle 30 and exit:
+Run in dry-run mode in delphinet, make payments from cycle 30 and exit:
 
 ::
 
-    python3 src/main.py -D -N ZERONET -C 30 -M 3
+    python3 src/main.py -D -N DELPHINET -C 30 -M 3
 
 Run in dry-run mode in mainnet, make payments from cycle 30 onwards,
 for calculations use data provided by tezos node rpc interface:
