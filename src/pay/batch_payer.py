@@ -350,7 +350,7 @@ class BatchPayer():
             op_counter.inc()
 
             # TRD extension for non scriptless contract accounts
-            gas_limit, tx_fee = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id) if payment_item.paymentaddress.startswith('KT') else self.gas_limit, self.default_fee
+            gas_limit, tx_fee = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id) if payment_item.paymentaddress.startswith('KT') else (self.gas_limit, self.default_fee)
 
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
