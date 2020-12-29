@@ -35,6 +35,8 @@ FEE_INI = 'fee.ini'
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
+HARD_GAS_LIMIT_PER_OPERATION = 1040000
+
 
 class BatchPayer():
     def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee,
@@ -270,12 +272,51 @@ class BatchPayer():
 
         sleep(slp_tm)
 
+    def simulate_single_operation(self, payment_item, pymnt_amnt, branch, chain_id):
+        # Initial gas and transaction limits
+        gas_limit = str(HARD_GAS_LIMIT_PER_OPERATION)
+        tx_fee = self.default_fee
+
+        content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
+            .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(self.base_counter + 1)) \
+            .replace("%fee%", str(tx_fee)).replace("%gas_limit%", gas_limit).replace(
+            "%storage_limit%", str(self.storage_limit))
+
+        runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", content)
+        runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
+        runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
+
+        result, runops_command_response = self.wllt_clnt_mngr.send_request(runops_command_str)
+        if not result:
+            logger.error("Error in run_operation")
+            logger.debug("Error in run_operation, request ->{}<-".format(runops_command_str))
+            logger.debug("---")
+            logger.debug("Error in run_operation, response ->{}<-".format(runops_command_response))
+            return PaymentStatus.FAIL, ""
+        run_ops_parsed = parse_json_response(runops_command_response)
+        op = run_ops_parsed["contents"][0]
+        status = op["metadata"]["operation_result"]["status"]
+        if status == 'applied':
+            consumed_gas = int(op["metadata"]["operation_result"]["consumed_gas"])
+            internal_operation_results = op["metadata"]["internal_operation_results"]
+            for internal_op in internal_operation_results:
+                consumed_gas += int(internal_op['result']['consumed_gas'])
+        else:
+            op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
+            logger.error(
+                "Error while validating operation - Status: {}, Message: {}".format(status, op_error))
+            return PaymentStatus.FAIL, ""
+
+        gas_limit = consumed_gas
+        tx_fee += int(consumed_gas * 0.1)
+        return gas_limit, tx_fee
+
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
             _, response = self.wllt_clnt_mngr.send_request(self.comm_counter)
             counter = parse_json_response(response)
-            counter = int(counter)
-            op_counter.set(counter)
+            self.base_counter = int(counter)
+            op_counter.set(self.base_counter)
 
         _, response = self.wllt_clnt_mngr.send_request(self.comm_head, verbose_override=False)
         head = parse_json_response(response)
@@ -308,9 +349,12 @@ class BatchPayer():
 
             op_counter.inc()
 
+            # TRD extension for non scriptless contract accounts
+            gas_limit, tx_fee = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id) if payment_item.paymentaddress.startswith('KT') else self.gas_limit, self.default_fee
+
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
-                .replace("%fee%", str(self.default_fee)).replace("%gas_limit%", self.gas_limit).replace(
+                .replace("%fee%", str(tx_fee)).replace("%gas_limit%", str(gas_limit)).replace(
                 "%storage_limit%", str(storage))
 
             content_list.append(content)
