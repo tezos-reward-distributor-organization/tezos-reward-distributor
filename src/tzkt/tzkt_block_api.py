@@ -7,7 +7,7 @@ class TzKTBlockApiImpl(BlockApi):
     def __init__(self, nw, base_url=None):
         super(TzKTBlockApiImpl, self).__init__(nw)
         if base_url is None:
-            self.api = TzKTApi.from_network(nw['NAME'].lower())
+            self.api = TzKTApi.from_network(nw['NAME'])
         else:
             self.api = TzKTApi.from_url(base_url)
 

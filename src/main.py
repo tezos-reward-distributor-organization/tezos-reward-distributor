@@ -2,10 +2,8 @@ import json
 import os
 import queue
 import sys
-import pip
-import pkg_resources
-
 from time import sleep
+
 from launch_common import print_banner, parse_arguments
 from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
@@ -27,7 +25,7 @@ from util.process_life_cycle import ProcessLifeCycle
 from exception.configuration import ConfigurationException
 from plugins import plugins
 
-REQUIREMENTS_FILE_PATH = 'requirements.txt'
+
 LINER = "--------------------------------------------"
 NB_CONSUMERS = 1
 BUF_SIZE = 50
@@ -81,7 +79,7 @@ def main(args):
 
     # 4. get network config
     config_client_manager = SimpleClientManager(client_path, args.node_addr)
-    network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
+    network_config_map = init_network_config(args.network, config_client_manager)
     network_config = network_config_map[args.network]
 
     logger.debug("Network config {}".format(network_config))
@@ -176,8 +174,8 @@ def main(args):
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
                             client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, plugins_manager=plugins_manager, args=args,
-                            dry_run=dry_run, reactivate_zeroed=cfg.get_reactivate_zeroed(),
+                            wllt_clnt_mngr=wllt_clnt_mngr, plugins_manager=plugins_manager, rewards_type=cfg.get_rewards_type(),
+                            args=args, dry_run=dry_run, reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
                             delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
                             network_config=network_config, publish_stats=publish_stats)
@@ -225,28 +223,10 @@ def get_latest_report_file(payments_root):
     return recent
 
 
-def install(package):
-    if hasattr(pip, 'main'):
-        pip.main(['install', package])
-    else:
-        pip._internal.main(['install', package])
-
-
-def check_requirements():
-    with open(REQUIREMENTS_FILE_PATH, 'r') as requirements:
-        for requirement in requirements:
-            try:
-                pkg_resources.require(requirement)
-            except Exception:
-                install(requirement)
-
-
 if __name__ == '__main__':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
         raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
-
-    check_requirements()
 
     args = parse_arguments()
 

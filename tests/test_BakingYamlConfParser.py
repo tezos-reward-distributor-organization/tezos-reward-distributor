@@ -3,8 +3,8 @@ from unittest import TestCase
 from cli.wallet_client_manager import WalletClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
+from Constants import PUBLIC_NODE_URL, RewardsType
 from rpc.rpc_block_api import RpcBlockApiImpl
-from Constants import PUBLIC_NODE_URL
 
 network = {'NAME': 'MAINNET'}
 
@@ -12,7 +12,7 @@ network = {'NAME': 'MAINNET'}
 class TestYamlAppConfParser(TestCase):
 
     def setUp(self):
-        self.mainnet_public_node_url = PUBLIC_NODE_URL["MAINNET"][0]
+        self.mainnet_public_node_url = PUBLIC_NODE_URL["MAINNET"]
 
     def test_validate(self):
         data_fine = """
@@ -63,9 +63,12 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
 
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.ACTUAL)
+
         plugins = cnf_prsr.get_conf_obj_attr('plugins')
         self.assertIsInstance(plugins, dict)
         self.assertIsNone(plugins['enabled'], None)
+
 
     def test_validate_no_founders_map(self):
         data_no_founders = """
@@ -77,6 +80,7 @@ class TestYamlAppConfParser(TestCase):
         service_fee: 4.5
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        rewards_type:
         plugins:
         """
 
@@ -115,9 +119,12 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
 
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.ACTUAL)
+
         plugins = cnf_prsr.get_conf_obj_attr('plugins')
         self.assertIsInstance(plugins, dict)
         self.assertIsNone(plugins['enabled'], None)
+
 
     def test_validate_pymnt_alias(self):
         data_no_founders = """
@@ -129,6 +136,7 @@ class TestYamlAppConfParser(TestCase):
         min_delegation_amt: 100
         reactivate_zeroed: False
         delegator_pays_ra_fee: True
+        rewards_type: ideal
         plugins:
           enabled:
         """
@@ -173,9 +181,12 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr('reactivate_zeroed'), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr('delegator_pays_ra_fee'), True)
 
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.IDEAL)
+
         plugins = cnf_prsr.get_conf_obj_attr('plugins')
         self.assertIsInstance(plugins, dict)
         self.assertIsNone(plugins['enabled'], None)
+
 
     def test_validate_plugins(self):
         data = """

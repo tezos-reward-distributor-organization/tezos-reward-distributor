@@ -1,14 +1,18 @@
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
+from Constants import RewardsType
 from exception.configuration import ConfigurationException
+from log_config import main_logger
 from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, SERVICE_FEE, \
     FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, REACTIVATE_ZEROED, DELEGATOR_PAYS_RA_FEE, \
     RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
     EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP, PLUGINS_CONF, DEXTER, \
-    CONTRACTS_SET
+    CONTRACTS_SET, REWARDS_TYPE
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
+
+logger = main_logger.getChild("config_parser")
 
 PKH_LENGHT = 36
 
@@ -38,6 +42,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.validate_specials_map(conf_obj)
         self.validate_dest_map(conf_obj)
         self.validate_plugins(conf_obj)
+        self.validate_rewards_type(conf_obj)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
         self.parse_bool(conf_obj, REACTIVATE_ZEROED, None)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_RA_FEE, None)
@@ -263,6 +268,24 @@ class BakingYamlConfParser(YamlConfParser):
 
         if conf_obj[PLUGINS_CONF] is None or "enabled" not in conf_obj[PLUGINS_CONF]:
             conf_obj[PLUGINS_CONF] = {"enabled": None}
+
+    def validate_rewards_type(self, conf_obj):
+
+        if REWARDS_TYPE not in conf_obj or conf_obj[REWARDS_TYPE] is None:
+            conf_obj[REWARDS_TYPE] = 'actual'
+            logger.warning("[config_parser] Parameter '{:s}' is missing or incorrectly configured. "
+                           "Defaults to 'actual' rewards payout type.".format(REWARDS_TYPE))
+
+        # Validate correct value
+        try:
+            v = conf_obj[REWARDS_TYPE]
+            r_type = RewardsType(v)
+        except ValueError:
+            raise ConfigurationException("'{:s}' is not a valid option for parameter '{:s}'. "
+                                         "Please consult the documentation.".format(v, REWARDS_TYPE))
+
+        # Reset conf object to be the enum
+        conf_obj[REWARDS_TYPE] = r_type
 
     def parse_bool(self, conf_obj, param_name, default):
 

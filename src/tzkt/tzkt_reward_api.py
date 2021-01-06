@@ -12,7 +12,7 @@ class TzKTRewardApiImpl(RewardApi):
     def __init__(self, nw, baking_address, base_url=None):
         super(TzKTRewardApiImpl, self).__init__()
         if base_url is None:
-            self.api = TzKTApi.from_network(nw['NAME'].lower())
+            self.api = TzKTApi.from_network(nw['NAME'])
         else:
             self.api = TzKTApi.from_url(base_url)
         self.baking_address = baking_address

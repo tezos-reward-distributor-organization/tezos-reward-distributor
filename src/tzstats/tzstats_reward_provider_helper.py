@@ -8,6 +8,7 @@ from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income
     idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
     idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
     idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance
+from Constants import TZSTATS_PREFIX_API
 
 logger = main_logger
 
@@ -20,12 +21,6 @@ snapshot_cycle = '/explorer/cycle/{}'
 
 contract_storage = '/explorer/contract/{}/storage'
 balance_LP_call = '/explorer/bigmap/{}/values?limit=100&offset={}&block={}'
-
-PREFIX_API = {
-    'MAINNET': {'API_URL': 'http://api.tzstats.com'},
-    'ZERONET': {'API_URL': 'http://api.zeronet.tzstats.com'},
-    'ALPHANET': {'API_URL': 'http://api.carthagenet.tzstats.com'}
-}
 
 
 def split(input, n):
@@ -40,20 +35,20 @@ class TzStatsRewardProviderHelper:
 
         self.preserved_cycles = nw['NB_FREEZE_CYCLE']
 
-        self.api = PREFIX_API[nw['NAME']]
+        self.api = TZSTATS_PREFIX_API[nw['NAME']]
         if self.api is None:
             raise ApiProviderException("Unknown network {}".format(nw))
 
         self.baking_address = baking_address
 
-    def get_rewards_for_cycle(self, cycle, expected_reward=False):
+    def get_rewards_for_cycle(self, cycle, expected_rewards=False):
 
         root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balances": {}}
 
         #
         # Get rewards breakdown for cycle
         #
-        uri = self.api['API_URL'] + rewards_split_call.format(self.baking_address, cycle)
+        uri = self.api + rewards_split_call.format(self.baking_address, cycle)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -68,7 +63,7 @@ class TzStatsRewardProviderHelper:
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
-        if expected_reward:
+        if expected_rewards:
             root["total_reward_amount"] = int(1e6 * float(resp[idx_income_expected_income]))
         else:
             root["total_reward_amount"] = int(1e6 * (float(resp[idx_income_baking_income])
@@ -83,7 +78,7 @@ class TzStatsRewardProviderHelper:
         #
         # Get staking balances of delegators at snapshot block
         #
-        uri = self.api['API_URL'] + delegators_call.format(cycle - self.preserved_cycles - 2, self.baking_address)
+        uri = self.api + delegators_call.format(cycle - self.preserved_cycles - 2, self.baking_address)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -121,7 +116,7 @@ class TzStatsRewardProviderHelper:
 
         # Phase 1
         #
-        uri = self.api['API_URL'] + batch_current_balance_call.format(self.baking_address)
+        uri = self.api + batch_current_balance_call.format(self.baking_address)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -186,7 +181,7 @@ class TzStatsRewardProviderHelper:
 
     def get_snapshot_level(self, cycle):
 
-        uri = self.api['API_URL'] + snapshot_cycle.format(cycle)
+        uri = self.api + snapshot_cycle.format(cycle)
 
         resp = requests.get(uri, timeout=5)
 
@@ -202,7 +197,7 @@ class TzStatsRewardProviderHelper:
         for address in address_list:
             param_txt += address + ','
         param_txt = param_txt[:-1]
-        uri = self.api['API_URL'] + single_current_balance_call.format(param_txt)
+        uri = self.api + single_current_balance_call.format(param_txt)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -225,7 +220,7 @@ class TzStatsRewardProviderHelper:
         return ret_list
 
     def get_big_map_id(self, contract_id):
-        uri = self.api['API_URL'] + contract_storage.format(contract_id)
+        uri = self.api + contract_storage.format(contract_id)
 
         verbose_logger.debug("Requesting contract storage, {}".format(uri))
 
@@ -246,7 +241,7 @@ class TzStatsRewardProviderHelper:
         listLPs = {}
         resp = ' '
         while resp != []:
-            uri = self.api['API_URL'] + balance_LP_call.format(big_map_id, offset, snapshot_block)
+            uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
             offset += 100
 
             verbose_logger.debug("Requesting LP balances, {}".format(uri))

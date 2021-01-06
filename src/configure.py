@@ -48,7 +48,7 @@ messages = {
     'delegatorpaysrafee': "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
     'supporters': "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
     'specials': "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
-    'final': "Add excluded address in form of 'PKH,target'. Possbile targets are: TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip"
+    'final': ""
 }
 
 parser = None
@@ -275,10 +275,12 @@ def ondelegatorpaysxfrfee(input):
     try:
         if not input:
             input = "0"
+        if input != "0" and input != "1":
+            raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(DELEGATOR_PAYS_XFER_FEE, input != "1")
-    except Exception:
-        printe("Invalid input: " + traceback.format_exc())
+    except Exception as e:
+        printe("Invalid input: {}".format(str(e)))
         return
     fsm.go()
 
@@ -286,11 +288,13 @@ def ondelegatorpaysxfrfee(input):
 def ondelegatorpaysrafee(input):
     try:
         if not input:
-            input = "1"
+            input = "0"
+        if input != "0" and input != "1":
+            raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(DELEGATOR_PAYS_RA_FEE, input != "1")
-    except Exception:
-        printe("Invalid input: " + traceback.format_exc())
+    except Exception as e:
+        printe("Invalid input: {}".format(str(e)))
         return
     fsm.go()
 
@@ -298,11 +302,13 @@ def ondelegatorpaysrafee(input):
 def onreactivatezeroed(input):
     try:
         if not input:
-            input = "1"
+            input = "0"
+        if input != "0" and input != "1":
+            raise Exception("Please enter '0' or '1'")
         global parser
         parser.set(REACTIVATE_ZEROED, input != "1")
-    except Exception:
-        printe("Invalid input: " + traceback.format_exc())
+    except Exception as e:
+        printe("Invalid input: {}".format(str(e)))
         return
     fsm.go()
 
@@ -393,7 +399,7 @@ def main(args):
 
     # 4. get network config
     config_client_manager = SimpleClientManager(client_path, args.node_addr)
-    network_config_map = init_network_config(args.network, config_client_manager, args.node_addr)
+    network_config_map = init_network_config(args.network, config_client_manager)
     global network_config
     network_config = network_config_map[args.network]
 
