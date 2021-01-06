@@ -69,7 +69,6 @@ class TestYamlAppConfParser(TestCase):
         self.assertIsInstance(plugins, dict)
         self.assertIsNone(plugins['enabled'], None)
 
-
     def test_validate_no_founders_map(self):
         data_no_founders = """
         version: 1.0
@@ -124,7 +123,6 @@ class TestYamlAppConfParser(TestCase):
         plugins = cnf_prsr.get_conf_obj_attr('plugins')
         self.assertIsInstance(plugins, dict)
         self.assertIsNone(plugins['enabled'], None)
-
 
     def test_validate_pymnt_alias(self):
         data_no_founders = """
@@ -186,7 +184,6 @@ class TestYamlAppConfParser(TestCase):
         plugins = cnf_prsr.get_conf_obj_attr('plugins')
         self.assertIsInstance(plugins, dict)
         self.assertIsNone(plugins['enabled'], None)
-
 
     def test_validate_plugins(self):
         data = """
