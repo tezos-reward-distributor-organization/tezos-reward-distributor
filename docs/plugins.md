@@ -1,6 +1,6 @@
 # Plugins
 
-The Tezos Reward Distributor uses a plugin style subsystem for sending out payment notifications.
+The Tezos Reward Distributor uses a plugin style subsystem for sending out payment notifications. If a message is labeled 'administrative style' it will contain information which are in general not meant for the end user of e.g. a staking service but for the adminstrators who monitor the quality of the service.
 
 Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.
 

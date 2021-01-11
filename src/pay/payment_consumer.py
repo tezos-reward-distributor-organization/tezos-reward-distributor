@@ -144,8 +144,8 @@ class PaymentConsumer(threading.Thread):
                             status = status + ", {:d} injected but final state not known".format(nb_unknown)
                     subject = subject + ' ' + status
 
-                    admin_message = "Payment for cycle {:d} is {:s}. The current payout account balance is expected to last for the next {:d} cycle(s)!"\
-                        .format(pymnt_cycle, status, number_future_payable_cycles)
+                    admin_message = "The current payout account balance is expected to last for the next {:d} cycle(s)!"\
+                        .format(number_future_payable_cycles)
 
                     # Payout notification receives cycle, rewards total, number of delegators
                     self.plugins_manager.send_payout_notification(pymnt_cycle, total_payout_amount, (nb_paid + nb_failed + nb_unknown))
