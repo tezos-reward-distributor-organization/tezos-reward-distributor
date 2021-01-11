@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Plugins &mdash; Tezos Reward Distributor 8.0 documentation</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Tezos Reward Distributor
+            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor
           
 
           
@@ -98,6 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#telegram-plugin">Telegram Plugin</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">Example Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-result">Example Result</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#twitter-plugin">Twitter Plugin</a><ul>
@@ -158,6 +162,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -169,7 +175,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/plugins.md.txt" rel="nofollow"> View page source</a>
           
         
@@ -185,7 +191,7 @@
             
   <div class="section" id="plugins">
 <h1>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h1>
-<p>The Tezos Reward Distributor uses a plugin style subsystem for sending out payment notifications.</p>
+<p>The Tezos Reward Distributor uses a plugin style subsystem for sending out payment notifications. If a message is labeled ‘administrative style’ it will contain information which are in general not meant for the end user of e.g. a staking service but for the adminstrators who monitor the quality of the service.</p>
 <p>Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.</p>
 <p>The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml">the example config</a>.</p>
 <p>Individual plugins will not load if not properly configured.</p>
@@ -211,7 +217,7 @@
 <hr class="docutils" />
 <div class="section" id="email-plugin">
 <h2>Email Plugin<a class="headerlink" href="#email-plugin" title="Permalink to this headline">¶</a></h2>
-<p>This plugin will send the configured recipients an email of payouts status with a CSV report attached.</p>
+<p>This plugin will send the configured recipients an ‘administrative style’ email of payouts status with a CSV report attached.</p>
 <div class="section" id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -246,23 +252,38 @@
 <p>This plugin allows payouts notifications to be sent via Telegram bot to specific chatIds, including groups.</p>
 <p>You must first create a Telegram bot to generate the <em>bot_api_key</em> and you must discover your, or your groups’, <em>chat_id</em>. There are many guides/tutorials on the internet for how to do this.</p>
 <p>The Telegram plugin does not need read access to any messages and the bot will not respond to any commands. This is a “send only” style of bot.</p>
+<p>This plugin supports two notification styles: admin notifications, and payouts notifications</p>
 <div class="section" id="id1">
 <h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>chat_ids: A YAML list containing chat IDs of users and/or group IDs for groups. Group IDs typically start with a - (negative/dash) symbol. Must be list format even if only 1 ID.</p></li>
+<li><p>admin_chat_ids: A required YAML list containing chat IDs of users and/or groups to receive administrative-related messages. This might include failed payouts, or lack of funds messages.  Must be list format even if only 1 ID.</p></li>
+<li><p>public_chat_ids: An, optional, YAML list containing chat IDs of users and/or groups to receive completed payouts message as defined by <code class="docutils literal notranslate"><span class="pre">telegram_text</span></code>. Must be list format even if only 1 ID.</p></li>
 <li><p>bot_api_key: This is the API token that you get from &#64;TheBotFather after creating your bot.</p></li>
+<li><p>telegram_text: This text will be sent to all chat ids list in ‘payouts_chat_ids’. The text will be passed through a filter to replace the following placeholders: <code class="docutils literal notranslate"><span class="pre">%CYCLE%</span></code>, <code class="docutils literal notranslate"><span class="pre">%NDELEGATORS%</span></code>, <code class="docutils literal notranslate"><span class="pre">%TREWARDS%</span></code>. Basic HTML formatting is supported; see Telegram Docs for supported HTML tags. Emojis and other unicode characters are supported.</p></li>
 </ul>
 </div>
 <div class="section" id="id2">
 <h3>Example Config<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
   <span class="n">telegram</span><span class="p">:</span>
-    <span class="n">chat_ids</span><span class="p">:</span>
+    <span class="n">admin_chat_ids</span><span class="p">:</span>
       <span class="o">-</span> <span class="mi">123456789</span>
+      <span class="o">-</span> <span class="mi">345112344</span>
+    <span class="n">payouts_chat_ids</span><span class="p">:</span>
       <span class="o">-</span> <span class="o">-</span><span class="mi">13134455</span>
+      <span class="o">-</span> <span class="mi">827384777</span>
     <span class="n">bot_api_key</span><span class="p">:</span> <span class="mi">988877766</span><span class="p">:</span><span class="n">SKDJFLSJDFJLJSKDFJLKSDJFLKJDF</span>
+    <span class="n">telegram_text</span><span class="p">:</span> <span class="o">&gt;</span>
+      <span class="o">&amp;</span><span class="c1">#x2728; Reward for cycle %CYCLE% &lt;b&gt;complete&lt;/b&gt;! We had %NDELEGATORS% &lt;i&gt;delegators&lt;/i&gt; in the cycle and paid out %TREWARDS% XTZ in rewards!</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="example-result">
+<h3>Example Result<a class="headerlink" href="#example-result" title="Permalink to this headline">¶</a></h3>
+<p>Admin Message:
+<img alt="Admin Image" src="https://i.imgur.com/57Lim8s.png" /></p>
+<p>Payouts Message (using above example config text):
+<img alt="Payouts Image" src="https://i.imgur.com/7ES9m2e.png" /></p>
 </div>
 </div>
 <div class="section" id="twitter-plugin">
@@ -288,17 +309,22 @@
 <div class="section" id="id3">
 <h3>Example Config<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p><strong>NOTE</strong>: All 4 pieces of keys and tokens are required.</p>
-<p><strong>NOTE</strong>: Hashtags <em>must</em> include ‘#’ and <em>must</em> be inside quotation “” marks</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
-  <span class="n">twitter</span><span class="p">:</span>
-    <span class="n">api_key</span><span class="p">:</span> <span class="n">XXXXXXXX</span>
-    <span class="n">api_secret</span><span class="p">:</span> <span class="n">ZZZZZZZZ</span>
-    <span class="n">access_token</span><span class="p">:</span> <span class="n">YYYYYYYY</span>
-    <span class="n">access_secret</span><span class="p">:</span> <span class="n">WWWWWWWW</span>
-    <span class="n">extra_tags</span><span class="p">:</span>
-      <span class="o">-</span> <span class="s2">&quot;#our_baker&quot;</span>
-      <span class="o">-</span> <span class="s2">&quot;#tezos&quot;</span>
-      <span class="o">-</span> <span class="s2">&quot;#rewards&quot;</span>
+<p><strong>NOTE</strong>: <code class="docutils literal notranslate"><span class="pre">tweet_text</span></code> will be passed through a filter to replace the following placeholders: <code class="docutils literal notranslate"><span class="pre">%CYCLE%</span></code>, <code class="docutils literal notranslate"><span class="pre">%NDELEGATORS%</span></code>, <code class="docutils literal notranslate"><span class="pre">%TREWARDS%</span></code></p>
+<p><strong>NOTE</strong>: The twitter plugin only supports payouts notifications; administrative notifications will not be sent via twitter plugin</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>plugins:
+  twitter:
+    api_key: XXXXXXXX
+    api_secret: ZZZZZZZZ
+    access_token: YYYYYYYY
+    access_secret: WWWWWWWW
+    tweet_text: &gt;
+      Reward for cycle %CYCLE% complete! We had %NDELEGATORS% delegators in the cycle and paid out %TREWARDS% XTZ in rewards. #ourbakery #rewards #tezos
+</pre></div>
+</div>
+<p>The above example configuration will produce a tweet that looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Reward for cycle 290 complete! We had 133 delegators
+in the cycle and paid out 1234.98 XTZ in rewards.
+#ourbakery #rewards #tezos
 </pre></div>
 </div>
 </div>
@@ -308,12 +334,15 @@
 <p>This plugin makes an HTTP POST request to an endpoint. This endpoint will receive a JSON object containing the reward data.</p>
 <p>For simple security, configure a random token (alphanumeric string) to be included in the root JSON object. Your receiver script should verify this token before accepting data.</p>
 <p>Your script can return a short message in the response body. This will be displayed on the TRD console and written to the TRD logs.</p>
+<p><strong>NOTE</strong>: The webhook plugin supports administrative notifications which includes ‘subject’, ‘message’, and payouts records.</p>
 <div class="section" id="example-json-object">
 <h3>Example JSON Object<a class="headerlink" href="#example-json-object" title="Permalink to this headline">¶</a></h3>
 <p>“payouts” is a JSON array of objects, each object representing the status of a payout. All Tez amounts are in mutez.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="mi">1604982374</span><span class="p">,</span>
   <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="s2">&quot;Xynl6svphysd3BhjLP6IS&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="s2">&quot;Payouts of cycle 22 completed&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Much longer message example containing more information&quot;</span><span class="p">,</span>
   <span class="s2">&quot;payouts&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;tz1LrHNbbCLgNJZsEsTUYFvWz2THgJC8fHyX&quot;</span><span class="p">,</span>
@@ -355,37 +384,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="paymentaddress.html" class="btn btn-neutral float-right" title="Payment Address" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="configuration.html" class="btn btn-neutral float-left" title="How to configure Tezos Reward Distributor?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="paymentaddress.html" class="btn btn-neutral float-right" title="Payment Address" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="configuration.html" class="btn btn-neutral float-left" title="How to configure Tezos Reward Distributor?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, habanoz, utdrmac, amzid, jdsika
+        &#169; Copyright 2019, habanoz, utdrmac, amzid, jdsika.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
