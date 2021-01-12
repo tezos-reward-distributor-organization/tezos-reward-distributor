@@ -5,14 +5,16 @@ from plugins import plugins
 import tweepy
 
 logger = logging.getLogger("main.plugins.twitter")
+MUTEZ = 1e6
 
 plugin_name = 'TwitterPlugin'
 
 
 class TwitterPlugin(plugins.Plugin):
+
     MAX_TWEET_LEN = 280
 
-    _req_cfg_keys = ["api_key", "api_secret", "access_token", "access_secret"]
+    _req_cfg_keys = ["api_key", "api_secret", "access_token", "access_secret", "tweet_text"]
     _base_api_url = "https://api.twitter.com/1.1/statuses/update.json"
 
     def __init__(self, cfg):
@@ -28,24 +30,25 @@ class TwitterPlugin(plugins.Plugin):
         # see the name of the account print out
         logger.info("[TwitterPlugin] Authenticated '{:s}'".format(self.twitter.me().name))
 
-    def send_notification(self, title, message, attachments=None, reward_data=None):
+    def send_admin_notification(self, title, message, attachments=None, reward_data=None):
+        logger.debug("[TwitterPlugin] Admin notifications not implemented")
+        return
 
-        # Merge title and message to form tweet
-        tweet = "{:s} {:s}".format(title, message)
+    def send_payout_notification(self, cycle, payout_amount, nb_delegators):
 
-        # Join hashtags together
-        hash_tags = ""
-        if self.extra_tags is not None:
-            hash_tags = " ".join(self.extra_tags)
+        # Replace template variables
+        tweet = self.tweet_text \
+            .replace("%CYCLE%", cycle) \
+            .replace("%TREWARDS%", round(payout_amount / MUTEZ, 2)) \
+            .replace("%NDELEGATORS%", nb_delegators)
 
-        # Tags are important for those that follow bakers' messages.
-        # Truncate message before adding tags.
-        tweet = tweet[:(self.MAX_TWEET_LEN - len(hash_tags) - 1)]
-        message = "{:s} {:s}".format(tweet, hash_tags)
+        # Truncate message to max tweet length
+        tweet = tweet[:self.MAX_TWEET_LEN]
 
-        resp = self.twitter.update_status(message)
-        logger.info("[TwitterPlugin] Notification '{:s}' sent".format(title))
-        logger.debug("[TwitterPlugin] Response '{:s}'".format(str(resp)))
+        resp = self.twitter.update_status(tweet)
+
+        logger.info("[TwitterPlugin] Payout Notification '{:s}' sent".format(tweet))
+        logger.debug("[TwitterPlugin] Payout Response '{:s}'".format(str(resp)))
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
@@ -55,21 +58,18 @@ class TwitterPlugin(plugins.Plugin):
 
         for k in self._req_cfg_keys:
             if k not in cfg_keys:
-                raise plugins.PluginConfigurationError("[{:s}] '{:s}' setting not found".format(self.name, k))
+                raise plugins.PluginConfigurationError("[TwitterPlugin] '{:s}' setting not found; Please read documentation".format(k))
 
         # Set config
         self.api_key = self.cfg["api_key"]
         self.api_secret = self.cfg["api_secret"]
         self.access_token = self.cfg["access_token"]
         self.access_secret = self.cfg["access_secret"]
-        self.extra_tags = self.cfg["extra_tags"]
+        self.tweet_text = self.cfg["tweet_text"]
 
         # Sanity
         if self.api_key is None or self.api_secret is None or self.access_token is None or self.access_secret is None:
-            raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
+            raise plugins.PluginConfigurationError("[TwitterPlugin] Missing required parameters; Please read documentation")
 
-        if self.extra_tags is None:
-            logger.info("[TwitterPlugin] No hashtags defined; Just letting you know")
-
-        elif self.extra_tags is not None and not isinstance(self.extra_tags, list):
-            raise plugins.PluginConfigurationError("[{:s}] 'extra_tags' not configured correctly".format(self.name))
+        if self.tweet_text is None:
+            raise plugins.PluginConfigurationError("[TwitterPlugin] No tweet text defined; Please read documentation")
