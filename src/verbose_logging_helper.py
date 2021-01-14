@@ -13,16 +13,26 @@ class VerboseLoggingHelper:
         self.logger.setLevel(logging.DEBUG)
         self.keep_at_most = keep_at_most
         self.enabled = enabled
+        self.log_file_path = None
+        self.handler = None
 
         if self.enabled:
             self.archive_old_log_file()
-            self.log_file_path = self.get_log_file_path(mode)
-            self.handler = logging.FileHandler(self.log_file_path, 'a')
-            self.main_logger.addHandler(self.handler)
+            self.change_file_handler(mode)
         else:
-            self.log_file_path = None
-            self.handler = logging.NullHandler()
+            self.set_to_null_handler()
 
+    def set_to_null_handler(self):
+        self.log_file_path = None
+        self.handler = logging.NullHandler()
+        self.logger.addHandler(self.handler)
+
+    def change_file_handler(self, mode):
+        self.log_file_path = self.get_log_file_path(mode)
+        self.handler = logging.FileHandler(self.log_file_path, 'a')
+        self.handler.setLevel(logging.DEBUG)
+        self.handler.setFormatter(self.formatter)
+        self.main_logger.addHandler(self.handler)
         self.logger.addHandler(self.handler)
 
     def archive_old_log_file(self):
@@ -47,12 +57,8 @@ class VerboseLoggingHelper:
             return
 
         self.close_current_handler()
-
         old_path = self.log_file_path
-        self.log_file_path = self.get_log_file_path(cycle)
-        self.handler = logging.FileHandler(self.log_file_path, 'a')
-        self.main_logger.addHandler(self.handler)
-        self.logger.addHandler(self.handler)
+        self.change_file_handler(cycle)
 
         self.archive(old_path)
 

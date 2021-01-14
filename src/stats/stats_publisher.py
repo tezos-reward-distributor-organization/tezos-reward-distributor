@@ -19,6 +19,7 @@ def stats_publisher(stats_dict):
         logger.debug("stats_publisher data: {}".format(stats_dict))
 
         resp = requests.post(STATS_URL, json=stats_dict, timeout=15, headers={'user-agent': 'trd/0.0.1'})
+
         if resp.status_code != 200:
             raise Exception("Unable to POST anonymous stats: {}".format(resp.text))
 

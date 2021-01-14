@@ -19,11 +19,13 @@ class WebhookPlugin(plugins.Plugin):
 
         logger.info("[WebhookPlugin] Endpoint: {:s}".format(self.endpoint))
 
-    def send_notification(self, title, message, attachments=None, reward_data=None):
+    def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
 
         # Create JSON object to be POST'd to hook URL
         payload = {"timestamp": int(time()),
                    "token": self.token,
+                   "subject": subject,
+                   "message": message,
                    "payouts": []
                    }
 
@@ -38,10 +40,19 @@ class WebhookPlugin(plugins.Plugin):
                       }
             payload["payouts"].append(payout)
 
-        resp = requests.post(self.endpoint, json=payload, timeout=15)
+        try:
+            resp = requests.post(self.endpoint, json=payload, timeout=15)
+        except requests.exceptions.RequestException as e:
+            logger.error("[WebhookPlugin] Error POSTing '{:s}'".format(str(e)))
+            return
 
+        # Will log 200, 203, 404, 500, etc
         logger.info("[WebhookPlugin] Notification '{:s}' sent; Response {:d} {:s}"
-                    .format(title, resp.status_code, resp.text))
+                    .format(subject, resp.status_code, resp.text))
+
+    def send_payout_notification(self, cycle, payout_amount, nb_delegators):
+        logger.debug("[WebhookPlugin] Payout notification not implemented")
+        return
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
