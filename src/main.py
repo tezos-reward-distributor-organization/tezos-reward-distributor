@@ -48,8 +48,8 @@ def main(args):
         os.makedirs(config_dir)
 
     # 4. get network config
-    client_manager = ClientManager(node_endpoint = args.node_endpoint,
-                                   signer_endpoint = args.signer_endpoint)
+    client_manager = ClientManager(node_endpoint=args.node_endpoint,
+                                   signer_endpoint=args.signer_endpoint)
     network_config_map = init_network_config(args.network, client_manager)
     network_config = network_config_map[args.network]
     logger.debug("Network config {}".format(network_config))
@@ -64,11 +64,11 @@ def main(args):
 
         logger.info("Loading baking configuration file {}".format(config_file_path))
 
-        parser = BakingYamlConfParser(yaml_text = ConfigParser.load_file(config_file_path),
-                                      wllt_clnt_mngr = client_manager,
-                                      provider_factory = provider_factory,
-                                      network_config = network_config,
-                                      node_url = args.node_endpoint,
+        parser = BakingYamlConfParser(yaml_text=ConfigParser.load_file(config_file_path),
+                                      wllt_clnt_mngr=client_manager,
+                                      provider_factory=provider_factory,
+                                      network_config=network_config,
+                                      node_url=args.node_endpoint,
                                       api_base_url=args.api_base_url)
         parser.parse()
         parser.validate()

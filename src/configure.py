@@ -376,26 +376,15 @@ def main(args):
     else:
         logger.debug("master configuration file not present.")
 
-    managers = None
-    contracts_by_alias = None
-    addresses_by_pkh = None
-    if 'managers' in master_cfg:
-        managers = master_cfg['managers']
-    if 'contracts_by_alias' in master_cfg:
-        contracts_by_alias = master_cfg['contracts_by_alias']
-    if 'addresses_by_pkh' in master_cfg:
-        addresses_by_pkh = master_cfg['addresses_by_pkh']
-
     # 4. get network config
     global client_manager
-    client_manager = ClientManager(node_endpoint = args.node_endpoint,
-                                   signer_endpoint = args.signer_endpoint)
+    client_manager = ClientManager(node_endpoint=args.node_endpoint,
+                                   signer_endpoint=args.signer_endpoint)
 
     network_config_map = init_network_config(args.network, client_manager)
     global network_config
     network_config = network_config_map[args.network]
     logger.debug("Network config {}".format(network_config))
-
 
     # hello state
     input("{} >".format(messages['hello'])).strip()

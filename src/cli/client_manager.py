@@ -46,7 +46,6 @@ class ClientManager:
             return response.status_code, ""
         return response.status_code, response.json()
 
-
     def sign(self, bytes, key_name, timeout=None):
         json_params = json.dumps('03' + bytes)
         signer_url = self.signer_endpoint

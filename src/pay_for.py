@@ -7,8 +7,6 @@ import time
 from datetime import datetime
 
 from cli.client_manager import ClientManager
-from config.config_parser import ConfigParser
-from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger, init
 from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_base, \
     add_argument_config_dir, add_argument_node_endpoint, add_argument_dry, add_argument_dry_no_consumer, \
@@ -41,28 +39,6 @@ def main(args):
     # so that user can easily put his configuration there
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
-
-    # 2- Load master configuration file if it is present
-    master_config_file_path = os.path.join(config_dir, "master.yaml")
-
-    master_cfg = {}
-    if os.path.isfile(master_config_file_path):
-        logger.info("Loading master configuration file {}".format(master_config_file_path))
-
-        master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
-        master_cfg = master_parser.parse()
-    else:
-        logger.info("master configuration file not present.")
-
-    managers = None
-    contracts_by_alias = None
-    addresses_by_pkh = None
-    if 'managers' in master_cfg:
-        managers = master_cfg['managers']
-    if 'contracts_by_alias' in master_cfg:
-        contracts_by_alias = master_cfg['contracts_by_alias']
-    if 'addresses_by_pkh' in master_cfg:
-        addresses_by_pkh = master_cfg['addresses_by_pkh']
 
     # 3- load payments file
     payments_file = os.path.expanduser(args.payments_file)
@@ -99,8 +75,8 @@ def main(args):
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 
-    client_manager = ClientManager(node_endpoint = args.node_endpoint,
-                                   signer_endpoint = args.signer_endpoint)
+    client_manager = ClientManager(node_endpoint=args.node_endpoint,
+                                   signer_endpoint=args.signer_endpoint)
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='manual_payment_consumer', payments_dir=payments_root,
