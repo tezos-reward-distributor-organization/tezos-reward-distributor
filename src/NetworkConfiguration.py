@@ -1,20 +1,12 @@
 from log_config import main_logger
 import requests
+from Constants import DEFAULT_NETWORK_CONFIG_MAP, PUBLIC_NODE_URL
 
 logger = main_logger
 
-default_network_config_map = {
-    'MAINNET': {'NAME': 'MAINNET', 'NB_FREEZE_CYCLE': 5, 'BLOCK_TIME_IN_SEC': 60, 'BLOCKS_PER_CYCLE': 4096,
-                'BLOCKS_PER_ROLL_SNAPSHOT': 256, 'BLOCK_REWARD': 40000000, 'ENDORSEMENT_REWARD': 1250000},
-    'DELPHINET': {'NAME': 'DELPHINET', 'NB_FREEZE_CYCLE': 3, 'BLOCK_TIME_IN_SEC': 30, 'BLOCKS_PER_CYCLE': 2048,
-                  'BLOCKS_PER_ROLL_SNAPSHOT': 128, 'BLOCK_REWARD': 40000000, 'ENDORSEMENT_REWARD': 1250000},
-}
+default_network_config_map = DEFAULT_NETWORK_CONFIG_MAP
 
 CONSTANTS_PATH = "/chains/main/blocks/head/context/constants"
-
-PUBLIC_NODE_BASE = "https://{}-tezos.giganode.io"
-PUBLIC_NODE_RPC = PUBLIC_NODE_BASE + CONSTANTS_PATH
-PUBLIC_NODE_PREFIX = {"MAINNET": "mainnet", "DELPHINET": "delphinet"}
 
 
 def init_network_config(network_name, config_client_manager):
@@ -28,7 +20,7 @@ def init_network_config(network_name, config_client_manager):
     except Exception:
         logger.debug("Failed to get network configuration constants from a local node ({}).".format(node_addr))
 
-    pub_node_url = PUBLIC_NODE_BASE.format(PUBLIC_NODE_PREFIX[network_name])
+    pub_node_url = PUBLIC_NODE_URL[network_name]
     try:
         network_config_map[network_name] = get_network_config_from_public_node(network_name)
         network_config_map[network_name]['NAME'] = network_name
@@ -49,7 +41,7 @@ def get_network_config_from_local_node(config_client_manager):
 
 
 def get_network_config_from_public_node(network_name):
-    url = PUBLIC_NODE_RPC.format(PUBLIC_NODE_PREFIX[network_name])
+    url = PUBLIC_NODE_URL[network_name] + CONSTANTS_PATH
     response_constants = requests.get(url, timeout=5)
     constants = response_constants.json()
     network_config_map = parse_constants(constants)
