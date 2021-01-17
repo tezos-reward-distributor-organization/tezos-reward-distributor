@@ -1,8 +1,9 @@
 import requests
 import json
+import os
 from datetime import datetime
+
 from Constants import TEZOS_RPC_PORT
-from cli.cmd_manager import CommandManager
 from exception.client import ClientException
 from log_config import main_logger
 
@@ -11,32 +12,18 @@ logger = main_logger
 COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 
 
-class SimpleClientManager:
-    def __init__(self, client_path, node_addr) -> None:
+class ClientManager:
+    def __init__(self, node_endpoint, signer_endpoint) -> None:
         super().__init__()
-        self.client_path = client_path
-        self.cmd_manager = CommandManager()
-        self.node_hostname = "127.0.0.1"
-        self.node_port = TEZOS_RPC_PORT
-        self.tls_on = False
-
-        # Need to split host:port, default port to 8732 if not specified
-        if node_addr is not None:
-            # set tls to true if node address contains https
-            self.tls_on = (node_addr.find('https://') != -1)
-            # Remove potential protocol prefixes
-            node_addr = node_addr.replace('https://', '')
-            node_addr = node_addr.replace('http://', '')
-            parts = node_addr.split(":")
-            self.node_hostname = parts[0]
-            self.node_port = TEZOS_RPC_PORT if len(parts) == 1 else parts[1]
-
-    def get_node_addr(self) -> str:
-        return "{}:{}".format(self.node_hostname, self.node_port)
+        self.node_endpoint = node_endpoint
+        if self.node_endpoint.find('http') == -1:
+            self.node_endpoint = 'http://' + self.node_endpoint
+        if len(self.node_endpoint.split(':')) < 3:
+            self.node_endpoint += f':{TEZOS_RPC_PORT}'
+        self.signer_endpoint = signer_endpoint
 
     def get_node_url(self) -> str:
-        return "{}://{}:{}".format(
-               "https" if self.tls_on else "http", self.node_hostname, self.node_port)
+        return self.node_endpoint
 
     def request_url(self, cmd, verbose_override=None, timeout=None):
         url = self.get_node_url() + cmd
@@ -51,7 +38,7 @@ class SimpleClientManager:
     def request_url_post(self, cmd, json_params, verbose_override=None, timeout=None):
         url = self.get_node_url() + cmd
         headers = {'content-type': "application/json", 'cache-control': "no-cache"}
-        response = requests.request("POST", url, data=json_params, headers=headers)
+        response = requests.request("POST", url, data=json_params, headers=headers, timeout=timeout)
         if not (response.status_code == 200):
             logger.debug("Error, request ->{}<-, params ->{}<-,".format(url, json_params))
             logger.debug("---")
@@ -59,25 +46,44 @@ class SimpleClientManager:
             return response.status_code, ""
         return response.status_code, response.json()
 
-    def send_request(self, cmd, verbose_override=None, timeout=None):
-        # Build command with flags
-        if self.tls_on:
-            whole_cmd = "{} -S -A {} -P {} {}".format(self.client_path, self.node_hostname, self.node_port, cmd)
+
+    def sign(self, bytes, key_name, timeout=None):
+        json_params = json.dumps('03' + bytes)
+        signer_url = self.signer_endpoint
+        cmd = f'keys/{key_name}'
+        url = os.path.join(signer_url, cmd)
+        response = requests.request("POST", url, data=json_params, timeout=timeout)
+        if not (response.status_code == 200):
+            raise ClientException("Error at signing: '{}'".format(response.text))
         else:
-            whole_cmd = "{} -A {} -P {} {}".format(self.client_path, self.node_hostname, self.node_port, cmd)
-        return self.cmd_manager.execute(whole_cmd, verbose_override, timeout=timeout)
+            response = response.json()
+            return response['signature']
 
-    def sign(self, bytes, key_name, verbose_override=None):
-        result, response = self.send_request(" sign bytes 0x03{} for {}".format(bytes, key_name), verbose_override=verbose_override)
+    def check_pkh_known_by_signer(self, key_name, timeout=None):
+        signer_url = self.signer_endpoint
+        cmd = f'keys/{key_name}'
+        url = os.path.join(signer_url, cmd)
+        response = requests.get(url, timeout=timeout)
+        if not (response.status_code == 200):
+            raise ClientException(f"Please import the secret key to the signer before using payment address {key_name} "
+                                  f"'{response.text}'")
+        else:
+            response = response.json()
+            if 'public_key' in response:
+                return True
 
-        if not result:
-            raise ClientException("Error at signing: '{}'".format(response))
-
-        for line in response.splitlines():
-            if "Signature" in line:
-                return line.replace("Signature:", "").strip()
-
-        raise ClientException("Signature not found in response '{}'. Signed with key '{}'".format(response, key_name))
+    def get_authorized_keys(self, key_name, timeout=None):
+        signer_url = self.signer_endpoint
+        cmd = f'authorized_keys'
+        url = os.path.join(signer_url, cmd)
+        response = requests.get(url, timeout=timeout)
+        if not (response.status_code == 200):
+            raise ClientException(f"Please import the secret key to the signer before using payment address {key_name} "
+                                  f"'{response.text}'")
+        else:
+            response = response.json()
+            if 'public_key' in response:
+                return True
 
     def get_bootstrapped(self):
         # /monitor/bootstrapped is a stream of data that only terminates

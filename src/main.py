@@ -9,16 +9,13 @@ from Constants import RunMode, VERSION
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from calc.service_fee_calculator import ServiceFeeCalculator
-from cli.simple_client_manager import SimpleClientManager
-from cli.wallet_client_manager import WalletClientManager
+from cli.client_manager import ClientManager
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
-from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger, init
 from model.baking_conf import BakingConf
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
-from util.client_utils import get_client_path
 from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
@@ -50,42 +47,12 @@ def main(args):
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
-    # 2- Load master configuration file if it is present
-    master_config_file_path = os.path.join(config_dir, "master.yaml")
-
-    master_cfg = {}
-    if os.path.isfile(master_config_file_path):
-        logger.debug("Loading master configuration file {}".format(master_config_file_path))
-
-        master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
-        master_cfg = master_parser.parse()
-    else:
-        logger.debug("master configuration file not present.")
-
-    managers = None
-    contracts_by_alias = None
-    addresses_by_pkh = None
-    if 'managers' in master_cfg:
-        managers = master_cfg['managers']
-    if 'contracts_by_alias' in master_cfg:
-        contracts_by_alias = master_cfg['contracts_by_alias']
-    if 'addresses_by_pkh' in master_cfg:
-        addresses_by_pkh = master_cfg['addresses_by_pkh']
-
-    # 3- get client path
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')], args.docker, args.network)
-
-    logger.debug("Tezos client path is {}".format(client_path))
-
     # 4. get network config
-    config_client_manager = SimpleClientManager(client_path, args.node_addr)
-    network_config_map = init_network_config(args.network, config_client_manager)
+    client_manager = ClientManager(node_endpoint = args.node_endpoint,
+                                   signer_endpoint = args.signer_endpoint)
+    network_config_map = init_network_config(args.network, client_manager)
     network_config = network_config_map[args.network]
-
     logger.debug("Network config {}".format(network_config))
-
-    # Load the payment wallet
-    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers)
 
     # Setup provider to fetch RPCs
     provider_factory = ProviderFactory(args.reward_data_provider)
@@ -97,15 +64,19 @@ def main(args):
 
         logger.info("Loading baking configuration file {}".format(config_file_path))
 
-        parser = BakingYamlConfParser(ConfigParser.load_file(config_file_path), wllt_clnt_mngr, provider_factory,
-                                      network_config, args.node_addr, api_base_url=args.api_base_url)
+        parser = BakingYamlConfParser(yaml_text = ConfigParser.load_file(config_file_path),
+                                      wllt_clnt_mngr = client_manager,
+                                      provider_factory = provider_factory,
+                                      network_config = network_config,
+                                      node_url = args.node_endpoint,
+                                      api_base_url=args.api_base_url)
         parser.parse()
         parser.validate()
         parser.process()
 
         # dictionary to BakingConf object, for a bit of type safety
         cfg_dict = parser.get_conf_obj()
-        cfg = BakingConf(cfg_dict, master_cfg)
+        cfg = BakingConf(cfg_dict)
 
     except ConfigurationException as e:
         logger.info("Unable to parse '{}' config file.".format(config_file_path))
@@ -161,24 +132,44 @@ def main(args):
     plugins_manager = plugins.PluginManager(cfg.get_plugins_conf(), dry_run)
 
     # 11- Start producer and consumer
-    p = PaymentProducer(name='producer', initial_payment_cycle=args.initial_cycle, network_config=network_config,
-                        payments_dir=payments_root, calculations_dir=calculations_root, run_mode=RunMode(args.run_mode),
-                        service_fee_calc=srvc_fee_calc, release_override=args.release_override,
-                        payment_offset=args.payment_offset, baking_cfg=cfg, life_cycle=life_cycle,
-                        payments_queue=payments_queue, dry_run=dry_run, wllt_clnt_mngr=wllt_clnt_mngr,
-                        node_url=args.node_addr, provider_factory=provider_factory,
-                        node_url_public=args.node_addr_public, api_base_url=args.api_base_url,
+    p = PaymentProducer(name='producer',
+                        initial_payment_cycle=args.initial_cycle,
+                        network_config=network_config,
+                        payments_dir=payments_root,
+                        calculations_dir=calculations_root,
+                        run_mode=RunMode(args.run_mode),
+                        service_fee_calc=srvc_fee_calc,
+                        release_override=args.release_override,
+                        payment_offset=args.payment_offset,
+                        baking_cfg=cfg,
+                        life_cycle=life_cycle,
+                        payments_queue=payments_queue,
+                        dry_run=dry_run,
+                        client_manager=client_manager,
+                        node_url=args.node_endpoint,
+                        provider_factory=provider_factory,
+                        node_url_public=args.node_addr_public,
+                        api_base_url=args.api_base_url,
                         retry_injected=args.retry_injected)
     p.start()
 
     for i in range(NB_CONSUMERS):
-        c = PaymentConsumer(name='consumer' + str(i), payments_dir=payments_root, key_name=payment_address,
-                            client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, plugins_manager=plugins_manager, rewards_type=cfg.get_rewards_type(),
-                            args=args, dry_run=dry_run, reactivate_zeroed=cfg.get_reactivate_zeroed(),
+        c = PaymentConsumer(name='consumer' + str(i),
+                            payments_dir=payments_root,
+                            key_name=payment_address,
+                            payments_queue=payments_queue,
+                            node_addr=args.node_endpoint,
+                            client_manager=client_manager,
+                            plugins_manager=plugins_manager,
+                            rewards_type=cfg.get_rewards_type(),
+                            args=args,
+                            dry_run=dry_run,
+                            reactivate_zeroed=cfg.get_reactivate_zeroed(),
                             delegator_pays_ra_fee=cfg.get_delegator_pays_ra_fee(),
-                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(), dest_map=cfg.get_dest_map(),
-                            network_config=network_config, publish_stats=publish_stats)
+                            delegator_pays_xfer_fee=cfg.get_delegator_pays_xfer_fee(),
+                            dest_map=cfg.get_dest_map(),
+                            network_config=network_config,
+                            publish_stats=publish_stats)
 
         sleep(1)
         c.start()

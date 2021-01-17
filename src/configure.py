@@ -11,20 +11,18 @@ from fysom import Fysom
 
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
-from cli.simple_client_manager import SimpleClientManager
-from cli.wallet_client_manager import WalletClientManager
+from cli.client_manager import ClientManager
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
 from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
-    add_argument_config_dir, add_argument_node_addr, add_argument_executable_dirs, add_argument_docker, \
+    add_argument_config_dir, add_argument_node_endpoint, add_argument_signer_endpoint, add_argument_docker, \
     add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url, add_argument_log_file
 from log_config import main_logger, init
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
     REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET
 from util.address_validator import AddressValidator
-from util.client_utils import get_client_path
 from util.dir_utils import get_payment_root, get_successful_payments_dir, get_failed_payments_dir
 from util.fee_validator import FeeValidator
 
@@ -35,7 +33,7 @@ logger = main_logger
 messages = {
     'hello': 'This application will help you configure TRD to manage payouts for your bakery. Type enter to continue',
     'bakingaddress': 'Specify your baking address public key hash (Processing may take a few seconds)',
-    'paymentaddress': 'Specify your payment PKH/alias. Available aliases:{}',
+    'paymentaddress': 'Specify your payment PKH. Available addresses:{}',
     'servicefee': 'Specify bakery fee [0:100]',
     'foundersmap': "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
     'ownersmap': "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
@@ -76,11 +74,9 @@ def onbakingaddress(input):
         return
     provider_factory = ProviderFactory(args.reward_data_provider)
     global parser
-    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
+    parser = BakingYamlConfParser(None, client_manager, provider_factory, network_config, args.node_endpoint,
                                   api_base_url=args.api_base_url)
     parser.set(BAKING_ADDRESS, input)
-    messages['paymentaddress'] = messages['paymentaddress'].format(
-        [v['alias'] for k, v in wllt_clnt_mngr.get_addr_dict().items() if v['sk']]) + " (without quotes)"
     fsm.go()
 
 
@@ -390,26 +386,19 @@ def main(args):
     if 'addresses_by_pkh' in master_cfg:
         addresses_by_pkh = master_cfg['addresses_by_pkh']
 
-    # 3- get client path
-
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network)
-
-    logger.debug("tezos-client path is {}".format(client_path))
-
     # 4. get network config
-    config_client_manager = SimpleClientManager(client_path, args.node_addr)
-    network_config_map = init_network_config(args.network, config_client_manager)
+    global client_manager
+    client_manager = ClientManager(node_endpoint = args.node_endpoint,
+                                   signer_endpoint = args.signer_endpoint)
+
+    network_config_map = init_network_config(args.network, client_manager)
     global network_config
     network_config = network_config_map[args.network]
-
     logger.debug("Network config {}".format(network_config))
 
-    global wllt_clnt_mngr
-    wllt_clnt_mngr = WalletClientManager(client_path, args.node_addr, contracts_by_alias, addresses_by_pkh, managers)
 
     # hello state
-    command = input("{} >".format(messages['hello'])).strip()
+    input("{} >".format(messages['hello'])).strip()
     start()
 
     while not fsm.is_finished():
@@ -509,8 +498,8 @@ if __name__ == '__main__':
     add_argument_network(parser)
     add_argument_reports_base(parser)
     add_argument_config_dir(parser)
-    add_argument_node_addr(parser)
-    add_argument_executable_dirs(parser)
+    add_argument_node_endpoint(parser)
+    add_argument_signer_endpoint(parser)
     add_argument_docker(parser)
     add_argument_verbose(parser)
     add_argument_dry(parser)

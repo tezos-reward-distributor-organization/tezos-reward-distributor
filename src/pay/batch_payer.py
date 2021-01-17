@@ -90,11 +90,8 @@ class BatchPayer():
             else:
                 raise Exception("pymnt_addr cannot be translated into a PKH or alias: {}".format(self.pymnt_addr))
 
-        self.manager = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.source)['manager']
-        self.manager_alias = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.manager)['alias']
-
+        self.manager = self.source
         logger.debug("Payment address is {}".format(self.source))
-        logger.debug("Signing address is {}, manager alias is {}".format(self.manager, self.manager_alias))
 
         self.comm_head = COMM_HEAD
         self.comm_counter = COMM_COUNTER.format(self.source)
@@ -351,8 +348,7 @@ class BatchPayer():
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, ""
 
-        # sign the operations
-        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager_alias, verbose_override=True)
+        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager)
 
         # pre-apply operations
         logger.debug("Preapplying the operations")

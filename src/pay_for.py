@@ -6,17 +6,16 @@ import sys
 import time
 from datetime import datetime
 
-from cli.wallet_client_manager import WalletClientManager
+from cli.client_manager import ClientManager
 from config.config_parser import ConfigParser
 from config.yaml_conf_parser import YamlConfParser
 from log_config import main_logger, init
 from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_base, \
-    add_argument_config_dir, add_argument_node_addr, add_argument_dry, add_argument_dry_no_consumer, \
-    add_argument_executable_dirs, add_argument_docker, add_argument_verbose
+    add_argument_config_dir, add_argument_node_endpoint, add_argument_dry, add_argument_dry_no_consumer, \
+    add_argument_signer_endpoint, add_argument_docker, add_argument_verbose
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
-from util.client_utils import get_client_path
 from util.dir_utils import get_payment_root, \
     get_successful_payments_dir, get_failed_payments_dir
 from util.process_life_cycle import ProcessLifeCycle
@@ -84,19 +83,6 @@ def main(args):
     if not payments_dict:
         raise Exception("No payments to process")
 
-    # 3- get client path
-
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network)
-
-    logger.debug("Tezos client path is {}".format(client_path))
-
-    # 4- get client path
-    client_path = get_client_path([x.strip() for x in args.executable_dirs.split(',')],
-                                  args.docker, args.network)
-
-    logger.debug("Tezos client path is {}".format(client_path))
-
     # 6- is it a reports run
     dry_run = args.dry_run
 
@@ -113,14 +99,19 @@ def main(args):
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 
-    wllt_clnt_mngr = WalletClientManager(client_path, contracts_by_alias, addresses_by_pkh, managers)
+    client_manager = ClientManager(node_endpoint = args.node_endpoint,
+                                   signer_endpoint = args.signer_endpoint)
 
     for i in range(NB_CONSUMERS):
         c = PaymentConsumer(name='manual_payment_consumer', payments_dir=payments_root,
                             key_name=args.paymentaddress,
-                            client_path=client_path, payments_queue=payments_queue, node_addr=args.node_addr,
-                            wllt_clnt_mngr=wllt_clnt_mngr, dry_run=dry_run, reactivate_zeroed=False,
-                            delegator_pays_ra_fee=False, delegator_pays_xfer_fee=False)
+                            payments_queue=payments_queue,
+                            node_addr=args.node_endpoint,
+                            client_manager=client_manager,
+                            dry_run=dry_run,
+                            reactivate_zeroed=False,
+                            delegator_pays_ra_fee=False,
+                            delegator_pays_xfer_fee=False)
         time.sleep(1)
         c.start()
 
@@ -183,10 +174,10 @@ if __name__ == '__main__':
     add_argument_provider(parser)
     add_argument_reports_base(parser)
     add_argument_config_dir(parser)
-    add_argument_node_addr(parser)
+    add_argument_node_endpoint(parser)
     add_argument_dry(parser)
     add_argument_dry_no_consumer(parser)
-    add_argument_executable_dirs(parser)
+    add_argument_signer_endpoint(parser)
     add_argument_docker(parser)
     add_argument_verbose(parser)
 

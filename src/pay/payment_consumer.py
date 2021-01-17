@@ -29,7 +29,7 @@ def count_and_log_failed(payment_logs):
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, client_path, payments_queue, node_addr, wllt_clnt_mngr,
+    def __init__(self, name, payments_dir, key_name, payments_queue, node_addr, client_manager,
                  network_config, plugins_manager, rewards_type, args=None, dry_run=None, reactivate_zeroed=True,
                  delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None, publish_stats=True):
         super(PaymentConsumer, self).__init__()
@@ -38,11 +38,10 @@ class PaymentConsumer(threading.Thread):
         self.name = name
         self.payments_dir = payments_dir
         self.key_name = key_name
-        self.client_path = client_path
         self.payments_queue = payments_queue
         self.node_addr = node_addr
         self.dry_run = dry_run
-        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.client_manager = client_manager
         self.reactivate_zeroed = reactivate_zeroed
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
         self.delegator_pays_ra_fee = delegator_pays_ra_fee
@@ -95,7 +94,7 @@ class PaymentConsumer(threading.Thread):
 
                 payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
-                batch_payer = BatchPayer(self.node_addr, self.key_name, self.wllt_clnt_mngr,
+                batch_payer = BatchPayer(self.node_addr, self.key_name, self.client_manager,
                                          self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
                                          self.network_config, self.plugins_manager,
                                          self.dry_run)

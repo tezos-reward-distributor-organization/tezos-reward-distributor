@@ -11,7 +11,7 @@ CONSTANTS_PATH = "/chains/main/blocks/head/context/constants"
 
 def init_network_config(network_name, config_client_manager):
     network_config_map = {}
-    node_addr = config_client_manager.get_node_addr()
+    node_addr = config_client_manager.get_node_url()
     try:
         network_config_map[network_name] = get_network_config_from_local_node(config_client_manager)
         network_config_map[network_name]['NAME'] = network_name

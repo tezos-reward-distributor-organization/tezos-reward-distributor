@@ -33,17 +33,13 @@ DEXTER = 'dexter'
 
 
 class BakingConf:
-    def __init__(self, cfg_dict, master_dict=None) -> None:
+    def __init__(self, cfg_dict) -> None:
         super().__init__()
-        self.master_dict = master_dict
         self.cfg_dict = cfg_dict
 
     def get_attribute(self, attr):
         if attr in self.cfg_dict:
             return self.cfg_dict[attr]
-
-        if self.master_dict and attr in self.master_dict:
-            return self.master_dict[attr]
 
         raise Exception("Attribute {} not found in application configuration.".format(attr))
 
