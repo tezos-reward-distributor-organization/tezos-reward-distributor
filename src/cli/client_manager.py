@@ -73,7 +73,7 @@ class ClientManager:
 
     def get_authorized_keys(self, key_name, timeout=None):
         signer_url = self.signer_endpoint
-        cmd = f'authorized_keys'
+        cmd = 'authorized_keys'
         url = os.path.join(signer_url, cmd)
         response = requests.get(url, timeout=timeout)
         if not (response.status_code == 200):
