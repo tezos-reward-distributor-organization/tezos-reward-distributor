@@ -144,7 +144,7 @@ class BatchPayer():
 
         if not payment_items:
             logger.info("No payment items found, returning...")
-            return payment_items_in, 0
+            return payment_items_in, 0, 0, 0
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
@@ -177,19 +177,19 @@ class BatchPayer():
 
                 # Output to CLI, send notification using plugins
                 logger.error(message)
-                self.plugins_manager.send_notification(subject, message)
+                self.plugins_manager.send_admin_notification(subject, message)
 
                 # Exit early since nothing can be paid
-                return payment_items, 0, 0
+                return payment_items, 0, 0, 0
 
             elif number_future_payable_cycles < 1:
 
-                subject = "Low Payment Address Funds Warning"
+                subject = "WARNING Payouts - Low Payment Address Funds"
                 message = "The payout address will soon run out of funds. The current balance, {:,} mutez, " \
                           "might not be sufficient for the next cycle".format(payment_address_balance)
 
                 logger.warn(message)
-                self.plugins_manager.send_notification(subject, message)
+                self.plugins_manager.send_admin_notification(subject, message)
 
             else:
                 logger.info("The payout account balance is expected to last for the next {:d} cycle(s)".format(
@@ -207,7 +207,7 @@ class BatchPayer():
             payment_logs.extend(payments_log)
             total_attempts += attempt
 
-        return payment_logs, total_attempts, number_future_payable_cycles
+        return payment_logs, total_attempts, total_amount_to_pay, number_future_payable_cycles
 
     def log_processed_items(self, payment_logs):
         if payment_logs:

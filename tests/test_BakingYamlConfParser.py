@@ -54,6 +54,10 @@ class TestYamlAppConfParser(TestCase):
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.ACTUAL)
 
+        plugins = cnf_prsr.get_conf_obj_attr('plugins')
+        self.assertIsInstance(plugins, dict)
+        self.assertIsNone(plugins['enabled'], None)
+
     def test_validate_no_founders_map(self):
         data_no_founders = """
         version: 1.0
@@ -95,11 +99,17 @@ class TestYamlAppConfParser(TestCase):
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('rewards_type'), RewardsType.ACTUAL)
 
+        plugins = cnf_prsr.get_conf_obj_attr('plugins')
+        self.assertIsInstance(plugins, dict)
+        self.assertIsNone(plugins['enabled'], None)
+
     def test_validate_plugins(self):
         data = """
         baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
         plugins:
           enabled:
+          - plug1
+          - plug2
         """
 
         block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
@@ -107,3 +117,8 @@ class TestYamlAppConfParser(TestCase):
                                         network_config=None, node_url="", block_api=block_api)
         cnf_prsr.parse()
         cnf_prsr.validate_plugins(cnf_prsr.get_conf_obj())
+
+        plugins = cnf_prsr.get_conf_obj_attr('plugins')
+        self.assertIsInstance(plugins, dict)
+        self.assertIsInstance(plugins['enabled'], list)
+        self.assertEqual(len(plugins['enabled']), 2)

@@ -31,10 +31,11 @@ class PluginManager(object):
 
         # Print notice if no plugins loaded/enabled
         if not self.plugins:
-            logger.info("[Plugins] No plugins enabled")
+            logger.info("[Plugins] No plugins enabled; Check the documentation if you believe this to be incorrect")
 
-    # Go through each plugin module and call send_notification
-    def send_notification(self, subject, message, attachments=None, reward_data=None):
+    # Go through each plugin module and call send_admin_notification
+    # TODO: Optimize DRY
+    def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
 
         if not self.plugins:
             logger.info("[Plugins] Not sending notification; no plugins enabled")
@@ -42,11 +43,27 @@ class PluginManager(object):
         for p in self.plugins:
             if not self.dry_run:
                 try:
-                    p.send_notification(subject, message, attachments, reward_data)
+                    p.send_admin_notification(subject, message, attachments, reward_data)
                 except Exception as e:
                     logger.error("[Plugins] [{:s}] Unknown Error: {:s}".format(p.name, str(e)))
             else:
-                logger.info("[Plugins] [{:s}] send_notification (Dry-Run mode)".format(p.name))
+                logger.info("[Plugins] [{:s}] send_admin_notification (Dry-Run mode)".format(p.name))
+
+    # Go through each plugin module and call send_payout_notification
+    # TODO: Optimize DRY
+    def send_payout_notification(self, cycle, payout_amount, nb_delegators):
+
+        if not self.plugins:
+            logger.info("[Plugins] Not sending notification; no plugins enabled")
+
+        for p in self.plugins:
+            if not self.dry_run:
+                try:
+                    p.send_payout_notification(cycle, payout_amount, nb_delegators)
+                except Exception as e:
+                    logger.error("[Plugins] [{:s}] Unknown Error: {:s}".format(p.name, str(e)))
+            else:
+                logger.info("[Plugins] [{:s}] send_payout_notification (Dry-Run mode)".format(p.name))
 
     # Dynamically load python modules as plugins
     def loadPlugin(self, plugin_name, cfg):
@@ -81,7 +98,10 @@ class Plugin(object):
         self.cfg = cfg
         self.validateConfig()
 
-    def send_notification(self, subject, message, attachments, reward_data):
+    def send_admin_notification(self, subject, message, attachments, reward_data):
+        raise NotImplementedError
+
+    def send_payout_notification(self, cycle, payout_amount, nb_delegators):
         raise NotImplementedError
 
     def validateConfig(self):

@@ -25,20 +25,24 @@ class EmailPlugin(plugins.Plugin):
         logger.info("[EmailPlugin] From: {:s}, To: [{:s}], Via: {:s}:{:d} ({:s}SSL/TLS)".format(
                     self.sender, ", ".join(self.recipients), self.host, self.port, "" if self.use_tls else "No "))
 
-    def send_notification(self, title, message, attachments=None, reward_data=None):
+    def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
 
-        self.send_email(title, message, attachments)
+        self.send_email(subject, message, attachments)
 
-        logger.info("[EmailPlugin] Notification '{:s}' sent".format(title))
+        logger.info("[EmailPlugin] Notification '{:s}' sent".format(subject))
 
-    def send_email(self, title, message, attachments):
+    def send_payout_notification(self, cycle, payout_amount, nb_delegators):
+        logger.debug("[EmailPlugin] Payout notification not implemented")
+        return
+
+    def send_email(self, subject, message, attachments):
 
         # Create email and basic headers
         msg = MIMEMultipart()
         msg['From'] = self.sender
         msg['To'] = ", ".join(self.recipients)
         msg['Date'] = formatdate(localtime=True)
-        msg['Subject'] = title
+        msg['Subject'] = subject
 
         msg.attach(MIMEText(message))
 
