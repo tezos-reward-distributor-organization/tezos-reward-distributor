@@ -154,7 +154,7 @@ class BatchPayer():
 
         if not payment_items:
             logger.info("No payment items found, returning...")
-            return payment_items_in, 0
+            return payment_items_in, 0, 0, 0
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
@@ -190,7 +190,7 @@ class BatchPayer():
                 self.plugins_manager.send_admin_notification(subject, message)
 
                 # Exit early since nothing can be paid
-                return payment_items, 0, 0
+                return payment_items, 0, 0, 0
 
             elif number_future_payable_cycles < 1:
 
