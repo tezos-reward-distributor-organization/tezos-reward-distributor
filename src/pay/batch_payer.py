@@ -35,7 +35,11 @@ FEE_INI = 'fee.ini'
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
+# For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
+HARD_STORAGE_LIMIT_PER_OPERATION = 60000
+COST_PER_BYTE = 250
+MUTEZ_PER_GAS_UNIT = 0.1
 
 
 class BatchPayer():
@@ -273,14 +277,15 @@ class BatchPayer():
         sleep(slp_tm)
 
     def simulate_single_operation(self, payment_item, pymnt_amnt, branch, chain_id):
-        # Initial gas and transaction limits
+        # Initial gas, storage and transaction limits
         gas_limit = str(HARD_GAS_LIMIT_PER_OPERATION)
         tx_fee = self.default_fee
+        storage = HARD_STORAGE_LIMIT_PER_OPERATION
 
         content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
             .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(self.base_counter + 1)) \
             .replace("%fee%", str(tx_fee)).replace("%gas_limit%", gas_limit).replace(
-            "%storage_limit%", str(self.storage_limit))
+            "%storage_limit%", str(storage))
 
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", content)
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
@@ -297,19 +302,28 @@ class BatchPayer():
         op = run_ops_parsed["contents"][0]
         status = op["metadata"]["operation_result"]["status"]
         if status == 'applied':
+            # Calculate actual consumed gas amount
             consumed_gas = int(op["metadata"]["operation_result"]["consumed_gas"])
             internal_operation_results = op["metadata"]["internal_operation_results"]
             for internal_op in internal_operation_results:
                 consumed_gas += int(internal_op['result']['consumed_gas'])
+            # Calculate actual used storage
+            storage = 0
+            if 'paid_storage_size_diff' in op['metadata']['operation_result']:
+                storage += op['metadata']['operation_result']['paid_storage_size_diff']
+            for internal_op in internal_operation_results:
+                if 'paid_storage_size_diff' in internal_op['result']:
+                    storage += internal_op['result']['paid_storage_size_diff']
+
         else:
             op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
             logger.error(
                 "Error while validating operation - Status: {}, Message: {}".format(status, op_error))
             return PaymentStatus.FAIL, ""
 
-        gas_limit = consumed_gas
-        tx_fee += int(consumed_gas * 0.1)
-        return gas_limit, tx_fee
+        # Calculate needed fee for extra consumed gas
+        tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
+        return consumed_gas, tx_fee, storage
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
@@ -333,13 +347,26 @@ class BatchPayer():
             storage = self.storage_limit
             pymnt_amnt = payment_item.amount  # expects in micro tezos
 
+            # TRD extension for non scriptless contract accounts
+            gas_limit, tx_fee = self.gas_limit, self.default_fee
+            if payment_item.paymentaddress.startswith('KT'):
+                simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
+                gas_limit, tx_fee, storage = simulation_results
+                burn_fee = COST_PER_BYTE * storage
+                total_fee = tx_fee + burn_fee
+                # Bound the total (baker and burn) fee by the reward amount in case of KT1 accounts
+                if total_fee > pymnt_amnt:
+                    logger.debug("Payment to {} script requires higher fees than reward amount. Skipping."
+                                 .format(payment_item.paymentaddress))
+                    continue
+
             if payment_item.needs_activation:
                 storage += RA_STORAGE
                 if self.delegator_pays_ra_fee:
                     pymnt_amnt = max(pymnt_amnt - RA_BURN_FEE, 0)  # ensure not less than 0
 
             if self.delegator_pays_xfer_fee:
-                pymnt_amnt = max(pymnt_amnt - self.default_fee, 0)  # ensure not less than 0
+                pymnt_amnt = max(pymnt_amnt - tx_fee, 0)  # ensure not less than 0
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
@@ -348,9 +375,6 @@ class BatchPayer():
                 continue
 
             op_counter.inc()
-
-            # TRD extension for non scriptless contract accounts
-            gas_limit, tx_fee = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id) if payment_item.paymentaddress.startswith('KT') else (self.gas_limit, self.default_fee)
 
             content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
