@@ -93,7 +93,7 @@ class ClientManager:
                                   f'and specify the url using the flag -E http://<signer_addr>:<port>')
         else:
             response = response.json()
-            if not 'public_key' in response:
+            if 'public_key' not in response:
                 raise ClientException(f'The secret key of the payout address {key_name} was not imported to the signer!\n'
                                       f'Error querying the signer at url {signer_url}. \n'
                                       f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
