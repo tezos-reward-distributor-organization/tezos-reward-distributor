@@ -307,16 +307,19 @@ class BatchPayer():
         if status == 'applied':
             # Calculate actual consumed gas amount
             consumed_gas = int(op["metadata"]["operation_result"]["consumed_gas"])
-            internal_operation_results = op["metadata"]["internal_operation_results"]
-            for internal_op in internal_operation_results:
-                consumed_gas += int(internal_op['result']['consumed_gas'])
+            if "internal_operation_results" in op["metadata"]:
+                internal_operation_results = op["metadata"]["internal_operation_results"]
+                for internal_op in internal_operation_results:
+                    consumed_gas += int(internal_op['result']['consumed_gas'])
             # Calculate actual used storage
             storage = 0
             if 'paid_storage_size_diff' in op['metadata']['operation_result']:
                 storage += op['metadata']['operation_result']['paid_storage_size_diff']
-            for internal_op in internal_operation_results:
-                if 'paid_storage_size_diff' in internal_op['result']:
-                    storage += internal_op['result']['paid_storage_size_diff']
+            if "internal_operation_results" in op["metadata"]:
+                internal_operation_results = op["metadata"]["internal_operation_results"]
+                for internal_op in internal_operation_results:
+                    if 'paid_storage_size_diff' in internal_op['result']:
+                        storage += internal_op['result']['paid_storage_size_diff']
 
         else:
             op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
