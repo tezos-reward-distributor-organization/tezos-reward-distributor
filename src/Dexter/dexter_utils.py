@@ -31,6 +31,7 @@ def process_original_delegators_map(delegator_map, contract_id, snapshot_block, 
             delegator_map[delegator] = {}
             delegator_map[delegator]['staking_balance'] = balance
             delegator_map[delegator]['current_balance'] = dexter_liquidity_provider_map[delegator]['current_balance']
+        delegator_map[delegator]['originaladdress'] = contract_id
 
     # url = 'https://api.tzstats.com/tables/op?hash=onydXMUCP5JFQp19VfFk6WJ54LftNxo3a34sw1uE3CbbxhmMNw3&limit=1000&columns=receiver,volume'
     # resp = requests.get(url, timeout=5)

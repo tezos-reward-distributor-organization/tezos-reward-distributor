@@ -26,7 +26,11 @@ class TzStatsRewardApiImpl(RewardApi):
 
         snapshot_level = self.helper.get_snapshot_level(cycle)
         for delegator in self.dexter_contracts_set:
-            dxtz.process_original_delegators_map(delegators_balances_dict, delegator, snapshot_level, self.helper)
+            if delegator in delegators_balances_dict:
+                dxtz.process_original_delegators_map(delegators_balances_dict, delegator, snapshot_level, self.helper)
+            else:
+                logger.warning(f"The configured Dexter account {delegator} is not delegated to {self.helper.baking_address} "
+                            f"at snapshot level {snapshot_level} corresponding to payout cycle {cycle} or has a zero rewards")
 
         return RewardProviderModel(delegate_staking_balance, total_reward_amount, delegators_balances_dict)
 
