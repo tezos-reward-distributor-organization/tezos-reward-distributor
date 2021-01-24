@@ -19,7 +19,7 @@ types = {
 
 
 class RewardLog:
-    def __init__(self, address, type, staking_balance, current_balance, originaladdress = None) -> None:
+    def __init__(self, address, type, staking_balance, current_balance, originaladdress=None) -> None:
         super().__init__()
         self.staking_balance = staking_balance
         self.current_balance = current_balance
