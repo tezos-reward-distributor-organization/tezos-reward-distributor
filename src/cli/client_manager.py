@@ -77,27 +77,43 @@ class ClientManager:
         signer_url = self.signer_endpoint
         cmd = f'keys/{key_name}'
         url = os.path.join(signer_url, cmd)
-        response = requests.get(url, timeout=timeout)
+        try:
+            response = requests.get(url, timeout=timeout)
+        except Exception as e:
+            raise ClientException(f'Exception: {e}\n'
+                                  f'Error querying the signer at url {signer_url}. \n'
+                                  f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
+                                  f'import the secret key of the payout address {key_name} \n'
+                                  f'and specify the url using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)')
         if not (response.status_code == 200):
-            raise ClientException(f"Please import the secret key to the signer before using payment address {key_name} "
-                                  f"'{response.text}'")
+            raise ClientException(f'{response.text}\n'
+                                  f'Error querying the signer at url {signer_url}. \n'
+                                  f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
+                                  f'import the secret key of the payout address {key_name} \n'
+                                  f'and specify the url using the flag -E http://<signer_addr>:<port>')
         else:
             response = response.json()
-            if 'public_key' in response:
-                return True
+            if not 'public_key' in response:
+                raise ClientException(f'The secret key of the payout address {key_name} was not imported to the signer!\n'
+                                      f'Error querying the signer at url {signer_url}. \n'
+                                      f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
+                                      f'import the secret key of the payout address {key_name} \n'
+                                      f'and specify the url using the flag -E http://<signer_addr>:<port>')
 
-    def get_authorized_keys(self, key_name, timeout=None):
+    def get_authorized_keys(self, timeout=None):
         signer_url = self.signer_endpoint
         cmd = 'authorized_keys'
         url = os.path.join(signer_url, cmd)
         response = requests.get(url, timeout=timeout)
         if not (response.status_code == 200):
-            raise ClientException(f"Please import the secret key to the signer before using payment address {key_name} "
-                                  f"'{response.text}'")
+            raise ClientException(f'{response.text}\n'
+                                  f'Error querying the signer at url {signer_url}. \n'
+                                  f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
+                                  f'import the secret key of the payout address \n'
+                                  f'and specify the url using the flag -E http://<signer_addr>:<port>')
         else:
             response = response.json()
-            if 'public_key' in response:
-                return True
+            return response
 
     def get_bootstrapped(self):
         # /monitor/bootstrapped is a stream of data that only terminates
