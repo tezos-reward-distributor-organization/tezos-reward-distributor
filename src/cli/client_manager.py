@@ -25,7 +25,7 @@ class ClientManager:
     def get_node_url(self) -> str:
         return self.node_endpoint
 
-    def request_url(self, cmd, verbose_override=None, timeout=None):
+    def request_url(self, cmd, timeout=None):
         url = self.get_node_url() + cmd
         response = requests.get(url, timeout=timeout)
         if not (response.status_code == 200):
@@ -35,7 +35,7 @@ class ClientManager:
             return response.status_code, ""
         return response.status_code, response.json()
 
-    def request_url_post(self, cmd, json_params, verbose_override=None, timeout=None):
+    def request_url_post(self, cmd, json_params, timeout=None):
         url = self.get_node_url() + cmd
         headers = {'content-type': "application/json", 'cache-control': "no-cache"}
         response = requests.request("POST", url, data=json_params, headers=headers, timeout=timeout)

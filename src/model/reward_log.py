@@ -19,12 +19,13 @@ types = {
 
 
 class RewardLog:
-    def __init__(self, address, type, staking_balance, current_balance) -> None:
+    def __init__(self, address, type, staking_balance, current_balance, originaladdress=None) -> None:
         super().__init__()
         self.staking_balance = staking_balance
         self.current_balance = current_balance
         self.address = address
         self.paymentaddress = address
+        self.originaladdress = originaladdress if originaladdress is not None else address
         self.needs_activation = False
         self.type = type
         self.desc = ""

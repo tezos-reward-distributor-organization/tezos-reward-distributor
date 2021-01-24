@@ -83,9 +83,10 @@ class RpcRewardApiImpl(RewardApi):
                     logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
                     reward_data["total_rewards"] = 0
 
-            _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
-            for delegator in self.dexter_contracts_set:
-                dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
+            # TODO: support Dexter for RPC
+            # _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
+            # for delegator in self.dexter_contracts_set:
+            #     dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
 
             reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
                                                reward_data["delegators"])
