@@ -35,6 +35,11 @@ FEE_INI = 'fee.ini'
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
+# This fee limit is set to allow payouts to ovens
+# Other KT accounts with higher fee requirements will be skipped
+# TODO: define set of known contract formats and make this fee for unknown contracts configurable
+FEE_LIMIT_CONTRACTS = 12444
+
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
 HARD_STORAGE_LIMIT_PER_OPERATION = 60000
@@ -263,8 +268,9 @@ class BatchPayer():
                 self.wait_random()
 
         for payment_item in payment_items:
-            payment_item.paid = status
-            payment_item.hash = operation_hash
+            if payment_item.paid == PaymentStatus.UNDEFINED:
+                payment_item.paid = status
+                payment_item.hash = operation_hash
 
         return payment_items, attempt_count
 
@@ -297,7 +303,7 @@ class BatchPayer():
             logger.debug("Error in run_operation, request ->{}<-".format(runops_command_str))
             logger.debug("---")
             logger.debug("Error in run_operation, response ->{}<-".format(runops_command_response))
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.FAIL, []
         run_ops_parsed = parse_json_response(runops_command_response)
         op = run_ops_parsed["contents"][0]
         status = op["metadata"]["operation_result"]["status"]
@@ -319,11 +325,12 @@ class BatchPayer():
             op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
             logger.error(
                 "Error while validating operation - Status: {}, Message: {}".format(status, op_error))
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.FAIL, []
 
         # Calculate needed fee for extra consumed gas
         tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
-        return consumed_gas, tx_fee, storage
+        simulation_results = consumed_gas, tx_fee, storage
+        return PaymentStatus.DONE, simulation_results
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
@@ -350,14 +357,18 @@ class BatchPayer():
             # TRD extension for non scriptless contract accounts
             gas_limit, tx_fee = self.gas_limit, self.default_fee
             if payment_item.paymentaddress.startswith('KT'):
-                simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
+                simulation_status, simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
+                if simulation_status == PaymentStatus.FAIL:
+                    payment_item.paid = PaymentStatus.FAIL
+                    continue
                 gas_limit, tx_fee, storage = simulation_results
                 burn_fee = COST_PER_BYTE * storage
                 total_fee = tx_fee + burn_fee
                 # Bound the total (baker and burn) fee by the reward amount in case of KT1 accounts
-                if total_fee > pymnt_amnt:
+                if total_fee > FEE_LIMIT_CONTRACTS:
                     logger.debug("Payment to {} script requires higher fees than reward amount. Skipping."
                                  .format(payment_item.paymentaddress))
+                    payment_item.paid = PaymentStatus.FAIL
                     continue
 
             if payment_item.needs_activation:
