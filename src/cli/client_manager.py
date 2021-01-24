@@ -5,7 +5,7 @@ from datetime import datetime
 
 from Constants import TEZOS_RPC_PORT
 from exception.client import ClientException
-from log_config import main_logger
+from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
@@ -25,7 +25,12 @@ class ClientManager:
     def get_node_url(self) -> str:
         return self.node_endpoint
 
-    def request_url(self, cmd, timeout=None):
+    def request_url(self,
+                    cmd,
+                    timeout=None,
+                    verbose_override=True):
+        if verbose_override:
+            verbose_logger.debug("--> Verbose : Command is |{}|".format(cmd))
         url = self.get_node_url() + cmd
         response = requests.get(url, timeout=timeout)
         if not (response.status_code == 200):
@@ -33,9 +38,17 @@ class ClientManager:
             logger.debug("---")
             logger.debug("Error, response ->{}<-".format(response.text))
             return response.status_code, ""
-        return response.status_code, response.json()
+        output = response.json()
+        verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
+        return response.status_code, output
 
-    def request_url_post(self, cmd, json_params, timeout=None):
+    def request_url_post(self,
+                         cmd,
+                         json_params,
+                         timeout=None,
+                         verbose_override=True):
+        if verbose_override:
+            verbose_logger.debug("--> Verbose : Command is |{}|, Params are |{}|".format(cmd, json_params))
         url = self.get_node_url() + cmd
         headers = {'content-type': "application/json", 'cache-control': "no-cache"}
         response = requests.request("POST", url, data=json_params, headers=headers, timeout=timeout)
@@ -44,7 +57,9 @@ class ClientManager:
             logger.debug("---")
             logger.debug("Error, response ->{}<-".format(response.text))
             return response.status_code, ""
-        return response.status_code, response.json()
+        output = response.json()
+        verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
+        return response.status_code, output
 
     def sign(self, bytes, key_name, timeout=None):
         json_params = json.dumps('03' + bytes)

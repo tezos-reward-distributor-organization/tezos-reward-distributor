@@ -331,12 +331,14 @@ class BatchPayer():
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
-            _, counter = self.wllt_clnt_mngr.request_url(self.comm_counter)
+            _, counter = self.wllt_clnt_mngr.request_url(self.comm_counter,
+                                                         verbose_override=False)
             counter = int(counter)
             self.base_counter = int(counter)
             op_counter.set(self.base_counter)
 
-        _, head = self.wllt_clnt_mngr.request_url(self.comm_head, verbose_override=False)
+        _, head = self.wllt_clnt_mngr.request_url(self.comm_head,
+                                                  verbose_override=False)
         branch = head["hash"]
         chain_id = head["chain_id"]
         protocol = head["metadata"]["protocol"]
@@ -470,10 +472,12 @@ class BatchPayer():
 
         signed_operation_bytes = bytes + decoded_signature
 
-        _, head = self.wllt_clnt_mngr.request_url(self.comm_head, verbose_override=False)
+        _, head = self.wllt_clnt_mngr.request_url(self.comm_head,
+                                                  verbose_override=False)
         last_level_before_injection = head['header']['level']
 
-        status, operation_hash = self.wllt_clnt_mngr.request_url_post(self.comm_inject, json.dumps(signed_operation_bytes))
+        status, operation_hash = self.wllt_clnt_mngr.request_url_post(self.comm_inject,
+                                                                      json.dumps(signed_operation_bytes))
         if not (status == 200):
             logger.error("Error in inject operation")
             return PaymentStatus.FAIL, ""
