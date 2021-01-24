@@ -148,6 +148,10 @@ class BatchPayer():
         sum_burn_fees = 0
         for pi in unprocessed_payment_items:
 
+            # Reinitialize status for items fetched from failed payment files
+            if pi.paid == PaymentStatus.FAIL:
+                pi.paid = PaymentStatus.UNDEFINED
+
             zt = self.zero_threshold
             if pi.needs_activation and self.delegator_pays_ra_fee:
                 # Need to apply this fee to only those which need reactivation
