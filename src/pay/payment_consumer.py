@@ -82,13 +82,13 @@ class PaymentConsumer(threading.Thread):
 
                 logger.info("Starting payments for cycle {}".format(pymnt_cycle))
 
-                # Merge payments to same address
-                phaseMerge = CalculatePhaseMerge()
-                payment_items = phaseMerge.calculate(payment_items)
-
                 # Handle remapping of payment to alternate address
                 phaseMapping = CalculatePhaseMapping()
                 payment_items = phaseMapping.calculate(payment_items, self.dest_map)
+
+                # Merge payments to same address
+                phaseMerge = CalculatePhaseMerge()
+                payment_items = phaseMerge.calculate(payment_items)
 
                 # Filter zero-balance addresses based on config
                 phaseZeroBalance = CalculatePhaseZeroBalance()
