@@ -31,7 +31,7 @@ def process_original_delegators_map(delegator_map, contract_id, snapshot_block, 
             delegator_map[delegator] = {}
             delegator_map[delegator]['staking_balance'] = balance
             delegator_map[delegator]['current_balance'] = dexter_liquidity_provider_map[delegator]['current_balance']
-        delegator_map[delegator]['originaladdress'] = contract_id
+            delegator_map[delegator]['originaladdress'] = contract_id
 
 
 def parse_dexter_storage(storage_input):
