@@ -297,7 +297,7 @@ class BatchPayer():
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
 
         status, run_ops_parsed = self.wllt_clnt_mngr.request_url_post(cmd=self.comm_runops,
-                                                                               json_params=runops_json)
+                                                                      json_params=runops_json)
         if not (status == 200):
             logger.warning("Error in run_operation")
             return PaymentStatus.FAIL, []
