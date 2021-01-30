@@ -17,7 +17,8 @@ class Args:
         self.release_override = 0
         self.payment_offset = 0
         self.network = 'DELPHINET'
-        self.node_addr = ''
+        self.node_endpoint = ''
+        self.signer_endpoint = ''
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = node_addr_public
         self.reports_base = join(dirname(__file__), reward_data_provider)
@@ -88,11 +89,10 @@ test_logger.addHandler(sh)
 
 
 @patch('main.get_baking_configuration_file', MagicMock(return_value=''))
-@patch('main.get_client_path', MagicMock(return_value='/bin/false'))
 @patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
 @patch('log_config.main_logger', test_logger)
-@patch.multiple('main.WalletClientManager',
-                get_addr_dict_by_pkh=MagicMock(return_value=dummy_addr_dict),
+@patch.multiple('main.ClientManager',
+                check_pkh_known_by_signer=MagicMock(return_value=True),
                 get_bootstrapped=MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('main.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 class RpcApiTest(unittest.TestCase):
@@ -101,6 +101,6 @@ class RpcApiTest(unittest.TestCase):
 
         # Test with PRPC node
         args = Args(initial_cycle=90, reward_data_provider='prpc', node_addr_public='https://delphinet-tezos.giganode.io')
-        args.node_addr = 'https://delphinet-tezos.giganode.io:443'
+        args.node_endpoint = 'https://delphinet-tezos.giganode.io:443'
         args.docker = True
         main(args)

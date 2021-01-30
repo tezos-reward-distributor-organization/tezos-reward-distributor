@@ -28,7 +28,7 @@ BOOTSTRAP_SLEEP = 8
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', api_base_url=None,
+                 dry_run, client_manager, node_url, provider_factory, node_url_public='', api_base_url=None,
                  retry_injected=False):
         super(PaymentProducer, self).__init__()
 
@@ -43,7 +43,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.name = name
 
         self.node_url = node_url
-        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.client_manager = client_manager
         self.reward_api = provider_factory.newRewardApi(
             network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
         self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
@@ -321,11 +321,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         # Get RPC node's (-A) bootstrap time. If bootstrap time + 2 minutes is
         # before local time, node is not bootstrapped.
         #
-        # wllt_clnt_mngr is a super class of SimpleClientManager which interfaces
+        # clnt_mngr is a super class of SimpleClientManager which interfaces
         # with the tezos-node used for txn forging/signing/injection. This is the
         # node which we need to determine bootstrapped state
         try:
-            boot_time = self.wllt_clnt_mngr.get_bootstrapped()
+            boot_time = self.client_manager.get_bootstrapped()
             utc_time = datetime.utcnow()
             if (boot_time + timedelta(minutes=2)) < utc_time:
                 logger.info("Current time is '{}', latest block of local node is '{}'."
