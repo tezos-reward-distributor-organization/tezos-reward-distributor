@@ -50,7 +50,7 @@ messages = {
 }
 
 parser = None
-wllt_clnt_mngr = None
+clnt_mngr = None
 network_config = None
 
 
@@ -411,9 +411,9 @@ def main(args):
         print("Configuration file is created at '{}'".format(config_file_path))
 
 
-def load_config_file(wllt_clnt_mngr, network_config, master_cfg):
+def load_config_file(clnt_mngr, network_config, master_cfg):
     provider_factory = ProviderFactory(args.reward_data_provider)
-    parser = BakingYamlConfParser(None, wllt_clnt_mngr, provider_factory, network_config, args.node_addr,
+    parser = BakingYamlConfParser(None, clnt_mngr, provider_factory, network_config, args.node_addr,
                                   api_base_url=args.api_base_url)
     parser.parse()
     parser.validate()

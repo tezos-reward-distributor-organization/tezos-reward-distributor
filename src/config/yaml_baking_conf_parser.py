@@ -18,9 +18,9 @@ PKH_LENGHT = 36
 
 
 class BakingYamlConfParser(YamlConfParser):
-    def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, block_api=None, api_base_url=None) -> None:
+    def __init__(self, yaml_text, clnt_mngr, provider_factory, network_config, node_url, block_api=None, api_base_url=None) -> None:
         super().__init__(yaml_text)
-        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.clnt_mngr = clnt_mngr
         self.network_config = network_config
         if block_api is None:
             block_api = provider_factory.newBlockApi(network_config, node_url, api_base_url=api_base_url)
@@ -133,7 +133,7 @@ class BakingYamlConfParser(YamlConfParser):
             raise ConfigurationException("KT addresses cannot be used for payments. Only tz addresses are allowed")
 
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
-            self.wllt_clnt_mngr.check_pkh_known_by_signer(pymnt_addr)
+            self.clnt_mngr.check_pkh_known_by_signer(pymnt_addr)
 
             conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.TZ
             conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr

@@ -321,7 +321,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         # Get RPC node's (-A) bootstrap time. If bootstrap time + 2 minutes is
         # before local time, node is not bootstrapped.
         #
-        # wllt_clnt_mngr is a super class of SimpleClientManager which interfaces
+        # clnt_mngr is a super class of SimpleClientManager which interfaces
         # with the tezos-node used for txn forging/signing/injection. This is the
         # node which we need to determine bootstrapped state
         try:

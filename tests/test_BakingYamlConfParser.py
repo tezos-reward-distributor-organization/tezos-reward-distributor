@@ -113,7 +113,7 @@ class TestYamlAppConfParser(TestCase):
         """
 
         block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
-        cnf_prsr = BakingYamlConfParser(data, wllt_clnt_mngr=None, provider_factory=None,
+        cnf_prsr = BakingYamlConfParser(data, clnt_mngr=None, provider_factory=None,
                                         network_config=None, node_url="", block_api=block_api)
         cnf_prsr.parse()
         cnf_prsr.validate_plugins(cnf_prsr.get_conf_obj())

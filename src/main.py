@@ -65,7 +65,7 @@ def main(args):
         logger.info("Loading baking configuration file {}".format(config_file_path))
 
         parser = BakingYamlConfParser(yaml_text=ConfigParser.load_file(config_file_path),
-                                      wllt_clnt_mngr=client_manager,
+                                      clnt_mngr=client_manager,
                                       provider_factory=provider_factory,
                                       network_config=network_config,
                                       node_url=args.node_endpoint,

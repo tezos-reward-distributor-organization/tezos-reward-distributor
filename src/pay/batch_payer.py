@@ -47,12 +47,12 @@ MUTEZ_PER_GAS_UNIT = 0.1
 
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee,
+    def __init__(self, node_url, pymnt_addr, clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee,
                  network_config, plugins_manager, dry_run):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
-        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.clnt_mngr = clnt_mngr
         self.network_config = network_config
         self.zero_threshold = 1  # 1 mutez = 0.000001 XTZ
         self.plugins_manager = plugins_manager
@@ -95,7 +95,7 @@ class BatchPayer():
                 self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")):
             self.source = self.pymnt_addr
         else:
-            known_contracts = self.wllt_clnt_mngr.get_known_contracts_by_alias()
+            known_contracts = self.clnt_mngr.get_known_contracts_by_alias()
             if self.pymnt_addr in known_contracts:
                 self.source = known_contracts[self.pymnt_addr]
             else:
@@ -296,7 +296,7 @@ class BatchPayer():
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", content)
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
 
-        status, run_ops_parsed = self.wllt_clnt_mngr.request_url_post(cmd=self.comm_runops,
+        status, run_ops_parsed = self.clnt_mngr.request_url_post(cmd=self.comm_runops,
                                                                       json_params=runops_json)
         if not (status == 200):
             logger.warning("Error in run_operation")
@@ -334,14 +334,12 @@ class BatchPayer():
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
-            _, counter = self.wllt_clnt_mngr.request_url(self.comm_counter,
-                                                         verbose_override=False)
+            _, counter = self.clnt_mngr.request_url(self.comm_counter)
             counter = int(counter)
             self.base_counter = int(counter)
             op_counter.set(self.base_counter)
 
-        _, head = self.wllt_clnt_mngr.request_url(self.comm_head,
-                                                  verbose_override=False)
+        _, head = self.clnt_mngr.request_url(self.comm_head)
         branch = head["hash"]
         chain_id = head["chain_id"]
         protocol = head["metadata"]["protocol"]
@@ -404,7 +402,7 @@ class BatchPayer():
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
 
-        status, run_ops_parsed = self.wllt_clnt_mngr.request_url_post(self.comm_runops, runops_json)
+        status, run_ops_parsed = self.clnt_mngr.request_url_post(self.comm_runops, runops_json)
         if not (status == 200):
             logger.error("Error in run_operation")
             return PaymentStatus.FAIL, ""
@@ -429,12 +427,12 @@ class BatchPayer():
 
         # if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
 
-        status, bytes = self.wllt_clnt_mngr.request_url_post(self.comm_forge, forge_json)
+        status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if not (status == 200):
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, ""
 
-        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager)
+        signed_bytes = self.clnt_mngr.sign(bytes, self.manager)
 
         # pre-apply operations
         logger.debug("Preapplying the operations")
@@ -442,7 +440,7 @@ class BatchPayer():
 
         # if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
 
-        status, preapply_command_response = self.wllt_clnt_mngr.request_url_post(self.comm_preapply, preapply_json)
+        status, preapply_command_response = self.clnt_mngr.request_url_post(self.comm_preapply, preapply_json)
         if not (status == 200):
             logger.error("Error in preapply operation")
             return PaymentStatus.FAIL, ""
@@ -475,11 +473,10 @@ class BatchPayer():
 
         signed_operation_bytes = bytes + decoded_signature
 
-        _, head = self.wllt_clnt_mngr.request_url(self.comm_head,
-                                                  verbose_override=False)
+        _, head = self.clnt_mngr.request_url(self.comm_head)
         last_level_before_injection = head['header']['level']
 
-        status, operation_hash = self.wllt_clnt_mngr.request_url_post(self.comm_inject,
+        status, operation_hash = self.clnt_mngr.request_url_post(self.comm_inject,
                                                                       json.dumps(signed_operation_bytes))
         if not (status == 200):
             logger.error("Error in inject operation")
@@ -492,7 +489,7 @@ class BatchPayer():
         for i in range(last_level_before_injection + 1, last_level_before_injection + 6):
             sleep(self.network_config['BLOCK_TIME_IN_SEC'])
             cmd = self.comm_wait.replace("%BLOCK_HASH%", 'head')
-            status, list_op_hash = self.wllt_clnt_mngr.request_url(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * PATIENCE)
+            status, list_op_hash = self.clnt_mngr.request_url(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * PATIENCE)
             for op_hashes in list_op_hash:
                 if operation_hash in op_hashes:
                     logger.info("Operation {} is included".format(operation_hash))
@@ -503,7 +500,7 @@ class BatchPayer():
 
     def __get_payment_address_balance(self):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
-        status, payment_address_balance = self.wllt_clnt_mngr.request_url(get_current_balance_request)
+        status, payment_address_balance = self.clnt_mngr.request_url(get_current_balance_request)
         return int(payment_address_balance)
 
 
