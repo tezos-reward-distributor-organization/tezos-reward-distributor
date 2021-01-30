@@ -12,6 +12,7 @@ logger = main_logger
 COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 MAX_NB_TRIES = 3
 
+
 class ClientManager:
     def __init__(self, node_endpoint, signer_endpoint) -> None:
         super().__init__()
@@ -60,7 +61,7 @@ class ClientManager:
                                         json_params=json_params,
                                         headers=headers,
                                         timeout=timeout)
-        except Exception as _:
+        except Exception:
             return -1, ""
 
         if not (response.status_code == 200):
@@ -185,7 +186,7 @@ class ClientManager:
                 logger.debug(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
                              f"Error, exception ->{e}<-")
                 # If all MAX_NB_TRIES tries were not successful
-                if try_i == MAX_NB_TRIES-1:
+                if try_i == MAX_NB_TRIES - 1:
                     raise Exception(e)
         if response is None:
             return
@@ -194,4 +195,3 @@ class ClientManager:
             logger.debug(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
                          f"Error, response ->{response.text}<-")
         return response
-
