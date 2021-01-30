@@ -1,11 +1,42 @@
-from time import sleep
-from NetworkConfiguration import default_network_config_map
-from log_config import main_logger, DEFAULT_LOG_FILE
-
 import argparse
+from time import sleep
+import pip
+import pkg_resources
 
+from log_config import main_logger, DEFAULT_LOG_FILE
+from NetworkConfiguration import default_network_config_map
+
+
+REQUIREMENTS_FILE_PATH = 'requirements.txt'
 LINER = "--------------------------------------------"
 logger = main_logger
+
+
+def install(package):
+    if hasattr(pip, 'main'):
+        pip.main(['install', package])
+    else:
+        pip._internal.main(['install', package])
+
+
+def check_requirements():
+    with open(REQUIREMENTS_FILE_PATH, 'r') as requirements:
+        for requirement in requirements:
+            try:
+                pkg_resources.require(requirement)
+            except Exception as e:
+                requirement = requirement.replace('\n', '')
+                print('The requirement {} was not found: {}\nWould you like to install {}? (y/n)'.format(requirement, e, requirement))
+                value = input().lower()
+                if value == 'y':
+                    install(requirement)
+                else:
+                    print('Please make sure to install all the required packages before using the TRD.\n'
+                          'To install the requirements: pip3 install -r requirements.txt')
+                    exit()
+
+
+check_requirements()
 
 
 def print_banner(args, script_name):
@@ -34,14 +65,14 @@ def parse_arguments():
     add_argument_release_override(parser)
     add_argument_payment_offset(parser)
     add_argument_network(parser)
-    add_argument_node_addr(parser)
+    add_argument_node_endpoint(parser)
     add_argument_provider(parser)
     add_argument_node_addr_public(parser)
     add_argument_reports_base(parser)
     add_argument_config_dir(parser)
     add_argument_dry(parser)
     add_argument_dry_no_consumer(parser)
-    add_argument_executable_dirs(parser)
+    add_argument_signer_endpoint(parser)
     add_argument_docker(parser)
     add_argument_background_service(parser)
     add_argument_stats(parser)
@@ -115,8 +146,8 @@ def add_argument_network(parser):
                         default='MAINNET')
 
 
-def add_argument_node_addr(parser):
-    parser.add_argument("-A", "--node_addr",
+def add_argument_node_endpoint(parser):
+    parser.add_argument("-A", "--node_endpoint",
                         help="Node (host:port pair) potentially with protocol prefix especially if tls encryption is used. Default is http://127.0.0.1:8732. "
                              "This is the main Tezos node used by the client for rpc queries and operation injections.",
                         default='http://127.0.0.1:8732')
@@ -155,12 +186,10 @@ def add_argument_dry_no_consumer(parser):
                         action="store_true")
 
 
-def add_argument_executable_dirs(parser):
-    parser.add_argument("-E", "--executable_dirs",
-                        help="Comma separated list of directories to search for client executable. Prefer single "
-                             "location when setting client directory. If -d is set, point to location where the tezos docker "
-                             "script (e.g. mainnet.sh for mainnet) is found. Default value is given for minimum configuration effort.",
-                        default='~/,~/tezos')
+def add_argument_signer_endpoint(parser):
+    parser.add_argument("-E", "--signer_endpoint",
+                        help="URL used by the Tezos-signer to accept HTTP requests.",
+                        default='http://127.0.0.1:6732')
 
 
 def add_argument_docker(parser):

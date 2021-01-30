@@ -1,22 +1,26 @@
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
+from Constants import RewardsType
 from exception.configuration import ConfigurationException
+from log_config import main_logger
 from model.baking_conf import FOUNDERS_MAP, OWNERS_MAP, BAKING_ADDRESS, SUPPORTERS_SET, SERVICE_FEE, \
     FULL_SUPPORTERS_SET, MIN_DELEGATION_AMT, PAYMENT_ADDRESS, SPECIALS_MAP, \
     DELEGATOR_PAYS_XFER_FEE, REACTIVATE_ZEROED, DELEGATOR_PAYS_RA_FEE, \
     RULES_MAP, MIN_DELEGATION_KEY, TOF, TOB, TOE, EXCLUDED_DELEGATORS_SET_TOB, \
     EXCLUDED_DELEGATORS_SET_TOE, EXCLUDED_DELEGATORS_SET_TOF, DEST_MAP, PLUGINS_CONF, DEXTER, \
-    CONTRACTS_SET
+    CONTRACTS_SET, REWARDS_TYPE
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
+
+logger = main_logger.getChild("config_parser")
 
 PKH_LENGHT = 36
 
 
 class BakingYamlConfParser(YamlConfParser):
-    def __init__(self, yaml_text, wllt_clnt_mngr, provider_factory, network_config, node_url, block_api=None, api_base_url=None) -> None:
+    def __init__(self, yaml_text, clnt_mngr, provider_factory, network_config, node_url, block_api=None, api_base_url=None) -> None:
         super().__init__(yaml_text)
-        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.clnt_mngr = clnt_mngr
         self.network_config = network_config
         if block_api is None:
             block_api = provider_factory.newBlockApi(network_config, node_url, api_base_url=api_base_url)
@@ -38,6 +42,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.validate_specials_map(conf_obj)
         self.validate_dest_map(conf_obj)
         self.validate_plugins(conf_obj)
+        self.validate_rewards_type(conf_obj)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_XFER_FEE, True)
         self.parse_bool(conf_obj, REACTIVATE_ZEROED, None)
         self.parse_bool(conf_obj, DELEGATOR_PAYS_RA_FEE, None)
@@ -128,60 +133,16 @@ class BakingYamlConfParser(YamlConfParser):
             raise ConfigurationException("KT addresses cannot be used for payments. Only tz addresses are allowed")
 
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
-
-            addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pymnt_addr)
-
-            self.check_sk(addr_obj, pymnt_addr)
+            self.clnt_mngr.check_pkh_known_by_signer(pymnt_addr)
 
             conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.TZ
             conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pymnt_addr
             conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = pymnt_addr
 
         else:
-            if pymnt_addr in self.wllt_clnt_mngr.get_known_contracts_by_alias():
-                pkh = self.wllt_clnt_mngr.get_known_contract_by_alias(pymnt_addr)
-
-                if pkh.startswith("KT"):
-                    raise ConfigurationException("KT addresses cannot be used for payments. Only tz addresses are allowed")
-
-                addr_obj = self.wllt_clnt_mngr.get_addr_dict_by_pkh(pkh)
-
-                self.check_sk(addr_obj, pkh)
-
-                conf_obj[('__%s_type' % PAYMENT_ADDRESS)] = AddrType.KTALS if pkh.startswith("KT") else AddrType.TZALS
-                conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)] = pkh
-                conf_obj[('__%s_manager' % PAYMENT_ADDRESS)] = self.wllt_clnt_mngr.get_manager_for_contract(pkh)
-
-            else:
-                raise ConfigurationException("Payment Address ({}) cannot be translated into a PKH or alias. "
-                                             "If it is an alias import it first. ".format(pymnt_addr))
-
-        # if reveal information is present, do not ask
-        # if 'revealed' in addr_obj:
-        #    revealed = addr_obj['revealed']
-        # else:
-        #   revealed = self.block_api.get_revelation(conf_obj[('__%s_pkh' % PAYMENT_ADDRESS)])
-
-        # payment address needs to be revealed
-        # if not revealed:
-        #   raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
-        #                                "Public key is not revealed.\n"
-        #                                "Use command 'reveal key for <src>' to reveal your public key. \n"
-        #                                "For implicit accounts, setting your account as delegate is enough.\n"
-        #                                "For more information please refer to tezos command line interface."
-        #                                .format(pymnt_addr))
-
-        # if not self.block_api.get_revelation(conf_obj[('%s_manager' % PAYMENT_ADDRESS)]):
-        #    raise ConfigurationException("Payment Address ({}) is not eligible for payments. \n"
-        #                                 "Public key of Manager ({}) is not revealed.\n"
-        #                                 "Use command 'reveal key for <src>' to reveal your public key. \n"
-        #                                 "For implicit accounts, setting your account as delegate is enough.\n"
-        #                                 "For more information please refer to tezos command line interface."
-        #                                 .format(pymnt_addr, conf_obj[('%s_manager' % PAYMENT_ADDRESS)]))
-
-    def check_sk(self, addr_obj, pkh):
-        if not addr_obj['sk']:
-            raise ConfigurationException("No secret key for Address Obj {} with PKH {}".format(addr_obj, pkh))
+            raise ConfigurationException("Payment Address ({}) cannot be translated into a PKH. "
+                                         "Make sure it is a tz1 address and to first import "
+                                         "its corresponding secret key to the signer. ".format(pymnt_addr))
 
     def validate_baking_address(self, conf_obj):
         if BAKING_ADDRESS not in conf_obj or not conf_obj[BAKING_ADDRESS]:
@@ -257,13 +218,30 @@ class BakingYamlConfParser(YamlConfParser):
 
     def validate_plugins(self, conf_obj):
 
+        # if plugins config missing, then no plugins
         if PLUGINS_CONF not in conf_obj:
-            raise ConfigurationException("Parameter '{:s}' is not present in config file. "
-                                         "Please consult the documentation and add this parameter.".format(PLUGINS_CONF))
+            conf_obj[PLUGINS_CONF] = {}
 
         if conf_obj[PLUGINS_CONF] is None or "enabled" not in conf_obj[PLUGINS_CONF]:
-            raise ConfigurationException("Plugins config missing 'enabled' parameter. "
-                                         "Please consult the documentation and add this parameter.")
+            conf_obj[PLUGINS_CONF] = {"enabled": None}
+
+    def validate_rewards_type(self, conf_obj):
+
+        if REWARDS_TYPE not in conf_obj or conf_obj[REWARDS_TYPE] is None:
+            conf_obj[REWARDS_TYPE] = 'actual'
+            logger.warning("[config_parser] Parameter '{:s}' is missing or incorrectly configured. "
+                           "Defaults to 'actual' rewards payout type.".format(REWARDS_TYPE))
+
+        # Validate correct value
+        try:
+            v = conf_obj[REWARDS_TYPE]
+            r_type = RewardsType(v)
+        except ValueError:
+            raise ConfigurationException("'{:s}' is not a valid option for parameter '{:s}'. "
+                                         "Please consult the documentation.".format(v, REWARDS_TYPE))
+
+        # Reset conf object to be the enum
+        conf_obj[REWARDS_TYPE] = r_type
 
     def parse_bool(self, conf_obj, param_name, default):
 

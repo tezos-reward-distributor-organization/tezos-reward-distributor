@@ -18,7 +18,7 @@ class ProviderFactory:
             return RpcRewardApiImpl(network_config, baking_address, node_url)
         elif self.provider == 'prpc':
             if node_url_public == '':
-                node_url_public = PUBLIC_NODE_URL[network_config['NAME']][0]
+                node_url_public = PUBLIC_NODE_URL[network_config['NAME']]
             return RpcRewardApiImpl(network_config, baking_address, node_url_public)
         elif self.provider == 'tzstats':
             return TzStatsRewardApiImpl(network_config, baking_address)

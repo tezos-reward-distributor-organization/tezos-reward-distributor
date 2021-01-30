@@ -33,7 +33,7 @@ def mock_request_get(url, timeout):
 
     if path == "/chains/main/blocks/head":
         return MagicMock(status_code=200, json=lambda: {"metadata": {"level": {"level": 208114, "level_position": 208113, "cycle": 101}}})
-    if path == "/chains/main/blocks/184321/context/raw/json/cycle/90/roll_snapshot":
+    if path == "/chains/main/blocks/178177/context/raw/json/cycle/90/roll_snapshot":
         return MagicMock(status_code=200, json=lambda: 10)
     if path == "/chains/main/blocks/175488/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V":
         return MagicMock(status_code=200, json=lambda: {

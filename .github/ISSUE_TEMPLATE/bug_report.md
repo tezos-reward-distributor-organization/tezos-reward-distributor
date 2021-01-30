@@ -24,7 +24,7 @@ If applicable, add screenshots to help explain your problem.
 **Environment**
  - Source Code Build or Docker
  - Attached configuration
- - Chain mainnet, zeronet, alphanet
+ - Chain mainnet, testnet
  - actual command used
  - Operating system / system specification
 

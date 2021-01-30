@@ -6,7 +6,7 @@ import threading
 from time import sleep
 from datetime import datetime, timedelta
 
-from Constants import RunMode, PaymentStatus
+from Constants import MUTEZ, RunMode, PaymentStatus
 from log_config import main_logger, get_verbose_log_helper
 from model.reward_log import RewardLog
 from model.rules_model import RulesModel
@@ -22,16 +22,16 @@ from util.dir_utils import get_calculation_report_file, get_failed_payments_dir,
 
 logger = main_logger.getChild("payment_producer")
 
-MUTEZ = 1e+6
 BOOTSTRAP_SLEEP = 8
 
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, wllt_clnt_mngr, node_url, provider_factory, node_url_public='', api_base_url=None,
+                 dry_run, client_manager, node_url, provider_factory, node_url_public='', api_base_url=None,
                  retry_injected=False):
         super(PaymentProducer, self).__init__()
+
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
         self.baking_address = baking_cfg.get_baking_address()
@@ -43,7 +43,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.name = name
 
         self.node_url = node_url
-        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.client_manager = client_manager
         self.reward_api = provider_factory.newRewardApi(
             network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
         self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
@@ -55,6 +55,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         else:
             self.reward_api.set_dexter_contracts_set(dexter_contracts_set)
 
+        self.rewards_type = baking_cfg.get_rewards_type()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
         self.nw_config = network_config
@@ -167,32 +168,27 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                     if not self.payments_queue.full():
 
+                        expected_rewards = False
+
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
-                            if self.reward_api.name == 'tzstats' or self.reward_api.name == 'tzkt':
-                                logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation given by tzstats.")
-                                result = self.try_to_pay(pymnt_cycle, expected_reward=True)
-                            else:
-                                logger.error("This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
-                                self.exit()
-                                break
+                            logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation.")
+                            expected_rewards = True
+
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
                         elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
-                            if self.reward_api.name == 'tzstats' or self.reward_api.name == 'tzkt':
-                                logger.warn("Please note that you are doing payouts for frozen rewards!!!")
-                                result = self.try_to_pay(pymnt_cycle)
-                            else:
-                                logger.error("This feature is currently not possible using the rpc provider. Please consider changing the provider using the -P flag.")
-                                self.exit()
-                                break
+                            logger.warn("Please note that you are doing payouts for frozen rewards!!!")
+                            expected_rewards = True if self.reward_api.name == 'RPC' else False
+
                         # If user wants to offset payments within a cycle, check here
-                        elif level_in_cycle < self.payment_offset:
+                        if level_in_cycle < self.payment_offset:
                             wait_offset_blocks = self.payment_offset - level_in_cycle
                             logger.info("Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks." .format(level_in_cycle, self.payment_offset, wait_offset_blocks))
                             self.wait_for_blocks(wait_offset_blocks)
                             continue  # Break/Repeat loop
+
                         else:
-                            result = self.try_to_pay(pymnt_cycle)
+                            result = self.try_to_pay(pymnt_cycle, expected_rewards=expected_rewards)
 
                         if result:
                             # single run is done. Do not continue.
@@ -250,7 +246,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle, expected_reward=False):
+    def try_to_pay(self, pymnt_cycle, expected_rewards=False):
         try:
             logger.info("Payment cycle is " + str(pymnt_cycle))
 
@@ -262,10 +258,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            if expected_reward:
-                reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, expected_reward)
+            # Expected rewards and ideal rewards are the same thing
+            expected_rewards = expected_rewards or self.rewards_type.isIdeal()
+            if expected_rewards:
+                logger.info("Using expected/ideal rewards for payouts calculations")
             else:
-                reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle)
+                logger.info("Using actual rewards for payouts calculations")
+
+            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, expected_rewards)
 
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
@@ -290,7 +290,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 sleep(5.0)
 
                 # 6- create calculations report file. This file contains calculations details
-                self.create_calculations_report(reward_logs, report_file_path, total_amount)
+                self.create_calculations_report(reward_logs, report_file_path, total_amount, expected_rewards)
 
                 # 7- processing of cycle is done
                 logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
@@ -321,11 +321,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         # Get RPC node's (-A) bootstrap time. If bootstrap time + 2 minutes is
         # before local time, node is not bootstrapped.
         #
-        # wllt_clnt_mngr is a super class of SimpleClientManager which interfaces
+        # clnt_mngr is a super class of SimpleClientManager which interfaces
         # with the tezos-node used for txn forging/signing/injection. This is the
         # node which we need to determine bootstrapped state
         try:
-            boot_time = self.wllt_clnt_mngr.get_bootstrapped()
+            boot_time = self.client_manager.get_bootstrapped()
             utc_time = datetime.utcnow()
             if (boot_time + timedelta(minutes=2)) < utc_time:
                 logger.info("Current time is '{}', latest block of local node is '{}'."
@@ -335,14 +335,21 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             logger.error("Unable to determine local node's bootstrap status. Continuing...")
         return True
 
-    def create_calculations_report(self, payment_logs, report_file_path, total_rewards):
+    def create_calculations_report(self, payment_logs, report_file_path, total_rewards, expected_rewards):
+
+        rt = "I" if expected_rewards else "A"
+
+        # Open reports file and write; auto-closes file
         with open(report_file_path, 'w', newline='') as f:
+
             writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
             # write headers and total rewards
             writer.writerow(
                 ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
-                 "skipped", "atphase", "desc", "payment_address"])
+                 "skipped", "atphase", "desc", "payment_address", "rewards_type"])
 
+            # First row is for the baker
             writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
                              "{0:f}".format(1.0),
                              "{0:f}".format(1.0),
@@ -351,7 +358,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                              "{0:f}".format(0.0),
                              "{0:f}".format(0.0),
                              "0", "0", "-1", "Baker",
-                             "None"
+                             "None", rt
                              ])
 
             for pymnt_log in payment_logs:
@@ -365,19 +372,19 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                          "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
                          pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
                          pymnt_log.desc if pymnt_log.desc else "None",
-                         pymnt_log.paymentaddress]
+                         pymnt_log.paymentaddress, rt]
                 writer.writerow(array)
 
                 logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
                              "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
-                             "desc: {:s}, pay_addr: {:s}"
+                             "desc: {:s}, pay_addr: {:s}, type: {:s}"
                              .format(pymnt_log.address, pymnt_log.type,
                                      pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
                                      pymnt_log.ratio, pymnt_log.service_fee_ratio,
                                      pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
                                      pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
                                      "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
-                                     pymnt_log.desc, pymnt_log.paymentaddress))
+                                     pymnt_log.desc, pymnt_log.paymentaddress, rt))
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 

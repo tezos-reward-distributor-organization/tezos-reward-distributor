@@ -14,6 +14,7 @@ REACTIVATE_ZEROED = 'reactivate_zeroed'
 DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
 DELEGATOR_PAYS_RA_FEE = 'delegator_pays_ra_fee'
 PLUGINS_CONF = 'plugins'
+REWARDS_TYPE = 'rewards_type'
 
 # extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
@@ -32,17 +33,13 @@ DEXTER = 'dexter'
 
 
 class BakingConf:
-    def __init__(self, cfg_dict, master_dict=None) -> None:
+    def __init__(self, cfg_dict) -> None:
         super().__init__()
-        self.master_dict = master_dict
         self.cfg_dict = cfg_dict
 
     def get_attribute(self, attr):
         if attr in self.cfg_dict:
             return self.cfg_dict[attr]
-
-        if self.master_dict and attr in self.master_dict:
-            return self.master_dict[attr]
 
         raise Exception("Attribute {} not found in application configuration.".format(attr))
 
@@ -102,6 +99,9 @@ class BakingConf:
 
     def get_plugins_conf(self):
         return self.get_attribute(PLUGINS_CONF)
+
+    def get_rewards_type(self):
+        return self.get_attribute(REWARDS_TYPE)
 
     def __repr__(self) -> str:
         return json.dumps(self.__dict__, cls=CustomJsonEncoder, indent=1)
