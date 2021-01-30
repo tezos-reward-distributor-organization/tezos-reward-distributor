@@ -61,7 +61,8 @@ class Args:
         self.release_override = 0
         self.payment_offset = 0
         self.network = 'MAINNET'
-        self.node_addr = ''
+        self.node_endpoint = ''
+        self.signer_endpoint = ''
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = ''
         self.reports_base = join(dirname(__file__), reward_data_provider)
@@ -97,11 +98,10 @@ def make_config(baking_address, payment_address, service_fee: int,
 @unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 @patch('pay.payment_producer.sleep', MagicMock())
 @patch('main.sleep', MagicMock(sleep=MagicMock()))
-@patch('main.get_client_path', MagicMock(return_value='/bin/false'))
 @patch('main.get_baking_configuration_file', MagicMock(return_value=''))
 @patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
-@patch.multiple('main.WalletClientManager',
-                get_addr_dict_by_pkh=MagicMock(return_value=dummy_addr_dict),
+@patch.multiple('main.ClientManager',
+                check_pkh_known_by_signer=MagicMock(return_value=True),
                 get_bootstrapped=MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('main.ConfigParser')
 class IntegrationTests(unittest.TestCase):

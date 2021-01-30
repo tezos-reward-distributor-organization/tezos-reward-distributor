@@ -1,35 +1,34 @@
 import configparser
 import os
 from random import randint
-from subprocess import TimeoutExpired
 from time import sleep
 
 import base58
+import json
 
-from Constants import MUTEZ, PaymentStatus
+from Constants import PaymentStatus, MUTEZ
 from log_config import main_logger, verbose_logger
-from util.rpc_utils import parse_json_response
 
 logger = main_logger
 
 MAX_TX_PER_BLOCK = 200
 PKH_LENGTH = 36
-CONFIRMATIONS = 1
 PATIENCE = 10
 
-COMM_DELEGATE_BALANCE = "rpc get chains/main/blocks/{}/context/contracts/{}/balance"
-COMM_HEAD = "rpc get /chains/main/blocks/head"
-COMM_COUNTER = "rpc get /chains/main/blocks/head/context/contracts/{}/counter"
+COMM_DELEGATE_BALANCE = "/chains/main/blocks/{}/context/contracts/{}/balance"
+COMM_HEAD = "/chains/main/blocks/head"
+COMM_COUNTER = "/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit":"%gas_limit%","storage_limit":"%storage_limit%","amount":"%AMOUNT%"}'
 FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
 JSON_WRAP = '{"operation": %JSON%,"chain_id":"%chain_id%"}'
-COMM_FORGE = "rpc post /chains/main/blocks/head/helpers/forge/operations with '%JSON%'"
-COMM_RUNOPS = "rpc post /chains/main/blocks/head/helpers/scripts/run_operation with '%JSON%'"
-COMM_PREAPPLY = "rpc post /chains/main/blocks/head/helpers/preapply/operations with '%JSON%'"
-COMM_INJECT = "rpc post /injection/operation with '\"%OPERATION_HASH%\"'"
-COMM_WAIT = "wait for %OPERATION% to be included --confirmations {}".format(CONFIRMATIONS)
+
+COMM_RUNOPS = "/chains/main/blocks/head/helpers/scripts/run_operation"
+COMM_FORGE = "/chains/main/blocks/head/helpers/forge/operations"
+COMM_PREAPPLY = "/chains/main/blocks/head/helpers/preapply/operations"
+COMM_INJECT = "/injection/operation"
+COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 
 FEE_INI = 'fee.ini'
 RA_BURN_FEE = 257000  # 0.257 XTZ
@@ -38,7 +37,7 @@ RA_STORAGE = 300
 # This fee limit is set to allow payouts to ovens
 # Other KT accounts with higher fee requirements will be skipped
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
-FEE_LIMIT_CONTRACTS = 12444
+FEE_LIMIT_CONTRACTS = 21000
 
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
@@ -48,12 +47,12 @@ MUTEZ_PER_GAS_UNIT = 0.1
 
 
 class BatchPayer():
-    def __init__(self, node_url, pymnt_addr, wllt_clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee,
+    def __init__(self, node_url, pymnt_addr, clnt_mngr, delegator_pays_ra_fee, delegator_pays_xfer_fee,
                  network_config, plugins_manager, dry_run):
         super(BatchPayer, self).__init__()
         self.pymnt_addr = pymnt_addr
         self.node_url = node_url
-        self.wllt_clnt_mngr = wllt_clnt_mngr
+        self.clnt_mngr = clnt_mngr
         self.network_config = network_config
         self.zero_threshold = 1  # 1 mutez = 0.000001 XTZ
         self.plugins_manager = plugins_manager
@@ -96,17 +95,14 @@ class BatchPayer():
                 self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")):
             self.source = self.pymnt_addr
         else:
-            known_contracts = self.wllt_clnt_mngr.get_known_contracts_by_alias()
+            known_contracts = self.clnt_mngr.get_known_contracts_by_alias()
             if self.pymnt_addr in known_contracts:
                 self.source = known_contracts[self.pymnt_addr]
             else:
                 raise Exception("pymnt_addr cannot be translated into a PKH or alias: {}".format(self.pymnt_addr))
 
-        self.manager = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.source)['manager']
-        self.manager_alias = self.wllt_clnt_mngr.get_addr_dict_by_pkh(self.manager)['alias']
-
+        self.manager = self.source
         logger.debug("Payment address is {}".format(self.source))
-        logger.debug("Signing address is {}, manager alias is {}".format(self.manager, self.manager_alias))
 
         self.comm_head = COMM_HEAD
         self.comm_counter = COMM_COUNTER.format(self.source)
@@ -299,16 +295,13 @@ class BatchPayer():
 
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", content)
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
-        runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
 
-        result, runops_command_response = self.wllt_clnt_mngr.send_request(runops_command_str)
-        if not result:
-            logger.error("Error in run_operation")
-            logger.debug("Error in run_operation, request ->{}<-".format(runops_command_str))
-            logger.debug("---")
-            logger.debug("Error in run_operation, response ->{}<-".format(runops_command_response))
+        status, run_ops_parsed = self.clnt_mngr.request_url_post(cmd=self.comm_runops,
+                                                                 json_params=runops_json)
+        if not (status == 200):
+            logger.warning("Error in run_operation")
             return PaymentStatus.FAIL, []
-        run_ops_parsed = parse_json_response(runops_command_response)
+
         op = run_ops_parsed["contents"][0]
         status = op["metadata"]["operation_result"]["status"]
         if status == 'applied':
@@ -335,19 +328,18 @@ class BatchPayer():
             return PaymentStatus.FAIL, []
 
         # Calculate needed fee for extra consumed gas
-        tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
+        tx_fee += int((consumed_gas - int(self.gas_limit)) * MUTEZ_PER_GAS_UNIT)
         simulation_results = consumed_gas, tx_fee, storage
         return PaymentStatus.DONE, simulation_results
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
-            _, response = self.wllt_clnt_mngr.send_request(self.comm_counter)
-            counter = parse_json_response(response)
+            _, counter = self.clnt_mngr.request_url(self.comm_counter)
+            counter = int(counter)
             self.base_counter = int(counter)
             op_counter.set(self.base_counter)
 
-        _, response = self.wllt_clnt_mngr.send_request(self.comm_head, verbose_override=False)
-        head = parse_json_response(response)
+        _, head = self.clnt_mngr.request_url(self.comm_head)
         branch = head["hash"]
         chain_id = head["chain_id"]
         protocol = head["metadata"]["protocol"]
@@ -409,18 +401,11 @@ class BatchPayer():
         logger.debug("Running {} operations".format(len(content_list)))
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
-        runops_command_str = self.comm_runops.replace("%JSON%", runops_json)
 
-        result, runops_command_response = self.wllt_clnt_mngr.send_request(runops_command_str)
-        if not result:
+        status, run_ops_parsed = self.clnt_mngr.request_url_post(self.comm_runops, runops_json)
+        if not (status == 200):
             logger.error("Error in run_operation")
-            logger.debug("Error in run_operation, request ->{}<-".format(runops_command_str))
-            logger.debug("---")
-            logger.debug("Error in run_operation, response ->{}<-".format(runops_command_response))
             return PaymentStatus.FAIL, ""
-
-        # Parse result of run_operation and check for potential failures
-        run_ops_parsed = parse_json_response(runops_command_response)
 
         # Check each contents object for failure
         for op in run_ops_parsed["contents"]:
@@ -439,37 +424,26 @@ class BatchPayer():
         # forge the operations
         logger.debug("Forging {} operations".format(len(content_list)))
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
-        forge_command_str = self.comm_forge.replace("%JSON%", forge_json)
 
-        result, forge_command_response = self.wllt_clnt_mngr.send_request(forge_command_str)
-        if not result:
+        # if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
+
+        status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
+        if not (status == 200):
             logger.error("Error in forge operation")
-            logger.debug("Error in forge, request '{}'".format(forge_command_str))
-            logger.debug("---")
-            logger.debug("Error in forge, response '{}'".format(forge_command_response))
             return PaymentStatus.FAIL, ""
 
-        # sign the operations
-        bytes = parse_json_response(forge_command_response)
-        signed_bytes = self.wllt_clnt_mngr.sign(bytes, self.manager_alias, verbose_override=True)
+        signed_bytes = self.clnt_mngr.sign(bytes, self.manager)
 
         # pre-apply operations
         logger.debug("Preapplying the operations")
-        preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace(
-            "%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
-        preapply_command_str = self.comm_preapply.replace("%JSON%", preapply_json)
+        preapply_json = PREAPPLY_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string).replace("%PROTOCOL%", protocol).replace("%SIGNATURE%", signed_bytes)
 
-        result, preapply_command_response = self.wllt_clnt_mngr.send_request(preapply_command_str)
-        if not result:
+        # if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
+
+        status, preapply_command_response = self.clnt_mngr.request_url_post(self.comm_preapply, preapply_json)
+        if not (status == 200):
             logger.error("Error in preapply operation")
-            logger.debug("Error in preapply, request '{}'".format(preapply_command_str))
-            logger.debug("---")
-            logger.debug("Error in preapply, response '{}'".format(preapply_command_response))
-
             return PaymentStatus.FAIL, ""
-
-        # not necessary
-        # preapplied = parse_response(preapply_command_response)
 
         # if dry_run, skip injection
         if dry_run:
@@ -498,43 +472,35 @@ class BatchPayer():
             # return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
-        inject_command_str = self.comm_inject.replace("%OPERATION_HASH%", signed_operation_bytes)
 
-        result, inject_command_response = self.wllt_clnt_mngr.send_request(inject_command_str)
-        if not result:
+        _, head = self.clnt_mngr.request_url(self.comm_head)
+        last_level_before_injection = head['header']['level']
+
+        status, operation_hash = self.clnt_mngr.request_url_post(self.comm_inject,
+                                                                 json.dumps(signed_operation_bytes))
+        if not (status == 200):
             logger.error("Error in inject operation")
-            logger.debug("Error in inject, response '{}'".format(inject_command_str))
-            logger.debug("---")
-            logger.debug("Error in inject, response '{}'".format(inject_command_response))
             return PaymentStatus.FAIL, ""
 
-        operation_hash = parse_json_response(inject_command_response)
         logger.info("Operation hash is {}".format(operation_hash))
 
         # wait for inclusion
-        logger.info(
-            "Waiting for operation {} to be included. Please be patient until the block has {} confirmation(s)".format(
-                operation_hash, CONFIRMATIONS))
-        try:
-            cmd = self.comm_wait.replace("%OPERATION%", operation_hash)
-            self.wllt_clnt_mngr.send_request(cmd, timeout=self.get_confirmation_timeout())
-            logger.info("Operation {} is included".format(operation_hash))
-        except TimeoutExpired:
-            logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
-            return PaymentStatus.INJECTED, operation_hash
+        logger.info("Waiting for operation {} to be included...".format(operation_hash))
+        for i in range(last_level_before_injection + 1, last_level_before_injection + 6):
+            sleep(self.network_config['BLOCK_TIME_IN_SEC'])
+            cmd = self.comm_wait.replace("%BLOCK_HASH%", 'head')
+            status, list_op_hash = self.clnt_mngr.request_url(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * PATIENCE)
+            for op_hashes in list_op_hash:
+                if operation_hash in op_hashes:
+                    logger.info("Operation {} is included".format(operation_hash))
+                    return PaymentStatus.PAID, operation_hash
 
-        return PaymentStatus.PAID, operation_hash
-
-    def get_confirmation_timeout(self):
-        return self.network_config['BLOCK_TIME_IN_SEC'] * (CONFIRMATIONS + PATIENCE)
+        logger.warn("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
+        return PaymentStatus.INJECTED, operation_hash
 
     def __get_payment_address_balance(self):
-        payment_address_balance = None
-
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
-        result, command_response = self.wllt_clnt_mngr.send_request(get_current_balance_request)
-        payment_address_balance = parse_json_response(command_response)
-
+        status, payment_address_balance = self.clnt_mngr.request_url(get_current_balance_request)
         return int(payment_address_balance)
 
 
