@@ -10,7 +10,7 @@ from log_config import main_logger, verbose_logger
 logger = main_logger
 
 COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
-
+MAX_NB_TRIES = 3
 
 class ClientManager:
     def __init__(self, node_endpoint, signer_endpoint) -> None:
@@ -28,14 +28,19 @@ class ClientManager:
     def request_url(self,
                     cmd,
                     timeout=None):
+
         verbose_logger.debug("--> Verbose : Command is |{}|".format(cmd))
+
         url = self.get_node_url() + cmd
-        response = requests.get(url, timeout=timeout)
+        response = self._do_request(method="GET",
+                                    url=url,
+                                    timeout=timeout)
+        if response is None:
+            return -1, ""
+
         if not (response.status_code == 200):
-            logger.debug("Error, request ->{}<-,".format(url))
-            logger.debug("---")
-            logger.debug("Error, response ->{}<-".format(response.text))
             return response.status_code, ""
+
         output = response.json()
         verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
         return response.status_code, output
@@ -44,15 +49,23 @@ class ClientManager:
                          cmd,
                          json_params,
                          timeout=None):
+
         verbose_logger.debug("--> Verbose : Command is |{}|, Params are |{}|".format(cmd, json_params))
+
         url = self.get_node_url() + cmd
         headers = {'content-type': "application/json", 'cache-control': "no-cache"}
-        response = requests.request("POST", url, data=json_params, headers=headers, timeout=timeout)
+        try:
+            response = self._do_request(method="POST",
+                                        url=url,
+                                        json_params=json_params,
+                                        headers=headers,
+                                        timeout=timeout)
+        except Exception as _:
+            return -1, ""
+
         if not (response.status_code == 200):
-            logger.debug("Error, request ->{}<-, params ->{}<-,".format(url, json_params))
-            logger.debug("---")
-            logger.debug("Error, response ->{}<-".format(response.text))
             return response.status_code, ""
+
         output = response.json()
         verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
         return response.status_code, output
@@ -62,7 +75,13 @@ class ClientManager:
         signer_url = self.signer_endpoint
         cmd = f'keys/{key_name}'
         url = os.path.join(signer_url, cmd)
-        response = requests.request("POST", url, data=json_params, timeout=timeout)
+        response = self._do_request(method="POST",
+                                    url=url,
+                                    json_params=json_params,
+                                    timeout=timeout)
+
+        if response is None:
+            ClientException("Unknown Error at signing. Please consult the verbose logs!")
         if not (response.status_code == 200):
             raise ClientException("Error at signing: '{}'".format(response.text))
         else:
@@ -70,43 +89,49 @@ class ClientManager:
             return response['signature']
 
     def check_pkh_known_by_signer(self, key_name, timeout=None):
+
         signer_url = self.signer_endpoint
         cmd = f'keys/{key_name}'
         url = os.path.join(signer_url, cmd)
+
+        signer_exception = f'Error querying the signer at url {signer_url}. \n' \
+                           f'Please make sure to start the signer using "./tezos-signer launch http signer", \n' \
+                           f'import the secret key of the payout address {key_name} \n' \
+                           f'and specify the url using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)'
+
         try:
-            response = requests.get(url, timeout=timeout)
+            response = self._do_request(method="GET",
+                                        url=url,
+                                        timeout=timeout)
         except Exception as e:
-            raise ClientException(f'Exception: {e}\n'
-                                  f'Error querying the signer at url {signer_url}. \n'
-                                  f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
-                                  f'import the secret key of the payout address {key_name} \n'
-                                  f'and specify the url using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)')
+            raise ClientException(f'Exception: {e}\n{signer_exception}')
         if not (response.status_code == 200):
-            raise ClientException(f'{response.text}\n'
-                                  f'Error querying the signer at url {signer_url}. \n'
-                                  f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
-                                  f'import the secret key of the payout address {key_name} \n'
-                                  f'and specify the url using the flag -E http://<signer_addr>:<port>')
+            raise ClientException(f'{response.text}\n{signer_exception}')
         else:
             response = response.json()
             if 'public_key' not in response:
                 raise ClientException(f'The secret key of the payout address {key_name} was not imported to the signer!\n'
-                                      f'Error querying the signer at url {signer_url}. \n'
-                                      f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
-                                      f'import the secret key of the payout address {key_name} \n'
-                                      f'and specify the url using the flag -E http://<signer_addr>:<port>')
+                                      f'{signer_exception}')
 
     def get_authorized_keys(self, timeout=None):
+
         signer_url = self.signer_endpoint
         cmd = 'authorized_keys'
         url = os.path.join(signer_url, cmd)
-        response = requests.get(url, timeout=timeout)
+
+        signer_exception = f'Error querying the signer at url {signer_url}. \n' \
+                           f'Please make sure to start the signer using "./tezos-signer launch http signer", \n' \
+                           f'import the secret key of the payout address \n' \
+                           f'and specify the url using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)'
+
+        try:
+            response = self._do_request(method="GET",
+                                        url=url,
+                                        timeout=timeout)
+        except Exception as e:
+            raise ClientException(f'Exception: {e}\n{signer_exception}')
         if not (response.status_code == 200):
-            raise ClientException(f'{response.text}\n'
-                                  f'Error querying the signer at url {signer_url}. \n'
-                                  f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
-                                  f'import the secret key of the payout address \n'
-                                  f'and specify the url using the flag -E http://<signer_addr>:<port>')
+            raise ClientException(f'{response.text}\n{signer_exception}')
         else:
             response = response.json()
             return response
@@ -139,3 +164,34 @@ class ClientManager:
 
         # Return unix epoch if cannot determine
         return datetime.min
+
+    def _do_request(self,
+                    method,
+                    url,
+                    json_params=None,
+                    headers=None,
+                    timeout=None):
+        try_i = 0
+        response = None
+        while response is None and try_i < MAX_NB_TRIES:
+            try:
+                try_i += 1
+                response = requests.request(method=method,
+                                            url=url,
+                                            data=json_params,
+                                            headers=headers,
+                                            timeout=timeout)
+            except Exception as e:
+                logger.debug(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
+                             f"Error, exception ->{e}<-")
+                # If all MAX_NB_TRIES tries were not successful
+                if try_i == MAX_NB_TRIES-1:
+                    raise Exception(e)
+        if response is None:
+            return
+        # If request returns failed code
+        if not (response.status_code == 200):
+            logger.debug(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
+                         f"Error, response ->{response.text}<-")
+        return response
+
