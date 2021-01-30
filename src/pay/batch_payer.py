@@ -37,7 +37,7 @@ RA_STORAGE = 300
 # This fee limit is set to allow payouts to ovens
 # Other KT accounts with higher fee requirements will be skipped
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
-FEE_LIMIT_CONTRACTS = 12444
+FEE_LIMIT_CONTRACTS = 21000
 
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
@@ -328,7 +328,7 @@ class BatchPayer():
             return PaymentStatus.FAIL, []
 
         # Calculate needed fee for extra consumed gas
-        tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
+        tx_fee += int((consumed_gas - int(self.gas_limit)) * MUTEZ_PER_GAS_UNIT)
         simulation_results = consumed_gas, tx_fee, storage
         return PaymentStatus.DONE, simulation_results
 
