@@ -38,9 +38,9 @@ class TwitterPlugin(plugins.Plugin):
 
         # Replace template variables
         tweet = self.tweet_text \
-            .replace("%CYCLE%", cycle) \
-            .replace("%TREWARDS%", round(payout_amount / MUTEZ, 2)) \
-            .replace("%NDELEGATORS%", nb_delegators)
+            .replace("%CYCLE%", str(cycle)) \
+            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ, 2))) \
+            .replace("%NDELEGATORS%", str(nb_delegators))
 
         # Truncate message to max tweet length
         tweet = tweet[:self.MAX_TWEET_LEN]
