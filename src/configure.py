@@ -64,9 +64,9 @@ def start():
 
 def onbakingaddress(input):
     try:
-        AddressValidator("bakingaddress").validate(input)
-    except Exception:
-        printe("Invalid baking address: " + traceback.format_exc())
+        AddressValidator("baking address").validate(input)
+    except Exception as e:
+        printe(f"Invalid baking address: {str(e)}")
         return
 
     if not input.startswith("tz"):
@@ -82,11 +82,14 @@ def onbakingaddress(input):
 
 def onpaymentaddress(input):
     try:
+
+        AddressValidator("payouts address").validate(input)
+
         global parser
         parser.set(PAYMENT_ADDRESS, input)
         parser.validate_payment_address(parser.get_conf_obj())
     except Exception as e:
-        printe(f"Invalid payment address: {str(e)}")
+        printe(f"Invalid payouts address: {str(e)}")
         return
 
     fsm.go()
