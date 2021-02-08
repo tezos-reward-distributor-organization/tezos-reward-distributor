@@ -12,6 +12,7 @@ from fysom import Fysom
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from cli.client_manager import ClientManager
+from Constants import RewardsType
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from config.yaml_conf_parser import YamlConfParser
@@ -21,7 +22,7 @@ from launch_common import print_banner, add_argument_network, add_argument_repor
 from log_config import main_logger, init
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
-    REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET
+    REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET, REWARDS_TYPE
 from util.address_validator import AddressValidator
 from util.dir_utils import get_payment_root, get_successful_payments_dir, get_failed_payments_dir
 from util.fee_validator import FeeValidator
@@ -33,8 +34,9 @@ logger = main_logger
 messages = {
     'hello': 'This application will help you configure TRD to manage payouts for your bakery. Type enter to continue',
     'bakingaddress': 'Specify your baking address public key hash (Processing may take a few seconds)',
-    'paymentaddress': 'Specify your payment PKH. Available addresses:{}',
+    'paymentaddress': 'Specify your payouts public key hash. It can be the same as your baking address, or a different one.',
     'servicefee': 'Specify bakery fee [0:100]',
+    'rewardstype': "Specify if baker pays 'ideal', or 'actual' rewards (Be sure to read the documentation to understand the difference). Type enter for 'actual'",
     'foundersmap': "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
     'ownersmap': "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
     'mindelegation': "Specify minimum delegation amount in tez. Type enter for 0",
@@ -46,7 +48,7 @@ messages = {
     'delegatorpaysrafee': "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
     'supporters': "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
     'specials': "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
-    'final': ""
+    'noplugins': "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually."
 }
 
 parser = None
@@ -85,8 +87,8 @@ def onpaymentaddress(input):
         global parser
         parser.set(PAYMENT_ADDRESS, input)
         parser.validate_payment_address(parser.get_conf_obj())
-    except Exception:
-        printe("Invalid payment address: " + traceback.format_exc())
+    except Exception as e:
+        printe(f"Invalid payment address: {str(e)}")
         return
 
     fsm.go()
@@ -97,8 +99,23 @@ def onservicefee(input):
         global parser
         parser.set(SERVICE_FEE, float(input))
         parser.validate_service_fee(parser.get_conf_obj())
+    except Exception as e:
+        printe(f"Invalid service fee: {str(e)}\nPlease enter a value between 0 and 100.")
+        return
+
+    fsm.go()
+
+
+def onrewardstype(input):
+    if not input:
+        input = 'actual'
+
+    try:
+        global parser
+        rt = RewardsType(input.lower())
+        parser.set(REWARDS_TYPE, str(rt))
     except Exception:
-        printe("Invalid service fee: " + traceback.format_exc())
+        printe("Invalid option for rewards type. Please enter 'actual' or 'ideal'.")
         return
 
     fsm.go()
@@ -309,14 +326,15 @@ def onreactivatezeroed(input):
     fsm.go()
 
 
-def onfinal(input):
-    pass
+def onprefinal(input):
+    fsm.go()
 
 
 callbacks = {
     'bakingaddress': onbakingaddress,
     'paymentaddress': onpaymentaddress,
     'servicefee': onservicefee,
+    'rewardstype': onrewardstype,
     'foundersmap': onfoundersmap,
     'ownersmap': onownersmap,
     'mindelegation': onmindelegation,
@@ -328,7 +346,7 @@ callbacks = {
     'delegatorpaysrafee': ondelegatorpaysrafee,
     'supporters': onsupporters,
     'specials': onspecials,
-    'final': onfinal
+    'prefinal': onprefinal,
 }
 
 fsm = Fysom({'initial': 'hello', 'final': 'final',
@@ -336,7 +354,8 @@ fsm = Fysom({'initial': 'hello', 'final': 'final',
                  {'name': 'go', 'src': 'hello', 'dst': 'bakingaddress'},
                  {'name': 'go', 'src': 'bakingaddress', 'dst': 'paymentaddress'},
                  {'name': 'go', 'src': 'paymentaddress', 'dst': 'servicefee'},
-                 {'name': 'go', 'src': 'servicefee', 'dst': 'foundersmap'},
+                 {'name': 'go', 'src': 'servicefee', 'dst': 'rewardstype'},
+                 {'name': 'go', 'src': 'rewardstype', 'dst': 'foundersmap'},
                  {'name': 'go', 'src': 'foundersmap', 'dst': 'ownersmap'},
                  {'name': 'go', 'src': 'ownersmap', 'dst': 'mindelegation'},
                  {'name': 'go', 'src': 'mindelegation', 'dst': 'mindelegationtarget'},
@@ -356,7 +375,7 @@ fsm = Fysom({'initial': 'hello', 'final': 'final',
 def main(args):
     logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
 
-    # 1- find where configuration is
+    # 1. find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
 
     # create configuration directory if it is not present
@@ -364,19 +383,7 @@ def main(args):
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
-    # 2- Load master configuration file if it is present
-    master_config_file_path = os.path.join(config_dir, "master.yaml")
-
-    master_cfg = {}
-    if os.path.isfile(master_config_file_path):
-        logger.debug("Loading master configuration file {}".format(master_config_file_path))
-
-        master_parser = YamlConfParser(ConfigParser.load_file(master_config_file_path))
-        master_cfg = master_parser.parse()
-    else:
-        logger.debug("master configuration file not present.")
-
-    # 4. get network config
+    # 2. get network config
     global client_manager
     client_manager = ClientManager(node_endpoint=args.node_endpoint,
                                    signer_endpoint=args.signer_endpoint)
@@ -390,72 +397,28 @@ def main(args):
     input("{} >".format(messages['hello'])).strip()
     start()
 
+    # 3. loop while collecting information
     while not fsm.is_finished():
         sleep(0.1)
         command = input("{} >\n".format(messages[fsm.current])).strip()
         callbacks[fsm.current](command)
     pass
 
+    # 4. parse and process config
     parser.validate()
     parser.process()
     cfg_dict = parser.get_conf_obj()
 
     # dictionary to BakingConf object, for a bit of type safety
-    cfg = BakingConf(cfg_dict, master_cfg)
+    cfg = BakingConf(cfg_dict)
 
     config_file_path = os.path.join(os.path.abspath(config_dir), cfg.get_baking_address() + '.yaml')
     cfg_dict_plain = {k: v for k, v in cfg_dict.items() if not k.startswith('__')}
     with open(config_file_path, 'w') as outfile:
-        yaml.dump(cfg_dict_plain, outfile, default_flow_style=True, indent=4)
+        yaml.dump(cfg_dict_plain, outfile, default_flow_style=False, indent=4)
 
-        print("Configuration file is created at '{}'".format(config_file_path))
-
-
-def load_config_file(clnt_mngr, network_config, master_cfg):
-    provider_factory = ProviderFactory(args.reward_data_provider)
-    parser = BakingYamlConfParser(None, clnt_mngr, provider_factory, network_config, args.node_addr,
-                                  api_base_url=args.api_base_url)
-    parser.parse()
-    parser.validate()
-    parser.process()
-    cfg_dict = parser.get_conf_obj()
-
-    # dictionary to BakingConf object, for a bit of type safety
-    cfg = BakingConf(cfg_dict, master_cfg)
-
-    logger.info("Baking Configuration {}".format(cfg))
-
-    baking_address = cfg.get_baking_address()
-    payment_address = cfg.get_payment_address()
-    logger.info(LINER)
-    logger.info("BAKING ADDRESS is {}".format(baking_address))
-    logger.info("PAYMENT ADDRESS is {}".format(payment_address))
-    logger.info(LINER)
-
-    # 7- get reporting directories
-    reports_dir = os.path.expanduser(args.reports_base)
-
-    reports_dir = os.path.join(reports_dir, baking_address)
-
-    payments_root = get_payment_root(reports_dir, create=True)
-    get_successful_payments_dir(payments_root, create=True)
-    get_failed_payments_dir(payments_root, create=True)
-
-
-def get_baking_configuration_file(config_dir):
-    config_file = None
-    for file in os.listdir(config_dir):
-        if file.endswith(".yaml") and not file.startswith("master"):
-            if config_file:
-                raise Exception(
-                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
-                        config_file, file))
-            config_file = file
-    if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
-
-    return os.path.join(config_dir, config_file)
+    print(messages['noplugins'])
+    print("Configuration file is created at '{}'".format(config_file_path))
 
 
 def get_latest_report_file(payments_root):
@@ -481,21 +444,21 @@ if __name__ == '__main__':
         raise Exception(
             "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
-    parser = argparse.ArgumentParser()
+    argparser = argparse.ArgumentParser()
 
-    add_argument_provider(parser)
-    add_argument_network(parser)
-    add_argument_reports_base(parser)
-    add_argument_config_dir(parser)
-    add_argument_node_endpoint(parser)
-    add_argument_signer_endpoint(parser)
-    add_argument_docker(parser)
-    add_argument_verbose(parser)
-    add_argument_dry(parser)
-    add_argument_api_base_url(parser)
-    add_argument_log_file(parser)
+    add_argument_provider(argparser)
+    add_argument_network(argparser)
+    add_argument_reports_base(argparser)
+    add_argument_config_dir(argparser)
+    add_argument_node_endpoint(argparser)
+    add_argument_signer_endpoint(argparser)
+    add_argument_docker(argparser)
+    add_argument_verbose(argparser)
+    add_argument_dry(argparser)
+    add_argument_api_base_url(argparser)
+    add_argument_log_file(argparser)
 
-    args = parser.parse_args()
+    args = argparser.parse_args()
 
     init(False, args.log_file, args.verbose == 'on', mode='configure')
 
