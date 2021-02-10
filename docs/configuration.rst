@@ -12,8 +12,26 @@ Baker Configuration:
 Each baker has its own configuration and policy. Therefore, a payment system should be flexible enough to cover the needs of bakers. The application uses a yaml file for loading baker specific configurations and is loaded at every start.
 There are two options to create a custom yaml file:
 
-    a. You can use the interactive configuration tool using python3 src/configure.py
+    a. You can use the interactive configuration tool (configure.py)
     b. You can copy&paste the example config from ~/tezos-reward-distributor/examples into ~/pymnt/cfg, rename and change it according to your baker policy.
+
+If you want to use Option a, you can use
+::
+
+    # Move into tezos-reward-distributor directory
+    cd tezos-reward-distributor
+    # Run the interactive configuration tool
+    python3 src/configure.py
+
+If you want to use Option b, you can use
+::
+
+    # create directory
+    mkdir -p ~/pymnt/cfg/
+    # Copy & Paste
+    cp tezos-reward-distributor/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml ~/pymnt/cfg/
+    # Edit the file with nano
+    nano ~/pymnt/cfg/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml
 
 By default, configuration files are kept under ~/pymnt/cfg directory. The configuration directory can be changed with "-f" configuration option. The name of a configuration file should be the baker's address (e.g. tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).
 If you want to use with a decimal operator within your config, please use a decimal point. 

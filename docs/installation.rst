@@ -30,3 +30,7 @@ Regulary check and upgrade to the latest available version:
 ::
 
     git pull
+
+The Tezos signer is also needed to run TRD. Please check out the offical documentation_ and install the Tezos signer.
+
+.. _documentation : https://tezos.gitlab.io/introduction/howtoget.html
