@@ -1,7 +1,6 @@
 import functools
 import os
 import threading
-
 from time import sleep
 from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
 from calc.calculate_phaseMapping import CalculatePhaseMapping
@@ -60,115 +59,122 @@ class PaymentConsumer(threading.Thread):
         return
 
     def run(self):
-        while True:
-            try:
-                # 1 - wait until a reward is present
-                payment_batch = self.payments_queue.get(True)
+        running = True
+        while running:
+            # Wait until a reward is present
+            payment_batch = self.payments_queue.get(True)
 
-                payment_items = payment_batch.batch
-
-                if len(payment_items) == 0:
-                    logger.debug("Batch is empty, ignoring ...")
-                    continue
-
-                if payment_items[0].type == EXIT_PAYMENT_TYPE:
-                    logger.warn("Exit signal received. Terminating...")
-                    break
-
-                sleep(1)
-
-                pymnt_cycle = payment_batch.cycle
-
-                logger.info("Starting payments for cycle {}".format(pymnt_cycle))
-
-                # Handle remapping of payment to alternate address
-                phaseMapping = CalculatePhaseMapping()
-                payment_items = phaseMapping.calculate(payment_items, self.dest_map)
-
-                # Merge payments to same address
-                phaseMerge = CalculatePhaseMerge()
-                payment_items = phaseMerge.calculate(payment_items)
-
-                # Filter zero-balance addresses based on config
-                phaseZeroBalance = CalculatePhaseZeroBalance()
-                payment_items = phaseZeroBalance.calculate(payment_items, self.reactivate_zeroed)
-
-                # Filter out non-payable items
-                payment_items = [pi for pi in payment_items if pi.payable]
-
-                payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
-
-                batch_payer = BatchPayer(self.node_addr, self.key_name, self.client_manager,
-                                         self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
-                                         self.network_config, self.plugins_manager,
-                                         self.dry_run)
-
-                # 3- do the payment
-                payment_logs, total_attempts, total_payout_amount, number_future_payable_cycles = \
-                    batch_payer.pay(payment_items, dry_run=self.dry_run)
-
-                # override batch data
-                payment_batch.batch = payment_logs
-
-                # 4- count failed payments
-                nb_paid, nb_failed, nb_unknown = count_and_log_failed(payment_logs)
-
-                # 5- create payment report file
-                report_file = self.create_payment_report(nb_failed, payment_logs, pymnt_cycle)
-
-                # 6- Clean failure reports
-                self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
-
-                # 7- notify batch producer
-                if nb_failed == 0:
-                    if payment_batch.producer_ref:
-                        payment_batch.producer_ref.on_success(payment_batch)
-                else:
-                    if payment_batch.producer_ref:
-                        payment_batch.producer_ref.on_fail(payment_batch)
-
-                # 8- send notification via plugins
-                if total_attempts > 0:
-
-                    subject = "Reward Payouts for Cycle {:d}".format(pymnt_cycle)
-
-                    status = ''
-                    if nb_failed == 0 and nb_unknown == 0:
-                        status = status + 'Completed Successfully!'
-                    else:
-                        status = status + 'attempted'
-                        if nb_failed > 0:
-                            status = status + ", {:d} failed".format(nb_failed)
-                        if nb_unknown > 0:
-                            status = status + ", {:d} injected but final state not known".format(nb_unknown)
-                    subject = subject + ' ' + status
-
-                    admin_message = "The current payout account balance is expected to last for the next {:d} cycle(s)!"\
-                        .format(number_future_payable_cycles)
-
-                    # Payout notification receives cycle, rewards total, number of delegators
-                    self.plugins_manager.send_payout_notification(pymnt_cycle, total_payout_amount, (nb_paid + nb_failed + nb_unknown))
-
-                    # Admin notification receives subject, message, CSV report, raw log objects
-                    self.plugins_manager.send_admin_notification(subject, admin_message, [report_file], payment_logs)
-
-                # 9- publish anonymous stats
-                if self.publish_stats and self.args and not self.dry_run:
-                    stats_dict = self.create_stats_dict(nb_failed, nb_unknown, pymnt_cycle,
-                                                        payment_logs, total_attempts)
-                    stats_publisher(stats_dict)
-
-            except Exception:
-                logger.error("Error at reward payment", exc_info=True)
+            running = self._consume_batch(payment_batch)
 
         logger.info("Consumer returning ...")
 
         return
 
+    def _consume_batch(self, payment_batch):
+        try:
+            payment_items = payment_batch.batch
+
+            if len(payment_items) == 0:
+                logger.debug("Batch is empty, ignoring ...")
+                return True
+
+            if payment_items[0].type == EXIT_PAYMENT_TYPE:
+                logger.warn("Exit signal received. Terminating...")
+                return False
+
+            sleep(1)
+
+            pymnt_cycle = payment_batch.cycle
+
+            logger.info("Starting payments for cycle {}".format(pymnt_cycle))
+
+            # Handle remapping of payment to alternate address
+            phaseMapping = CalculatePhaseMapping()
+            payment_items = phaseMapping.calculate(payment_items, self.dest_map)
+
+            # Merge payments to same address
+            phaseMerge = CalculatePhaseMerge()
+            payment_items = phaseMerge.calculate(payment_items)
+
+            # Filter zero-balance addresses based on config
+            phaseZeroBalance = CalculatePhaseZeroBalance()
+            payment_items = phaseZeroBalance.calculate(payment_items, self.reactivate_zeroed)
+
+            # Filter out non-payable items
+            payment_items = [pi for pi in payment_items if pi.payable]
+            already_paid_items = [pi for pi in payment_items if pi.paid.is_processed()]
+            payment_items = [pi for pi in payment_items if not pi.paid.is_processed()]
+
+            payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
+
+            batch_payer = BatchPayer(self.node_addr, self.key_name, self.client_manager,
+                                     self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
+                                     self.network_config, self.plugins_manager,
+                                     self.dry_run)
+
+            # 3- do the payment
+            payment_logs, total_attempts, total_payout_amount, number_future_payable_cycles = \
+                batch_payer.pay(payment_items, dry_run=self.dry_run)
+
+            # override batch data
+            payment_batch.batch = payment_logs
+
+            # 4- count failed payments
+            nb_paid, nb_failed, nb_unknown = count_and_log_failed(payment_logs)
+
+            # 5- create payment report file
+            report_file = self.create_payment_report(nb_failed, payment_logs, pymnt_cycle, already_paid_items)
+
+            # 6- Clean failure reports
+            self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
+
+            # 7- notify batch producer
+            if nb_failed == 0:
+                if payment_batch.producer_ref:
+                    payment_batch.producer_ref.on_success(payment_batch)
+            else:
+                if payment_batch.producer_ref:
+                    payment_batch.producer_ref.on_fail(payment_batch)
+
+            # 8- send notification via plugins
+            if total_attempts > 0:
+
+                subject = "Reward Payouts for Cycle {:d}".format(pymnt_cycle)
+
+                status = ''
+                if nb_failed == 0 and nb_unknown == 0:
+                    status = status + 'Completed Successfully!'
+                else:
+                    status = status + 'attempted'
+                    if nb_failed > 0:
+                        status = status + ", {:d} failed".format(nb_failed)
+                    if nb_unknown > 0:
+                        status = status + ", {:d} injected but final state not known".format(nb_unknown)
+                subject = subject + ' ' + status
+
+                admin_message = "The current payout account balance is expected to last for the next {:d} cycle(s)!".format(number_future_payable_cycles)
+
+                # Payout notification receives cycle, rewards total, number of delegators
+                self.plugins_manager.send_payout_notification(pymnt_cycle, total_payout_amount, (nb_paid + nb_failed + nb_unknown))
+
+                # Admin notification receives subject, message, CSV report, raw log objects
+                self.plugins_manager.send_admin_notification(subject, admin_message, [report_file], payment_logs)
+
+            # 9- publish anonymous stats
+            if self.publish_stats and self.args and not self.dry_run:
+                stats_dict = self.create_stats_dict(nb_failed, nb_unknown, pymnt_cycle, payment_logs, total_attempts)
+                stats_publisher(stats_dict)
+
+        except Exception:
+            logger.error("Error at reward payment", exc_info=True)
+
+        return True
+
     def clean_failed_payment_reports(self, payment_cycle, success):
         # 1- generate path of a assumed failure report file
         # if it exists and payments were successful, remove it
         failure_report_file = payment_report_file_path(self.payments_dir, payment_cycle, 1)
+        success_report_file = payment_report_file_path(self.payments_dir, payment_cycle, 0)
         if success and os.path.isfile(failure_report_file):
             os.remove(failure_report_file)
         # 2- generate path of a assumed busy failure report file
@@ -184,13 +190,14 @@ class PaymentConsumer(threading.Thread):
 
     #
     # create report file
-    def create_payment_report(self, nb_failed, payment_logs, payment_cycle):
+    def create_payment_report(self, nb_failed, payment_logs, payment_cycle, already_paid_items):
 
         logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
+        logger.debug("Adding {} already paid items to the report", len(already_paid_items))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
 
-        CsvPaymentFileParser().write(report_file, payment_logs)
+        CsvPaymentFileParser().write(report_file, already_paid_items+payment_logs)
 
         logger.info("Payment report is created at '{}'".format(report_file))
 
