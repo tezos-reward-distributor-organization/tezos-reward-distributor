@@ -174,7 +174,6 @@ class PaymentConsumer(threading.Thread):
         # 1- generate path of a assumed failure report file
         # if it exists and payments were successful, remove it
         failure_report_file = payment_report_file_path(self.payments_dir, payment_cycle, 1)
-        success_report_file = payment_report_file_path(self.payments_dir, payment_cycle, 0)
         if success and os.path.isfile(failure_report_file):
             os.remove(failure_report_file)
         # 2- generate path of a assumed busy failure report file
@@ -193,11 +192,11 @@ class PaymentConsumer(threading.Thread):
     def create_payment_report(self, nb_failed, payment_logs, payment_cycle, already_paid_items):
 
         logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
-        logger.debug("Adding {} already paid items to the report", len(already_paid_items))
+        logger.debug("Adding {} already paid items to the report".format(len(already_paid_items)))
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
 
-        CsvPaymentFileParser().write(report_file, already_paid_items+payment_logs)
+        CsvPaymentFileParser().write(report_file, already_paid_items + payment_logs)
 
         logger.info("Payment report is created at '{}'".format(report_file))
 

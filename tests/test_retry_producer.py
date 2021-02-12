@@ -28,7 +28,7 @@ def request_url(url, timeout=None):
     if url == '/chains/main/blocks/head/operation_hashes':
         return 200, ["xxx_op_hash"]
 
-    return "aaaaa"+str(timeout)
+    return "aaaaa" + str(timeout)
 
 
 def request_url_post(cmd, json_params, timeout=None):
@@ -42,7 +42,7 @@ def request_url_post(cmd, json_params, timeout=None):
     if cmd == '/injection/operation':
         return 200, "xxx_op_hash"
 
-    return "bbbb"+str(json_params)+str(timeout)
+    return "bbbb" + str(json_params) + str(timeout)
 
 
 @unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
@@ -51,7 +51,7 @@ class TestRetryProducer(TestCase):
         prepare_test_data()
 
     @patch('pay.payment_consumer.BatchPayer.get_payment_address_balance', MagicMock(return_value=100_000_000))
-    @patch('pay.payment_consumer.BatchPayer.simulate_single_operation',MagicMock(return_value=(PaymentStatus.DONE, (500, 100, 0))))
+    @patch('pay.payment_consumer.BatchPayer.simulate_single_operation', MagicMock(return_value=(PaymentStatus.DONE, (500, 100, 0))))
     @patch('pay.batch_payer.sleep', MagicMock())
     @patch('cli.client_manager.ClientManager.request_url', MagicMock(side_effect=request_url))
     @patch('cli.client_manager.ClientManager.request_url_post', MagicMock(side_effect=request_url_post))
@@ -69,7 +69,7 @@ class TestRetryProducer(TestCase):
 
         self.assertEqual(10, payment_batch.cycle)
         self.assertEqual(31, len(payment_batch.batch))
-        self.assertEqual(5, len([row for row in payment_batch.batch if row.paid==PaymentStatus.FAIL]))
+        self.assertEqual(5, len([row for row in payment_batch.batch if row.paid == PaymentStatus.FAIL]))
 
         nw = dict({'BLOCK_TIME_IN_SEC': 64})
         payment_consumer = self.create_consumer(nw, payment_queue)
