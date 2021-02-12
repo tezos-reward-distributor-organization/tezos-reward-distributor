@@ -88,6 +88,11 @@ class PaymentConsumer(threading.Thread):
 
             logger.info("Starting payments for cycle {}".format(pymnt_cycle))
 
+            # Filter out non-payable items
+            payment_items = [pi for pi in payment_items if pi.payable]
+            already_paid_items = [pi for pi in payment_items if pi.paid.is_processed()]
+            payment_items = [pi for pi in payment_items if not pi.paid.is_processed()]
+
             # Handle remapping of payment to alternate address
             phaseMapping = CalculatePhaseMapping()
             payment_items = phaseMapping.calculate(payment_items, self.dest_map)
@@ -99,11 +104,6 @@ class PaymentConsumer(threading.Thread):
             # Filter zero-balance addresses based on config
             phaseZeroBalance = CalculatePhaseZeroBalance()
             payment_items = phaseZeroBalance.calculate(payment_items, self.reactivate_zeroed)
-
-            # Filter out non-payable items
-            payment_items = [pi for pi in payment_items if pi.payable]
-            already_paid_items = [pi for pi in payment_items if pi.paid.is_processed()]
-            payment_items = [pi for pi in payment_items if not pi.paid.is_processed()]
 
             payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
