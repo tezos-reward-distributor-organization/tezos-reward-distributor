@@ -48,7 +48,7 @@ source_suffix = {
 master_doc = 'index'
 
 # General information about the project.
-project = u'Tezos Reward Distributor'
+project = u'Tezos Reward Distributor (TRD)'
 copyright = u'2021, habanoz, utdrmac, amzid, jdsika, dansan566'
 author = u'TRD Organization'
 

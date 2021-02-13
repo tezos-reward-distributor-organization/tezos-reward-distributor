@@ -1,4 +1,4 @@
-How to configure the Tezos Reward Distributor (TRD)?
+How to configure TRD?
 ==========================================
 
 Fee Setup

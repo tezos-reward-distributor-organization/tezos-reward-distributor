@@ -1,4 +1,4 @@
-How to get and install Tezos Reward Distributor?
+How to get and install TRD?
 =====================================================
 
 Requirements and Setup

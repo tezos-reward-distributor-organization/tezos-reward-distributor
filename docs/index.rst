@@ -1,21 +1,21 @@
-Tezos Reward Distributor |Build Status|
+Tezos Reward Distributor (TRD) |Build Status|
 ======================================================
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.
 
 PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR STATISTICS POLICY_ FOR MORE INFORMATION.
 
-What's the Tezos Reward Distributor (TRD)?
+What's TRD?
 ------------------------------------------------
 
 TRD is an open-source software for distributing staking rewards from bakers to delegators introduced in detail in this Medium article_. This is not a python script but a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether frozen or unfrozen rewards, minimum delegation, or actual vs ideal rewards - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches, and provides three back ends for calculations: Tezos RPC, tzstats_ API and TzKT_ API. TRD is developed and tested extensively by the community and the source code which can be found in the following Github_ repo.
 
-Who needs the Tezos Reward Distributor (TRD)?
+Who needs TRD?
 ------------------------------------------------
 
 The TRD is needed by bakers. There are a few payout tools available in the Tezos ecosystem. However, the TRD is probably the most used open source payout tool by bakers. It ranges from small bakers with a couple of delegators to large bakers with more than thousand delegators. The maintainers strive to keep up with the growing Tezos ecosystem. This in turn enables TRD users to participate in the exploration of new business areas like baking for liquidity pools or DAOs.
 
-What else do you need for Tezos Reward Distributor (TRD)?
+What else do you need for TRD?
 ------------------------------------------------
 
 There are currently the following options to run TRD:
