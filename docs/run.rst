@@ -11,47 +11,53 @@ The TRD can run with the following parameters:
     python3 src/main.py [-h] [-C INITIAL_CYCLE] [-M {1,2,3,4}] [-R RELEASE_OVERRIDE] [-O PAYMENT_OFFSET] [-N {MAINNET,DELPHINET}] [-A NODE_ENDPOINT] [-P {rpc,prpc,tzstats,tzkt}] [-Ap NODE_ADDR_PUBLIC] [-r REPORTS_BASE] [-f CONFIG_DIR] [-D] [-Dc] [-E SIGNER_ENDPOINT] [-d] [-s] [-Dp] [-V {on,off}] [-U API_BASE_URL] [-inj] [--syslog] [--log-file LOG_FILE]
 
 It is adviseable to use the argument "-V on" in every run because it makes debugging easier.
-The most common use case is to run in mainnet and start to make payments from last released rewards or continue making payments from the cycle last payment is done:
+The most common use case is to run in mainnet and start to make payouts from last released rewards or continue making payouts from the cycle last payment is done:
 
 ::
 
     python3 src/main.py -V on
 
-Make payments for a single cycle (300) and exit:
+Make payouts for a single cycle (300) and exit:
 
 ::
 
     python3 src/main.py -C 300 -M 3 -V on
 
-Make all pending payments and exit:
+Make all pending payouts and exit:
 
 ::
 
     python3 src/main.py -M 2 -V on
 
-Make pending payments beginning from a cycle and exit:
+Make pending payouts beginning from a cycle and exit:
 
 ::
 
     python3 src/main.py -C 300 -M 2 -V on
 
-Run in dry-run mode in delphinet, make payments from cycle 300 and exit:
+Run in dry-run mode in delphinet, make payouts from cycle 300 and exit:
 
 ::
 
     python3 src/main.py -D -N DELPHINET -C 300 -M 3 -V on
 
-Run in dry-run mode in mainnet, make payments from cycle 300 onwards, for calculations use data provided by tezos node rpc interface:
+Run in dry-run mode in mainnet, make payouts from cycle 300 onwards, for calculations use data provided by tezos node rpc interface:
 
 ::
 
     python3 src/main.py -C 300 -P rpc -D -V on
 
-Run in dry-run mode in mainnet, make payments for cycle 300, for calculations use data provided by the tzkt API:
+Run in dry-run mode in mainnet, make payouts for cycle 300, for calculations use data provided by the tzkt API:
 
 ::
 
     python3 src/main.py -C 300 -P tzkt -M 3 -V on -D
+
+Run in dry-run mode in mainnet, retry failed payouts for cycle 300, for calculations use data provided by the tzstats API:
+
+::
+
+    python3 src/main.py -C 300 -P tzstats -M 4 -V on -D
 
 For help, run
 

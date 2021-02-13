@@ -1,4 +1,4 @@
-Tezos Signer with Docker
+Tezos Signer with Docker (WIP)
 ========================
 
 In Tezos *mainnet* it is not safe to keep private keys unencrypted. Many use HSM (Hardware Security Module) to keep private keys. Luckily HSMs are not the only option. The Tezos Signer can be used to sign transactions/blocks. Tezos-signer should be given encrypted private key so that it can sign operations. For security reasons tezos-signer does not keep encryption password anywhere, it must be typed upon tezos-signer launch. As a result, it is not possible to run tezos-signer as a daemon. 

@@ -1,4 +1,4 @@
-How to use the Tezos Signer
+How to use the Tezos Signer (WIP)
 ===========================
 
 Tezos signer daemon can be configured to sign the operations with the secret key of the account. There are two steps, first import secret key to the signer, second tell the client that it can use particular signer to sign the operations.

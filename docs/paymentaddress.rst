@@ -1,4 +1,4 @@
-Payment Address
+Payment Address (WIP)
 ===============
 
 TRD is designed to work as a linux service. It expects the usage of the Tezos signer for encrypted payment accounts. Unencrypted payment accounts can be used without tezos signer. If a payment account is encrypted and not configured to be signed by tezos signer, TRD will freeze.
