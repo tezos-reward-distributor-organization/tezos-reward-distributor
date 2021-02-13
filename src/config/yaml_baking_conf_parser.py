@@ -1,3 +1,5 @@
+import yaml
+
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
 from Constants import RewardsType
@@ -283,3 +285,10 @@ class BakingYamlConfParser(YamlConfParser):
             # validate destination value (An address OR TOF OR TOB OR TOE)
             if value not in [TOF, TOB, TOE]:
                 addr_validator.validate(key)
+
+
+def rewardstype_representer(dumper, data):
+    return dumper.represent_scalar('tag:yaml.org,2002:str', str(data))
+
+
+yaml.add_representer(RewardsType, rewardstype_representer)
