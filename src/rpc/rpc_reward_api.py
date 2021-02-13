@@ -63,6 +63,9 @@ class RpcRewardApiImpl(RewardApi):
                 nb_blocks = self.__get_number_of_baking_rights(cycle, level_of_first_block_in_preserved_cycles)
                 nb_endorsements = self.__get_number_of_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles)
 
+                logger.debug("Number of 0 priority blocks: {}, Number of endorsements: {}".format(nb_blocks, nb_endorsements))
+                logger.debug("Block reward: {}, Endorsement Reward: {}".format(self.block_reward, self.endorsement_reward))
+
                 # "ideally", the baker baked every priority 0 block they had rights for,
                 # and every block they baked contained 32 endorsements
                 total_block_reward = nb_blocks * self.block_reward
