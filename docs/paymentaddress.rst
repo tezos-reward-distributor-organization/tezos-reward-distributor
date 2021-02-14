@@ -1,4 +1,4 @@
-Payment Address (WIP)
+Payment Address
 ===============
 
 TRD is designed to work as a linux service. It expects the usage of the Tezos signer for encrypted payment accounts.
