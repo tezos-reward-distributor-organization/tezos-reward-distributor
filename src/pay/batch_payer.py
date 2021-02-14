@@ -13,7 +13,8 @@ logger = main_logger
 
 MAX_TX_PER_BLOCK = 200
 PKH_LENGTH = 36
-PATIENCE = 10
+MAX_NUM_TRIALS_PER_BLOCK = 2
+MAX_BLOCKS_TO_CHECK_AFTER_INJECTION = 5
 
 COMM_DELEGATE_BALANCE = "/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_HEAD = "/chains/main/blocks/head"
@@ -484,15 +485,24 @@ class BatchPayer():
         logger.info("Operation hash is {}".format(operation_hash))
 
         # wait for inclusion
-        logger.info("Waiting for operation {} to be included...".format(operation_hash))
-        for i in range(last_level_before_injection + 1, last_level_before_injection + 6):
-            sleep(self.network_config['BLOCK_TIME_IN_SEC'])
-            cmd = self.comm_wait.replace("%BLOCK_HASH%", 'head')
-            status, list_op_hash = self.clnt_mngr.request_url(cmd, timeout=self.network_config['BLOCK_TIME_IN_SEC'] * PATIENCE)
+        timeout = MAX_BLOCKS_TO_CHECK_AFTER_INJECTION * MAX_NUM_TRIALS_PER_BLOCK * self.network_config['BLOCK_TIME_IN_SEC'] // 60
+        logger.info("Waiting for operation {} to be included... Please do not interrupt the process!!! (Timeout is around {} minutes)".format(operation_hash, timeout))
+        for i in range(last_level_before_injection + 1, last_level_before_injection + 1 + MAX_BLOCKS_TO_CHECK_AFTER_INJECTION):
+            cmd = self.comm_wait.replace("%BLOCK_HASH%", str(i))
+            status = -1
+            list_op_hash = []
+            trial_i = 0
+            while not (status == 200) and (trial_i < MAX_NUM_TRIALS_PER_BLOCK):
+                sleep(self.network_config['BLOCK_TIME_IN_SEC'])
+                status, list_op_hash = self.clnt_mngr.request_url(cmd)
+            if not (status == 200):
+                logger.warning("Level {} could not be queried about operation hashes".format(i))
+                break
             for op_hashes in list_op_hash:
                 if operation_hash in op_hashes:
                     logger.info("Operation {} is included".format(operation_hash))
                     return PaymentStatus.PAID, operation_hash
+            logger.debug("Operation {} is not included at level {}".format(operation_hash, i))
 
         logger.warning("Operation {} wait is timed out. Not sure about the result!".format(operation_hash))
         return PaymentStatus.INJECTED, operation_hash
