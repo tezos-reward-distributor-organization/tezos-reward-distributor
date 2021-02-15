@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Payment Address &mdash; Tezos Reward Distributor 8.0 documentation</title>
+  <title>Payment Address &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="How to use the Tezos Signer" href="tezossigner.html" />
-    <link rel="prev" title="Plugins" href="plugins.html" /> 
+    <link rel="prev" title="How to configure TRD?" href="configuration.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -53,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor
+            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor (TRD)
           
 
           
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                8.0
+                9.0
               </div>
             
           
@@ -88,18 +88,19 @@
               
             
             
-              <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributors.html">For developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
 </ul>
 
             
@@ -115,7 +116,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Tezos Reward Distributor</a>
+          <a href="index.html">Tezos Reward Distributor (TRD)</a>
         
       </nav>
 
@@ -169,41 +170,16 @@
             
   <div class="section" id="payment-address">
 <h1>Payment Address<a class="headerlink" href="#payment-address" title="Permalink to this headline">¶</a></h1>
-<p>TRD is designed to work as a linux service. It expects
-the usage of the Tezos signer for encrypted payment
-accounts. Unencrypted payment accounts can be used
-without tezos signer. If a payment account is encrypted
-and not configured to be signed by tezos signer,
-TRD will freeze.</p>
-<p>An address can only be used for payments if it satisfies the
-following criteria:</p>
+<p>TRD is designed to work as a linux service. It expects the usage of the Tezos signer for encrypted payment accounts.</p>
+<p>An address can only be used for payments if it satisfies the following criteria:</p>
 <ul>
-<li><p>Public key of the address must be revealed. See tezos command
-line interface on how to run reveal command on tezos client.
-If an address is registered as delegate, there is no need to
-run reveal command.</p>
+<li><p>The public key of the address must be revealed. See the Tezos command line interface on how to run reveal command using the Tezos client e.g. If an address is registered as delegate, there is no need to run the reveal command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="n">reveal</span> <span class="n">key</span> <span class="k">for</span> <span class="o">&lt;</span><span class="n">alias</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </li>
-<li><p>Secret key of the address must be known. If the payment
-address is an implicit address (tz), its secret key must
-be imported. If payment address is an originated address
-(KT), secret key of the manager address must be imported.</p></li>
-<li><p>If secret key is encrypted, tezos-signer must be used to
-sign payments. For instructions on how to use signer,
-please refer to the next section.</p></li>
-<li><p>Use of unencrypted secret key is also possible. The
-unencrypted secret key can be obtained from tezbox
-web wallet. An unencrypted secret key can be imported
-to the client using the command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="o">&lt;</span><span class="n">alias</span><span class="o">&gt;</span> <span class="n">unencrypted</span><span class="p">:</span><span class="n">edskXXXXX</span>
-</pre></div>
-</div>
-</li>
+<li><p>The payment address must be an implicit address (tz). The secret key of the address must be known and imported to the signer before running the TRD. Please refer to the Tezos signer section for detailed instructions.</p></li>
 </ul>
-<p>For more information about tezos command line interface please
-refer to the official Tezos <a class="reference external" href="http://tezos.gitlab.io/api/cli-commands.html">documentation</a>.</p>
 </div>
 
 
@@ -213,14 +189,14 @@ refer to the official Tezos <a class="reference external" href="http://tezos.git
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="tezossigner.html" class="btn btn-neutral float-right" title="How to use the Tezos Signer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="plugins.html" class="btn btn-neutral float-left" title="Plugins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral float-left" title="How to configure TRD?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2019, habanoz, utdrmac, amzid, jdsika.
+        &#169; Copyright 2021, habanoz, utdrmac, amzid, jdsika, dansan566.
 
     </p>
   </div>

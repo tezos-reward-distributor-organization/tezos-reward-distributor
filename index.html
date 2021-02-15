@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Tezos Reward Distributor &mdash; Tezos Reward Distributor 8.0 documentation</title>
+  <title>Tezos Reward Distributor (TRD) &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="How to get and install Tezos Reward Distributor?" href="installation.html" /> 
+    <link rel="next" title="How to get and install TRD?" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -52,7 +52,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Tezos Reward Distributor
+            <a href="#" class="icon icon-home"> Tezos Reward Distributor (TRD)
           
 
           
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                8.0
+                9.0
               </div>
             
           
@@ -87,18 +87,19 @@
               
             
             
-              <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributors.html">For developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
 </ul>
 
             
@@ -114,7 +115,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Tezos Reward Distributor</a>
+          <a href="#">Tezos Reward Distributor (TRD)</a>
         
       </nav>
 
@@ -147,7 +148,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Tezos Reward Distributor </li>
+      <li>Tezos Reward Distributor (TRD) </li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -166,74 +167,78 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tezos-reward-distributor-build-status">
-<h1>Tezos Reward Distributor <a class="reference external" href="https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor"><img alt="Build Status" src="https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master" /></a><a class="headerlink" href="#tezos-reward-distributor-build-status" title="Permalink to this headline">¶</a></h1>
-<p>DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS.
-IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL
-TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN
-DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO
-RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH
-THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.</p>
-<p>PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS
-STATISTICS. PLEASE READ OUR STATISTICS <a class="reference external" href="statistics.html">POLICY</a> FOR MORE
-INFORMATION.</p>
-<div class="section" id="what-is-tezos-reward-distributor">
-<h2>What is Tezos Reward Distributor?<a class="headerlink" href="#what-is-tezos-reward-distributor" title="Permalink to this headline">¶</a></h2>
-<p>TRD is a software for distributing staking rewards of
-delegators introduced in detail in this Medium <a class="reference external" href="https://medium.com/&#64;huseyinabanox/tezos-reward-distributor-e6588c4d27e7">article</a>.
-This is not a script but a full scale application which
-can continuously run in the background as a Linux service.
-It can track cycles and make payments. However it does
-not have to be used as a service, but it can also be
-used interactively.</p>
-<p>TRD supports complex payments, pays in batches, and provides
-three back ends for calculations: Tezos RPC, <a class="reference external" href="https://tzstats.com/">tzstats</a> API and
-<a class="reference external" href="https://api.tzkt.io/">TzKT</a> API. TRD is developed and tested extensively by the community
-and the source code which can be found in the following <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor">Github</a> repo.</p>
+  <div class="section" id="tezos-reward-distributor-trd-build-status">
+<h1>Tezos Reward Distributor (TRD) <a class="reference external" href="https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor"><img alt="Build Status" src="https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master" /></a><a class="headerlink" href="#tezos-reward-distributor-trd-build-status" title="Permalink to this headline">¶</a></h1>
+<p>DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.</p>
+<p>PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR STATISTICS <a class="reference external" href="statistics.html">POLICY</a> FOR MORE INFORMATION.</p>
+<div class="section" id="what-s-trd">
+<h2>What’s TRD?<a class="headerlink" href="#what-s-trd" title="Permalink to this headline">¶</a></h2>
+<p>TRD is an open-source software for distributing staking rewards from bakers to delegators introduced in detail in this Medium <a class="reference external" href="https://medium.com/&#64;huseyinabanox/tezos-reward-distributor-e6588c4d27e7">article</a>. This is not a python script but a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether frozen or unfrozen rewards, minimum delegation, or actual vs ideal rewards - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches, and provides three back ends for calculations: Tezos RPC, <a class="reference external" href="https://tzstats.com/">tzstats</a> API and <a class="reference external" href="https://api.tzkt.io/">TzKT</a> API. TRD is developed and tested extensively by the community and the source code which can be found in the following <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor">Github</a> repo.</p>
+</div>
+<div class="section" id="who-needs-trd">
+<h2>Who needs TRD?<a class="headerlink" href="#who-needs-trd" title="Permalink to this headline">¶</a></h2>
+<p>The TRD is needed by bakers. There are a few payout tools available in the Tezos ecosystem. However, the TRD is probably the most used open source payout tool by bakers. It ranges from small bakers with a couple of delegators to large bakers with more than thousand delegators. The maintainers strive to keep up with the growing Tezos ecosystem. This in turn enables TRD users to participate in the exploration of new business areas like baking for liquidity pools or DAOs.</p>
+</div>
+<div class="section" id="what-else-do-you-need-for-trd">
+<h2>What else do you need for TRD?<a class="headerlink" href="#what-else-do-you-need-for-trd" title="Permalink to this headline">¶</a></h2>
+<p>There are currently the following options to run TRD:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>If you want to use RPC (not public RPC) for the reward calculation, you need a Tezos archive node.</p></li>
+<li><p>If you want to use an provider (pRPC, tzstats, tzkt) for the reward calculation, but want to inject your own transactions, at least a Tezos rolling node is needed.</p></li>
+<li><p>If you want to use an provider (pRPC, tzstats, tzkt) for the reward calculation and don’t want to inject your own transactions, only the Tezos signer is needed.</p></li>
+</ol>
+</div></blockquote>
+<p>However, for all options the Tezos signer is needed.</p>
 <p><strong>Provider notes:</strong></p>
 </div>
 <div class="section" id="tzstats">
 <h2>TZStats<a class="headerlink" href="#tzstats" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference external" href="https://tzstats.com/terms">terms</a> of tzstats note that a license is needed for
-the commercial use of their API:</p>
+<p>The <a class="reference external" href="https://tzstats.com/terms">terms</a> of tzstats note that a license is needed for the commercial use of their API:</p>
 <blockquote>
-<div><p>If you wish to use the Data in a manner that is primarily
-intended for or directed towards commercial advantage or
-monetary compensation (such use, “Commercial Use”),
-KIDTSUNAMI requires that you enter into a separate
-commercial license agreement. Entering into a separate
-commercial license allows us to protect KIDTSUNAMI’s
-investment in the Data and to maintain the integrity of
-the Data.</p>
-<p>Please contact us at <a class="reference external" href="mailto:license&#37;&#52;&#48;kidtsunami&#46;com">license<span>&#64;</span>kidtsunami<span>&#46;</span>com</a> for more
-information about Commercial Uses of our Data.</p>
+<div><p>If you wish to use the Data in a manner that is primarily intended for or directed towards commercial advantage or monetary compensation (such use, “Commercial Use”), Blockwatch requires that you enter into a separate commercial license agreement. Entering into a separate commercial license allows us to protect Blockwatch’s investment in the Data and to maintain the integrity of the Data.</p>
+<p>Please contact us at <a class="reference external" href="mailto:license&#37;&#52;&#48;blockwatch&#46;cc">license<span>&#64;</span>blockwatch<span>&#46;</span>cc</a> for more information about Commercial Uses of our Data.</p>
 </div></blockquote>
 </div>
 <div class="section" id="tzkt">
 <h2>TzKT<a class="headerlink" href="#tzkt" title="Permalink to this headline">¶</a></h2>
-<p>With <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232">PR232</a> the backend of the Tezos Reward Distributor
-can be optionally <a class="reference external" href="https://tzkt.io/">Powered by TzKT API</a> under the
-following terms:</p>
+<p>With <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232">PR232</a> the backend of the Tezos Reward Distributor can be optionally <a class="reference external" href="https://tzkt.io/">Powered by TzKT API</a> under the following terms:</p>
 <blockquote>
-<div><p>TzKT API is free for everyone and for both commercial
-and non-commercial usage.</p>
-<p>If your application or service uses the TzKT API in
-any forms: directly on frontend or indirectly on
-backend, you should mention that fact on your website or
-application by placing the label “Powered by TzKT API”
-with a direct link to tzkt.io.</p>
+<div><p>TzKT API is free for everyone and for both commercial and non-commercial usage.</p>
+<p>If your application or service uses the TzKT API in any forms: directly on frontend or indirectly on backend, you should mention that fact on your website or application by placing the label “Powered by TzKT API” with a direct link to tzkt.io.</p>
 </div></blockquote>
+</div>
+<div class="section" id="funding">
+<h2>Funding<a class="headerlink" href="#funding" title="Permalink to this headline">¶</a></h2>
+<p>TRD is an open source, GPL licensed project. It is maintained by various community members. A grant by the Tezos Foundation was approved in October 2020 to fund development through 2021.</p>
+</div>
+<div class="section" id="trd-art-work">
+<h2>TRD Art Work<a class="headerlink" href="#trd-art-work" title="Permalink to this headline">¶</a></h2>
+<p>This Github <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/trd-art">Repo</a> contains logo images. If you are using TRD and want to let everybody know about it, feel free to place them in your website.</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+<p class="caption"><span class="caption-text">Content:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#requirements-and-setup">Requirements and Setup</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="configuration.html#email-setup">Email Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#fee-setup">Fee Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#baker-configuration">Baker Configuration:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker (WIP)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#setup-tezos-docker-image">1 - Setup Tezos Docker Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#configure-tezos-signer">2 - Configure Tezos Signer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#configure-tezos-client">3 - Configure Tezos Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#configure-baker-and-endorser">4 - Configure baker and endorser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#test">5 - Test</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="run.html#command-line-usage">Command Line Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a><ul>
@@ -243,42 +248,26 @@ with a direct link to tzkt.io.</p>
 <li class="toctree-l2"><a class="reference internal" href="plugins.html#webhook-plugin">Webhook Plugin</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#setup-tezos-docker-image">1 - Setup Tezos Docker Image</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#configure-tezos-signer">2 - Configure Tezos Signer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#configure-tezos-client">3 - Configure Tezos Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#configure-baker-and-endorser">4 - Configure baker and endorser</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tezossignerdocker.html#test">5 - Test</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="run.html#command-line-usage">Command Line Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="statistics.html#collected-data">Collected Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistics.html#transfer">Transfer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistics.html#gdpr">GDPR</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributors.html">For developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="codeofconduct.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="codeofconduct.html#our-standards">Our Standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="codeofconduct.html#enforcement-responsibilities">Enforcement Responsibilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="codeofconduct.html#scope">Scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="codeofconduct.html#enforcement">Enforcement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="codeofconduct.html#enforcement-guidelines">Enforcement Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="codeofconduct.html#attribution">Attribution</a></li>
+</ul>
+</li>
 </ul>
 </div>
-</div>
-<div class="section" id="funding">
-<h2>Funding<a class="headerlink" href="#funding" title="Permalink to this headline">¶</a></h2>
-<p>TRD is an open source, GPL licensed project. It is maintained by various
-community members. A grant by the Tezos Foundation was approved in
-October 2020 to fund development through 2021.</p>
-</div>
-<div class="section" id="trd-art-work">
-<h2>TRD Art Work<a class="headerlink" href="#trd-art-work" title="Permalink to this headline">¶</a></h2>
-<p>This Github <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/trd-art">Repo</a> contains logo images. If you are
-using TRD and want to let everybody know about it, feel free to place
-them in your website.</p>
 </div>
 </div>
 
@@ -288,14 +277,14 @@ them in your website.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="installation.html" class="btn btn-neutral float-right" title="How to get and install Tezos Reward Distributor?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="How to get and install TRD?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2019, habanoz, utdrmac, amzid, jdsika.
+        &#169; Copyright 2021, habanoz, utdrmac, amzid, jdsika, dansan566.
 
     </p>
   </div>

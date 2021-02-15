@@ -1,41 +1,24 @@
 How to use the Tezos Signer
 ===========================
 
-Tezos signer daemon can be configured to sign the
-operations with the secret key of the account.
-There are two steps, first import secret key to
-the signer, second tell the client that it can use
-particular signer to sign the operations.
+The payouts of the rewards are most frequently performed using an encrypted payment address. In order for the TRD to be able to sign the batch transactions, it should be able to communicate with the Tezos signer. Therefore, a prior configuration of the Tezos-signer is needed. 
 
-1. Configure Signer
+There are three steps, first get the secret key of the payment address, second import the secret key to the signer, and finally start the http signer.
 
-  Replace "`<myaddressalias>`" with your alias.
-  Replace "edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-  with your encryped private key. IP address and port
-  selection are up to the user.
+1. Get the secret key of the payment address. If the payment address was created using a wallet, please refer to the GUI/documentation of the used wallet to get the secret key of your payment address. If the payment address was created using the Tezos client, or if the secret key was previously imported to the Tezos Client, it can be obtained using the following command (Replace "`<myaddressalias>`" with your alias):
+  ::
 
+    ./tezos-client show address <myaddressalias> -S
+
+
+2. Import the obtained secret key to the Tezos Signer. For that, you can replace "edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" with your encryped private key in the following command line: 
   ::
 
       ./tezos-signer import secret key <myaddressalias> encrypted:edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-      ./tezos-signer launch socket signer -a 127.0.0.1 -p 22000 -W
 
-2. Configure Client
-
-  Replace "`<myaddressalias>`" with your alias.
-  Replace "`<PKH>`" with your public key hash.
-  Use the same host port combination from the previous step.
-
+3. Launch the Tezos Signer. The following command will use the default IP address (127.0.0.1) and port (6732) of the Tezos signer, but these can be configured differently if desired by the user:
   ::
 
-    ./tezos-client import secret key <myaddressalias> tcp://127.0.0.1:22000/<PKH> -f
+      ./tezos-signer launch http signer
 
-When the client is required to sign an operation, the operation
-is sent to the signer. Signer generates a signature and sends
-back to the client. Normally encrypted accounts are imported
-to the signer. So, it is necessary to provide encryption password
-to the signer at launch. Note that signer generates generic
-signatures e.g. sigXXXX but not edsigXXXX.
-
-For instructions on how to configure signer on a docker image
-go to the next section.
- 
+Normally encrypted accounts are imported to the signer. So, it is necessary to provide the encryption password to the signer at launch. Note that the signer generates generic signatures e.g. sigXXXX but not edsigXXXX. For instructions on how to configure the signer on a docker image please go to the next section.

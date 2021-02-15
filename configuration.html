@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>How to configure Tezos Reward Distributor? &mdash; Tezos Reward Distributor 8.0 documentation</title>
+  <title>How to configure TRD? &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Plugins" href="plugins.html" />
-    <link rel="prev" title="How to get and install Tezos Reward Distributor?" href="installation.html" /> 
+    <link rel="next" title="Payment Address" href="paymentaddress.html" />
+    <link rel="prev" title="How to get and install TRD?" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -53,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor
+            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor (TRD)
           
 
           
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                8.0
+                9.0
               </div>
             
           
@@ -88,23 +88,23 @@
               
             
             
-              <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">How to configure Tezos Reward Distributor?</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#email-setup">Email Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to configure TRD?</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#fee-setup">Fee Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#baker-configuration">Baker Configuration:</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tezossignerdocker.html">Tezos Signer with Docker (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributors.html">For developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
 </ul>
 
             
@@ -120,7 +120,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Tezos Reward Distributor</a>
+          <a href="index.html">Tezos Reward Distributor (TRD)</a>
         
       </nav>
 
@@ -153,7 +153,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>How to configure Tezos Reward Distributor?</li>
+      <li>How to configure TRD?</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -172,91 +172,78 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="how-to-configure-tezos-reward-distributor">
-<h1>How to configure Tezos Reward Distributor?<a class="headerlink" href="#how-to-configure-tezos-reward-distributor" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="email-setup">
-<h2>Email Setup<a class="headerlink" href="#email-setup" title="Permalink to this headline">¶</a></h2>
-<p>Various notifications, such as completed cycle payouts, can be delivered to you via email.
-Please see the <a class="reference external" href="plugins.html">plugins docs</a> for information on configuring this plugin.</p>
-</div>
+  <div class="section" id="how-to-configure-trd">
+<h1>How to configure TRD?<a class="headerlink" href="#how-to-configure-trd" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="fee-setup">
 <h2>Fee Setup<a class="headerlink" href="#fee-setup" title="Permalink to this headline">¶</a></h2>
-<p>fee.ini file contains details about transaction fees. Currently the fee
-value specified under DEFAULT domain is used as fee amount. It is in
-mutez.</p>
+<p>fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.</p>
 </div>
 <div class="section" id="baker-configuration">
 <h2>Baker Configuration:<a class="headerlink" href="#baker-configuration" title="Permalink to this headline">¶</a></h2>
-<p>Each baker has its own configuration and policy. A payment system should
-be flexible enough to cover the needs of bakers. The application uses a yaml
-file for loading baker specific configurations.</p>
-<p>Configuration tool can be used to create baking configuration file
-interactively. Also an example configuration file is present under
-examples directory.
-By default configuration files are kept under ~/pymnt/cfg directory.
-Configuration directory can be changed with “-f” configuration option.
-Name of a configuration file should be the baker’s address
-(e.g. tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).</p>
-<p>You can use configure.py tool to interactively create your configuration
-file, with ease.</p>
+<p>Each baker has its own configuration and policy. Therefore, a payment system should be flexible enough to cover the needs of bakers. The application uses a yaml file for loading baker specific configurations and is loaded at every start.
+There are two options to create a custom yaml file:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>You can use the interactive configuration tool (configure.py)</p></li>
+<li><p>You can copy&amp;paste the example config from ~/tezos-reward-distributor/examples into ~/pymnt/cfg, rename and change it according to your baker policy.</p></li>
+</ol>
+</div></blockquote>
+<p>If you want to use Option a, you can use</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Move into tezos-reward-distributor directory</span>
+<span class="n">cd</span> <span class="n">tezos</span><span class="o">-</span><span class="n">reward</span><span class="o">-</span><span class="n">distributor</span>
+<span class="c1"># Run the interactive configuration tool</span>
+<span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">configure</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>If you want to use Option b, you can use</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># create directory</span>
+<span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="n">pymnt</span><span class="o">/</span><span class="n">cfg</span><span class="o">/</span>
+<span class="c1"># Copy &amp; Paste</span>
+<span class="n">cp</span> <span class="n">tezos</span><span class="o">-</span><span class="n">reward</span><span class="o">-</span><span class="n">distributor</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889</span><span class="o">.</span><span class="n">yaml</span> <span class="o">~/</span><span class="n">pymnt</span><span class="o">/</span><span class="n">cfg</span><span class="o">/</span>
+<span class="c1"># Edit the file with nano</span>
+<span class="n">nano</span> <span class="o">~/</span><span class="n">pymnt</span><span class="o">/</span><span class="n">cfg</span><span class="o">/</span><span class="n">tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>By default, configuration files are kept under ~/pymnt/cfg directory. The configuration directory can be changed with “-f” configuration option. The name of a configuration file should be the baker’s address (e.g. tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).
+If you want to use with a decimal operator within your config, please use a decimal point.</p>
 <p>Available configuration parameters are:</p>
 <dl>
-<dt><strong>baking_address</strong></dt><dd><p>Address of the baker. It must be an implicit account (tz1).
-No alias is allowed.</p>
+<dt><strong>baking_address</strong></dt><dd><p>Address of the baker. It must be an implicit account (tz1). No alias is allowed.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">baking_address</span><span class="p">:</span> <span class="n">tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>payment_address</strong></dt><dd><p>This is the address where payments will be done from. A PKH
-or alias of implicit or originated account is accepted. For
-more information on the payment address configuration please
-refer to the next section.</p>
+<dt><strong>payment_address</strong></dt><dd><p>This is the address where payments will be done from. A PKH of implicit or originated account is accepted. For more information on the payment address configuration please refer to the next section. No alias is allowed.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">payment_address</span><span class="p">:</span> <span class="n">tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>rewards_type</strong></dt><dd><p>There are two options for calculating the total rewards earned by
-a baker at the end of each cycle. If this parameter is missing,
-‘actual’ rewards take affect.</p>
-<p>‘ideal’: Rewards are calculated using the number of baking rights
-granted at priority 0, plus the count of all endorsing slots. If a
-bake or endorsement is missed, rewards are calculated as if there
-was no miss. No additional block rewards or transaction fees are
-included in this method.</p>
-<p>‘actual’: Rewards are calculated based on the actual number of bakes,
-at any priority, and any endorsements. If a bake or endorsement is missed,
-rewards are not earned and therefor not included. Transaction fees
-and other block rewards are included in the rewards.</p>
+<dt><strong>rewards_type</strong></dt><dd><p>There are two options for calculating the total rewards earned by a baker at the end of each cycle. If this parameter is missing, ‘actual’ rewards take affect.</p>
+<p>‘ideal’: Rewards are calculated using the number of baking rights granted at priority 0, plus the count of all endorsing slots. If a bake or endorsement is missed, rewards are calculated as if there was no miss. No additional block rewards or transaction fees are included in this method.
+‘actual’: Rewards are calculated based on the actual number of bakes, at any priority, and any endorsements. If a bake or endorsement is missed, rewards are not earned and therefor not included. Transaction fees and other block rewards are included in the rewards.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rewards_type</span><span class="p">:</span> <span class="n">actual</span>
 </pre></div>
 </div>
 </dd>
-<dt><strong>service_fee</strong></dt><dd><p>A decimal in range [0-100]. Also known as the baker’s fee.
-This is evaluated as a percentage value. Example: If set to 5,
-then 5% of baking rewards are kept as a service fee by the baker.</p>
-</dd>
-<dt><strong>founders_map</strong></dt><dd><p>A dictionary of PKH and ratio (decimal in the range [0-1])
-pairs. Each item in this dictionary represents PKH of each
-founder and his ratio of the shares coming from the service fee.
-Implicit or originated addresses are accepted. It is important
-that the sum of all ratios equals to 1. This map is optional
-if founders do not want to be paid from service fees, in
-this case, service fee remains in baking balance.</p>
+<dt><strong>service_fee</strong></dt><dd><p>A decimal in range [0-100]. Also known as the baker’s fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">service_fee</span><span class="p">:</span> <span class="mi">10</span>
-<span class="n">founders_map</span><span class="p">:</span>
-    <span class="n">tz3VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf</span><span class="p">:</span> <span class="mf">0.6</span>
-    <span class="n">tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17</span><span class="p">:</span> <span class="mf">0.4</span>
 </pre></div>
 </div>
-<p>Alice and Bob are both founders of Acme Bakery. Their bakery fee is 10%.
-Alice has a 60% (0.6) interest in the bakery, and Bob has a 40% (0.4) interest.
-When rewards are delivered at the end of each cycle, 10% is taken as the bakery
-fee (ie: <em>service_fee</em>). That 10% is then divided between Alice and Bob according to their ratios.</p>
 </dd>
-<dt><strong>owners_map</strong></dt><dd><p>A dictionary of PKH and ratio ( decimal in the range [0-1])
-pairs. Each item in this dictionary represents PKH of each
-balance owner and his ratio of the amount he owns in the
-total baking balance. Implicit or originated addresses are
-accepted. It is important that the sum of all ratios equals
-to 1. This map is optional if owners do not want to be paid
-for baking rewards, in this case, baking rewards remain in
-baking balance.</p>
+<dt><strong>founders_map</strong></dt><dd><p>A dictionary of PKH and ratio (decimal in the range [0-1]) pairs. Each item in this dictionary represents PKH of each founder and his ratio of the shares coming from the service fee. Implicit or originated addresses are accepted. It is important that the sum of all ratios equals to 1. This map is optional if founders do not want to be paid from service fees, in this case, service fee remains in baking balance.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">founders_map</span><span class="p">:</span>
+    <span class="p">{</span><span class="s1">&#39;tz3VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf&#39;</span> <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+     <span class="s1">&#39;tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17&#39;</span> <span class="p">:</span> <span class="mf">0.4</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Alice and Bob are both founders of Acme Bakery. Their bakery fee is 10%. Alice has a 60% (0.6) interest in the bakery, and Bob has a 40% (0.4) interest. When rewards are delivered at the end of each cycle, 10% is taken as the bakery fee (ie: <em>service_fee</em>). That 10% is then divided between Alice and Bob according to their ratios.</p>
+</dd>
+<dt><strong>owners_map</strong></dt><dd><p>A dictionary of PKH and ratio ( decimal in the range [0-1]) pairs. Each item in this dictionary represents PKH of each balance owner and his ratio of the amount he owns in the total baking balance. Implicit or originated addresses are accepted. It is important that the sum of all ratios equals to 1. This map is optional if owners do not want to be paid for baking rewards, in this case, baking rewards remain in baking balance.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Current</span> <span class="n">Baker</span> <span class="n">Balance</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span><span class="mi">400</span> <span class="n">XTZ</span>
 <span class="n">Total</span> <span class="n">Delegations</span><span class="p">:</span> <span class="mi">69</span><span class="p">,</span><span class="mi">520</span> <span class="n">XTZ</span>
@@ -264,56 +251,60 @@ baking balance.</p>
 
 <span class="n">service_fee</span><span class="p">:</span> <span class="mi">9</span>
 <span class="n">owners_map</span><span class="p">:</span>
-  <span class="n">tz1PV5g16m9hHMAVJ4Hx6NzzUHgksDnTLFcK</span><span class="p">:</span> <span class="mf">0.4</span>
-  <span class="n">tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17</span><span class="p">:</span> <span class="mf">0.4</span>
-  <span class="n">tz1VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf</span><span class="p">:</span> <span class="mf">0.2</span>
+  <span class="p">{</span><span class="s1">&#39;tz1PV5g16m9hHMAVJ4Hx6NzzUHgksDnTLFcK&#39;</span> <span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+   <span class="s1">&#39;tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17&#39;</span> <span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+   <span class="s1">&#39;tz1VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf&#39;</span> <span class="p">:</span> <span class="mf">0.2</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>Charlie, and Dave, have each transfered 6,960 Tez to the baker address. Edwin has transfered 3,480 Tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: <em>service_fee</em>). That 9% is dispersed to any <em>founders</em>. If there are no founders, that 9% remains in the baker’s balance.</p>
-<p>The baker address is technically a delegator to itself. Its share of rewards are part of the overall cycle rewards. Charlie, Dave, and Edwin divide the “baker address rewards” as per the ratios in <em>owners_map</em>. Additionally, owners are <em>not</em> subject to the <em>service_fee</em>.</p>
+<p>Charlie, and Dave, have each transfered 6,960 Tez to the baker address. Edwin has transfered 3,480 Tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: <em>service_fee</em>). That 9% is dispersed to any <em>founders</em>. If there are no founders, that 9% remains in the baker’s balance.
+The baker address is technically a delegator to itself. Its share of rewards are part of the overall cycle rewards. Charlie, Dave, and Edwin divide the “baker address rewards” as per the ratios in <em>owners_map</em>. Additionally, owners are <em>not</em> subject to the <em>service_fee</em>.</p>
 </dd>
-<dt><strong>specials_map</strong></dt><dd><p>A dictionary of PKH and fee (decimal in the range [0-100] )
-pairs. This dictionary can be used to set special service
-fee values for desired delegators.</p>
+<dt><strong>specials_map</strong></dt><dd><p>A dictionary of PKH and fee (decimal in the range [0-100] ) pairs. This dictionary can be used to set special service fee values for desired delegators.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">specials_map</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tz3VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf&#39;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">&#39;tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17&#39;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>supporters_set</strong></dt><dd><p>A set of PKH values. Each PKH represents a supporter of the
-baker. Supporters are not charged with a service fee. Founders
-and balance owners are natural supporters, they are not
-needed to be added.</p>
+<dt><strong>supporters_set</strong></dt><dd><p>A set of PKH values. Each PKH represents a supporter of the baker. Supporters are not charged with a service fee. Founders and balance owners are natural supporters, they are not needed to be added.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">supporters_set</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tz3VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>min_delegation_amt</strong></dt><dd><p>A minimum delegation amount can be set here. If this value is set
-to 10, 10 XTZ are required as minimum. It is important to define
-what happens to the rewards of excluded delegates that are below
-the minimum delegation balance in rules_map.</p>
+<dt><strong>min_delegation_amt</strong></dt><dd><p>A minimum delegation amount can be set here. If this value is set to 10, 10 XTZ are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">min_delegation_amt</span> <span class="p">:</span> <span class="mi">10</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>reactivate_zeroed</strong></dt><dd><p>True/False - If True, an account to be paid found with a 0
-balance will be reactivated, incurring the necessary burn fee
-and storage, and rewards will be sent. If False, any account
-with a 0 balance will be skipped payment. This will be noted in
-the CSV report.</p>
+<dt><strong>reactivate_zeroed</strong></dt><dd><p>True/False - If True, an account to be paid found with a 0 balance will be reactivated, incurring the necessary burn fee and storage, and rewards will be sent. If False, any account with a 0 balance will be skipped payment. This will be noted in the CSV report.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reactivate_zeroed</span> <span class="p">:</span> <span class="kc">True</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>delegator_pays_xfer_fee</strong></dt><dd><p>Default value is true. If set to false, the transfer fee for
-each payment is paid by the delegate. Otherwise, the transfer
-fee is deducted from the delegator reward.</p>
+<dt><strong>delegator_pays_xfer_fee</strong></dt><dd><p>Default value is true. If set to false, the transfer fee for each payment is paid by the delegate. Otherwise, the transfer fee is deducted from the delegator reward.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delegator_pays_xfer_fee</span> <span class="p">:</span> <span class="kc">False</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>delegator_pays_ra_fee</strong></dt><dd><p>True/False - Functions just like delegator_pays_xfer_fee, except refers
-to the burn/reactivation fee. If True, the burn fee
-is subtracted from the reward payment (ie: delegate pays).
-If False, burn fee is paid for by baker. If reactivate_zeroed: True
-and delegator_pays_ra_fee: True but the reward is smaller than the burn fee,
-their rewards will be ignored and will simply remain at the bakers address.</p>
+<dt><strong>delegator_pays_ra_fee</strong></dt><dd><p>True/False - Functions just like delegator_pays_xfer_fee, except refers to the burn/reactivation fee. If True, the burn fee is subtracted from the reward payment (ie: delegate pays). If False, burn fee is paid for by baker. If reactivate_zeroed: True and delegator_pays_ra_fee: True but the reward is smaller than the burn fee, their rewards will be ignored and will simply remain at the bakers address.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delegator_pays_ra_fee</span> <span class="p">:</span> <span class="kc">False</span>
+</pre></div>
+</div>
 </dd>
-<dt><strong>rules_map</strong></dt><dd><p>The rules_map is needed to redirect payments. A pre-defined source (left side) is
-mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance,
-TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are
-PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.</p>
+<dt><strong>rules_map</strong></dt><dd><p>The rules_map is needed to redirect payments. A pre-defined source (left side) is mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rules_map</span><span class="p">:</span>
-  <span class="n">tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ</span><span class="p">:</span> <span class="n">TOF</span>                                         <span class="p">(</span><span class="n">redirects</span> <span class="n">payment</span> <span class="kn">from</span> <span class="nn">tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ</span> <span class="n">to</span> <span class="n">founders</span><span class="p">)</span>
-  <span class="n">tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace</span><span class="p">:</span> <span class="n">TOB</span>                                         <span class="p">(</span><span class="n">payment</span> <span class="n">to</span> <span class="n">tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace</span> <span class="n">will</span> <span class="n">remain</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">bakers</span> <span class="n">balance</span><span class="p">)</span>
-  <span class="n">tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT</span><span class="p">:</span> <span class="n">tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7</span>        <span class="p">(</span><span class="n">redirects</span> <span class="n">payment</span> <span class="kn">from</span> <span class="nn">tz1V9S...</span> <span class="n">to</span> <span class="n">tz1fgX</span><span class="o">...</span><span class="p">)</span>
-  <span class="n">tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs</span><span class="p">:</span> <span class="n">Dexter</span>                                      <span class="p">(</span><span class="n">indicates</span> <span class="n">address</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">dexter</span> <span class="n">pool</span><span class="p">;</span> <span class="n">TRD</span> <span class="n">will</span> <span class="n">send</span> <span class="n">rewards</span> <span class="n">to</span> <span class="n">pool</span> <span class="n">members</span><span class="p">)</span>
-  <span class="n">mindelegation</span><span class="p">:</span> <span class="n">TOE</span>                                                                <span class="p">(</span><span class="n">mindelegation</span> <span class="n">will</span> <span class="n">be</span> <span class="n">shared</span> <span class="k">with</span> <span class="n">everyone</span><span class="p">)</span>
+  <span class="n">tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ</span><span class="p">:</span> <span class="n">TOF</span>                                         <span class="c1">#(redirects payment from tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ to founders)</span>
+  <span class="n">tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace</span><span class="p">:</span> <span class="n">TOB</span>                                         <span class="c1">#(payment to tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace will remain in the bakers balance)</span>
+  <span class="n">tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT</span><span class="p">:</span> <span class="n">tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7</span>        <span class="c1">#(redirects payment from tz1V9S... to tz1fgX...)</span>
+  <span class="n">tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs</span><span class="p">:</span> <span class="n">Dexter</span>                                      <span class="c1">#(indicates address is a dexter pool; TRD will send rewards to pool members)</span>
+  <span class="n">mindelegation</span><span class="p">:</span> <span class="n">TOE</span>                                                                <span class="c1">#(mindelegation will be shared with everyone)</span>
 </pre></div>
 </div>
 </dd>
@@ -329,15 +320,15 @@ PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="plugins.html" class="btn btn-neutral float-right" title="Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="installation.html" class="btn btn-neutral float-left" title="How to get and install Tezos Reward Distributor?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="paymentaddress.html" class="btn btn-neutral float-right" title="Payment Address" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="How to get and install TRD?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2019, habanoz, utdrmac, amzid, jdsika.
+        &#169; Copyright 2021, habanoz, utdrmac, amzid, jdsika, dansan566.
 
     </p>
   </div>

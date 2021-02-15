@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Tezos Signer with Docker &mdash; Tezos Reward Distributor 8.0 documentation</title>
+  <title>Tezos Signer with Docker (WIP) &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="How to run Tezos Reward Distributor?" href="run.html" />
+    <link rel="next" title="How to run TRD?" href="run.html" />
     <link rel="prev" title="How to use the Tezos Signer" href="tezossigner.html" /> 
 </head>
 
@@ -53,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor
+            <a href="index.html" class="icon icon-home"> Tezos Reward Distributor (TRD)
           
 
           
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                8.0
+                9.0
               </div>
             
           
@@ -88,14 +88,13 @@
               
             
             
-              <p class="caption"><span class="caption-text">Tezos Reward Distributor:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tezos Signer with Docker</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tezos Signer with Docker (WIP)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#setup-tezos-docker-image">1 - Setup Tezos Docker Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configure-tezos-signer">2 - Configure Tezos Signer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configure-tezos-client">3 - Configure Tezos Client</a></li>
@@ -103,10 +102,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#test">5 - Test</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">How to run Tezos Reward Distributor?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributors.html">For developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
 </ul>
 
             
@@ -122,7 +123,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Tezos Reward Distributor</a>
+          <a href="index.html">Tezos Reward Distributor (TRD)</a>
         
       </nav>
 
@@ -155,7 +156,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Tezos Signer with Docker</li>
+      <li>Tezos Signer with Docker (WIP)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -174,36 +175,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tezos-signer-with-docker">
-<h1>Tezos Signer with Docker<a class="headerlink" href="#tezos-signer-with-docker" title="Permalink to this headline">¶</a></h1>
-<p>In Tezos <em>mainnet</em> it is not safe to keep private keys unencrypted.
-Many use HSM (Hardware Security Module) to keep private keys.
-Luckily HSMs are not the only option. The Tezos Signer can be
-used to sign transactions/blocks. Tezos-signer should be given
-encrypted private key so that it can sign operations. For
-security reasons tezos-signer does not keep encryption password
-anywhere, it must be typed upon tezos-signer launch. As a result,
-it is not possible to run tezos-signer as a daemon.</p>
-<p>The Tezos Signer must be run from shell interactively and
-encryption password must be typed. Then this shell session
-must be kept open otherwise tezos-signer process dies.
-However, if baking service is in the cloud then it is not
-practical to keep a terminal session open.</p>
-<p>The proposed solution is to use Tezos docker image in host
-network mode. Start the signer and type the password.
-Terminate the terminal session. Signer will continue to
-work and sign operations.</p>
-<p>DISCLAIMER: SAFETY OF THE PROPOSED METHOD IS NOT ASSURED.
-USE OF HSM IS ADVISED. IF AN ATTACKER BREACHES THE MACHINE
-TEZOS SIGNER RUNNING IT MAY COPY YOU PRIVATE KEY FROM
-TEZOS SIGNER MEMORY. IN DEFAULT MODE TEZOS SIGNER MAY BE
-USED BY THE ATTACKER TO SIGN ANY TRANSACTIONS INCLUDING
-TEZOS TRANSFERS. BEFORE USING THIS METHOD BEWARE OF THE
-DANGERS.</p>
+  <div class="section" id="tezos-signer-with-docker-wip">
+<h1>Tezos Signer with Docker (WIP)<a class="headerlink" href="#tezos-signer-with-docker-wip" title="Permalink to this headline">¶</a></h1>
+<p><strong>IMPORTANT: This section is still under maintenance. This will be updated parallely to adding the docker support to the TRD</strong></p>
+<p>In Tezos <em>mainnet</em> it is not safe to keep private keys unencrypted. Many use HSM (Hardware Security Module) to keep private keys. Luckily HSMs are not the only option. The Tezos Signer can be used to sign transactions/blocks. Tezos-signer should be given encrypted private key so that it can sign operations. For security reasons tezos-signer does not keep encryption password anywhere, it must be typed upon tezos-signer launch. As a result, it is not possible to run tezos-signer as a daemon.</p>
+<p>The Tezos Signer must be run from shell interactively and encryption password must be typed. Then this shell session must be kept open otherwise tezos-signer process dies. However, if baking service is in the cloud then it is not practical to keep a terminal session open.</p>
+<p>The proposed solution is to use Tezos docker image in host network mode. Start the signer and type the password. Terminate the terminal session. Signer will continue to work and sign operations.</p>
+<p>DISCLAIMER: SAFETY OF THE PROPOSED METHOD IS NOT ASSURED. USE OF HSM IS ADVISED. IF AN ATTACKER BREACHES THE MACHINE TEZOS SIGNER RUNNING IT MAY COPY YOU PRIVATE KEY FROM EZOS SIGNER MEMORY. IN DEFAULT MODE TEZOS SIGNER MAY BE USED BY THE ATTACKER TO SIGN ANY TRANSACTIONS INCLUDING TEZOS TRANSFERS. BEFORE USING THIS METHOD BEWARE OF THE DANGERS.</p>
 <p><strong>IMPORTANT:</strong></p>
-<p>This need to be tested again for the current version of the
-Tezos test network. Some commands and filenames may have
-changed!</p>
+<p>This need to be tested again for the current version of the Tezos test network. Some commands and filenames may have changed!</p>
 <div class="section" id="setup-tezos-docker-image">
 <h2>1 - Setup Tezos Docker Image<a class="headerlink" href="#setup-tezos-docker-image" title="Permalink to this headline">¶</a></h2>
 <p>Example command is for <em>babylonnet</em>:</p>
@@ -213,16 +193,11 @@ changed!</p>
 <span class="o">./</span><span class="n">babylonnet</span><span class="o">.</span><span class="n">sh</span> <span class="n">status</span>
 </pre></div>
 </div>
-<p>For mainnet, replace first “babylonnet.sh” with “mainnet.sh”
-and have a look at the official Tezos <a class="reference external" href="http://tezos.gitlab.io/introduction/howtoget.html?highlight=docker#docker-images">docker</a> documentation.</p>
+<p>For mainnet, replace first “babylonnet.sh” with “mainnet.sh” and have a look at the official Tezos <a class="reference external" href="http://tezos.gitlab.io/introduction/howtoget.html?highlight=docker#docker-images">docker</a> documentation.</p>
 </div>
 <div class="section" id="configure-tezos-signer">
 <h2>2 - Configure Tezos Signer<a class="headerlink" href="#configure-tezos-signer" title="Permalink to this headline">¶</a></h2>
-<p>For mainnet replace “babylonnet” with “mainnet”. Replace
-“myaddressalias” with your alias. Replace
-“edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX” with your
-encryped private key. Replace “8fa665779b7b” with result
-from docker ps.</p>
+<p>For mainnet replace “babylonnet” with “mainnet”. Replace “myaddressalias” with your alias. Replace “edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX” with your encryped private key. Replace “8fa665779b7b” with result from docker ps.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">it</span>  <span class="n">tezos</span><span class="o">/</span><span class="n">tezos</span><span class="p">:</span><span class="n">babylonnet</span> <span class="n">tezos</span><span class="o">-</span><span class="n">signer</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="n">mykeyalias</span> <span class="n">encrypted</span><span class="p">:</span><span class="n">edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
 <span class="n">docker</span> <span class="n">ps</span> <span class="o">-</span><span class="n">a</span>
 <span class="n">docker</span> <span class="n">commit</span> <span class="mi">8</span><span class="n">fa665779b7b</span> <span class="n">tezos</span><span class="o">-</span><span class="n">babylonnet</span><span class="o">-</span><span class="n">signer</span>
@@ -232,20 +207,14 @@ from docker ps.</p>
 </div>
 <div class="section" id="configure-tezos-client">
 <h2>3 - Configure Tezos Client<a class="headerlink" href="#configure-tezos-client" title="Permalink to this headline">¶</a></h2>
-<p>Replace “myaddressalias” with your alias. Replace
-“tz1PKH” with your public key hash. It is up to you
-to select host IP and port.</p>
+<p>Replace “myaddressalias” with your alias. Replace “tz1PKH” with your public key hash. It is up to you to select host IP and port.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="n">myaddressalias</span> <span class="n">tcp</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">22000</span><span class="o">/</span><span class="n">tz1PKH</span> <span class="o">-</span><span class="n">f</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="configure-baker-and-endorser">
 <h2>4 - Configure baker and endorser<a class="headerlink" href="#configure-baker-and-endorser" title="Permalink to this headline">¶</a></h2>
-<p>Replace “myaddressalias” with your alias. Replace “tz1PKH”
-with your public key hash. “~/.tezos-node/” is where node
-data is stored and may be different in your system. Also,
-baker/endorser binary name may change according to currently
-active protocol.</p>
+<p>Replace “myaddressalias” with your alias. Replace “tz1PKH” with your public key hash. “~/.tezos-node/” is where node data is stored and may be different in your system. Also, baker/endorser binary name may change according to currently active protocol.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">baker</span><span class="o">-</span><span class="mi">003</span><span class="o">-</span><span class="n">PsddFKi3</span> <span class="o">-</span><span class="n">R</span> <span class="n">tcp</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">22000</span><span class="o">/</span><span class="n">tz1PKH</span> <span class="n">run</span> <span class="k">with</span> <span class="n">local</span> <span class="n">node</span> <span class="o">~/.</span><span class="n">tezos</span><span class="o">-</span><span class="n">node</span><span class="o">/</span> <span class="n">myaddressalias</span>
 <span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">endorser</span><span class="o">-</span><span class="mi">003</span><span class="o">-</span><span class="n">PsddFKi3</span> <span class="o">-</span><span class="n">R</span> <span class="n">tcp</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">22000</span><span class="o">/</span><span class="n">tz1PKH</span> <span class="n">run</span> <span class="n">myaddressalias</span>
 </pre></div>
@@ -253,15 +222,12 @@ active protocol.</p>
 </div>
 <div class="section" id="test">
 <h2>5 - Test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h2>
-<p>To make sure that tezos-signer can survive terminal session
-death, run tests after terminating the session the signer
-is launched.</p>
+<p>To make sure that tezos-signer can survive terminal session death, run tests after terminating the session the signer is launched.</p>
 <p>You must see tezos-signer process after running following command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ps</span> <span class="o">-</span><span class="n">ef</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">tezos</span><span class="o">-</span><span class="n">signer</span>
 </pre></div>
 </div>
-<p>Transfer small amount of money from your account to make sure
-that tezos-signer is signing operations.</p>
+<p>Transfer small amount of money from your account to make sure that tezos-signer is signing operations.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="n">transfer</span> <span class="mi">1</span> <span class="kn">from</span> <span class="nn">myaddressalias</span> <span class="n">to</span> <span class="n">someaddress</span> <span class="o">--</span><span class="n">fee</span> <span class="mi">0</span>
 </pre></div>
 </div>
@@ -274,7 +240,7 @@ that tezos-signer is signing operations.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="run.html" class="btn btn-neutral float-right" title="How to run Tezos Reward Distributor?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="run.html" class="btn btn-neutral float-right" title="How to run TRD?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="tezossigner.html" class="btn btn-neutral float-left" title="How to use the Tezos Signer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
@@ -282,7 +248,7 @@ that tezos-signer is signing operations.</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2019, habanoz, utdrmac, amzid, jdsika.
+        &#169; Copyright 2021, habanoz, utdrmac, amzid, jdsika, dansan566.
 
     </p>
   </div>
