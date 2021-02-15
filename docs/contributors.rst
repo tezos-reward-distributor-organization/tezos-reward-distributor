@@ -1,15 +1,16 @@
-For developers
+For Developers
 =====================================================
 
 If you are interested in improving our project, this is just great! Our community looks forward to your contribution. Please follow this process:
 
 1. Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.
-2. Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.
-3. Branches MUST have descriptive names that start with either the `fix/` or `feature/` prefixes. Good examples are: `fix/signin-issue` or `feature/issue-templates`.
-4. Make your changes on the branch you created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.
-5. Be sure your code style adheres to the Python PEP8 standard. Use `pycodestyle` to verify before submitting.
-6. Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don't push it to your master! If you do it will make it harder to submit new changes later.
-7. Submit a pull request to the TRD repository from your commit page on GitHub.
+2. Use a suitable code editor like Visual Studio Code or PyCharm. If you want to work on the documentation, please use a suitable plugin for .rst files. Make sure to install recommonmark (pip install recommonmark) and the Sphinx theme (pip install sphinx_rtd_theme) when working on the documentation. Also make sure to that lines will wrap at the viewport width.
+3. Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.
+4. Branches MUST have descriptive names that start with either the `fix/` or `feature/` prefixes. Good examples are: `fix/signin-issue` or `feature/issue-templates`.
+5. Make your changes on the branch you created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.
+6. Be sure your code style adheres to the Python PEP8 standard. Use `pycodestyle` to verify before submitting.
+7. Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don't push it to your master! If you do it will make it harder to submit new changes later.
+8. Submit a pull request to the TRD repository from your commit page on GitHub.
     a. Give a descriptive title to your PR and mark it e.g. as `[WIP]` if you want it to be visible but you are not finished yet or need help.
     b. Provide a description of your changes according to the PR template.
     c. Put `closes #XXXX` in your comment to auto-close the issue that your PR fixes (if such).
