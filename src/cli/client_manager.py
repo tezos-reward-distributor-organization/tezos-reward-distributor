@@ -37,10 +37,10 @@ class ClientManager:
                                     url=url,
                                     timeout=timeout)
         if response is None:
-            return -1, ""
+            return -1, "TimeOut"
 
         if not (response.status_code == 200):
-            return response.status_code, ""
+            return response.status_code, "Code"+str(response.status_code)
 
         output = response.json()
         verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
@@ -62,10 +62,10 @@ class ClientManager:
                                         headers=headers,
                                         timeout=timeout)
         except Exception:
-            return -1, ""
+            return -1, "TimeOut"
 
         if not (response.status_code == 200):
-            return response.status_code, ""
+            return response.status_code, "Code"+str(response.status_code)
 
         output = response.json()
         verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
