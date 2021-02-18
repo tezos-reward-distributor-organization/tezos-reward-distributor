@@ -96,9 +96,9 @@ class ClientManager:
         url = os.path.join(signer_url, cmd)
 
         signer_exception = f'Error querying the signer at url {signer_url}. \n' \
-                           f'Please make sure to start the signer using "./tezos-signer launch http signer", \n' \
-                           f'import the secret key of the payout address {key_name} \n' \
-                           f'and specify the url using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)'
+                           f'Please make sure you have started the signer using "./tezos-signer launch http signer", \n' \
+                           f'imported the secret key of the payout address {key_name}, \n' \
+                           f'and specified the URL of signer using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)'
 
         try:
             response = self._do_request(method="GET",
