@@ -173,10 +173,11 @@ class BatchPayer():
 
         payment_address_balance = self.get_payment_address_balance()
         logger.info("Total amount to pay out is {:,} mutez.".format(total_amount_to_pay))
-        logger.info("Current balance in payout address is {:,} mutez.".format(payment_address_balance))
         logger.info("{} payments will be done in {} batches".format(len(payment_items), len(payment_items_chunks)))
 
         if payment_address_balance is not None:
+
+            logger.info("Current balance in payout address is {:,} mutez.".format(payment_address_balance))
 
             number_future_payable_cycles = int(payment_address_balance / total_amount_to_pay) - 1
 
@@ -334,7 +335,9 @@ class BatchPayer():
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
-            _, counter = self.clnt_mngr.request_url(self.comm_counter)
+            status, counter = self.clnt_mngr.request_url(self.comm_counter)
+            if status != 200:
+                raise Exception("Received response code {} for request '{}'".format(status, self.comm_counter))
             counter = int(counter)
             self.base_counter = int(counter)
             op_counter.set(self.base_counter)
@@ -510,6 +513,11 @@ class BatchPayer():
     def get_payment_address_balance(self):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
         status, payment_address_balance = self.clnt_mngr.request_url(get_current_balance_request)
+
+        if status != 200:
+            logger.warning("Balance request failed! Response code {} is received for request '{}'. See verbose logs for more detail.".format(status, get_current_balance_request))
+            return None
+
         return int(payment_address_balance)
 
 
