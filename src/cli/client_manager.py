@@ -18,7 +18,11 @@ class ClientManager:
         super().__init__()
         self.node_endpoint = node_endpoint
         if self.node_endpoint.find('http') == -1:
-            self.node_endpoint = 'http://' + self.node_endpoint
+            if self.node_endpoint.find('443') == -1:
+                self.node_endpoint = 'http://' + self.node_endpoint
+            else:
+                self.node_endpoint = 'https://' + self.node_endpoint
+                logger.info("Node endpoint URL points to an SSL endpoint. Using HTTPS protocol prefix.")
         if len(self.node_endpoint.split(':')) < 3:
             self.node_endpoint += f':{TEZOS_RPC_PORT}'
         self.signer_endpoint = signer_endpoint
