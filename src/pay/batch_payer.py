@@ -322,12 +322,12 @@ class BatchPayer():
             # Calculate actual used storage
             storage = 0
             if 'paid_storage_size_diff' in op['metadata']['operation_result']:
-                storage += op['metadata']['operation_result']['paid_storage_size_diff']
+                storage += int(op['metadata']['operation_result']['paid_storage_size_diff'])
             if "internal_operation_results" in op["metadata"]:
                 internal_operation_results = op["metadata"]["internal_operation_results"]
                 for internal_op in internal_operation_results:
                     if 'paid_storage_size_diff' in internal_op['result']:
-                        storage += internal_op['result']['paid_storage_size_diff']
+                        storage += int(internal_op['result']['paid_storage_size_diff'])
 
         else:
             op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
