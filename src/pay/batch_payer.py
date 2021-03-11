@@ -151,7 +151,7 @@ class BatchPayer():
             # Check if payment item was skipped due to any of the phase calculations.
             # Add any items which are marked as skipped to the returning array so that they are logged to reports.
             if not pi.payable:
-                logger.info("Skipping payout to {:s} (:>10.6f), reason: {:s}".format(pi.address, pi.amount / MUTEZ, pi.desc))
+                logger.info("Skipping payout to {:s} {:>10.6f}, reason: {:s}".format(pi.address, pi.amount / MUTEZ, pi.desc))
                 payment_logs.append(pi)
                 continue
 
