@@ -2,7 +2,7 @@ import gzip
 import logging
 import os
 from datetime import datetime
-
+import shutil
 
 class VerboseLoggingHelper:
     def __init__(self, logging_dir, enabled, verbose_logger, main_logger, formatter, keep_at_most, mode):
@@ -73,8 +73,10 @@ class VerboseLoggingHelper:
 
         archive_file = os.path.join(archive_dir, os.path.splitext(os.path.basename(path))[0] + '.gz')
 
-        with gzip.open(archive_file, 'wb') as arch_zip:
-            arch_zip.write(path)
+        with open(path, 'rb') as f_in:
+            with gzip.open(archive_file, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
         os.remove(path)
 
         self.remove_oldest(archive_dir)
