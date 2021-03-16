@@ -1,7 +1,7 @@
+import gzip
 import logging
 import os
 from datetime import datetime
-from zipfile import ZipFile
 
 
 class VerboseLoggingHelper:
@@ -71,10 +71,10 @@ class VerboseLoggingHelper:
         archive_dir = os.path.join(self.logging_dir, 'verbose_backup')
         os.makedirs(archive_dir, exist_ok=True)
 
-        archive_file = os.path.join(archive_dir, os.path.splitext(os.path.basename(path))[0] + '.zip')
+        archive_file = os.path.join(archive_dir, os.path.splitext(os.path.basename(path))[0] + '.gz')
 
-        with ZipFile(archive_file, 'w') as arch_zip:
-            arch_zip.write(path, arcname=os.path.basename(path))
+        with gzip.open(archive_file, 'wb') as arch_zip:
+            arch_zip.write(path)
         os.remove(path)
 
         self.remove_oldest(archive_dir)
