@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import shutil
 
+
 class VerboseLoggingHelper:
     def __init__(self, logging_dir, enabled, verbose_logger, main_logger, formatter, keep_at_most, mode):
         self.main_logger = main_logger
