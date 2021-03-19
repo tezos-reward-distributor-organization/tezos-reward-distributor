@@ -2,6 +2,7 @@ import os
 import queue
 import shutil
 import unittest
+import pytest
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
@@ -44,7 +45,7 @@ def request_url_post(cmd, json_params, timeout=None):
 
     return "bbbb" + str(json_params) + str(timeout)
 
-
+@pytest.mark.skip
 @unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 class TestRetryProducer(TestCase):
     def setUp(self):
