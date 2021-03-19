@@ -142,7 +142,7 @@ def add_argument_payment_offset(parser):
 def add_argument_network(parser):
     parser.add_argument("-N", "--network",
                         help="Network name. Default is Mainnet. The current test network of tezos is DELPHINET.",
-                        choices=['MAINNET', 'DELPHINET'],
+                        choices=['MAINNET', 'EDO2NET'],
                         default='MAINNET')
 
 
