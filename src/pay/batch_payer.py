@@ -148,6 +148,13 @@ class BatchPayer():
             if pi.paid == PaymentStatus.FAIL:
                 pi.paid = PaymentStatus.UNDEFINED
 
+            # Check if payment item was skipped due to any of the phase calculations.
+            # Add any items which are marked as skipped to the returning array so that they are logged to reports.
+            if not pi.payable:
+                logger.info("Skipping payout to {:s} {:>10.6f}, reason: {:s}".format(pi.address, pi.amount / MUTEZ, pi.desc))
+                payment_logs.append(pi)
+                continue
+
             zt = self.zero_threshold
             if pi.needs_activation and self.delegator_pays_ra_fee:
                 # Need to apply this fee to only those which need reactivation
@@ -324,8 +331,7 @@ class BatchPayer():
 
         else:
             op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-            logger.error(
-                "Error while validating operation - Status: {}, Message: {}".format(status, op_error))
+            logger.error("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
             return PaymentStatus.FAIL, []
 
         # Calculate needed fee for extra consumed gas
@@ -383,8 +389,7 @@ class BatchPayer():
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
-                logger.debug(
-                    "Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
+                logger.debug("Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
             op_counter.inc()
