@@ -405,6 +405,7 @@ def main(args):
         callbacks[fsm.current](command)
     pass
 
+
     # 4. parse and process config
     parser.validate()
     parser.process()
