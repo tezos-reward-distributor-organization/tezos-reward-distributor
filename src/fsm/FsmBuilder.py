@@ -1,3 +1,7 @@
+from fysom import Fysom
+
+from fsm.TrdFsmModel import TrdFsmModel
+
 ALL_STATES = '*'
 
 
@@ -23,8 +27,8 @@ class FsmBuilder:
         self.states.append(name)
 
         if on_enter: self.callbacks['on_enter_' + name] = on_enter
-        if on_leave: self.callbacks['en_leave_' + name] = on_leave
-        if on_reenter: self.callbacks['en_reenter_' + name] = on_reenter
+        if on_leave: self.callbacks['on_leave_' + name] = on_leave
+        if on_reenter: self.callbacks['on_reenter_' + name] = on_reenter
 
     def add_state_async_leave(self, name, on_enter=None):
         self.add_state(name, on_leave=lambda e: False, on_enter=on_enter)
@@ -44,3 +48,9 @@ class FsmBuilder:
 
         if on_before: self.callbacks['on_before_' + event] = on_before
         if on_after: self.callbacks['on_after_' + event] = on_after
+
+    def build(self):
+        return TrdFsmModel(Fysom(initial=self.initial,
+                     events=self.transitions,
+                     callbacks=self.callbacks,
+                     final=self.final))
