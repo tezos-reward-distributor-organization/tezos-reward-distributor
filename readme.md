@@ -4,7 +4,7 @@ DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DE
 
 PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR [STATISTICS POLICY](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/statistics.html) FOR MORE INFORMATION.
 
-## Tezos Reward Distributor : Run & Forget [![Build Status](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master)](https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor)
+## Tezos Reward Distributor : Run & Forget [![Actions Status](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/workflows/actions/badge.svg)](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/actions)
 
 TRD is a software for distributing staking rewards of delegators introduced in detail in this [Medium article](https://medium.com/@huseyinabanox/tezos-reward-distributor-e6588c4d27e7). This is not a script but a full scale application which can continuously run in the background as a Linux service. It can track cycles and make payments. However it does not have to be used as a service, but it can also be used interactively.
 The documentation can be found [here](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/).
