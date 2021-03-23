@@ -15,10 +15,10 @@ class FsmBuilder:
         self.final = None
 
     def add_initial_state(self, name, on_leave=None):
-        return self.add_state(name, initial=True, on_leave=on_leave)
+        self.add_state(name, initial=True, on_leave=on_leave)
 
     def add_final_state(self, name, on_enter=None):
-        return self.add_state(name, final=True, on_enter=on_enter)
+        self.add_state(name, final=True, on_enter=on_enter)
 
     def add_state(self, name, initial=False, final=False, on_enter=None, on_leave=None, on_reenter=None):
         if initial: self.initial = name
@@ -50,7 +50,8 @@ class FsmBuilder:
         if on_after: self.callbacks['on_after_' + event] = on_after
 
     def build(self):
-        return TrdFsmModel(Fysom(initial=self.initial,
+        fsm = TrdFsmModel(Fysom(initial=self.initial,
                      events=self.transitions,
                      callbacks=self.callbacks,
                      final=self.final))
+        return fsm
