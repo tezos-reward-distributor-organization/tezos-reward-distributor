@@ -369,7 +369,7 @@ class BatchPayer():
             if payment_item.paymentaddress.startswith('KT'):
                 simulation_status, simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
                 if simulation_status == PaymentStatus.FAIL:
-                    logger.debug("Payment to {} script could not be processed (Possible reason: liquidated contract). Skipping."
+                    logger.debug("Payment to {} script could not be processed (Possible reason: liquidated contract). Skipping. (think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers)"
                                  .format(payment_item.paymentaddress))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
@@ -378,8 +378,8 @@ class BatchPayer():
                 total_fee = tx_fee + burn_fee
                 # Bound the total (baker and burn) fee by the reward amount in case of KT1 accounts
                 if total_fee > FEE_LIMIT_CONTRACTS:
-                    logger.debug("Payment to {} script requires higher fees than reward amount. Skipping."
-                                 .format(payment_item.paymentaddress))
+                    logger.debug("Payment to {} script requires higher fees than reward amount. Skipping. (Needed fee: {} muTez, Max fee: {} muTez, think about either configuring higher fees or redirecting to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers."
+                                 .format(payment_item.paymentaddress, total_fee, FEE_LIMIT_CONTRACTS))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
 
