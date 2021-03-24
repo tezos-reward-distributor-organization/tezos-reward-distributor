@@ -41,7 +41,7 @@ class WebhookPlugin(plugins.Plugin):
             payload["payouts"].append(payout)
 
         try:
-            resp = requests.post(self.endpoint, json=payload, timeout=15)
+            resp = requests.post(self.endpoint, json=payload, timeout=15, headers={'user-agent': 'trd/0.0.1'})
         except requests.exceptions.RequestException as e:
             logger.error("[WebhookPlugin] Error POSTing '{:s}'".format(str(e)))
             return

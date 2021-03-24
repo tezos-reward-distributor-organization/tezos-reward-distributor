@@ -2,17 +2,17 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 
-CURRENT_TESTNET = 'DELPHINET'
+CURRENT_TESTNET = 'EDO2NET'
 
 # Providers api prefix
 # Public RPC
 PUBLIC_NODE_URL = {"MAINNET": "https://mainnet-tezos.giganode.io",
-                   CURRENT_TESTNET: "https://{}-tezos.giganode.io".format(CURRENT_TESTNET)}
+                   CURRENT_TESTNET: "https://testnet-tezos.giganode.io"}
 
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.delphi.tzstats.com'
+    CURRENT_TESTNET: 'https://api.edo2net.tzstats.com'
 }
 
 # TzKt

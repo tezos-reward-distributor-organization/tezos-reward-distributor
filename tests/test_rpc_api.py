@@ -3,8 +3,10 @@ import unittest
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 from os.path import dirname, join
+import pytest
 
 from main import main  # This imports main() from src/main.py
+from Constants import CURRENT_TESTNET
 
 
 # This is a dummy class representing any --arguments passed on the command line
@@ -16,7 +18,7 @@ class Args:
         self.run_mode = 3
         self.release_override = 0
         self.payment_offset = 0
-        self.network = 'DELPHINET'
+        self.network = CURRENT_TESTNET
         self.node_endpoint = ''
         self.signer_endpoint = ''
         self.reward_data_provider = reward_data_provider
@@ -88,6 +90,7 @@ test_logger.setLevel(logging.DEBUG)
 test_logger.addHandler(sh)
 
 
+@pytest.mark.skip
 @patch('main.get_baking_configuration_file', MagicMock(return_value=''))
 @patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
 @patch('log_config.main_logger', test_logger)
@@ -100,7 +103,7 @@ class RpcApiTest(unittest.TestCase):
     def test_dry_run(self):
 
         # Test with PRPC node
-        args = Args(initial_cycle=90, reward_data_provider='prpc', node_addr_public='https://delphinet-tezos.giganode.io')
-        args.node_endpoint = 'https://delphinet-tezos.giganode.io:443'
+        args = Args(initial_cycle=90, reward_data_provider='prpc', node_addr_public='https://testnet-tezos.giganode.io')
+        args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
         args.docker = True
         main(args)
