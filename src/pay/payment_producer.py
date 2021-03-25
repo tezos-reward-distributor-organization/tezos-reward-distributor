@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from time import sleep
 from requests import ReadTimeout, ConnectTimeout
 from Constants import MUTEZ, RunMode
+from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, get_verbose_log_helper
@@ -25,7 +26,7 @@ BOOTSTRAP_SLEEP = 8
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, client_manager, node_url, provider_factory, node_url_public='', api_base_url=None,
+                 dry_run, client_manager, node_url, reward_data_provider, node_url_public='', api_base_url=None,
                  retry_injected=False):
         super(PaymentProducer, self).__init__()
 
@@ -36,14 +37,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.founders_map = baking_cfg.get_founders_map()
         self.min_delegation_amt_in_mutez = baking_cfg.get_min_delegation_amount() * MUTEZ
         self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
-
+        self.provider_factory = ProviderFactory(reward_data_provider)
         self.name = name
 
         self.node_url = node_url
         self.client_manager = client_manager
-        self.reward_api = provider_factory.newRewardApi(
+        self.reward_api = self.provider_factory.newRewardApi(
             network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
-        self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
+        self.block_api = self.provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
 
         dexter_contracts_set = baking_cfg.get_contracts_set()
         if len(dexter_contracts_set) > 0 and not (self.reward_api.name == 'tzstats'):

@@ -104,6 +104,8 @@ def parse_arguments():
     if release_override < -11:
         parser.error("release-override cannot be less than -11")
 
+    args.dry_run = args.dry_run or args.dry_run_no_consumers
+
     # All passed
     return args
 

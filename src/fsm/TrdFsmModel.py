@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 class TrdFsmModel:
     def __init__(self, fsm) -> None:
         super().__init__()
@@ -14,7 +17,20 @@ class TrdFsmModel:
 
     def trigger(self, event, args_map=None):
         if args_map is None: args_map = dict()
-        self.internal_fsm.trigger(event, **args_map)
+        if isinstance(event, Enum): event = event.name
+
+        if args_map:
+            self.internal_fsm.trigger(event, **args_map)
+        else:
+            self.internal_fsm.trigger(event)
+
+    def trigger_if_not_in_state(self, event, state):
+        if isinstance(state, Enum): state = state.name
+        if self.current() != state:
+            self.trigger(event)
+            return True
+        return False
+
 
     def is_finished(self):
         return self.internal_fsm.is_finished()

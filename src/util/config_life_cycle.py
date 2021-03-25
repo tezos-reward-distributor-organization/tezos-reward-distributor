@@ -41,11 +41,11 @@ class ConfigLifeCycle:
 
         fsm_builder = FsmBuilder()
         fsm_builder.add_initial_state(ConfigState.INITIAL, on_leave=lambda e: logger.debug("Loading baking configuration file ..."))
-        fsm_builder.add_state(ConfigState.BUILT)
         fsm_builder.add_state(ConfigState.READ)
+        fsm_builder.add_state(ConfigState.BUILT)
         fsm_builder.add_state(ConfigState.PARSED)
         fsm_builder.add_state(ConfigState.VALIDATED)
-        fsm_builder.add_final_state(ConfigState.PROCESSED, on_enter=lambda e: callback(conf=self.get_conf()))
+        fsm_builder.add_final_state(ConfigState.PROCESSED, on_enter=lambda e: callback(self.get_conf()))
 
         fsm_builder.add_transition(ConfigEvent.READ, ConfigState.INITIAL, ConfigState.READ, on_before=self.do_read_cfg_file)
         fsm_builder.add_transition(ConfigEvent.BUILD, ConfigState.READ, ConfigState.BUILT, on_before=self.do_build_parser)
@@ -64,7 +64,7 @@ class ConfigLifeCycle:
         self.fsm.trigger(ConfigEvent.VALIDATE)
         self.fsm.trigger(ConfigEvent.PROCESS)
 
-    def do_read_cfg_file(self):
+    def do_read_cfg_file(self, e):
         config_dir = os.path.expanduser(self.args.config_dir)
 
         # create configuration directory if it is not present
@@ -79,7 +79,7 @@ class ConfigLifeCycle:
 
         self.config_text = ConfigParser.load_file(config_file_path)
 
-    def do_build_parser(self):
+    def do_build_parser(self, e):
         provider_factory = ProviderFactory(self.args.reward_data_provider)
 
         self.parser = BakingYamlConfParser(yaml_text=self.config_text, clnt_mngr=self.node_client,
@@ -87,13 +87,13 @@ class ConfigLifeCycle:
                                            node_url=self.args.node_endpoint, api_base_url=self.args.api_base_url)
         pass
 
-    def do_parse_cfg(self):
+    def do_parse_cfg(self, e):
         self.parser.parse()
 
-    def do_validate_cfg(self):
+    def do_validate_cfg(self, e):
         self.parser.validate()
 
-    def do_process_cfg(self):
+    def do_process_cfg(self, e):
         self.parser.process()
 
     def get_conf(self):

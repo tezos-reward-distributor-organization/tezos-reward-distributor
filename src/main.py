@@ -147,7 +147,7 @@ def main(args):
                         dry_run=dry_run,
                         client_manager=client_manager,
                         node_url=args.node_endpoint,
-                        provider_factory=provider_factory,
+                        reward_data_provider=args.reward_data_provider,
                         node_url_public=args.node_addr_public,
                         api_base_url=args.api_base_url,
                         retry_injected=args.retry_injected)
@@ -214,7 +214,7 @@ def get_latest_report_file(payments_root):
     return recent
 
 
-if __name__ == '__main__':
+if __name__ == '__main__2':
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
         raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
@@ -226,3 +226,6 @@ if __name__ == '__main__':
     print_banner(args, script_name="")
 
     main(args)
+
+if __name__ == '__main__':
+    life_cycle.start()
