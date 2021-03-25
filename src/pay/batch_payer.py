@@ -38,7 +38,7 @@ RA_STORAGE = 300
 # This fee limit is set to allow payouts to ovens
 # Other KT accounts with higher fee requirements will be skipped
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
-FEE_LIMIT_CONTRACTS = 21000
+FEE_LIMIT_CONTRACTS = 100000
 
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
@@ -147,6 +147,13 @@ class BatchPayer():
             # Reinitialize status for items fetched from failed payment files
             if pi.paid == PaymentStatus.FAIL:
                 pi.paid = PaymentStatus.UNDEFINED
+
+            # Check if payment item was skipped due to any of the phase calculations.
+            # Add any items which are marked as skipped to the returning array so that they are logged to reports.
+            if not pi.payable:
+                logger.info("Skipping payout to {:s} {:>10.6f}, reason: {:s}".format(pi.address, pi.amount / MUTEZ, pi.desc))
+                payment_logs.append(pi)
+                continue
 
             zt = self.zero_threshold
             if pi.needs_activation and self.delegator_pays_ra_fee:
@@ -323,13 +330,14 @@ class BatchPayer():
                         storage += int(internal_op['result']['paid_storage_size_diff'])
 
         else:
-            op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-            logger.error(
-                "Error while validating operation - Status: {}, Message: {}".format(status, op_error))
+            op_error = "Unknown error in simulating contract payout. Payment will be skipped!"
+            if "errors" in op["metadata"]["operation_result"] and len (op["metadata"]["operation_result"]["errors"])>0 and "id" in op["metadata"]["operation_result"]["errors"][0]:
+                op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
+            logger.debug("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
             return PaymentStatus.FAIL, []
 
         # Calculate needed fee for extra consumed gas
-        tx_fee += int((consumed_gas - int(self.gas_limit)) * MUTEZ_PER_GAS_UNIT)
+        tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
         simulation_results = consumed_gas, tx_fee, storage
         return PaymentStatus.DONE, simulation_results
 
@@ -361,6 +369,8 @@ class BatchPayer():
             if payment_item.paymentaddress.startswith('KT'):
                 simulation_status, simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
                 if simulation_status == PaymentStatus.FAIL:
+                    logger.info("Payment to {} script could not be processed (Possible reason: liquidated contract). Skipping. (think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers)"
+                                 .format(payment_item.paymentaddress))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
                 gas_limit, tx_fee, storage = simulation_results
@@ -368,8 +378,8 @@ class BatchPayer():
                 total_fee = tx_fee + burn_fee
                 # Bound the total (baker and burn) fee by the reward amount in case of KT1 accounts
                 if total_fee > FEE_LIMIT_CONTRACTS:
-                    logger.debug("Payment to {} script requires higher fees than reward amount. Skipping."
-                                 .format(payment_item.paymentaddress))
+                    logger.info("Payment to {} script requires higher fees than reward amount. Skipping. (Needed fee: {} muTez, Max fee: {} muTez, think about either configuring higher fees or redirecting to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers."
+                                 .format(payment_item.paymentaddress, total_fee, FEE_LIMIT_CONTRACTS))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
 
@@ -383,8 +393,7 @@ class BatchPayer():
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
-                logger.debug(
-                    "Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
+                logger.debug("Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
             op_counter.inc()
