@@ -19,6 +19,7 @@ class ConfigState(Enum):
     PARSED = 3
     VALIDATED = 4
     PROCESSED = 5
+    COMPLETED = 6
 
 
 class ConfigEvent(Enum):
@@ -27,6 +28,7 @@ class ConfigEvent(Enum):
     PARSE = 3
     VALIDATE = 4
     PROCESS = 5
+    COMPLETE = 6
 
 
 class ConfigLifeCycle:
@@ -41,28 +43,31 @@ class ConfigLifeCycle:
 
         fsm_builder = FsmBuilder()
         fsm_builder.add_initial_state(ConfigState.INITIAL, on_leave=lambda e: logger.debug("Loading baking configuration file ..."))
-        fsm_builder.add_state(ConfigState.READ)
-        fsm_builder.add_state(ConfigState.BUILT)
-        fsm_builder.add_state(ConfigState.PARSED)
-        fsm_builder.add_state(ConfigState.VALIDATED)
-        fsm_builder.add_final_state(ConfigState.PROCESSED, on_enter=lambda e: callback(self.get_conf()))
+        fsm_builder.add_state(ConfigState.READ, on_enter=self.do_read_cfg_file)
+        fsm_builder.add_state(ConfigState.BUILT, on_enter=self.do_build_parser)
+        fsm_builder.add_state(ConfigState.PARSED, on_enter=self.do_parse_cfg)
+        fsm_builder.add_state(ConfigState.VALIDATED, on_enter=self.do_validate_cfg)
+        fsm_builder.add_state(ConfigState.PROCESSED, on_enter=self.do_process_cfg)
+        fsm_builder.add_final_state(ConfigState.COMPLETED, on_enter=lambda e: callback(self.get_conf()))
 
-        fsm_builder.add_transition(ConfigEvent.READ, ConfigState.INITIAL, ConfigState.READ, on_before=self.do_read_cfg_file)
-        fsm_builder.add_transition(ConfigEvent.BUILD, ConfigState.READ, ConfigState.BUILT, on_before=self.do_build_parser)
-        fsm_builder.add_transition(ConfigEvent.PARSE, ConfigState.BUILT, ConfigState.PARSED, on_before=self.do_parse_cfg)
-        fsm_builder.add_transition(ConfigEvent.VALIDATE, ConfigState.PARSED, ConfigState.VALIDATED, on_before=self.do_validate_cfg)
-        fsm_builder.add_transition(ConfigEvent.PROCESS, ConfigState.VALIDATED, ConfigState.PROCESSED, on_before=self.do_process_cfg)
+        fsm_builder.add_transition(ConfigEvent.READ, ConfigState.INITIAL, ConfigState.READ)
+        fsm_builder.add_transition(ConfigEvent.BUILD, ConfigState.READ, ConfigState.BUILT)
+        fsm_builder.add_transition(ConfigEvent.PARSE, ConfigState.BUILT, ConfigState.PARSED)
+        fsm_builder.add_transition(ConfigEvent.VALIDATE, ConfigState.PARSED, ConfigState.VALIDATED)
+        fsm_builder.add_transition(ConfigEvent.PROCESS, ConfigState.VALIDATED, ConfigState.PROCESSED)
+        fsm_builder.add_transition(ConfigEvent.COMPLETE, ConfigState.PROCESSED, ConfigState.COMPLETED)
 
         self.fsm = fsm_builder.build()
 
         pass
 
     def start(self):
-        self.fsm.trigger(ConfigEvent.READ)
-        self.fsm.trigger(ConfigEvent.BUILD)
-        self.fsm.trigger(ConfigEvent.PARSE)
-        self.fsm.trigger(ConfigEvent.VALIDATE)
-        self.fsm.trigger(ConfigEvent.PROCESS)
+        self.fsm.trigger_event(ConfigEvent.READ)
+        self.fsm.trigger_event(ConfigEvent.BUILD)
+        self.fsm.trigger_event(ConfigEvent.PARSE)
+        self.fsm.trigger_event(ConfigEvent.VALIDATE)
+        self.fsm.trigger_event(ConfigEvent.PROCESS)
+        self.fsm.trigger_event(ConfigEvent.COMPLETE)
 
     def do_read_cfg_file(self, e):
         config_dir = os.path.expanduser(self.args.config_dir)

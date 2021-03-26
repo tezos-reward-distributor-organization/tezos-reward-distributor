@@ -4,6 +4,7 @@ import queue
 import signal
 from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 from enum import Enum, auto
+from time import sleep
 
 from Constants import VERSION, RunMode
 from NetworkConfiguration import init_network_config
@@ -42,6 +43,7 @@ class TrdState(Enum):
     CONSUMERS_READY = auto()
     NO_CONSUMERS_READY = auto()
     READY = auto()
+    SHUTTING = auto()
 
 
 class TrdEvent(Enum):
@@ -59,12 +61,11 @@ class TrdEvent(Enum):
     LAUNCH_PRODUCERS = auto()
     LAUNCH_CONSUMERS = auto()
     GO_READY = auto()
+    SHUT_DOWN = auto()
 
 
 class ProcessLifeCycle:
     def __init__(self):
-        self.lock_file = LockFile()
-        self.running = False
         self.lock_taken = False
         self.args = None
         self.node_client = None
@@ -93,8 +94,9 @@ class ProcessLifeCycle:
         fsm_builder.add_state(TrdState.CONSUMERS_READY, on_enter=self.do_launch_consumers)
         fsm_builder.add_state(TrdState.NO_CONSUMERS_READY)
         fsm_builder.add_state(TrdState.READY, on_enter=self.print_ready)
+        fsm_builder.add_final_state(TrdState.SHUTTING, on_enter=self.do_shut_down)
 
-        fsm_builder.add_transition(TrdEvent.LAUNCH, TrdState.INITIAL, TrdState.CMD_ARGS_PARSED, on_before=self.do_parse_args)
+        fsm_builder.add_transition(TrdEvent.LAUNCH, TrdState.INITIAL, TrdState.CMD_ARGS_PARSED)
         fsm_builder.add_transition(TrdEvent.PRINT_BANNER, TrdState.CMD_ARGS_PARSED, TrdState.BANNER_PRINTED)
         fsm_builder.add_transition(TrdEvent.INITIATE_LOGGERS, TrdState.BANNER_PRINTED, TrdState.LOGGERS_INITIATED)
         fsm_builder.add_transition(TrdEvent.BUILD_NODE_CLIENT, TrdState.LOGGERS_INITIATED, TrdState.NODE_CLIENT_BUILT)
@@ -103,15 +105,15 @@ class ProcessLifeCycle:
         fsm_builder.add_transition(TrdEvent.SET_UP_DIRS, TrdState.CONFIG_LOADED, TrdState.DIRS_SET_UP)
         fsm_builder.add_transition(TrdEvent.REGISTER_SIGNALS, TrdState.DIRS_SET_UP, TrdState.SIGNALS_REGISTERED)
 
-        fsm_builder.add_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, TrdState.LOCKED, conditions=[{False:self.is_dry_run,'else': TrdState.NOT_LOCKED.name}])
+        fsm_builder.add_conditional_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, self.is_dry_run, TrdState.LOCKED, TrdState.NOT_LOCKED, False)
         fsm_builder.add_transition(TrdEvent.INIT_FEES, [TrdState.LOCKED, TrdState.NOT_LOCKED], TrdState.FEES_INIT)
         fsm_builder.add_transition(TrdEvent.LOAD_PLUGINS, TrdState.FEES_INIT, TrdState.PLUGINS_LOADED)
 
         fsm_builder.add_transition(TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY)
-        fsm_builder.add_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, TrdState.CONSUMERS_READY, conditions=[{False:self.is_dry_run_no_consumers,'else': TrdState.NO_CONSUMERS_READY.name}])
-        fsm_builder.add_transition(TrdEvent.GO_READY, [TrdState.CONSUMERS_READY,TrdState.NO_CONSUMERS_READY], TrdState.READY)
+        fsm_builder.add_conditional_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, self.is_dry_run_no_consumers, TrdState.NO_CONSUMERS_READY, TrdState.CONSUMERS_READY)
+        fsm_builder.add_transition(TrdEvent.GO_READY, [TrdState.CONSUMERS_READY, TrdState.NO_CONSUMERS_READY], TrdState.READY)
 
-        self.fsm = fsm_builder.build_blobal()
+        self.fsm = fsm_builder.build()
         pass
 
     def print_baking_config(self):
@@ -144,6 +146,13 @@ class ProcessLifeCycle:
         self.fsm.trigger_event(TrdEvent.LAUNCH_CONSUMERS)
         self.fsm.trigger_event(TrdEvent.GO_READY)
 
+        # Run forever
+        try:
+            while self.is_running():
+                sleep(10)
+        except KeyboardInterrupt:
+            logger.info("Interrupted.")
+            self.shut_down()
         pass
 
     def do_parse_args(self, e):
@@ -154,7 +163,8 @@ class ProcessLifeCycle:
         mode = "daemon" if self.args.background_service else "interactive"
         logger.info("TRD version {} is running in {} mode.".format(VERSION, mode))
 
-        if logger.isEnabledFor(logging.INFO): logger.info("Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
+        if logger.isEnabledFor(logging.INFO): logger.info(
+            "Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
 
         publish_stats = not self.args.do_not_publish_stats
         msg = "will" if publish_stats else "will not"
@@ -192,7 +202,7 @@ class ProcessLifeCycle:
         self.srvc_fee_calc = ServiceFeeCalculator(self.cfg.get_full_supporters_set(), self.cfg.get_specials_map(), self.cfg.get_service_fee())
 
     def do_lock(self, e):
-        self.lock_file.lock()
+        LockFile().lock()
         self.lock_taken = True
 
     def do_load_plugins(self, e):
@@ -237,19 +247,24 @@ class ProcessLifeCycle:
                         network_config=self.nw_config,
                         publish_stats=not self.args.do_not_publish_stats).start()
 
-    def stop(self):
+    def do_shut_down(self, e):
+        logger.info("TRD is shutting down...")
+
         logger.info("--------------------------------------------------------")
         logger.info("Sensitive operations are in progress!")
         logger.info("Please wait while the application is being shut down!")
         logger.info("--------------------------------------------------------")
+
         if self.lock_taken:
-            self.lock_file.release()
+            LockFile().release()
             logger.info("Lock file removed!")
-        self.running = False
 
     def stop_handler(self, signum):
         logger.info("Application stop handler called: {}".format(signum))
-        self.stop()
+        self.shut_down()
+
+    def shut_down(self):
+        self.fsm.trigger_event(TrdEvent.SHUT_DOWN)
 
     def is_running(self):
         return not self.fsm.is_finished()
@@ -259,4 +274,3 @@ class ProcessLifeCycle:
 
     def is_dry_run_no_consumers(self, e):
         return self.args.dry_run_no_consumers
-

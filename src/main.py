@@ -180,7 +180,7 @@ def main(args):
             sleep(10)
     except KeyboardInterrupt:
         logger.info("Interrupted.")
-        life_cycle.stop()
+        life_cycle.do_shut_down()
 
 
 def get_baking_configuration_file(config_dir):

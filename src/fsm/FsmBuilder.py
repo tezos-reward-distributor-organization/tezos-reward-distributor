@@ -61,18 +61,18 @@ class FsmBuilder:
         if on_before: self.callbacks['on_before_' + str(event)] = on_before
         if on_after: self.callbacks['on_after_' + str(event)] = on_after
 
-    def build(self):
-        fsm = TrdFsmModel(Fysom(initial=self.initial,
-                                events=self.transitions,
-                                callbacks=self.callbacks,
-                                final=self.final))
-        return fsm
+    def add_conditional_transition(self, event, src, condition, pass_dst, not_pass_dst=None, condition_target=True):
+        cond = {condition_target: condition}
+        if not_pass_dst:
+            cond['else'] = not_pass_dst.name if isinstance(not_pass_dst, Enum) else not_pass_dst
 
-    def build_blobal(self):
+        self.add_transition(event, src, pass_dst, conditions=[cond])
+
+    def build(self):
         fsm = TrdGFsmModel(FysomGlobal(initial=self.initial,
-                                events=self.transitions,
-                                callbacks=self.callbacks,
-                                state_field='state',
-                                final=self.final)
-                                )
+                                       events=self.transitions,
+                                       callbacks=self.callbacks,
+                                       state_field='state',
+                                       final=self.final))
+
         return fsm
