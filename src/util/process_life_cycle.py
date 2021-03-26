@@ -77,54 +77,44 @@ class ProcessLifeCycle:
 
         fsm_builder = FsmBuilder()
         fsm_builder.add_initial_state(TrdState.INITIAL, on_leave=lambda e: logger.debug("TRD is starting..."))
-        fsm_builder.add_state(TrdState.CMD_ARGS_PARSED, on_enter=self.print_argument_configuration)
-        fsm_builder.add_state(TrdState.BANNER_PRINTED)
-        fsm_builder.add_state(TrdState.LOGGERS_INITIATED)
-        fsm_builder.add_state(TrdState.NODE_CLIENT_BUILT)
-        fsm_builder.add_state(TrdState.NW_CONFIG_BUILT)
-        fsm_builder.add_state(TrdState.CONFIG_LOADED, on_enter=self.print_baking_config)
-        fsm_builder.add_state(TrdState.DIRS_SET_UP)
-        fsm_builder.add_state(TrdState.SIGNALS_REGISTERED)
+        fsm_builder.add_state(TrdState.CMD_ARGS_PARSED, on_enter=self.do_parse_args)
+        fsm_builder.add_state(TrdState.BANNER_PRINTED, on_enter=self.do_print_banner)
+        fsm_builder.add_state(TrdState.LOGGERS_INITIATED, on_enter=self.do_initiate_loggers)
+        fsm_builder.add_state(TrdState.NODE_CLIENT_BUILT, on_enter=self.do_build_node_client)
+        fsm_builder.add_state(TrdState.NW_CONFIG_BUILT, on_enter=self.do_build_nw_config)
+        fsm_builder.add_state(TrdState.CONFIG_LOADED, on_enter=self.do_load_config)
+        fsm_builder.add_state(TrdState.DIRS_SET_UP, on_enter=self.do_set_up_dirs)
+        fsm_builder.add_state(TrdState.SIGNALS_REGISTERED, on_enter=self.do_register_signals)
         fsm_builder.add_state(TrdState.LOCKED, on_enter=self.do_lock)
         fsm_builder.add_state(TrdState.NOT_LOCKED)
-        fsm_builder.add_state(TrdState.FEES_INIT)
-        fsm_builder.add_state(TrdState.PLUGINS_LOADED)
-        fsm_builder.add_state(TrdState.PRODUCERS_READY)
+        fsm_builder.add_state(TrdState.FEES_INIT, on_enter=self.do_init_service_fees)
+        fsm_builder.add_state(TrdState.PLUGINS_LOADED, on_enter=self.do_load_plugins)
+        fsm_builder.add_state(TrdState.PRODUCERS_READY, on_enter=self.do_launch_producers)
         fsm_builder.add_state(TrdState.CONSUMERS_READY, on_enter=self.do_launch_consumers)
         fsm_builder.add_state(TrdState.NO_CONSUMERS_READY)
         fsm_builder.add_state(TrdState.READY, on_enter=self.print_ready)
 
         fsm_builder.add_transition(TrdEvent.LAUNCH, TrdState.INITIAL, TrdState.CMD_ARGS_PARSED, on_before=self.do_parse_args)
-        fsm_builder.add_transition(TrdEvent.PRINT_BANNER, TrdState.CMD_ARGS_PARSED, TrdState.BANNER_PRINTED, on_before=self.do_print_banner)
-        fsm_builder.add_transition(TrdEvent.INITIATE_LOGGERS, TrdState.BANNER_PRINTED, TrdState.LOGGERS_INITIATED, on_before=self.do_initiate_loggers)
-        fsm_builder.add_transition(TrdEvent.BUILD_NODE_CLIENT, TrdState.LOGGERS_INITIATED, TrdState.NODE_CLIENT_BUILT, on_before=self.do_build_node_client)
-        fsm_builder.add_transition(TrdEvent.BUILD_NW_CONFIG, TrdState.NODE_CLIENT_BUILT, TrdState.NW_CONFIG_BUILT, on_before=self.do_build_nw_config)
-        fsm_builder.add_transition(TrdEvent.LOAD_CONFIG, TrdState.NW_CONFIG_BUILT, TrdState.CONFIG_LOADED, on_before=self.do_load_config)
-        fsm_builder.add_transition(TrdEvent.SET_UP_DIRS, TrdState.CONFIG_LOADED, TrdState.DIRS_SET_UP, on_before=self.do_set_up_dirs)
-        fsm_builder.add_transition(TrdEvent.REGISTER_SIGNALS, TrdState.DIRS_SET_UP, TrdState.SIGNALS_REGISTERED, on_before=self.do_register_signals)
+        fsm_builder.add_transition(TrdEvent.PRINT_BANNER, TrdState.CMD_ARGS_PARSED, TrdState.BANNER_PRINTED)
+        fsm_builder.add_transition(TrdEvent.INITIATE_LOGGERS, TrdState.BANNER_PRINTED, TrdState.LOGGERS_INITIATED)
+        fsm_builder.add_transition(TrdEvent.BUILD_NODE_CLIENT, TrdState.LOGGERS_INITIATED, TrdState.NODE_CLIENT_BUILT)
+        fsm_builder.add_transition(TrdEvent.BUILD_NW_CONFIG, TrdState.NODE_CLIENT_BUILT, TrdState.NW_CONFIG_BUILT)
+        fsm_builder.add_transition(TrdEvent.LOAD_CONFIG, TrdState.NW_CONFIG_BUILT, TrdState.CONFIG_LOADED)
+        fsm_builder.add_transition(TrdEvent.SET_UP_DIRS, TrdState.CONFIG_LOADED, TrdState.DIRS_SET_UP)
+        fsm_builder.add_transition(TrdEvent.REGISTER_SIGNALS, TrdState.DIRS_SET_UP, TrdState.SIGNALS_REGISTERED)
 
-        fsm_builder.add_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, TrdState.LOCKED, conditions=[{False:'is_dry_run','else': TrdState.NOT_LOCKED.name}])
-        fsm_builder.add_transition(TrdEvent.INIT_FEES, [TrdState.LOCKED, TrdState.NOT_LOCKED], TrdState.FEES_INIT, on_before=self.do_init_service_fees)
-        fsm_builder.add_transition(TrdEvent.LOAD_PLUGINS, TrdState.FEES_INIT, TrdState.PLUGINS_LOADED, on_before=self.do_load_plugins)
+        fsm_builder.add_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, TrdState.LOCKED, conditions=[{False:self.is_dry_run,'else': TrdState.NOT_LOCKED.name}])
+        fsm_builder.add_transition(TrdEvent.INIT_FEES, [TrdState.LOCKED, TrdState.NOT_LOCKED], TrdState.FEES_INIT)
+        fsm_builder.add_transition(TrdEvent.LOAD_PLUGINS, TrdState.FEES_INIT, TrdState.PLUGINS_LOADED)
 
-        fsm_builder.add_transition(TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY, on_before=self.do_launch_producers)
-        fsm_builder.add_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, TrdState.CONSUMERS_READY, conditions=[{False:'is_dry_run_no_consumers','else': TrdState.NO_CONSUMERS_READY.name}])
+        fsm_builder.add_transition(TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY)
+        fsm_builder.add_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, TrdState.CONSUMERS_READY, conditions=[{False:self.is_dry_run_no_consumers,'else': TrdState.NO_CONSUMERS_READY.name}])
         fsm_builder.add_transition(TrdEvent.GO_READY, [TrdState.CONSUMERS_READY,TrdState.NO_CONSUMERS_READY], TrdState.READY)
 
         self.fsm = fsm_builder.build_blobal()
         pass
 
-    def print_argument_configuration(self, e):
-        mode = "daemon" if self.args.background_service else "interactive"
-        logger.info("TRD version {} is running in {} mode.".format(VERSION, mode))
-
-        if logger.isEnabledFor(logging.INFO): logger.info("Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
-
-        publish_stats = not self.args.do_not_publish_stats
-        msg = "will" if publish_stats else "will not"
-        logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information.".format(msg))
-
-    def print_baking_config(self, e):
+    def print_baking_config(self):
         logger.info("Baking Configuration {}".format(self.cfg))
 
         logger.info(LINER)
@@ -147,7 +137,6 @@ class ProcessLifeCycle:
         self.fsm.trigger_event(TrdEvent.SET_UP_DIRS)
         self.fsm.trigger_event(TrdEvent.REGISTER_SIGNALS)
         self.fsm.trigger_event(TrdEvent.LOCK)
-        print(self.fsm.current())
         self.fsm.trigger_event(TrdEvent.INIT_FEES)
         self.fsm.trigger_event(TrdEvent.LOAD_PLUGINS)
 
@@ -159,6 +148,17 @@ class ProcessLifeCycle:
 
     def do_parse_args(self, e):
         self.args = parse_arguments()
+        self.print_argument_configuration()
+
+    def print_argument_configuration(self):
+        mode = "daemon" if self.args.background_service else "interactive"
+        logger.info("TRD version {} is running in {} mode.".format(VERSION, mode))
+
+        if logger.isEnabledFor(logging.INFO): logger.info("Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
+
+        publish_stats = not self.args.do_not_publish_stats
+        msg = "will" if publish_stats else "will not"
+        logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information.".format(msg))
 
     def do_print_banner(self, e):
         print_banner(self.args, script_name="")
@@ -176,6 +176,7 @@ class ProcessLifeCycle:
     def do_load_config(self, e):
         cfg_life_cycle = ConfigLifeCycle(self.args, self.nw_config, self.node_client, self.set_cfg)
         cfg_life_cycle.start()
+        self.print_baking_config()
 
     def set_cfg(self, cfg):
         self.cfg = cfg
