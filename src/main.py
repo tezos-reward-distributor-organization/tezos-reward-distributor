@@ -14,14 +14,11 @@ from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from log_config import main_logger, init
 from model.baking_conf import BakingConf
-from pay.payment_consumer import PaymentConsumer
-from pay.payment_producer import PaymentProducer
 from util.dir_utils import get_payment_root, \
     get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
-from util.process_life_cycle import ProcessLifeCycle
 from exception.configuration import ConfigurationException
 from plugins import plugins
-
+from util.process_life_cycle import ProcessLifeCycle
 
 LINER = "--------------------------------------------"
 NB_CONSUMERS = 1
@@ -197,21 +194,6 @@ def get_baking_configuration_file(config_dir):
         raise Exception("Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
 
     return os.path.join(config_dir, config_file)
-
-
-def get_latest_report_file(payments_root):
-    recent = None
-    if get_successful_payments_dir(payments_root):
-        files = [os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))]
-        paid_cycles = []
-        for x in files:
-            try:
-                paid_cycles.append(int(x))
-            except Exception:
-                pass
-        paid_cycles = sorted(paid_cycles)
-        recent = paid_cycles[-1] if len(paid_cycles) > 0 else None
-    return recent
 
 
 if __name__ == '__main__2':

@@ -21,33 +21,32 @@ def onred(e):
 
 
 class FysomModel(FysomGlobalMixin):
-    GSM = FysomGlobal(
-        events=[('warn', 'green', 'yellow'),
-                {
-                    'name': 'panic',
-                    'src': ['green', 'yellow'],
-                    'dst': 'red',
-                    'cond': [  # can be function object or method name
-                        # 'is_angry',  # by default target is "True"
-                        {True: 'is_very_angry', 'else': 'blue'},
-                        {True: 'is_angry', 'else': 'turq'},
-                    ]
-                },
-                ('calm', 'red', 'yellow'),
-                ('clear', 'yellow', 'green')],
-        initial='green',
-        final='red',
-        state_field='state',
-        callbacks={
-            'onenter_panic_': onpanic,
-            # 'on_panic': onpanic,
-            'oncalm': oncalm,
-            'ongreen': ongreen,
-            #'onyellow': onyellow,
-            'onred': onred}
-    )
-
     def __init__(self):
+        FysomGlobalMixin.GSM = FysomGlobal(
+            events=[('warn', 'green', 'yellow'),
+                    {
+                        'name': 'panic',
+                        'src': ['green', 'yellow'],
+                        'dst': 'red',
+                        'cond': [  # can be function object or method name
+                            # 'is_angry',  # by default target is "True"
+                            {True: 'is_very_angry', 'else': 'blue'},
+                            {True: 'is_angry', 'else': 'turq'},
+                        ]
+                    },
+                    ('calm', 'red', 'yellow'),
+                    ('clear', 'yellow', 'green')],
+            initial='green',
+            final='red',
+            state_field='state',
+            callbacks={
+                'onenter_panic_': onpanic,
+                # 'on_panic': onpanic,
+                'oncalm': oncalm,
+                'ongreen': ongreen,
+                # 'onyellow': onyellow,
+                'onred': onred}
+        )
         self.state = None
         super(FysomModel, self).__init__()
 

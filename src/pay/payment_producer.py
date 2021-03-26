@@ -16,7 +16,7 @@ from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
-from util.dir_utils import get_calculation_report_file
+from util.dir_utils import get_calculation_report_file, get_latest_report_file
 
 logger = main_logger.getChild("payment_producer")
 
@@ -56,6 +56,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.rewards_type = baking_cfg.get_rewards_type()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
+
+        if self.initial_payment_cycle is None:
+            recent = get_latest_report_file(payments_dir)
+            # if payment logs exists set initial cycle to following cycle
+            # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
+            self.initial_payment_cycle = 0 if recent is None else int(recent) + 1
+
+            logger.info("initial_cycle set to {}".format(self.initial_payment_cycle))
+
         self.nw_config = network_config
         self.payments_root = payments_dir
         self.calculations_dir = calculations_dir
@@ -125,7 +134,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.retry_fail_thread.start()
 
         try:
-            current_cycle = self.block_api.get_current_cycle()
+            current_cycle = 0 # self.block_api.get_current_cycle()
             pymnt_cycle = self.initial_payment_cycle
         except ApiProviderException as a:
             logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))

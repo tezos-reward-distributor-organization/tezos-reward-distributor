@@ -1,8 +1,9 @@
 from enum import Enum
 
-from fysom import Fysom
+from fysom import Fysom, FysomGlobal
 
 from fsm.TrdFsmModel import TrdFsmModel
+from fsm.TrdGFsmModel import TrdGFsmModel
 
 ALL_STATES = '*'
 SAME_STATE = '='
@@ -65,4 +66,13 @@ class FsmBuilder:
                                 events=self.transitions,
                                 callbacks=self.callbacks,
                                 final=self.final))
+        return fsm
+
+    def build_blobal(self):
+        fsm = TrdGFsmModel(FysomGlobal(initial=self.initial,
+                                events=self.transitions,
+                                callbacks=self.callbacks,
+                                state_field='state',
+                                final=self.final)
+                                )
         return fsm

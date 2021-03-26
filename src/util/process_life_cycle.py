@@ -12,6 +12,7 @@ from cli.client_manager import ClientManager
 from fsm.FsmBuilder import FsmBuilder
 from launch_common import print_banner, parse_arguments
 from model.baking_dirs import BakingDirs
+from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
 from util.config_life_cycle import ConfigLifeCycle
 from util.lock_file import LockFile
@@ -21,6 +22,7 @@ from plugins import plugins
 logger = main_logger
 LINER = "--------------------------------------------"
 BUF_SIZE = 50
+
 
 class TrdState(Enum):
     INITIAL = auto()
@@ -33,10 +35,13 @@ class TrdState(Enum):
     DIRS_SET_UP = auto()
     SIGNALS_REGISTERED = auto()
     LOCKED = auto()
+    NOT_LOCKED = auto()
     FEES_INIT = auto()
     PLUGINS_LOADED = auto()
     PRODUCERS_READY = auto()
     CONSUMERS_READY = auto()
+    NO_CONSUMERS_READY = auto()
+    READY = auto()
 
 
 class TrdEvent(Enum):
@@ -48,11 +53,12 @@ class TrdEvent(Enum):
     LOAD_CONFIG = auto()
     SET_UP_DIRS = auto()
     REGISTER_SIGNALS = auto()
-    CHECK_DRY_RUN = auto()
+    LOCK = auto()
     INIT_FEES = auto()
     LOAD_PLUGINS = auto()
     LAUNCH_PRODUCERS = auto()
     LAUNCH_CONSUMERS = auto()
+    GO_READY = auto()
 
 
 class ProcessLifeCycle:
@@ -76,14 +82,17 @@ class ProcessLifeCycle:
         fsm_builder.add_state(TrdState.LOGGERS_INITIATED)
         fsm_builder.add_state(TrdState.NODE_CLIENT_BUILT)
         fsm_builder.add_state(TrdState.NW_CONFIG_BUILT)
-        fsm_builder.add_state(TrdState.CONFIG_LOADED, on_enter=self.do_print_baking_config)
+        fsm_builder.add_state(TrdState.CONFIG_LOADED, on_enter=self.print_baking_config)
         fsm_builder.add_state(TrdState.DIRS_SET_UP)
         fsm_builder.add_state(TrdState.SIGNALS_REGISTERED)
-        fsm_builder.add_state(TrdState.LOCKED)
+        fsm_builder.add_state(TrdState.LOCKED, on_enter=self.do_lock)
+        fsm_builder.add_state(TrdState.NOT_LOCKED)
         fsm_builder.add_state(TrdState.FEES_INIT)
         fsm_builder.add_state(TrdState.PLUGINS_LOADED)
         fsm_builder.add_state(TrdState.PRODUCERS_READY)
-        fsm_builder.add_state(TrdState.CONSUMERS_READY)
+        fsm_builder.add_state(TrdState.CONSUMERS_READY, on_enter=self.do_launch_consumers)
+        fsm_builder.add_state(TrdState.NO_CONSUMERS_READY)
+        fsm_builder.add_state(TrdState.READY, on_enter=self.print_ready)
 
         fsm_builder.add_transition(TrdEvent.LAUNCH, TrdState.INITIAL, TrdState.CMD_ARGS_PARSED, on_before=self.do_parse_args)
         fsm_builder.add_transition(TrdEvent.PRINT_BANNER, TrdState.CMD_ARGS_PARSED, TrdState.BANNER_PRINTED, on_before=self.do_print_banner)
@@ -94,15 +103,15 @@ class ProcessLifeCycle:
         fsm_builder.add_transition(TrdEvent.SET_UP_DIRS, TrdState.CONFIG_LOADED, TrdState.DIRS_SET_UP, on_before=self.do_set_up_dirs)
         fsm_builder.add_transition(TrdEvent.REGISTER_SIGNALS, TrdState.DIRS_SET_UP, TrdState.SIGNALS_REGISTERED, on_before=self.do_register_signals)
 
-        fsm_builder.add_transition(TrdEvent.CHECK_DRY_RUN, TrdState.SIGNALS_REGISTERED, TrdState.LOCKED, on_before=self.do_lock, conditions=[lambda e: not self.args.dry_drun])
-        fsm_builder.add_transition(TrdEvent.CHECK_DRY_RUN, TrdState.SIGNALS_REGISTERED, TrdState.FEES_INIT, on_before=self.do_init_service_fees, conditions=[lambda e: self.args.dry_drun])
-        fsm_builder.add_transition(TrdEvent.INIT_FEES, TrdState.LOCKED, TrdState.FEES_INIT, on_before=self.do_init_service_fees)
+        fsm_builder.add_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, TrdState.LOCKED, conditions=[{False:'is_dry_run','else': TrdState.NOT_LOCKED.name}])
+        fsm_builder.add_transition(TrdEvent.INIT_FEES, [TrdState.LOCKED, TrdState.NOT_LOCKED], TrdState.FEES_INIT, on_before=self.do_init_service_fees)
         fsm_builder.add_transition(TrdEvent.LOAD_PLUGINS, TrdState.FEES_INIT, TrdState.PLUGINS_LOADED, on_before=self.do_load_plugins)
 
         fsm_builder.add_transition(TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY, on_before=self.do_launch_producers)
-        fsm_builder.add_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, TrdState.CONSUMERS_READY, on_before=self.do_launch_consumers)
+        fsm_builder.add_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, TrdState.CONSUMERS_READY, conditions=[{False:'is_dry_run_no_consumers','else': TrdState.NO_CONSUMERS_READY.name}])
+        fsm_builder.add_transition(TrdEvent.GO_READY, [TrdState.CONSUMERS_READY,TrdState.NO_CONSUMERS_READY], TrdState.READY)
 
-        self.fsm = fsm_builder.build()
+        self.fsm = fsm_builder.build_blobal()
         pass
 
     def print_argument_configuration(self, e):
@@ -115,7 +124,7 @@ class ProcessLifeCycle:
         msg = "will" if publish_stats else "will not"
         logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information.".format(msg))
 
-    def do_print_baking_config(self, e):
+    def print_baking_config(self, e):
         logger.info("Baking Configuration {}".format(self.cfg))
 
         logger.info(LINER)
@@ -123,21 +132,28 @@ class ProcessLifeCycle:
         logger.info("PAYMENT ADDRESS is {}".format(self.cfg.get_payment_address()))
         logger.info(LINER)
 
-    def start(self):
-        self.fsm.trigger(TrdEvent.LAUNCH)
-        self.fsm.trigger(TrdEvent.PRINT_BANNER)
-        self.fsm.trigger(TrdEvent.INITIATE_LOGGERS)
-        self.fsm.trigger(TrdEvent.BUILD_NODE_CLIENT)
-        self.fsm.trigger(TrdEvent.BUILD_NW_CONFIG)
-        self.fsm.trigger(TrdEvent.LOAD_CONFIG)
-        self.fsm.trigger(TrdEvent.SET_UP_DIRS)
-        self.fsm.trigger(TrdEvent.REGISTER_SIGNALS)
-        self.fsm.trigger(TrdEvent.CHECK_DRY_RUN)
-        self.fsm.trigger_if_not_in_state(TrdEvent.INIT_FEES, TrdState.FEES_INIT)
-        self.fsm.trigger(TrdEvent.LOAD_PLUGINS)
+    @staticmethod
+    def print_ready(e):
+        logger.info("Application is READY!")
+        logger.info(LINER)
 
-        self.fsm.trigger(TrdEvent.LAUNCH_PRODUCERS)
-        self.fsm.trigger(TrdEvent.LAUNCH_CONSUMERS)
+    def start(self):
+        self.fsm.trigger_event(TrdEvent.LAUNCH)
+        self.fsm.trigger_event(TrdEvent.PRINT_BANNER)
+        self.fsm.trigger_event(TrdEvent.INITIATE_LOGGERS)
+        self.fsm.trigger_event(TrdEvent.BUILD_NODE_CLIENT)
+        self.fsm.trigger_event(TrdEvent.BUILD_NW_CONFIG)
+        self.fsm.trigger_event(TrdEvent.LOAD_CONFIG)
+        self.fsm.trigger_event(TrdEvent.SET_UP_DIRS)
+        self.fsm.trigger_event(TrdEvent.REGISTER_SIGNALS)
+        self.fsm.trigger_event(TrdEvent.LOCK)
+        print(self.fsm.current())
+        self.fsm.trigger_event(TrdEvent.INIT_FEES)
+        self.fsm.trigger_event(TrdEvent.LOAD_PLUGINS)
+
+        self.fsm.trigger_event(TrdEvent.LAUNCH_PRODUCERS)
+        self.fsm.trigger_event(TrdEvent.LAUNCH_CONSUMERS)
+        self.fsm.trigger_event(TrdEvent.GO_READY)
 
         pass
 
@@ -182,9 +198,6 @@ class ProcessLifeCycle:
         self.plugins_manager = plugins.PluginManager(self.cfg.get_plugins_conf(), self.args.dry_run)
 
     def do_launch_producers(self, e):
-        pass
-
-    def do_launch_consumers(self, e):
         PaymentProducer(name='producer',
                         initial_payment_cycle=self.args.initial_cycle,
                         network_config=self.nw_config,
@@ -205,6 +218,24 @@ class ProcessLifeCycle:
                         api_base_url=self.args.api_base_url,
                         retry_injected=self.args.retry_injected).start()
 
+    def do_launch_consumers(self, e):
+        PaymentConsumer(name='consumer0',
+                        payments_dir=self.baking_dirs.payments_root,
+                        key_name=self.cfg.get_payment_address(),
+                        payments_queue=self.payments_queue,
+                        node_addr=self.args.node_endpoint,
+                        client_manager=self.node_client,
+                        plugins_manager=self.plugins_manager,
+                        rewards_type=self.cfg.get_rewards_type(),
+                        args=self.args,
+                        dry_run=self.args.dry_run,
+                        reactivate_zeroed=self.cfg.get_reactivate_zeroed(),
+                        delegator_pays_ra_fee=self.cfg.get_delegator_pays_ra_fee(),
+                        delegator_pays_xfer_fee=self.cfg.get_delegator_pays_xfer_fee(),
+                        dest_map=self.cfg.get_dest_map(),
+                        network_config=self.nw_config,
+                        publish_stats=not self.args.do_not_publish_stats).start()
+
     def stop(self):
         logger.info("--------------------------------------------------------")
         logger.info("Sensitive operations are in progress!")
@@ -221,3 +252,10 @@ class ProcessLifeCycle:
 
     def is_running(self):
         return not self.fsm.is_finished()
+
+    def is_dry_run(self, e):
+        return self.args.dry_run
+
+    def is_dry_run_no_consumers(self, e):
+        return self.args.dry_run_no_consumers
+

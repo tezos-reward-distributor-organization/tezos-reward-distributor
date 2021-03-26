@@ -24,13 +24,5 @@ class TrdFsmModel:
         else:
             self.internal_fsm.trigger(event)
 
-    def trigger_if_not_in_state(self, event, state):
-        if isinstance(state, Enum): state = state.name
-        if self.current() != state:
-            self.trigger(event)
-            return True
-        return False
-
-
     def is_finished(self):
         return self.internal_fsm.is_finished()

@@ -11,6 +11,21 @@ def payment_report_file_path(pymnt_root, pymnt_cycle, nb_failed):
     return os.path.abspath(os.path.join(pymnt_root, PAYMENT_DONE_DIR if nb_failed == 0 else PAYMENT_FAILED_DIR, str(pymnt_cycle) + '.csv'))
 
 
+def get_latest_report_file(payments_root):
+    recent = None
+    if get_successful_payments_dir(payments_root):
+        files = [os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))]
+        paid_cycles = []
+        for x in files:
+            try:
+                paid_cycles.append(int(x))
+            except Exception:
+                pass
+        paid_cycles = sorted(paid_cycles)
+        recent = paid_cycles[-1] if len(paid_cycles) > 0 else None
+    return recent
+
+
 def get_successful_payments_dir(pymnt_root, create=None):
     root_dir = os.path.abspath(os.path.join(pymnt_root, PAYMENT_DONE_DIR))
     if create and not os.path.isdir(root_dir):
