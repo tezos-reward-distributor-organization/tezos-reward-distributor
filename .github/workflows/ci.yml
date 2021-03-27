@@ -57,7 +57,9 @@ jobs:
         pip install -r requirements.txt
         pip install pytest
         pip install parameterized
-        export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+
+    - name: Set the python path
+      run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV  
 
     - name: Test with pytest
       run: python3 -m pytest -s tests/ --verbose
