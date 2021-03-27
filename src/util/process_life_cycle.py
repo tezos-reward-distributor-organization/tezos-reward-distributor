@@ -265,7 +265,7 @@ class ProcessLifeCycle:
             LockFile().release()
             logger.info("Lock file removed!")
 
-    def stop_handler(self, signum):
+    def stop_handler(self, signum, frame):
         logger.info("Application stop handler called: {}".format(signum))
         self.shut_down()
 
