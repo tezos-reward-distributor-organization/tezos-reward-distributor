@@ -42,8 +42,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.node_url = node_url
         self.client_manager = client_manager
-        self.reward_api = self.provider_factory.newRewardApi(
-            network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
+        self.reward_api = self.provider_factory.newRewardApi(network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
         self.block_api = self.provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
 
         dexter_contracts_set = baking_cfg.get_contracts_set()
@@ -63,7 +62,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
             self.initial_payment_cycle = 0 if recent is None else int(recent) + 1
 
-            logger.info("initial_cycle set to {}".format(self.initial_payment_cycle))
+        logger.info("initial_cycle set to {}".format(self.initial_payment_cycle))
 
         self.nw_config = network_config
         self.payments_root = payments_dir
