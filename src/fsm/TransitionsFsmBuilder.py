@@ -77,7 +77,7 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         self.add_transition(event, src, pass_dst, conditions=[condition])
 
         if not_pass_dst:
-            self.add_transition(event, src, pass_dst, conditions=[condition], condition_target=False)
+            self.add_transition(event, src, not_pass_dst, conditions=[condition], condition_target=False)
 
         pass
 
