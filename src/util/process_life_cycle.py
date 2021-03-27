@@ -112,6 +112,7 @@ class ProcessLifeCycle:
         fsm_builder.add_transition(TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY)
         fsm_builder.add_conditional_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, self.is_dry_run_no_consumers, TrdState.NO_CONSUMERS_READY, TrdState.CONSUMERS_READY)
         fsm_builder.add_transition(TrdEvent.GO_READY, [TrdState.CONSUMERS_READY, TrdState.NO_CONSUMERS_READY], TrdState.READY)
+        fsm_builder.add_global_transition(TrdEvent.SHUT_DOWN, TrdState.SHUTTING)
 
         self.fsm = fsm_builder.build()
         pass
