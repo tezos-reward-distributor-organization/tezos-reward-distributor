@@ -3,3 +3,4 @@ base58>=1.0.2
 pyyaml>=4.2b1
 fysom==2.1.5
 parse
+transitions
