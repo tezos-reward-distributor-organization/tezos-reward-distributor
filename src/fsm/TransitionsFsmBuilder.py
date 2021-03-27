@@ -43,7 +43,7 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         pass
 
     def add_global_transition(self, event, dst, on_before=None, on_after=None):
-        return self.add_transition(event, ALL_STATES, dst, on_before=on_before, on_after=on_after)
+        return self.add_transition(event, self.state_names, dst, on_before=on_before, on_after=on_after)
 
     def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None, condition_target=True):
         if isinstance(event, Enum): event = event.name
