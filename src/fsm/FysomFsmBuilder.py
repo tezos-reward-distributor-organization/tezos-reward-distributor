@@ -1,15 +1,15 @@
 from enum import Enum
 
-from fysom import Fysom, FysomGlobal
+from fysom import FysomGlobal
 
-from fsm.TrdFsmModel import TrdFsmModel
-from fsm.TrdGFsmModel import TrdGFsmModel
+from fsm.FysomFsmModel import FysomFsmModel
+from fsm.TrdFsmBuilder import TrdFsmBuilder
 
 ALL_STATES = '*'
 SAME_STATE = '='
 
 
-class FsmBuilder:
+class FysomFsmBuilder(TrdFsmBuilder):
 
     def __init__(self):
         self.states = []
@@ -36,11 +36,8 @@ class FsmBuilder:
         if on_leave: self.callbacks['on_leave_' + str(state)] = on_leave
         if on_reenter: self.callbacks['on_reenter_' + str(state)] = on_reenter
 
-    def add_state_async_leave(self, name, on_enter=None):
-        self.add_state(name, on_leave=lambda e: False, on_enter=on_enter)
-
-    def add_global_transition(self, event, dst, on_before=None, on_after=None, cond=None):
-        return self.add_transition(event, ALL_STATES, dst, on_before=on_before, on_after=on_after, conditions=cond)
+    def add_global_transition(self, event, dst, on_before=None, on_after=None):
+        return self.add_transition(event, ALL_STATES, dst, on_before=on_before, on_after=on_after)
 
     def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None):
         if isinstance(event, Enum): event = event.name
@@ -61,18 +58,18 @@ class FsmBuilder:
         if on_before: self.callbacks['on_before_' + str(event)] = on_before
         if on_after: self.callbacks['on_after_' + str(event)] = on_after
 
-    def add_conditional_transition(self, event, src, condition, pass_dst, not_pass_dst=None, condition_target=True):
-        cond = {condition_target: condition}
+    def add_conditional_transition(self, event, src, condition, pass_dst, not_pass_dst=None):
+        cond = {True: condition}
         if not_pass_dst:
             cond['else'] = not_pass_dst.name if isinstance(not_pass_dst, Enum) else not_pass_dst
 
         self.add_transition(event, src, pass_dst, conditions=[cond])
 
     def build(self):
-        fsm = TrdGFsmModel(FysomGlobal(initial=self.initial,
-                                       events=self.transitions,
-                                       callbacks=self.callbacks,
-                                       state_field='state',
-                                       final=self.final))
+        fsm = FysomFsmModel(FysomGlobal(initial=self.initial,
+                                      events=self.transitions,
+                                      callbacks=self.callbacks,
+                                      state_field='state',
+                                      final=self.final))
 
         return fsm

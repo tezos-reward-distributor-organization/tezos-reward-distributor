@@ -1,12 +1,11 @@
+import os
 from enum import Enum
 
 from api.provider_factory import ProviderFactory
 from config.config_parser import ConfigParser
 from config.yaml_baking_conf_parser import BakingYamlConfParser
-from fsm.FsmBuilder import FsmBuilder
+from fsm.TransitionsFsmBuilder import TransitionsFsmBuilder
 from log_config import main_logger
-import os
-
 from model.baking_conf import BakingConf
 
 logger = main_logger
@@ -41,7 +40,7 @@ class ConfigLifeCycle:
         self.config_text = None
         self.parser = None
 
-        fsm_builder = FsmBuilder()
+        fsm_builder = TransitionsFsmBuilder()
         fsm_builder.add_initial_state(ConfigState.INITIAL, on_leave=lambda e: logger.debug("Loading baking configuration file ..."))
         fsm_builder.add_state(ConfigState.READ, on_enter=self.do_read_cfg_file)
         fsm_builder.add_state(ConfigState.BUILT, on_enter=self.do_build_parser)

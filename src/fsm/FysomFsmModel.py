@@ -2,15 +2,17 @@ from enum import Enum
 
 from fysom import FysomGlobalMixin
 
+from fsm.TrdFsmModel import TrdFsmModel
 
-class TrdGFsmModel(FysomGlobalMixin):
+
+class FysomFsmModel(FysomGlobalMixin, TrdFsmModel):
     def __init__(self, gfsm) -> None:
         FysomGlobalMixin.GSM = gfsm
         self.state = None
-        super(TrdGFsmModel, self).__init__()
+        super(FysomFsmModel, self).__init__()
 
     def current(self):
-        return self.current
+        return self.state
 
     def is_state(self, state):
         return self.isstate(state)

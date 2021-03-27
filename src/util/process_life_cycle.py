@@ -10,7 +10,7 @@ from Constants import VERSION, RunMode
 from NetworkConfiguration import init_network_config
 from calc.service_fee_calculator import ServiceFeeCalculator
 from cli.client_manager import ClientManager
-from fsm.FsmBuilder import FsmBuilder
+from fsm.TransitionsFsmBuilder import TransitionsFsmBuilder
 from launch_common import print_banner, parse_arguments
 from model.baking_dirs import BakingDirs
 from pay.payment_consumer import PaymentConsumer
@@ -76,7 +76,7 @@ class ProcessLifeCycle:
         self.plugins_manager = None
         self.payments_queue = queue.Queue(BUF_SIZE)
 
-        fsm_builder = FsmBuilder()
+        fsm_builder = TransitionsFsmBuilder()
         fsm_builder.add_initial_state(TrdState.INITIAL, on_leave=lambda e: logger.debug("TRD is starting..."))
         fsm_builder.add_state(TrdState.CMD_ARGS_PARSED, on_enter=self.do_parse_args)
         fsm_builder.add_state(TrdState.BANNER_PRINTED, on_enter=self.do_print_banner)
@@ -105,7 +105,7 @@ class ProcessLifeCycle:
         fsm_builder.add_transition(TrdEvent.SET_UP_DIRS, TrdState.CONFIG_LOADED, TrdState.DIRS_SET_UP)
         fsm_builder.add_transition(TrdEvent.REGISTER_SIGNALS, TrdState.DIRS_SET_UP, TrdState.SIGNALS_REGISTERED)
 
-        fsm_builder.add_conditional_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, self.is_dry_run, TrdState.LOCKED, TrdState.NOT_LOCKED, False)
+        fsm_builder.add_conditional_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, self.is_dry_run, TrdState.NOT_LOCKED, TrdState.LOCKED)
         fsm_builder.add_transition(TrdEvent.INIT_FEES, [TrdState.LOCKED, TrdState.NOT_LOCKED], TrdState.FEES_INIT)
         fsm_builder.add_transition(TrdEvent.LOAD_PLUGINS, TrdState.FEES_INIT, TrdState.PLUGINS_LOADED)
 
@@ -267,7 +267,7 @@ class ProcessLifeCycle:
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN)
 
     def is_running(self):
-        return not self.fsm.is_finished()
+        return not self.fsm.is_complete()
 
     def is_dry_run(self, e):
         return self.args.dry_run
