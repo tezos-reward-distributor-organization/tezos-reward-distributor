@@ -1,0 +1,42 @@
+name: Docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - v*
+
+jobs:
+  deploy-documentation:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Build documentation
+      uses: ammaraskar/sphinx-action@master
+      with:
+        docs-folder: docs/
+        pre-build-command: |
+          mkdir -p docs/build/
+          touch docs/build/.nojekyll
+          pip install sphinx_rtd_theme
+          pip install sphinxcontrib.spelling
+          pip install --upgrade recommonmark
+
+        build-command: sphinx-build -b html . build
+
+    - name: Deploy documentation
+      uses: JamesIves/github-pages-deploy-action@4.1.0
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: docs/build

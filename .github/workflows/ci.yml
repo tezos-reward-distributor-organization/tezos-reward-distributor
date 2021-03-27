@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+      - v*
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install linter dependencies
+      run: |
+        pip install flake8
+
+    - name: Lint with flake8 
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  build-trd:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+
+    name: "🐍 ${{ matrix.python-version  }} • ${{ matrix.runs-on }}"
+    runs-on: ${{ matrix.runs-on }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install software dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        sudo apt-get update -y
+        sudo apt-get install libenchant1c2a -y
+        pip install -r requirements.txt
+        pip install parameterized
+
+    - name: Test with pytest
+      run: |
+        pytest -s tests/ --verbose
+
+    - name: Run main
+      run: |
+        python main.py
+
+
+  build-documentation:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Build documentation
+      uses: ammaraskar/sphinx-action@master
+      with:
+        docs-folder: docs/
+        pre-build-command: |
+          mkdir -p docs/build/
+          touch docs/build/.nojekyll
+          pip install sphinx_rtd_theme
+          pip install sphinxcontrib.spelling
+          pip install --upgrade recommonmark
+
+        build-command: sphinx-build -b html . build
