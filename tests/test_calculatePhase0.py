@@ -8,6 +8,7 @@ from Constants import CURRENT_TESTNET
 
 BAKING_ADDRESS = "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V"
 
+
 @pytest.mark.skip
 class TestCalculatePhase0(TestCase):
 
