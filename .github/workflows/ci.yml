@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - master
       - v*
 
 jobs:
@@ -60,7 +60,7 @@ jobs:
         export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 
     - name: Test with pytest
-      run: pytest -s tests/ --verbose
+      run: python3 -m pytest -s tests/ --verbose
 
   build-documentation:
     runs-on: ubuntu-latest
