@@ -87,12 +87,12 @@ class ProcessLifeCycle:
         fsm_builder.add_state(TrdState.DIRS_SET_UP, on_enter=self.do_set_up_dirs)
         fsm_builder.add_state(TrdState.SIGNALS_REGISTERED, on_enter=self.do_register_signals)
         fsm_builder.add_state(TrdState.LOCKED, on_enter=self.do_lock)
-        fsm_builder.add_state(TrdState.NOT_LOCKED)
+        fsm_builder.add_state(TrdState.NOT_LOCKED, on_enter=lambda e: logger.debug("No locking needed!"))
         fsm_builder.add_state(TrdState.FEES_INIT, on_enter=self.do_init_service_fees)
         fsm_builder.add_state(TrdState.PLUGINS_LOADED, on_enter=self.do_load_plugins)
         fsm_builder.add_state(TrdState.PRODUCERS_READY, on_enter=self.do_launch_producers)
         fsm_builder.add_state(TrdState.CONSUMERS_READY, on_enter=self.do_launch_consumers)
-        fsm_builder.add_state(TrdState.NO_CONSUMERS_READY)
+        fsm_builder.add_state(TrdState.NO_CONSUMERS_READY, on_enter=lambda e: logger.debug("No consumers needed!"))
         fsm_builder.add_state(TrdState.READY, on_enter=self.print_ready)
         fsm_builder.add_final_state(TrdState.SHUTTING, on_enter=self.do_shut_down)
 
@@ -157,11 +157,15 @@ class ProcessLifeCycle:
 
     def do_parse_args(self, e):
         self.args = parse_arguments()
-        self.print_argument_configuration()
 
     def print_argument_configuration(self):
         mode = "daemon" if self.args.background_service else "interactive"
         logger.info("TRD version {} is running in {} mode.".format(VERSION, mode))
+
+        if self.args.dry_run:
+            logger.info(LINER)
+            logger.info("DRY RUN MODE")
+            logger.info(LINER)
 
         if logger.isEnabledFor(logging.INFO): logger.info(
             "Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
@@ -175,6 +179,7 @@ class ProcessLifeCycle:
 
     def do_initiate_loggers(self, e):
         init(self.args.syslog, self.args.log_file, self.args.verbose == 'on')
+        self.print_argument_configuration()
 
     def do_build_node_client(self, e):
         self.node_client = ClientManager(self.args.node_endpoint, self.args.signer_endpoint)
