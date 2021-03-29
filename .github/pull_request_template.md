@@ -21,7 +21,7 @@ This PR resolves the issue <issue ID>. The following steps were performed:
 
 * **Check list**:
 
-- [ ] I extended the Travis CI test units with the corresponding tests for this new feature (if needed).
+- [ ] I extended the Github Actions CI test units with the corresponding tests for this new feature (if needed).
 - [ ] I extended the Sphinx documentation (if needed).
 - [ ] I extended the help section (if needed).
 - [ ] I changed the README file (if needed).
