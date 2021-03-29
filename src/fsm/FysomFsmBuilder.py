@@ -25,26 +25,36 @@ class FysomFsmBuilder(TrdFsmBuilder):
         self.add_state(name, final=True, on_enter=on_enter)
 
     def add_state(self, state, initial=False, final=False, on_enter=None, on_leave=None, on_reenter=None):
-        if isinstance(state, Enum): state = state.name
+        if isinstance(state, Enum):
+            state = state.name
 
-        if initial: self.initial = state
-        if final: self.final = state
+        if initial:
+            self.initial = state
+        if final:
+            self.final = state
 
         self.states.append(state)
 
-        if on_enter: self.callbacks['on_enter_' + str(state)] = on_enter
-        if on_leave: self.callbacks['on_leave_' + str(state)] = on_leave
-        if on_reenter: self.callbacks['on_reenter_' + str(state)] = on_reenter
+        if on_enter:
+            self.callbacks['on_enter_' + str(state)] = on_enter
+        if on_leave:
+            self.callbacks['on_leave_' + str(state)] = on_leave
+        if on_reenter:
+            self.callbacks['on_reenter_' + str(state)] = on_reenter
 
     def add_global_transition(self, event, dst, on_before=None, on_after=None):
         return self.add_transition(event, ALL_STATES, dst, on_before=on_before, on_after=on_after)
 
     def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None):
-        if isinstance(event, Enum): event = event.name
-        if not isinstance(src, list): src = [src]
+        if isinstance(event, Enum):
+            event = event.name
+        if not isinstance(src, list):
+            src = [src]
 
         src = [e.name if isinstance(e, Enum) else e for e in src]
-        if isinstance(dst, Enum): dst = dst.name
+
+        if isinstance(dst, Enum):
+            dst = dst.name
 
         for s in src:
             if s != ALL_STATES and s not in self.states:
@@ -55,8 +65,10 @@ class FysomFsmBuilder(TrdFsmBuilder):
 
         self.transitions.append({'name': event, 'src': src, 'dst': dst, 'cond': conditions})
 
-        if on_before: self.callbacks['on_before_' + str(event)] = on_before
-        if on_after: self.callbacks['on_after_' + str(event)] = on_after
+        if on_before:
+            self.callbacks['on_before_' + str(event)] = on_before
+        if on_after:
+            self.callbacks['on_after_' + str(event)] = on_after
 
     def add_conditional_transition(self, event, src, condition, pass_dst, not_pass_dst=None):
         cond = {True: condition}
@@ -67,9 +79,9 @@ class FysomFsmBuilder(TrdFsmBuilder):
 
     def build(self):
         fsm = FysomFsmModel(FysomGlobal(initial=self.initial,
-                                      events=self.transitions,
-                                      callbacks=self.callbacks,
-                                      state_field='state',
-                                      final=self.final))
+                                        events=self.transitions,
+                                        callbacks=self.callbacks,
+                                        state_field='state',
+                                        final=self.final))
 
         return fsm

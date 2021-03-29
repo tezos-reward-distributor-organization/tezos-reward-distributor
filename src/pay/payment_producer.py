@@ -133,7 +133,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.retry_fail_thread.start()
 
         try:
-            current_cycle = 0 # self.block_api.get_current_cycle()
+            current_cycle = self.block_api.get_current_cycle()
             pymnt_cycle = self.initial_payment_cycle
         except ApiProviderException as a:
             logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))

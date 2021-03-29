@@ -170,8 +170,8 @@ class ProcessLifeCycle:
             logger.info("DRY RUN MODE")
             logger.info(LINER)
 
-        if logger.isEnabledFor(logging.INFO): logger.info(
-            "Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
+        if logger.isEnabledFor(logging.INFO):
+            logger.info("Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
 
         publish_stats = not self.args.do_not_publish_stats
         msg = "will" if publish_stats else "will not"

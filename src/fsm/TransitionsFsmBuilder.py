@@ -27,16 +27,22 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         self.add_state(name, final=True, on_enter=on_enter)
 
     def add_state(self, state, initial=False, final=False, on_enter=None, on_leave=None, on_reenter=None):
-        if isinstance(state, Enum): state = state.name
+        if isinstance(state, Enum):
+            state = state.name
 
-        if initial: self.initial = state
-        if final: self.final = state
+        if initial:
+            self.initial = state
+        if final:
+            self.final = state
 
         state_dict = {'name': state}
 
-        if on_enter: state_dict['on_enter'] = [on_enter]
-        if on_leave: state_dict['on_exit'] = [on_leave]
-        if on_reenter: print("reenter not supported!", file=sys.stderr)
+        if on_enter:
+            state_dict['on_enter'] = [on_enter]
+        if on_leave:
+            state_dict['on_exit'] = [on_leave]
+        if on_reenter:
+            print("reenter not supported!", file=sys.stderr)
 
         self.states.append(state_dict)
         self.state_names.append(state)
@@ -46,8 +52,10 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         return self.add_transition(event, self.state_names, dst, on_before=on_before, on_after=on_after)
 
     def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None, condition_target=True):
-        if isinstance(event, Enum): event = event.name
-        if not isinstance(src, list): src = [src]
+        if isinstance(event, Enum):
+            event = event.name
+        if not isinstance(src, list):
+            src = [src]
 
         src = [e.name if isinstance(e, Enum) else e for e in src]
         if isinstance(dst, Enum): dst = dst.name
@@ -64,10 +72,13 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         if conditions:
             if condition_target:
                 trigger_dict['conditions'] = conditions
-            else: trigger_dict['unless'] = conditions
+            else:
+                trigger_dict['unless'] = conditions
 
-        if on_before: trigger_dict['before'] = on_before
-        if on_after: trigger_dict['after'] = on_after
+        if on_before:
+            trigger_dict['before'] = on_before
+        if on_after:
+            trigger_dict['after'] = on_after
 
         self.transitions.append(trigger_dict)
         pass
@@ -83,7 +94,7 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
 
     def build(self):
         fsm = TransitionsFsmModel(self.final)
-        machine = Machine(model=fsm, states=self.states, initial=self.initial, transitions=self.transitions,send_event=True)
+        machine = Machine(model=fsm, states=self.states, initial=self.initial, transitions=self.transitions, send_event=True)
         fsm.init(machine)
 
         return fsm
