@@ -20,16 +20,11 @@ class TransitionsFsmModel(TrdFsmModel):
         state = state.name if isinstance(state, Enum) else state
         return self.state == state
 
-    def trigger_event(self, event, args_map=None):
-        if args_map is None:
-            args_map = dict()
+    def trigger_event(self, event, *args, **kwargs):
         if isinstance(event, Enum):
             event = event.name
 
-        if args_map:
-            self.trigger(event, **args_map)
-        else:
-            self.trigger(event)
+        self.trigger(event, *args, **kwargs)
 
     def is_complete(self):
         return self.state == self.final_state

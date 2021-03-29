@@ -17,7 +17,7 @@ class TestFsmBuilder(TestCase):
         print(fsm.current())
         fsm.trigger("stop", {'msg': 'Doneeeee'})
         print(fsm.current())
-        print(fsm.is_finished())
+        print(fsm.is_complete())
 
     def raiseError(self, msg):
         raise ValueError(msg)
