@@ -58,7 +58,9 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
             src = [src]
 
         src = [e.name if isinstance(e, Enum) else e for e in src]
-        if isinstance(dst, Enum): dst = dst.name
+
+        if isinstance(dst, Enum):
+            dst = dst.name
 
         for s in src:
             if s != ALL_STATES and s not in self.state_names:

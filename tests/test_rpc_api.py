@@ -93,8 +93,6 @@ test_logger.addHandler(sh)
 
 
 @pytest.mark.skip
-
-# @patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))

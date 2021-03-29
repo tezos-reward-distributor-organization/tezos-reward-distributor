@@ -100,7 +100,6 @@ def make_config(baking_address, payment_address, service_fee: int,
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
-
 @patch('util.config_life_cycle.ConfigParser')
 class IntegrationTests(unittest.TestCase):
 
