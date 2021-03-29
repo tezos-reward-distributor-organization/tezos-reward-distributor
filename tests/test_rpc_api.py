@@ -111,5 +111,5 @@ class RpcApiTest(unittest.TestCase):
         args.syslog = False
         args.log_file = 'logs/app.log'
         args.do_not_publish_stats = True
-        args.run_mode = 4 # retry fail
+        args.run_mode = 4  # retry fail
         start_application(args)
