@@ -28,6 +28,7 @@ BUF_SIZE = 50
 class TrdState(Enum):
     INITIAL = auto()
     CMD_ARGS_PARSED = auto()
+    CMD_ARGS_GIVEN = auto()
     BANNER_PRINTED = auto()
     LOGGERS_INITIATED = auto()
     NODE_CLIENT_BUILT = auto()
@@ -65,9 +66,9 @@ class TrdEvent(Enum):
 
 
 class ProcessLifeCycle:
-    def __init__(self):
+    def __init__(self, args):
         self.lock_taken = False
-        self.args = None
+        self.args = args
         self.node_client = None
         self.nw_config = None
         self.cfg = None
@@ -79,6 +80,7 @@ class ProcessLifeCycle:
         fsm_builder = TransitionsFsmBuilder()
         fsm_builder.add_initial_state(TrdState.INITIAL, on_leave=lambda e: logger.debug("TRD is starting..."))
         fsm_builder.add_state(TrdState.CMD_ARGS_PARSED, on_enter=self.do_parse_args)
+        fsm_builder.add_state(TrdState.CMD_ARGS_GIVEN, on_enter=self.print_argument_configuration)
         fsm_builder.add_state(TrdState.BANNER_PRINTED, on_enter=self.do_print_banner)
         fsm_builder.add_state(TrdState.LOGGERS_INITIATED, on_enter=self.do_initiate_loggers)
         fsm_builder.add_state(TrdState.NODE_CLIENT_BUILT, on_enter=self.do_build_node_client)
@@ -96,8 +98,8 @@ class ProcessLifeCycle:
         fsm_builder.add_state(TrdState.READY, on_enter=self.print_ready)
         fsm_builder.add_final_state(TrdState.SHUTTING, on_enter=self.do_shut_down)
 
-        fsm_builder.add_transition(TrdEvent.LAUNCH, TrdState.INITIAL, TrdState.CMD_ARGS_PARSED)
-        fsm_builder.add_transition(TrdEvent.PRINT_BANNER, TrdState.CMD_ARGS_PARSED, TrdState.BANNER_PRINTED)
+        fsm_builder.add_conditional_transition(TrdEvent.LAUNCH, TrdState.INITIAL, self.is_args_not_set, TrdState.CMD_ARGS_PARSED, TrdState.CMD_ARGS_GIVEN)
+        fsm_builder.add_transition(TrdEvent.PRINT_BANNER, [TrdState.CMD_ARGS_PARSED, TrdState.CMD_ARGS_GIVEN], TrdState.BANNER_PRINTED)
         fsm_builder.add_transition(TrdEvent.INITIATE_LOGGERS, TrdState.BANNER_PRINTED, TrdState.LOGGERS_INITIATED)
         fsm_builder.add_transition(TrdEvent.BUILD_NODE_CLIENT, TrdState.LOGGERS_INITIATED, TrdState.NODE_CLIENT_BUILT)
         fsm_builder.add_transition(TrdEvent.BUILD_NW_CONFIG, TrdState.NODE_CLIENT_BUILT, TrdState.NW_CONFIG_BUILT)
@@ -159,7 +161,7 @@ class ProcessLifeCycle:
     def do_parse_args(self, e):
         self.args = parse_arguments()
 
-    def print_argument_configuration(self):
+    def print_argument_configuration(self, e=None):
         mode = "daemon" if self.args.background_service else "interactive"
         logger.info("TRD version {} is running in {} mode.".format(VERSION, mode))
 
@@ -280,3 +282,6 @@ class ProcessLifeCycle:
 
     def is_dry_run_no_consumers(self, e):
         return self.args.dry_run_no_consumers
+
+    def is_args_not_set(self, e):
+        return self.args is None

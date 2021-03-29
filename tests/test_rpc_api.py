@@ -5,12 +5,14 @@ from unittest.mock import patch, MagicMock
 from os.path import dirname, join
 import pytest
 
-from main import main  # This imports main() from src/main.py
 from Constants import CURRENT_TESTNET
 
 
 # This is a dummy class representing any --arguments passed on the command line
 # You can instantiate this class and then change any parameters for testing
+from main import start_application
+
+
 class Args:
 
     def __init__(self, initial_cycle, reward_data_provider, node_addr_public=None, api_base_url=None):
@@ -91,13 +93,13 @@ test_logger.addHandler(sh)
 
 
 @pytest.mark.skip
-@patch('main.get_baking_configuration_file', MagicMock(return_value=''))
-@patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
+
+# @patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
 @patch('log_config.main_logger', test_logger)
-@patch.multiple('main.ClientManager',
-                check_pkh_known_by_signer=MagicMock(return_value=True),
-                get_bootstrapped=MagicMock(return_value=datetime(2030, 1, 1)))
-@patch('main.ConfigParser.load_file', MagicMock(return_value=parsed_config))
+@patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
+@patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
+@patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
+@patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
 class RpcApiTest(unittest.TestCase):
 
     def test_dry_run(self):
@@ -106,4 +108,10 @@ class RpcApiTest(unittest.TestCase):
         args = Args(initial_cycle=90, reward_data_provider='prpc', node_addr_public='https://testnet-tezos.giganode.io')
         args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
         args.docker = True
-        main(args)
+        args.dry_run = True
+        args.dry_run_no_consumers = True
+        args.syslog = False
+        args.log_file = 'logs/app.log'
+        args.do_not_publish_stats = True
+        args.run_mode = 4 # retry fail
+        start_application(args)

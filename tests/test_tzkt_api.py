@@ -4,10 +4,11 @@ import json
 from typing import Optional
 from unittest.mock import patch, MagicMock
 from os.path import dirname, join
-from parameterized import parameterized
 from datetime import datetime
 
-from main import main
+from numpy.testing._private.parameterized import parameterized
+
+from main import start_application
 from rpc.rpc_reward_api import RpcRewardApiImpl
 from tzstats.tzstats_reward_api import TzStatsRewardApiImpl, RewardProviderModel
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
@@ -97,13 +98,11 @@ def make_config(baking_address, payment_address, service_fee: int,
 
 @unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 @patch('pay.payment_producer.sleep', MagicMock())
-@patch('main.sleep', MagicMock(sleep=MagicMock()))
-@patch('main.get_baking_configuration_file', MagicMock(return_value=''))
-@patch('main.ProcessLifeCycle', MagicMock(is_running=MagicMock(return_value=False)))
-@patch.multiple('main.ClientManager',
-                check_pkh_known_by_signer=MagicMock(return_value=True),
-                get_bootstrapped=MagicMock(return_value=datetime(2030, 1, 1)))
-@patch('main.ConfigParser')
+@patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
+@patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
+@patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
+
+@patch('util.config_life_cycle.ConfigParser')
 class IntegrationTests(unittest.TestCase):
 
     @classmethod
@@ -118,7 +117,20 @@ class IntegrationTests(unittest.TestCase):
             min_delegation_amt=10,
             delegator_pays_xfer_fee=True
         ))
-        main(Args(initial_cycle=201, reward_data_provider='tzkt'))
+
+        # Test with PRPC node
+        args = Args(initial_cycle=201, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1/')
+        args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
+        args.docker = True
+        args.dry_run = True
+        args.dry_run_no_consumers = True
+        args.syslog = False
+        args.verbose = "on"
+        args.log_file = 'logs/app.log'
+        args.do_not_publish_stats = True
+        args.run_mode = 3
+
+        start_application(args)
 
     def test_base_url(self, ConfigParser):
         ConfigParser.load_file = MagicMock(return_value=make_config(
@@ -128,7 +140,19 @@ class IntegrationTests(unittest.TestCase):
             min_delegation_amt=0,
             delegator_pays_xfer_fee=True
         ))
-        main(Args(initial_cycle=100, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1'))
+
+        # Test with PRPC node
+        args = Args(initial_cycle=100, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1')
+        args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
+        args.docker = True
+        args.dry_run = True
+        args.dry_run_no_consumers = True
+        args.syslog = False
+        args.log_file = 'logs/app.log'
+        args.do_not_publish_stats = True
+        args.run_mode = 3
+
+        start_application(args)
 
 
 @unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
