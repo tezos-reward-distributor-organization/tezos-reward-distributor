@@ -107,7 +107,7 @@ class IntegrationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.maxDiff = None
 
-    def test_dry_run(self, ConfigParser):
+    def disabled_test_dry_run(self, ConfigParser):
         ConfigParser.load_file = MagicMock(return_value=make_config(
             baking_address='tz1NortRftucvAkD1J58L32EhSVrQEWJCEnB',
             payment_address='tz1Zrqm4TkJwqTxm5TiyVFh6taXG4Wrq7tko',
@@ -140,12 +140,13 @@ class IntegrationTests(unittest.TestCase):
         ))
 
         # Test with PRPC node
-        args = Args(initial_cycle=100, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1')
+        args = Args(initial_cycle=100, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1/')
         args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
         args.docker = True
         args.dry_run = True
         args.dry_run_no_consumers = True
         args.syslog = False
+        args.verbose = "on"
         args.log_file = 'logs/app.log'
         args.do_not_publish_stats = True
         args.run_mode = 3
