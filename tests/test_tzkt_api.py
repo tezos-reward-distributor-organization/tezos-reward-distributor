@@ -6,14 +6,13 @@ from unittest.mock import patch, MagicMock
 from os.path import dirname, join
 from datetime import datetime
 
-from numpy.testing._private.parameterized import parameterized
-
 from main import start_application
 from rpc.rpc_reward_api import RpcRewardApiImpl
 from tzstats.tzstats_reward_api import TzStatsRewardApiImpl, RewardProviderModel
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
 from NetworkConfiguration import default_network_config_map
+from parameterized import parameterized
 
 
 def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
