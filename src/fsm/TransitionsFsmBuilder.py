@@ -19,6 +19,10 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         self.callbacks = {}
         self.initial = None
         self.final = None
+        self.transition_complete_callback = None
+
+    def add_transition_complete_callback(self, transition_complete_callback):
+        self.transition_complete_callback = transition_complete_callback
 
     def add_initial_state(self, name, on_leave=None):
         self.add_state(name, initial=True, on_leave=on_leave)
@@ -96,7 +100,7 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
 
     def build(self):
         fsm = TransitionsFsmModel(self.final)
-        machine = Machine(model=fsm, states=self.states, initial=self.initial, transitions=self.transitions, send_event=True)
+        machine = Machine(model=fsm, states=self.states, initial=self.initial, transitions=self.transitions, send_event=True, finalize_event=self.transition_complete_callback)
         fsm.init(machine)
 
         return fsm

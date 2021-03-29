@@ -133,28 +133,32 @@ class ProcessLifeCycle:
         logger.info(LINER)
 
     def start(self):
-        self.fsm.trigger_event(TrdEvent.LAUNCH)
-        self.fsm.trigger_event(TrdEvent.PRINT_BANNER)
-        self.fsm.trigger_event(TrdEvent.INITIATE_LOGGERS)
-        self.fsm.trigger_event(TrdEvent.BUILD_NODE_CLIENT)
-        self.fsm.trigger_event(TrdEvent.BUILD_NW_CONFIG)
-        self.fsm.trigger_event(TrdEvent.LOAD_CONFIG)
-        self.fsm.trigger_event(TrdEvent.SET_UP_DIRS)
-        self.fsm.trigger_event(TrdEvent.REGISTER_SIGNALS)
-        self.fsm.trigger_event(TrdEvent.LOCK)
-        self.fsm.trigger_event(TrdEvent.INIT_FEES)
-        self.fsm.trigger_event(TrdEvent.LOAD_PLUGINS)
 
-        self.fsm.trigger_event(TrdEvent.LAUNCH_PRODUCERS)
-        self.fsm.trigger_event(TrdEvent.LAUNCH_CONSUMERS)
-        self.fsm.trigger_event(TrdEvent.GO_READY)
-
-        # Run forever
         try:
+            self.fsm.trigger_event(TrdEvent.LAUNCH)
+            self.fsm.trigger_event(TrdEvent.PRINT_BANNER)
+            self.fsm.trigger_event(TrdEvent.INITIATE_LOGGERS)
+            self.fsm.trigger_event(TrdEvent.BUILD_NODE_CLIENT)
+            self.fsm.trigger_event(TrdEvent.BUILD_NW_CONFIG)
+            self.fsm.trigger_event(TrdEvent.LOAD_CONFIG)
+            self.fsm.trigger_event(TrdEvent.SET_UP_DIRS)
+            self.fsm.trigger_event(TrdEvent.REGISTER_SIGNALS)
+            self.fsm.trigger_event(TrdEvent.LOCK)
+            self.fsm.trigger_event(TrdEvent.INIT_FEES)
+            self.fsm.trigger_event(TrdEvent.LOAD_PLUGINS)
+
+            self.fsm.trigger_event(TrdEvent.LAUNCH_PRODUCERS)
+            self.fsm.trigger_event(TrdEvent.LAUNCH_CONSUMERS)
+            self.fsm.trigger_event(TrdEvent.GO_READY)
+
             while self.is_running():
                 sleep(10)
+
         except KeyboardInterrupt:
             logger.info("Interrupted.")
+            self.shut_down()
+        except Exception as e:
+            logger.error("[Process Life Cycle completing With Failure] Error Details: {:s}".format(str(e)))
             self.shut_down()
         pass
 
