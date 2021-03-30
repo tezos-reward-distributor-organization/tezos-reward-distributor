@@ -189,5 +189,3 @@ class TestLaunchStates(unittest.TestCase):
     def test_wrong_args_run_mode(self):
         start_application(None)
         pass
-
-
