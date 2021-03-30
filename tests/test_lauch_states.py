@@ -2,10 +2,34 @@ import argparse
 import logging
 import unittest
 from datetime import datetime
+from os.path import join, dirname
 from unittest.mock import MagicMock, patch
 
 from main import start_application
-from test_tzkt_api import Args
+
+
+class Args:
+    def __init__(self, initial_cycle, reward_data_provider, node_addr_public=None, api_base_url=None):
+        self.initial_cycle = initial_cycle
+        self.run_mode = 3
+        self.release_override = 0
+        self.payment_offset = 0
+        self.network = 'EDO2NET'
+        self.node_endpoint = ''
+        self.signer_endpoint = ''
+        self.reward_data_provider = reward_data_provider
+        self.node_addr_public = node_addr_public
+        self.reports_base = join(dirname(__file__), reward_data_provider)
+        self.config_dir = dirname(__file__)
+        self.dry_run = True
+        self.dry_run_no_consumers = True
+        self.executable_dirs = dirname(__file__)
+        self.docker = False
+        self.background_service = False
+        self.do_not_publish_stats = False
+        self.retry_injected = False
+        self.verbose = True
+        self.api_base_url = api_base_url
 
 
 def illegal_run_mode():
