@@ -17,7 +17,7 @@ from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
 from util.config_life_cycle import ConfigLifeCycle
 from util.lock_file import LockFile
-from log_config import main_logger, init
+from log_config import main_logger, init, verbose_logger
 from plugins import plugins
 
 logger = main_logger
@@ -159,6 +159,8 @@ class ProcessLifeCycle:
             self.shut_down()
         except Exception as e:
             logger.error("[Process Life Cycle completing With Failure] Error Details: {:s}".format(str(e)))
+            verbose_logger.error("[Process Life Cycle completing With Failure] Stack Trace: {}".format(e), stack_info=True)
+
             self.shut_down()
         pass
 

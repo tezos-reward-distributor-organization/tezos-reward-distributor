@@ -54,28 +54,7 @@ def print_banner(args, script_name):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser()
-    add_argument_cycle(parser)
-    add_argument_mode(parser)
-    add_argument_release_override(parser)
-    add_argument_payment_offset(parser)
-    add_argument_network(parser)
-    add_argument_node_endpoint(parser)
-    add_argument_provider(parser)
-    add_argument_node_addr_public(parser)
-    add_argument_reports_base(parser)
-    add_argument_config_dir(parser)
-    add_argument_dry(parser)
-    add_argument_dry_no_consumer(parser)
-    add_argument_signer_endpoint(parser)
-    add_argument_docker(parser)
-    add_argument_background_service(parser)
-    add_argument_stats(parser)
-    add_argument_verbose(parser)
-    add_argument_api_base_url(parser)
-    add_argument_retry_injected(parser)
-    add_argument_syslog(parser)
-    add_argument_log_file(parser)
+    parser = build_parser()
 
     args = parser.parse_args()
 
@@ -103,6 +82,32 @@ def parse_arguments():
 
     # All passed
     return args
+
+
+def build_parser():
+    parser = argparse.ArgumentParser()
+    add_argument_cycle(parser)
+    add_argument_mode(parser)
+    add_argument_release_override(parser)
+    add_argument_payment_offset(parser)
+    add_argument_network(parser)
+    add_argument_node_endpoint(parser)
+    add_argument_provider(parser)
+    add_argument_node_addr_public(parser)
+    add_argument_reports_base(parser)
+    add_argument_config_dir(parser)
+    add_argument_dry(parser)
+    add_argument_dry_no_consumer(parser)
+    add_argument_signer_endpoint(parser)
+    add_argument_docker(parser)
+    add_argument_background_service(parser)
+    add_argument_stats(parser)
+    add_argument_verbose(parser)
+    add_argument_api_base_url(parser)
+    add_argument_retry_injected(parser)
+    add_argument_syslog(parser)
+    add_argument_log_file(parser)
+    return parser
 
 
 def add_argument_cycle(parser):
