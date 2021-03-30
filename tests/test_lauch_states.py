@@ -5,7 +5,6 @@ from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 from main import start_application
-from test_rpc_api import make_config
 from test_tzkt_api import Args
 
 
@@ -34,6 +33,32 @@ def illegal_run_mode():
     parser.add_argument('--retry_injected', default=False)
 
     return parser
+
+
+def make_config(baking_address, payment_address, service_fee: int,
+                min_delegation_amt: int) -> str:
+    return \
+        "baking_address: {:s}\n" \
+        "delegator_pays_ra_fee: true\n" \
+        "delegator_pays_xfer_fee: true\n" \
+        "founders_map:\n" \
+        "  tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7: 0.25\n" \
+        "  tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace: 0.75\n" \
+        "min_delegation_amt: {:d}\n" \
+        "owners_map:\n" \
+        "  tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk: 1.0\n" \
+        "payment_address: {:s}\n" \
+        "reactivate_zeroed: true\n" \
+        "rules_map:\n" \
+        "  tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP: tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs\n" \
+        "  tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: TOB\n" \
+        "  mindelegation: TOB\n" \
+        "service_fee: {:d}\n" \
+        "specials_map: {{}}\n" \
+        "supporters_set: !!set {{}}\n" \
+        "plugins:\n" \
+        "  enabled:\n".format(
+            baking_address, min_delegation_amt, payment_address, service_fee)
 
 
 class TestLaunchStates(unittest.TestCase):
@@ -65,7 +90,7 @@ class TestLaunchStates(unittest.TestCase):
         args.dry_run = True
         args.dry_run_no_consumers = True
         args.syslog = False
-        args.verbose = "on"
+        args.verbose = "off"
         args.log_file = 'logs/app.log'
         args.do_not_publish_stats = True
         args.run_mode = 4
@@ -85,7 +110,7 @@ class TestLaunchStates(unittest.TestCase):
         args.dry_run = True
         args.dry_run_no_consumers = True
         args.syslog = False
-        args.verbose = "on"
+        args.verbose = "off"
         args.log_file = 'logs/app.log'
         args.do_not_publish_stats = True
         args.run_mode = 4
@@ -105,7 +130,7 @@ class TestLaunchStates(unittest.TestCase):
         args.dry_run = True
         args.dry_run_no_consumers = True
         args.syslog = False
-        args.verbose = "on"
+        args.verbose = "off"
         args.log_file = 'logs/app.log'
         args.do_not_publish_stats = True
         args.run_mode = 3
@@ -125,7 +150,7 @@ class TestLaunchStates(unittest.TestCase):
         args.dry_run = True
         args.dry_run_no_consumers = True
         args.syslog = False
-        args.verbose = "on"
+        args.verbose = "off"
         args.log_file = 'logs/app.log'
         args.do_not_publish_stats = True
         args.run_mode = 3
@@ -145,7 +170,7 @@ class TestLaunchStates(unittest.TestCase):
         args.dry_run = True
         args.dry_run_no_consumers = True
         args.syslog = False
-        args.verbose = "on"
+        args.verbose = "off"
         args.log_file = 'logs/app.log'
         args.do_not_publish_stats = True
         args.run_mode = 3
@@ -163,5 +188,6 @@ class TestLaunchStates(unittest.TestCase):
     @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
     def test_wrong_args_run_mode(self):
         start_application(None)
+        pass
 
 
