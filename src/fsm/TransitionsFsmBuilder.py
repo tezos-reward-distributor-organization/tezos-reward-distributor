@@ -1,10 +1,10 @@
 import sys
-from enum import Enum
 
 from transitions import Machine
 
 from fsm.TransitionsFsmModel import TransitionsFsmModel
 from fsm.TrdFsmBuilder import TrdFsmBuilder
+from fsm.fsm_helper import to_name, to_list
 
 ALL_STATES = '*'
 SAME_STATE = '='
@@ -14,7 +14,7 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
 
     def __init__(self):
         self.states = []
-        self.state_names = []
+        self.state_names = set()
         self.transitions = []
         self.callbacks = {}
         self.initial = None
@@ -30,9 +30,9 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
     def add_final_state(self, name, on_enter=None):
         self.add_state(name, final=True, on_enter=on_enter)
 
-    def add_state(self, state, initial=False, final=False, on_enter=None, on_leave=None, on_reenter=None):
-        if isinstance(state, Enum):
-            state = state.name
+    def add_state(self, state, initial=False, final=False, on_enter=None, on_leave=None):
+
+        state = to_name(state)
 
         if initial:
             self.initial = state
@@ -45,36 +45,30 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
             state_dict['on_enter'] = [on_enter]
         if on_leave:
             state_dict['on_exit'] = [on_leave]
-        if on_reenter:
-            print("reenter not supported!", file=sys.stderr)
 
         self.states.append(state_dict)
-        self.state_names.append(state)
+        self.state_names.add(state)
         pass
 
     def add_global_transition(self, event, dst, on_before=None, on_after=None):
         return self.add_transition(event, self.state_names, dst, on_before=on_before, on_after=on_after)
 
     def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None, condition_target=True):
-        if isinstance(event, Enum):
-            event = event.name
+        event = to_name(event)
 
-        if not isinstance(src, list):
-            src = [src]
+        src_states = to_list(src)
+        src_state_names = [to_name(state) for state in src_states]
 
-        src = [state.name if isinstance(state, Enum) else state for state in src]
+        dst = to_name(dst)
 
-        if isinstance(dst, Enum):
-            dst = dst.name
-
-        for s in src:
-            if s != ALL_STATES and s not in self.state_names:
-                raise Exception("Unknown source state:" + str(s))
+        for state_name in src_state_names:
+            if state_name != ALL_STATES and state_name not in self.state_names:
+                raise Exception("Unknown source state:" + str(state_name))
 
         if dst != SAME_STATE and dst not in self.state_names:
             raise Exception("Unknown destination state:" + str(dst))
 
-        trigger_dict = {'trigger': event, 'source': src, 'dest': dst}
+        trigger_dict = {'trigger': event, 'source': src_state_names, 'dest': dst}
 
         if conditions:
             if condition_target:

@@ -12,7 +12,7 @@ class TrdFsmBuilder(ABC):
         pass
 
     @abstractmethod
-    def add_state(self, state, initial=False, final=False, on_enter=None, on_leave=None, on_reenter=None):
+    def add_state(self, state, initial=False, final=False, on_enter=None, on_leave=None):
         pass
 
     @abstractmethod

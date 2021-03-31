@@ -1,6 +1,7 @@
 from enum import Enum
 
 from fsm.TrdFsmModel import TrdFsmModel
+from fsm.fsm_helper import to_name
 
 
 class TransitionsFsmModel(TrdFsmModel):
@@ -17,12 +18,11 @@ class TransitionsFsmModel(TrdFsmModel):
         return self.state
 
     def is_state(self, state):
-        state = state.name if isinstance(state, Enum) else state
+        state = to_name(state)
         return self.state == state
 
     def trigger_event(self, event, *args, **kwargs):
-        if isinstance(event, Enum):
-            event = event.name
+        event = to_name(event)
 
         self.trigger(event, *args, **kwargs)
 
