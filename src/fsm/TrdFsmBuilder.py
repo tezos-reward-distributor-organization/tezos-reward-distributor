@@ -20,7 +20,7 @@ class TrdFsmBuilder(ABC):
         pass
 
     @abstractmethod
-    def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None):
+    def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None, condition_target=True):
         pass
 
     @abstractmethod

@@ -58,10 +58,11 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
     def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None, condition_target=True):
         if isinstance(event, Enum):
             event = event.name
+
         if not isinstance(src, list):
             src = [src]
 
-        src = [e.name if isinstance(e, Enum) else e for e in src]
+        src = [state.name if isinstance(state, Enum) else state for state in src]
 
         if isinstance(dst, Enum):
             dst = dst.name
