@@ -1,5 +1,9 @@
 import os
 
+from log_config import main_logger
+
+logger = main_logger
+
 PAYMENT_DONE_DIR = "done"
 PAYMENT_FAILED_DIR = "failed"
 BUSY_FILE = ".BUSY"
@@ -14,13 +18,14 @@ def payment_report_file_path(pymnt_root, pymnt_cycle, nb_failed):
 def get_latest_report_file(payments_root):
     recent = None
     if get_successful_payments_dir(payments_root):
-        files = [os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))]
+        files = [os.path.splitext(file)[0] for file in os.listdir(get_successful_payments_dir(payments_root))]
         paid_cycles = []
-        for x in files:
+        for file in files:
             try:
-                paid_cycles.append(int(x))
+                paid_cycles.append(int(file))
             except Exception:
-                pass
+                logger.warning("Unexpected file under payments dir {}. File names should correspond to cycle numbers", file)
+
         paid_cycles = sorted(paid_cycles)
         recent = paid_cycles[-1] if len(paid_cycles) > 0 else None
     return recent

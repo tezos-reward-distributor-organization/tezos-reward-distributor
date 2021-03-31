@@ -18,13 +18,13 @@ class TestFsmBuilder(TestCase):
         fsm = fsmBuilder.build()
 
         fsm.trigger_event("move")
-        self.assertEqual(fsm.current(), "middle")
+        self.assertEqual(fsm.current, "middle")
 
         fsm.trigger_event("run", 'Run Forest')
-        self.assertEqual(fsm.current(), "not_running")
+        self.assertEqual(fsm.current, "not_running")
 
         fsm.trigger_event("stop", msg='Stop There')
-        self.assertTrue(fsm.is_complete())
+        self.assertTrue(fsm.is_complete)
 
     def test_exceptions(self):
         fsmBuilder = TransitionsFsmBuilder()
@@ -48,10 +48,10 @@ class TestFsmBuilder(TestCase):
             self.assertEqual(fsm.current(), "not_running")
 
             fsm.trigger_event("stop", msg='Stop There')
-            self.assertTrue(fsm.is_complete())
+            self.assertTrue(fsm.is_complete)
         except Exception:
             fsm.trigger_event("fail")
-            self.assertTrue(fsm.is_complete())
+            self.assertTrue(fsm.is_complete)
 
     @staticmethod
     def print_any_error(e):

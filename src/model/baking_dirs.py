@@ -19,4 +19,4 @@ class BakingDirs:
         self.calculations_root = get_calculations_root(self.reports_dir, create=True)
         self.successful_payments_dir = get_successful_payments_dir(self.payments_root, create=True)
         self.failed_payments_dir = get_failed_payments_dir(self.payments_root, create=True)
-        pass
+

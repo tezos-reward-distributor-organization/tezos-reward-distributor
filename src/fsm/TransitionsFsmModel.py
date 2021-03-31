@@ -1,12 +1,10 @@
-from enum import Enum
-
 from fsm.TrdFsmModel import TrdFsmModel
 from fsm.fsm_helper import to_name
 
 
 class TransitionsFsmModel(TrdFsmModel):
     def __init__(self, final_state) -> None:
-        self.final_state = final_state.name if isinstance(final_state, Enum) else final_state
+        self.final_state = to_name(final_state)
         self.machine = None
         self.state = None
         super(TransitionsFsmModel, self).__init__()
@@ -14,6 +12,7 @@ class TransitionsFsmModel(TrdFsmModel):
     def init(self, machine):
         self.machine = machine
 
+    @property
     def current(self):
         return self.state
 
@@ -26,5 +25,6 @@ class TransitionsFsmModel(TrdFsmModel):
 
         self.trigger(event, *args, **kwargs)
 
+    @property
     def is_complete(self):
         return self.state == self.final_state

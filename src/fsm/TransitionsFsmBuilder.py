@@ -1,5 +1,3 @@
-import sys
-
 from transitions import Machine
 
 from fsm.TransitionsFsmModel import TransitionsFsmModel
@@ -48,7 +46,6 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
 
         self.states.append(state_dict)
         self.state_names.add(state)
-        pass
 
     def add_global_transition(self, event, dst, on_before=None, on_after=None):
         return self.add_transition(event, self.state_names, dst, on_before=on_before, on_after=on_after)
@@ -82,7 +79,6 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
             trigger_dict['after'] = on_after
 
         self.transitions.append(trigger_dict)
-        pass
 
     def add_conditional_transition(self, event, src, condition, pass_dst, not_pass_dst=None):
 
@@ -90,8 +86,6 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
 
         if not_pass_dst:
             self.add_transition(event, src, not_pass_dst, conditions=[condition], condition_target=False)
-
-        pass
 
     def build(self):
         fsm = TransitionsFsmModel(self.final)

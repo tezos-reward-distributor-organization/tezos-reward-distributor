@@ -58,8 +58,6 @@ class ConfigLifeCycle:
 
         self.fsm = fsm_builder.build()
 
-        pass
-
     def start(self):
         self.fsm.trigger_event(ConfigEvent.READ)
         self.fsm.trigger_event(ConfigEvent.BUILD)
@@ -89,7 +87,6 @@ class ConfigLifeCycle:
         self.parser = BakingYamlConfParser(yaml_text=self.config_text, clnt_mngr=self.node_client,
                                            provider_factory=provider_factory, network_config=self.nw_cfg,
                                            node_url=self.args.node_endpoint, api_base_url=self.args.api_base_url)
-        pass
 
     def do_parse_cfg(self, e):
         self.parser.parse()

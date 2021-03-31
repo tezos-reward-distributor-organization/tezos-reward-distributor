@@ -117,7 +117,6 @@ class ProcessLifeCycle:
         fsm_builder.add_global_transition(TrdEvent.SHUT_DOWN, TrdState.SHUTTING)
 
         self.fsm = fsm_builder.build()
-        pass
 
     def print_baking_config(self):
         logger.info("Baking Configuration {}".format(self.cfg))
@@ -151,7 +150,7 @@ class ProcessLifeCycle:
             self.fsm.trigger_event(TrdEvent.LAUNCH_CONSUMERS)
             self.fsm.trigger_event(TrdEvent.GO_READY)
 
-            while self.is_running():
+            while self.is_running:
                 sleep(10)
 
         except KeyboardInterrupt:
@@ -162,7 +161,6 @@ class ProcessLifeCycle:
             verbose_logger.error("[Process Life Cycle completing With Failure] Stack Trace: {}".format(e), stack_info=True)
 
             self.shut_down()
-        pass
 
     def do_parse_args(self, e):
         self.args = parse_arguments()
@@ -280,6 +278,7 @@ class ProcessLifeCycle:
     def shut_down(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN)
 
+    @property
     def is_running(self):
         return not self.fsm.is_complete()
 
