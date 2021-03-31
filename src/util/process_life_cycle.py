@@ -67,15 +67,15 @@ class TrdEvent(Enum):
 
 class ProcessLifeCycle:
     def __init__(self, args):
-        self.lock_taken = False
-        self.args = args
-        self.node_client = None
-        self.nw_config = None
-        self.cfg = None
-        self.baking_dirs = None
-        self.srvc_fee_calc = None
-        self.plugins_manager = None
-        self.payments_queue = queue.Queue(BUF_SIZE)
+        self.__lock_taken = False
+        self.__args = args
+        self.__node_client = None
+        self.__nw_config = None
+        self.__cfg = None
+        self.__baking_dirs = None
+        self.__srvc_fee_calc = None
+        self.__plugins_manager = None
+        self.__payments_queue = queue.Queue(BUF_SIZE)
 
         fsm_builder = TransitionsFsmBuilder()
         fsm_builder.add_initial_state(TrdState.INITIAL, on_leave=lambda e: logger.debug("TRD is starting..."))
@@ -119,11 +119,11 @@ class ProcessLifeCycle:
         self.fsm = fsm_builder.build()
 
     def print_baking_config(self):
-        logger.info("Baking Configuration {}".format(self.cfg))
+        logger.info("Baking Configuration {}".format(self.__cfg))
 
         logger.info(LINER)
-        logger.info("BAKING ADDRESS is {}".format(self.cfg.get_baking_address()))
-        logger.info("PAYMENT ADDRESS is {}".format(self.cfg.get_payment_address()))
+        logger.info("BAKING ADDRESS is {}".format(self.__cfg.get_baking_address()))
+        logger.info("PAYMENT ADDRESS is {}".format(self.__cfg.get_payment_address()))
         logger.info(LINER)
 
     @staticmethod
@@ -163,7 +163,7 @@ class ProcessLifeCycle:
             self.shut_down()
 
     def do_parse_args(self, e):
-        self.args = parse_arguments()
+        self.__args = parse_arguments()
 
     def print_argument_configuration(self, e=None):
         mode = "daemon" if self.args.background_service else "interactive"
@@ -189,52 +189,52 @@ class ProcessLifeCycle:
         self.print_argument_configuration()
 
     def do_build_node_client(self, e):
-        self.node_client = ClientManager(self.args.node_endpoint, self.args.signer_endpoint)
+        self.__node_client = ClientManager(self.args.node_endpoint, self.args.signer_endpoint)
 
     def do_build_nw_config(self, e):
-        network_config_map = init_network_config(self.args.network, self.node_client)
-        self.nw_config = network_config_map[self.args.network]
+        network_config_map = init_network_config(self.args.network, self.__node_client)
+        self.__nw_config = network_config_map[self.args.network]
 
     def do_load_config(self, e):
-        cfg_life_cycle = ConfigLifeCycle(self.args, self.nw_config, self.node_client, self.set_cfg)
+        cfg_life_cycle = ConfigLifeCycle(self.args, self.__nw_config, self.__node_client, self.set_cfg)
         cfg_life_cycle.start()
         self.print_baking_config()
 
     def set_cfg(self, cfg):
-        self.cfg = cfg
+        self.__cfg = cfg
 
     def do_set_up_dirs(self, e):
-        self.baking_dirs = BakingDirs(self.args, self.cfg.get_baking_address())
+        self.__baking_dirs = BakingDirs(self.args, self.__cfg.get_baking_address())
 
     def do_register_signals(self, e):
         for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM):
             signal.signal(sig, self.stop_handler)
 
     def do_init_service_fees(self, e):
-        self.srvc_fee_calc = ServiceFeeCalculator(self.cfg.get_full_supporters_set(), self.cfg.get_specials_map(), self.cfg.get_service_fee())
+        self.__srvc_fee_calc = ServiceFeeCalculator(self.__cfg.get_full_supporters_set(), self.__cfg.get_specials_map(), self.__cfg.get_service_fee())
 
     def do_lock(self, e):
         LockFile().lock()
-        self.lock_taken = True
+        self.__lock_taken = True
 
     def do_load_plugins(self, e):
-        self.plugins_manager = plugins.PluginManager(self.cfg.get_plugins_conf(), self.args.dry_run)
+        self.__plugins_manager = plugins.PluginManager(self.__cfg.get_plugins_conf(), self.args.dry_run)
 
     def do_launch_producers(self, e):
         PaymentProducer(name='producer',
                         initial_payment_cycle=self.args.initial_cycle,
-                        network_config=self.nw_config,
-                        payments_dir=self.baking_dirs.payments_root,
-                        calculations_dir=self.baking_dirs.calculations_root,
+                        network_config=self.__nw_config,
+                        payments_dir=self.__baking_dirs.payments_root,
+                        calculations_dir=self.__baking_dirs.calculations_root,
                         run_mode=RunMode(self.args.run_mode),
-                        service_fee_calc=self.srvc_fee_calc,
+                        service_fee_calc=self.__srvc_fee_calc,
                         release_override=self.args.release_override,
                         payment_offset=self.args.payment_offset,
-                        baking_cfg=self.cfg,
+                        baking_cfg=self.__cfg,
                         life_cycle=self,
-                        payments_queue=self.payments_queue,
+                        payments_queue=self.__payments_queue,
                         dry_run=self.args.dry_run,
-                        client_manager=self.node_client,
+                        client_manager=self.__node_client,
                         node_url=self.args.node_endpoint,
                         reward_data_provider=self.args.reward_data_provider,
                         node_url_public=self.args.node_addr_public,
@@ -243,20 +243,20 @@ class ProcessLifeCycle:
 
     def do_launch_consumers(self, e):
         PaymentConsumer(name='consumer0',
-                        payments_dir=self.baking_dirs.payments_root,
-                        key_name=self.cfg.get_payment_address(),
-                        payments_queue=self.payments_queue,
+                        payments_dir=self.__baking_dirs.payments_root,
+                        key_name=self.__cfg.get_payment_address(),
+                        payments_queue=self.__payments_queue,
                         node_addr=self.args.node_endpoint,
-                        client_manager=self.node_client,
-                        plugins_manager=self.plugins_manager,
-                        rewards_type=self.cfg.get_rewards_type(),
+                        client_manager=self.__node_client,
+                        plugins_manager=self.__plugins_manager,
+                        rewards_type=self.__cfg.get_rewards_type(),
                         args=self.args,
                         dry_run=self.args.dry_run,
-                        reactivate_zeroed=self.cfg.get_reactivate_zeroed(),
-                        delegator_pays_ra_fee=self.cfg.get_delegator_pays_ra_fee(),
-                        delegator_pays_xfer_fee=self.cfg.get_delegator_pays_xfer_fee(),
-                        dest_map=self.cfg.get_dest_map(),
-                        network_config=self.nw_config,
+                        reactivate_zeroed=self.__cfg.get_reactivate_zeroed(),
+                        delegator_pays_ra_fee=self.__cfg.get_delegator_pays_ra_fee(),
+                        delegator_pays_xfer_fee=self.__cfg.get_delegator_pays_xfer_fee(),
+                        dest_map=self.__cfg.get_dest_map(),
+                        network_config=self.__nw_config,
                         publish_stats=not self.args.do_not_publish_stats).start()
 
     def do_shut_down(self, e):
@@ -267,7 +267,7 @@ class ProcessLifeCycle:
         logger.info("Please wait while the application is being shut down!")
         logger.info("--------------------------------------------------------")
 
-        if self.lock_taken:
+        if self.__lock_taken:
             LockFile().release()
             logger.info("Lock file removed!")
 
@@ -281,6 +281,10 @@ class ProcessLifeCycle:
     @property
     def is_running(self):
         return not self.fsm.is_complete()
+
+    @property
+    def args(self):
+        return self.__args
 
     def is_dry_run(self, e):
         return self.args.dry_run

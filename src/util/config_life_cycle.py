@@ -33,12 +33,12 @@ class ConfigEvent(Enum):
 class ConfigLifeCycle:
 
     def __init__(self, args, nw_cfg, node_client, callback):
-        self.args = args
-        self.nw_cfg = nw_cfg
-        self.node_client = node_client
+        self.__args = args
+        self.__nw_cfg = nw_cfg
+        self.__node_client = node_client
 
-        self.config_text = None
-        self.parser = None
+        self.__config_text = None
+        self.__parser = None
 
         fsm_builder = TransitionsFsmBuilder()
         fsm_builder.add_initial_state(ConfigState.INITIAL, on_leave=lambda e: logger.debug("Loading baking configuration file ..."))
@@ -79,27 +79,31 @@ class ConfigLifeCycle:
 
         logger.info("Loading baking configuration file {}".format(config_file_path))
 
-        self.config_text = ConfigParser.load_file(config_file_path)
+        self.__config_text = ConfigParser.load_file(config_file_path)
 
     def do_build_parser(self, e):
         provider_factory = ProviderFactory(self.args.reward_data_provider)
 
-        self.parser = BakingYamlConfParser(yaml_text=self.config_text, clnt_mngr=self.node_client,
-                                           provider_factory=provider_factory, network_config=self.nw_cfg,
-                                           node_url=self.args.node_endpoint, api_base_url=self.args.api_base_url)
+        self.__parser = BakingYamlConfParser(yaml_text=self.__config_text, clnt_mngr=self.__node_client,
+                                             provider_factory=provider_factory, network_config=self.__nw_cfg,
+                                             node_url=self.args.node_endpoint, api_base_url=self.args.api_base_url)
 
     def do_parse_cfg(self, e):
-        self.parser.parse()
+        self.__parser.parse()
 
     def do_validate_cfg(self, e):
-        self.parser.validate()
+        self.__parser.validate()
 
     def do_process_cfg(self, e):
-        self.parser.process()
+        self.__parser.process()
 
     def get_conf(self):
-        cfg_dict = self.parser.get_conf_obj()
+        cfg_dict = self.__parser.get_conf_obj()
         return BakingConf(cfg_dict)
+
+    @property
+    def args(self):
+        return self.__args
 
     @staticmethod
     def get_baking_cfg_file(cfg_dir):

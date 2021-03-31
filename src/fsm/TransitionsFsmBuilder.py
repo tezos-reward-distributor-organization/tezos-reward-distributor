@@ -11,16 +11,16 @@ SAME_STATE = '='
 class TransitionsFsmBuilder(TrdFsmBuilder):
 
     def __init__(self):
-        self.states = []
-        self.state_names = set()
-        self.transitions = []
-        self.callbacks = {}
-        self.initial = None
-        self.final = None
-        self.transition_complete_callback = None
+        self.__states = []
+        self.__state_names = set()
+        self.__transitions = []
+        self.__callbacks = {}
+        self.__initial = None
+        self.__final = None
+        self.__transition_complete_callback = None
 
     def add_transition_complete_callback(self, transition_complete_callback):
-        self.transition_complete_callback = transition_complete_callback
+        self.__transition_complete_callback = transition_complete_callback
 
     def add_initial_state(self, name, on_leave=None):
         self.add_state(name, initial=True, on_leave=on_leave)
@@ -33,9 +33,9 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         state = to_name(state)
 
         if initial:
-            self.initial = state
+            self.__initial = state
         if final:
-            self.final = state
+            self.__final = state
 
         state_dict = {'name': state}
 
@@ -44,11 +44,11 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         if on_leave:
             state_dict['on_exit'] = [on_leave]
 
-        self.states.append(state_dict)
-        self.state_names.add(state)
+        self.__states.append(state_dict)
+        self.__state_names.add(state)
 
     def add_global_transition(self, event, dst, on_before=None, on_after=None):
-        return self.add_transition(event, self.state_names, dst, on_before=on_before, on_after=on_after)
+        return self.add_transition(event, self.__state_names, dst, on_before=on_before, on_after=on_after)
 
     def add_transition(self, event, src, dst, on_before=None, on_after=None, conditions=None, condition_target=True):
         event = to_name(event)
@@ -59,10 +59,10 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         dst = to_name(dst)
 
         for state_name in src_state_names:
-            if state_name != ALL_STATES and state_name not in self.state_names:
+            if state_name != ALL_STATES and state_name not in self.__state_names:
                 raise Exception("Unknown source state:" + str(state_name))
 
-        if dst != SAME_STATE and dst not in self.state_names:
+        if dst != SAME_STATE and dst not in self.__state_names:
             raise Exception("Unknown destination state:" + str(dst))
 
         trigger_dict = {'trigger': event, 'source': src_state_names, 'dest': dst}
@@ -78,7 +78,7 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
         if on_after:
             trigger_dict['after'] = on_after
 
-        self.transitions.append(trigger_dict)
+        self.__transitions.append(trigger_dict)
 
     def add_conditional_transition(self, event, src, condition, pass_dst, not_pass_dst=None):
 
@@ -88,8 +88,8 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
             self.add_transition(event, src, not_pass_dst, conditions=[condition], condition_target=False)
 
     def build(self):
-        fsm = TransitionsFsmModel(self.final)
-        machine = Machine(model=fsm, states=self.states, initial=self.initial, transitions=self.transitions, send_event=True, finalize_event=self.transition_complete_callback)
+        fsm = TransitionsFsmModel(self.__final)
+        machine = Machine(model=fsm, states=self.__states, initial=self.__initial, transitions=self.__transitions, send_event=True, finalize_event=self.__transition_complete_callback)
         fsm.init(machine)
 
         return fsm

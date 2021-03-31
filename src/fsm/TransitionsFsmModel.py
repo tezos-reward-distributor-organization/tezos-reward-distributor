@@ -4,21 +4,21 @@ from fsm.fsm_helper import to_name
 
 class TransitionsFsmModel(TrdFsmModel):
     def __init__(self, final_state) -> None:
-        self.final_state = to_name(final_state)
-        self.machine = None
-        self.state = None
+        self.__final_state = to_name(final_state)
+        self.__machine = None
+        self.__state = None
         super(TransitionsFsmModel, self).__init__()
 
     def init(self, machine):
-        self.machine = machine
+        self.__machine = machine
 
     @property
     def current(self):
-        return self.state
+        return self.__state
 
     def is_state(self, state):
         state = to_name(state)
-        return self.state == state
+        return self.__state == state
 
     def trigger_event(self, event, *args, **kwargs):
         event = to_name(event)
@@ -27,4 +27,4 @@ class TransitionsFsmModel(TrdFsmModel):
 
     @property
     def is_complete(self):
-        return self.state == self.final_state
+        return self.__state == self.__final_state
