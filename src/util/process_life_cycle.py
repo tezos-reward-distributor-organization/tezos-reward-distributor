@@ -278,9 +278,8 @@ class ProcessLifeCycle:
     def shut_down(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN)
 
-    @property
     def is_running(self):
-        return not self.fsm.is_complete()
+        return not self.fsm.is_complete
 
     @property
     def args(self):
