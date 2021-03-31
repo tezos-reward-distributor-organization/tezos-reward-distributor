@@ -96,9 +96,28 @@ class TestLaunchStates(unittest.TestCase):
     @patch('log_config.main_logger', test_logger)
     @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
     @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
-    @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=None))
     @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
     def test_load_file_error(self):
+        # Test with PRPC node
+        args = Args(initial_cycle=10, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1/')
+        args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
+        args.docker = True
+        args.dry_run = True
+        args.dry_run_no_consumers = True
+        args.syslog = False
+        args.verbose = "off"
+        args.log_file = 'logs/app.log'
+        args.do_not_publish_stats = True
+        args.run_mode = 4
+
+        start_application(args)
+
+    @patch('log_config.main_logger', test_logger)
+    @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
+    @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
+    @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value="asasdasd"))
+    @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
+    def test_illegal_baking_file(self):
         # Test with PRPC node
         args = Args(initial_cycle=10, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1/')
         args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
