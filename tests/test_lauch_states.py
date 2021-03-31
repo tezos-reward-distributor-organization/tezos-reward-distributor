@@ -32,33 +32,6 @@ class Args:
         self.api_base_url = api_base_url
 
 
-def illegal_run_mode():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--initial_cycle', default=10)
-    parser.add_argument('--reward_data_provider', default='tzkt')
-    parser.add_argument('--api_base_url', default='https://api.carthage.tzkt.io/v1/')
-    parser.add_argument('--node_endpoint', default='https://testnet-tezos.giganode.io:443')
-    parser.add_argument('--docker', default=True)
-    parser.add_argument('--dry_run', default=True)
-    parser.add_argument('--dry_run_no_consumers', default=True)
-    parser.add_argument('--syslog', default=False)
-    parser.add_argument('--verbose', default='on')
-    parser.add_argument('--log_file', default='logs/app.log')
-    parser.add_argument('--do_not_publish_stats', default='True')
-    parser.add_argument('--run_mode', default=33)
-    parser.add_argument('--network', default='MAINNET')
-    parser.add_argument('--payment_offset', default=0)
-    parser.add_argument('--release_override', default=0)
-    parser.add_argument('--background_service', default=False)
-    parser.add_argument('--signer_endpoint', default='http://127.0.0.1:6732')
-    parser.add_argument('--config_dir', default='~/pymnt/cfg')
-    parser.add_argument('--reports_base', default='~/pymnt/reports')
-    parser.add_argument('--node_addr_public', default='')
-    parser.add_argument('--retry_injected', default=False)
-
-    return parser
-
-
 def make_config(baking_address, payment_address, service_fee: int,
                 min_delegation_amt: int) -> str:
     return \
@@ -202,7 +175,6 @@ class TestLaunchStates(unittest.TestCase):
         start_application(args)
         pass
 
-    @patch('launch_common.build_parser', MagicMock(return_value=illegal_run_mode()))
     @patch('util.process_life_cycle.verbose_logger', test_logger)
     @patch('log_config.verbose_logger', test_logger)
     @patch('log_config.init', MagicMock())
@@ -211,5 +183,17 @@ class TestLaunchStates(unittest.TestCase):
     @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
     @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
     def test_wrong_args_run_mode(self):
-        start_application(None)
+        # Test with PRPC node
+        args = Args(initial_cycle=10, reward_data_provider='tzkt33', api_base_url='https://api.carthage.tzkt.io/v1/')
+        args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
+        args.docker = True
+        args.dry_run = True
+        args.dry_run_no_consumers = True
+        args.syslog = False
+        args.verbose = "off"
+        args.log_file = 'logs/app.log'
+        args.do_not_publish_stats = True
+        args.run_mode = 33
+
+        start_application(args)
         pass
