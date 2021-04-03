@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from time import sleep
 from requests import ReadTimeout, ConnectTimeout
 from Constants import MUTEZ, RunMode
+from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, get_verbose_log_helper
@@ -15,7 +16,7 @@ from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
-from util.dir_utils import get_calculation_report_file
+from util.dir_utils import get_calculation_report_file, get_latest_report_file
 
 logger = main_logger.getChild("payment_producer")
 
@@ -25,7 +26,7 @@ BOOTSTRAP_SLEEP = 8
 class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
-                 dry_run, client_manager, node_url, provider_factory, node_url_public='', api_base_url=None,
+                 dry_run, client_manager, node_url, reward_data_provider, node_url_public='', api_base_url=None,
                  retry_injected=False):
         super(PaymentProducer, self).__init__()
 
@@ -36,14 +37,13 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.founders_map = baking_cfg.get_founders_map()
         self.min_delegation_amt_in_mutez = baking_cfg.get_min_delegation_amount() * MUTEZ
         self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
-
+        self.provider_factory = ProviderFactory(reward_data_provider)
         self.name = name
 
         self.node_url = node_url
         self.client_manager = client_manager
-        self.reward_api = provider_factory.newRewardApi(
-            network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
-        self.block_api = provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
+        self.reward_api = self.provider_factory.newRewardApi(network_config, self.baking_address, self.node_url, node_url_public, api_base_url)
+        self.block_api = self.provider_factory.newBlockApi(network_config, self.node_url, api_base_url)
 
         dexter_contracts_set = baking_cfg.get_contracts_set()
         if len(dexter_contracts_set) > 0 and not (self.reward_api.name == 'tzstats'):
@@ -55,6 +55,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.rewards_type = baking_cfg.get_rewards_type()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
+
+        if self.initial_payment_cycle is None:
+            recent = get_latest_report_file(payments_dir)
+            # if payment logs exists set initial cycle to following cycle
+            # if payment logs does not exists, set initial cycle to 0, so that payment starts from last released rewards
+            self.initial_payment_cycle = 0 if recent is None else int(recent) + 1
+
+        logger.info("initial_cycle set to {}".format(self.initial_payment_cycle))
+
         self.nw_config = network_config
         self.payments_root = payments_dir
         self.calculations_dir = calculations_dir
@@ -105,8 +114,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.retry_fail_event.wait(60 * 60)  # 1 hour
             except RuntimeError:
                 pass
-
-        pass
 
     def run(self):
         # call first retry if not in onetime mode.

@@ -35,7 +35,9 @@ class BakingYamlConfParser(YamlConfParser):
     def validate(self):
         conf_obj = self.get_conf_obj()
         self.validate_baking_address(conf_obj)
+
         self.validate_payment_address(conf_obj)
+
         self.validate_share_map(conf_obj, FOUNDERS_MAP)
         self.validate_share_map(conf_obj, OWNERS_MAP)
         self.validate_service_fee(conf_obj)
@@ -158,8 +160,6 @@ class BakingYamlConfParser(YamlConfParser):
                 raise ConfigurationException("Baking address must be a valid tz address")
         else:
             raise ConfigurationException("Baking address length must be {}".format(PKH_LENGHT))
-
-        pass
 
     def validate_specials_map(self, conf_obj):
         if SPECIALS_MAP not in conf_obj:

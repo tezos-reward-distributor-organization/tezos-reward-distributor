@@ -431,7 +431,6 @@ class BatchPayer():
                     return PaymentStatus.FAIL, ""
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
-                pass
 
         # forge the operations
         logger.debug("Forging {} operations".format(len(content_list)))

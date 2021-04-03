@@ -43,44 +43,18 @@ def print_banner(args, script_name):
     with open("./banner.txt", "rt") as file:
         print(file.read())
     print(LINER, flush=True)
-    print("Copyright Huseyin ABANOZ 2019")
+    print("Copyright Huseyin ABANOZ 2021")
     print("huseyinabanox@gmail.com")
     print("Please leave copyright information")
     print(LINER, flush=True)
 
     sleep(0.1)
 
-    logger.info("Tezos Reward Distributor" + script_name + " is Starting")
-
-    if args.dry_run:
-        logger.info(LINER)
-        logger.info("DRY RUN MODE")
-        logger.info(LINER)
+    print("Tezos Reward Distributor (TRD)" + script_name + " is Starting")
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser()
-    add_argument_cycle(parser)
-    add_argument_mode(parser)
-    add_argument_release_override(parser)
-    add_argument_payment_offset(parser)
-    add_argument_network(parser)
-    add_argument_node_endpoint(parser)
-    add_argument_provider(parser)
-    add_argument_node_addr_public(parser)
-    add_argument_reports_base(parser)
-    add_argument_config_dir(parser)
-    add_argument_dry(parser)
-    add_argument_dry_no_consumer(parser)
-    add_argument_signer_endpoint(parser)
-    add_argument_docker(parser)
-    add_argument_background_service(parser)
-    add_argument_stats(parser)
-    add_argument_verbose(parser)
-    add_argument_api_base_url(parser)
-    add_argument_retry_injected(parser)
-    add_argument_syslog(parser)
-    add_argument_log_file(parser)
+    parser = build_parser()
 
     args = parser.parse_args()
 
@@ -104,8 +78,36 @@ def parse_arguments():
     if release_override < -11:
         parser.error("release-override cannot be less than -11")
 
+    args.dry_run = args.dry_run or args.dry_run_no_consumers
+
     # All passed
     return args
+
+
+def build_parser():
+    parser = argparse.ArgumentParser()
+    add_argument_cycle(parser)
+    add_argument_mode(parser)
+    add_argument_release_override(parser)
+    add_argument_payment_offset(parser)
+    add_argument_network(parser)
+    add_argument_node_endpoint(parser)
+    add_argument_provider(parser)
+    add_argument_node_addr_public(parser)
+    add_argument_reports_base(parser)
+    add_argument_config_dir(parser)
+    add_argument_dry(parser)
+    add_argument_dry_no_consumer(parser)
+    add_argument_signer_endpoint(parser)
+    add_argument_docker(parser)
+    add_argument_background_service(parser)
+    add_argument_stats(parser)
+    add_argument_verbose(parser)
+    add_argument_api_base_url(parser)
+    add_argument_retry_injected(parser)
+    add_argument_syslog(parser)
+    add_argument_log_file(parser)
+    return parser
 
 
 def add_argument_cycle(parser):
