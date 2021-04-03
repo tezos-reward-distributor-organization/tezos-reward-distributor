@@ -47,7 +47,6 @@ def request_url_post(cmd, json_params, timeout=None):
 
 
 @pytest.mark.skip
-@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 class TestRetryProducer(TestCase):
     def setUp(self):
         prepare_test_data()
