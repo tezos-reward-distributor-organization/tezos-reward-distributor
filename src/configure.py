@@ -403,7 +403,6 @@ def main(args):
         sleep(0.1)
         command = input("{} >\n".format(messages[fsm.current])).strip()
         callbacks[fsm.current](command)
-    pass
 
     # 4. parse and process config
     parser.validate()

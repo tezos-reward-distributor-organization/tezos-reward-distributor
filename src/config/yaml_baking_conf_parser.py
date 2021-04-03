@@ -161,8 +161,6 @@ class BakingYamlConfParser(YamlConfParser):
         else:
             raise ConfigurationException("Baking address length must be {}".format(PKH_LENGHT))
 
-        pass
-
     def validate_specials_map(self, conf_obj):
         if SPECIALS_MAP not in conf_obj:
             conf_obj[SPECIALS_MAP] = dict()

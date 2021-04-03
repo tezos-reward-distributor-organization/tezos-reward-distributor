@@ -115,8 +115,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             except RuntimeError:
                 pass
 
-        pass
-
     def run(self):
         # call first retry if not in onetime mode.
         # retry_failed script is more suitable for one time cases.

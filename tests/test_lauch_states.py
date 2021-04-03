@@ -191,7 +191,6 @@ class TestLaunchStates(unittest.TestCase):
         args.run_mode = 3
 
         start_application(args)
-        pass
 
     @patch('util.process_life_cycle.verbose_logger', test_logger)
     @patch('log_config.verbose_logger', test_logger)
@@ -214,4 +213,3 @@ class TestLaunchStates(unittest.TestCase):
         args.run_mode = 33
 
         start_application(args)
-        pass

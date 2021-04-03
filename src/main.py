@@ -16,5 +16,3 @@ if __name__ == '__main__':
         raise Exception("Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
 
     start_application(None)
-
-    pass
