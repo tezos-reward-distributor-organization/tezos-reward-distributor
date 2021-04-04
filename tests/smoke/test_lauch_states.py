@@ -43,56 +43,50 @@ def args():
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@pytest.mark.launch_state
 def test_no_errors(args):
-    start_application(args)
+    assert start_application(args) == 0
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@pytest.mark.launch_state
 def test_load_file_error(args):
-    start_application(args)
+    assert start_application(args) == 0
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value="asasdasd"))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@pytest.mark.launch_state
 def test_illegal_baking_file(args):
-    start_application(args)
+    assert start_application(args) == 0
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@pytest.mark.launch_state
 def test_wrong_api_base_url(args):
     args.api_base_url = "https://api.carthage.tzkt.io_no_such_api/v1/"
-    start_application(args)
+    assert start_application(args) == 0
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@pytest.mark.launch_state
 def test_wrong_node_end_point(args):
     args.node_endpoint = 'https://testnet-tezos.giganode.io:4433'
-    start_application(args)
+    assert start_application(args) == 0
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@pytest.mark.launch_state
 def test_wrong_reward_provider(args):
     args.reward_data_provider = "asdasdasd"
-    start_application(args)
+    assert start_application(args) == 0
 
 @patch('util.process_life_cycle.verbose_logger', test_logger)
 @patch('log_config.verbose_logger', test_logger)
@@ -101,7 +95,6 @@ def test_wrong_reward_provider(args):
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@pytest.mark.launch_state
 def test_wrong_args_run_mode(args):
     args.run_mode = 33
-    start_application(args)
+    assert start_application(args) == 0

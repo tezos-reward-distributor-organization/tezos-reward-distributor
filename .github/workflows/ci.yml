@@ -62,7 +62,7 @@ jobs:
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV  
 
     - name: Test with pytest
-      run: python3 -m pytest -s tests/ --verbose
+      run: pytest tests/
 
   build-documentation:
     runs-on: ubuntu-latest

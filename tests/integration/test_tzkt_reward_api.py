@@ -5,17 +5,12 @@ import json
 from typing import Optional
 from unittest.mock import patch, MagicMock
 from os.path import dirname, join
-from datetime import datetime
 
-from main import start_application
 from rpc.rpc_reward_api import RpcRewardApiImpl
 from tzstats.tzstats_reward_api import TzStatsRewardApiImpl, RewardProviderModel
-from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
 from NetworkConfiguration import default_network_config_map
 from parameterized import parameterized
-from tests.utils import Args, make_config
-from Constants import CURRENT_TESTNET
 
 
 def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
@@ -56,72 +51,9 @@ dummy_addr_dict = dict(
 )
 
 
-@patch('pay.payment_producer.sleep', MagicMock())
-@patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
-@patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
-@patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
-@patch('util.config_life_cycle.ConfigParser')
-class IntegrationTests(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.maxDiff = None
-
-    @pytest.mark.skip(reason="Gets stuck in an infinite loop.")
-    def test_dry_run(self, ConfigParser):
-        ConfigParser.load_file = MagicMock(return_value=make_config(
-            baking_address='tz1NortRftucvAkD1J58L32EhSVrQEWJCEnB',
-            payment_address='tz1Zrqm4TkJwqTxm5TiyVFh6taXG4Wrq7tko',
-            service_fee=9,
-            min_delegation_amt=10,
-        ))
-
-        # Test with PRPC node
-        args = Args(initial_cycle=201, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1/')
-        args.network = 'MAINNET'
-        args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
-        args.docker = True
-        args.dry_run = True
-        args.dry_run_no_consumers = True
-        args.syslog = False
-        args.verbose = "on"
-        args.log_file = 'logs/app.log'
-        args.do_not_publish_stats = True
-        args.run_mode = 3
-
-        start_application(args)
-
-    def test_base_url(self, ConfigParser):
-        ConfigParser.load_file = MagicMock(return_value=make_config(
-            baking_address='tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9',
-            payment_address='tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9',
-            service_fee=0,
-            min_delegation_amt=0,
-        ))
-
-        # Test with PRPC node
-        args = Args(initial_cycle=100, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1/')
-        args.network = 'MAINNET'
-        args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
-        args.docker = True
-        args.dry_run = True
-        args.dry_run_no_consumers = True
-        args.syslog = False
-        args.verbose = "on"
-        args.log_file = 'logs/app.log'
-        args.do_not_publish_stats = True
-        args.run_mode = 3
-
-        start_application(args)
-
-
 @patch('rpc.rpc_reward_api.sleep', MagicMock())
 @patch('rpc.rpc_reward_api.logger', MagicMock(debug=MagicMock(side_effect=print)))
 class RewardApiImplTests(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.maxDiff = None
 
     def assertBalancesAlmostEqual(self, expected: dict, actual: dict, delta=1):
         for address, balances in expected.items():
@@ -214,15 +146,3 @@ class RewardApiImplTests(unittest.TestCase):
                                       baking_address='tz1gk3TDbU7cJuiBRMhwQXVvgDnjsxuWhcEA')
         tzkt_impl.update_current_balances(log_items)
         self.assertNotEqual(0, log_items[0].current_balance)
-
-
-class BlockApiImplTests(unittest.TestCase):
-
-    def test_get_head(self):
-        tzkt_impl = TzKTBlockApiImpl(nw=default_network_config_map['MAINNET'])
-        level = tzkt_impl.get_current_level()
-        self.assertGreater(level, 900000)
-
-
-if __name__ == '__main__':
-    unittest.main()
