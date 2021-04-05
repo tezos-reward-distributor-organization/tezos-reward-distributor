@@ -6,9 +6,9 @@ from tests.utils import Args, make_config
 from Constants import CURRENT_TESTNET
 from main import start_application
 
+
 @pytest.fixture
 def args():
-   # Test with PRPC node
     args = Args(initial_cycle=90, reward_data_provider='prpc', node_addr_public='https://testnet-tezos.giganode.io')
     args.network = CURRENT_TESTNET
     args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
@@ -20,6 +20,7 @@ def args():
     args.do_not_publish_stats = True
     args.run_mode = 4  # retry fail
     return args
+
 
 # Create a config object that can be injected to simulate loading a yaml config file
 parsed_config = make_config(
@@ -35,6 +36,7 @@ sh.setFormatter(logging.Formatter('%(asctime)s - %(name)-9s - %(message)s'))
 test_logger = logging.getLogger('main')
 test_logger.setLevel(logging.DEBUG)
 test_logger.addHandler(sh)
+
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))

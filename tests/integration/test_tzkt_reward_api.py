@@ -1,5 +1,4 @@
 import unittest
-import pytest
 import os
 import json
 from typing import Optional

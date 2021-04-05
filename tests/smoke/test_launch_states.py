@@ -1,7 +1,6 @@
 import logging
 import pytest
 from datetime import datetime
-from os.path import join, dirname
 from unittest.mock import MagicMock, patch
 
 from main import start_application
@@ -22,6 +21,7 @@ test_logger = logging.getLogger('test')
 test_logger.setLevel(logging.DEBUG)
 test_logger.addHandler(sh)
 
+
 @pytest.fixture
 def args():
     # Test with PRPC node
@@ -38,6 +38,7 @@ def args():
     args.run_mode = 4
     return args
 
+
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
@@ -46,12 +47,14 @@ def args():
 def test_no_errors(args):
     assert start_application(args) == 0
 
+
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
 def test_load_file_error(args):
     assert start_application(args) == 0
+
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
@@ -60,6 +63,7 @@ def test_load_file_error(args):
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
 def test_illegal_baking_file(args):
     assert start_application(args) == 0
+
 
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
@@ -70,6 +74,7 @@ def test_wrong_api_base_url(args):
     args.api_base_url = "https://api.carthage.tzkt.io_no_such_api/v1/"
     assert start_application(args) == 0
 
+
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
@@ -79,6 +84,7 @@ def test_wrong_node_end_point(args):
     args.node_endpoint = 'https://testnet-tezos.giganode.io:4433'
     assert start_application(args) == 0
 
+
 @patch('log_config.main_logger', test_logger)
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
 @patch('cli.client_manager.ClientManager.get_bootstrapped', MagicMock(return_value=datetime(2030, 1, 1)))
@@ -87,6 +93,7 @@ def test_wrong_node_end_point(args):
 def test_wrong_reward_provider(args):
     args.reward_data_provider = "asdasdasd"
     assert start_application(args) == 0
+
 
 @patch('util.process_life_cycle.verbose_logger', test_logger)
 @patch('log_config.verbose_logger', test_logger)

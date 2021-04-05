@@ -1,7 +1,6 @@
 import os
 import queue
 import shutil
-import unittest
 import pytest
 from distutils.dir_util import copy_tree
 from unittest import TestCase

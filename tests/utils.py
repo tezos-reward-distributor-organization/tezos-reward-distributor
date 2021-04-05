@@ -2,10 +2,11 @@ from os.path import dirname, join
 
 
 class Args:
-    """This is a dummy class representing any --arguments passed 
-    on the command line. You can instantiate this class and then 
+    """This is a dummy class representing any --arguments passed
+    on the command line. You can instantiate this class and then
     change any parameters for testing
     """
+
     def __init__(
         self,
         initial_cycle,
@@ -70,4 +71,3 @@ def make_config(baking_address, payment_address, service_fee, min_delegation_amt
     enabled:""".format(
         baking_address, min_delegation_amt, payment_address, service_fee
     )
-    
