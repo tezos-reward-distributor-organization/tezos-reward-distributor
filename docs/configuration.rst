@@ -62,6 +62,11 @@ Available configuration parameters are:
 
     rewards_type: actual
 
+  Note that 'actual' payouts will throw an error if:
+
+#. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -5, since the payouts are done before the cycle is completed, or
+#. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -1, and the backend API is a Tezos node RPC, as actual payout calculation in this context is not implemented.
+
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.
 
