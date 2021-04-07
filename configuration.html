@@ -227,7 +227,14 @@ If you want to use with a decimal operator within your config, please use a deci
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rewards_type</span><span class="p">:</span> <span class="n">actual</span>
 </pre></div>
 </div>
+<p>Note that ‘actual’ payouts will throw an error if:</p>
 </dd>
+</dl>
+<ol class="arabic simple">
+<li><p>The ‘RELEASE_OVERRIDE’ parameter is set to a value inferior or equal to -5, since the payouts are done before the cycle is completed, or</p></li>
+<li><p>The ‘RELEASE_OVERRIDE’ parameter is set to a value inferior or equal to -1, and the backend API is a Tezos node RPC, as actual payout calculation in this context is not implemented.</p></li>
+</ol>
+<dl>
 <dt><strong>service_fee</strong></dt><dd><p>A decimal in range [0-100]. Also known as the baker’s fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">service_fee</span><span class="p">:</span> <span class="mi">10</span>
