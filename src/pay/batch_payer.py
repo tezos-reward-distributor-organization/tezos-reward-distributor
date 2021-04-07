@@ -38,7 +38,7 @@ RA_STORAGE = 300
 # This fee limit is set to allow payouts to ovens
 # Other KT accounts with higher fee requirements will be skipped
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
-FEE_LIMIT_CONTRACTS = 40000
+FEE_LIMIT_CONTRACTS = 100000
 
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
@@ -341,8 +341,10 @@ class BatchPayer():
                         consumed_storage += int(internal_op['result']['paid_storage_size_diff'])
 
         else:
-            op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-            logger.error("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
+            op_error = "Unknown error in simulating contract payout. Payment will be skipped!"
+            if "errors" in op["metadata"]["operation_result"] and len(op["metadata"]["operation_result"]["errors"]) > 0 and "id" in op["metadata"]["operation_result"]["errors"][0]:
+                op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
+            logger.debug("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
             return PaymentStatus.FAIL, []
 
         consumed_gas += GAS_SAFETY  # Tezos client does this
@@ -381,6 +383,8 @@ class BatchPayer():
             if payment_item.paymentaddress.startswith('KT'):
                 simulation_status, simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
                 if simulation_status == PaymentStatus.FAIL:
+                    logger.info("Payment to {} script could not be processed (Possible reason: liquidated contract). Skipping. (think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers)"
+                                .format(payment_item.paymentaddress))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
                 gas_limit, tx_fee, storage_limit = simulation_results
@@ -388,7 +392,8 @@ class BatchPayer():
                 total_fee = tx_fee + burn_fee
                 # Bound the total (baker and burn) fee by the reward amount in case of KT1 accounts
                 if total_fee > FEE_LIMIT_CONTRACTS:
-                    logger.info("Payment to {} script requires higher fees than safety limits ({:10.6f} / {:10.6f}). Skipping.".format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
+                    logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. (Needed fee: {:10.6f} XTZ, Max fee: {:10.6f} XTZ) Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
+                                .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
 
@@ -455,7 +460,6 @@ class BatchPayer():
                     return PaymentStatus.FAIL, ""
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
-                pass
 
         # forge the operations
         logger.debug("Forging {} operations".format(len(content_list)))
