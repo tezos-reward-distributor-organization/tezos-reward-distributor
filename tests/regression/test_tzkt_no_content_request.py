@@ -1,9 +1,10 @@
 import pytest
 from src.tzkt.tzkt_api import TzKTApi, TzKTApiError
 
+
 def test_request_no_content_response():
     """Test the handling of API calls which respond with no content (204).
-    Issue: 
+    Issue:
     https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/404
     """
 
@@ -15,5 +16,4 @@ def test_request_no_content_response():
     tzkt = TzKTApi(base_url, timeout)
     request_path = f"rewards/split/{baker_address}/{cycle}"
     with pytest.raises(TzKTApiError, match="TzKT returned 204 error"):
-        res = tzkt._request(request_path, offset=0, limit=10000)
-    
+        _ = tzkt._request(request_path, offset=0, limit=10000)
