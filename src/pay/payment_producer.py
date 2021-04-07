@@ -277,19 +277,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # 4- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
-                report_file_path = get_calculation_report_file(self.calculations_dir, pymnt_cycle)
 
                 # 5- send to payment consumer
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
 
-                # logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
-                #            "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
-
-                logger.debug("Creating calculation report (%s)", report_file_path)
-
                 sleep(5.0)
 
                 # 6- create calculations report file. This file contains calculations details
+                report_file_path = get_calculation_report_file(self.calculations_dir, pymnt_cycle)
+                logger.debug("Creating calculation report (%s)", report_file_path)
                 self.create_calculations_report(reward_logs, report_file_path, total_amount, expected_rewards)
 
                 # 7- processing of cycle is done
