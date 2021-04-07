@@ -479,7 +479,6 @@ class BatchPayer():
 
         if len(decoded_signature) != 128:  # must be 64 bytes
             # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
-            print("++++++++++++++++++++++++++++++++++")
             logger.warn(
                 "Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
             # return False, ""

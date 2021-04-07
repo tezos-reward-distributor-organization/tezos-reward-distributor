@@ -92,7 +92,14 @@ class TestRetryProducer(TestCase):
 
 def prepare_test_data():
     try:
+        if not os.path.exists(os.path.join(TEST_REPORT_DIR, "done")):
+            os.makedirs(os.path.join(TEST_REPORT_DIR, "done"))
+
+        if not os.path.exists(os.path.join(TEST_REPORT_DIR, "failed")):
+            os.makedirs(os.path.join(TEST_REPORT_DIR, "failed"))
+
         shutil.rmtree(TEST_REPORT_TEMP_DIR)
+
     except OSError:
         pass
     copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
