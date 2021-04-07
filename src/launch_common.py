@@ -34,8 +34,7 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
                     print("Please restart TRD!")
                 else:
                     print("Please make sure to install all the required packages before using the TRD.\n"
-                          "To install the requirements: 'pip3 install -r requirements.txt'\n"
-                          "DeprecationWarning: In the near future TRD will be available as a pip package.")
+                          "To install the requirements: 'pip3 install -r requirements.txt'\n")
                 return False
         return True
 

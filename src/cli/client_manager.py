@@ -87,9 +87,9 @@ class ClientManager:
                                     timeout=timeout)
 
         if response is None:
-            ClientException("Unknown Error at signing. Please consult the verbose logs!")
-        if not (response.status_code == HTTPStatus.OK):
-            raise ClientException("Error at signing: '{}'".format(response.text))
+            raise ClientException("Unknown Error at signing. Please consult the verbose logs!")
+        if response.status_code != HTTPStatus.OK:
+            raise ClientException("Error at signing. Make sure tezos-signer is up and running 'tezos-signer launch http signer': '{}'".format(response.text))
         else:
             response = response.json()
             return response['signature']

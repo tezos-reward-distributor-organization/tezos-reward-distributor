@@ -13,7 +13,7 @@ The tests in **trd** are run in the following order:
 Unit tests test only **one specific** function or method of a class. 
 The smaller the function and the more specialized it is the better the unit test.
 
-## Regression tests (WIP)
+## Regression tests
 Regression tests are tests which document fixed bugs.
 To implement a regression test you need to do the following:
 1. Have a bug in trd (see bug label in issues)

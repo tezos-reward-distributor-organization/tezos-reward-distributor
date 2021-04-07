@@ -1,7 +1,6 @@
 import os
 import queue
 import shutil
-import pytest
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
@@ -14,8 +13,8 @@ from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path
 
 
-TEST_REPORT_DIR = "test_reports"
-TEST_REPORT_TEMP_DIR = "test_reports_temp"
+TEST_REPORT_DIR = "tests/integration/test_reports"
+TEST_REPORT_TEMP_DIR = "tests/integration/test_reports_temp"
 
 
 def request_url(url, timeout=None):
@@ -28,7 +27,7 @@ def request_url(url, timeout=None):
     if url == '/chains/main/blocks/head/operation_hashes':
         return 200, ["xxx_op_hash"]
 
-    return "aaaaa" + str(timeout)
+    return 404, "aaaaa" + str(timeout)
 
 
 def request_url_post(cmd, json_params, timeout=None):
@@ -42,10 +41,9 @@ def request_url_post(cmd, json_params, timeout=None):
     if cmd == '/injection/operation':
         return 200, "xxx_op_hash"
 
-    return "bbbb" + str(json_params) + str(timeout)
+    return 404, "bbbb" + str(json_params) + str(timeout)
 
 
-@pytest.mark.skip
 class TestRetryProducer(TestCase):
     def setUp(self):
         prepare_test_data()
@@ -82,7 +80,7 @@ class TestRetryProducer(TestCase):
         nb_success = len([row for row in success_report_rows if row.paid == PaymentStatus.PAID])
         nb_hash_xxx_op_hash = len([row for row in success_report_rows if row.hash == 'xxx_op_hash'])
 
-        self.assertEqual(31, nb_success)
+        self.assertEqual(26, nb_success)
         self.assertEqual(5, nb_hash_xxx_op_hash)
 
     @staticmethod
