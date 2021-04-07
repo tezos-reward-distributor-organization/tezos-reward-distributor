@@ -175,17 +175,21 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                     if not self.payments_queue.full():
 
-                        expected_rewards = False
-
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
                             logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation.")
-                            expected_rewards = True
+                            if not self.rewards_type.isIdeal():
+                                logger.error("For future rewards payout, you must configure the payout type to 'Ideal', see documentation")
+                                self.exit()
+                                break
 
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
                         elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
                             logger.warn("Please note that you are doing payouts for frozen rewards!!!")
-                            expected_rewards = True if self.reward_api.name == 'RPC' else False
+                            if (not self.rewards_type.isIdeal()) and self.reward_api.name == 'RPC':
+                                logger.error("Paying out frozen rewards with Node RPC API and rewards type 'Actual' is unsupported, you must use TzKT or tzstats API")
+                                self.exit()
+                                break
 
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
@@ -195,7 +199,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             continue  # Break/Repeat loop
 
                         else:
-                            result = self.try_to_pay(pymnt_cycle, expected_rewards=expected_rewards)
+                            result = self.try_to_pay(pymnt_cycle, expected_rewards=self.rewards_type.isIdeal())
 
                         if result:
                             # single run is done. Do not continue.
@@ -265,8 +269,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            # Expected rewards and ideal rewards are the same thing
-            expected_rewards = expected_rewards or self.rewards_type.isIdeal()
             if expected_rewards:
                 logger.info("Using expected/ideal rewards for payouts calculations")
             else:
