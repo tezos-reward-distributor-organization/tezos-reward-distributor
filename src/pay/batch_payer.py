@@ -434,7 +434,7 @@ class BatchPayer():
 
             content_list.append(content)
 
-            logger.debug("Payment content: {}".format(content))
+            verbose_logger.info("Payment content: {}".format(content))
 
         contents_string = ",".join(content_list)
 
