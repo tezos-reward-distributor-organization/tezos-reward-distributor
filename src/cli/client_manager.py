@@ -44,7 +44,7 @@ class ClientManager:
         if response is None:
             return -1, "TimeOut"
 
-        if not (response.status_code == HTTPStatus.OK):
+        if response.status_code != HTTPStatus.OK:
             return response.status_code, "Code" + str(response.status_code)
 
         output = response.json()
@@ -69,7 +69,7 @@ class ClientManager:
         except Exception:
             return -1, "TimeOut"
 
-        if not (response.status_code == HTTPStatus.OK):
+        if response.status_code != HTTPStatus.OK:
             return response.status_code, "Code" + str(response.status_code)
 
         output = response.json()
@@ -111,7 +111,7 @@ class ClientManager:
                                         timeout=timeout)
         except Exception as e:
             raise ClientException(f'Exception: {e}\n{signer_exception}')
-        if not (response.status_code == HTTPStatus.OK):
+        if response.status_code != HTTPStatus.OK:
             raise ClientException(f'{response.text}\n{signer_exception}')
         else:
             response = response.json()
@@ -136,7 +136,7 @@ class ClientManager:
                                         timeout=timeout)
         except Exception as e:
             raise ClientException(f'Exception: {e}\n{signer_exception}')
-        if not (response.status_code == HTTPStatus.OK):
+        if response.status_code != HTTPStatus.OK:
             raise ClientException(f'{response.text}\n{signer_exception}')
         else:
             response = response.json()
@@ -196,7 +196,7 @@ class ClientManager:
         if response is None:
             return
         # If request returns failed code
-        if not (response.status_code == HTTPStatus.OK):
+        if response.status_code != HTTPStatus.OK:
             logger.debug(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
                          f"Error, response ->{response.text}<-")
         return response

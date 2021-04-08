@@ -32,7 +32,7 @@ parsed_config = make_config(
 
 # This overrides all logging within TRD to output everything during tests
 sh = logging.StreamHandler()
-sh.setFormatter(logging.Formatter('%(asctime)s - %(name)-9s - %(message)s'))
+sh.setFormatter(logging.Formatter('%(asctime)s - %(name)-9s - %(levelname)s - %(message)s'))
 test_logger = logging.getLogger('main')
 test_logger.setLevel(logging.DEBUG)
 test_logger.addHandler(sh)

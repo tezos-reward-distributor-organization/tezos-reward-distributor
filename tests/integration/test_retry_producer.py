@@ -55,6 +55,11 @@ class TestRetryProducer(TestCase):
     @patch('cli.client_manager.ClientManager.request_url_post', MagicMock(side_effect=request_url_post))
     @patch('cli.client_manager.ClientManager.sign', MagicMock(return_value="edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"))
     def test_retry_failed_payments(self):
+        """This is a test about retrying failed operations.
+        Input is a past payment report which contains 31 payment items,
+        26 of them were successful and 5 of them were failed. The final report
+        should report 31 successful transactions.
+        """
         payment_queue = queue.Queue(100)
 
         retry_producer = RetryProducer(payment_queue, _DummyRpcRewardApi(), _TestPaymentProducer(),
@@ -77,10 +82,10 @@ class TestRetryProducer(TestCase):
         self.assertTrue(os.path.isfile(success_report))
 
         success_report_rows = CsvPaymentFileParser().parse(success_report, 10)
-        nb_success = len([row for row in success_report_rows if row.paid == PaymentStatus.PAID])
+        nb_success = len([row for row in success_report_rows if row.paid == PaymentStatus.PAID or row.paid == PaymentStatus.INJECTED])
         nb_hash_xxx_op_hash = len([row for row in success_report_rows if row.hash == 'xxx_op_hash'])
 
-        self.assertEqual(26, nb_success)
+        self.assertEqual(31, nb_success)
         self.assertEqual(5, nb_hash_xxx_op_hash)
 
     @staticmethod

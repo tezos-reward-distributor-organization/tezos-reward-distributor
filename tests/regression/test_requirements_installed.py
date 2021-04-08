@@ -19,12 +19,6 @@ def test_requirements_installed():
 
 @patch('launch_common.input', MagicMock(return_value="n"))
 @patch('launch_common.installed', MagicMock(return_value=False))
-def test_if_pytest_is_installed():
-    assert requirements_installed("tests/regression/dummy_requirements.txt") is False
-
-
-@patch('launch_common.input', MagicMock(return_value="n"))
-@patch('launch_common.installed', MagicMock(return_value=False))
 def test_user_does_not_want_install__missing_package():
     assert requirements_installed("tests/regression/dummy_requirements.txt") is False
 
