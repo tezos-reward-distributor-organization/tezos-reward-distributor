@@ -308,7 +308,7 @@ class BatchPayer():
         status, run_ops_parsed = self.clnt_mngr.request_url_post(cmd=self.comm_runops,
                                                                  json_params=runops_json)
         if status != HTTPStatus.OK:
-            logger.warning("Error in run_operation")
+            logger.error("Error in run_operation")
             return PaymentStatus.FAIL, []
 
         op = run_ops_parsed["contents"][0]
@@ -334,7 +334,7 @@ class BatchPayer():
             op_error = "Unknown error in simulating contract payout. Payment will be skipped!"
             if "errors" in op["metadata"]["operation_result"] and len(op["metadata"]["operation_result"]["errors"]) > 0 and "id" in op["metadata"]["operation_result"]["errors"][0]:
                 op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-            logger.debug("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
+            logger.error("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
             return PaymentStatus.FAIL, []
 
         # Calculate needed fee for extra consumed gas
