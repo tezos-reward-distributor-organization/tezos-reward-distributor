@@ -46,7 +46,16 @@ def request_url_post(cmd, json_params, timeout=None):
 
 class TestRetryProducer(TestCase):
     def setUp(self):
-        prepare_test_data()
+        try:
+            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "done")):
+                os.makedirs(os.path.join(TEST_REPORT_DIR, "done"))
+
+            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "failed")):
+                os.makedirs(os.path.join(TEST_REPORT_DIR, "failed"))
+
+        except OSError:
+            pass
+        copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
 
     @patch('pay.payment_consumer.BatchPayer.get_payment_address_balance', MagicMock(return_value=100_000_000))
     @patch('pay.payment_consumer.BatchPayer.simulate_single_operation', MagicMock(return_value=(PaymentStatus.DONE, (500, 100, 0))))
@@ -82,32 +91,23 @@ class TestRetryProducer(TestCase):
         self.assertTrue(os.path.isfile(success_report))
 
         success_report_rows = CsvPaymentFileParser().parse(success_report, 10)
-        nb_success = len([row for row in success_report_rows if row.paid == PaymentStatus.PAID or row.paid == PaymentStatus.INJECTED])
-        nb_hash_xxx_op_hash = len([row for row in success_report_rows if row.hash == 'xxx_op_hash'])
+        success_count = len([row for row in success_report_rows])
+        hash_xxx_op_count = len([row for row in success_report_rows if row.hash == 'xxx_op_hash'])
+        failed_reports_count = len([file for file in os.listdir(os.path.join(TEST_REPORT_TEMP_DIR, "failed")) if os.path.isfile(file)])
 
-        self.assertEqual(31, nb_success)
-        self.assertEqual(5, nb_hash_xxx_op_hash)
+        # Success is defined when the transactions are saved in the done folder
+        self.assertEqual(31, success_count)
+        self.assertEqual(5, hash_xxx_op_count)
+        self.assertEqual(0, failed_reports_count)
+
+    def tearDown(self):
+        shutil.rmtree(TEST_REPORT_TEMP_DIR)
 
     @staticmethod
     def create_consumer(nw, payment_queue):
         return PaymentConsumer("name", TEST_REPORT_TEMP_DIR, "tz1234567890123456789012345678901234", payment_queue,
                                "node_addr", ClientManager('', ''), nw, MagicMock(),
                                rewards_type='actual', dry_run=False)
-
-
-def prepare_test_data():
-    try:
-        if not os.path.exists(os.path.join(TEST_REPORT_DIR, "done")):
-            os.makedirs(os.path.join(TEST_REPORT_DIR, "done"))
-
-        if not os.path.exists(os.path.join(TEST_REPORT_DIR, "failed")):
-            os.makedirs(os.path.join(TEST_REPORT_DIR, "failed"))
-
-        shutil.rmtree(TEST_REPORT_TEMP_DIR)
-
-    except OSError:
-        pass
-    copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
 
 
 class _DummyRpcRewardApi:
