@@ -62,4 +62,5 @@ def test_simulate_single_operation():
     consumed_gas, tx_fee, storage = simulation_results
     assert 150 == consumed_gas
     assert 589 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
+    assert int == type(storage)  # type of storage should be int
     assert 24 == storage
