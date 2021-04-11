@@ -184,13 +184,13 @@ class RewardApiImplTests(unittest.TestCase):
                 nw=default_network_config_map['MAINNET'],
                 baking_address=address,
                 node_url='https://rpc.tzkt.io/mainnet')
-            rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle)
+            rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, 'actual')
             store_reward_model(address, cycle, 'actual', rpc_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
             nw=default_network_config_map['MAINNET'],
             baking_address=address)
-        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle)
+        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, 'actual')
 
         self.assertAlmostEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance, delta=1)
         self.assertAlmostEqual(rpc_rewards.total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
@@ -209,13 +209,13 @@ class RewardApiImplTests(unittest.TestCase):
             tzstats_impl = TzStatsRewardApiImpl(
                 nw=default_network_config_map['MAINNET'],
                 baking_address=address)
-            tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(cycle, expected_reward=True)
+            tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(cycle, 'expected')
             store_reward_model(address, cycle, 'expected', tzstats_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
             nw=default_network_config_map['MAINNET'],
             baking_address=address)
-        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, expected_reward=True)
+        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, 'expected')
 
         self.assertAlmostEqual(
             tzstats_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance, delta=1)
@@ -234,13 +234,13 @@ class RewardApiImplTests(unittest.TestCase):
                 nw=default_network_config_map['MAINNET'],
                 baking_address=address,
                 node_url='https://rpc.tzkt.io/mainnet')
-            rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle)
+            rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, 'actual')
             store_reward_model(address, cycle, 'actual', rpc_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
             nw=default_network_config_map['MAINNET'],
             baking_address=address)
-        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle)
+        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, 'actual')
 
         self.assertNotEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance)
         self.assertAlmostEqual(rpc_rewards.total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)

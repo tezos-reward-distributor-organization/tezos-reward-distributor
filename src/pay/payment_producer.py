@@ -178,16 +178,23 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
                             logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation.")
-                            if not self.rewards_type.isIdeal():
-                                logger.error("For future rewards payout, you must configure the payout type to 'Ideal', see documentation")
+                            if not self.rewards_type.isExpected():
+                                logger.error("For future rewards payout, you must configure the payout type to 'Expected', see documentation")
                                 self.exit()
                                 break
 
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
                         elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
                             logger.warn("Please note that you are doing payouts for frozen rewards!!!")
-                            if (not self.rewards_type.isIdeal()) and self.reward_api.name == 'RPC':
-                                logger.error("Paying out frozen rewards with Node RPC API and rewards type 'Actual' is unsupported, you must use TzKT or tzstats API")
+                            if (not self.rewards_type.isExpected()) and self.reward_api.name == 'RPC':
+                                logger.error("Paying out frozen rewards with Node RPC API and rewards type 'Ideal' or 'Actual' is unsupported, you must use TzKT or tzstats API")
+                                self.exit()
+                                break
+
+                        # Payment cycle with unfrozen rewards (-R >= 0)
+                        else:
+                            if self.rewards_type.isIdeal() and self.reward_api.name == 'RPC':
+                                logger.error("Paying out rewards of type 'Ideal' with Node RPC API is unsupported, you must use TzKT or tzstats API")
                                 self.exit()
                                 break
 
@@ -199,7 +206,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             continue  # Break/Repeat loop
 
                         else:
-                            result = self.try_to_pay(pymnt_cycle, expected_rewards=self.rewards_type.isIdeal())
+                            result = self.try_to_pay(pymnt_cycle, self.rewards_type)
 
                         if result:
                             # single run is done. Do not continue.
@@ -257,7 +264,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle, expected_rewards=False):
+    def try_to_pay(self, pymnt_cycle, rewards_type):
         try:
             logger.info("Payment cycle is " + str(pymnt_cycle))
 
@@ -269,12 +276,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            if expected_rewards:
-                logger.info("Using expected/ideal rewards for payouts calculations")
-            else:
+            if rewards_type.isExpected():
+                logger.info("Using expected rewards for payouts calculations")
+            elif rewards_type.isActual():
                 logger.info("Using actual rewards for payouts calculations")
+            elif rewards_type.isIdeal():
+                logger.info("Using ideal rewards for payouts calculations")
 
-            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, expected_rewards)
+            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, rewards_type)
 
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
@@ -299,7 +308,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 sleep(5.0)
 
                 # 6- create calculations report file. This file contains calculations details
-                self.create_calculations_report(reward_logs, report_file_path, total_amount, expected_rewards)
+                self.create_calculations_report(reward_logs, report_file_path, total_amount, rewards_type)
 
                 # 7- processing of cycle is done
                 logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
@@ -344,9 +353,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             logger.error("Unable to determine local node's bootstrap status. Continuing...")
         return True
 
-    def create_calculations_report(self, payment_logs, report_file_path, total_rewards, expected_rewards):
+    def create_calculations_report(self, payment_logs, report_file_path, total_rewards, rewards_type):
 
-        rt = "I" if expected_rewards else "A"
+        if rewards_type.isExpected():
+            rt = "E"
+        elif rewards_type.isActual():
+            rt = "A"
+        elif rewards_type.isIdeal():
+            rt = "I"
 
         # Open reports file and write; auto-closes file
         with open(report_file_path, 'w', newline='') as f:

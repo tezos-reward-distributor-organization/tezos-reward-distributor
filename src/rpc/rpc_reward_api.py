@@ -37,7 +37,7 @@ class RpcRewardApiImpl(RewardApi):
         self.baking_address = baking_address
         self.node_url = node_url
 
-    def get_rewards_for_cycle_map(self, cycle, expected_rewards=False):
+    def get_rewards_for_cycle_map(self, cycle, rewards_type):
         try:
             current_level, current_cycle = self.__get_current_level()
             logger.debug("Current level {:d}, current cycle {:d}".format(current_level, current_cycle))
@@ -57,7 +57,7 @@ class RpcRewardApiImpl(RewardApi):
                                  level_of_first_block_in_preserved_cycles, level_of_last_block_in_unfreeze_cycle))
 
             # Decide on if paying actual rewards earned, or paying expected/ideal rewards
-            if expected_rewards:
+            if rewards_type.isExpected():
 
                 # Determine how many priority 0 baking rights delegate had
                 nb_blocks = self.__get_number_of_baking_rights(cycle, level_of_first_block_in_preserved_cycles)
@@ -71,13 +71,13 @@ class RpcRewardApiImpl(RewardApi):
                 total_block_reward = nb_blocks * self.block_reward
                 total_endorsement_reward = nb_endorsements * self.endorsement_reward
 
-                logger.info("Ideal rewards for cycle {:d}, {:,} block rewards ({:d} blocks), {:,} endorsing rewards ({:d} slots)".format(
+                logger.info("Expected rewards for cycle {:d}, {:,} block rewards ({:d} blocks), {:,} endorsing rewards ({:d} slots)".format(
                             cycle, total_block_reward, nb_blocks, total_endorsement_reward, nb_endorsements))
 
                 reward_data["total_rewards"] = total_block_reward + total_endorsement_reward
 
             # Calculate actual rewards
-            else:
+            elif rewards_type.isActual():
 
                 if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
                     unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
@@ -85,6 +85,11 @@ class RpcRewardApiImpl(RewardApi):
                 else:
                     logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
                     reward_data["total_rewards"] = 0
+
+            elif rewards_type.isIdeal():
+                message = "Ideal rewards are not implemented when using node RPC"
+                logger.error(message)
+                raise ApiProviderException(message)
 
             # TODO: support Dexter for RPC
             # _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)

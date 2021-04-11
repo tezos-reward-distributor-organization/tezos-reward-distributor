@@ -142,7 +142,7 @@ class TestCalculatePhases(TestCase):
             try:
                 # Reward data
                 # Fetch cycle 90 of delphinet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
-                reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE)
+                reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE, 'actual')
 
                 # Calculate rewards - payment_producer.py
                 reward_logs, total_amount = payment_calc.calculate(reward_model)
