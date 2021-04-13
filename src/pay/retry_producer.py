@@ -54,7 +54,7 @@ class RetryProducer:
             # 2.2 - if queue is full, wait for sometime
             # make sure the queue is not full
             while self.payments_queue.full():
-                logger.debug("Payments queue is full. Wait a few minutes.")
+                logger.debug("Payments queue is full. Please wait three minutes.")
                 sleep(60 * 3)
 
             cycle = int(os.path.splitext(os.path.basename(payment_failed_report_file))[0])
