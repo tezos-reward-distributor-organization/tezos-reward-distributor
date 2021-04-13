@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 from verbose_logging_helper import VerboseLoggingHelper
 
 DEFAULT_LOG_FILE = 'logs/app.log'
-FORMATTER = logging.Formatter('%(asctime)s - %(threadName)-9s - %(message)s')
+FORMATTER = logging.Formatter('%(asctime)s - %(threadName)-9s - %(levelname)s - %(message)s')
 
 main_logger = logging.getLogger('main')
 verbose_logger = logging.getLogger('verbose')

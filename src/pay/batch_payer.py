@@ -2,6 +2,7 @@ import configparser
 import os
 from random import randint
 from time import sleep
+from http import HTTPStatus
 
 import base58
 import json
@@ -306,8 +307,8 @@ class BatchPayer():
 
         status, run_ops_parsed = self.clnt_mngr.request_url_post(cmd=self.comm_runops,
                                                                  json_params=runops_json)
-        if not (status == 200):
-            logger.warning("Error in run_operation")
+        if status != HTTPStatus.OK:
+            logger.error("Error in run_operation")
             return PaymentStatus.FAIL, []
 
         op = run_ops_parsed["contents"][0]
@@ -333,7 +334,7 @@ class BatchPayer():
             op_error = "Unknown error in simulating contract payout. Payment will be skipped!"
             if "errors" in op["metadata"]["operation_result"] and len(op["metadata"]["operation_result"]["errors"]) > 0 and "id" in op["metadata"]["operation_result"]["errors"][0]:
                 op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-            logger.debug("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
+            logger.error("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
             return PaymentStatus.FAIL, []
 
         # Calculate needed fee for extra consumed gas
@@ -344,7 +345,7 @@ class BatchPayer():
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
         if not op_counter.get():
             status, counter = self.clnt_mngr.request_url(self.comm_counter)
-            if status != 200:
+            if status != HTTPStatus.OK:
                 raise Exception("Received response code {} for request '{}'".format(status, self.comm_counter))
             counter = int(counter)
             self.base_counter = int(counter)
@@ -415,7 +416,7 @@ class BatchPayer():
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
 
         status, run_ops_parsed = self.clnt_mngr.request_url_post(self.comm_runops, runops_json)
-        if not (status == 200):
+        if status != HTTPStatus.OK:
             logger.error("Error in run_operation")
             return PaymentStatus.FAIL, ""
 
@@ -439,7 +440,7 @@ class BatchPayer():
         # if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
 
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
-        if not (status == 200):
+        if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, ""
 
@@ -452,7 +453,7 @@ class BatchPayer():
         # if verbose: print("--> preapply_command_str is |{}|".format(preapply_command_str))
 
         status, preapply_command_response = self.clnt_mngr.request_url_post(self.comm_preapply, preapply_json)
-        if not (status == 200):
+        if status != HTTPStatus.OK:
             logger.error("Error in preapply operation")
             return PaymentStatus.FAIL, ""
 
@@ -489,7 +490,7 @@ class BatchPayer():
 
         status, operation_hash = self.clnt_mngr.request_url_post(self.comm_inject,
                                                                  json.dumps(signed_operation_bytes))
-        if not (status == 200):
+        if status != HTTPStatus.OK:
             logger.error("Error in inject operation")
             return PaymentStatus.FAIL, ""
 
@@ -503,10 +504,11 @@ class BatchPayer():
             status = -1
             list_op_hash = []
             trial_i = 0
-            while not (status == 200) and (trial_i < MAX_NUM_TRIALS_PER_BLOCK):
+            while status != HTTPStatus.OK and (trial_i < MAX_NUM_TRIALS_PER_BLOCK):
                 sleep(self.network_config['BLOCK_TIME_IN_SEC'])
                 status, list_op_hash = self.clnt_mngr.request_url(cmd)
-            if not (status == 200):
+                trial_i += 1
+            if status != HTTPStatus.OK:
                 logger.warning("Level {} could not be queried about operation hashes".format(i))
                 break
             for op_hashes in list_op_hash:
@@ -522,7 +524,7 @@ class BatchPayer():
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
         status, payment_address_balance = self.clnt_mngr.request_url(get_current_balance_request)
 
-        if status != 200:
+        if status != HTTPStatus.OK:
             logger.warning("Balance request failed! Response code {} is received for request '{}'. See verbose logs for more detail.".format(status, get_current_balance_request))
             return None
 

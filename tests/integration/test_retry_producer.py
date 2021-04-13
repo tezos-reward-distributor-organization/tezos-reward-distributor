@@ -1,8 +1,6 @@
 import os
 import queue
 import shutil
-import unittest
-import pytest
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
@@ -15,8 +13,8 @@ from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path
 
 
-TEST_REPORT_DIR = "test_reports"
-TEST_REPORT_TEMP_DIR = "test_reports_temp"
+TEST_REPORT_DIR = "tests/integration/test_reports"
+TEST_REPORT_TEMP_DIR = "tests/integration/test_reports_temp"
 
 
 def request_url(url, timeout=None):
@@ -29,7 +27,7 @@ def request_url(url, timeout=None):
     if url == '/chains/main/blocks/head/operation_hashes':
         return 200, ["xxx_op_hash"]
 
-    return "aaaaa" + str(timeout)
+    return 404, "aaaaa" + str(timeout)
 
 
 def request_url_post(cmd, json_params, timeout=None):
@@ -43,14 +41,21 @@ def request_url_post(cmd, json_params, timeout=None):
     if cmd == '/injection/operation':
         return 200, "xxx_op_hash"
 
-    return "bbbb" + str(json_params) + str(timeout)
+    return 404, "bbbb" + str(json_params) + str(timeout)
 
 
-@pytest.mark.skip
-@unittest.skipIf('TRAVIS' in os.environ, 'Not running on Travis')
 class TestRetryProducer(TestCase):
     def setUp(self):
-        prepare_test_data()
+        try:
+            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "done")):
+                os.makedirs(os.path.join(TEST_REPORT_DIR, "done"))
+
+            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "failed")):
+                os.makedirs(os.path.join(TEST_REPORT_DIR, "failed"))
+
+        except OSError:
+            pass
+        copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
 
     @patch('pay.payment_consumer.BatchPayer.get_payment_address_balance', MagicMock(return_value=100_000_000))
     @patch('pay.payment_consumer.BatchPayer.simulate_single_operation', MagicMock(return_value=(PaymentStatus.DONE, (500, 100, 0))))
@@ -59,6 +64,11 @@ class TestRetryProducer(TestCase):
     @patch('cli.client_manager.ClientManager.request_url_post', MagicMock(side_effect=request_url_post))
     @patch('cli.client_manager.ClientManager.sign', MagicMock(return_value="edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"))
     def test_retry_failed_payments(self):
+        """This is a test about retrying failed operations.
+        Input is a past payment report which contains 31 payment items,
+        26 of them were successful and 5 of them were failed. The final report
+        should report 31 successful transactions.
+        """
         payment_queue = queue.Queue(100)
 
         retry_producer = RetryProducer(payment_queue, _DummyRpcRewardApi(), _TestPaymentProducer(),
@@ -81,25 +91,23 @@ class TestRetryProducer(TestCase):
         self.assertTrue(os.path.isfile(success_report))
 
         success_report_rows = CsvPaymentFileParser().parse(success_report, 10)
-        nb_success = len([row for row in success_report_rows if row.paid == PaymentStatus.PAID])
-        nb_hash_xxx_op_hash = len([row for row in success_report_rows if row.hash == 'xxx_op_hash'])
+        success_count = len([row for row in success_report_rows])
+        hash_xxx_op_count = len([row for row in success_report_rows if row.hash == 'xxx_op_hash'])
+        failed_reports_count = len([file for file in os.listdir(os.path.join(TEST_REPORT_TEMP_DIR, "failed")) if os.path.isfile(file)])
 
-        self.assertEqual(31, nb_success)
-        self.assertEqual(5, nb_hash_xxx_op_hash)
+        # Success is defined when the transactions are saved in the done folder
+        self.assertEqual(31, success_count)
+        self.assertEqual(5, hash_xxx_op_count)
+        self.assertEqual(0, failed_reports_count)
+
+    def tearDown(self):
+        shutil.rmtree(TEST_REPORT_TEMP_DIR)
 
     @staticmethod
     def create_consumer(nw, payment_queue):
         return PaymentConsumer("name", TEST_REPORT_TEMP_DIR, "tz1234567890123456789012345678901234", payment_queue,
                                "node_addr", ClientManager('', ''), nw, MagicMock(),
                                rewards_type='actual', dry_run=False)
-
-
-def prepare_test_data():
-    try:
-        shutil.rmtree(TEST_REPORT_TEMP_DIR)
-    except OSError:
-        pass
-    copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
 
 
 class _DummyRpcRewardApi:
