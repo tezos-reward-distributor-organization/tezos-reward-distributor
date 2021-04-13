@@ -191,13 +191,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                 self.exit()
                                 break
 
-                        # Payment cycle with unfrozen rewards (-R >= 0)
-                        else:
-                            if self.rewards_type.isIdeal() and self.reward_api.name == 'RPC':
-                                logger.error("Paying out rewards of type 'Ideal' with Node RPC API is unsupported, you must use TzKT or tzstats API")
-                                self.exit()
-                                break
-
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
                             wait_offset_blocks = self.payment_offset - level_in_cycle

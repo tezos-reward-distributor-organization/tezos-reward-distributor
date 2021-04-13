@@ -13,6 +13,8 @@ logger = main_logger.getChild("rpc_reward_api")
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
+COMM_BLOCK_METADATA = "{}/chains/main/blocks/{}/metadata"
+COMM_BLOCK_OPERATIONS = "{}/chains/main/blocks/{}/operations"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
@@ -60,8 +62,8 @@ class RpcRewardApiImpl(RewardApi):
             if rewards_type.isExpected():
 
                 # Determine how many priority 0 baking rights delegate had
-                nb_blocks = self.__get_number_of_baking_rights(cycle, level_of_first_block_in_preserved_cycles)
-                nb_endorsements = self.__get_number_of_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles)
+                nb_blocks = len([r for r in self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles) if r["priority"] == 0])
+                nb_endorsements = sum([len(r["slots"]) for r in self.__get_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles)])
 
                 logger.debug("Number of 0 priority blocks: {}, Number of endorsements: {}".format(nb_blocks, nb_endorsements))
                 logger.debug("Block reward: {}, Endorsement Reward: {}".format(self.block_reward, self.endorsement_reward))
@@ -77,19 +79,32 @@ class RpcRewardApiImpl(RewardApi):
                 reward_data["total_rewards"] = total_block_reward + total_endorsement_reward
 
             # Calculate actual rewards
-            elif rewards_type.isActual():
+            else:
 
                 if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
                     unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
-                    reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
+                    total_actual_rewards = unfrozen_fees + unfrozen_rewards
+                    if rewards_type.isActual():
+                        reward_data["total_rewards"] = total_actual_rewards
+                    elif rewards_type.isIdeal():
+                        missed_baking_income = 0
+                        for r in self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles):
+                            if r["priority"] == 0:
+                                if self.__get_block_author(r["level"]) != self.baking_address:
+                                    logger.warning("Found missed baking slot {}, adding {} mutez reward anyway.".format(r, self.block_reward))
+                                    missed_baking_income += self.block_reward
+                        missed_endorsing_income = 0
+                        for r in self.__get_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles):
+                            authored_endorsement_slots = self.__get_authored_endorsement_slots_by_level(r["level"] + 1)
+                            if authored_endorsement_slots != r["slots"]:
+                                mutez_to_add = self.endorsement_reward * len(r["slots"])
+                                logger.warning("Found {} missed endorsement(s) at level {}, adding {} mutez reward anyway.".format(len(r["slots"]), r["level"], mutez_to_add))
+                                missed_endorsing_income += mutez_to_add
+                        logger.warning("total rewards %s" % (total_actual_rewards + missed_baking_income + missed_endorsing_income))
+                        reward_data["total_rewards"] = total_actual_rewards + missed_baking_income + missed_endorsing_income
                 else:
                     logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
                     reward_data["total_rewards"] = 0
-
-            elif rewards_type.isIdeal():
-                message = "Ideal rewards are not implemented when using node RPC"
-                logger.error(message)
-                raise ApiProviderException(message)
 
             # TODO: support Dexter for RPC
             # _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
@@ -99,7 +114,7 @@ class RpcRewardApiImpl(RewardApi):
             reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
                                                reward_data["delegators"])
 
-            logger.debug("delegate_staking_balance = {:d}, total_rewards = {:d}"
+            logger.debug("delegate_staking_balance = {:d}, total_rewards = {:f}"
                          .format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
             logger.debug("delegators = {}".format(reward_data["delegators"]))
 
@@ -110,37 +125,54 @@ class RpcRewardApiImpl(RewardApi):
             # necessary data to properly compute rewards
             raise e from e
 
-    def __get_number_of_baking_rights(self, cycle, level):
+    def __get_baking_rights(self, cycle, level):
+        """
+        Returns list of baking rights for a given cycle.
+        """
 
         try:
             baking_rights_rpc = COMM_BAKING_RIGHTS.format(self.node_url, level, cycle, self.baking_address)
-            baking_rights = self.do_rpc_request(baking_rights_rpc)
-
-            nb_rights = 0
-
-            # Count all of the priority 0 rights
-            for r in baking_rights:
-                if r["priority"] == 0:
-                    nb_rights += 1
-
-            return nb_rights
+            return self.do_rpc_request(baking_rights_rpc)
 
         except ApiProviderException as e:
             raise e from e
 
-    def __get_number_of_endorsement_rights(self, cycle, level):
+    def __get_block_author(self, level):
+        """
+        Returns baker public key hash for a given block level.
+        """
+
+        try:
+            block_metadata_rpc = COMM_BLOCK_METADATA.format(self.node_url, level)
+            return self.do_rpc_request(block_metadata_rpc)["baker"]
+
+        except ApiProviderException as e:
+            raise e from e
+
+    def __get_endorsement_rights(self, cycle, level):
+        """
+        Returns list of endorsements rights for a cycle.
+        """
 
         try:
             endorsing_rights_rpc = COMM_ENDORSING_RIGHTS.format(self.node_url, level, cycle, self.baking_address)
-            endorsing_rights = self.do_rpc_request(endorsing_rights_rpc)
+            return self.do_rpc_request(endorsing_rights_rpc)
 
-            nb_rights = 0
+        except ApiProviderException as e:
+            raise e from e
 
-            # Count all of the slots in each endorsing right
-            for r in endorsing_rights:
-                nb_rights += len(r["slots"])
+    def __get_authored_endorsement_slots_by_level(self, level):
+        """
+        Returns a list of endorsements authored by the baker for a given block level.
+        """
 
-            return nb_rights
+        try:
+            block_operations_rpc = COMM_BLOCK_OPERATIONS.format(self.node_url, level)
+            endorsements = self.do_rpc_request(block_operations_rpc)[0]
+            for e in endorsements:
+                if e["contents"][0]["kind"] == "endorsement" and e["contents"][0]["metadata"]["delegate"] == self.baking_address:
+                    return e["contents"][0]["metadata"]["slots"]
+            return []
 
         except ApiProviderException as e:
             raise e from e

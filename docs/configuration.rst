@@ -68,8 +68,6 @@ Available configuration parameters are:
 #. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -5, since the payouts are done before the cycle is completed, or
 #. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -1, and the backend API is a Tezos node RPC, as actual payout calculation in this context is not implemented.
 
-  Note that 'ideal' payout is not implemented using the Tezos node RPC backend. 'Ideal' payouts with tzstats backend will not account for the missed fees due to missed blocks, but 'ideal' payouts with TzKT backend will.
-
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.
 
