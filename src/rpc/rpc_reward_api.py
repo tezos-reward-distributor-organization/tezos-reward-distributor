@@ -1,6 +1,7 @@
 from time import sleep
 
 import requests
+from http import HTTPStatus
 
 from api.reward_api import RewardApi
 from exception.api_provider import ApiProviderException
@@ -233,7 +234,7 @@ class RpcRewardApiImpl(RewardApi):
             raise ApiProviderException("RPC URL '{}' not found. Is this node in archive mode?".format(request))
 
         # URL returned something broken
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
             message = "[do_rpc_request] Requesting URL '{:s}' failed ({:d})".format(request, resp.status_code)
             if "CF-RAY" in resp.headers:
 

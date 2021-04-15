@@ -3,6 +3,7 @@ from time import sleep
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 from urllib.parse import urlparse
+from http import HTTPStatus
 
 from Constants import CURRENT_TESTNET
 from Constants import RewardsType
@@ -34,11 +35,11 @@ def mock_request_get(url, timeout):
     # logger.debug("Mock URL: {}".format(path))
 
     if path == "/chains/main/blocks/head":
-        return MagicMock(status_code=200, json=lambda: {"metadata": {"level": {"level": 208114, "level_position": 208113, "cycle": 101}}})
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: {"metadata": {"level": {"level": 208114, "level_position": 208113, "cycle": 101}}})
     if path == "/chains/main/blocks/178177/context/raw/json/cycle/90/roll_snapshot":
-        return MagicMock(status_code=200, json=lambda: 10)
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: 10)
     if path == "/chains/main/blocks/175488/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V":
-        return MagicMock(status_code=200, json=lambda: {
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: {
             "balance": "15218028669",
             "staking_balance": "191368330803",
             "delegated_contracts": [
@@ -54,27 +55,27 @@ def mock_request_get(url, timeout):
         })
     if path == "/chains/main/blocks/175488/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance":
-        return MagicMock(status_code=200, json=lambda: "25689884573")
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "25689884573")
     if path == "/chains/main/blocks/175488/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance":
-        return MagicMock(status_code=200, json=lambda: "62657825729")
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "62657825729")
     if path == "/chains/main/blocks/175488/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance":
-        return MagicMock(status_code=200, json=lambda: "24916325758")
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "24916325758")
     if path == "/chains/main/blocks/175488/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance":
-        return MagicMock(status_code=200, json=lambda: "55646701807")
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "55646701807")
     if path == "/chains/main/blocks/175488/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance":
-        return MagicMock(status_code=200, json=lambda: "981635036")
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "981635036")
     if path == "/chains/main/blocks/175488/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance":
-        return MagicMock(status_code=200, json=lambda: "30527208")
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "30527208")
     if path == "/chains/main/blocks/175488/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance" \
        or path == "/chains/main/blocks/head/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance":
-        return MagicMock(status_code=200, json=lambda: "6725429231")
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "6725429231")
     if path == "/chains/main/blocks/192512/metadata":
-        return MagicMock(status_code=200, json=lambda: {
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: {
             "balance_updates": [
                 {"kind": "freezer", "category": "deposits", "delegate": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "cycle": 90, "change": "-14272000000"},
                 {"kind": "freezer", "category": "fees", "delegate": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "cycle": 90, "change": "-8374"},

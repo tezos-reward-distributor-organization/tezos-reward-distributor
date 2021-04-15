@@ -46,6 +46,13 @@ class RunMode(Enum):
 
 
 class PaymentStatus(Enum):
+    """
+    PAID: payment successfully made.
+    FAIL: Some failures happened in the process.
+    DONE: Process completed without payment. E.g. zero amount, dry run...
+    INJECTED: Transaction is injected into the node but after waiting for some time it is not added to any block.
+    TRD does not know its fate.
+    """
     UNDEFINED = -1
     FAIL = 0
     PAID = 1

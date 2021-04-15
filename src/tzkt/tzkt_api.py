@@ -1,4 +1,5 @@
 import requests
+from http import HTTPStatus
 from time import sleep
 from pprint import pformat
 from os.path import join
@@ -65,7 +66,7 @@ class TzKTApi:
         except requests.RequestException as e:
             raise TzKTApiError(e)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code != HTTPStatus.OK:
             raise TzKTApiError(f'TzKT returned {response.status_code} error:\n{response.text}')
 
         try:
