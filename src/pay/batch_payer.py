@@ -322,17 +322,21 @@ class BatchPayer():
             logger.error("Error in run_operation")
             return PaymentStatus.FAIL, []
 
+        consumed_gas = 0
+        consumed_storage = 0
+
         op = run_ops_parsed["contents"][0]
         status = op["metadata"]["operation_result"]["status"]
         if status == 'applied':
+
             # Calculate actual consumed gas amount
             consumed_gas = int(op["metadata"]["operation_result"]["consumed_gas"])
             if "internal_operation_results" in op["metadata"]:
                 internal_operation_results = op["metadata"]["internal_operation_results"]
                 for internal_op in internal_operation_results:
                     consumed_gas += int(internal_op['result']['consumed_gas'])
+
             # Calculate actual used storage
-            consumed_storage = 0
             if 'paid_storage_size_diff' in op['metadata']['operation_result']:
                 consumed_storage += int(op['metadata']['operation_result']['paid_storage_size_diff'])
             if "internal_operation_results" in op["metadata"]:
@@ -348,11 +352,8 @@ class BatchPayer():
             logger.error("Error while validating operation - Status: {}, Message: {}".format(status, op_error))
             return PaymentStatus.FAIL, []
 
-        consumed_gas += GAS_SAFETY  # Tezos client does this
-        consumed_storage += STORAGE_SAFETY
-
         # Calculate needed fee for extra consumed gas
-        tx_fee += int((consumed_gas - int(self.gas_limit)) * MUTEZ_PER_GAS_UNIT)
+        tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
         simulation_results = consumed_gas, tx_fee, consumed_storage
 
         return PaymentStatus.DONE, simulation_results
