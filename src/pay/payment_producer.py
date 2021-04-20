@@ -16,6 +16,7 @@ from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
+import traceback
 from util.dir_utils import get_calculation_report_file, get_latest_report_file
 
 logger = main_logger.getChild("payment_producer")
@@ -247,6 +248,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             except Exception as e:
                 logger.debug("Unknown error in payment producer loop: {:s}".format(str(e)), exc_info=True)
+                traceback.print_exc()
                 logger.error("Unknown error in payment producer loop: {:s}, will try again.".format(str(e)))
 
         # end of endless loop
