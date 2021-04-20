@@ -20,6 +20,7 @@ COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 COMM_BAKING_RIGHTS = "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}"
 COMM_ENDORSING_RIGHTS = "{}/chains/main/blocks/{}/helpers/endorsing_rights?cycle={}&delegate={}"
+COMM_FROZEN_BALANCE = "{}/chains/main/blocks/{}/context/delegates/{}/frozen_balance_by_cycle"
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -84,8 +85,8 @@ class RpcRewardApiImpl(RewardApi):
                     unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
                     reward_data["total_rewards"] = unfrozen_fees + unfrozen_rewards
                 else:
-                    logger.warning("Please wait until the rewards and fees for cycle {:d} are unfrozen".format(cycle))
-                    reward_data["total_rewards"] = 0
+                    frozen_fees, frozen_rewards = self.__get_frozen_rewards(cycle, current_level)
+                    reward_data["total_rewards"] = frozen_fees + frozen_rewards
 
             # TODO: support Dexter for RPC
             # _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
@@ -137,6 +138,17 @@ class RpcRewardApiImpl(RewardApi):
                 nb_rights += len(r["slots"])
 
             return nb_rights
+
+        except ApiProviderException as e:
+            raise e from e
+
+    def __get_frozen_rewards(self, cycle, current_level):
+        try:
+            frozen_balance_by_cycle_rpc = COMM_FROZEN_BALANCE.format(self.node_url, current_level, self.baking_address)
+            logger.debug(self.do_rpc_request(frozen_balance_by_cycle_rpc))
+            f = [f for f in self.do_rpc_request(frozen_balance_by_cycle_rpc) if f["cycle"] == cycle][0]
+
+            return int(f["fees"]), int(f["rewards"])
 
         except ApiProviderException as e:
             raise e from e
@@ -306,7 +318,8 @@ class RpcRewardApiImpl(RewardApi):
 
             # If roll_snapshot == 15, we need to adjust the baker's staking balance
             # by subtracting unfrozen rewards due to when the snapshot is taken
-            # within the block context
+            # within the block context. For more information, see:
+            # https://medium.com/@_MisterWalker_/we-all-were-wrong-baking-bad-and-most-bakers-were-using-wrong-data-to-calculate-staking-rewards-a8c26f5ec62b
             if roll_snapshot == 15:
                 old_rewards_cycle = (level_snapshot_block / self.blocks_per_cycle) - self.preserved_cycles - 1
                 _, unfrozen_rewards = self.__get_unfrozen_rewards(level_snapshot_block, old_rewards_cycle)

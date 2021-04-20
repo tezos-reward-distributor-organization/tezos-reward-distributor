@@ -186,10 +186,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
                         elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
                             logger.warn("Please note that you are doing payouts for frozen rewards!!!")
-                            if (not self.rewards_type.isIdeal()) and self.reward_api.name == 'RPC':
-                                logger.error("Paying out frozen rewards with Node RPC API and rewards type 'Actual' is unsupported, you must use TzKT or tzstats API")
-                                self.exit()
-                                break
 
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
