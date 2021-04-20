@@ -83,7 +83,7 @@ def mock_request_get(url, timeout):
             ]
         })
 
-    raise MagicMock(status_code=404, json=lambda: {"Not Found"})
+    raise MagicMock(status_code=HTTPStatus.NOT_FOUND, json=lambda: {"Not Found"})
 
 
 class TestCalculatePhases(TestCase):

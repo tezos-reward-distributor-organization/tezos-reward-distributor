@@ -156,10 +156,22 @@ class BakingYamlConfParser(YamlConfParser):
 
         # key_name must has a length of 36 and starts with tz or KT, an alias is not expected
         if len(baking_address) == PKH_LENGHT:
-            if not baking_address.startswith("tz"):
-                raise ConfigurationException("Baking address must be a valid tz address")
+            if not baking_address.startswith("tz") and not baking_address.startswith("KT"):
+                raise ConfigurationException("Baking address must be a valid tz or KT address")
+            else:
+                if not self.exists(baking_address):
+                    raise ConfigurationException("Baking address {} does not exist".format(baking_address))
+
+                if not self.delegatable(baking_address):
+                    raise ConfigurationException("Baking address {} is not enabled for delegation".format(baking_address))
         else:
             raise ConfigurationException("Baking address length must be {}".format(PKH_LENGHT))
+
+    def exists(self, address):
+        return False
+
+    def delegatable(self, address):
+        return False
 
     def validate_specials_map(self, conf_obj):
         if SPECIALS_MAP not in conf_obj:
