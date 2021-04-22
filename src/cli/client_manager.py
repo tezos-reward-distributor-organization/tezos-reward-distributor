@@ -119,6 +119,25 @@ class ClientManager:
                 raise ClientException(f'The secret key of the payout address {key_name} was not imported to the signer!\n'
                                       f'{signer_exception}')
 
+    def baker_exists(self, address, timeout=None):
+        url = "{}/chains/main/blocks/head/context/contracts/{}/manager_key".format(self.node_endpoint, address)
+        baker_address_exception = f'Error querying the baker at url {self.node_endpoint}.'
+        try:
+            response = self._do_request(method="GET",
+                                        url=url,
+                                        timeout=timeout)
+        except Exception as e:
+            raise ClientException(f'Exception: {e}\n{baker_address_exception}')
+
+        if response.status_code != HTTPStatus.OK:
+            logger.error(f'{response.text}\n{baker_address_exception}')
+            return False
+        return True
+
+    def baker_delegatable(self, address, timeout=None):
+        # TODO: Introduce a check if the address is delegatable
+        return True
+
     def get_authorized_keys(self, timeout=None):
 
         signer_url = self.signer_endpoint
