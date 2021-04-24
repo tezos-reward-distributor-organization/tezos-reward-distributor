@@ -35,9 +35,7 @@ class BakingYamlConfParser(YamlConfParser):
     def validate(self):
         conf_obj = self.get_conf_obj()
         self.validate_baking_address(conf_obj)
-
         self.validate_payment_address(conf_obj)
-
         self.validate_share_map(conf_obj, FOUNDERS_MAP)
         self.validate_share_map(conf_obj, OWNERS_MAP)
         self.validate_service_fee(conf_obj)
