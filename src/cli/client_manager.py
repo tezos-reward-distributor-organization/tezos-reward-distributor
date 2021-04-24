@@ -120,6 +120,7 @@ class ClientManager:
                                       f'{signer_exception}')
 
     def baker_exists(self, address, timeout=None):
+        """A baker exists if the public key was revealed."""
         url = "{}/chains/main/blocks/head/context/contracts/{}/manager_key".format(self.node_endpoint, address)
         baker_address_exception = f'Error querying the baker at url {self.node_endpoint}.'
         try:
@@ -132,10 +133,32 @@ class ClientManager:
         if response.status_code != HTTPStatus.OK:
             logger.error(f'{response.text}\n{baker_address_exception}')
             return False
+
+        response_json = response.json()
+        if response_json is None or len(response_json) != 54 or not response_json.startswith("edpk"):
+            logger.error(f'No public key found for {address}, which means a revelation operation has not been published.')
+            return False
         return True
 
     def baker_delegatable(self, address, timeout=None):
-        # TODO: Introduce a check if the address is delegatable
+        """A baker is delegatable if the response has a delegate key and the baker is delegating to itself."""
+        url = "{}/chains/main/blocks/head/context/contracts/{}".format(self.node_endpoint, address)
+        baker_address_exception = f'Error querying the baker at url {self.node_endpoint}.'
+        try:
+            response = self._do_request(method="GET",
+                                        url=url,
+                                        timeout=timeout)
+        except Exception as e:
+            raise ClientException(f'Exception: {e}\n{baker_address_exception}')
+
+        if response.status_code != HTTPStatus.OK:
+            logger.error(f'{response.text}\n{baker_address_exception}')
+            return False
+
+        response_json = response.json()
+        if response_json is None or "delegate" not in response_json or response_json["delegate"] != address:
+            logger.error(f"Address {address} is not delegatable. Please check if it's a baker.")
+            return False
         return True
 
     def get_authorized_keys(self, timeout=None):
