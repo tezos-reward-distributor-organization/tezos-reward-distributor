@@ -157,7 +157,7 @@ class ClientManager:
 
         response_json = response.json()
         if response_json is None or "delegate" not in response_json or response_json["delegate"] != address:
-            logger.error(f"Address {address} is not delegatable. Please check if it's a baker.")
+            logger.error(f"Baking address {address} is not delegatable. Please check if it's a baker.")
             return False
         return True
 
