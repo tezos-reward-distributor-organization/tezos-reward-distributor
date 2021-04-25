@@ -11,8 +11,6 @@ network = {'NAME': 'MAINNET'}
 
 
 @patch('cli.client_manager.ClientManager.check_pkh_known_by_signer', MagicMock(return_value=True))
-@patch('cli.client_manager.ClientManager.baker_exists', MagicMock(return_value=True))
-@patch('cli.client_manager.ClientManager.baker_delegatable', MagicMock(return_value=True))
 class TestYamlAppConfParser(TestCase):
 
     def setUp(self):

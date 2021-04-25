@@ -152,13 +152,16 @@ class BakingYamlConfParser(YamlConfParser):
 
         baking_address = conf_obj[BAKING_ADDRESS]
 
-        # key_name must has a length of 36 and starts with tz or KT, an alias is not expected
+        if baking_address.startswith("KT"):
+            raise ConfigurationException("KT addresses cannot act as bakers. Only tz addresses can be registered to bake.")
+
+        # key_name must has a length of 36 and starts with tz an alias is not expected
         if len(baking_address) == PKH_LENGHT:
-            if not baking_address.startswith("tz") and not baking_address.startswith("KT"):
+            if not baking_address.startswith("tz"):
                 raise ConfigurationException("Baking address must be a valid tz or KT address")
             else:
                 if not self.block_api.get_revelation(baking_address):
-                    raise ConfigurationException("Baking address {} does not exist".format(baking_address))
+                    raise ConfigurationException("Baking address {} did not revealed key.".format(baking_address))
 
                 if not self.block_api.get_delegatable(baking_address):
                     raise ConfigurationException("Baking address {} is not enabled for delegation".format(baking_address))
