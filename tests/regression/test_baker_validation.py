@@ -1,139 +1,101 @@
+import pytest
 from cli.client_manager import ClientManager
-from http import HTTPStatus
-from unittest.mock import MagicMock, patch
+from Constants import PUBLIC_NODE_URL
+from config.yaml_baking_conf_parser import BakingYamlConfParser
+from exception.configuration import ConfigurationException
 
-node_endpoint = "http://127.0.0.1:8732"
+from rpc.rpc_block_api import RpcBlockApiImpl
+from tzkt.tzkt_block_api import TzKTBlockApiImpl
+from tzstats.tzstats_block_api import TzStatsBlockApiImpl
+
+node_endpoint = PUBLIC_NODE_URL["MAINNET"]
 signer_endpoint = "http://127.0.0.1:6732"
-
-# ============================================================
-
-
-class Exists_Response:
-    def __init__(self):
-        self.status_code = HTTPStatus.OK
-
-    def json(self):
-        return "edpktqksRnsC4fX1bxWW4DVSdhoirZ1C1RkrEwq4yZabjecmDZLQwS"
+network = {"NAME": "MAINNET"}
 
 
-@patch(
-    "cli.client_manager.ClientManager._do_request",
-    MagicMock(return_value=(Exists_Response())),
+@pytest.mark.parametrize(
+    "block_api",
+    [
+        pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
+        pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
+        pytest.param(TzStatsBlockApiImpl(network), id="TzStatsBlockApiImpl"),
+    ],
 )
-def test_address_is_baker_address_exists():
-    baker_address = "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"  # StakeNow
-    client_manager = ClientManager(node_endpoint, signer_endpoint)
-    assert client_manager.baker_exists(baker_address) is True
+def test_address_is_baker_address(block_api):
+    data_fine = """
+    version: 1.0
+    baking_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+    """
+
+    wallet_client_manager = ClientManager(node_endpoint, signer_endpoint)
+    cnf_prsr = BakingYamlConfParser(
+        data_fine,
+        wallet_client_manager,
+        provider_factory=None,
+        network_config=network,
+        node_url=node_endpoint,
+        block_api=block_api,
+    )
+    cnf_prsr.parse()
+    assert cnf_prsr.validate_baking_address(cnf_prsr.conf_obj) is None
 
 
-# ============================================================
-
-
-class Delegatable_Response:
-    def __init__(self):
-        self.status_code = HTTPStatus.OK
-
-    def json(self):
-        return {
-            "balance": "151608135131",
-            "delegate": "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194",
-            "counter": "37410",
-        }
-
-
-@patch(
-    "cli.client_manager.ClientManager._do_request",
-    MagicMock(return_value=(Delegatable_Response())),
+@pytest.mark.parametrize(
+    "block_api",
+    [
+        pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
+        pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
+        pytest.param(TzStatsBlockApiImpl(network), id="TzStatsBlockApiImpl"),
+    ],
 )
-def test_address_is_baker_address_delegatable():
-    baker_address = "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"  # StakeNow
-    client_manager = ClientManager(node_endpoint, signer_endpoint)
-    assert client_manager.baker_delegatable(baker_address) is True
+def test_address_is_not_baker_address(block_api):
+    data_fine = """
+    version: 1.0
+    baking_address: tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+    """
+
+    wallet_client_manager = ClientManager(node_endpoint, signer_endpoint)
+    cnf_prsr = BakingYamlConfParser(
+        data_fine,
+        wallet_client_manager,
+        provider_factory=None,
+        network_config=network,
+        node_url=node_endpoint,
+        block_api=block_api,
+    )
+    cnf_prsr.parse()
+    with pytest.raises(
+        ConfigurationException,
+        match="Baking address tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ is not enabled for delegation",
+    ):
+        cnf_prsr.validate_baking_address(cnf_prsr.conf_obj)
 
 
-# ============================================================
-
-
-class Exists_Response:
-    def __init__(self):
-        self.status_code = HTTPStatus.OK
-
-    def json(self):
-        return "edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3"
-
-
-@patch(
-    "cli.client_manager.ClientManager._do_request",
-    MagicMock(return_value=Exists_Response()),
+@pytest.mark.parametrize(
+    "block_api",
+    [
+        pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
+        pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
+        pytest.param(TzStatsBlockApiImpl(network), id="TzStatsBlockApiImpl"),
+    ],
 )
-def test_address_is_not_baker_address_exists():
-    not_baker_address = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"  # jdsika
-    client_manager = ClientManager(node_endpoint, signer_endpoint)
-    assert client_manager.baker_exists(not_baker_address) is True
+def test_invalid_baking_address(block_api):
+    data_fine = """
+    version: 1.0
+    baking_address: tz123
+    """
 
-
-# ============================================================
-
-
-class Delegatable_Response:
-    def __init__(self):
-        self.status_code = HTTPStatus.OK
-
-    def json(self):
-        return {
-            "balance": "617536",
-            "delegate": "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194",
-            "counter": "7117399",
-        }
-
-
-@patch(
-    "cli.client_manager.ClientManager._do_request",
-    MagicMock(return_value=Delegatable_Response()),
-)
-def test_address_is_not_baker_address_delegatable():
-    not_baker_address = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"  # jdsika
-    client_manager = ClientManager(node_endpoint, signer_endpoint)
-    assert client_manager.baker_delegatable(not_baker_address) is False
-
-
-# ============================================================
-
-
-class Exists_Response:
-    def __init__(self):
-        self.status_code = HTTPStatus.OK
-
-    def json(self):
-        return "123342"
-
-
-@patch(
-    "cli.client_manager.ClientManager._do_request",
-    MagicMock(return_value=Exists_Response()),
-)
-def test_public_key_incorrect():
-    not_baker_address = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"  # jdsika
-    client_manager = ClientManager(node_endpoint, signer_endpoint)
-    assert client_manager.baker_exists(not_baker_address) is False
-
-
-# ============================================================
-
-
-class Exists_Response:
-    def __init__(self):
-        self.status_code = HTTPStatus.OK
-
-    def json(self):
-        return {"balance": "617536", "counter": "7117399"}
-
-
-@patch(
-    "cli.client_manager.ClientManager._do_request",
-    MagicMock(return_value=Exists_Response()),
-)
-def test_not_delegatable():
-    not_baker_address = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"  # jdsika
-    client_manager = ClientManager(node_endpoint, signer_endpoint)
-    assert client_manager.baker_delegatable(not_baker_address) is False
+    wallet_client_manager = ClientManager(node_endpoint, signer_endpoint)
+    cnf_prsr = BakingYamlConfParser(
+        data_fine,
+        wallet_client_manager,
+        provider_factory=None,
+        network_config=network,
+        node_url=node_endpoint,
+        block_api=block_api,
+    )
+    cnf_prsr.parse()
+    with pytest.raises(
+        ConfigurationException, match="Baking address length must be 36"
+    ):
+        cnf_prsr.validate_baking_address(cnf_prsr.conf_obj)
