@@ -1,6 +1,7 @@
 import os
 import queue
 import shutil
+from http import HTTPStatus
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
@@ -20,28 +21,28 @@ TEST_REPORT_TEMP_DIR = "tests/integration/test_reports_temp"
 def request_url(url, timeout=None):
     print(url)
     if '/chains/main/blocks/head/context/contracts/' in url:
-        return 200, 1
+        return HTTPStatus.OK, 1
     if url == '/chains/main/blocks/head':
-        return 200, dict({"header": dict({"level": 1000}), "hash": "hash", "chain_id": "unittest",
-                          "metadata": dict({"protocol": "protocol1"})})
+        return HTTPStatus.OK, dict({"header": dict({"level": 1000}), "hash": "hash", "chain_id": "unittest",
+                                    "metadata": dict({"protocol": "protocol1"})})
     if url == '/chains/main/blocks/head/operation_hashes':
-        return 200, ["xxx_op_hash"]
+        return HTTPStatus.OK, ["xxx_op_hash"]
 
-    return 404, "aaaaa" + str(timeout)
+    return HTTPStatus.NOT_FOUND, "aaaaa" + str(timeout)
 
 
 def request_url_post(cmd, json_params, timeout=None):
     print(cmd)
     if cmd == '/chains/main/blocks/head/helpers/scripts/run_operation':
-        return 200, dict({"contents": [dict({"metadata": dict({"operation_result": dict({"status": "done"})})})]})
+        return HTTPStatus.OK, dict({"contents": [dict({"metadata": dict({"operation_result": dict({"status": "done"})})})]})
     if cmd == '/chains/main/blocks/head/helpers/forge/operations':
-        return 200, "bytes"
+        return HTTPStatus.OK, "bytes"
     if cmd == '/chains/main/blocks/head/helpers/preapply/operations':
-        return 200, "xxxx"
+        return HTTPStatus.OK, "xxxx"
     if cmd == '/injection/operation':
-        return 200, "xxx_op_hash"
+        return HTTPStatus.OK, "xxx_op_hash"
 
-    return 404, "bbbb" + str(json_params) + str(timeout)
+    return HTTPStatus.NOT_FOUND, "bbbb" + str(json_params) + str(timeout)
 
 
 class TestRetryProducer(TestCase):
