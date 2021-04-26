@@ -187,9 +187,9 @@ class BatchPayer():
         payment_items_tz = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('tz')]
         payment_items_KT = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('KT')]
         payment_items_chunks_tz = [payment_items_tz[i:i + MAX_TX_PER_BLOCK_tz] for i in
-                                range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_tz)]
+                                   range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_tz)]
         payment_items_chunks_KT = [payment_items_KT[i:i + MAX_TX_PER_BLOCK_KT] for i in
-                                range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)]
+                                   range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)]
         payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
@@ -473,7 +473,6 @@ class BatchPayer():
                     return PaymentStatus.FAIL, ""
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
-
 
         # forge the operations
         logger.debug("Forging {} operations".format(len(content_list)))
