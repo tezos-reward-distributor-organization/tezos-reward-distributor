@@ -6,14 +6,17 @@ from http import HTTPStatus
 
 import base58
 import json
+import math
 
 from Constants import PaymentStatus, MUTEZ
 from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
-MAX_TX_PER_BLOCK = 200
+MAX_TX_PER_BLOCK_tz = 200
+MAX_TX_PER_BLOCK_KT = 10
 PKH_LENGTH = 36
+SIGNATURE_BYTES_SIZE = 64
 MAX_NUM_TRIALS_PER_BLOCK = 2
 MAX_BLOCKS_TO_CHECK_AFTER_INJECTION = 5
 
@@ -45,11 +48,10 @@ FEE_LIMIT_CONTRACTS = 100000
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
 HARD_STORAGE_LIMIT_PER_OPERATION = 60000
 
-GAS_SAFETY = 100
-STORAGE_SAFETY = 20
-
 COST_PER_BYTE = 250
+MINIMUM_FEE_MUTEZ = 100
 MUTEZ_PER_GAS_UNIT = 0.1
+MUTEZ_PER_BYTE = 1
 
 
 class BatchPayer():
@@ -182,8 +184,13 @@ class BatchPayer():
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
-        payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in
-                                range(0, len(payment_items), MAX_TX_PER_BLOCK)]
+        payment_items_tz = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('tz')]
+        payment_items_KT = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('KT')]
+        payment_items_chunks_tz = [payment_items_tz[i:i + MAX_TX_PER_BLOCK_tz] for i in
+                                range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_tz)]
+        payment_items_chunks_KT = [payment_items_KT[i:i + MAX_TX_PER_BLOCK_KT] for i in
+                                range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)]
+        payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
         total_amount_to_pay += sum_burn_fees
@@ -322,7 +329,6 @@ class BatchPayer():
             logger.error("Error in run_operation")
             return PaymentStatus.FAIL, []
 
-        consumed_gas = 0
         consumed_storage = 0
 
         op = run_ops_parsed["contents"][0]
@@ -376,6 +382,8 @@ class BatchPayer():
 
         content_list = []
 
+        total_gas = total_fees = 0
+
         for payment_item in payment_records:
 
             pymnt_amnt = payment_item.amount  # expected in micro tez
@@ -426,6 +434,9 @@ class BatchPayer():
 
             op_counter.inc()
 
+            total_gas += int(gas_limit)
+            total_fees += int(tx_fee)
+
             content = CONTENT.replace("%SOURCE%", self.source) \
                 .replace("%DESTINATION%", payment_item.paymentaddress) \
                 .replace("%AMOUNT%", str(pymnt_amnt)) \
@@ -463,6 +474,7 @@ class BatchPayer():
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
 
+
         # forge the operations
         logger.debug("Forging {} operations".format(len(content_list)))
         forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
@@ -473,6 +485,25 @@ class BatchPayer():
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, ""
+        size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
+        required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+        logger.info(f'minimal required fee is {required_fee}, current used fee is {total_fees}')
+
+        while total_fees < required_fee:
+            difference_fees = int(math.ceil(required_fee - total_fees))
+            first_tx = json.loads(content_list[0])
+            first_tx['fee'] = str(int(int(first_tx['fee']) + difference_fees))
+            total_fees = required_fee
+            content_list[0] = json.dumps(first_tx)
+            contents_string = ",".join(content_list)
+            forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
+            status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
+            if status != HTTPStatus.OK:
+                logger.error("Error in forge operation")
+                return PaymentStatus.FAIL, ""
+            size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
+            required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+            logger.info(f'minimal required fee is {required_fee}, current used fee is {total_fees}')
 
         signed_bytes = self.clnt_mngr.sign(bytes, self.manager)
 
