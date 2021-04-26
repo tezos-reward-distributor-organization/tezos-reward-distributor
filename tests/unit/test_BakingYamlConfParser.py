@@ -15,6 +15,7 @@ class TestYamlAppConfParser(TestCase):
 
     def setUp(self):
         self.mainnet_public_node_url = PUBLIC_NODE_URL["MAINNET"]
+        self.signer_endpoint = "http://127.0.0.1:6732"
 
     def test_validate(self):
         data_fine = """
@@ -31,7 +32,7 @@ class TestYamlAppConfParser(TestCase):
           enabled:
         """
 
-        wallet_client_manager = ClientManager('', '')
+        wallet_client_manager = ClientManager(self.mainnet_public_node_url, self.signer_endpoint)
 
         block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_fine, wallet_client_manager, provider_factory=None,
@@ -73,7 +74,7 @@ class TestYamlAppConfParser(TestCase):
           enabled:
         """
 
-        wallet_client_manager = ClientManager('', '')
+        wallet_client_manager = ClientManager(self.mainnet_public_node_url, self.signer_endpoint)
 
         block_api = RpcBlockApiImpl(network, self.mainnet_public_node_url)
         cnf_prsr = BakingYamlConfParser(data_no_founders, wallet_client_manager, provider_factory=None,

@@ -188,7 +188,7 @@ class ClientManager:
                                             headers=headers,
                                             timeout=timeout)
             except Exception as e:
-                logger.debug(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
+                logger.error(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
                              f"Error, exception ->{e}<-")
                 # If all MAX_NB_TRIES tries were not successful
                 if try_i == MAX_NB_TRIES - 1:
@@ -197,6 +197,6 @@ class ClientManager:
             return
         # If request returns failed code
         if response.status_code != HTTPStatus.OK:
-            logger.debug(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
+            logger.error(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
                          f"Error, response ->{response.text}<-")
         return response
