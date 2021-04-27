@@ -145,7 +145,6 @@ class RpcRewardApiImpl(RewardApi):
     def __get_frozen_rewards(self, cycle, current_level):
         try:
             frozen_balance_by_cycle_rpc = COMM_FROZEN_BALANCE.format(self.node_url, current_level, self.baking_address)
-            logger.debug(self.do_rpc_request(frozen_balance_by_cycle_rpc))
             f = [f for f in self.do_rpc_request(frozen_balance_by_cycle_rpc) if f["cycle"] == cycle][0]
 
             return int(f["fees"]), int(f["rewards"])
