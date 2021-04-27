@@ -35,9 +35,7 @@ class BakingYamlConfParser(YamlConfParser):
     def validate(self):
         conf_obj = self.get_conf_obj()
         self.validate_baking_address(conf_obj)
-
         self.validate_payment_address(conf_obj)
-
         self.validate_share_map(conf_obj, FOUNDERS_MAP)
         self.validate_share_map(conf_obj, OWNERS_MAP)
         self.validate_service_fee(conf_obj)
@@ -154,10 +152,19 @@ class BakingYamlConfParser(YamlConfParser):
 
         baking_address = conf_obj[BAKING_ADDRESS]
 
-        # key_name must has a length of 36 and starts with tz or KT, an alias is not expected
+        if baking_address.startswith("KT"):
+            raise ConfigurationException("KT addresses cannot act as bakers. Only tz addresses can be registered to bake.")
+
+        # key_name must has a length of 36 and starts with tz an alias is not expected
         if len(baking_address) == PKH_LENGHT:
             if not baking_address.startswith("tz"):
-                raise ConfigurationException("Baking address must be a valid tz address")
+                raise ConfigurationException("Baking address must be a valid tz or KT address")
+            else:
+                if not self.block_api.get_revelation(baking_address):
+                    raise ConfigurationException("Baking address {} did not revealed key.".format(baking_address))
+
+                if not self.block_api.get_delegatable(baking_address):
+                    raise ConfigurationException("Baking address {} is not enabled for delegation".format(baking_address))
         else:
             raise ConfigurationException("Baking address length must be {}".format(PKH_LENGHT))
 

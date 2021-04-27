@@ -205,7 +205,7 @@ class RpcRewardApiImpl(RewardApi):
             raise ApiProviderException(message)
 
         # URL not found
-        if resp.status_code == 404:
+        if resp.status_code == HTTPStatus.NOT_FOUND:
             raise ApiProviderException("RPC URL '{}' not found. Is this node in archive mode?".format(request))
 
         # URL returned something broken
