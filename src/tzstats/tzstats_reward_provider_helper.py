@@ -1,4 +1,5 @@
 import requests
+from http import HTTPStatus
 from time import sleep
 
 from exception.api_provider import ApiProviderException
@@ -58,7 +59,7 @@ class TzStatsRewardProviderHelper:
 
         verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
@@ -88,7 +89,7 @@ class TzStatsRewardProviderHelper:
 
         verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
@@ -126,7 +127,7 @@ class TzStatsRewardProviderHelper:
 
         verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
@@ -185,7 +186,7 @@ class TzStatsRewardProviderHelper:
 
         resp = requests.get(uri, timeout=5)
 
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
@@ -207,7 +208,7 @@ class TzStatsRewardProviderHelper:
 
         verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
@@ -228,7 +229,7 @@ class TzStatsRewardProviderHelper:
 
         verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
@@ -250,7 +251,7 @@ class TzStatsRewardProviderHelper:
 
             verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
-            if resp.status_code != 200:
+            if resp.status_code != HTTPStatus.OK:
                 # This means something went wrong.
                 raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 

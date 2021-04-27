@@ -403,7 +403,6 @@ def main(args):
         sleep(0.1)
         command = input("{} >\n".format(messages[fsm.current])).strip()
         callbacks[fsm.current](command)
-    pass
 
     # 4. parse and process config
     parser.validate()
@@ -425,8 +424,7 @@ def main(args):
 def get_latest_report_file(payments_root):
     recent = None
     if get_successful_payments_dir(payments_root):
-        files = sorted([os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))],
-                       key=lambda x: int(x))
+        files = sorted([os.path.splitext(file)[0] for file in os.listdir(get_successful_payments_dir(payments_root))], key=lambda file_name: int(file_name))
         recent = files[-1] if len(files) > 0 else None
     return recent
 

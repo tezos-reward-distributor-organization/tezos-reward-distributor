@@ -1,18 +1,21 @@
 from unittest import TestCase
+import pytest
 
 from calc.calculate_phase0 import CalculatePhase0
 from model.reward_log import TYPE_OWNERS_PARENT
 from api.provider_factory import ProviderFactory
+from Constants import CURRENT_TESTNET
 
 BAKING_ADDRESS = "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V"
 
 
+@pytest.mark.skip
 class TestCalculatePhase0(TestCase):
 
     def test_calculate(self):
 
         nw = {
-            'NAME': 'DELPHINET',
+            'NAME': CURRENT_TESTNET,
             'NB_FREEZE_CYCLE': 3,
             'BLOCK_TIME_IN_SEC': 30,
             'BLOCKS_PER_CYCLE': 2048,
@@ -23,7 +26,7 @@ class TestCalculatePhase0(TestCase):
 
         api = ProviderFactory(provider='prpc').newRewardApi(nw, BAKING_ADDRESS, '')
 
-        model = api.get_rewards_for_cycle_map(90)
+        model = api.get_rewards_for_cycle_map(11)
 
         phase0 = CalculatePhase0(model)
         reward_data, total_rewards = phase0.calculate()

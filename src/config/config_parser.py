@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 
 
@@ -21,6 +22,9 @@ class ConfigParser(ABC):
 
     @staticmethod
     def load_file(conf_file_path):
+        if not os.path.isfile(conf_file_path):
+            raise ValueError("No such config file: '{}'".format(conf_file_path))
+
         with open(conf_file_path, 'r') as file:
             return file.read()
 

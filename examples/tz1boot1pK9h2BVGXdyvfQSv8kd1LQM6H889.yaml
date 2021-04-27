@@ -42,10 +42,14 @@ plugins:
       - bob@domain.com
       - alice@hotmail.com
   telegram:
-    chat_ids:
+    admin_chat_ids:
       - 123456789
+    payouts_chat_ids:
       - -13134455
     bot_api_key: 988877766:SKDJFLSJDFJLJSKDFJLKSDJFLKJDF
+    telegram_text: >
+      Rewards for cycle %CYCLE% are completed.
+      We paid out %TREWARDS% XTZ in rewards to %NDELEGATORS% delegators.
   twitter:
     api_key: XXXXXXXX
     api_secret: ZZZZZZZZ

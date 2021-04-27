@@ -2,17 +2,17 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 
-CURRENT_TESTNET = 'DELPHINET'
+CURRENT_TESTNET = 'EDO2NET'
 
 # Providers api prefix
 # Public RPC
 PUBLIC_NODE_URL = {"MAINNET": "https://mainnet-tezos.giganode.io",
-                   CURRENT_TESTNET: "https://{}-tezos.giganode.io".format(CURRENT_TESTNET)}
+                   CURRENT_TESTNET: "https://testnet-tezos.giganode.io"}
 
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.delphi.tzstats.com'
+    CURRENT_TESTNET: 'https://api.edo2net.tzstats.com'
 }
 
 # TzKt
@@ -46,6 +46,13 @@ class RunMode(Enum):
 
 
 class PaymentStatus(Enum):
+    """
+    PAID: payment successfully made.
+    FAIL: Some failures happened in the process.
+    DONE: Process completed without payment. E.g. zero amount, dry run...
+    INJECTED: Transaction is injected into the node but after waiting for some time it is not added to any block.
+    TRD does not know its fate.
+    """
     UNDEFINED = -1
     FAIL = 0
     PAID = 1

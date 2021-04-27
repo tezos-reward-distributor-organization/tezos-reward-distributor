@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from datetime import datetime
+from http import HTTPStatus
 
 from Constants import TEZOS_RPC_PORT
 from exception.client import ClientException
@@ -18,7 +19,11 @@ class ClientManager:
         super().__init__()
         self.node_endpoint = node_endpoint
         if self.node_endpoint.find('http') == -1:
-            self.node_endpoint = 'http://' + self.node_endpoint
+            if self.node_endpoint.find('443') == -1:
+                self.node_endpoint = 'http://' + self.node_endpoint
+            else:
+                self.node_endpoint = 'https://' + self.node_endpoint
+                logger.info("Node endpoint URL points to an SSL endpoint. Using HTTPS protocol prefix.")
         if len(self.node_endpoint.split(':')) < 3:
             self.node_endpoint += f':{TEZOS_RPC_PORT}'
         self.signer_endpoint = signer_endpoint
@@ -37,10 +42,10 @@ class ClientManager:
                                     url=url,
                                     timeout=timeout)
         if response is None:
-            return -1, ""
+            return -1, "TimeOut"
 
-        if not (response.status_code == 200):
-            return response.status_code, ""
+        if response.status_code != HTTPStatus.OK:
+            return response.status_code, "Code" + str(response.status_code)
 
         output = response.json()
         verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
@@ -62,10 +67,10 @@ class ClientManager:
                                         headers=headers,
                                         timeout=timeout)
         except Exception:
-            return -1, ""
+            return -1, "TimeOut"
 
-        if not (response.status_code == 200):
-            return response.status_code, ""
+        if response.status_code != HTTPStatus.OK:
+            return response.status_code, "Code" + str(response.status_code)
 
         output = response.json()
         verbose_logger.debug("<-- Verbose : Answer is |{}|".format(output))
@@ -82,9 +87,9 @@ class ClientManager:
                                     timeout=timeout)
 
         if response is None:
-            ClientException("Unknown Error at signing. Please consult the verbose logs!")
-        if not (response.status_code == 200):
-            raise ClientException("Error at signing: '{}'".format(response.text))
+            raise ClientException("Unknown Error at signing. Please consult the verbose logs!")
+        if response.status_code != HTTPStatus.OK:
+            raise ClientException("Error at signing. Make sure tezos-signer is up and running 'tezos-signer launch http signer': '{}'".format(response.text))
         else:
             response = response.json()
             return response['signature']
@@ -106,7 +111,7 @@ class ClientManager:
                                         timeout=timeout)
         except Exception as e:
             raise ClientException(f'Exception: {e}\n{signer_exception}')
-        if not (response.status_code == 200):
+        if response.status_code != HTTPStatus.OK:
             raise ClientException(f'{response.text}\n{signer_exception}')
         else:
             response = response.json()
@@ -131,7 +136,7 @@ class ClientManager:
                                         timeout=timeout)
         except Exception as e:
             raise ClientException(f'Exception: {e}\n{signer_exception}')
-        if not (response.status_code == 200):
+        if response.status_code != HTTPStatus.OK:
             raise ClientException(f'{response.text}\n{signer_exception}')
         else:
             response = response.json()
@@ -183,7 +188,7 @@ class ClientManager:
                                             headers=headers,
                                             timeout=timeout)
             except Exception as e:
-                logger.debug(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
+                logger.error(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
                              f"Error, exception ->{e}<-")
                 # If all MAX_NB_TRIES tries were not successful
                 if try_i == MAX_NB_TRIES - 1:
@@ -191,7 +196,7 @@ class ClientManager:
         if response is None:
             return
         # If request returns failed code
-        if not (response.status_code == 200):
-            logger.debug(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
+        if response.status_code != HTTPStatus.OK:
+            logger.error(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
                          f"Error, response ->{response.text}<-")
         return response

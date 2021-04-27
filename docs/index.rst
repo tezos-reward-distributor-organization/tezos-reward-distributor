@@ -1,5 +1,7 @@
-Tezos Reward Distributor (TRD) |Build Status|
+Tezos Reward Distributor (TRD)
 ======================================================
+
+|Build Status| |Docs Status| |Stable Documentation Status|
 
 DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEVELOPMENT. EVENT THOUGH IT IS WELL TESTED, PLEASE USE IT WITH CARE. ALWAYS MAKE A PRE-RUN IN DRY MODE BEFORE MAKING ACTUAL PAYMENTS. IF YOU WANT TO RUN IN SERVICE MODE DO IT AFTER YOU ARE CONFIDENT WITH THE APPLICATION. IN SERVICE MODE ONLY UPDATE IF NEEDED.
 
@@ -74,9 +76,13 @@ TRD Art Work
 
 This Github Repo_ contains logo images. If you are using TRD and want to let everybody know about it, feel free to place them in your website.
 
-.. |Build Status| image:: https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor.svg?branch=master
-   :target: https://travis-ci.com/tezos-reward-distributor-organization/tezos-reward-distributor
+.. |Build Status| image:: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/workflows/CI/badge.svg
+   :target: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/actions
+.. |Docs Status| image:: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/workflows/Docs/badge.svg
+   :target: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/actions
 .. _Repo: https://github.com/tezos-reward-distributor-organization/trd-art
+.. |Stable Documentation Status| image:: https://img.shields.io/badge/docs-stable-blue.svg
+   :target: https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/
 
 .. toctree::
    :maxdepth: 2
@@ -91,5 +97,6 @@ This Github Repo_ contains logo images. If you are using TRD and want to let eve
    plugins
    linuxservice
    contributors
+   testing
    statistics
    codeofconduct
