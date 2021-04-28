@@ -303,7 +303,7 @@ class BatchPayer():
 
     def wait_random(self):
         block_time = self.network_config['BLOCK_TIME_IN_SEC']
-        slp_tm = randint(block_time / 2, block_time)
+        slp_tm = randint(block_time // 2, block_time)
 
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
 
