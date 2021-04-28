@@ -124,7 +124,7 @@ def test_batch_payer_total_payout_amount():
     )
 
     # Filter out non-payable items
-    reward_logs = [pi for pi in reward_logs if pi.payable]
+    reward_logs = [payment_item for payment_item in reward_logs if payment_item.payable]
     reward_logs.sort(key=cmp_to_key(cmp_by_type_balance))
 
     batch_payer = BatchPayer(
@@ -152,4 +152,4 @@ def test_batch_payer_total_payout_amount():
 
     assert total_attempts == 3
     assert total_payout_amount == 238211030
-    assert (PAYMENT_ADDRESS_BALANCE // total_payout_amount) - 1 == 3
+    assert (PAYMENT_ADDRESS_BALANCE // total_payout_amount) - 1 == number_future_payable_cycles
