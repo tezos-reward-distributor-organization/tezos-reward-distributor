@@ -92,7 +92,7 @@ This Github Repo_ contains logo images. If you are using TRD and want to let eve
    configuration
    paymentaddress
    tezossigner
-   tezossignerdocker
+   docker
    run
    plugins
    linuxservice
