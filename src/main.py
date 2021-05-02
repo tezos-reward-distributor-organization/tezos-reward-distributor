@@ -5,6 +5,14 @@ import pkg_resources
 REQUIREMENTS_FILE_PATH = 'requirements.txt'
 
 
+def installed(package):
+    if hasattr(pip, 'main'):
+        pip.main(['install', package])
+    else:
+        pip._internal.main(['install', package])
+    return True
+
+
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
     print("Checking installed packages ...")
     with open(requirement_path, 'r') as requirements:
@@ -22,14 +30,6 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
                           "To install the requirements: 'pip3 install -r requirements.txt'\n")
                 return False
         return True
-
-
-def installed(package):
-    if hasattr(pip, 'main'):
-        pip.main(['install', package])
-    else:
-        pip._internal.main(['install', package])
-    return True
 
 
 def start_application(args=None):
