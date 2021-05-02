@@ -6,7 +6,7 @@
 
 ## Launch life cycle (with auto transitions):
 
-<img src="launch_state_diagram_autotransitions.png" alt="drawing"/>
+<img src="launch_state_diagram_auto_transitions.png" alt="drawing"/>
 
 ## Configuration life cycle:
 
@@ -14,7 +14,7 @@
 
 ## Configuration life cycle (with auto transitions):
 
-<img src="config_cycle_state_diagram_autotransitions.png" alt="drawing"/>
+<img src="config_cycle_state_diagram_auto_transitions.png" alt="drawing"/>
 
 ## Diagram generation
 To generate the state diagrams install graphviz:
