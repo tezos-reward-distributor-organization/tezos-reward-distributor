@@ -2,6 +2,7 @@ Test structure
 ====================
 
 The tests in TRD are run in the following order:
+
 1. unit tests
 
 2. regression tests
