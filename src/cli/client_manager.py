@@ -13,7 +13,6 @@ logger = main_logger
 COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 MAX_NB_TRIES = 3
 
-
 class ClientManager:
     def __init__(self, node_endpoint, signer_endpoint) -> None:
         super().__init__()
@@ -81,9 +80,11 @@ class ClientManager:
         signer_url = self.signer_endpoint
         cmd = f'keys/{key_name}'
         url = os.path.join(signer_url, cmd)
+        headers = {'content-type': "application/json"}
         response = self._do_request(method="POST",
                                     url=url,
                                     json_params=json_params,
+                                    headers=headers,
                                     timeout=timeout)
 
         if response is None:
@@ -177,6 +178,7 @@ class ClientManager:
                     json_params=None,
                     headers=None,
                     timeout=None):
+
         try_i = 0
         response = None
         while response is None and try_i < MAX_NB_TRIES:
