@@ -13,6 +13,7 @@ logger = main_logger
 COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 MAX_NB_TRIES = 3
 
+
 class ClientManager:
     def __init__(self, node_endpoint, signer_endpoint) -> None:
         super().__init__()
