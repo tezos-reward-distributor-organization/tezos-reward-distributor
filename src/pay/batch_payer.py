@@ -6,14 +6,17 @@ from http import HTTPStatus
 
 import base58
 import json
+import math
 
 from Constants import PaymentStatus, MUTEZ
 from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
-MAX_TX_PER_BLOCK = 200
+MAX_TX_PER_BLOCK_tz = 200
+MAX_TX_PER_BLOCK_KT = 10
 PKH_LENGTH = 36
+SIGNATURE_BYTES_SIZE = 64
 MAX_NUM_TRIALS_PER_BLOCK = 2
 MAX_BLOCKS_TO_CHECK_AFTER_INJECTION = 5
 
@@ -44,8 +47,11 @@ FEE_LIMIT_CONTRACTS = 100000
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
 HARD_STORAGE_LIMIT_PER_OPERATION = 60000
+
 COST_PER_BYTE = 250
+MINIMUM_FEE_MUTEZ = 100
 MUTEZ_PER_GAS_UNIT = 0.1
+MUTEZ_PER_BYTE = 1
 
 
 class BatchPayer():
@@ -89,7 +95,7 @@ class BatchPayer():
                                                                           "Delegator" if self.delegator_pays_xfer_fee else "Delegate"))
         logger.info("Reactivation fee is {:.6f} XTZ and is paid by {}".format(RA_BURN_FEE / MUTEZ,
                                                                               "Delegator" if self.delegator_pays_ra_fee else "Delegate"))
-        logger.info("Payment amount cutoff is {:.6f} XTZ".format(self.zero_threshold / MUTEZ))
+        logger.info("Payment amount minimum is {:.6f} XTZ".format(self.zero_threshold / MUTEZ))
 
         # If pymnt_addr has a length of 36 and starts with tz or KT then it is a public key, else it is an alias
         if len(self.pymnt_addr) == PKH_LENGTH and (
@@ -160,10 +166,17 @@ class BatchPayer():
             if pi.needs_activation and self.delegator_pays_ra_fee:
                 # Need to apply this fee to only those which need reactivation
                 zt += RA_BURN_FEE
-                sum_burn_fees += RA_BURN_FEE
 
+                # Check here if payout amount is greater than, or equal to new zero threshold with reactivation fee added.
+                # If so, add burn fee to global total. If not, payout will not get appended to list and therefor burn fee should not be added to global total.
+                if pi.amount >= zt:
+                    sum_burn_fees += RA_BURN_FEE
+
+            # If payout total greater than, or equal to zero threshold, append payout record to master array
             if pi.amount >= zt:
                 payment_items.append(pi)
+            else:
+                logger.info("Skipping payout to {:s} ({:>10.6f} XTZ), reason: payout below minimum ({:>10.6f} XTZ)".format(pi.address, pi.amount / MUTEZ, zt / MUTEZ))
 
         if not payment_items:
             logger.info("No payment items found, returning...")
@@ -171,8 +184,13 @@ class BatchPayer():
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
-        payment_items_chunks = [payment_items[i:i + MAX_TX_PER_BLOCK] for i in
-                                range(0, len(payment_items), MAX_TX_PER_BLOCK)]
+        payment_items_tz = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('tz')]
+        payment_items_KT = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('KT')]
+        payment_items_chunks_tz = [payment_items_tz[i:i + MAX_TX_PER_BLOCK_tz] for i in
+                                   range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_tz)]
+        payment_items_chunks_KT = [payment_items_KT[i:i + MAX_TX_PER_BLOCK_KT] for i in
+                                   range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)]
+        payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
 
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
         total_amount_to_pay += sum_burn_fees
@@ -285,7 +303,7 @@ class BatchPayer():
 
     def wait_random(self):
         block_time = self.network_config['BLOCK_TIME_IN_SEC']
-        slp_tm = randint(block_time / 2, block_time)
+        slp_tm = randint(block_time // 2, block_time)
 
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
 
@@ -294,13 +312,13 @@ class BatchPayer():
     def simulate_single_operation(self, payment_item, pymnt_amnt, branch, chain_id):
         # Initial gas, storage and transaction limits
         gas_limit = str(HARD_GAS_LIMIT_PER_OPERATION)
+        storage_limit = str(HARD_STORAGE_LIMIT_PER_OPERATION)
         tx_fee = self.default_fee
-        storage = HARD_STORAGE_LIMIT_PER_OPERATION
 
         content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
             .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(self.base_counter + 1)) \
-            .replace("%fee%", str(tx_fee)).replace("%gas_limit%", gas_limit).replace(
-            "%storage_limit%", str(storage))
+            .replace("%fee%", str(tx_fee)).replace("%gas_limit%", gas_limit) \
+            .replace("%storage_limit%", storage_limit)
 
         runops_json = RUNOPS_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", content)
         runops_json = JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
@@ -311,24 +329,27 @@ class BatchPayer():
             logger.error("Error in run_operation")
             return PaymentStatus.FAIL, []
 
+        consumed_storage = 0
+
         op = run_ops_parsed["contents"][0]
         status = op["metadata"]["operation_result"]["status"]
         if status == 'applied':
+
             # Calculate actual consumed gas amount
             consumed_gas = int(op["metadata"]["operation_result"]["consumed_gas"])
             if "internal_operation_results" in op["metadata"]:
                 internal_operation_results = op["metadata"]["internal_operation_results"]
                 for internal_op in internal_operation_results:
                     consumed_gas += int(internal_op['result']['consumed_gas'])
+
             # Calculate actual used storage
-            storage = 0
             if 'paid_storage_size_diff' in op['metadata']['operation_result']:
-                storage += int(op['metadata']['operation_result']['paid_storage_size_diff'])
+                consumed_storage += int(op['metadata']['operation_result']['paid_storage_size_diff'])
             if "internal_operation_results" in op["metadata"]:
                 internal_operation_results = op["metadata"]["internal_operation_results"]
                 for internal_op in internal_operation_results:
                     if 'paid_storage_size_diff' in internal_op['result']:
-                        storage += int(internal_op['result']['paid_storage_size_diff'])
+                        consumed_storage += int(internal_op['result']['paid_storage_size_diff'])
 
         else:
             op_error = "Unknown error in simulating contract payout. Payment will be skipped!"
@@ -339,7 +360,8 @@ class BatchPayer():
 
         # Calculate needed fee for extra consumed gas
         tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
-        simulation_results = consumed_gas, tx_fee, storage
+        simulation_results = consumed_gas, tx_fee, consumed_storage
+
         return PaymentStatus.DONE, simulation_results
 
     def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
@@ -360,13 +382,14 @@ class BatchPayer():
 
         content_list = []
 
+        total_gas = total_fees = 0
+
         for payment_item in payment_records:
 
-            storage = self.storage_limit
-            pymnt_amnt = payment_item.amount  # expects in micro tezos
+            pymnt_amnt = payment_item.amount  # expected in micro tez
+            storage_limit, gas_limit, tx_fee = self.storage_limit, self.gas_limit, self.default_fee
 
             # TRD extension for non scriptless contract accounts
-            gas_limit, tx_fee = self.gas_limit, self.default_fee
             if payment_item.paymentaddress.startswith('KT'):
                 simulation_status, simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
                 if simulation_status == PaymentStatus.FAIL:
@@ -374,35 +397,53 @@ class BatchPayer():
                                 .format(payment_item.paymentaddress))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
-                gas_limit, tx_fee, storage = simulation_results
-                burn_fee = COST_PER_BYTE * storage
+                gas_limit, tx_fee, storage_limit = simulation_results
+                burn_fee = COST_PER_BYTE * storage_limit
                 total_fee = tx_fee + burn_fee
                 # Bound the total (baker and burn) fee by the reward amount in case of KT1 accounts
                 if total_fee > FEE_LIMIT_CONTRACTS:
-                    logger.info("Payment to {} script requires higher fees than reward amount. Skipping. (Needed fee: {} muTez, Max fee: {} muTez, think about either configuring higher fees or redirecting to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers."
-                                .format(payment_item.paymentaddress, total_fee, FEE_LIMIT_CONTRACTS))
+                    logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. (Needed fee: {:10.6f} XTZ, Max fee: {:10.6f} XTZ) Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
+                                .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
                     payment_item.paid = PaymentStatus.FAIL
                     continue
 
-            if payment_item.needs_activation:
-                storage += RA_STORAGE
-                if self.delegator_pays_ra_fee:
-                    pymnt_amnt = max(pymnt_amnt - RA_BURN_FEE, 0)  # ensure not less than 0
+                # Fees within safety limits; Subtract from payment amount
+                orig_pymnt_amnt = pymnt_amnt
+                pymnt_amnt = max(pymnt_amnt - total_fee, 0)  # ensure not less than 0
+                logger.info("Payment to {} script requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} default fee = {:10.6f} total fees; Payment reduced from {:10.6f} to {:10.6f}".format(
+                            payment_item.paymentaddress, gas_limit, MUTEZ_PER_GAS_UNIT, self.default_fee / MUTEZ, total_fee / MUTEZ, orig_pymnt_amnt / MUTEZ, pymnt_amnt / MUTEZ))
 
-            if self.delegator_pays_xfer_fee:
-                pymnt_amnt = max(pymnt_amnt - tx_fee, 0)  # ensure not less than 0
+            else:
+                # Not a KT1
+                if payment_item.needs_activation:
+                    storage_limit += RA_STORAGE
+                    if self.delegator_pays_ra_fee:
+                        orig_pymnt_amnt = pymnt_amnt
+                        pymnt_amnt = max(pymnt_amnt - RA_BURN_FEE, 0)  # ensure not less than 0
+                        logger.info("Payment to {:s} reduced from {:>10.6f} to {:>10.6f} due to reactivation".format(payment_item.address, orig_pymnt_amnt / MUTEZ, pymnt_amnt / MUTEZ))
+
+                if self.delegator_pays_xfer_fee:
+                    pymnt_amnt = max(pymnt_amnt - tx_fee, 0)  # ensure not less than 0
+
+            # Resume main logic
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
-                logger.debug("Payment to {} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
+                logger.info("Payment to {:s} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
             op_counter.inc()
 
-            content = CONTENT.replace("%SOURCE%", self.source).replace("%DESTINATION%", payment_item.paymentaddress) \
-                .replace("%AMOUNT%", str(pymnt_amnt)).replace("%COUNTER%", str(op_counter.get())) \
-                .replace("%fee%", str(tx_fee)).replace("%gas_limit%", str(gas_limit)).replace(
-                "%storage_limit%", str(storage))
+            total_gas += int(gas_limit)
+            total_fees += int(tx_fee)
+
+            content = CONTENT.replace("%SOURCE%", self.source) \
+                .replace("%DESTINATION%", payment_item.paymentaddress) \
+                .replace("%AMOUNT%", str(pymnt_amnt)) \
+                .replace("%COUNTER%", str(op_counter.get())) \
+                .replace("%fee%", str(tx_fee)) \
+                .replace("%gas_limit%", str(gas_limit)) \
+                .replace("%storage_limit%", str(storage_limit))
 
             content_list.append(content)
 
@@ -443,6 +484,25 @@ class BatchPayer():
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, ""
+        size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
+        required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+        logger.info(f'minimal required fee is {required_fee}, current used fee is {total_fees}')
+
+        while total_fees < required_fee:
+            difference_fees = int(math.ceil(required_fee - total_fees))
+            first_tx = json.loads(content_list[0])
+            first_tx['fee'] = str(int(int(first_tx['fee']) + difference_fees))
+            total_fees = required_fee
+            content_list[0] = json.dumps(first_tx)
+            contents_string = ",".join(content_list)
+            forge_json = FORGE_JSON.replace('%BRANCH%', branch).replace("%CONTENT%", contents_string)
+            status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
+            if status != HTTPStatus.OK:
+                logger.error("Error in forge operation")
+                return PaymentStatus.FAIL, ""
+            size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
+            required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+            logger.info(f'minimal required fee is {required_fee}, current used fee is {total_fees}')
 
         signed_bytes = self.clnt_mngr.sign(bytes, self.manager)
 
