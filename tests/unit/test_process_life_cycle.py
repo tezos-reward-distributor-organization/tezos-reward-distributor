@@ -1,6 +1,9 @@
 from unittest import TestCase
 
+import pytest
 
+
+@pytest.mark.skip
 class TestProcessLifeCycle(TestCase):
     def test_draw(self):
         from util.process_life_cycle import ProcessLifeCycle
