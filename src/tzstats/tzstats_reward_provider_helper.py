@@ -66,7 +66,7 @@ class TzStatsRewardProviderHelper:
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
-        if rewards_type.isExpected():
+        if rewards_type.isEstimated():
             root["total_reward_amount"] = int(1e6 * float(resp[idx_income_expected_income]))
         else:
             # rewards earned (excluding equivocation losses)

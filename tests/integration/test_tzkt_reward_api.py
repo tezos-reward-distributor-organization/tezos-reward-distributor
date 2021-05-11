@@ -101,13 +101,13 @@ class RewardApiImplTests(unittest.TestCase):
             tzstats_impl = TzStatsRewardApiImpl(
                 nw=default_network_config_map['MAINNET'],
                 baking_address=address)
-            tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(cycle, RewardsType.EXPECTED)
+            tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(cycle, RewardsType.ESTIMATED)
             store_reward_model(address, cycle, 'expected', tzstats_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
             nw=default_network_config_map['MAINNET'],
             baking_address=address)
-        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.EXPECTED)
+        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ESTIMATED)
 
         self.assertAlmostEqual(
             tzstats_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance, delta=1)

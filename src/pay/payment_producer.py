@@ -178,8 +178,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
                             logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation.")
-                            if not self.rewards_type.isExpected():
-                                logger.error("For future rewards payout, you must configure the payout type to 'Expected', see documentation")
+                            if not self.rewards_type.isEstimated():
+                                logger.error("For future rewards payout, you must configure the payout type to 'Estimated', see documentation")
                                 self.exit()
                                 break
 
@@ -265,8 +265,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            if rewards_type.isExpected():
-                logger.info("Using expected rewards for payouts calculations")
+            if rewards_type.isEstimated():
+                logger.info("Using estimated rewards for payouts calculations")
             elif rewards_type.isActual():
                 logger.info("Using actual rewards for payouts calculations")
             elif rewards_type.isIdeal():
@@ -340,7 +340,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
     def create_calculations_report(self, payment_logs, report_file_path, total_rewards, rewards_type):
 
-        if rewards_type.isExpected():
+        if rewards_type.isEstimated():
             rt = "E"
         elif rewards_type.isActual():
             rt = "A"

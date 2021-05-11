@@ -60,8 +60,8 @@ class RpcRewardApiImpl(RewardApi):
                          .format(cycle, self.preserved_cycles, self.blocks_per_cycle,
                                  level_of_first_block_in_preserved_cycles, level_of_last_block_in_unfreeze_cycle))
 
-            # Decide on if paying actual rewards earned, or paying expected/ideal rewards
-            if rewards_type.isExpected():
+            # Decide on if paying actual rewards earned, or paying estimated/ideal rewards
+            if rewards_type.isEstimated():
 
                 # Determine how many priority 0 baking rights delegate had
                 nb_blocks = len([r for r in self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles) if r["priority"] == 0])
@@ -75,7 +75,7 @@ class RpcRewardApiImpl(RewardApi):
                 total_block_reward = nb_blocks * self.block_reward
                 total_endorsement_reward = nb_endorsements * self.endorsement_reward
 
-                logger.info("Expected rewards for cycle {:d}, {:,} block rewards ({:d} blocks), {:,} endorsing rewards ({:d} slots)".format(
+                logger.info("Estimated rewards for cycle {:d}, {:,} block rewards ({:d} blocks), {:,} endorsing rewards ({:d} slots)".format(
                             cycle, total_block_reward, nb_blocks, total_endorsement_reward, nb_endorsements))
 
                 reward_data["total_rewards"] = total_block_reward + total_endorsement_reward

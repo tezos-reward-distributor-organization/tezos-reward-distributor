@@ -72,10 +72,10 @@ class PaymentStatus(Enum):
 class RewardsType(Enum):
     ACTUAL = 'actual'
     IDEAL = 'ideal'
-    EXPECTED = 'expected'
+    ESTIMATED = 'estimated'
 
-    def isExpected(self):
-        return self == RewardsType.EXPECTED
+    def isEstimated(self):
+        return self == RewardsType.ESTIMATED
 
     def isActual(self):
         return self == RewardsType.ACTUAL

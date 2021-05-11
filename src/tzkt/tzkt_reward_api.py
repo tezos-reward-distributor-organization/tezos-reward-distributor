@@ -18,9 +18,9 @@ class TzKTRewardApiImpl(RewardApi):
         self.baking_address = baking_address
         self.name = 'tzkt'
 
-    def calc_expected_reward(self, cycle: int, num_blocks: int, num_endorsements: int) -> int:
+    def calc_estimated_reward(self, cycle: int, num_blocks: int, num_endorsements: int) -> int:
         """
-        Calculate expected rewards (0 priority, 32 endorsements per block) based on baking rights only
+        Calculate estimated rewards (0 priority, 32 endorsements per block) based on baking rights only
         :param cycle: Cycle
         :param num_blocks: Number of baking rights
         :param num_endorsements: Number of endorsement rights
@@ -56,7 +56,7 @@ class TzKTRewardApiImpl(RewardApi):
 
         delegate_staking_balance = split['stakingBalance']
 
-        if rewards_type.isExpected():
+        if rewards_type.isEstimated():
             num_blocks = \
                 split['ownBlocks'] \
                 + split['missedOwnBlocks'] \
@@ -69,7 +69,7 @@ class TzKTRewardApiImpl(RewardApi):
                 + split['uncoveredEndorsements'] \
                 + split['futureEndorsements']
 
-            total_reward_amount = self.calc_expected_reward(cycle, num_blocks, num_endorsements)
+            total_reward_amount = self.calc_estimated_reward(cycle, num_blocks, num_endorsements)
         else:
             # rewards earned (excluding equivocation losses)
             total_rewards_and_fees = \
