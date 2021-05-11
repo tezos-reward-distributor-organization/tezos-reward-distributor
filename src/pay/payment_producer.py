@@ -139,7 +139,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             return
 
         # if non-positive initial_payment_cycle, set initial_payment_cycle to
-        # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1)'
+        # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1) - self.release_override'
         if self.initial_payment_cycle <= 0:
             pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
             logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
