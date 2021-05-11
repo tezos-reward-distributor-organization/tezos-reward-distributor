@@ -1,5 +1,5 @@
 Tezos Signer with Docker (WIP)
-========================
+===============================
 
 **IMPORTANT: This section is still under maintenance. This will be updated parallely to adding the docker support to the TRD**
 

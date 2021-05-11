@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Test structure</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#unit-tests">Unit tests</a></li>
@@ -183,14 +184,16 @@
             
   <div class="section" id="test-structure">
 <h1>Test structure<a class="headerlink" href="#test-structure" title="Permalink to this headline">¶</a></h1>
-<p>The tests in TRD are run in the following order:
-1. unit tests
-2. regression tests
-3. integration tests
-4. smoke tests
-5. acceptance tests
-6. non functional tests.
-7. formal verification (WIP)</p>
+<p>The tests in TRD are run in the following order:</p>
+<ol class="arabic simple">
+<li><p>unit tests</p></li>
+<li><p>regression tests</p></li>
+<li><p>integration tests</p></li>
+<li><p>smoke tests</p></li>
+<li><p>acceptance tests (WIP)</p></li>
+<li><p>non functional tests. (WIP)</p></li>
+<li><p>formal verification (WIP)</p></li>
+</ol>
 <div class="section" id="unit-tests">
 <h2>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
 <p>Unit tests test only one specific function or method of a class.
@@ -199,11 +202,13 @@ The smaller the function and the more specialized it is the better the unit test
 <div class="section" id="regression-tests">
 <h2>Regression tests<a class="headerlink" href="#regression-tests" title="Permalink to this headline">¶</a></h2>
 <p>Regression tests are tests which document fixed bugs.
-To implement a regression test you need to do the following:
-1. Have a bug in trd (see bug label in issues)
-2. Reproduce the bug in a test under the <cite>regression/</cite> directory.
-3. Assert the behaviour which you would like this bug to have.
-4. Fix the bug and make the test pass.</p>
+To implement a regression test you need to do the following:</p>
+<ol class="arabic simple">
+<li><p>Have a bug in trd (see bug label in issues)</p></li>
+<li><p>Reproduce the bug in a test under the <cite>regression/</cite> directory.</p></li>
+<li><p>Assert the behaviour which you would like this bug to have.</p></li>
+<li><p>Fix the bug and make the test pass.</p></li>
+</ol>
 </div>
 <div class="section" id="integration-tests">
 <h2>Integration tests<a class="headerlink" href="#integration-tests" title="Permalink to this headline">¶</a></h2>

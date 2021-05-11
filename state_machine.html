@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Search &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
+  <title>TRD State Machines &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
   
 
   
@@ -25,7 +25,6 @@
   
 
   
-    
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -40,10 +39,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <script type="text/javascript" src="_static/searchtools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="For Developers" href="contributors.html" />
+    <link rel="prev" title="Run as Linux Service (WIP)" href="linuxservice.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -74,7 +73,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -93,7 +92,7 @@
             
             
               <p class="caption"><span class="caption-text">Content:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
@@ -102,7 +101,11 @@
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TRD State Machines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#launch-state-machine-diagram">Launch state machine diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-state-machine-diagram">Configuration state machine diagram</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Test structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
@@ -155,10 +158,14 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Search</li>
+      <li>TRD State Machines</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/state_machine.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -170,23 +177,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="trd-state-machines">
+<h1>TRD State Machines<a class="headerlink" href="#trd-state-machines" title="Permalink to this headline">¶</a></h1>
+<p>TRD is designed as a state machine to make sure it’s reliable.</p>
+<p>In the future TRD will be <a class="reference external" href="https://en.wikipedia.org/wiki/Formal_verification">formally verified</a> to avoid undetected bugs.</p>
+<div class="section" id="launch-state-machine-diagram">
+<h2>Launch state machine diagram<a class="headerlink" href="#launch-state-machine-diagram" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/launch_state_diagram.png"><img alt="Launch State Diagram" src="_images/launch_state_diagram.png" style="width: 800px;" /></a>
+</div>
+<div class="section" id="configuration-state-machine-diagram">
+<h2>Configuration state machine diagram<a class="headerlink" href="#configuration-state-machine-diagram" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/config_cycle_state_diagram.png"><img alt="Configuration State Diagram" src="_images/config_cycle_state_diagram.png" style="width: 800px;" /></a>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="contributors.html" class="btn btn-neutral float-right" title="For Developers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="linuxservice.html" class="btn btn-neutral float-left" title="Run as Linux Service (WIP)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
@@ -223,14 +236,7 @@
   
   
     
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>
