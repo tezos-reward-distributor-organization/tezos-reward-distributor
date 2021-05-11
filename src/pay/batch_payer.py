@@ -449,6 +449,8 @@ class BatchPayer():
 
             verbose_logger.info("Payment content: {}".format(content))
 
+        if len(content_list) == 0:
+            return PaymentStatus.FAIL, ""
         contents_string = ",".join(content_list)
 
         # run the operations
