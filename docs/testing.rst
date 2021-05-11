@@ -2,12 +2,19 @@ Test structure
 ====================
 
 The tests in TRD are run in the following order:
+
 1. unit tests
+
 2. regression tests
+
 3. integration tests
+
 4. smoke tests
-5. acceptance tests
-6. non functional tests.
+
+5. acceptance tests (WIP)
+
+6. non functional tests. (WIP)
+
 7. formal verification (WIP)
 
 Unit tests
@@ -19,9 +26,13 @@ Regression tests
 ------------------
 Regression tests are tests which document fixed bugs.
 To implement a regression test you need to do the following:
+
 1. Have a bug in trd (see bug label in issues)
+
 2. Reproduce the bug in a test under the `regression/` directory.
+
 3. Assert the behaviour which you would like this bug to have.
+
 4. Fix the bug and make the test pass.
 
 Integration tests
