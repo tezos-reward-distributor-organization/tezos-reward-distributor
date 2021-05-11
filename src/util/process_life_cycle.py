@@ -62,7 +62,8 @@ class TrdEvent(Enum):
     LAUNCH_PRODUCERS = auto()
     LAUNCH_CONSUMERS = auto()
     GO_READY = auto()
-    SHUT_DOWN = auto()
+    SHUT_DOWN_ON_ERROR = auto()
+    SHUT_DOWN_ON_DEMAND = auto()
 
 
 class ProcessLifeCycle:
@@ -77,6 +78,9 @@ class ProcessLifeCycle:
         self.__plugins_manager = None
         self.__payments_queue = queue.Queue(BUF_SIZE)
 
+        self.fsm = self.get_fsm_builder().build()
+
+    def get_fsm_builder(self):
         fsm_builder = TransitionsFsmBuilder()
         fsm_builder.add_initial_state(TrdState.INITIAL, on_leave=lambda e: logger.debug("TRD is starting..."))
         fsm_builder.add_state(TrdState.CMD_ARGS_PARSED, on_enter=self.do_parse_args)
@@ -114,9 +118,10 @@ class ProcessLifeCycle:
         fsm_builder.add_transition(TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY)
         fsm_builder.add_conditional_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, self.is_dry_run_no_consumers, TrdState.NO_CONSUMERS_READY, TrdState.CONSUMERS_READY)
         fsm_builder.add_transition(TrdEvent.GO_READY, [TrdState.CONSUMERS_READY, TrdState.NO_CONSUMERS_READY], TrdState.READY)
-        fsm_builder.add_global_transition(TrdEvent.SHUT_DOWN, TrdState.SHUTTING)
+        fsm_builder.add_transition(TrdEvent.SHUT_DOWN_ON_DEMAND, TrdState.READY, TrdState.SHUTTING)
+        fsm_builder.add_global_transition(TrdEvent.SHUT_DOWN_ON_ERROR, TrdState.SHUTTING)
 
-        self.fsm = fsm_builder.build()
+        return fsm_builder
 
     def print_baking_config(self):
         logger.info("Baking Configuration {}".format(self.__cfg))
@@ -155,12 +160,12 @@ class ProcessLifeCycle:
 
         except KeyboardInterrupt:
             logger.info("Interrupted.")
-            self.shut_down()
+            self.shut_down_on_error()
         except Exception as e:
             logger.error("[Process Life Cycle completing With Failure] Error Details: {:s}".format(str(e)))
             verbose_logger.error("[Process Life Cycle completing With Failure] Stack Trace: {}".format(e), stack_info=True)
 
-            self.shut_down()
+            self.shut_down_on_error()
 
     def do_parse_args(self, e):
         self.__args = parse_arguments()
@@ -273,10 +278,13 @@ class ProcessLifeCycle:
 
     def stop_handler(self, signum, frame):
         logger.info("Application stop handler called: {}".format(signum))
-        self.shut_down()
+        self.shut_down_on_error()
 
-    def shut_down(self):
-        self.fsm.trigger_event(TrdEvent.SHUT_DOWN)
+    def shut_down_on_error(self):
+        self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_ERROR)
+
+    def shut_down_on_demand(self):
+        self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_DEMAND)
 
     def is_running(self):
         return not self.fsm.is_complete
