@@ -81,9 +81,11 @@ class ClientManager:
         signer_url = self.signer_endpoint
         cmd = f'keys/{key_name}'
         url = os.path.join(signer_url, cmd)
+        headers = {'content-type': "application/json"}
         response = self._do_request(method="POST",
                                     url=url,
                                     json_params=json_params,
+                                    headers=headers,
                                     timeout=timeout)
 
         if response is None:
@@ -177,6 +179,7 @@ class ClientManager:
                     json_params=None,
                     headers=None,
                     timeout=None):
+
         try_i = 0
         response = None
         while response is None and try_i < MAX_NB_TRIES:
@@ -188,7 +191,7 @@ class ClientManager:
                                             headers=headers,
                                             timeout=timeout)
             except Exception as e:
-                logger.debug(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
+                logger.error(f"Error, request ->{url}<-, params ->{json_params}<-,\n---\n"
                              f"Error, exception ->{e}<-")
                 # If all MAX_NB_TRIES tries were not successful
                 if try_i == MAX_NB_TRIES - 1:
@@ -197,6 +200,6 @@ class ClientManager:
             return
         # If request returns failed code
         if response.status_code != HTTPStatus.OK:
-            logger.debug(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
+            logger.error(f"Error, request ->{method} {url}<-, params ->{json_params}<-,\n---\n"
                          f"Error, response ->{response.text}<-")
         return response

@@ -186,10 +186,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
                         elif pymnt_cycle >= current_cycle - self.nw_config['NB_FREEZE_CYCLE']:
                             logger.warn("Please note that you are doing payouts for frozen rewards!!!")
-                            if (not self.rewards_type.isExpected()) and self.reward_api.name == 'RPC':
-                                logger.error("Paying out frozen rewards with Node RPC API and rewards type 'Ideal' or 'Actual' is unsupported, you must use TzKT or tzstats API")
-                                self.exit()
-                                break
 
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
@@ -288,19 +284,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # 4- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
-                report_file_path = get_calculation_report_file(self.calculations_dir, pymnt_cycle)
 
                 # 5- send to payment consumer
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
 
-                # logger.info("Total payment amount is {:,} mutez. %s".format(total_amount_to_pay),
-                #            "" if self.delegator_pays_xfer_fee else "(Transfer fee is not included)")
-
-                logger.debug("Creating calculation report (%s)", report_file_path)
-
                 sleep(5.0)
 
                 # 6- create calculations report file. This file contains calculations details
+                report_file_path = get_calculation_report_file(self.calculations_dir, pymnt_cycle)
+                logger.debug("Creating calculation report (%s)", report_file_path)
                 self.create_calculations_report(reward_logs, report_file_path, total_amount, rewards_type)
 
                 # 7- processing of cycle is done

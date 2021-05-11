@@ -6,11 +6,11 @@ from log_config import main_logger
 logger = main_logger.getChild("rpc_block_api")
 
 COMM_HEAD = "{}/chains/main/blocks/head"
+COMM_DELEGATES = "{}/chains/main/blocks/head/context/delegates/{}"
 COMM_REVELATION = "{}/chains/main/blocks/head/context/contracts/{}/manager_key"
 
 
 class RpcBlockApiImpl(BlockApi):
-
     def __init__(self, nw, node_url):
         super(RpcBlockApiImpl, self).__init__(nw)
         self.node_url = node_url
@@ -29,13 +29,28 @@ class RpcBlockApiImpl(BlockApi):
 
     def get_revelation(self, pkh, verbose=False):
         try:
-            response = requests.get(COMM_REVELATION.format(self.node_url, pkh), timeout=5)
+            response = requests.get(COMM_REVELATION.format(self.node_url, pkh))
             manager_key = response.json()
             logger.debug("Manager key is '{}'".format(manager_key))
-            bool_revelation = manager_key and manager_key != 'null'
+            bool_revelation = (
+                manager_key
+                and manager_key != "null"
+                and len(manager_key) == 54
+                and manager_key.startswith("edpk")
+            )
             return bool_revelation
         except requests.exceptions.RequestException as e:
-            message = "[RpcBlockApiImpl] - Unable to fetch revelation: {:s}".format(str(e))
+            message = "[{}] - Unable to fetch revelation: {:s}".format(__class__.__name__, str(e))
+            logger.error(message)
+            raise ApiProviderException(message)
+
+    def get_delegatable(self, pkh):
+        try:
+            response = requests.get(COMM_DELEGATES.format(self.node_url, pkh))
+            delegates = response.json()
+            return "delegated_contracts" in delegates and not bool(delegates["deactivated"])
+        except requests.exceptions.RequestException as e:
+            message = "[{}] - Unable to fetch delegate: {:s}".format(__class__.__name__, str(e))
             logger.error(message)
             raise ApiProviderException(message)
 

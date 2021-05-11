@@ -2,7 +2,7 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 
-CURRENT_TESTNET = 'EDO2NET'
+CURRENT_TESTNET = 'FLORENCENET'
 
 # Providers api prefix
 # Public RPC
