@@ -218,7 +218,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     logger.info("No pending payments for cycle {}, current cycle is {}".format(pymnt_cycle, current_cycle))
 
                     # pending payments done. Do not wait any more.
-                    if self.run_mode in [ RunMode.PENDING, RunMode.ONETIME ]:
+                    if self.run_mode in [RunMode.PENDING, RunMode.ONETIME]:
                         logger.info(f"{self.run_mode} satisfied. Terminating ...")
                         self.exit()
                         break
