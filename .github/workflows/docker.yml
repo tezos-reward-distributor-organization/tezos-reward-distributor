@@ -1,0 +1,26 @@
+name: Docker
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - v*
+
+jobs:
+  deploy-docker-hub:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Docker login
+      run: docker login -u ${{secrets.DOCKER_USER}} -p ${{secrets.DOCKER_PASSWORD}}
+
+    - name: Build the docker image
+      run: docker build -t ${{secrets.DOCKER_USER}}/tezos-reward-distributor .
+
+    - name: Deploy on docker hub
+      run: docker push ${{secrets.DOCKER_USER}}/tezos-reward-distributor
