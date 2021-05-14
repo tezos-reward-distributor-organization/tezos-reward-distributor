@@ -395,7 +395,7 @@ class BatchPayer():
                 if simulation_status == PaymentStatus.FAIL:
                     logger.info("Payment to {} script could not be processed (Possible reason: liquidated contract). Skipping. (think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers)"
                                 .format(payment_item.paymentaddress))
-                    payment_item.paid = PaymentStatus.FAIL
+                    payment_item.paid = PaymentStatus.SKIPPED
                     continue
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
@@ -404,7 +404,7 @@ class BatchPayer():
                 if total_fee > FEE_LIMIT_CONTRACTS:
                     logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. (Needed fee: {:10.6f} XTZ, Max fee: {:10.6f} XTZ) Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
                                 .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
-                    payment_item.paid = PaymentStatus.FAIL
+                    payment_item.paid = PaymentStatus.SKIPPED
                     continue
 
                 # Fees within safety limits; Subtract from payment amount
@@ -429,6 +429,7 @@ class BatchPayer():
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
+                payment_item.paid = PaymentStatus.SKIPPED
                 logger.info("Payment to {:s} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
@@ -450,7 +451,7 @@ class BatchPayer():
             verbose_logger.info("Payment content: {}".format(content))
 
         if len(content_list) == 0:
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.DONE, ""
         contents_string = ",".join(content_list)
 
         # run the operations
@@ -472,7 +473,7 @@ class BatchPayer():
                     op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
                     logger.error(
                         "Error while validating operation - Status: {}, Message: {}".format(op_status, op_error))
-                    return PaymentStatus.FAIL, ""
+                    return PaymentStatus.SKIPPED, ""
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
 

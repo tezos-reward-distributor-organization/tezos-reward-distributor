@@ -58,6 +58,7 @@ class PaymentStatus(Enum):
     PAID = 1
     DONE = 2
     INJECTED = 3
+    SKIPPED = 4
 
     def is_fail(self):
         return self.value == 0
