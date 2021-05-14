@@ -6,7 +6,7 @@ from Constants import PaymentStatus
 from log_config import main_logger
 from pay.payment_batch import PaymentBatch
 from util.csv_payment_file_parser import CsvPaymentFileParser
-from util.dir_utils import get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, remove_busy_file, BUSY_FILE
+from util.dir_utils import get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, BUSY_FILE
 
 logger = main_logger.getChild("payment_producer")
 
