@@ -33,7 +33,7 @@ jobs:
           pip install --upgrade recommonmark
 
           sudo apt install graphviz
-          pip install graphviz pygraphviz
+          pip install graphviz
           python docs/fsm/graphviz/draw_state_diagrams.py
 
         build-command: sphinx-build -b html . build

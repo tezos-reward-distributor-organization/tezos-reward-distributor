@@ -58,7 +58,7 @@ jobs:
         pip install -r requirements.txt
         pip install pytest
         pip install parameterized
-        pip install graphviz pygraphviz
+        pip install graphviz
 
     - name: Set the python path
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV  
@@ -92,7 +92,7 @@ jobs:
           pip install --upgrade recommonmark
 
           sudo apt install graphviz
-          pip install graphviz pygraphviz
+          pip install graphviz
           python docs/fsm/graphviz/draw_state_diagrams.py
 
         build-command: sphinx-build -b html . build
