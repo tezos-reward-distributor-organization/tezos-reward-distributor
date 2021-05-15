@@ -94,10 +94,10 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
 
         return fsm
 
-    def draw(self, path):
+    def draw(self, path, title="State Machine"):
         fsm = TransitionsFsmModel(self.__final)
         from transitions.extensions import GraphMachine
-        machine = GraphMachine(model=fsm, states=self.__states, initial=self.__initial, transitions=self.__transitions, send_event=True, finalize_event=self.__transition_complete_callback, use_pygraphviz=True, show_conditions=True, show_state_attributes=True)
+        machine = GraphMachine(model=fsm, states=self.__states, initial=self.__initial, transitions=self.__transitions, send_event=True, finalize_event=self.__transition_complete_callback, title=title, use_pygraphviz=True, show_conditions=True, show_state_attributes=True)
         fsm.init(machine)
         fsm.get_graph().draw(path, prog='dot')
         return fsm
