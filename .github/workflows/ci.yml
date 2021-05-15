@@ -57,6 +57,8 @@ jobs:
         pip install -r requirements.txt
         pip install pytest
         pip install parameterized
+        sudo apt install graphviz
+        pip install graphviz pygraphviz
 
     - name: Set the python path
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV  
