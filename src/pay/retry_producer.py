@@ -12,12 +12,13 @@ logger = main_logger.getChild("payment_producer")
 
 
 class RetryProducer:
-    def __init__(self, payments_queue, reward_api, payment_producer, payments_dir, retry_injected=False):
+    def __init__(self, payments_queue, reward_api, payment_producer, payments_dir, initial_payment_cycle, retry_injected=False):
         self.payments_queue = payments_queue
         self.reward_api = reward_api
         self.payment_producer = payment_producer
         self.payments_root = payments_dir
         self.retry_injected = retry_injected
+        self.initial_payment_cycle = initial_payment_cycle
 
     def retry_failed_payments(self):
         logger.debug("retry_failed_payments started")
@@ -25,13 +26,14 @@ class RetryProducer:
         # 1 - list csv files under payments/failed directory
         # absolute path of csv files found under payments_root/failed directory
         failed_payments_dir = get_failed_payments_dir(self.payments_root)
-        payment_reports_failed = [join(failed_payments_dir, x) for x in listdir(failed_payments_dir) if x.endswith('.csv')]
+        payment_reports_failed = [join(failed_payments_dir, x) for x in listdir(failed_payments_dir) if x.endswith('.csv')
+                and int(x.split(".csv")[0]) >= self.initial_payment_cycle]
 
         if payment_reports_failed:
             payment_reports_failed = sorted(payment_reports_failed, key=self.get_basename)
             logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
         else:
-            logger.info("No failed payment files found under directory '{}'".format(failed_payments_dir))
+            logger.info("No failed payment files found under directory '{}' on or after cycle '{}'".format(failed_payments_dir, self.initial_payment_cycle))
 
         # 2- for each csv file with name csv_report.csv
         for payment_failed_report_file in payment_reports_failed:

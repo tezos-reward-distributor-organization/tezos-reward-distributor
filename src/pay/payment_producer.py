@@ -83,7 +83,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.retry_fail_event = threading.Event()
         self.retry_injected = retry_injected
 
-        self.retry_producer = RetryProducer(self.payments_queue, self.reward_api, self, self.payments_root, self.retry_injected)
+        self.retry_producer = RetryProducer(self.payments_queue, self.reward_api, self, self.payments_root, self.initial_payment_cycle, self.retry_injected)
 
         logger.info('Producer "{}" started'.format(self.name))
 
