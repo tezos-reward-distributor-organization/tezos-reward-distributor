@@ -27,7 +27,7 @@ class RetryProducer:
         # absolute path of csv files found under payments_root/failed directory
         failed_payments_dir = get_failed_payments_dir(self.payments_root)
         payment_reports_failed = [join(failed_payments_dir, x) for x in listdir(failed_payments_dir) if x.endswith('.csv')
-                and int(x.split(".csv")[0]) >= self.initial_payment_cycle]
+                                  and int(x.split(".csv")[0]) >= self.initial_payment_cycle]
 
         if payment_reports_failed:
             payment_reports_failed = sorted(payment_reports_failed, key=self.get_basename)
