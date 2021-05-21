@@ -79,6 +79,7 @@ class TestRetryProducerBeforeInitialCycle(TestCase):
 
         self.assertEqual(0, len(payment_queue.queue))
 
+
 class TestRetryProducer(TestCase):
     def setUp(self):
         try:
@@ -143,6 +144,7 @@ class TestRetryProducer(TestCase):
         return PaymentConsumer("name", TEST_REPORT_TEMP_DIR, "tz1234567890123456789012345678901234", payment_queue,
                                "node_addr", ClientManager('', ''), nw, MagicMock(),
                                rewards_type='actual', dry_run=False)
+
 
 class _DummyRpcRewardApi:
     def update_current_balances(self, reward_logs):
