@@ -73,7 +73,7 @@ class TestRetryProducer(TestCase):
         payment_queue = queue.Queue(100)
 
         retry_producer = RetryProducer(payment_queue, _DummyRpcRewardApi(), _TestPaymentProducer(),
-                                       TEST_REPORT_TEMP_DIR)
+                                       TEST_REPORT_TEMP_DIR, 10)
         retry_producer.retry_failed_payments()
 
         self.assertEqual(1, len(payment_queue.queue))
