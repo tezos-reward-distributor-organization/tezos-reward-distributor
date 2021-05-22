@@ -96,3 +96,16 @@ jobs:
           python docs/fsm/graphviz/draw_state_diagrams.py
 
         build-command: sphinx-build -b html . build
+
+  build-docker:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Build the docker image
+      run: docker build -t trdo/tezos-reward-distributor .
+
