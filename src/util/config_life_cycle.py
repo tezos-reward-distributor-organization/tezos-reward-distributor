@@ -39,7 +39,10 @@ class ConfigLifeCycle:
 
         self.__config_text = None
         self.__parser = None
+        self.__callback = callback
+        self.fsm = self.get_fsm_builder().build()
 
+    def get_fsm_builder(self):
         fsm_builder = TransitionsFsmBuilder()
         fsm_builder.add_initial_state(ConfigState.INITIAL, on_leave=lambda e: logger.debug("Loading baking configuration file ..."))
         fsm_builder.add_state(ConfigState.READ, on_enter=self.do_read_cfg_file)
@@ -47,7 +50,7 @@ class ConfigLifeCycle:
         fsm_builder.add_state(ConfigState.PARSED, on_enter=self.do_parse_cfg)
         fsm_builder.add_state(ConfigState.VALIDATED, on_enter=self.do_validate_cfg)
         fsm_builder.add_state(ConfigState.PROCESSED, on_enter=self.do_process_cfg)
-        fsm_builder.add_final_state(ConfigState.COMPLETED, on_enter=lambda e: callback(self.get_conf()))
+        fsm_builder.add_final_state(ConfigState.COMPLETED, on_enter=lambda e: self.__callback(self.get_conf()))
 
         fsm_builder.add_transition(ConfigEvent.READ, ConfigState.INITIAL, ConfigState.READ)
         fsm_builder.add_transition(ConfigEvent.BUILD, ConfigState.READ, ConfigState.BUILT)
@@ -55,8 +58,7 @@ class ConfigLifeCycle:
         fsm_builder.add_transition(ConfigEvent.VALIDATE, ConfigState.PARSED, ConfigState.VALIDATED)
         fsm_builder.add_transition(ConfigEvent.PROCESS, ConfigState.VALIDATED, ConfigState.PROCESSED)
         fsm_builder.add_transition(ConfigEvent.COMPLETE, ConfigState.PROCESSED, ConfigState.COMPLETED)
-
-        self.fsm = fsm_builder.build()
+        return fsm_builder
 
     def start(self):
         self.fsm.trigger_event(ConfigEvent.READ)
