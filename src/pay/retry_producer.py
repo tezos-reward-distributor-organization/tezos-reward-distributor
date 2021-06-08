@@ -49,9 +49,9 @@ class RetryProducer:
             nb_done = len(list(filter(lambda f: f.paid == PaymentStatus.DONE, batch)))
             nb_injected = len(list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch)))
             nb_failed = len(list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch)))
-            nb_skipped = len(list(filter(lambda f: f.paid == PaymentStatus.SKIPPED, batch)))
+            nb_avoided = len(list(filter(lambda f: f.paid == PaymentStatus.AVOIDED, batch)))
 
-            logger.info("Summary {} paid, {} done, {} injected, {} fail, {} skipped".format(nb_paid, nb_done, nb_injected, nb_failed, nb_skipped))
+            logger.info("Summary {} paid, {} done, {} injected, {} fail, {} avoided".format(nb_paid, nb_done, nb_injected, nb_failed, nb_avoided))
 
             if self.retry_injected:
                 self.convert_injected_to_fail(batch)
