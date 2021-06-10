@@ -51,6 +51,8 @@ class PaymentStatus(Enum):
     FAIL: Some failures happened in the process.
     DONE: Process completed without payment. E.g. zero amount, dry run...
     INJECTED: Transaction is injected into the node but after waiting for some time it is not added to any block.
+    AVOIDED: payment item avoided because of lack of support, incompatibility of contract script,
+             contract with no default entry point, too high fees, liquidated contract, etc.
     TRD does not know its fate.
     """
     UNDEFINED = -1
@@ -58,6 +60,7 @@ class PaymentStatus(Enum):
     PAID = 1
     DONE = 2
     INJECTED = 3
+    AVOIDED = 4
 
     def is_fail(self):
         return self.value == 0

@@ -6,7 +6,7 @@ from Constants import PaymentStatus
 from log_config import main_logger
 from pay.payment_batch import PaymentBatch
 from util.csv_payment_file_parser import CsvPaymentFileParser
-from util.dir_utils import get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, remove_busy_file, BUSY_FILE
+from util.dir_utils import get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, BUSY_FILE
 
 logger = main_logger.getChild("payment_producer")
 
@@ -39,40 +39,30 @@ class RetryProducer:
         for payment_failed_report_file in payment_reports_failed:
             logger.info("Working on failed payment file {}".format(payment_failed_report_file))
 
-            # 2.1 - if there is a file csv_report.csv under payments/done, it means payment is already done
-            if os.path.isfile(payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)):
-                # remove payments/failed/csv_report.csv
-                os.remove(payment_failed_report_file)
-
-                logger.info("Payment for failed payment {} is already done. Removing.".format(payment_failed_report_file))
-
-                # remove payments/failed/csv_report.csv.BUSY
-                # if there is a busy failed payment report file, remove it.
-                remove_busy_file(payment_failed_report_file)
-
-                # do not double pay
-                continue
-
-            # 2.2 - if queue is full, wait for sometime
-            # make sure the queue is not full
-            while self.payments_queue.full():
-                logger.debug("Payments queue is full. Please wait three minutes.")
-                sleep(60 * 3)
-
+            # 2.1 - Read csv_report.csv under payments/failed and -if existing- under payments/done
             cycle = int(os.path.splitext(os.path.basename(payment_failed_report_file))[0])
-
-            # 2.3 read payments/failed/csv_report.csv file into a list of dictionaries
             batch = CsvPaymentFileParser().parse(payment_failed_report_file, cycle)
+            payment_successful_report_file = payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)
+            if os.path.isfile(payment_successful_report_file):
+                batch += CsvPaymentFileParser().parse(payment_successful_report_file, cycle)
 
+            # 2.2 Translate batch into a list of dictionaries
             nb_paid = len(list(filter(lambda f: f.paid == PaymentStatus.PAID, batch)))
             nb_done = len(list(filter(lambda f: f.paid == PaymentStatus.DONE, batch)))
             nb_injected = len(list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch)))
             nb_failed = len(list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch)))
+            nb_avoided = len(list(filter(lambda f: f.paid == PaymentStatus.AVOIDED, batch)))
 
-            logger.info("Summary {} paid, {} done, {} injected, {} fail".format(nb_paid, nb_done, nb_injected, nb_failed))
+            logger.info("Summary {} paid, {} done, {} injected, {} fail, {} avoided".format(nb_paid, nb_done, nb_injected, nb_failed, nb_avoided))
 
             if self.retry_injected:
                 self.convert_injected_to_fail(batch)
+
+            # 2.3 - if queue is full, wait for sometime
+            # make sure the queue is not full
+            while self.payments_queue.full():
+                logger.debug("Payments queue is full. Please wait three minutes.")
+                sleep(60 * 3)
 
             # 2.5 - Need to fetch current balance for addresses of any failed payments
             self.reward_api.update_current_balances(batch)
