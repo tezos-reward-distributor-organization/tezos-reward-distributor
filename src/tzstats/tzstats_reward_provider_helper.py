@@ -177,8 +177,12 @@ class TzStatsRewardProviderHelper:
 
     def update_current_balances(self, reward_logs):
         """External helper for fetching current balance of addresses"""
-        for rl in reward_logs:
-            rl.current_balance = self.__fetch_current_balance([rl.address])[rl.address]
+        split_addresses = split(reward_logs, 50)
+        for list_address in split_addresses:
+            addresses = [x.address for x in list_address]
+            list_curr_balances = self.__fetch_current_balance(addresses)
+            for d in list_address:
+                d.current_balance = list_curr_balances[d.address]
 
     def get_snapshot_level(self, cycle):
 
