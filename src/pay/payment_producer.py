@@ -16,7 +16,7 @@ from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
-from util.dir_utils import get_calculation_report_file, get_latest_report_file
+from util.dir_utils import get_calculation_report_file
 
 logger = main_logger.getChild("payment_producer")
 
@@ -24,10 +24,10 @@ BOOTSTRAP_SLEEP = 8
 
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
-    def __init__(self, name, initial_payment_cycle, network_config, payments_dir, calculations_dir, run_mode,
+    def __init__(self, name, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
                  dry_run, client_manager, node_url, reward_data_provider, node_url_public='', api_base_url=None,
-                 retry_injected=False):
+                 retry_injected=False, initial_payment_cycle=0):
         super(PaymentProducer, self).__init__()
 
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
@@ -55,12 +55,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.rewards_type = baking_cfg.get_rewards_type()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
-
-        if self.initial_payment_cycle is None:
-            recent = get_latest_report_file(payments_dir)
-            # if successful payment logs exist (in "done" directory), set initial cycle to following cycle
-            # if succesful payment logs do not exist, set initial cycle to 0, so that payment starts from last released rewards
-            self.initial_payment_cycle = 0 if recent is None else int(recent) + 1
 
         logger.info("initial_cycle set to {}".format(self.initial_payment_cycle))
 

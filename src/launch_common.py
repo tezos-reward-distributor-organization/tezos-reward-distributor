@@ -85,7 +85,7 @@ def add_argument_cycle(parser):
     parser.add_argument("-C", "--initial_cycle",
                         help="First cycle to start payment. For last released rewards, set to 0. Non-positive values "
                              "are interpreted as: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1) - release_override. "
-                             "If not set application will continue from last payment made or last reward released.",
+                             "If not set, default to 0, which will pay last released reward.",
                         type=int)
 
 
