@@ -72,9 +72,9 @@ class BatchPayer():
             logger.warning("File {} not found. Using default fee values".format(FEE_INI))
 
         tztx = config['TZTX']
-        self.gas_limit = kttx['gas_limit']
-        self.storage_limit = int(kttx['storage_limit'])
-        self.default_fee = int(kttx['fee'])
+        self.gas_limit = tztx['gas_limit']
+        self.storage_limit = int(tztx['storage_limit'])
+        self.default_fee = int(tztx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
         self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee', fallback=True)  # Must use getboolean otherwise parses as string
