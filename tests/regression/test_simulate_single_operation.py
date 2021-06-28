@@ -31,7 +31,7 @@ def test_simulate_single_operation():
     config = configparser.ConfigParser()
     assert os.path.isfile(FEE_INI) is True
     config.read(FEE_INI)
-    default_fee = int(config["KTTX"]["fee"])
+    default_fee = int(config["TZTX"]["fee"])
     network_config = {"BLOCK_TIME_IN_SEC": 64}
     batch_payer = BatchPayer(
         node_url="node_addr",
