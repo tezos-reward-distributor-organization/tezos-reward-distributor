@@ -80,6 +80,16 @@ jobs:
       with:
         python-version: 3.9
 
+    - name: Set the python path
+      run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
+
+    - name: Generate diagrams
+      run: |
+        sudo apt-get install graphviz -y
+        pip install -r requirements.txt
+        pip install graphviz
+        python docs/fsm/graphviz/draw_state_diagrams.py
+
     - name: Build documentation
       uses: ammaraskar/sphinx-action@master
       with:
@@ -90,11 +100,6 @@ jobs:
           pip install sphinx_rtd_theme
           pip install sphinxcontrib.spelling
           pip install --upgrade recommonmark
-
-          sudo apt install graphviz
-          pip install graphviz
-          python docs/fsm/graphviz/draw_state_diagrams.py
-
         build-command: sphinx-build -b html . build
 
   build-docker:

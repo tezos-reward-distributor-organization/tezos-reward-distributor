@@ -1,6 +1,8 @@
+from util.config_life_cycle import ConfigLifeCycle
+from util.process_life_cycle import ProcessLifeCycle
+
+
 def draw_state_diagram():
-    from util.config_life_cycle import ConfigLifeCycle
-    from util.process_life_cycle import ProcessLifeCycle
     process_life_cycle = ProcessLifeCycle(None)
     config_life_cycle = ConfigLifeCycle(None, None, None, None)
 
