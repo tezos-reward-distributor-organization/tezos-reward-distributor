@@ -13,7 +13,7 @@ from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
-MAX_TX_PER_BLOCK_tz = 200
+MAX_TX_PER_BLOCK_TZ = 600
 MAX_TX_PER_BLOCK_KT = 10
 PKH_LENGTH = 36
 SIGNATURE_BYTES_SIZE = 64
@@ -71,10 +71,10 @@ class BatchPayer():
         else:
             logger.warning("File {} not found. Using default fee values".format(FEE_INI))
 
-        kttx = config['KTTX']
-        self.gas_limit = kttx['gas_limit']
-        self.storage_limit = int(kttx['storage_limit'])
-        self.default_fee = int(kttx['fee'])
+        tztx = config['TZTX']
+        self.gas_limit = tztx['gas_limit']
+        self.storage_limit = int(tztx['storage_limit'])
+        self.default_fee = int(tztx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
         self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee', fallback=True)  # Must use getboolean otherwise parses as string
@@ -186,8 +186,8 @@ class BatchPayer():
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
         payment_items_tz = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('tz')]
         payment_items_KT = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('KT')]
-        payment_items_chunks_tz = [payment_items_tz[i:i + MAX_TX_PER_BLOCK_tz] for i in
-                                   range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_tz)]
+        payment_items_chunks_tz = [payment_items_tz[i:i + MAX_TX_PER_BLOCK_TZ] for i in
+                                   range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_TZ)]
         payment_items_chunks_KT = [payment_items_KT[i:i + MAX_TX_PER_BLOCK_KT] for i in
                                    range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)]
         payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
