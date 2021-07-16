@@ -260,7 +260,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # 0- check for past payment evidence for current cycle
             past_payment_state = check_past_payment(self.payments_root, pymnt_cycle)
 
-            if not self.dry_run and past_payment_state:
+            if past_payment_state:
                 logger.warn(past_payment_state)
                 return True
 

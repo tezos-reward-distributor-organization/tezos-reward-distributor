@@ -194,11 +194,19 @@ class PaymentConsumer(threading.Thread):
         logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
         logger.debug("Adding {} already paid items to the report".format(len(already_paid_items)))
 
-        report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
+        payouts = already_paid_items + payment_logs
 
-        CsvPaymentFileParser().write(report_file, already_paid_items + payment_logs)
+        successful_payouts = [x for x in payouts if x.paid != PaymentStatus.FAIL]
+        unsuccessful_payouts = [x for x in payouts if x.paid == PaymentStatus.FAIL]
 
+        report_file = payment_report_file_path(self.payments_dir, payment_cycle, 0)
+        CsvPaymentFileParser().write(report_file, successful_payouts)
         logger.info("Payment report is created at '{}'".format(report_file))
+
+        if nb_failed > 0:
+            report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
+            CsvPaymentFileParser().write(report_file, unsuccessful_payouts)
+            logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
             logger.debug("Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}".format(pl.address, pl.type, pl.amount / MUTEZ, pl.paid))

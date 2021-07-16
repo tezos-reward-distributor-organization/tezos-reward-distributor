@@ -13,7 +13,7 @@ from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
-MAX_TX_PER_BLOCK_tz = 200
+MAX_TX_PER_BLOCK_TZ = 600
 MAX_TX_PER_BLOCK_KT = 10
 PKH_LENGTH = 36
 SIGNATURE_BYTES_SIZE = 64
@@ -71,10 +71,10 @@ class BatchPayer():
         else:
             logger.warning("File {} not found. Using default fee values".format(FEE_INI))
 
-        kttx = config['KTTX']
-        self.gas_limit = kttx['gas_limit']
-        self.storage_limit = int(kttx['storage_limit'])
-        self.default_fee = int(kttx['fee'])
+        tztx = config['TZTX']
+        self.gas_limit = tztx['gas_limit']
+        self.storage_limit = int(tztx['storage_limit'])
+        self.default_fee = int(tztx['fee'])
 
         # section below is left to make sure no one using legacy configuration option
         self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee', fallback=True)  # Must use getboolean otherwise parses as string
@@ -186,8 +186,8 @@ class BatchPayer():
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
         payment_items_tz = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('tz')]
         payment_items_KT = [payment_item for payment_item in payment_items if payment_item.paymentaddress.startswith('KT')]
-        payment_items_chunks_tz = [payment_items_tz[i:i + MAX_TX_PER_BLOCK_tz] for i in
-                                   range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_tz)]
+        payment_items_chunks_tz = [payment_items_tz[i:i + MAX_TX_PER_BLOCK_TZ] for i in
+                                   range(0, len(payment_items_tz), MAX_TX_PER_BLOCK_TZ)]
         payment_items_chunks_KT = [payment_items_KT[i:i + MAX_TX_PER_BLOCK_KT] for i in
                                    range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)]
         payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
@@ -395,7 +395,7 @@ class BatchPayer():
                 if simulation_status == PaymentStatus.FAIL:
                     logger.info("Payment to {} script could not be processed (Possible reason: liquidated contract). Skipping. (think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers)"
                                 .format(payment_item.paymentaddress))
-                    payment_item.paid = PaymentStatus.FAIL
+                    payment_item.paid = PaymentStatus.AVOIDED
                     continue
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
@@ -404,7 +404,7 @@ class BatchPayer():
                 if total_fee > FEE_LIMIT_CONTRACTS:
                     logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. (Needed fee: {:10.6f} XTZ, Max fee: {:10.6f} XTZ) Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
                                 .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
-                    payment_item.paid = PaymentStatus.FAIL
+                    payment_item.paid = PaymentStatus.AVOIDED
                     continue
 
                 # Fees within safety limits; Subtract from payment amount
@@ -429,6 +429,7 @@ class BatchPayer():
 
             # if pymnt_amnt becomes 0, don't pay
             if pymnt_amnt == 0:
+                payment_item.paid = PaymentStatus.DONE
                 logger.info("Payment to {:s} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
 
@@ -450,7 +451,7 @@ class BatchPayer():
             verbose_logger.info("Payment content: {}".format(content))
 
         if len(content_list) == 0:
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.DONE, ""
         contents_string = ",".join(content_list)
 
         # run the operations
@@ -472,7 +473,7 @@ class BatchPayer():
                     op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
                     logger.error(
                         "Error while validating operation - Status: {}, Message: {}".format(op_status, op_error))
-                    return PaymentStatus.FAIL, ""
+                    return PaymentStatus.AVOIDED, ""
             except KeyError:
                 logger.debug("Unable to find metadata->operation_result->{status,errors} in run_ops response")
 

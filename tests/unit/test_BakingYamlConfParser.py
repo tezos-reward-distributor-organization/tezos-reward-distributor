@@ -20,8 +20,8 @@ class TestYamlAppConfParser(TestCase):
     def test_validate(self):
         data_fine = """
         version: 1.0
-        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        baking_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+        payment_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
         founders_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
         supporters_set:
@@ -41,11 +41,11 @@ class TestYamlAppConfParser(TestCase):
         cnf_prsr.parse()
         cnf_prsr.validate()
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZ)
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('min_delegation_amt'), 0)
@@ -62,8 +62,8 @@ class TestYamlAppConfParser(TestCase):
     def test_validate_no_founders_map(self):
         data_no_founders = """
         version: 1.0
-        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
-        payment_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        baking_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+        payment_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
         owners_map: {'KT2Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5,'KT3Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj': 0.5}
         supporters_set: None
         service_fee: 4.5
@@ -83,10 +83,10 @@ class TestYamlAppConfParser(TestCase):
         cnf_prsr.parse()
         cnf_prsr.validate()
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
-        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('baking_address'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('payment_address'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_pkh'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
+        self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_manager'), 'tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194')
         self.assertEqual(cnf_prsr.get_conf_obj_attr('__payment_address_type'), AddrType.TZ)
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr('founders_map'), dict())
@@ -106,7 +106,7 @@ class TestYamlAppConfParser(TestCase):
 
     def test_validate_plugins(self):
         data = """
-        baking_address: tz1Z1tMai15JWUWeN2PKL9faXXVPMuWamzJj
+        baking_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
         plugins:
           enabled:
           - plug1
