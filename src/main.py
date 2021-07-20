@@ -45,13 +45,12 @@ def check_fee_ini(args=None):
             print("File fee.ini has been renamed to fee.ini.old")
         else:
             print("File fee.ini needs to be manually deleted or renamed")
-            sleep(2)
     return 1
-    
+
 
 def start_application(args=None):
     check_fee_ini()
-    
+
     # Requirements need to be checked outside of the state machine
     # because the library transitions could not be present
     if requirements_installed():
