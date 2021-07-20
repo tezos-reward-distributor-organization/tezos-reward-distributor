@@ -83,18 +83,21 @@ def build_parser():
 
 def add_argument_cycle(parser):
     parser.add_argument("-C", "--initial_cycle",
-                        help="First cycle to start payment. For last released rewards, set to 0. Non-positive values "
-                             "are interpreted as: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1) - release_override. "
-                             "If not set, default to 0, which will pay last released reward.",
-                        type=int)
+                        help="First cycle to start payment(s) from depending on run mode -M. "
+                             "The default value is 0, which will start at the most recently released reward. "
+                             "Positive values sets desired cycle directly: initial_cycle <= current cycle - (NB_FREEZE_CYCLE+1) - release_override. "
+                             "Non-positive values count backwards: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1) - release_override.",
+                        default=0, type=int)
 
 
 def add_argument_mode(parser):
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. "
                              "2: Run all pending payments and exit. 3: Run for one cycle and exit. "
-                             "Suitable to use with -C option. 4: Retry failed payments and exit",
-                        default=1, choices=[1, 2, 3, 4], type=int)
+                             "4: Retry failed payments and exit. "
+                             "Recommended: Always explicitly specify starting cycle with -C",
+                        choices=[1, 2, 3, 4],
+                        default=1, type=int)
 
 
 def add_argument_release_override(parser):
@@ -114,7 +117,7 @@ def add_argument_payment_offset(parser):
 
 def add_argument_network(parser):
     parser.add_argument("-N", "--network",
-                        help="Network name. Default is Mainnet. The current test network of tezos is DELPHINET.",
+                        help="Network name. Default is Mainnet. The current test network of tezos is FLORENCENET.",
                         choices=['MAINNET', 'FLORENCENET'],
                         default='MAINNET')
 
@@ -140,11 +143,15 @@ def add_argument_node_addr_public(parser):
 
 
 def add_argument_reports_base(parser):
-    parser.add_argument("-r", "--reports_base", help="Directory to create reports", default='~/pymnt/reports')
+    parser.add_argument("-r", "--reports_base",
+                        help="Directory to create reports",
+                        default='~/pymnt/reports')
 
 
 def add_argument_config_dir(parser):
-    parser.add_argument("-f", "--config_dir", help="Directory to find baking configuration", default='~/pymnt/cfg')
+    parser.add_argument("-f", "--config_dir",
+                        help="Directory to find baking configuration",
+                        default='~/pymnt/cfg')
 
 
 def add_argument_dry(parser):
@@ -207,8 +214,12 @@ def add_argument_retry_injected(parser):
 
 
 def add_argument_syslog(parser):
-    parser.add_argument("--syslog", help="Log to syslog. Useful in daemon mode.", action="store_true")
+    parser.add_argument("--syslog",
+                        help="Log to syslog. Useful in daemon mode.",
+                        action="store_true")
 
 
 def add_argument_log_file(parser):
-    parser.add_argument("--log-file", help="Log output file", default=DEFAULT_LOG_FILE)
+    parser.add_argument("--log-file",
+                        help="Log output file",
+                        default=DEFAULT_LOG_FILE)
