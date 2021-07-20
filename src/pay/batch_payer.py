@@ -13,7 +13,7 @@ from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
-MAX_TX_PER_BLOCK_TZ = 600
+MAX_TX_PER_BLOCK_TZ = 400
 MAX_TX_PER_BLOCK_KT = 10
 PKH_LENGTH = 36
 SIGNATURE_BYTES_SIZE = 64
