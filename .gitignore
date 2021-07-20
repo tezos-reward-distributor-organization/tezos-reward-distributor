@@ -1,5 +1,6 @@
 logs/
 reports/
+.vscode/
 */*/__pycache__/
 */__pycache__/
 email.ini
