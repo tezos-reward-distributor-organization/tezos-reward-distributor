@@ -27,7 +27,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     def __init__(self, name, network_config, payments_dir, calculations_dir, run_mode,
                  service_fee_calc, release_override, payment_offset, baking_cfg, payments_queue, life_cycle,
                  dry_run, client_manager, node_url, reward_data_provider, node_url_public='', api_base_url=None,
-                 retry_injected=False, initial_payment_cycle=0):
+                 retry_injected=False, initial_payment_cycle):
         super(PaymentProducer, self).__init__()
 
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
