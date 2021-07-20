@@ -1,7 +1,7 @@
 import configparser
 import os
 from unittest.mock import patch, MagicMock
-from pay.batch_payer import BatchPayer, FEE_INI, MUTEZ_PER_GAS_UNIT
+from pay.batch_payer import BatchPayer, TZTX_FEE, MUTEZ_PER_GAS_UNIT
 from model.reward_log import RewardLog
 from cli.client_manager import ClientManager
 from http import HTTPStatus
@@ -28,10 +28,7 @@ run_ops_parsed = {
     MagicMock(return_value=(HTTPStatus.OK, run_ops_parsed)),
 )
 def test_simulate_single_operation():
-    config = configparser.ConfigParser()
-    assert os.path.isfile(FEE_INI) is True
-    config.read(FEE_INI)
-    default_fee = int(config["TZTX"]["fee"])
+    default_fee = TZTX_FEE
     network_config = {"BLOCK_TIME_IN_SEC": 64}
     batch_payer = BatchPayer(
         node_url="node_addr",
