@@ -1,5 +1,3 @@
-import configparser
-import os
 from random import randint
 from time import sleep
 from http import HTTPStatus
