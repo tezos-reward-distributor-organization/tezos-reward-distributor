@@ -1,5 +1,3 @@
-import configparser
-import os
 from unittest.mock import patch, MagicMock
 from pay.batch_payer import BatchPayer, TZTX_FEE, MUTEZ_PER_GAS_UNIT
 from model.reward_log import RewardLog
