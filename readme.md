@@ -4,7 +4,7 @@ DISCLAIMER : TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DE
 
 PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR [STATISTICS POLICY](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/statistics.html) FOR MORE INFORMATION.
 
-## Tezos Reward Distributor : Run & Forget
+## Tezos Reward Distributor: Run & Forget
 
 [![Actions Status](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/workflows/CI/badge.svg)](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/actions)
 [![Documentation Status](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/workflows/Docs/badge.svg)](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/actions)
@@ -17,13 +17,13 @@ TRD supports complex payments, pays in batches, and provides three back ends for
 
 **Provider notes:**
 
-### TZStats
+### TzStats
 
-The [terms and conditions](https://tzstats.com/terms) of tzstats note that a license is needed for the commercial use of the API!
+The [terms and conditions](https://tzstats.com/terms) of TzStats note that a license is needed for the commercial use of the API.
 
-> If you wish to use the Data in a manner that is primarily intended for or directed towards commercial advantage or monetary compensation (such use, “Commercial Use”), KIDTSUNAMI requires that you enter into a separate commercial license agreement. Entering into a separate commercial license allows us to protect KIDTSUNAMI’s investment in the Data and to maintain the integrity of the Data.
+> If you wish to use the Data in a manner that is primarily intended for or directed towards commercial advantage or monetary compensation (such use, “Commercial Use”), Blockwatch requires that you enter into a separate commercial license agreement. Entering into a separate commercial license allows us to protect Blockwatch’s investment in the Data and to maintain the integrity of the Data.
 >
-> Please contact us at license@kidtsunami.com for more information about Commercial Uses of our Data.
+> Please contact us at license@blockwatch.cc for more information about Commercial Uses of our Data.
 
 ### TzKt
 
