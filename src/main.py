@@ -1,3 +1,4 @@
+import os
 import sys
 import pip
 import pkg_resources
@@ -32,7 +33,24 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
         return True
 
 
+def check_fee_ini(args=None):
+    # Check if the fee.ini configuration file is still present and, if so,
+    # warn the user that the file has to be removed or renamed
+    if os.path.isfile("fee.ini"):
+        print("File fee.ini is deprecated. You can change the values at src/pay/batch_payer.py.")
+        print("Would you like to rename fee.ini to fee.ini.old? (y/n)")
+        value = input().lower()
+        if value == 'yes' or value == 'y':
+            os.rename("fee.ini", "fee.ini.old")
+            print("File fee.ini has been renamed to fee.ini.old")
+        else:
+            print("File fee.ini needs to be manually deleted or renamed")
+    return 1
+
+
 def start_application(args=None):
+    check_fee_ini()
+
     # Requirements need to be checked outside of the state machine
     # because the library transitions could not be present
     if requirements_installed():
