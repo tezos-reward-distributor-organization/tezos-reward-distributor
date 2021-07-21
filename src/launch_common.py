@@ -88,7 +88,7 @@ def add_argument_cycle(parser):
                              "Cycle for which rewards were most recently released is calulated based on the formula:"
                              " current_cycle - (NB_FREEZE_CYCLE+1) - release_override"
                              "Negative values are relative to the cycle where rewards were most recently released."
-                             "Positive values sets desired cycle directly."
+                             "Positive values sets desired cycle directly.",
                         default=0, type=int)
 
 
