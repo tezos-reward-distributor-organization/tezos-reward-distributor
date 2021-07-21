@@ -31,7 +31,7 @@ def test_simulate_single_operation():
     config = configparser.ConfigParser()
     assert os.path.isfile(FEE_INI) is True
     config.read(FEE_INI)
-    default_fee = int(config["KTTX"]["fee"])
+    default_fee = int(config["TZTX"]["fee"])
     network_config = {"BLOCK_TIME_IN_SEC": 64}
     batch_payer = BatchPayer(
         node_url="node_addr",
@@ -61,6 +61,6 @@ def test_simulate_single_operation():
     assert PaymentStatus.DONE == simulation_status
     consumed_gas, tx_fee, storage = simulation_results
     assert 150 == consumed_gas
-    assert 589 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
+    assert 411 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
     assert int == type(storage)  # type of storage should be int
     assert 24 == storage
