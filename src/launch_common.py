@@ -46,8 +46,8 @@ def parse_arguments():
 
     # Verify cycle release override within range
     release_override = args.release_override
-    if release_override < -11 or release_override > -1:
-        parser.error("release-override must be in the range of [-11;-1]")
+    if release_override < -11 or release_override > 0:
+        parser.error("release-override must be in the range of [-11;-1] to override, default is 0")
 
     args.dry_run = args.dry_run or args.dry_run_no_consumers
 
@@ -106,7 +106,7 @@ def add_argument_release_override(parser):
     parser.add_argument("-R", "--release_override",
                         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
                              "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
-                             "For future payments give negative values. Valid range is [-11,-1]",
+                             "For future payments give negative values. Valid range is [-11,-1]. Default is 0 with no effect",
                         default=0, type=int)
 
 
