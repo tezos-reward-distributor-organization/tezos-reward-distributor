@@ -1,5 +1,3 @@
-import configparser
-import os
 from random import randint
 from time import sleep
 from http import HTTPStatus
@@ -13,6 +11,9 @@ from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
+TZTX_FEE = 396
+TZTX_GAS_LIMIT = 1427
+TZTX_STORAGE_LIMIT = 65
 MAX_TX_PER_BLOCK_TZ = 400
 MAX_TX_PER_BLOCK_KT = 10
 PKH_LENGTH = 36
@@ -35,7 +36,6 @@ COMM_PREAPPLY = "/chains/main/blocks/head/helpers/preapply/operations"
 COMM_INJECT = "/injection/operation"
 COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 
-FEE_INI = 'fee.ini'
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 
@@ -65,22 +65,9 @@ class BatchPayer():
         self.plugins_manager = plugins_manager
         self.dry_run = dry_run
 
-        config = configparser.ConfigParser()
-        if os.path.isfile(FEE_INI):
-            config.read(FEE_INI)
-        else:
-            logger.warning("File {} not found. Using default fee values".format(FEE_INI))
-
-        tztx = config['TZTX']
-        self.gas_limit = tztx['gas_limit']
-        self.storage_limit = int(tztx['storage_limit'])
-        self.default_fee = int(tztx['fee'])
-
-        # section below is left to make sure no one using legacy configuration option
-        self.delegator_pays_xfer_fee = config.getboolean('KTTX', 'delegator_pays_xfer_fee', fallback=True)  # Must use getboolean otherwise parses as string
-
-        if not self.delegator_pays_xfer_fee:
-            raise Exception("delegator_pays_xfer_fee is no longer read from fee.ini. It should be set in baking configuration file.")
+        self.gas_limit = TZTX_GAS_LIMIT
+        self.storage_limit = TZTX_STORAGE_LIMIT
+        self.default_fee = TZTX_FEE
 
         self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
