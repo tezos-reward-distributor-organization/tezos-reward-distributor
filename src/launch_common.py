@@ -44,10 +44,15 @@ def parse_arguments():
         parser.error("Valid range for payment offset on {:s} is between 0 and {:d}".format(
             network, blocks_per_cycle))
 
+    # Verify cycle initial cycle within range
+    initial_cycle = args.initial_cycle
+    if initial_cycle < -1:
+        parser.error("initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle")
+
     # Verify cycle release override within range
     release_override = args.release_override
     if release_override < -11 or release_override > 0:
-        parser.error("release-override must be in the range of [-11;-1] to override, default is 0")
+        parser.error("release-override must be in the range of [-11,-1] to override, default is 0")
 
     args.dry_run = args.dry_run or args.dry_run_no_consumers
 
@@ -84,12 +89,11 @@ def build_parser():
 def add_argument_cycle(parser):
     parser.add_argument("-C", "--initial_cycle",
                         help="Cycle to start payment(s) from."
-                             "Default value is 0: will pay rewards that were most recently released."
-                             "Cycle for which rewards were most recently released is calulated based on the formula:"
-                             " current_cycle - (NB_FREEZE_CYCLE+1) - release_override"
-                             "Negative values are relative to the cycle where rewards were most recently released."
-                             "Positive values sets desired cycle directly.",
-                        default=0, type=int)
+                             "Default value is -1: will pay rewards that were most recently released."
+                             "Cycle for which rewards were most recently released is calulated based on the formula: "
+                             "current_cycle - (NB_FREEZE_CYCLE+1) - release_override "
+                             "Valid range is [-1,).",
+                        default=-1, type=int)
 
 
 def add_argument_mode(parser):
