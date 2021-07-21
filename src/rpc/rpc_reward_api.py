@@ -86,27 +86,27 @@ class RpcRewardApiImpl(RewardApi):
                 if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
                     unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
                     total_actual_rewards = unfrozen_fees + unfrozen_rewards
-                    if rewards_type.isActual():
-                        reward_data["total_rewards"] = total_actual_rewards
-                    elif rewards_type.isIdeal():
-                        missed_baking_income = 0
-                        for r in self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles):
-                            if r["priority"] == 0:
-                                if self.__get_block_author(r["level"]) != self.baking_address:
-                                    logger.warning("Found missed baking slot {}, adding {} mutez reward anyway.".format(r, self.block_reward))
-                                    missed_baking_income += self.block_reward
-                        missed_endorsing_income = 0
-                        for r in self.__get_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles):
-                            authored_endorsement_slots = self.__get_authored_endorsement_slots_by_level(r["level"] + 1)
-                            if authored_endorsement_slots != r["slots"]:
-                                mutez_to_add = self.endorsement_reward * len(r["slots"])
-                                logger.warning("Found {} missed endorsement(s) at level {}, adding {} mutez reward anyway.".format(len(r["slots"]), r["level"], mutez_to_add))
-                                missed_endorsing_income += mutez_to_add
-                        logger.warning("total rewards %s" % (total_actual_rewards + missed_baking_income + missed_endorsing_income))
-                        reward_data["total_rewards"] = total_actual_rewards + missed_baking_income + missed_endorsing_income
                 else:
                     frozen_fees, frozen_rewards = self.__get_frozen_rewards(cycle, current_level)
-                    reward_data["total_rewards"] = frozen_fees + frozen_rewards
+                    total_actual_rewards = frozen_fees + frozen_rewards
+                if rewards_type.isActual():
+                    reward_data["total_rewards"] = total_actual_rewards
+                elif rewards_type.isIdeal():
+                    missed_baking_income = 0
+                    for r in self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles):
+                        if r["priority"] == 0:
+                            if self.__get_block_author(r["level"]) != self.baking_address:
+                                logger.warning("Found missed baking slot {}, adding {} mutez reward anyway.".format(r, self.block_reward))
+                                missed_baking_income += self.block_reward
+                    missed_endorsing_income = 0
+                    for r in self.__get_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles):
+                        authored_endorsement_slots = self.__get_authored_endorsement_slots_by_level(r["level"] + 1)
+                        if authored_endorsement_slots != r["slots"]:
+                            mutez_to_add = self.endorsement_reward * len(r["slots"])
+                            logger.warning("Found {} missed endorsement(s) at level {}, adding {} mutez reward anyway.".format(len(r["slots"]), r["level"], mutez_to_add))
+                            missed_endorsing_income += mutez_to_add
+                    logger.warning("total rewards %s" % (total_actual_rewards + missed_baking_income + missed_endorsing_income))
+                    reward_data["total_rewards"] = total_actual_rewards + missed_baking_income + missed_endorsing_income
 
             # TODO: support Dexter for RPC
             # _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
@@ -172,7 +172,7 @@ class RpcRewardApiImpl(RewardApi):
             block_operations_rpc = COMM_BLOCK_OPERATIONS.format(self.node_url, level)
             endorsements = self.do_rpc_request(block_operations_rpc)[0]
             for e in endorsements:
-                if e["contents"][0]["kind"] == "endorsement" and e["contents"][0]["metadata"]["delegate"] == self.baking_address:
+                if e["contents"][0]["kind"] == "endorsement_with_slot" and e["contents"][0]["metadata"]["delegate"] == self.baking_address:
                     return e["contents"][0]["metadata"]["slots"]
             return []
 
