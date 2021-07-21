@@ -83,10 +83,12 @@ def build_parser():
 
 def add_argument_cycle(parser):
     parser.add_argument("-C", "--initial_cycle",
-                        help="First cycle to start payment(s) from depending on run mode -M. "
-                             "The default value is 0, which will start at the most recently released reward. "
-                             "Positive values sets desired cycle directly: initial_cycle <= current cycle - (NB_FREEZE_CYCLE+1) - release_override. "
-                             "Non-positive values count backwards: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1) - release_override.",
+                        help="Cycle to start payment(s) from."
+                             "Default value is 0: will pay rewards that were most recently released."
+                             "Cycle for which rewards were most recently released is calulated based on the formula:"
+                             " current_cycle - (NB_FREEZE_CYCLE+1) - release_override"
+                             "Negative values are relative to the cycle where rewards were most recently released."
+                             "Positive values sets desired cycle directly."
                         default=0, type=int)
 
 
