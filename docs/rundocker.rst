@@ -14,17 +14,20 @@ Access to a signer endpoint and node endpoint are assumed in the host network.
 
 Here are the steps:
 
-1. Build the docker container
+1. Build the Docker container:
+
   ::
 
     docker build -t trdo/tezos-reward-distributor .
 
-2. Alternatively you can pull directly the official tezos-reward-distributor docker image:
+2. Alternatively, you can pull directly the official tezos-reward-distributor Docker image:
+
   ::
 
     docker pull trdo/tezos-reward-distributor
 
 3. Run the container:
+
   ::
 
       docker run --network=host -v $(pwd)/reports:/app/reports:z -v $(pwd)/config:/app/config:z trdo/tezos-reward-distributor --config_dir /app/config --reports_base /app/reports <ARGS>
