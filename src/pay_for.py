@@ -122,15 +122,6 @@ def get_baking_configuration_file(config_dir):
     return os.path.join(config_dir, config_file)
 
 
-def get_latest_report_file(payments_root):
-    recent = None
-    if get_successful_payments_dir(payments_root):
-        files = sorted([os.path.splitext(x)[0] for x in os.listdir(get_successful_payments_dir(payments_root))],
-                       key=lambda x: int(x))
-        recent = files[-1] if len(files) > 0 else None
-    return recent
-
-
 class ReleaseOverrideAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         if not -11 <= values:
