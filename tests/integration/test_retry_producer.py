@@ -22,6 +22,9 @@ def request_url(url, timeout=None):
     print(url)
     if '/chains/main/blocks/head/context/contracts/' in url:
         return HTTPStatus.OK, 1
+    if url == '/chains/main/blocks/head~10':
+        return HTTPStatus.OK, dict({"header": dict({"level": 1000}), "hash": "hash", "chain_id": "unittest",
+                                    "metadata": dict({"protocol": "protocol1"})})
     if url == '/chains/main/blocks/head':
         return HTTPStatus.OK, dict({"header": dict({"level": 1000}), "hash": "hash", "chain_id": "unittest",
                                     "metadata": dict({"protocol": "protocol1"})})
