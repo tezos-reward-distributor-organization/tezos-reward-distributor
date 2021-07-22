@@ -45,6 +45,8 @@ RA_STORAGE = 300
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
 FEE_LIMIT_CONTRACTS = 100000
 
+KT1_FEE_SAFETY_CHECK = True
+
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
 HARD_STORAGE_LIMIT_PER_OPERATION = 60000
@@ -382,37 +384,47 @@ class BatchPayer():
             if payment_item.paymentaddress.startswith('KT'):
                 simulation_status, simulation_results = self.simulate_single_operation(payment_item, pymnt_amnt, branch, chain_id)
                 if simulation_status == PaymentStatus.FAIL:
-                    logger.info("Payment to {} script could not be processed (Possible reason: liquidated contract). Skipping. (think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers)"
+                    logger.info("Payment to {} script could not be processed. Possible reason: liquidated contract. Skipping. Think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers."
                                 .format(payment_item.paymentaddress))
                     payment_item.paid = PaymentStatus.AVOIDED
                     continue
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
                 total_fee = tx_fee + burn_fee
-                # Bound the total (baker and burn) fee by the reward amount in case of KT1 accounts
-                if total_fee > FEE_LIMIT_CONTRACTS:
-                    logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. (Needed fee: {:10.6f} XTZ, Max fee: {:10.6f} XTZ) Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
-                                .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
-                    payment_item.paid = PaymentStatus.AVOIDED
-                    continue
 
-                # Fees within safety limits; Subtract from payment amount
+                if KT1_FEE_SAFETY_CHECK:
+                    if total_fee > FEE_LIMIT_CONTRACTS:
+                        logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. Needed fee: {:10.6f} XTZ, max fee: {:10.6f} XTZ. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
+                                    .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
+                        payment_item.paid = PaymentStatus.AVOIDED
+                        continue
+
+                    if total_fee > pymnt_amnt:
+                        logger.info("Payment to {:s} requires fees of {:10.6f} higher than payment amount of {:10.6f}."
+                                    "Payment avoided due KT1_FEE_SAFETY_CHECK set to True.".format(payment_item.paymentaddress,
+                                                                                                   total_fee / MUTEZ, pymnt_amnt / MUTEZ))
+                        payment_item.paid = PaymentStatus.AVOIDED
+                        continue
+
+                # Subtract burn fee from the payment amount
                 orig_pymnt_amnt = pymnt_amnt
-                pymnt_amnt = max(pymnt_amnt - total_fee, 0)  # ensure not less than 0
-                logger.info("Payment to {} script requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} default fee = {:10.6f} total fees; Payment reduced from {:10.6f} to {:10.6f}".format(
-                            payment_item.paymentaddress, gas_limit, MUTEZ_PER_GAS_UNIT, self.default_fee / MUTEZ, total_fee / MUTEZ, orig_pymnt_amnt / MUTEZ, pymnt_amnt / MUTEZ))
+                pymnt_amnt = max(pymnt_amnt - burn_fee, 0)  # ensure not less than 0
+                logger.info("Payment to {} script requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} burn fee; Payment reduced from {:10.6f} to {:10.6f}".format(
+                            payment_item.paymentaddress, gas_limit, MUTEZ_PER_GAS_UNIT, burn_fee / MUTEZ, orig_pymnt_amnt / MUTEZ, pymnt_amnt / MUTEZ))
 
             else:
-                # Not a KT1
+                # An implicit tz1 account
                 if payment_item.needs_activation:
                     storage_limit += RA_STORAGE
                     if self.delegator_pays_ra_fee:
+                        # Subtract reactivation fee from the payment amount
                         orig_pymnt_amnt = pymnt_amnt
                         pymnt_amnt = max(pymnt_amnt - RA_BURN_FEE, 0)  # ensure not less than 0
-                        logger.info("Payment to {:s} reduced from {:>10.6f} to {:>10.6f} due to reactivation".format(payment_item.address, orig_pymnt_amnt / MUTEZ, pymnt_amnt / MUTEZ))
+                        logger.info("Payment to {:s} reduced from {:>10.6f} to {:>10.6f} due to reactivation fee".format(payment_item.address, orig_pymnt_amnt / MUTEZ, pymnt_amnt / MUTEZ))
 
-                if self.delegator_pays_xfer_fee:
-                    pymnt_amnt = max(pymnt_amnt - tx_fee, 0)  # ensure not less than 0
+            # Subtract transaction's fee from the payment amount if delegator has to pay for it
+            if self.delegator_pays_xfer_fee:
+                pymnt_amnt = max(pymnt_amnt - tx_fee, 0)  # ensure not less than 0
 
             # Resume main logic
 
@@ -421,6 +433,8 @@ class BatchPayer():
                 payment_item.paid = PaymentStatus.DONE
                 logger.info("Payment to {:s} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
+            else:
+                logger.debug("Payment to {:s} became {:10.6f} after deducting fees.".format(payment_item.paymentaddress, pymnt_amnt / MUTEZ))
 
             op_counter.inc()
 
