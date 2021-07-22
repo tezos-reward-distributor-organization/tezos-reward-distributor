@@ -22,6 +22,7 @@ MAX_NUM_TRIALS_PER_BLOCK = 2
 MAX_BLOCKS_TO_CHECK_AFTER_INJECTION = 5
 
 COMM_DELEGATE_BALANCE = "/chains/main/blocks/{}/context/contracts/{}/balance"
+COMM_PAYMENT_HEAD = "/chains/main/blocks/head~10"
 COMM_HEAD = "/chains/main/blocks/head"
 COMM_COUNTER = "/chains/main/blocks/head/context/contracts/{}/counter"
 CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit":"%gas_limit%","storage_limit":"%storage_limit%","amount":"%AMOUNT%"}'
@@ -98,6 +99,7 @@ class BatchPayer():
         self.manager = self.source
         logger.debug("Payment address is {}".format(self.source))
 
+        self.comm_payment_head = COMM_PAYMENT_HEAD
         self.comm_head = COMM_HEAD
         self.comm_counter = COMM_COUNTER.format(self.source)
         self.comm_runops = COMM_RUNOPS
@@ -360,7 +362,7 @@ class BatchPayer():
             self.base_counter = int(counter)
             op_counter.set(self.base_counter)
 
-        _, head = self.clnt_mngr.request_url(self.comm_head)
+        _, head = self.clnt_mngr.request_url(self.comm_payment_head)
         branch = head["hash"]
         chain_id = head["chain_id"]
         protocol = head["metadata"]["protocol"]
