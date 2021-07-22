@@ -70,14 +70,15 @@ Explaination of individual arguments:
 ::
 
     -h                          # show help message and exit
-    -C INITIAL_CYCLE            # First cycle to start payment. For last released rewards, set to 0. Non-positive values are interpreted as: current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1). If not set
-                                # application will continue from last payment made or last reward released.
+    -C INITIAL_CYCLE            # Cycle to start payment(s) from. Default value is -1: will pay rewards that were most recently released.
+                                # Cycle for which rewards were most recently released is calulated based on the formula:
+                                # current_cycle - (NB_FREEZE_CYCLE+1) - release_override, Valid range is [-1,).
     -M {1,2,3,4}                # Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.
                                 # 4: Retry failed payments and exit
     -R RELEASE_OVERRIDE         # Override NB_FREEZE_CYCLE value. last released payment cycle will be (current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. For future payments give
-                                # negative values. Valid range is [-11,)
+                                # negative values. Valid range is [-11,-1]. Default is 0 with no effect.
     -O PAYMENT_OFFSET           # Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
-    -N {MAINNET,DELPHINET}      # Network name. Default is MAINNET. The current test network of tezos is DELPHINET.
+    -N {MAINNET,FLORENCENET}    # Network name. Default is MAINNET. The current test network of tezos is FLORENCENET.
     -A NODE_ENDPOINT            # Node (host:port pair) potentially with protocol prefix especially if tls encryption is used. Default is http://127.0.0.1:8732. This is the main Tezos node used by the client for
                                 # rpc queries and operation injections.
     -P {rpc,prpc,tzstats,tzkt}  # Source of reward data. The default is the use of a public archive rpc node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to
