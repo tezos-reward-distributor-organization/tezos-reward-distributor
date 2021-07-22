@@ -414,6 +414,8 @@ class BatchPayer():
                         logger.info("Payment to {:s} requires fees of {:10.6f} higher than payment amount of {:10.6f}."
                                     "Payment avoided due KT1_FEE_SAFETY_CHECK set to True.".format(
                             payment_item.paymentaddress, total_fee / MUTEZ, pymnt_amnt / MUTEZ))
+                        payment_item.paid = PaymentStatus.AVOIDED
+                        continue
 
                 # Subtract burn fee from the payment amount
                 orig_pymnt_amnt = pymnt_amnt
