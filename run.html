@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>How to run TRD? &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
+  <title>How to run TRD &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
   
 
   
@@ -97,8 +97,10 @@
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentaddress.html">Payment Address</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run TRD?</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to run TRD</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-usage">Command Line Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rundocker.html">How to run TRD in Docker</a></li>
@@ -157,7 +159,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>How to run TRD?</li>
+      <li>How to run TRD</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -177,85 +179,110 @@
            <div itemprop="articleBody">
             
   <div class="section" id="how-to-run-trd">
-<h1>How to run TRD?<a class="headerlink" href="#how-to-run-trd" title="Permalink to this headline">¶</a></h1>
+<h1>How to run TRD<a class="headerlink" href="#how-to-run-trd" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="command-line-usage">
 <h2>Command Line Usage<a class="headerlink" href="#command-line-usage" title="Permalink to this headline">¶</a></h2>
-<p>The TRD can run with the following parameters:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">C</span> <span class="n">INITIAL_CYCLE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">M</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">R</span> <span class="n">RELEASE_OVERRIDE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">O</span> <span class="n">PAYMENT_OFFSET</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">N</span> <span class="p">{</span><span class="n">MAINNET</span><span class="p">,</span><span class="n">DELPHINET</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">A</span> <span class="n">NODE_ENDPOINT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">P</span> <span class="p">{</span><span class="n">rpc</span><span class="p">,</span><span class="n">prpc</span><span class="p">,</span><span class="n">tzstats</span><span class="p">,</span><span class="n">tzkt</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">Ap</span> <span class="n">NODE_ADDR_PUBLIC</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">REPORTS_BASE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">CONFIG_DIR</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">D</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">Dc</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">E</span> <span class="n">SIGNER_ENDPOINT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">Dp</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">V</span> <span class="p">{</span><span class="n">on</span><span class="p">,</span><span class="n">off</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">U</span> <span class="n">API_BASE_URL</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">inj</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">syslog</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">log</span><span class="o">-</span><span class="n">file</span> <span class="n">LOG_FILE</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">(</span><span class="k">for</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">options</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>It is adviseable to use the argument “-V on” in every run because it makes debugging easier.
-The most common use case is to run in mainnet and start to make payouts from last released rewards or continue making payouts from the cycle last payment is done:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Make payouts for a single cycle (300) and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span>
+</div>
+<div class="section" id="options">
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-h</span></code></dt><dd><p>Show help message and exit.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">--initial_cycle</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Cycle to start payment(s) from. Valid range: <code class="docutils literal notranslate"><span class="pre">[-1,)</span></code>. Default value: <code class="docutils literal notranslate"><span class="pre">-1</span></code> (pay rewards that were most recently released). Cycle for which rewards were most recently released is calulated based on the formula: <code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">-</span> <span class="pre">(NB_FREEZE_CYCLE+1)</span> <span class="pre">-</span> <span class="pre">release_override</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-M</span> <span class="pre">--run_mode</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Waiting decision after making pending payments. Valid range: <code class="docutils literal notranslate"><span class="pre">[1,4]</span></code>. Default value: <code class="docutils literal notranslate"><span class="pre">1</span></code>. Values description:</p>
+<ol class="arabic simple">
+<li><p>Run forever.</p></li>
+<li><p>Run all pending payments and exit.</p></li>
+<li><p>Run for one cycle and exit. Suitable to use with <code class="docutils literal notranslate"><span class="pre">-C</span></code> option.</p></li>
+<li><p>Retry failed payments and exit.</p></li>
+</ol>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-R</span> <span class="pre">--release_override</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Override <code class="docutils literal notranslate"><span class="pre">NB_FREEZE_CYCLE</span></code> value, which is 5 by default. Valid range is <code class="docutils literal notranslate"><span class="pre">[-11,-1]</span></code>. Default value: <code class="docutils literal notranslate"><span class="pre">0</span></code> (with no effect). Last released payment cycle will be calculated based on the formula: <code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">-</span> <span class="pre">(NB_FREEZE_CYCLE+1)</span> <span class="pre">-</span> <span class="pre">release_override</span></code>. Suitable for future payments providing a negative value.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--payment_offset</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">--network</span> <span class="pre">&lt;MAINNET|FLORENCENET&gt;</span></code></dt><dd><p>Network name. Default value: <code class="docutils literal notranslate"><span class="pre">MAINNET</span></code>. The current test network of Tezos is <code class="docutils literal notranslate"><span class="pre">FLORENCENET</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-A</span> <span class="pre">--node_endpoint</span> <span class="pre">&lt;node_url:port&gt;</span></code></dt><dd><p>Node potentially with protocol prefix especially if TLS encryption is used. Default value: <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8732</span></code>. This is the main Tezos node used by the client for RPC queries and operation injections.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-P</span> <span class="pre">--reward_data_provider</span> <span class="pre">&lt;rpc|prpc|tzstats|tzkt&gt;</span></code></dt><dd><p>Source that provides all needed data for reward calculations. Default value: <code class="docutils literal notranslate"><span class="pre">prpc</span></code>. If you prefer to use your own local node, defined with the <code class="docutils literal notranslate"><span class="pre">-A</span></code> option, for getting reward data you must set this option to <code class="docutils literal notranslate"><span class="pre">rpc</span></code> (the local node must be an archive node in this case). If you prefer using a public RPC node, please set the node URL using the <code class="docutils literal notranslate"><span class="pre">-Ap</span></code> option. An alternative for providing reward data is <code class="docutils literal notranslate"><span class="pre">tzstats</span></code>, but pay attention for license in case of COMMERCIAL use!</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-Ap</span> <span class="pre">--node_addr_public</span> <span class="pre">&lt;url&gt;</span></code></dt><dd><p>Public node base URL. Default value: <code class="docutils literal notranslate"><span class="pre">https://mainnet-tezos.giganode.io</span></code>. This argument will only be used in case the provider is set to <cite>prpc</cite>. This node will only be used to query reward data and delegator list. It must be an archive node.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">--reports_base</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Directory to create reports. Default value: <code class="docutils literal notranslate"><span class="pre">~/pymnt/reports</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">--config_dir</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Directory to find baking configuration. Default value: <code class="docutils literal notranslate"><span class="pre">~/pymnt/cfg</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">--dry_run</span></code></dt><dd><p>Run without injecting payments. Suitable for testing. Does not require locking.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-Dc</span> <span class="pre">--dry_run_no_consumers</span></code></dt><dd><p>Run without any consumers. Suitable for testing. Does not require locking.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-E</span> <span class="pre">--signer_endpoint</span> <span class="pre">&lt;url&gt;</span></code></dt><dd><p>URL used by the Tezos signer to accept HTTP(S) requests. Default value: <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:6732</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">--docker</span></code></dt><dd><p>Docker installation flag. When set, docker script location should be set in <code class="docutils literal notranslate"><span class="pre">-E</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">--background_service</span></code></dt><dd><p>Marker to indicate that TRD is running in daemon mode. When not given it indicates that TRD is in interactive mode.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-Dp</span> <span class="pre">--do_not_publish_stats</span></code></dt><dd><p>Do not publish anonymous usage statistics.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-V</span> <span class="pre">--verbose</span> <span class="pre">&lt;on|off&gt;</span></code></dt><dd><p>Produces a lot of logs. Default value: <code class="docutils literal notranslate"><span class="pre">on</span></code>. Good for troubleshooting. Verbose logs go into app_verbose log file. App verbose log file is named with cycle number and creation date. For each cycle a new file is created and old file is moved to archive_backup directory after being zipped.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-U</span> <span class="pre">--api_base_url</span></code></dt><dd><p>Base API URL for non-RPC providers. If not set, public endpoints will be used.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-inj</span> <span class="pre">--retry_injected</span></code></dt><dd><p>Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--syslog</span></code></dt><dd><p>Log to syslog. Useful in daemon mode.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--log-file</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Log output file.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>It is adviseable to use the verbose argument <code class="docutils literal notranslate"><span class="pre">-V</span></code> on every run because it makes debugging easier.</p>
+<p>The most common use case is to run on <code class="docutils literal notranslate"><span class="pre">MAINNET</span></code> and start to make payouts from last released rewards or continue making payouts from the cycle last payment is done:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
-<p>Make all pending payouts and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span>
+<p>Make payouts for a single cycle and exit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span>
+</pre></div>
+</div>
+<p>Make all pending payouts from last released cycle and exit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
 <p>Make pending payouts beginning from a cycle and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
-<p>Run in dry-run mode in delphinet, make payouts from cycle 300 and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">N</span> <span class="n">DELPHINET</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span>
+<p>Run in dry-run mode on FLORENCENET, make payouts for cycle 300 and exit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">N</span> <span class="n">FLORENCENET</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
-<p>Run in dry-run mode in mainnet, make payouts from cycle 300 onwards, for calculations use data provided by tezos node rpc interface:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">rpc</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span>
+<p>Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by Tezos node RPC interface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">rpc</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
-<p>Run in dry-run mode in mainnet, make payouts for cycle 300, for calculations use data provided by the tzkt API:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">tzkt</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span> <span class="o">-</span><span class="n">D</span>
+<p>Run in dry-run mode on MAINNET, make payouts only for cycle 300, for calculations use data provided by the TzKT API:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">tzkt</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span> <span class="o">-</span><span class="n">D</span>
 </pre></div>
 </div>
-<p>Run in dry-run mode in mainnet, retry failed payouts for cycle 300, for calculations use data provided by the tzstats API:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">tzstats</span> <span class="o">-</span><span class="n">M</span> <span class="mi">4</span> <span class="o">-</span><span class="n">V</span> <span class="n">on</span> <span class="o">-</span><span class="n">D</span>
+<p>Run in dry-run mode on MAINNET, retry failed payouts only for cycle 300, for calculations use data provided by the TzStats API:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">tzstats</span> <span class="o">-</span><span class="n">M</span> <span class="mi">4</span> <span class="o">-</span><span class="n">V</span> <span class="o">-</span><span class="n">D</span>
 </pre></div>
 </div>
-<p>For help, run</p>
+<p>For help, run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">h</span>
 </pre></div>
 </div>
-<p>Explaination of individual arguments:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">h</span>                          <span class="c1"># show help message and exit</span>
-<span class="o">-</span><span class="n">C</span> <span class="n">INITIAL_CYCLE</span>            <span class="c1"># Cycle to start payment(s) from. Default value is -1: will pay rewards that were most recently released.</span>
-                            <span class="c1"># Cycle for which rewards were most recently released is calulated based on the formula:</span>
-                            <span class="c1"># current_cycle - (NB_FREEZE_CYCLE+1) - release_override, Valid range is [-1,).</span>
-<span class="o">-</span><span class="n">M</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">}</span>                <span class="c1"># Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.</span>
-                            <span class="c1"># 4: Retry failed payments and exit</span>
-<span class="o">-</span><span class="n">R</span> <span class="n">RELEASE_OVERRIDE</span>         <span class="c1"># Override NB_FREEZE_CYCLE value. last released payment cycle will be (current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. For future payments give</span>
-                            <span class="c1"># negative values. Valid range is [-11,-1]. Default is 0 with no effect.</span>
-<span class="o">-</span><span class="n">O</span> <span class="n">PAYMENT_OFFSET</span>           <span class="c1"># Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.</span>
-<span class="o">-</span><span class="n">N</span> <span class="p">{</span><span class="n">MAINNET</span><span class="p">,</span><span class="n">FLORENCENET</span><span class="p">}</span>    <span class="c1"># Network name. Default is MAINNET. The current test network of tezos is FLORENCENET.</span>
-<span class="o">-</span><span class="n">A</span> <span class="n">NODE_ENDPOINT</span>            <span class="c1"># Node (host:port pair) potentially with protocol prefix especially if tls encryption is used. Default is http://127.0.0.1:8732. This is the main Tezos node used by the client for</span>
-                            <span class="c1"># rpc queries and operation injections.</span>
-<span class="o">-</span><span class="n">P</span> <span class="p">{</span><span class="n">rpc</span><span class="p">,</span><span class="n">prpc</span><span class="p">,</span><span class="n">tzstats</span><span class="p">,</span><span class="n">tzkt</span><span class="p">}</span>  <span class="c1"># Source of reward data. The default is the use of a public archive rpc node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to</span>
-                            <span class="c1"># use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a</span>
-                            <span class="c1"># public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!</span>
-<span class="o">-</span><span class="n">Ap</span> <span class="n">NODE_ADDR_PUBLIC</span>        <span class="c1"># Public node base URL. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an</span>
-                            <span class="c1"># ARCHIVE node. (Default is https://mainnet-tezos.giganode.io)</span>
-<span class="o">-</span><span class="n">r</span> <span class="n">REPORTS_BASE</span>             <span class="c1"># Directory to create reports</span>
-<span class="o">-</span><span class="n">f</span> <span class="n">CONFIG_DIR</span>               <span class="c1"># Directory to find baking configuration</span>
-<span class="o">-</span><span class="n">D</span>                          <span class="c1"># Run without injecting payments. Suitable for testing. Does not require locking.</span>
-<span class="o">-</span><span class="n">Dc</span>                         <span class="c1"># Run without any consumers. Suitable for testing. Does not require locking.</span>
-<span class="o">-</span><span class="n">E</span> <span class="n">SIGNER_ENDPOINT</span>          <span class="c1"># URL used by the Tezos-signer to accept HTTP requests.</span>
-<span class="o">-</span><span class="n">d</span>                          <span class="c1"># Docker installation flag. When set, docker script location should be set in -E</span>
-<span class="o">-</span><span class="n">s</span>                          <span class="c1"># Marker to indicate that TRD is running in daemon mode. When not given it indicates that TRD is in interactive mode.</span>
-<span class="o">-</span><span class="n">Dp</span>                         <span class="c1"># Do not publish anonymous usage statistics</span>
-<span class="o">-</span><span class="n">V</span> <span class="p">{</span><span class="n">on</span><span class="p">,</span><span class="n">off</span><span class="p">}</span>                 <span class="c1"># Produces a lot of logs. Good for trouble shooting. Verbose logs go into app_verbose log file. App verbose log file is named with cycle number and creation date. For each cycle a</span>
-                            <span class="c1"># new file is created and old file is moved to archive_backup directory after being zipped.</span>
-<span class="o">-</span><span class="n">U</span> <span class="n">API_BASE_URL</span>             <span class="c1"># Base API url for non-rpc providers. If not set, public endpoints will be used.</span>
-<span class="o">-</span><span class="n">inj</span>                        <span class="c1"># Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.</span>
-<span class="o">--</span><span class="n">syslog</span>                    <span class="c1"># Log to syslog. Useful in daemon mode.</span>
-<span class="o">--</span><span class="n">log</span><span class="o">-</span><span class="n">file</span> <span class="n">LOG_FILE</span>         <span class="c1"># Log output file</span>
-</pre></div>
-</div>
-<p>Most arguements also have a verbose arguments if you prefer to work with those. You can find the verbose arguements in the help message.</p>
 </div>
 </div>
 
