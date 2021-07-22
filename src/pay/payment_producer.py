@@ -126,17 +126,20 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         try:
             current_cycle = self.block_api.get_current_cycle()
-            pymnt_cycle = self.initial_payment_cycle
         except ApiProviderException as a:
             logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))
             self.exit()
             return
 
-        # if non-positive initial_payment_cycle, set initial_payment_cycle to
-        # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1) - self.release_override'
-        if self.initial_payment_cycle <= 0:
-            pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
-            logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
+        # if initial_payment_cycle has the default value of -1 resulting in the last released cycle
+        if self.initial_payment_cycle == -1:
+            pymnt_cycle = current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
+            if pymnt_cycle < 0:
+                logger.error("Payment cycle cannot be < 0 but configuration results to {}".format(pymnt_cycle))
+            else:
+                logger.debug("Payment cycle is set to last released cycle {}".format(pymnt_cycle))
+        else:
+            pymnt_cycle = self.initial_payment_cycle
 
         get_verbose_log_helper().reset(pymnt_cycle)
 

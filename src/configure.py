@@ -422,8 +422,8 @@ def main(args):
 
 class ReleaseOverrideAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
+        if values < -11 or values > 0:
+            parser.error("release-override({0}) must be in the range of [-11,-1] to override, default is 0".format(option_string))
 
         setattr(namespace, "release_override", values)
 
