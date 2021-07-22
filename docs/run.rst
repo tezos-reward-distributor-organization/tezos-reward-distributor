@@ -103,7 +103,7 @@ Make payouts for a single cycle and exit:
 
     python3 src/main.py -C 300 -M 3 -V
 
-Make all pending payouts and exit:
+Make all pending payouts from last released cycle and exit:
 
 ::
 
