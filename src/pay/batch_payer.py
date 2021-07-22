@@ -44,6 +44,8 @@ RA_STORAGE = 300
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
 FEE_LIMIT_CONTRACTS = 100000
 
+KT1_FEE_SAFETY_CHECK = True
+
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
 HARD_STORAGE_LIMIT_PER_OPERATION = 60000
@@ -401,11 +403,17 @@ class BatchPayer():
                 burn_fee = COST_PER_BYTE * storage_limit
                 total_fee = tx_fee + burn_fee
 
-                if total_fee > FEE_LIMIT_CONTRACTS:
-                    logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. Needed fee: {:10.6f} XTZ, max fee: {:10.6f} XTZ. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
-                                .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
-                    payment_item.paid = PaymentStatus.AVOIDED
-                    continue
+                if KT1_FEE_SAFETY_CHECK:
+                    if total_fee > FEE_LIMIT_CONTRACTS:
+                        logger.info("Payment to {:s} script requires higher fees than reward amount. Skipping. Needed fee: {:10.6f} XTZ, max fee: {:10.6f} XTZ. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation."
+                                    .format(payment_item.paymentaddress, total_fee / MUTEZ, FEE_LIMIT_CONTRACTS / MUTEZ))
+                        payment_item.paid = PaymentStatus.AVOIDED
+                        continue
+
+                    if total_fee > pymnt_amnt:
+                        logger.info("Payment to {:s} requires fees of {:10.6f} higher than payment amount of {:10.6f}."
+                                    "Payment avoided due KT1_FEE_SAFETY_CHECK set to True.".format(
+                            payment_item.paymentaddress, total_fee / MUTEZ, pymnt_amnt / MUTEZ))
 
                 # Subtract burn fee from the payment amount
                 orig_pymnt_amnt = pymnt_amnt
@@ -435,7 +443,7 @@ class BatchPayer():
                 logger.info("Payment to {:s} became 0 after deducting fees. Skipping.".format(payment_item.paymentaddress))
                 continue
             else:
-                logger.info("Payment to {:s} became {:10.6f} after deducting fees.".format(payment_item.paymentaddress, pymnt_amnt / MUTEZ))
+                logger.debug("Payment to {:s} became {:10.6f} after deducting fees.".format(payment_item.paymentaddress, pymnt_amnt / MUTEZ))
 
             op_counter.inc()
 
