@@ -1,104 +1,146 @@
-How to run TRD?
-=====================================================
+How to run TRD
+==============
 
 Command Line Usage
-------------------------
-
-The TRD can run with the following parameters:
+------------------
 
 ::
 
-    python3 src/main.py [-h] [-C INITIAL_CYCLE] [-M {1,2,3,4}] [-R RELEASE_OVERRIDE] [-O PAYMENT_OFFSET] [-N {MAINNET,DELPHINET}] [-A NODE_ENDPOINT] [-P {rpc,prpc,tzstats,tzkt}] [-Ap NODE_ADDR_PUBLIC] [-r REPORTS_BASE] [-f CONFIG_DIR] [-D] [-Dc] [-E SIGNER_ENDPOINT] [-d] [-s] [-Dp] [-V {on,off}] [-U API_BASE_URL] [-inj] [--syslog] [--log-file LOG_FILE]
-
-It is adviseable to use the argument "-V on" in every run because it makes debugging easier.
-The most common use case is to run in mainnet and start to make payouts from last released rewards or continue making payouts from the cycle last payment is done:
+    python3 src/main.py [-h] (for list of options)
 
 ::
 
-    python3 src/main.py -V on
+    python3 src/main.py [options]
 
-Make payouts for a single cycle (300) and exit:
+Options
+-------
+
+``-h``
+    Show help message and exit.
+
+``-C --initial_cycle <int>``
+    Cycle to start payment(s) from. Valid range: ``[-1,)``. Default value: ``-1`` (pay rewards that were most recently released). Cycle for which rewards were most recently released is calulated based on the formula: ``current_cycle - (NB_FREEZE_CYCLE+1) - release_override``.
+
+``-M --run_mode <int>``
+    Waiting decision after making pending payments. Valid range: ``[1,4]``. Default value: ``1``. Values description:
+
+    1. Run forever.
+    2. Run all pending payments and exit.
+    3. Run for one cycle and exit. Suitable to use with ``-C`` option.
+    4. Retry failed payments and exit.
+
+``-R --release_override <int>``
+    Override ``NB_FREEZE_CYCLE`` value, which is 5 by default. Valid range is ``[-11,-1]``. Default value: ``0`` (with no effect). Last released payment cycle will be calculated based on the formula: ``current_cycle - (NB_FREEZE_CYCLE+1) - release_override``. Suitable for future payments providing a negative value.
+
+``-O --payment_offset <int>``
+    Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
+
+``-N --network <MAINNET|FLORENCENET>``
+    Network name. Default value: ``MAINNET``. The current test network of Tezos is ``FLORENCENET``.
+
+``-A --node_endpoint <node_url:port>``
+    Node potentially with protocol prefix especially if TLS encryption is used. Default value: ``http://127.0.0.1:8732``. This is the main Tezos node used by the client for RPC queries and operation injections.
+
+``-P --reward_data_provider <rpc|prpc|tzstats|tzkt>``
+    Source that provides all needed data for reward calculations. Default value: ``prpc``. If you prefer to use your own local node, defined with the ``-A`` option, for getting reward data you must set this option to ``rpc`` (the local node must be an archive node in this case). If you prefer using a public RPC node, please set the node URL using the ``-Ap`` option. An alternative for providing reward data is ``tzstats``, but pay attention for license in case of COMMERCIAL use!
+
+``-Ap --node_addr_public <url>``
+    Public node base URL. Default value: ``https://mainnet-tezos.giganode.io``. This argument will only be used in case the provider is set to `prpc`. This node will only be used to query reward data and delegator list. It must be an archive node.
+
+``-r --reports_base <path>``
+    Directory to create reports. Default value: ``~/pymnt/reports``.
+
+``-f --config_dir <path>``
+    Directory to find baking configuration. Default value: ``~/pymnt/cfg``.
+
+``-D --dry_run``
+    Run without injecting payments. Suitable for testing. Does not require locking.
+
+``-Dc --dry_run_no_consumers``
+    Run without any consumers. Suitable for testing. Does not require locking.
+
+``-E --signer_endpoint <url>``
+    URL used by the Tezos signer to accept HTTP(S) requests. Default value: ``http://127.0.0.1:6732``.
+
+``-d --docker``
+    Docker installation flag. When set, docker script location should be set in ``-E``.
+
+``-s --background_service``
+    Marker to indicate that TRD is running in daemon mode. When not given it indicates that TRD is in interactive mode.
+
+``-Dp --do_not_publish_stats``
+    Do not publish anonymous usage statistics.
+
+``-V --verbose <on|off>``
+    Produces a lot of logs. Default value: ``on``. Good for troubleshooting. Verbose logs go into app_verbose log file. App verbose log file is named with cycle number and creation date. For each cycle a new file is created and old file is moved to archive_backup directory after being zipped.
+
+``-U --api_base_url``
+    Base API URL for non-RPC providers. If not set, public endpoints will be used.
+
+``-inj --retry_injected``
+    Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.
+
+``--syslog``
+    Log to syslog. Useful in daemon mode.
+
+``--log-file <path>``
+    Log output file.
+
+Examples
+--------
+
+It is adviseable to use the verbose argument ``-V`` on every run because it makes debugging easier.
+
+The most common use case is to run on ``MAINNET`` and start to make payouts from last released rewards or continue making payouts from the cycle last payment is done:
 
 ::
 
-    python3 src/main.py -C 300 -M 3 -V on
+    python3 src/main.py -V
+
+Make payouts for a single cycle and exit:
+
+::
+
+    python3 src/main.py -C 300 -M 3 -V
 
 Make all pending payouts and exit:
 
 ::
 
-    python3 src/main.py -M 2 -V on
+    python3 src/main.py -M 2 -V
 
 Make pending payouts beginning from a cycle and exit:
 
 ::
 
-    python3 src/main.py -C 300 -M 2 -V on
+    python3 src/main.py -C 300 -M 2 -V
 
-Run in dry-run mode in delphinet, make payouts from cycle 300 and exit:
-
-::
-
-    python3 src/main.py -D -N DELPHINET -C 300 -M 3 -V on
-
-Run in dry-run mode in mainnet, make payouts from cycle 300 onwards, for calculations use data provided by tezos node rpc interface:
+Run in dry-run mode on FLORENCENET, make payouts for cycle 300 and exit:
 
 ::
 
-    python3 src/main.py -C 300 -P rpc -D -V on
+    python3 src/main.py -D -N FLORENCENET -C 300 -M 3 -V
 
-Run in dry-run mode in mainnet, make payouts for cycle 300, for calculations use data provided by the tzkt API:
-
-::
-
-    python3 src/main.py -C 300 -P tzkt -M 3 -V on -D
-
-Run in dry-run mode in mainnet, retry failed payouts for cycle 300, for calculations use data provided by the tzstats API:
+Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by Tezos node RPC interface:
 
 ::
 
-    python3 src/main.py -C 300 -P tzstats -M 4 -V on -D
+    python3 src/main.py -C 300 -P rpc -D -V
 
-For help, run
+Run in dry-run mode on MAINNET, make payouts only for cycle 300, for calculations use data provided by the TzKT API:
+
+::
+
+    python3 src/main.py -C 300 -P tzkt -M 3 -V -D
+
+Run in dry-run mode on MAINNET, retry failed payouts only for cycle 300, for calculations use data provided by the TzStats API:
+
+::
+
+    python3 src/main.py -C 300 -P tzstats -M 4 -V -D
+
+For help, run:
 
 ::
 
     python3 src/main.py -h
-
-Explaination of individual arguments:
-
-::
-
-    -h                          # show help message and exit
-    -C INITIAL_CYCLE            # Cycle to start payment(s) from. Default value is -1: will pay rewards that were most recently released.
-                                # Cycle for which rewards were most recently released is calulated based on the formula:
-                                # current_cycle - (NB_FREEZE_CYCLE+1) - release_override, Valid range is [-1,).
-    -M {1,2,3,4}                # Waiting decision after making pending payments. 1: default option. Run forever. 2: Run all pending payments and exit. 3: Run for one cycle and exit. Suitable to use with -C option.
-                                # 4: Retry failed payments and exit
-    -R RELEASE_OVERRIDE         # Override NB_FREEZE_CYCLE value. last released payment cycle will be (current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. For future payments give
-                                # negative values. Valid range is [-11,-1]. Default is 0 with no effect.
-    -O PAYMENT_OFFSET           # Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
-    -N {MAINNET,FLORENCENET}    # Network name. Default is MAINNET. The current test network of tezos is FLORENCENET.
-    -A NODE_ENDPOINT            # Node (host:port pair) potentially with protocol prefix especially if tls encryption is used. Default is http://127.0.0.1:8732. This is the main Tezos node used by the client for
-                                # rpc queries and operation injections.
-    -P {rpc,prpc,tzstats,tzkt}  # Source of reward data. The default is the use of a public archive rpc node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to
-                                # use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a
-                                # public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!
-    -Ap NODE_ADDR_PUBLIC        # Public node base URL. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an
-                                # ARCHIVE node. (Default is https://mainnet-tezos.giganode.io)
-    -r REPORTS_BASE             # Directory to create reports
-    -f CONFIG_DIR               # Directory to find baking configuration  
-    -D                          # Run without injecting payments. Suitable for testing. Does not require locking.
-    -Dc                         # Run without any consumers. Suitable for testing. Does not require locking.
-    -E SIGNER_ENDPOINT          # URL used by the Tezos-signer to accept HTTP requests.
-    -d                          # Docker installation flag. When set, docker script location should be set in -E
-    -s                          # Marker to indicate that TRD is running in daemon mode. When not given it indicates that TRD is in interactive mode.
-    -Dp                         # Do not publish anonymous usage statistics
-    -V {on,off}                 # Produces a lot of logs. Good for trouble shooting. Verbose logs go into app_verbose log file. App verbose log file is named with cycle number and creation date. For each cycle a
-                                # new file is created and old file is moved to archive_backup directory after being zipped.
-    -U API_BASE_URL             # Base API url for non-rpc providers. If not set, public endpoints will be used.
-    -inj                        # Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.
-    --syslog                    # Log to syslog. Useful in daemon mode.
-    --log-file LOG_FILE         # Log output file
-
-Most arguements also have a verbose arguments if you prefer to work with those. You can find the verbose arguements in the help message. 
