@@ -227,7 +227,6 @@ class ProcessLifeCycle:
 
     def do_launch_producers(self, e):
         PaymentProducer(name='producer',
-                        initial_payment_cycle=self.args.initial_cycle,
                         network_config=self.__nw_config,
                         payments_dir=self.__baking_dirs.payments_root,
                         calculations_dir=self.__baking_dirs.calculations_root,
@@ -244,7 +243,9 @@ class ProcessLifeCycle:
                         reward_data_provider=self.args.reward_data_provider,
                         node_url_public=self.args.node_addr_public,
                         api_base_url=self.args.api_base_url,
-                        retry_injected=self.args.retry_injected).start()
+                        retry_injected=self.args.retry_injected,
+                        initial_payment_cycle=self.args.initial_cycle
+                        ).start()
 
     def do_launch_consumers(self, e):
         PaymentConsumer(name='consumer0',
