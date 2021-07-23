@@ -48,6 +48,41 @@ def request_url_post(cmd, json_params, timeout=None):
     return HTTPStatus.NOT_FOUND, "bbbb" + str(json_params) + str(timeout)
 
 
+class TestRetryProducerBeforeInitialCycle(TestCase):
+    def setUp(self):
+        try:
+            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "done")):
+                os.makedirs(os.path.join(TEST_REPORT_DIR, "done"))
+
+            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "failed")):
+                os.makedirs(os.path.join(TEST_REPORT_DIR, "failed"))
+
+        except OSError:
+            pass
+        copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
+
+    @patch('pay.payment_consumer.BatchPayer.get_payment_address_balance', MagicMock(return_value=100_000_000))
+    @patch('pay.payment_consumer.BatchPayer.simulate_single_operation', MagicMock(return_value=(PaymentStatus.DONE, (500, 100, 0))))
+    @patch('pay.batch_payer.sleep', MagicMock())
+    @patch('cli.client_manager.ClientManager.request_url', MagicMock(side_effect=request_url))
+    @patch('cli.client_manager.ClientManager.request_url_post', MagicMock(side_effect=request_url_post))
+    @patch('cli.client_manager.ClientManager.sign', MagicMock(return_value="edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"))
+    def test_retry_failed_payments_before_initial_cycle(self):
+        """This is a test about retrying failed operations in a cycle
+        before initial_cycle passed at parameter.
+        Input is a past payment report with failues at cycle 10.
+        Initial cycle is set to 11.
+        It should NOT trigger any payment.
+        """
+        payment_queue = queue.Queue(100)
+
+        retry_producer = RetryProducer(payment_queue, _DummyRpcRewardApi(), _TestPaymentProducer(),
+                                       TEST_REPORT_TEMP_DIR, 11)
+        retry_producer.retry_failed_payments()
+
+        self.assertEqual(0, len(payment_queue.queue))
+
+
 class TestRetryProducer(TestCase):
     def setUp(self):
         try:
@@ -76,7 +111,7 @@ class TestRetryProducer(TestCase):
         payment_queue = queue.Queue(100)
 
         retry_producer = RetryProducer(payment_queue, _DummyRpcRewardApi(), _TestPaymentProducer(),
-                                       TEST_REPORT_TEMP_DIR)
+                                       TEST_REPORT_TEMP_DIR, 10)
         retry_producer.retry_failed_payments()
 
         self.assertEqual(1, len(payment_queue.queue))

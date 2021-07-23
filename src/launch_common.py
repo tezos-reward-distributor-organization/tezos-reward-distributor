@@ -100,7 +100,7 @@ def add_argument_mode(parser):
     parser.add_argument("-M", "--run_mode",
                         help="Waiting decision after making pending payments. 1: default option. Run forever. "
                              "2: Run all pending payments and exit. 3: Run for one cycle and exit. "
-                             "4: Retry failed payments and exit. "
+                             "4: Retry all failed payments and exit. "
                              "Recommended: Always explicitly specify starting cycle with -C",
                         choices=[1, 2, 3, 4],
                         default=1, type=int)
