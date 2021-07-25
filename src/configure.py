@@ -22,7 +22,6 @@ from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVI
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
     REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET, REWARDS_TYPE
 from util.address_validator import AddressValidator
-from util.dir_utils import get_successful_payments_dir
 from util.fee_validator import FeeValidator
 
 LINER = "--------------------------------------------"
@@ -421,18 +420,10 @@ def main(args):
     print("Configuration file is created at '{}'".format(config_file_path))
 
 
-def get_latest_report_file(payments_root):
-    recent = None
-    if get_successful_payments_dir(payments_root):
-        files = sorted([os.path.splitext(file)[0] for file in os.listdir(get_successful_payments_dir(payments_root))], key=lambda file_name: int(file_name))
-        recent = files[-1] if len(files) > 0 else None
-    return recent
-
-
 class ReleaseOverrideAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
+        if values < -11 or values > 0:
+            parser.error("release-override({0}) must be in the range of [-11,-1] to override, default is 0".format(option_string))
 
         setattr(namespace, "release_override", values)
 

@@ -16,7 +16,7 @@ from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
-from util.dir_utils import get_calculation_report_file, get_latest_report_file
+from util.dir_utils import get_calculation_report_file
 
 logger = main_logger.getChild("payment_producer")
 
@@ -56,12 +56,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
 
-        if self.initial_payment_cycle is None:
-            recent = get_latest_report_file(payments_dir)
-            # if successful payment logs exist (in "done" directory), set initial cycle to following cycle
-            # if succesful payment logs do not exist, set initial cycle to 0, so that payment starts from last released rewards
-            self.initial_payment_cycle = 0 if recent is None else int(recent) + 1
-
         logger.info("initial_cycle set to {}".format(self.initial_payment_cycle))
 
         self.nw_config = network_config
@@ -83,7 +77,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.retry_fail_event = threading.Event()
         self.retry_injected = retry_injected
 
-        self.retry_producer = RetryProducer(self.payments_queue, self.reward_api, self, self.payments_root, self.retry_injected)
+        self.retry_producer = RetryProducer(self.payments_queue, self.reward_api, self, self.payments_root, self.initial_payment_cycle, self.retry_injected)
 
         logger.info('Producer "{}" started'.format(self.name))
 
@@ -132,17 +126,20 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         try:
             current_cycle = self.block_api.get_current_cycle()
-            pymnt_cycle = self.initial_payment_cycle
         except ApiProviderException as a:
             logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))
             self.exit()
             return
 
-        # if non-positive initial_payment_cycle, set initial_payment_cycle to
-        # 'current cycle - abs(initial_cycle) - (NB_FREEZE_CYCLE+1) - self.release_override'
-        if self.initial_payment_cycle <= 0:
-            pymnt_cycle = current_cycle - abs(self.initial_payment_cycle) - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
-            logger.debug("Payment cycle is set to {}".format(pymnt_cycle))
+        # if initial_payment_cycle has the default value of -1 resulting in the last released cycle
+        if self.initial_payment_cycle == -1:
+            pymnt_cycle = current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override
+            if pymnt_cycle < 0:
+                logger.error("Payment cycle cannot be < 0 but configuration results to {}".format(pymnt_cycle))
+            else:
+                logger.debug("Payment cycle is set to last released cycle {}".format(pymnt_cycle))
+        else:
+            pymnt_cycle = self.initial_payment_cycle
 
         get_verbose_log_helper().reset(pymnt_cycle)
 
