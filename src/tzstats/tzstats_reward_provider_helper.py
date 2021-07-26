@@ -9,7 +9,7 @@ from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income
     idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
     idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
     idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance, idx_income_missed_baking_income, \
-    idx_income_missed_endorsing_income, idx_income_stolen_baking_income
+    idx_income_missed_endorsing_income
 from Constants import TZSTATS_PREFIX_API
 
 logger = main_logger
