@@ -72,8 +72,7 @@ class TzStatsRewardProviderHelper:
             total_rewards_and_fees = (float(resp[idx_income_baking_income])
                                       + float(resp[idx_income_endorsing_income])
                                       + float(resp[idx_income_seed_income])
-                                      + float(resp[idx_income_fees_income])
-                                      + float(resp[idx_income_stolen_baking_income]))
+                                      + float(resp[idx_income_fees_income]))
             # losses due to baker double baking, double endorsing or missing nonce
             total_equivocation_losses = (float(resp[idx_income_lost_accusation_fees])
                                          + float(resp[idx_income_lost_accusation_rewards])
