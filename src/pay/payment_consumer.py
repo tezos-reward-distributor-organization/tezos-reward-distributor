@@ -239,10 +239,12 @@ class PaymentConsumer(threading.Thread):
         stats_dict['pay_ra_fee'] = 1 if self.delegator_pays_ra_fee else 0
         if self.rewards_type.isIdeal():
             stats_dict['rewards_type'] = "I"
-        elif self.rewards_type.isActual():
-            stats_dict['rewards_type'] = "A"
         elif self.rewards_type.isExpected():
             stats_dict['rewards_type'] = "E"
+        elif self.rewards_type.isActual():
+            stats_dict['rewards_type'] = "A"
+        else:
+            stats_dict['rewards_type'] = "A"
         stats_dict['trdver'] = str(VERSION)
 
         if self.args:
