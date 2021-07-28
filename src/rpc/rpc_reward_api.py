@@ -170,9 +170,15 @@ class RpcRewardApiImpl(RewardApi):
 
         try:
             block_operations_rpc = COMM_BLOCK_OPERATIONS.format(self.node_url, level)
-            endorsements = self.do_rpc_request(block_operations_rpc)[0]
+            block_operations = self.do_rpc_request(block_operations_rpc)[0]
+            endorsements = [b for b in block_operations if b["contents"][0]["kind"] == "endorsement_with_slot"]
+            if len(endorsements) == 0:
+                logger.error("Can not parse endorsements from RPC. Aborting.")
+                logger.info("TRD can not process rewards for protocols older than Florence.")
+                raise Exception("Can not parse endorsements from RPC.")
+
             for e in endorsements:
-                if e["contents"][0]["kind"] == "endorsement_with_slot" and e["contents"][0]["metadata"]["delegate"] == self.baking_address:
+                if e["contents"][0]["metadata"]["delegate"] == self.baking_address:
                     return e["contents"][0]["metadata"]["slots"]
             return []
 
