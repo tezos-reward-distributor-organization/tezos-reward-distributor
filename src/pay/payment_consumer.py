@@ -245,6 +245,7 @@ class PaymentConsumer(threading.Thread):
             stats_dict['rewards_type'] = "A"
         else:
             stats_dict['rewards_type'] = "A"
+            logger.info("Reward type is set to actual by default - please check your configuration")
         stats_dict['trdver'] = str(VERSION)
 
         if self.args:
