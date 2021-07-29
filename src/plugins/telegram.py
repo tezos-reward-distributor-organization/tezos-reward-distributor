@@ -41,10 +41,10 @@ class TelegramPlugin(plugins.Plugin):
             self.postMessage(c, payout_message, "PAYOUT")
 
     def postMessage(self, chatId, msg, msgType):
-        payload = {"chat_id": c, "parse_mode": "html", "text": msg}
+        payload = {"chat_id": chatId, "parse_mode": "html", "text": msg}
         resp = requests.post(self.api_url, params=payload)
         respJ = resp.json()
-        logger.info("[TelegramPlugin] Sent {:s} notification to chatId: {:}".format(msgType, c))
+        logger.info("[TelegramPlugin] Sent {:s} notification to chatId: {:}".format(msgType, chatId))
         verbose_logger.debug("[TelegramPlugin] {:s} raw response: {:}".format(msgType, respJ))
         if respJ.ok.lower() == "false":
             logger.error("[TelegramPlugin] Error sending {:s} message: {:s}".format(msgType, respJ.description))
