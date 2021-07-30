@@ -79,8 +79,11 @@ class TzKTRewardApiImpl(RewardApi):
                 + split['ownBlockFees'] \
                 + split['extraBlockFees'] \
                 + split['revelationRewards'] \
-            # TODO: make configurable, rewards earned from slashing: only part of ideal reward type
+            #
+            # TODO: make configurable
+            # Rewards earned from slashing: currently only part of ideal reward type
             # Rationale: normally bakers return those funds to the one slashed in case of an honest mistake
+            #
             total_slashing_rewards = \
                 + split['doubleBakingRewards'] \
                 + split['doubleEndorsingRewards']
