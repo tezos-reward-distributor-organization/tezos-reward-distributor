@@ -79,6 +79,9 @@ class TzKTRewardApiImpl(RewardApi):
                 + split['ownBlockFees'] \
                 + split['extraBlockFees'] \
                 + split['revelationRewards'] \
+            # TODO: make configurable, rewards earned from slashing: only part of ideal reward type
+            # Rationale: normally bakers return those funds to the one slashed in case of an honest mistake
+            total_slashing_rewards = \
                 + split['doubleBakingRewards'] \
                 + split['doubleEndorsingRewards']
             # losses due to baker double baking, double endorsing or missing nonce
@@ -104,7 +107,7 @@ class TzKTRewardApiImpl(RewardApi):
             if rewards_type.isActual():
                 total_reward_amount = total_rewards_and_fees - total_equivocation_losses
             elif rewards_type.isIdeal():
-                total_reward_amount = total_rewards_and_fees + total_offline_losses
+                total_reward_amount = total_rewards_and_fees + total_offline_losses + total_slashing_rewards
 
             total_reward_amount = max(0, total_reward_amount)
 
