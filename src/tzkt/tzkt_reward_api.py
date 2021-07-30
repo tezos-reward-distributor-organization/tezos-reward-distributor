@@ -78,7 +78,7 @@ class TzKTRewardApiImpl(RewardApi):
                 + split['endorsementRewards'] \
                 + split['ownBlockFees'] \
                 + split['extraBlockFees'] \
-                + split['revelationRewards'] \
+                + split['revelationRewards']
             #
             # TODO: make configurable
             # Rewards earned from slashing: currently only part of ideal reward type
