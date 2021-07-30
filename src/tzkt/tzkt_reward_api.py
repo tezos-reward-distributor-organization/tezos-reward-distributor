@@ -78,8 +78,6 @@ class TzKTRewardApiImpl(RewardApi):
                 + split['ownBlockFees'] \
                 + split['extraBlockFees'] \
                 + split['revelationRewards'] \
-                + split['doubleBakingRewards'] \
-                + split['doubleEndorsingRewards'] \
                 - split['doubleBakingLostDeposits'] \
                 - split['doubleBakingLostRewards'] \
                 - split['doubleBakingLostFees'] \
