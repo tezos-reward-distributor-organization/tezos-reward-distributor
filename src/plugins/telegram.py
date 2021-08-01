@@ -46,7 +46,7 @@ class TelegramPlugin(plugins.Plugin):
         respJ = resp.json()
         logger.info("[TelegramPlugin] Sent {:s} notification to chatId: {:}".format(msgType, chatId))
         verbose_logger.debug("[TelegramPlugin] {:s} raw response: {:}".format(msgType, respJ))
-        if respJ.ok.lower() == "false":
+        if respJ["ok"].lower() == "false":
             logger.error("[TelegramPlugin] Error sending {:s} message: {:s}".format(msgType, respJ.description))
 
     def validateConfig(self):
