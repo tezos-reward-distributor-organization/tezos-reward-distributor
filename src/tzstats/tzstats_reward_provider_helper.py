@@ -8,7 +8,8 @@ from log_config import main_logger, verbose_logger
 from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income_baking_income, idx_income_endorsing_income, \
     idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
     idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
-    idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance
+    idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance, idx_income_missed_baking_income, \
+    idx_income_missed_endorsing_income
 from Constants import TZSTATS_PREFIX_API
 
 logger = main_logger
@@ -42,7 +43,7 @@ class TzStatsRewardProviderHelper:
 
         self.baking_address = baking_address
 
-    def get_rewards_for_cycle(self, cycle, expected_rewards=False):
+    def get_rewards_for_cycle(self, cycle, rewards_type):
 
         root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balances": {}}
 
@@ -64,17 +65,26 @@ class TzStatsRewardProviderHelper:
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
-        if expected_rewards:
+        if rewards_type.isEstimated():
             root["total_reward_amount"] = int(1e6 * float(resp[idx_income_expected_income]))
         else:
-            root["total_reward_amount"] = int(1e6 * (float(resp[idx_income_baking_income])
-                                                     + float(resp[idx_income_endorsing_income])
-                                                     + float(resp[idx_income_seed_income])
-                                                     + float(resp[idx_income_fees_income])
-                                                     - float(resp[idx_income_lost_accusation_fees])
-                                                     - float(resp[idx_income_lost_accusation_rewards])
-                                                     - float(resp[idx_income_lost_revelation_fees])
-                                                     - float(resp[idx_income_lost_revelation_rewards])))
+            # rewards earned (excluding equivocation losses and equivocation accusation income)
+            total_rewards_and_fees = (float(resp[idx_income_baking_income])
+                                      + float(resp[idx_income_endorsing_income])
+                                      + float(resp[idx_income_seed_income])
+                                      + float(resp[idx_income_fees_income]))
+            # losses due to baker double baking, double endorsing or missing nonce
+            total_equivocation_losses = (float(resp[idx_income_lost_accusation_fees])
+                                         + float(resp[idx_income_lost_accusation_rewards])
+                                         + float(resp[idx_income_lost_revelation_fees])
+                                         + float(resp[idx_income_lost_revelation_rewards]))
+            # losses due to being offline or not having enough bond
+            total_offline_losses = (float(resp[idx_income_missed_baking_income])
+                                    + float(resp[idx_income_missed_endorsing_income]))
+            if rewards_type.isActual():
+                root["total_reward_amount"] = int(1e6 * (total_rewards_and_fees - total_equivocation_losses))
+            elif rewards_type.isIdeal():
+                root["total_reward_amount"] = int(1e6 * (total_rewards_and_fees + total_offline_losses))
 
         #
         # Get staking balances of delegators at snapshot block

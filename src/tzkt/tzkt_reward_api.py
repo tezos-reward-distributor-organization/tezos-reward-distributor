@@ -18,9 +18,9 @@ class TzKTRewardApiImpl(RewardApi):
         self.baking_address = baking_address
         self.name = 'tzkt'
 
-    def calc_expected_reward(self, cycle: int, num_blocks: int, num_endorsements: int) -> int:
+    def calc_estimated_reward(self, cycle: int, num_blocks: int, num_endorsements: int) -> int:
         """
-        Calculate ideal rewards (0 priority, 32 endorsements per block) based on baking rights only
+        Calculate estimated rewards (0 priority, 32 endorsements per block) based on baking rights only
         :param cycle: Cycle
         :param num_blocks: Number of baking rights
         :param num_endorsements: Number of endorsement rights
@@ -36,11 +36,11 @@ class TzKTRewardApiImpl(RewardApi):
 
         return num_blocks * block_reward + num_endorsements * endorsement_reward
 
-    def get_rewards_for_cycle_map(self, cycle, expected_reward=False) -> RewardProviderModel:
+    def get_rewards_for_cycle_map(self, cycle, rewards_type) -> RewardProviderModel:
         """
         Returns reward split in a specified format
         :param cycle:
-        :param expected_reward:
+        :param rewards_type:
         :return: RewardProviderModel(
             delegate_staking_balance=5265698993303,
             total_reward_amount=2790471275,
@@ -56,7 +56,7 @@ class TzKTRewardApiImpl(RewardApi):
 
         delegate_staking_balance = split['stakingBalance']
 
-        if expected_reward:
+        if rewards_type.isEstimated():
             num_blocks = \
                 split['ownBlocks'] \
                 + split['missedOwnBlocks'] \
@@ -69,23 +69,44 @@ class TzKTRewardApiImpl(RewardApi):
                 + split['uncoveredEndorsements'] \
                 + split['futureEndorsements']
 
-            total_reward_amount = self.calc_expected_reward(cycle, num_blocks, num_endorsements)
+            total_reward_amount = self.calc_estimated_reward(cycle, num_blocks, num_endorsements)
         else:
-            total_reward_amount = \
+            # rewards earned (excluding equivocation losses)
+            total_rewards_and_fees = \
                 split['ownBlockRewards'] \
                 + split['extraBlockRewards'] \
                 + split['endorsementRewards'] \
                 + split['ownBlockFees'] \
                 + split['extraBlockFees'] \
-                + split['revelationRewards'] \
-                - split['doubleBakingLostDeposits'] \
-                - split['doubleBakingLostRewards'] \
-                - split['doubleBakingLostFees'] \
-                - split['doubleEndorsingLostDeposits'] \
-                - split['doubleEndorsingLostRewards'] \
-                - split['doubleEndorsingLostFees'] \
-                - split['revelationLostRewards'] \
-                - split['revelationLostFees']
+                + split['revelationRewards']
+            # slashing denunciation rewards are not part of any calculation for now:
+            #    + split['doubleBakingRewards'] \
+            #    + split['doubleEndorsingRewards']
+            # Rationale: normally bakers return those funds to the one slashed in case of an honest mistake
+            # TODO: make it configurable
+            total_equivocation_losses = split['doubleBakingLostDeposits'] \
+                + split['doubleBakingLostRewards'] \
+                + split['doubleBakingLostFees'] \
+                + split['doubleEndorsingLostDeposits'] \
+                + split['doubleEndorsingLostRewards'] \
+                + split['doubleEndorsingLostFees'] \
+                + split['revelationLostRewards'] \
+                + split['revelationLostFees']
+            # losses due to being offline or not having enough bond
+            total_offline_losses = split['missedOwnBlockRewards'] \
+                + split['missedExtraBlockRewards'] \
+                + split['uncoveredOwnBlockRewards'] \
+                + split['uncoveredExtraBlockRewards'] \
+                + split['missedEndorsementRewards'] \
+                + split['uncoveredEndorsementRewards'] \
+                + split['missedOwnBlockFees'] \
+                + split['missedExtraBlockFees'] \
+                + split['uncoveredOwnBlockFees'] \
+                + split['uncoveredExtraBlockFees']
+            if rewards_type.isActual():
+                total_reward_amount = total_rewards_and_fees - total_equivocation_losses
+            elif rewards_type.isIdeal():
+                total_reward_amount = total_rewards_and_fees + total_offline_losses
 
             total_reward_amount = max(0, total_reward_amount)
 
