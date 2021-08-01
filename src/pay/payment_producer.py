@@ -175,8 +175,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
                             logger.warn("Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation.")
-                            if not self.rewards_type.isIdeal():
-                                logger.error("For future rewards payout, you must configure the payout type to 'Ideal', see documentation")
+                            if not self.rewards_type.isEstimated():
+                                logger.error("For future rewards payout, you must configure the payout type to 'Estimated', see documentation")
                                 self.exit()
                                 break
 
@@ -192,7 +192,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             continue  # Break/Repeat loop
 
                         else:
-                            result = self.try_to_pay(pymnt_cycle, expected_rewards=self.rewards_type.isIdeal())
+                            result = self.try_to_pay(pymnt_cycle, self.rewards_type)
 
                         if result:
                             # single run is done. Do not continue.
@@ -250,7 +250,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle, expected_rewards=False):
+    def try_to_pay(self, pymnt_cycle, rewards_type):
         try:
             logger.info("Payment cycle is " + str(pymnt_cycle))
 
@@ -262,12 +262,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            if expected_rewards:
-                logger.info("Using expected/ideal rewards for payouts calculations")
-            else:
+            if rewards_type.isEstimated():
+                logger.info("Using estimated rewards for payouts calculations")
+            elif rewards_type.isActual():
                 logger.info("Using actual rewards for payouts calculations")
+            elif rewards_type.isIdeal():
+                logger.info("Using ideal rewards for payouts calculations")
 
-            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, expected_rewards)
+            reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, rewards_type)
 
             # 2- calculate rewards
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
@@ -288,7 +290,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 # 6- create calculations report file. This file contains calculations details
                 report_file_path = get_calculation_report_file(self.calculations_dir, pymnt_cycle)
                 logger.debug("Creating calculation report (%s)", report_file_path)
-                self.create_calculations_report(reward_logs, report_file_path, total_amount, expected_rewards)
+                self.create_calculations_report(reward_logs, report_file_path, total_amount, rewards_type)
 
                 # 7- processing of cycle is done
                 logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
@@ -333,9 +335,14 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             logger.error("Unable to determine local node's bootstrap status. Continuing...")
         return True
 
-    def create_calculations_report(self, payment_logs, report_file_path, total_rewards, expected_rewards):
+    def create_calculations_report(self, payment_logs, report_file_path, total_rewards, rewards_type):
 
-        rt = "I" if expected_rewards else "A"
+        if rewards_type.isEstimated():
+            rt = "E"
+        elif rewards_type.isActual():
+            rt = "A"
+        elif rewards_type.isIdeal():
+            rt = "I"
 
         # Open reports file and write; auto-closes file
         with open(report_file_path, 'w', newline='') as f:

@@ -4,7 +4,7 @@ from model.reward_log import cmp_by_type_balance
 
 from pay.batch_payer import BatchPayer
 from cli.client_manager import ClientManager
-from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL
+from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, RewardsType
 from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from model.baking_conf import BakingConf
@@ -100,7 +100,7 @@ def test_batch_payer_total_payout_amount():
 
         # Reward data
         # Fetch cycle 90 of delphinet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
-        reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE)
+        reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE, RewardsType.ACTUAL)
 
         # Calculate rewards - payment_producer.py
         reward_logs, total_amount = payment_calc.calculate(reward_model)

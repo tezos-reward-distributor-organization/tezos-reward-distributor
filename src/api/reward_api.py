@@ -7,7 +7,7 @@ class RewardApi(ABC):
         self.dexter_contracts_set = []
 
     @abstractmethod
-    def get_rewards_for_cycle_map(self, cycle):
+    def get_rewards_for_cycle_map(self, cycle, rewards_type):
         pass
 
     def set_dexter_contracts_set(self, dexter_contracts_set):
