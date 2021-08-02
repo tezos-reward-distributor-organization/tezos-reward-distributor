@@ -12,7 +12,7 @@ PUBLIC_NODE_URL = {"MAINNET": "https://mainnet-tezos.giganode.io",
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.florence.tzstats.com/'
+    CURRENT_TESTNET: 'https://api.florence.tzstats.com'
 }
 
 # TzKt
