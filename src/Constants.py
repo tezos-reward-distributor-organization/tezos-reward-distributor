@@ -12,7 +12,7 @@ PUBLIC_NODE_URL = {"MAINNET": "https://mainnet-tezos.giganode.io",
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.edo2net.tzstats.com'
+    CURRENT_TESTNET: 'https://api.florence.tzstats.com/'
 }
 
 # TzKt
@@ -35,7 +35,7 @@ TEZOS_RPC_PORT = 8732
 
 MUTEZ = 1e6
 
-VERSION = 8.0
+VERSION = 9.0
 
 
 class RunMode(Enum):
@@ -75,16 +75,12 @@ class PaymentStatus(Enum):
 class RewardsType(Enum):
     ACTUAL = 'actual'
     IDEAL = 'ideal'
-    ESTIMATED = 'estimated'
-
-    def isEstimated(self):
-        return self == RewardsType.ESTIMATED
-
-    def isActual(self):
-        return self == RewardsType.ACTUAL
 
     def isIdeal(self):
         return self == RewardsType.IDEAL
+
+    def isActual(self):
+        return self == RewardsType.ACTUAL
 
     def __str__(self):
         return self.value
