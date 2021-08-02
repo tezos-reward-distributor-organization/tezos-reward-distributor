@@ -12,7 +12,7 @@ PUBLIC_NODE_URL = {"MAINNET": "https://mainnet-tezos.giganode.io",
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.edo2net.tzstats.com'
+    CURRENT_TESTNET: 'https://api.florence.tzstats.com'
 }
 
 # TzKt
@@ -35,7 +35,7 @@ TEZOS_RPC_PORT = 8732
 
 MUTEZ = 1e6
 
-VERSION = 8.0
+VERSION = 9.0
 
 
 class RunMode(Enum):
