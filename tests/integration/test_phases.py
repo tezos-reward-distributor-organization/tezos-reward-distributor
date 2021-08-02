@@ -4,6 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from Constants import CURRENT_TESTNET
+from Constants import RewardsType
 from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from calc.calculate_phaseMapping import CalculatePhaseMapping
@@ -84,7 +85,7 @@ class TestCalculatePhases(TestCase):
             try:
                 # Reward data
                 # Fetch cycle 90 of delphinet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
-                reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE)
+                reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE, RewardsType.ACTUAL)
 
                 # Calculate rewards - payment_producer.py
                 reward_logs, total_amount = payment_calc.calculate(reward_model)

@@ -26,28 +26,28 @@ class TelegramPlugin(plugins.Plugin):
         admin_text = "<b>{:s}</b>\n{:s}".format(subject, message)
 
         for c in self.admin_chat_ids:
-            payload = {"chat_id": c, "parse_mode": "html", "text": admin_text}
-            resp = requests.post(self.api_url, params=payload)
-
-        verbose_logger.debug("[TelegramPlugin] Admin Response: {:}".format(resp.json()))
-
-        logger.info("[TelegramPlugin] Admin Notification '{:s}' sent".format(subject))
+            self.postMessage(c, admin_text, "ADMIN")
 
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
 
-        # Add sparkles emoji to message
-        message = self.telegram_text \
+        # Do template replacements
+        payout_message = self.telegram_text \
             .replace("%CYCLE%", str(cycle)) \
             .replace("%TREWARDS%", str(round(payout_amount / MUTEZ, 2))) \
             .replace("%NDELEGATORS%", str(nb_delegators))
 
+        # For each chat id, send message
         for c in self.payouts_chat_ids:
-            payload = {"chat_id": c, "parse_mode": "html", "text": message}
-            resp = requests.post(self.api_url, params=payload)
+            self.postMessage(c, payout_message, "PAYOUT")
 
-        verbose_logger.debug("[TelegramPlugin] Public Response: {:}".format(resp.json()))
-
-        logger.info("[TelegramPlugin] Public Notification '{:s}...' sent".format(message[:20]))
+    def postMessage(self, chatId, msg, msgType):
+        payload = {"chat_id": chatId, "parse_mode": "html", "text": msg}
+        resp = requests.post(self.api_url, params=payload)
+        respJ = resp.json()
+        logger.info("[TelegramPlugin] Sent {:s} notification to chatId: {:}".format(msgType, chatId))
+        verbose_logger.debug("[TelegramPlugin] {:s} raw response: {:}".format(msgType, respJ))
+        if respJ["ok"].lower() == "false":
+            logger.error("[TelegramPlugin] Error sending {:s} message: {:s}".format(msgType, respJ.description))
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
