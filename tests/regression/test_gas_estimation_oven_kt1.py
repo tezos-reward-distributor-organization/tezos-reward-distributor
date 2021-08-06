@@ -31,7 +31,7 @@ baking_config = make_config(
 )
 
 
-PAYOUT_CYCLE = 90
+PAYOUT_CYCLE = 51
 MUTEZ = 1e6
 PAYMENT_ADDRESS_BALANCE = 1000 * MUTEZ
 
@@ -99,7 +99,7 @@ def test_batch_payer_total_payout_amount():
         attempts += 1
 
         # Reward data
-        # Fetch cycle 90 of delphinet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
+        # Fetch cycle 51 of granadanet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
         reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE, RewardsType.ACTUAL)
 
         # Calculate rewards - payment_producer.py

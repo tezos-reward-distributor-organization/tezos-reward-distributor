@@ -20,7 +20,7 @@ from model.reward_log import cmp_by_type_balance
 from NetworkConfiguration import default_network_config_map
 from tests.utils import mock_request_get
 
-PAYOUT_CYCLE = 90
+PAYOUT_CYCLE = 51
 MUTEZ = 1e6
 
 logger = logging.getLogger("unittesting")
