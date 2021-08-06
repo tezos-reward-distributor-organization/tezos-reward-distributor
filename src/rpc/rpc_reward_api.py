@@ -332,8 +332,8 @@ class RpcRewardApiImpl(RewardApi):
 
     def __get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
-        current_level = int(head["metadata"]["level"]["level"])
-        current_cycle = int(head["metadata"]["level"]["cycle"])
+        current_level = int(head["metadata"]["level_info"]["level"])
+        current_cycle = int(head["metadata"]["level_info"]["cycle"])
 
         return current_level, current_cycle
 
