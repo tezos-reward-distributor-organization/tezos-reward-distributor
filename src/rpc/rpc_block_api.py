@@ -27,6 +27,17 @@ class RpcBlockApiImpl(BlockApi):
             logger.error(message)
             raise ApiProviderException(message)
 
+    def get_current_cycle(self, verbose=False):
+        try:
+            response = requests.get(COMM_HEAD.format(self.node_url), timeout=5)
+            head = response.json()
+            current_cycle = int(head["metadata"]["level_info"]["cycle"])
+            return current_cycle
+        except requests.exceptions.RequestException as e:
+            message = "[RpcBlockApiImpl] - Unable to fetch /head: {:s}".format(str(e))
+            logger.error(message)
+            raise ApiProviderException(message)
+
     def get_revelation(self, pkh, verbose=False):
         try:
             response = requests.get(COMM_REVELATION.format(self.node_url, pkh))

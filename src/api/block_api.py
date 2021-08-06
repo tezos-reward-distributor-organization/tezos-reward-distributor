@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from math import floor
 
 
 class BlockApi(ABC):
@@ -11,12 +10,15 @@ class BlockApi(ABC):
     def get_current_level(self):
         pass
 
-    def level_to_cycle(self, level):
-        return floor(level / self.nw['BLOCKS_PER_CYCLE'])
-
+    @abstractmethod
     def get_current_cycle(self):
-        return self.level_to_cycle(self.get_current_level())
+        pass
 
     def level_in_cycle(self, level):
-        cycle = self.level_to_cycle(level)
-        return level - (cycle * self.nw['BLOCKS_PER_CYCLE']) - 1
+        level = self.get_current_level()
+        if level > 1589248:
+            # After Granada
+            return ((level - 1589248) % self.nw['BLOCKS_PER_CYCLE']) - 1
+        else:
+            # Before Granada
+            return level - (cycle * self.nw['BLOCKS_PER_CYCLE']) - 1

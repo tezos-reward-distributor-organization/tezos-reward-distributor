@@ -158,7 +158,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 # Local node is ready
                 current_level = self.block_api.get_current_level()
-                current_cycle = self.block_api.level_to_cycle(current_level)
+                current_cycle = self.block_api.get_current_cycle()
                 level_in_cycle = self.block_api.level_in_cycle(current_level)
 
                 # create reports dir
