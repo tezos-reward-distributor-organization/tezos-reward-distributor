@@ -21,4 +21,4 @@ class BlockApi(ABC):
             return ((level - 1589248) % self.nw['BLOCKS_PER_CYCLE']) - 1
         else:
             # Before Granada
-            return level - (cycle * self.nw['BLOCKS_PER_CYCLE']) - 1
+            return (level % self.nw['BLOCKS_PER_CYCLE']) - 1
