@@ -20,7 +20,7 @@ from util.dir_utils import get_calculation_report_file
 
 logger = main_logger.getChild("payment_producer")
 
-BOOTSTRAP_SLEEP = 8
+BOOTSTRAP_SLEEP = 4
 
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
@@ -56,7 +56,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
 
-        logger.info("initial_cycle set to {}".format(self.initial_payment_cycle))
+        logger.info("Initial cycle set to {}".format(self.initial_payment_cycle))
 
         self.nw_config = network_config
         self.payments_root = payments_dir
@@ -79,7 +79,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.retry_producer = RetryProducer(self.payments_queue, self.reward_api, self, self.payments_root, self.initial_payment_cycle, self.retry_injected)
 
-        logger.info('Producer "{}" started'.format(self.name))
+        logger.debug('Producer "{}" started'.format(self.name))
 
     def exit(self):
         if not self.exiting:
@@ -93,7 +93,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.retry_fail_event.set()
 
     def retry_fail_run(self):
-        logger.info('Retry Fail thread "{}" started'.format(self.retry_fail_thread.name))
+        logger.debug('Retry Fail thread "{}" started'.format(self.retry_fail_thread.name))
 
         sleep(60)  # producer thread already tried once, wait for next try
 
@@ -152,7 +152,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 # Check if local node is bootstrapped; sleep if needed; restart loop
                 if not self.node_is_bootstrapped():
-                    logger.info("Local node, {}, is not in sync with the Tezos network. Will sleep for {} blocks and check again." .format(self.node_url, BOOTSTRAP_SLEEP))
+                    logger.info("Local node {} is not in sync with the Tezos network. Will sleep for {} blocks and check again." .format(self.node_url, BOOTSTRAP_SLEEP))
                     self.wait_for_blocks(BOOTSTRAP_SLEEP)
                     continue
 
@@ -165,8 +165,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 if self.calculations_dir and not os.path.exists(self.calculations_dir):
                     os.makedirs(self.calculations_dir)
 
-                logger.debug("Checking for pending payments : payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
-                logger.info("Checking for pending payments : checking {} <= {} - ({} + 1) - {}".format(pymnt_cycle, current_cycle, self.nw_config['NB_FREEZE_CYCLE'], self.release_override))
+                logger.debug("Checking for pending payments: payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override")
+                logger.info("Checking for pending payments: checking {} <= {} - ({} + 1) - {}".format(pymnt_cycle, current_cycle, self.nw_config['NB_FREEZE_CYCLE'], self.release_override))
 
                 # payments should not pass beyond last released reward cycle
                 if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
@@ -197,7 +197,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         if result:
                             # single run is done. Do not continue.
                             if self.run_mode == RunMode.ONETIME:
-                                logger.info("Run mode ONETIME satisfied. Terminating ...")
+                                logger.info("Run mode ONETIME satisfied. Terminating...")
                                 self.exit()
                                 break
                             else:
@@ -216,7 +216,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                     # pending payments done. Do not wait any more.
                     if self.run_mode == RunMode.PENDING:
-                        logger.info("Run mode PENDING satisfied. Terminating ...")
+                        logger.info("Run mode PENDING satisfied. Terminating...")
                         self.exit()
                         break
 
@@ -243,7 +243,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 logger.error("Unknown error in payment producer loop: {:s}, will try again.".format(str(e)))
 
         # end of endless loop
-        logger.info("Producer returning ...")
+        logger.debug("Producer returning...")
 
         # ensure consumer exits
         self.exit()
@@ -252,7 +252,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
     def try_to_pay(self, pymnt_cycle, rewards_type):
         try:
-            logger.info("Payment cycle is " + str(pymnt_cycle))
+            logger.info("Payment cycle is {:s}".format(str(pymnt_cycle)))
 
             # 0- check for past payment evidence for current cycle
             past_payment_state = check_past_payment(self.payments_root, pymnt_cycle)
@@ -328,7 +328,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             boot_time = self.client_manager.get_bootstrapped()
             utc_time = datetime.utcnow()
             if (boot_time + timedelta(minutes=2)) < utc_time:
-                logger.info("Current time is '{}', latest block of local node is '{}'."
+                logger.debug("Current time is '{}', latest block of local node is '{}'."
                             .format(utc_time, boot_time))
                 return False
         except ValueError:

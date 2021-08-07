@@ -54,7 +54,7 @@ class PaymentConsumer(threading.Thread):
         self.plugins_manager = plugins_manager
         self.rewards_type = rewards_type
 
-        logger.info('Consumer "%s" created', self.name)
+        logger.debug('Consumer "%s" created', self.name)
 
         return
 
@@ -66,7 +66,7 @@ class PaymentConsumer(threading.Thread):
 
             running = self._consume_batch(payment_batch)
 
-        logger.info("Consumer returning ...")
+        logger.debug("Consumer returning...")
 
         return
 
@@ -75,7 +75,7 @@ class PaymentConsumer(threading.Thread):
             payment_items = payment_batch.batch
 
             if len(payment_items) == 0:
-                logger.debug("Batch is empty, ignoring ...")
+                logger.debug("Batch is empty, ignoring...")
                 return True
 
             if payment_items[0].type == EXIT_PAYMENT_TYPE:
