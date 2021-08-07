@@ -329,7 +329,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             utc_time = datetime.utcnow()
             if (boot_time + timedelta(minutes=2)) < utc_time:
                 logger.debug("Current time is '{}', latest block of local node is '{}'."
-                            .format(utc_time, boot_time))
+                             .format(utc_time, boot_time))
                 return False
         except ValueError:
             logger.error("Unable to determine local node's bootstrap status. Continuing...")
