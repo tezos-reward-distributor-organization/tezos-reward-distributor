@@ -7,8 +7,7 @@ CURRENT_TESTNET = 'GRANADANET'
 # Providers api prefix
 # Public RPC
 PUBLIC_NODE_URL = {"MAINNET": "https://mainnet-tezos.giganode.io",
-                   CURRENT_TESTNET: "https://testnet-tezos.giganode.io"
-}
+                   CURRENT_TESTNET: "https://testnet-tezos.giganode.io"}
 
 # TzStats
 TZSTATS_PREFIX_API = {
