@@ -52,6 +52,7 @@ def parse_constants(constants):
     network_config_map = {}
     network_config_map['NB_FREEZE_CYCLE'] = int(constants['preserved_cycles'])
     network_config_map['BLOCK_TIME_IN_SEC'] = int(constants['time_between_blocks'][0])
+    network_config_map['MINIMAL_BLOCK_DELAY'] = int(constants['minimal_block_delay'])
     network_config_map['BLOCKS_PER_CYCLE'] = int(constants['blocks_per_cycle'])
     network_config_map['BLOCKS_PER_ROLL_SNAPSHOT'] = int(constants['blocks_per_roll_snapshot'])
     network_config_map['BLOCK_REWARD'] = int(int(constants['baking_reward_per_endorsement'][0]) * int(constants['endorsers_per_block']))

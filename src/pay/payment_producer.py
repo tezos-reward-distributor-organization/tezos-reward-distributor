@@ -187,7 +187,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
                             wait_offset_blocks = self.payment_offset - level_in_cycle
-                            logger.info("Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks." .format(level_in_cycle, self.payment_offset, wait_offset_blocks))
+                            wait_offset_minutes = (wait_offset_blocks * self.nw_config['MINIMAL_BLOCK_DELAY']) / 60
+                            logger.info("Current level within the cycle is {}; Requested offset is {}; Waiting for {} more blocks (~{} minutes)".format(level_in_cycle, self.payment_offset, wait_offset_blocks, wait_offset_minutes))
                             self.wait_for_blocks(wait_offset_blocks)
                             continue  # Break/Repeat loop
 
@@ -310,7 +311,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
     def wait_for_blocks(self, nb_blocks_remaining):
         for x in range(nb_blocks_remaining):
-            sleep(self.nw_config['BLOCK_TIME_IN_SEC'])
+            sleep(self.nw_config['MINIMAL_BLOCK_DELAY'])
 
             # if shutting down, exit
             if not self.life_cycle.is_running():

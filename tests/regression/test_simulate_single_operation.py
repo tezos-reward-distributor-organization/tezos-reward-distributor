@@ -27,7 +27,7 @@ run_ops_parsed = {
 )
 def test_simulate_single_operation():
     default_fee = TZTX_FEE
-    network_config = {"BLOCK_TIME_IN_SEC": 64}
+    network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
     batch_payer = BatchPayer(
         node_url="node_addr",
         pymnt_addr="tz1234567890123456789012345678901234",

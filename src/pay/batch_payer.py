@@ -293,7 +293,7 @@ class BatchPayer():
         return payment_items, attempt_count
 
     def wait_random(self):
-        block_time = self.network_config['BLOCK_TIME_IN_SEC']
+        block_time = self.network_config['MINIMAL_BLOCK_DELAY']
         slp_tm = randint(block_time // 2, block_time)
 
         logger.debug("Wait for {} seconds before trying again".format(slp_tm))
@@ -563,15 +563,15 @@ class BatchPayer():
         logger.info("Operation hash is {}".format(operation_hash))
 
         # wait for inclusion
-        timeout = MAX_BLOCKS_TO_CHECK_AFTER_INJECTION * MAX_NUM_TRIALS_PER_BLOCK * self.network_config['BLOCK_TIME_IN_SEC'] // 60
-        logger.info("Waiting for operation {} to be included... Please do not interrupt the process!!! (Timeout is around {} minutes)".format(operation_hash, timeout))
+        timeout = MAX_BLOCKS_TO_CHECK_AFTER_INJECTION * MAX_NUM_TRIALS_PER_BLOCK * self.network_config['MINIMAL_BLOCK_DELAY']
+        logger.info("Waiting for operation {} to be included... Please do not interrupt the process! (Timeout is around {} minutes)".format(operation_hash, timeout))
         for i in range(last_level_before_injection + 1, last_level_before_injection + 1 + MAX_BLOCKS_TO_CHECK_AFTER_INJECTION):
             cmd = self.comm_wait.replace("%BLOCK_HASH%", str(i))
             status = -1
             list_op_hash = []
             trial_i = 0
             while status != HTTPStatus.OK and (trial_i < MAX_NUM_TRIALS_PER_BLOCK):
-                sleep(self.network_config['BLOCK_TIME_IN_SEC'])
+                sleep(self.network_config['MINIMAL_BLOCK_DELAY'])
                 status, list_op_hash = self.clnt_mngr.request_url(cmd)
                 trial_i += 1
             if status != HTTPStatus.OK:

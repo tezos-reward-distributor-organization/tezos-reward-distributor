@@ -21,7 +21,7 @@ from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 
 node_endpoint = PUBLIC_NODE_URL[CURRENT_TESTNET]
 signer_endpoint = "http://127.0.0.1:6732"
-network = {"NAME": CURRENT_TESTNET, "BLOCK_TIME_IN_SEC": 5}
+network = {"NAME": CURRENT_TESTNET, "MINIMAL_BLOCK_DELAY": 5}
 
 baking_config = make_config(
     "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
