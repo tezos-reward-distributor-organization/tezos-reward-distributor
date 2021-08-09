@@ -1,6 +1,4 @@
 from unittest import TestCase
-import pytest
-
 from calc.calculate_phase0 import CalculatePhase0
 from model.reward_log import TYPE_OWNERS_PARENT
 from api.provider_factory import ProviderFactory
@@ -10,7 +8,7 @@ BAKING_ADDRESS = "tz1RpNqAzQNaZuxeLSbfEzVEzUWssddsL6Kw"
 CYCLE = 68
 REWARDS_TYPE = RewardsType.ACTUAL
 
-# @pytest.mark.skip
+
 class TestCalculatePhase0(TestCase):
 
     def test_calculate(self):
