@@ -4,30 +4,22 @@ import pytest
 from calc.calculate_phase0 import CalculatePhase0
 from model.reward_log import TYPE_OWNERS_PARENT
 from api.provider_factory import ProviderFactory
-from Constants import CURRENT_TESTNET
+from Constants import CURRENT_TESTNET, DEFAULT_NETWORK_CONFIG_MAP, RewardsType
 
-BAKING_ADDRESS = "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V"
+BAKING_ADDRESS = "tz1RpNqAzQNaZuxeLSbfEzVEzUWssddsL6Kw"
+CYCLE = 68
+REWARDS_TYPE = RewardsType.ACTUAL
 
-
-@pytest.mark.skip
+# @pytest.mark.skip
 class TestCalculatePhase0(TestCase):
 
     def test_calculate(self):
 
-        nw = {
-            'NAME': CURRENT_TESTNET,
-            'NB_FREEZE_CYCLE': 3,
-            'BLOCK_TIME_IN_SEC': 30,
-            'MINIMAL_BLOCK_DELAY': 15,
-            'BLOCKS_PER_CYCLE': 2048,
-            'BLOCKS_PER_ROLL_SNAPSHOT': 256,
-            'BLOCK_REWARD': 20000000,
-            'ENDORSEMENT_REWARD': 78125
-        }
+        nw = DEFAULT_NETWORK_CONFIG_MAP[CURRENT_TESTNET]
 
         api = ProviderFactory(provider='prpc').newRewardApi(nw, BAKING_ADDRESS, '')
 
-        model = api.get_rewards_for_cycle_map(11, 'actual')
+        model = api.get_rewards_for_cycle_map(CYCLE, REWARDS_TYPE)
 
         phase0 = CalculatePhase0(model)
         reward_data, total_rewards = phase0.calculate()
