@@ -11,8 +11,8 @@ from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
-TZTX_FEE = 396
-TZTX_GAS_LIMIT = 1427
+TZTX_FEE = 395
+TZTX_GAS_LIMIT = 1420
 TZTX_STORAGE_LIMIT = 65
 MAX_TX_PER_BLOCK_TZ = 400
 MAX_TX_PER_BLOCK_KT = 10
