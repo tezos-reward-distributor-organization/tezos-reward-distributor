@@ -33,11 +33,11 @@ class TzKTRewardApiImpl(RewardApi):
             proto = self.api.get_protocol_by_cycle(cycle)
 
             block_reward = \
-                 proto['constants']['blockReward'][0] \
-                 * proto['constants']['endorsersPerBlock']
+                proto['constants']['blockReward'][0] \
+                * proto['constants']['endorsersPerBlock']
 
             endorsement_reward = \
-                 proto['constants']['endorsementReward'][0]
+                proto['constants']['endorsementReward'][0]
         else:
             # Before Granada
             block_reward = 40000000
