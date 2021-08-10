@@ -441,16 +441,40 @@ class RpcRewardApiImpl(RewardApi):
         return int(current_balance_response)
 
     def __get_roll_snapshot_block_level(self, cycle, current_level):
+        # Granada doubled the number of [blocks_per_cycle] (8192 vs 4096)
+        # Thus, we need to change the way we calculate the snapshot level
+        # If the cycle is one of the 6 next after Granada (388-393),
+        # the calculation is the same. After cycle 393, we have to consider that
+        # the initial cycle has to be calculated differently, adding an offset.
+        # For example, for cycle 394:
+        # e.g. snapshot_level = 1589248 + ((394 - 387 - 5) * 8192 + 1)
 
-        snapshot_level = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
+        if cycle < 394:
+            # Still using pre-Granada calculation
+            pre_granada_blocks_per_cycle = 4096
+            snapshot_level = (cycle - self.preserved_cycles) * pre_granada_blocks_per_cycle + 1
+        else:
+            # Using an offset of 1589248 block (387 cycles pre-Granda of 4096 blocks each)
+            cycles_pre_granada = 387
+            block_pre_granada = 1589248
+            snapshot_level = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles) * self.blocks_per_cycle + 1)
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
 
         if current_level - snapshot_level >= 0:
             request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
-            level_snapshot_block = ((cycle - self.preserved_cycles - 2) * self.blocks_per_cycle
-                                    + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+            if cycle < 396:
+                # Still using pre-Granada calculation
+                pre_granada_blocks_per_cycle = 4096
+                level_snapshot_block = ((cycle - self.preserved_cycles - 2) * pre_granada_blocks_per_cycle
+                                        + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+            else:
+               # Using an offset of 1589248 block (387 cycles pre-Granda of 4096 blocks each)
+               cycles_pre_granada = 387
+               block_pre_granada = 1589248
+               level_snapshot_block = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles - 2) * self.blocks_per_cycle
+                                        + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
 
             logger.debug("Snapshot index {}, snapshot index level {}".format(chosen_snapshot, level_snapshot_block))
 
