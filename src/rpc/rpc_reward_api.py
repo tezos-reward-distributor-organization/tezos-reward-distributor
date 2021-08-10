@@ -52,8 +52,18 @@ class RpcRewardApiImpl(RewardApi):
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Get last block in cycle where rewards are unfrozen
-            level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
-            level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
+            if cycle < 394:
+                # Still using pre-Granada calculation
+                pre_granada_blocks_per_cycle = 4096
+                level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * pre_granada_blocks_per_cycle
+                level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * pre_granada_blocks_per_cycle + 1
+            else:
+                # Using an offset of 1589248 block (388 cycles pre-Granda of 4096 blocks each)
+                # Cycles start at 0
+                cycles_pre_granada = 388
+                blocks_pre_granada = 1589248
+                level_of_last_block_in_unfreeze_cycle = blocks_pre_granada + ((cycle - cycles_pre_granada + self.preserved_cycles + 1) * self.blocks_per_cycle)
+                level_of_first_block_in_preserved_cycles = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles) * self.blocks_per_cycle + 1)
 
             logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
                          "last block unfreeze cycle {:d}"
@@ -447,15 +457,16 @@ class RpcRewardApiImpl(RewardApi):
         # the calculation is the same. After cycle 393, we have to consider that
         # the initial cycle has to be calculated differently, adding an offset.
         # For example, for cycle 394:
-        # e.g. snapshot_level = 1589248 + ((394 - 387 - 5) * 8192 + 1)
+        # e.g. snapshot_level = 1589248 + ((394 - 388 - 5) * 8192 + 1)
 
         if cycle < 394:
             # Still using pre-Granada calculation
             pre_granada_blocks_per_cycle = 4096
             snapshot_level = (cycle - self.preserved_cycles) * pre_granada_blocks_per_cycle + 1
         else:
-            # Using an offset of 1589248 block (387 cycles pre-Granda of 4096 blocks each)
-            cycles_pre_granada = 387
+            # Using an offset of 1589248 block (388 cycles pre-Granda of 4096 blocks each)
+            # Cycles start at 0
+            cycles_pre_granada = 388
             blocks_pre_granada = 1589248
             snapshot_level = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles) * self.blocks_per_cycle + 1)
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
