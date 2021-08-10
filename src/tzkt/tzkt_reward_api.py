@@ -25,19 +25,23 @@ class TzKTRewardApiImpl(RewardApi):
         :param num_blocks: Number of baking rights
         :param num_endorsements: Number of endorsement rights
         """
-        # FIXME: https://api.tzkt.io/v1/protocols/cycles/242 gives Granada constants instead of Carthage
+        # FIXME: https://api.tzkt.io/v1/protocols/cycles/242 always return Granada constants
         # Temporarly hard-coding the values
 
-        # proto = self.api.get_protocol_by_cycle(cycle)
+        if cycle >= 388:
+            # Granada constants
+            proto = self.api.get_protocol_by_cycle(cycle)
 
-        # block_reward = \
-        #     proto['constants']['blockReward'][0] \
-        #     * proto['constants']['endorsersPerBlock']
-        block_reward = 1250000 * 32
+            block_reward = \
+                 proto['constants']['blockReward'][0] \
+                 * proto['constants']['endorsersPerBlock']
 
-        # endorsement_reward = \
-        #     proto['constants']['endorsementReward'][0]
-        endorsement_reward = 1250000
+            endorsement_reward = \
+                 proto['constants']['endorsementReward'][0]
+        else:
+            # Before Granada
+            block_reward = 40000000
+            endorsement_reward = 1250000
 
         return num_blocks * block_reward + num_endorsements * endorsement_reward
 
