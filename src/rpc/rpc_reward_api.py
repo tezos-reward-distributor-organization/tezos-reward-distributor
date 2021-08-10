@@ -456,7 +456,7 @@ class RpcRewardApiImpl(RewardApi):
         else:
             # Using an offset of 1589248 block (387 cycles pre-Granda of 4096 blocks each)
             cycles_pre_granada = 387
-            block_pre_granada = 1589248
+            blocks_pre_granada = 1589248
             snapshot_level = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles) * self.blocks_per_cycle + 1)
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
 
@@ -470,11 +470,11 @@ class RpcRewardApiImpl(RewardApi):
                 level_snapshot_block = ((cycle - self.preserved_cycles - 2) * pre_granada_blocks_per_cycle
                                         + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
             else:
-               # Using an offset of 1589248 block (387 cycles pre-Granda of 4096 blocks each)
-               cycles_pre_granada = 387
-               block_pre_granada = 1589248
-               level_snapshot_block = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles - 2) * self.blocks_per_cycle
-                                        + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+                # Using an offset of 1589248 block (387 cycles pre-Granda of 4096 blocks each)
+                cycles_pre_granada = 387
+                blocks_pre_granada = 1589248
+                level_snapshot_block = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles - 2) * self.blocks_per_cycle
+                                                             + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
 
             logger.debug("Snapshot index {}, snapshot index level {}".format(chosen_snapshot, level_snapshot_block))
 
