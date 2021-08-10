@@ -32,13 +32,12 @@ class RpcBlockApiImpl(BlockApi):
             response = requests.get(COMM_REVELATION.format(self.node_url, pkh))
             manager_key = response.json()
             logger.debug("Manager key is '{}'".format(manager_key))
-            bool_revelation = (
-                manager_key
-                and manager_key != "null"
-                and len(manager_key) == 54
-                and manager_key.startswith("edpk")
-            )
-            return bool_revelation
+            return manager_key and \
+			  manager_key != "null" and ( \
+				(manager_key.startswith("edpk") and len(manager_key) == 54) or \
+				(manager_key.startswith(("p2pk", "sppk")) and len(manager_key) == 55) \
+			  )
+
         except requests.exceptions.RequestException as e:
             message = "[{}] - Unable to fetch revelation: {:s}".format(__class__.__name__, str(e))
             logger.error(message)
