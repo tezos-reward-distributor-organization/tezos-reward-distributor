@@ -11,6 +11,7 @@ from Dexter import dexter_utils as dxtz
 
 logger = main_logger.getChild("rpc_reward_api")
 
+# RPC constants
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
@@ -23,6 +24,13 @@ COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 COMM_BAKING_RIGHTS = "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}"
 COMM_ENDORSING_RIGHTS = "{}/chains/main/blocks/{}/helpers/endorsing_rights?cycle={}&delegate={}"
 COMM_FROZEN_BALANCE = "{}/chains/main/blocks/{}/context/delegates/{}/frozen_balance_by_cycle"
+
+# Constants used for calculations related to the cycles before Granada
+CYCLES_BEFORE_GRANADA = 388
+BLOCKS_BEFORE_GRANADA = 1589248
+BLOCKS_PER_CYCLE_BEFORE_GRANADA = 4096
+FIRST_CYCLE_REWARDS_GRANADA = 394
+FIRST_CYCLE_SNAPSHOT_GRANADA = 396
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -52,18 +60,15 @@ class RpcRewardApiImpl(RewardApi):
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Get last block in cycle where rewards are unfrozen
-            if cycle < 394:
-                # Still using pre-Granada calculation
-                pre_granada_blocks_per_cycle = 4096
-                level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * pre_granada_blocks_per_cycle
-                level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * pre_granada_blocks_per_cycle + 1
-            else:
-                # Using an offset of 1589248 block (388 cycles pre-Granda of 4096 blocks each)
+            if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+                # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
                 # Cycles start at 0
-                cycles_pre_granada = 388
-                blocks_pre_granada = 1589248
-                level_of_last_block_in_unfreeze_cycle = blocks_pre_granada + ((cycle - cycles_pre_granada + self.preserved_cycles + 1) * self.blocks_per_cycle)
-                level_of_first_block_in_preserved_cycles = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles) * self.blocks_per_cycle + 1)
+                level_of_last_block_in_unfreeze_cycle = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA + self.preserved_cycles + 1) * self.blocks_per_cycle)
+                level_of_first_block_in_preserved_cycles = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles) * self.blocks_per_cycle + 1)
+            else:
+                # Using pre-Granada calculation
+                level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+                level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
 
             logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
                          "last block unfreeze cycle {:d}"
@@ -459,33 +464,28 @@ class RpcRewardApiImpl(RewardApi):
         # For example, for cycle 394:
         # e.g. snapshot_level = 1589248 + ((394 - 388 - 5) * 8192 + 1)
 
-        if cycle < 394:
-            # Still using pre-Granada calculation
-            pre_granada_blocks_per_cycle = 4096
-            snapshot_level = (cycle - self.preserved_cycles) * pre_granada_blocks_per_cycle + 1
-        else:
-            # Using an offset of 1589248 block (388 cycles pre-Granda of 4096 blocks each)
+        if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+            # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
             # Cycles start at 0
-            cycles_pre_granada = 388
-            blocks_pre_granada = 1589248
-            snapshot_level = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles) * self.blocks_per_cycle + 1)
+            snapshot_level = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles) * self.blocks_per_cycle + 1)
+        else:
+            # Using pre-Granada calculation
+            snapshot_level = (cycle - self.preserved_cycles) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
+
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
 
         if current_level - snapshot_level >= 0:
             request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
-            if cycle < 396:
-                # Still using pre-Granada calculation
-                pre_granada_blocks_per_cycle = 4096
-                level_snapshot_block = ((cycle - self.preserved_cycles - 2) * pre_granada_blocks_per_cycle
-                                        + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+            if cycle >= FIRST_CYCLE_SNAPSHOT_GRANADA:
+                # Using an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
+                level_snapshot_block = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles - 2) * self.blocks_per_cycle
+                                                                + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
             else:
-                # Using an offset of 1589248 block (387 cycles pre-Granda of 4096 blocks each)
-                cycles_pre_granada = 387
-                blocks_pre_granada = 1589248
-                level_snapshot_block = blocks_pre_granada + ((cycle - cycles_pre_granada - self.preserved_cycles - 2) * self.blocks_per_cycle
-                                                             + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+                # Using pre-Granada calculation
+                level_snapshot_block = ((cycle - self.preserved_cycles - 2) * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+                                        + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
 
             logger.debug("Snapshot index {}, snapshot index level {}".format(chosen_snapshot, level_snapshot_block))
 
