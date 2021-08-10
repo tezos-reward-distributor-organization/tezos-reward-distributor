@@ -7,7 +7,7 @@ CURRENT_TESTNET = 'GRANADANET'
 # Providers api prefix
 # Public RPC
 PUBLIC_NODE_URL = {
-    'MAINNET': 'https://mainnet-node.madfish.solutions',
+    'MAINNET': 'https://mainnet-tezos.giganode.io',
     CURRENT_TESTNET: 'https://granadanet.smartpy.io'
 }
 
