@@ -11,6 +11,7 @@ from Dexter import dexter_utils as dxtz
 
 logger = main_logger.getChild("rpc_reward_api")
 
+# RPC constants
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
@@ -23,6 +24,13 @@ COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 COMM_BAKING_RIGHTS = "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}"
 COMM_ENDORSING_RIGHTS = "{}/chains/main/blocks/{}/helpers/endorsing_rights?cycle={}&delegate={}"
 COMM_FROZEN_BALANCE = "{}/chains/main/blocks/{}/context/delegates/{}/frozen_balance_by_cycle"
+
+# Constants used for calculations related to the cycles before Granada
+CYCLES_BEFORE_GRANADA = 388
+BLOCKS_BEFORE_GRANADA = 1589248
+BLOCKS_PER_CYCLE_BEFORE_GRANADA = 4096
+FIRST_CYCLE_REWARDS_GRANADA = 394
+FIRST_CYCLE_SNAPSHOT_GRANADA = 396
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -52,8 +60,15 @@ class RpcRewardApiImpl(RewardApi):
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Get last block in cycle where rewards are unfrozen
-            level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * self.blocks_per_cycle
-            level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
+            if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+                # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
+                # Cycles start at 0
+                level_of_last_block_in_unfreeze_cycle = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA + self.preserved_cycles + 1) * self.blocks_per_cycle)
+                level_of_first_block_in_preserved_cycles = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles) * self.blocks_per_cycle + 1)
+            else:
+                # Using pre-Granada calculation
+                level_of_last_block_in_unfreeze_cycle = (cycle + self.preserved_cycles + 1) * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+                level_of_first_block_in_preserved_cycles = (cycle - self.preserved_cycles) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
 
             logger.debug("Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
                          "last block unfreeze cycle {:d}"
@@ -332,8 +347,8 @@ class RpcRewardApiImpl(RewardApi):
 
     def __get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
-        current_level = int(head["metadata"]["level"]["level"])
-        current_cycle = int(head["metadata"]["level"]["cycle"])
+        current_level = int(head["metadata"]["level_info"]["level"])
+        current_cycle = int(head["metadata"]["level_info"]["cycle"])
 
         return current_level, current_cycle
 
@@ -441,16 +456,36 @@ class RpcRewardApiImpl(RewardApi):
         return int(current_balance_response)
 
     def __get_roll_snapshot_block_level(self, cycle, current_level):
+        # Granada doubled the number of [blocks_per_cycle] (8192 vs 4096)
+        # Thus, we need to change the way we calculate the snapshot level
+        # If the cycle is one of the 6 next after Granada (388-393),
+        # the calculation is the same. After cycle 393, we have to consider that
+        # the initial cycle has to be calculated differently, adding an offset.
+        # For example, for cycle 394:
+        # e.g. snapshot_level = 1589248 + ((394 - 388 - 5) * 8192 + 1)
 
-        snapshot_level = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
+        if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+            # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
+            # Cycles start at 0
+            snapshot_level = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles) * self.blocks_per_cycle + 1)
+        else:
+            # Using pre-Granada calculation
+            snapshot_level = (cycle - self.preserved_cycles) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
+
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
 
         if current_level - snapshot_level >= 0:
             request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
-            level_snapshot_block = ((cycle - self.preserved_cycles - 2) * self.blocks_per_cycle
-                                    + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+            if cycle >= FIRST_CYCLE_SNAPSHOT_GRANADA:
+                # Using an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
+                level_snapshot_block = BLOCKS_BEFORE_GRANADA + ((cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles - 2) * self.blocks_per_cycle
+                                                                + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+            else:
+                # Using pre-Granada calculation
+                level_snapshot_block = ((cycle - self.preserved_cycles - 2) * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+                                        + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
 
             logger.debug("Snapshot index {}, snapshot index level {}".format(chosen_snapshot, level_snapshot_block))
 

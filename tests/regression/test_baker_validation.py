@@ -1,6 +1,5 @@
 import pytest
 from cli.client_manager import ClientManager
-from Constants import PUBLIC_NODE_URL
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from exception.configuration import ConfigurationException
 
@@ -8,7 +7,13 @@ from rpc.rpc_block_api import RpcBlockApiImpl
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzstats.tzstats_block_api import TzStatsBlockApiImpl
 
-node_endpoint = PUBLIC_NODE_URL["MAINNET"]
+# Giganode endpoint is too slow.
+# Using Madfish Solutions endpoint to fix failing CI
+# Switch back to Giganode once it's reliable:
+# from Constants import PUBLIC_NODE_URL
+# node_endpoint = PUBLIC_NODE_URL["MAINNET"]
+
+node_endpoint = 'https://mainnet-node.madfish.solutions'
 signer_endpoint = "http://127.0.0.1:6732"
 network = {"NAME": "MAINNET"}
 

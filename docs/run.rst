@@ -35,8 +35,8 @@ Options
 ``-O --payment_offset <int>``
     Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
 
-``-N --network <MAINNET|FLORENCENET>``
-    Network name. Default value: ``MAINNET``. The current test network of Tezos is ``FLORENCENET``.
+``-N --network <MAINNET|GRANADANET>``
+    Network name. Default value: ``MAINNET``. The current test network of Tezos is ``GRANADANET``.
 
 ``-A --node_endpoint <node_url:port>``
     Node potentially with protocol prefix especially if TLS encryption is used. Default value: ``http://127.0.0.1:8732``. This is the main Tezos node used by the client for RPC queries and operation injections.
@@ -115,11 +115,11 @@ Make pending payouts beginning from a cycle and exit:
 
     python3 src/main.py -C 300 -M 2 -V
 
-Run in dry-run mode on FLORENCENET, make payouts for cycle 300 and exit:
+Run in dry-run mode on GRANADANET, make payouts for cycle 300 and exit:
 
 ::
 
-    python3 src/main.py -D -N FLORENCENET -C 300 -M 3 -V
+    python3 src/main.py -D -N GRANADANET -C 300 -M 3 -V
 
 Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by Tezos node RPC interface:
 
