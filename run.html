@@ -208,7 +208,7 @@
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--payment_offset</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">--network</span> <span class="pre">&lt;MAINNET|FLORENCENET&gt;</span></code></dt><dd><p>Network name. Default value: <code class="docutils literal notranslate"><span class="pre">MAINNET</span></code>. The current test network of Tezos is <code class="docutils literal notranslate"><span class="pre">FLORENCENET</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">--network</span> <span class="pre">&lt;MAINNET|GRANADANET&gt;</span></code></dt><dd><p>Network name. Default value: <code class="docutils literal notranslate"><span class="pre">MAINNET</span></code>. The current test network of Tezos is <code class="docutils literal notranslate"><span class="pre">GRANADANET</span></code>.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-A</span> <span class="pre">--node_endpoint</span> <span class="pre">&lt;node_url:port&gt;</span></code></dt><dd><p>Node potentially with protocol prefix especially if TLS encryption is used. Default value: <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8732</span></code>. This is the main Tezos node used by the client for RPC queries and operation injections.</p>
 </dd>
@@ -263,8 +263,8 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
-<p>Run in dry-run mode on FLORENCENET, make payouts for cycle 300 and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">N</span> <span class="n">FLORENCENET</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span>
+<p>Run in dry-run mode on GRANADANET, make payouts for cycle 300 and exit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">N</span> <span class="n">GRANADANET</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
 <p>Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by Tezos node RPC interface:</p>
