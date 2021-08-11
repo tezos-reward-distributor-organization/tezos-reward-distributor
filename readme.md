@@ -78,7 +78,7 @@ nano ~/pymnt/cfg/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml
 
 ## How to Run
 
-For a list of parameters, run:
+For a list of parameters, [read the online documentation](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/run.html), or run:
 
 ```bash
 python3 src/main.py --help
@@ -90,7 +90,9 @@ The most common use case is to run in **mainnet** and start to make payments for
 python3 src/main.py
 ```
 
-TRD necessitates of an interface to get provided with income and delegator data in order to perform the needed calculations. 
-The default provider is the public RPC node `mainnet-tezos.giganode.io`. However, it is possible to change the data provider with the flag `-P rpc`.
-Please note that, in this case, the default node would be `127.0.0.1:8732`. In order to change the node URL for the provider, you can pass it in the form `node_url:port` using the flag `-A` (e.g. `-P rpc -A 127.0.0.1:8733`).
-Please note that the node should be an [archive node](https://tezos.gitlab.io/user/history_modes.html#setting-up-a-node-in-archive-mode), and that the port should be the RPC port specified while launching the node.
+TRD necessitates of an interface to get provided with income and delegator data in order to perform the needed calculations.
+
+The default provider is the TzKT API. However, it is possible to change the data provider to a local node with the flag `-P rpc`.
+In this case, the default node would be `127.0.0.1:8732`. In order to change the node URL for the provider, you can pass it in the form `node_url:port` using the flag `-A` (e.g. `-P rpc -A 127.0.0.1:8733`). Please note that the node should be an [archive node](https://tezos.gitlab.io/user/history_modes.html#setting-up-a-node-in-archive-mode), and that the port should be the RPC port specified while launching the node.
+
+It is also possible to use a public RPC node with flag `-P prpc`, which defaults to `https://mainnet-tezos.giganode.io`.
