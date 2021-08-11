@@ -8,7 +8,9 @@ from rpc.rpc_block_api import RpcBlockApiImpl
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzstats.tzstats_block_api import TzStatsBlockApiImpl
 
-node_endpoint = PUBLIC_NODE_URL["MAINNET"]
+# PUBLIC_NODE_URL["MAINNET"] is https://mainnet-tezos.giganode.io (too slow)
+# Using Madfish Solutions endpoint to fix failing CI
+node_endpoint = 'https://mainnet-node.madfish.solutions'
 signer_endpoint = "http://127.0.0.1:6732"
 network = {"NAME": "MAINNET"}
 
