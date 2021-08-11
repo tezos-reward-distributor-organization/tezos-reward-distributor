@@ -50,15 +50,7 @@ jobs:
 
     - name: Install software dependencies
       shell: bash
-      run: |
-        python -m pip install --upgrade pip
-        sudo apt-get update -y
-        sudo apt-get install libenchant1c2a -y
-        sudo apt-get install graphviz -y
-        pip install -r requirements.txt
-        pip install pytest
-        pip install parameterized
-        pip install graphviz
+      run: ./scripts/setup-dev.sh
 
     - name: Set the python path
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV  

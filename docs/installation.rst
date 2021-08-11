@@ -1,36 +1,40 @@
-How to get and install TRD?
-=====================================================
+Installation
+============
 
 Requirements and Setup
-------------------------
-
-
-Python 3 is required. You can use following commands to install.
-
-::
-
-    sudo apt-get update
-    sudo apt-get -y install python3-pip
+----------------------
 
 Download the application repository using git clone:
 
 ::
 
     git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
+    cd tezos-reward-distributor
 
-To install required modules, use pip with requirements.txt provided.
+Install Python 3 and pip (if not already installed) and required packages with:
 
 ::
 
-    cd tezos-reward-distributor
-    pip3 install -r requirements.txt
+    ./scripts/setup.sh
+
+The Tezos signer is also needed to run TRD. Please check out the official Tezos documentation_ and install the Tezos signer.
+
+.. _documentation : https://tezos.gitlab.io/introduction/howtoget.html
+
+Update
+------
 
 Regulary check and upgrade to the latest available version:
 
 ::
 
-    git pull
+    ./scripts/update.sh
 
-The Tezos signer is also needed to run TRD. Please check out the offical documentation_ and install the Tezos signer.
+Development
+-----------
 
-.. _documentation : https://tezos.gitlab.io/introduction/howtoget.html
+Developers and testers need to install additional packages:
+
+::
+
+    ./scripts/setup-dev.sh

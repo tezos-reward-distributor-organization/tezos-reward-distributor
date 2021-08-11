@@ -36,32 +36,29 @@ The [terms of use](https://api.tzkt.io/#section/Terms-of-Use) of TzKT API allow 
 
 ## Requirements and Setup
 
-Python 3 is required. You can use the following commands to install it.
-
-```bash
-sudo apt-get update
-sudo apt-get -y install python3-pip
-```
-
 Download the application repository using git clone:
 
 ```bash
 git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
+cd tezos-reward-distributor
 ```
 
-To install required modules, use pip with `requirements.txt` provided.
+Install Python 3 and pip (if not already installed) and required packages with:
 
 ```bash
-cd tezos-reward-distributor
-pip3 install -r requirements.txt
+./scripts/setup.sh
 ```
 
 Regularly check and upgrade to the latest available version:
 
 ```bash
-git fetch origin #fetches new branches
-git status #see the changes
-git pull
+./scripts/update.sh
+```
+
+Developers and testers need to install additional packages:
+
+```bash
+./scripts/setup-dev.sh
 ```
 
 ## Sample configuration
