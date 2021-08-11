@@ -123,21 +123,21 @@ def add_argument_payment_offset(parser):
 
 def add_argument_network(parser):
     parser.add_argument("-N", "--network",
-                        help="Network name. Default is Mainnet. The current test network of tezos is FLORENCENET.",
-                        choices=['MAINNET', 'FLORENCENET'],
+                        help="Network name. Default is MAINNET. The current test network is GRANADANET.",
+                        choices=['MAINNET', 'GRANADANET'],
                         default='MAINNET')
 
 
 def add_argument_node_endpoint(parser):
     parser.add_argument("-A", "--node_endpoint",
-                        help="Node (host:port pair) potentially with protocol prefix especially if tls encryption is used. Default is http://127.0.0.1:8732. "
+                        help="Node (host:port pair) potentially with protocol prefix especially if TLS encryption is used. Default is http://127.0.0.1:8732. "
                              "This is the main Tezos node used by the client for rpc queries and operation injections.",
                         default='http://127.0.0.1:8732')
 
 
 def add_argument_provider(parser):
     parser.add_argument("-P", "--reward_data_provider",
-                        help="Source of reward data. The default is the use of a public archive rpc node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!",
+                        help="Source of reward data. The default is the use of a public archive RPC node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!",
                         choices=['rpc', 'prpc', 'tzstats', 'tzkt'],
                         default='prpc')
 

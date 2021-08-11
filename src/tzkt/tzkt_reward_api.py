@@ -25,6 +25,7 @@ class TzKTRewardApiImpl(RewardApi):
         :param num_blocks: Number of baking rights
         :param num_endorsements: Number of endorsement rights
         """
+
         proto = self.api.get_protocol_by_cycle(cycle)
 
         block_reward = \

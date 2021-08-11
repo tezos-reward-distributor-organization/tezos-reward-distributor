@@ -3,7 +3,7 @@ from pay.batch_payer import BatchPayer, TZTX_FEE, MUTEZ_PER_GAS_UNIT
 from model.reward_log import RewardLog
 from cli.client_manager import ClientManager
 from http import HTTPStatus
-from Constants import PaymentStatus
+from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, PaymentStatus
 
 run_ops_parsed = {
     "contents": [
@@ -27,12 +27,12 @@ run_ops_parsed = {
 )
 def test_simulate_single_operation():
     default_fee = TZTX_FEE
-    network_config = {"BLOCK_TIME_IN_SEC": 64}
+    network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
     batch_payer = BatchPayer(
         node_url="node_addr",
         pymnt_addr="tz1234567890123456789012345678901234",
         clnt_mngr=ClientManager(
-            node_endpoint="https://testnet-tezos.giganode.io:443",
+            node_endpoint=PUBLIC_NODE_URL[CURRENT_TESTNET],
             signer_endpoint="http://127.0.0.1:6732",
         ),
         delegator_pays_ra_fee=True,
@@ -56,6 +56,6 @@ def test_simulate_single_operation():
     assert PaymentStatus.DONE == simulation_status
     consumed_gas, tx_fee, storage = simulation_results
     assert 150 == consumed_gas
-    assert 411 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
+    assert 410 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
     assert int == type(storage)  # type of storage should be int
     assert 24 == storage

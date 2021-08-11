@@ -30,6 +30,20 @@ class TzStatsBlockApiImpl(BlockApi):
 
         return current_level
 
+    def get_current_cycle(self):
+        uri = self.head_api + '/explorer/block/head'
+
+        verbose_logger.debug("Requesting {}".format(uri))
+
+        resp = requests.get(uri, timeout=5)
+        root = resp.json()
+
+        verbose_logger.debug("Response from tzstats is: {}".format(root))
+
+        current_cycle = int(root["cycle"])
+
+        return current_cycle
+
     def get_revelation(self, pkh, verbose=False):
         try:
             uri = self.head_api + '/explorer/account/{}'.format(pkh)

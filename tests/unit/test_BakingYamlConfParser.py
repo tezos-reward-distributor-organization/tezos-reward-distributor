@@ -4,9 +4,17 @@ from unittest.mock import patch, MagicMock
 from cli.client_manager import ClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
-from Constants import PUBLIC_NODE_URL, RewardsType
+from Constants import RewardsType
 from rpc.rpc_block_api import RpcBlockApiImpl
 
+# Giganode endpoint is too slow.
+# Using Madfish Solutions endpoint to fix failing CI
+# Switch back to Giganode once it's reliable:
+# from Constants import PUBLIC_NODE_URL
+# node_endpoint = PUBLIC_NODE_URL["MAINNET"]
+
+node_endpoint = 'https://mainnet-node.madfish.solutions'
+signer_endpoint = "http://127.0.0.1:6732"
 network = {'NAME': 'MAINNET'}
 
 
@@ -14,8 +22,8 @@ network = {'NAME': 'MAINNET'}
 class TestYamlAppConfParser(TestCase):
 
     def setUp(self):
-        self.mainnet_public_node_url = PUBLIC_NODE_URL["MAINNET"]
-        self.signer_endpoint = "http://127.0.0.1:6732"
+        self.mainnet_public_node_url = node_endpoint
+        self.signer_endpoint = signer_endpoint
 
     def test_validate(self):
         data_fine = """

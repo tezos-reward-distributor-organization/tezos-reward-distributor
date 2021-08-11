@@ -2,20 +2,22 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 
-CURRENT_TESTNET = 'FLORENCENET'
+CURRENT_TESTNET = 'GRANADANET'
 
 # Providers api prefix
 # Public RPC
-PUBLIC_NODE_URL = {"MAINNET": "https://mainnet-tezos.giganode.io",
-                   CURRENT_TESTNET: "https://testnet-tezos.giganode.io"}
+PUBLIC_NODE_URL = {
+    'MAINNET': 'https://mainnet-tezos.giganode.io',
+    CURRENT_TESTNET: 'https://granadanet.smartpy.io'
+}
 
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.florence.tzstats.com'
+    CURRENT_TESTNET: 'https://api.granada.tzstats.com'
 }
 
-# TzKt
+# TzKT
 TZKT_API_PREFIX = {
     'MAINNET': 'https://api.tzkt.io/v1',
     CURRENT_TESTNET: 'https://api.{}.tzkt.io/v1'.format(CURRENT_TESTNET)
@@ -24,10 +26,10 @@ TZKT_API_PREFIX = {
 
 # Network constants
 DEFAULT_NETWORK_CONFIG_MAP = {
-    'MAINNET': {'NAME': 'MAINNET', 'NB_FREEZE_CYCLE': 5, 'BLOCK_TIME_IN_SEC': 60, 'BLOCKS_PER_CYCLE': 4096,
-                'BLOCKS_PER_ROLL_SNAPSHOT': 256, 'BLOCK_REWARD': 40000000, 'ENDORSEMENT_REWARD': 1250000},
-    CURRENT_TESTNET: {'NAME': CURRENT_TESTNET, 'NB_FREEZE_CYCLE': 3, 'BLOCK_TIME_IN_SEC': 30, 'BLOCKS_PER_CYCLE': 2048,
-                      'BLOCKS_PER_ROLL_SNAPSHOT': 128, 'BLOCK_REWARD': 40000000, 'ENDORSEMENT_REWARD': 1250000},
+    'MAINNET': {'NAME': 'MAINNET', 'NB_FREEZE_CYCLE': 5, 'BLOCK_TIME_IN_SEC': 60, 'MINIMAL_BLOCK_DELAY': 30, 'BLOCKS_PER_CYCLE': 8192,
+                'BLOCKS_PER_ROLL_SNAPSHOT': 512, 'BLOCK_REWARD': 20000000, 'ENDORSEMENT_REWARD': 78125},
+    CURRENT_TESTNET: {'NAME': CURRENT_TESTNET, 'NB_FREEZE_CYCLE': 3, 'BLOCK_TIME_IN_SEC': 30, 'MINIMAL_BLOCK_DELAY': 15, 'BLOCKS_PER_CYCLE': 4096,
+                      'BLOCKS_PER_ROLL_SNAPSHOT': 256, 'BLOCK_REWARD': 20000000, 'ENDORSEMENT_REWARD': 78125},
 }
 
 

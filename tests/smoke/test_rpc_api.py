@@ -3,15 +3,15 @@ import logging
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 from tests.utils import Args, make_config
-from Constants import CURRENT_TESTNET
+from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL
 from main import start_application
 
 
 @pytest.fixture
 def args():
-    args = Args(initial_cycle=90, reward_data_provider='prpc', node_addr_public='https://testnet-tezos.giganode.io')
+    args = Args(initial_cycle=90, reward_data_provider='prpc', node_addr_public=PUBLIC_NODE_URL[CURRENT_TESTNET])
     args.network = CURRENT_TESTNET
-    args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
+    args.node_endpoint = PUBLIC_NODE_URL[CURRENT_TESTNET]
     args.docker = False
     args.dry_run = True
     args.dry_run_no_consumers = True
