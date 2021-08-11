@@ -31,7 +31,7 @@ class PluginManager(object):
 
         # Print notice if no plugins loaded/enabled
         if not self.plugins:
-            logger.info("[Plugins] No plugins enabled; Check the documentation if you believe this to be incorrect")
+            logger.info("[Plugins] No plugins enabled")
 
     # Go through each plugin module and call send_admin_notification
     # TODO: Optimize DRY

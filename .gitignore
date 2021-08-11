@@ -13,3 +13,4 @@ src/tzkt/reports
 .pytest_cache
 .idea/
 .python-version
+lock

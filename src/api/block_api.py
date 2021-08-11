@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
-from math import floor
+
+# TODO: we should check if we are on mainnet, or a testnet
+# We could add a get_current_protocol() method and check against it
+LAST_FLORENCE_LEVEL = 1589248
 
 
 class BlockApi(ABC):
@@ -11,12 +14,15 @@ class BlockApi(ABC):
     def get_current_level(self):
         pass
 
-    def level_to_cycle(self, level):
-        return floor(level / self.nw['BLOCKS_PER_CYCLE'])
-
+    @abstractmethod
     def get_current_cycle(self):
-        return self.level_to_cycle(self.get_current_level())
+        pass
 
     def level_in_cycle(self, level):
-        cycle = self.level_to_cycle(level)
-        return level - (cycle * self.nw['BLOCKS_PER_CYCLE']) - 1
+        level = self.get_current_level()
+        if level > LAST_FLORENCE_LEVEL:
+            # Since protocol Granada
+            return ((level - LAST_FLORENCE_LEVEL) % self.nw['BLOCKS_PER_CYCLE']) - 1
+        else:
+            # Until protocol Florence
+            return (level % self.nw['BLOCKS_PER_CYCLE']) - 1

@@ -122,7 +122,7 @@ class TestRetryProducer(TestCase):
         self.assertEqual(31, len(payment_batch.batch))
         self.assertEqual(5, len([row for row in payment_batch.batch if row.paid == PaymentStatus.FAIL]))
 
-        nw = dict({'BLOCK_TIME_IN_SEC': 64})
+        nw = dict({'MINIMAL_BLOCK_DELAY': 30})
         payment_consumer = self.create_consumer(nw, payment_queue)
         payment_consumer._consume_batch(payment_batch)
 
