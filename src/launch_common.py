@@ -137,14 +137,21 @@ def add_argument_node_endpoint(parser):
 
 def add_argument_provider(parser):
     parser.add_argument("-P", "--reward_data_provider",
-                        help="Source of reward data. The default is the use of a public archive RPC node, https://mainnet-tezos.giganode.io, to query all needed data for reward calculations. If you prefer to use your own local node defined with the -A flag for getting reward data please set the provider to rpc (the local node MUST be an ARCHIVE node in this case). If you prefer using a public rpc node, please set the node URL using the -Ap flag. An alternative for providing reward data is tzstats, but pay attention for license in case of COMMERCIAL use!!",
+                        help="Source of reward data. The default is 'tzkt' (TzKT API). "
+                             "Set to 'rpc' to use your own local node defined with the -A flag, "
+                             "(it must be an ARCHIVE node in this case). "
+                             "Set to 'prpc' to use a public RPC node defined with the -Ap flag. "
+                             "An alternative for providing reward data is 'tzstats', but pay attention for license in case of commercial use!",
                         choices=['rpc', 'prpc', 'tzstats', 'tzkt'],
-                        default='prpc')
+                        default='tzkt')
 
 
 def add_argument_node_addr_public(parser):
     parser.add_argument("-Ap", "--node_addr_public",
-                        help="Public node base URL. This argument will only be used in case the provider is set to prpc. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node. (Default is https://mainnet-tezos.giganode.io)",
+                        help="Public node base URL. Default is https://mainnet-tezos.giganode.io. "
+                             "This argument will only be used in case the reward provider is set to 'prpc'. "
+                             "This node will only be used to query reward data and delegator list. "
+                             "It must be an ARCHIVE node.",
                         default='')
 
 
