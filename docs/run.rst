@@ -42,10 +42,10 @@ Options
     Node potentially with protocol prefix especially if TLS encryption is used. Default value: ``http://127.0.0.1:8732``. This is the main Tezos node used by the client for RPC queries and operation injections.
 
 ``-P --reward_data_provider <rpc|prpc|tzstats|tzkt>``
-    Source that provides all needed data for reward calculations. Default value: ``prpc``. If you prefer to use your own local node, defined with the ``-A`` option, for getting reward data you must set this option to ``rpc`` (the local node must be an archive node in this case). If you prefer using a public RPC node, please set the node URL using the ``-Ap`` option. An alternative for providing reward data is ``tzstats``, but pay attention for license in case of COMMERCIAL use!
+    Source that provides all needed data for reward calculations. Default value: ``tzkt`` (TzKT API). Set to ``rpc`` to use your own local node defined with the ``-A`` flag, (it must be an ARCHIVE node in this case). Set to ``prpc`` to use a public RPC node defined with the ``-Ap`` flag. An alternative for providing reward data is ``tzstats``, but pay attention for license in case of commercial use!
 
 ``-Ap --node_addr_public <url>``
-    Public node base URL. Default value: ``https://mainnet-tezos.giganode.io``. This argument will only be used in case the provider is set to `prpc`. This node will only be used to query reward data and delegator list. It must be an archive node.
+    Public node base URL. Default is ``https://mainnet-tezos.giganode.io``. This argument will only be used in case the reward provider is set to ``prpc``. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.
 
 ``-r --reports_base <path>``
     Directory to create reports. Default value: ``~/pymnt/reports``.
@@ -121,17 +121,17 @@ Run in dry-run mode on GRANADANET, make payouts for cycle 300 and exit:
 
     python3 src/main.py -D -N GRANADANET -C 300 -M 3 -V
 
-Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by Tezos node RPC interface:
+Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by local Tezos node RPC interface:
 
 ::
 
     python3 src/main.py -C 300 -P rpc -D -V
 
-Run in dry-run mode on MAINNET, make payouts only for cycle 300, for calculations use data provided by the TzKT API:
+Run in dry-run mode on MAINNET, make payouts only for cycle 300, for calculations use data provided by the public node RPC:
 
 ::
 
-    python3 src/main.py -C 300 -P tzkt -M 3 -V -D
+    python3 src/main.py -C 300 -P prpc -Ap https://mainnet-tezos.giganode.io -M 3 -V -D
 
 Run in dry-run mode on MAINNET, retry failed payouts only for cycle 300, for calculations use data provided by the TzStats API:
 
