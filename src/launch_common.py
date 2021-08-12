@@ -152,7 +152,7 @@ def add_argument_node_addr_public(parser):
                              "This argument will only be used in case the reward provider is set to 'prpc'. "
                              "This node will only be used to query reward data and delegator list. "
                              "It must be an ARCHIVE node.",
-                        default='')
+                        default='https://mainnet-tezos.giganode.io')
 
 
 def add_argument_reports_base(parser):
