@@ -383,7 +383,7 @@ class RpcRewardApiImpl(RewardApi):
                     # Cycles start at 0.
                     old_rewards_cycle = CYCLES_BEFORE_GRANADA + ((level_snapshot_block - BLOCKS_BEFORE_GRANADA) / self.blocks_per_cycle) - self.preserved_cycles - 1
                 else:
-                    old_rewards_cycle = (level_snapshot_block / self.blocks_per_cycle) - self.preserved_cycles - 1
+                    old_rewards_cycle = (level_snapshot_block / BLOCKS_PER_CYCLE_BEFORE_GRANADA) - self.preserved_cycles - 1
                 _, unfrozen_rewards = self.__get_unfrozen_rewards(level_snapshot_block, old_rewards_cycle)
                 delegate_staking_balance -= unfrozen_rewards
 
