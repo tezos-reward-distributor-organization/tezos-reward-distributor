@@ -381,7 +381,7 @@ class RpcRewardApiImpl(RewardApi):
                 if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
                     # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
                     # Cycles start at 0.
-                    old_rewards_cycle = ((level_snapshot_block - BLOCKS_BEFORE_GRANADA) / self.blocks_per_cycle) - self.preserved_cycles - 1
+                    old_rewards_cycle = CYCLES_BEFORE_GRANADA + ((level_snapshot_block - BLOCKS_BEFORE_GRANADA) / self.blocks_per_cycle) - self.preserved_cycles - 1
                 else:
                     old_rewards_cycle = (level_snapshot_block / self.blocks_per_cycle) - self.preserved_cycles - 1
                 _, unfrozen_rewards = self.__get_unfrozen_rewards(level_snapshot_block, old_rewards_cycle)
