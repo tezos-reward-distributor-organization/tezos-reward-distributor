@@ -29,6 +29,7 @@ COMM_FROZEN_BALANCE = "{}/chains/main/blocks/{}/context/delegates/{}/frozen_bala
 CYCLES_BEFORE_GRANADA = 388
 BLOCKS_BEFORE_GRANADA = 1589248
 BLOCKS_PER_CYCLE_BEFORE_GRANADA = 4096
+BLOCK_PER_ROLL_SNAPSHOT_BEFORE_GRANADA = 256
 FIRST_CYCLE_REWARDS_GRANADA = 394
 FIRST_CYCLE_SNAPSHOT_GRANADA = 396
 
@@ -490,7 +491,7 @@ class RpcRewardApiImpl(RewardApi):
             else:
                 # Using pre-Granada calculation
                 level_snapshot_block = ((cycle - self.preserved_cycles - 2) * BLOCKS_PER_CYCLE_BEFORE_GRANADA
-                                        + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot)
+                                        + (chosen_snapshot + 1) * BLOCK_PER_ROLL_SNAPSHOT_BEFORE_GRANADA)
 
             logger.debug("Snapshot index {}, snapshot index level {}".format(chosen_snapshot, level_snapshot_block))
 
