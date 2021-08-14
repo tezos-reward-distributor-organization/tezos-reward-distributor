@@ -223,12 +223,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                     sleep(10)
 
-                    # calculate number of blocks until end of current cycle
-                    nb_blocks_remaining = (current_cycle + 1) * self.nw_config['BLOCKS_PER_CYCLE'] - current_level
-
-                    # plus offset. cycle beginnings may be busy, move payments forward
-                    nb_blocks_remaining = nb_blocks_remaining + self.payment_offset
-
+                    # calculate number of blocks until end of current cycle plus user-defined offset
+                    nb_blocks_remaining = self.nw_config['BLOCKS_PER_CYCLE'] - level_in_cycle + self.payment_offset
                     logger.debug("Waiting until next cycle; {} blocks remaining".format(nb_blocks_remaining))
 
                     # wait until current cycle ends
