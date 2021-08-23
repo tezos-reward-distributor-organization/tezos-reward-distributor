@@ -19,12 +19,12 @@ class TzStatsBlockApiImpl(BlockApi):
     def get_current_cycle_and_level(self):
         uri = self.head_api + '/explorer/tip'
 
-        logger.debug("Requesting {}".format(uri))
+        verbose_logger.debug("Requesting {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
         root = resp.json()
 
-        logger.debug("Response from tzstats is: {}".format(root))
+        verbose_logger.debug("Response from tzstats is: {}".format(root))
 
         current_cycle = int(root["cycle"])
         current_level = int(root["height"])
