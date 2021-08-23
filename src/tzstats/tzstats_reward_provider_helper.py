@@ -4,7 +4,7 @@ from time import sleep
 
 from exception.api_provider import ApiProviderException
 
-from log_config import main_logger, verbose_logger
+from log_config import main_logger
 from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income_baking_income, idx_income_endorsing_income, \
     idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
     idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
@@ -54,11 +54,11 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        verbose_logger.debug("Requesting rewards breakdown, {}".format(uri))
+        logger.debug("Requesting rewards breakdown, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -93,11 +93,11 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        verbose_logger.debug("Requesting staking balances of delegators, {}".format(uri))
+        logger.debug("Requesting staking balances of delegators, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -131,11 +131,11 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        verbose_logger.debug("Requesting current balance of delegators, phase 1, {}".format(uri))
+        logger.debug("Requesting current balance of delegators, phase 1, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -216,11 +216,11 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        verbose_logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
+        logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -237,11 +237,11 @@ class TzStatsRewardProviderHelper:
     def get_big_map_id(self, contract_id):
         uri = self.api + contract_storage.format(contract_id)
 
-        verbose_logger.debug("Requesting contract storage, {}".format(uri))
+        logger.debug("Requesting contract storage, {}".format(uri))
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -259,11 +259,11 @@ class TzStatsRewardProviderHelper:
             uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
             offset += 100
 
-            verbose_logger.debug("Requesting LP balances, {}".format(uri))
+            logger.debug("Requesting LP balances, {}".format(uri))
 
             resp = requests.get(uri, timeout=5)
 
-            verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+            logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
 
             if resp.status_code != HTTPStatus.OK:
                 # This means something went wrong.
