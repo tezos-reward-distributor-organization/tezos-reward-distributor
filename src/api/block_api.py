@@ -11,11 +11,7 @@ class BlockApi(ABC):
         self.nw = nw
 
     @abstractmethod
-    def get_current_level(self):
-        pass
-
-    @abstractmethod
-    def get_current_cycle(self):
+    def get_current_cycle_and_level(self):
         pass
 
     def level_in_cycle(self, level):
