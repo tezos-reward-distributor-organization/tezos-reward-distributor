@@ -14,23 +14,19 @@ class TzKTBlockApiImpl(BlockApi):
         else:
             self.api = TzKTApi.from_url(base_url)
 
-    def get_current_level(self) -> int:
+    def get_current_cycle_and_level(self) -> (int, int):
         """
-        Get head level
+        Get head cycle and level
         :returns: 0
         """
         head = self.api.get_head()
         if not head.get('synced'):
             raise TzKTApiError('Not synced')
 
-        return int(head['level'])
+        current_cycle = int(head['cycle'])
+        current_level = int(head['level'])
 
-    def get_current_cycle(self) -> int:
-        head = self.api.get_head()
-        if not head.get('synced'):
-            raise TzKTApiError('Not synced')
-
-        return int(head['cycle'])
+        return (current_cycle, current_level)
 
     def get_revelation(self, pkh, verbose=False):
         account = self.api.get_account_by_address(pkh)
