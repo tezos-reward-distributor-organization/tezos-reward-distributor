@@ -19,7 +19,6 @@ class BlockApi(ABC):
         pass
 
     def level_in_cycle(self, level):
-        level = self.get_current_level()
         if level > LAST_FLORENCE_LEVEL:
             # Since protocol Granada
             return ((level - LAST_FLORENCE_LEVEL) % self.nw['BLOCKS_PER_CYCLE']) - 1
