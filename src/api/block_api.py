@@ -4,6 +4,7 @@ from Constants import FIRST_GRANADA_LEVEL
 # TODO: we should check if we are on mainnet, or a testnet
 # We could add a get_current_protocol() method and check against it
 
+
 class BlockApi(ABC):
     def __init__(self, nw):
         super(BlockApi, self).__init__()
