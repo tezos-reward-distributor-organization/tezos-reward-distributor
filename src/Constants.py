@@ -4,6 +4,8 @@ EXIT_PAYMENT_TYPE = "exit"
 
 CURRENT_TESTNET = 'GRANADANET'
 
+FIRST_GRANADA_LEVEL = 1589249
+
 # Providers api prefix
 # Public RPC
 PUBLIC_NODE_URL = {

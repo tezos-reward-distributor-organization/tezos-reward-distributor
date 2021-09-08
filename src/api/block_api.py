@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
+from Constants import FIRST_GRANADA_LEVEL
 
 # TODO: we should check if we are on mainnet, or a testnet
 # We could add a get_current_protocol() method and check against it
-LAST_FLORENCE_LEVEL = 1589248
 
 
 class BlockApi(ABC):
@@ -11,18 +11,13 @@ class BlockApi(ABC):
         self.nw = nw
 
     @abstractmethod
-    def get_current_level(self):
-        pass
-
-    @abstractmethod
-    def get_current_cycle(self):
+    def get_current_cycle_and_level(self):
         pass
 
     def level_in_cycle(self, level):
-        level = self.get_current_level()
-        if level > LAST_FLORENCE_LEVEL:
+        if level >= FIRST_GRANADA_LEVEL:
             # Since protocol Granada
-            return ((level - LAST_FLORENCE_LEVEL) % self.nw['BLOCKS_PER_CYCLE']) - 1
+            return ((level - FIRST_GRANADA_LEVEL) % self.nw['BLOCKS_PER_CYCLE'])
         else:
             # Until protocol Florence
             return (level % self.nw['BLOCKS_PER_CYCLE']) - 1
