@@ -8,9 +8,13 @@ Command Line Usage
 
     python3 src/main.py [-h] (for list of options)
 
+To launch TRD:
+
 ::
 
-    python3 src/main.py [options]
+    python3 src/main.py -E signer_endpoint -A node_endpoint -P <rpc|prpc|tzstats|tzkt> [additional options]
+
+Please note that ``-E``, ``-A`` and ``-P`` are mandatory.
 
 Options
 -------
