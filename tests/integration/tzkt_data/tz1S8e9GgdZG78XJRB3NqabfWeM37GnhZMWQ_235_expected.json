@@ -4,11 +4,11 @@
   "delegator_balance_dict": {
     "tz1LzQgL3wPvPqAtBPiQZvWQkc6uGzrqUdnt": {
       "staking_balance": 19942072745,
-      "current_balance": 20076820782
+      "current_balance": 21490366163
     },
     "tz1WwVePEYpwq2RrBrEW9UyzZ1n44hvuEzuR": {
       "staking_balance": 180650630370,
-      "current_balance": 181871411902
+      "current_balance": 0
     }
   }
 }
