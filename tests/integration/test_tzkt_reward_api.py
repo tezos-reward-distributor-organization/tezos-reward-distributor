@@ -16,6 +16,7 @@ from parameterized import parameterized
 These tests are cached. To re-run, delete contents of the tzkt_data folder.
 '''
 
+
 def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
     path = join(dirname(__file__), f'tzkt_data/{address}_{cycle}_{suffix}.json')
     if os.path.exists(path):
@@ -41,7 +42,7 @@ def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
         }
     )
     with open(path, 'w+') as f:
-        f.write(json.dumps(data, indent = 2))
+        f.write(json.dumps(data, indent=2))
 
 
 dummy_addr_dict = dict(
