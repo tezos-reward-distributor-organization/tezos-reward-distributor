@@ -125,7 +125,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.retry_fail_thread.start()
 
         try:
-            current_cycle = self.block_api.get_current_cycle()
+            (current_cycle, current_level) = self.block_api.get_current_cycle_and_level()
         except ApiProviderException as a:
             logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))
             self.exit()
@@ -157,8 +157,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     continue
 
                 # Local node is ready
-                current_level = self.block_api.get_current_level()
-                current_cycle = self.block_api.get_current_cycle()
+                (current_cycle, current_level) = self.block_api.get_current_cycle_and_level()
                 level_in_cycle = self.block_api.level_in_cycle(current_level)
 
                 # create reports dir
