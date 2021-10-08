@@ -4,7 +4,7 @@ DISCLAIMER: TEZOS REWARD DISTRIBUTOR IS PROVIDED AS IS. IT IS UNDER CONSTANT DEV
 
 PRIVACY: TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR [STATISTICS POLICY](https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/statistics.html) FOR MORE INFORMATION.
 
-## Tezos Reward Distributor: Run & Forget
+# Tezos Reward Distributor: Run & Forget
 
 [![Actions Status](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/workflows/CI/badge.svg)](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/actions)
 [![Documentation Status](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/workflows/Docs/badge.svg)](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/actions)
