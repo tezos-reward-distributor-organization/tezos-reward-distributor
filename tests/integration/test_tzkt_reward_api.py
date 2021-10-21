@@ -36,7 +36,7 @@ def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
         delegate_staking_balance=model.delegate_staking_balance,
         total_reward_amount=model.total_reward_amount,
         delegator_balance_dict={
-            k: v
+            k: {'staking_balance': v['staking_balance']}
             for k, v in model.delegator_balance_dict.items()
             if v['staking_balance'] > 0
         }
@@ -75,12 +75,12 @@ class RewardApiImplTests(unittest.TestCase):
     ])
     def test_get_rewards_for_cycle_map(self, address, cycle, hardcoded_total_reward_amount):
         '''
-        This test compares the total rewards and balance accoring to tzkt,
+        This test compares the total rewards and balance according to tzkt,
         to the total rewards according to rpc.
 
         It also compares the balances per delegator.
 
-        Note: double baking and double endorsement gain are taked into account
+        Note: double baking and double endorsement gain are taken into account
         by the protocol but not by TRD, so there are discrepancies. To resolve,
         we are hardcoding the expected amount in hardcoded_total_reward_amount
         '''
@@ -150,6 +150,7 @@ class RewardApiImplTests(unittest.TestCase):
             baking_address=address)
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
+        self.assertAlmostEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance)
         self.assertAlmostEqual(rpc_rewards.total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
 
     def test_update_current_balances(self):
