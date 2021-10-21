@@ -3,12 +3,10 @@
   "total_reward_amount": 187500000,
   "delegator_balance_dict": {
     "tz1LzQgL3wPvPqAtBPiQZvWQkc6uGzrqUdnt": {
-      "staking_balance": 19942072745,
-      "current_balance": 21490366163
+      "staking_balance": 19942072745
     },
     "tz1WwVePEYpwq2RrBrEW9UyzZ1n44hvuEzuR": {
-      "staking_balance": 180650630370,
-      "current_balance": 0
+      "staking_balance": 180650630370
     }
   }
 }

@@ -3,60 +3,46 @@
   "total_reward_amount": 170428078,
   "delegator_balance_dict": {
     "tz1ZpoDnbZBMDtRfWvKtDyEb2eYR8MVLrTfP": {
-      "staking_balance": 734388,
-      "current_balance": 5620
+      "staking_balance": 734388
     },
     "KT1Dy5MaeTyQ4CD5teUKPZPU4a9WPTGLyc7L": {
-      "staking_balance": 580732,
-      "current_balance": 581919
+      "staking_balance": 580732
     },
     "KT1ApCujUE2p5xX9Mtvte3DaBrRdyDXdpdUV": {
-      "staking_balance": 2350587,
-      "current_balance": 2858
+      "staking_balance": 2350587
     },
     "tz1XcpwxygAenighVz1VHwHDNr3RkRDGU6Rv": {
-      "staking_balance": 257582,
-      "current_balance": 16
+      "staking_balance": 257582
     },
     "tz1SKZLJt4t5QYjwd98p7Z6EZPB1NHaWZacU": {
-      "staking_balance": 1501737937,
-      "current_balance": 1
+      "staking_balance": 1501737937
     },
     "KT1THBmGTRvUwD6S4mQmwZaQrdv5eTisMsdf": {
-      "staking_balance": 300025496586,
-      "current_balance": 0
+      "staking_balance": 300025496586
     },
     "KT1GXjiYthQY3TQAT5NhV3pqHkjWNuykouw2": {
-      "staking_balance": 582816,
-      "current_balance": 46
+      "staking_balance": 582816
     },
     "tz1i5fX5ScKeZe5XamRDTYxLeK2vU4SV3Fqg": {
-      "staking_balance": 1350170062,
-      "current_balance": 250641358
+      "staking_balance": 1350170062
     },
     "tz1PjUC4uCZUMq9q2DYBBdKdUbpRotSzdNuR": {
-      "staking_balance": 629429000,
-      "current_balance": 2564103
+      "staking_balance": 629429000
     },
     "KT1BRpiCSu2kRvXgKgGRZpJWhmQziaesxwj1": {
-      "staking_balance": 1632520,
-      "current_balance": 4162470
+      "staking_balance": 1632520
     },
     "tz1apEzpZAciDJ7XWyfxw9JNBu5ZWK3PNoMj": {
-      "staking_balance": 50356385,
-      "current_balance": 197465
+      "staking_balance": 50356385
     },
     "KT1B2WiCAgTbBNLS1dMHpSWfekJYwBRaqgRi": {
-      "staking_balance": 2107589,
-      "current_balance": 4410148
+      "staking_balance": 2107589
     },
     "KT1DkzqtwjzhCmmpWrvhdKfRDB1QdquBNpJq": {
-      "staking_balance": 97466,
-      "current_balance": 97466
+      "staking_balance": 97466
     },
     "tz1aRCdNg3S3jPTn2EXDygx1ot2vEWEynzLV": {
-      "staking_balance": 1635280506,
-      "current_balance": 90468
+      "staking_balance": 1635280506
     }
   }
 }
