@@ -65,15 +65,15 @@ class RewardApiImplTests(unittest.TestCase):
             self.assertAlmostEqual(balances['staking_balance'], actual[address]['staking_balance'], delta=delta, msg=address)
 
     @parameterized.expand([
-        ('tz1ZRWFLgT9sz8iFi1VYWPfRYeUvUSFAaDao', 201, None),
-        ('tz1Lhf4J9Qxoe3DZ2nfe8FGDnvVj7oKjnMY6', 185, None),  # double baking (loss)
-        ('tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8', 74, 765163164),   # double baking (gain)
-        ('tz1PeZx7FXy7QRuMREGXGxeipb24RsMMzUNe', 135, None),  # double endorsement (loss)
-        ('tz1gk3TDbU7cJuiBRMhwQXVvgDnjsxuWhcEA', 135, 5212539612),  # double endorsement (gain)
-        ('tz1S1Aew75hMrPUymqenKfHo8FspppXKpW7h', 233, None),  # revelation rewards
-        ('tz1UUgPwikRHW1mEyVZfGYy6QaxrY6Y7WaG5', 207, None),  # revelation miss
+        ('tz1ZRWFLgT9sz8iFi1VYWPfRYeUvUSFAaDao', 201, 0),
+        ('tz1Lhf4J9Qxoe3DZ2nfe8FGDnvVj7oKjnMY6', 185, 0),  # double baking (loss)
+        ('tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8', 74, 32000000),   # double baking (gain)
+        ('tz1PeZx7FXy7QRuMREGXGxeipb24RsMMzUNe', 135, 0),  # double endorsement (loss)
+        ('tz1gk3TDbU7cJuiBRMhwQXVvgDnjsxuWhcEA', 135, 19328043790),  # double endorsement (gain)
+        ('tz1S1Aew75hMrPUymqenKfHo8FspppXKpW7h', 233, 0),  # revelation rewards
+        ('tz1UUgPwikRHW1mEyVZfGYy6QaxrY6Y7WaG5', 207, 0),  # revelation miss
     ])
-    def test_get_rewards_for_cycle_map(self, address, cycle, hardcoded_total_reward_amount):
+    def test_get_rewards_for_cycle_map(self, address, cycle, hardcoded_denunciation_reward):
         '''
         This test compares the total rewards and balance according to tzkt,
         to the total rewards according to rpc.
@@ -82,7 +82,7 @@ class RewardApiImplTests(unittest.TestCase):
 
         Note: double baking and double endorsement gain are taken into account
         by the protocol but not by TRD, so there are discrepancies. To resolve,
-        we are hardcoding the expected amount in hardcoded_total_reward_amount
+        we are hardcoding the expected gain in hardcoded_denunciation_reward.
         '''
         rpc_rewards = load_reward_model(address, cycle, 'actual')
         if rpc_rewards is None:
@@ -98,7 +98,7 @@ class RewardApiImplTests(unittest.TestCase):
             baking_address=address)
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
-        total_reward_amount = hardcoded_total_reward_amount if hardcoded_total_reward_amount else rpc_rewards.total_reward_amount
+        total_reward_amount = rpc_rewards.total_reward_amount - hardcoded_denunciation_reward
 
         self.assertAlmostEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance, delta=1)
         self.assertAlmostEqual(total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
