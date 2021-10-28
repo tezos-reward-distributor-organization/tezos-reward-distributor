@@ -42,10 +42,10 @@ class PhasedPaymentCalculator:
     # owners reward = owners payment = total reward - delegators reward
     # founders reward = delegators fee = total reward - delegators reward
     ####
-    def calculate(self, reward_provider_model):
+    def calculate(self, reward_provider_model, total_rwrd_amnt):
 
         phase0 = CalculatePhase0(reward_provider_model)
-        rwrd_logs, total_rwrd_amnt = phase0.calculate()
+        rwrd_logs = phase0.calculate()
 
         logger.info("Total rewards before processing is {:,} mutez.".format(total_rwrd_amnt))
         if total_rwrd_amnt == 0:

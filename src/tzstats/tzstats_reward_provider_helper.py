@@ -5,11 +5,11 @@ from time import sleep
 from exception.api_provider import ApiProviderException
 
 from log_config import main_logger, verbose_logger
-from tzstats.tzstats_api_constants import idx_income_expected_income, idx_income_baking_income, idx_income_endorsing_income, \
+from tzstats.tzstats_api_constants import idx_n_baking_rights, idx_n_endorsing_rights, idx_income_baking_income, idx_income_endorsing_income, \
     idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
     idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
     idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance, idx_income_missed_baking_income, \
-    idx_income_missed_endorsing_income
+    idx_income_missed_endorsing_income, idx_income_double_baking_income, idx_income_double_endorsing_income
 from Constants import TZSTATS_PREFIX_API
 
 logger = main_logger
@@ -43,9 +43,11 @@ class TzStatsRewardProviderHelper:
 
         self.baking_address = baking_address
 
-    def get_rewards_for_cycle(self, cycle, rewards_type):
+    def get_rewards_for_cycle(self, cycle):
 
-        root = {"delegate_staking_balance": 0, "total_reward_amount": 0, "delegators_balances": {}}
+        root = {"delegate_staking_balance": 0, "num_baking_rights": 0,
+                "num_endorsing_rights": 0, "rewards_and_fees": 0,
+                "equivocation_losses": 0, "offline_losses": 0, "delegators_balances": {}}
 
         #
         # Get rewards breakdown for cycle
@@ -65,26 +67,25 @@ class TzStatsRewardProviderHelper:
             raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
 
         resp = resp.json()[0]
-        if rewards_type.isEstimated():
-            root["total_reward_amount"] = int(1e6 * float(resp[idx_income_expected_income]))
-        else:
-            # rewards earned (excluding equivocation losses and equivocation accusation income)
-            total_rewards_and_fees = (float(resp[idx_income_baking_income])
-                                      + float(resp[idx_income_endorsing_income])
-                                      + float(resp[idx_income_seed_income])
-                                      + float(resp[idx_income_fees_income]))
-            # losses due to baker double baking, double endorsing or missing nonce
-            total_equivocation_losses = (float(resp[idx_income_lost_accusation_fees])
-                                         + float(resp[idx_income_lost_accusation_rewards])
-                                         + float(resp[idx_income_lost_revelation_fees])
-                                         + float(resp[idx_income_lost_revelation_rewards]))
-            # losses due to being offline or not having enough bond
-            total_offline_losses = (float(resp[idx_income_missed_baking_income])
-                                    + float(resp[idx_income_missed_endorsing_income]))
-            if rewards_type.isActual():
-                root["total_reward_amount"] = int(1e6 * (total_rewards_and_fees - total_equivocation_losses))
-            elif rewards_type.isIdeal():
-                root["total_reward_amount"] = int(1e6 * (total_rewards_and_fees + total_offline_losses))
+
+        root["num_baking_rights"] = resp[idx_n_baking_rights]
+        root["num_endorsing_rights"] = resp[idx_n_endorsing_rights]
+
+        # rewards earned (excluding equivocation losses and equivocation accusation income)
+        root["rewards_and_fees"] = int(1e6 * (float(resp[idx_income_baking_income])
+                                       + float(resp[idx_income_endorsing_income])
+                                       + float(resp[idx_income_seed_income])
+                                       + float(resp[idx_income_fees_income])))
+        # losses due to baker double baking, double endorsing or missing nonce
+        root["equivocation_losses"] = int(1e6 * (float(resp[idx_income_lost_accusation_fees])
+                                          + float(resp[idx_income_lost_accusation_rewards])
+                                          + float(resp[idx_income_lost_revelation_fees])
+                                          + float(resp[idx_income_lost_revelation_rewards])))
+        root["denunciation_rewards"] = int(1e6 * (float(resp[idx_income_double_baking_income])
+                                           + float(resp[idx_income_double_endorsing_income])))
+        # losses due to being offline or not having enough bond
+        root["offline_losses"] = int(1e6 * (float(resp[idx_income_missed_baking_income])
+                                     + float(resp[idx_income_missed_endorsing_income])))
 
         #
         # Get staking balances of delegators at snapshot block

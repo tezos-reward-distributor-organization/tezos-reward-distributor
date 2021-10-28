@@ -53,6 +53,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.reward_api.set_dexter_contracts_set(dexter_contracts_set)
 
         self.rewards_type = baking_cfg.get_rewards_type()
+        self.pay_denunciation_rewards = baking_cfg.get_pay_denunciation_rewards()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
 
@@ -170,6 +171,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 # payments should not pass beyond last released reward cycle
                 if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                     if not self.payments_queue.full():
+                        if (not self.pay_denunciation_rewards) and self.reward_api.name == 'RPC':
+                            logger.info("Error: pay_denunciation_rewards=False requires an indexer since it is not possible to distinguish reward source using RPC")
+                            e = "You must set 'pay_denunciation_rewards' to True when using RPC provider."
+                            logger.error(e)
+                            self.exit()
+                            break
 
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
@@ -192,7 +199,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             continue  # Break/Repeat loop
 
                         else:
-                            result = self.try_to_pay(pymnt_cycle, self.rewards_type)
+                            result = self.try_to_pay(pymnt_cycle, self.rewards_type, self.nw_config)
 
                         if result:
                             # single run is done. Do not continue.
@@ -246,7 +253,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle, rewards_type):
+    def try_to_pay(self, pymnt_cycle, rewards_type, network_config):
         try:
             logger.info("Payment cycle is {:s}".format(str(pymnt_cycle)))
 
@@ -258,37 +265,54 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            if rewards_type.isEstimated():
-                logger.info("Using estimated rewards for payouts calculations")
-            elif rewards_type.isActual():
-                logger.info("Using actual rewards for payouts calculations")
-            elif rewards_type.isIdeal():
-                logger.info("Using ideal rewards for payouts calculations")
-
             reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, rewards_type)
 
-            # 2- calculate rewards
-            reward_logs, total_amount = self.payment_calc.calculate(reward_model)
+            block_reward = network_config["BLOCK_REWARD"]
+            endorsement_reward = network_config["ENDORSEMENT_REWARD"]
 
-            # 3- set cycle info
+            # 2- compute reward amount to distribute based on configuration
+            if rewards_type.isEstimated():
+                logger.info("Using estimated rewards for payouts calculations")
+                total_estimated_block_reward = reward_model.num_baking_rights * block_reward
+                total_estimated_endorsement_reward = reward_model.num_endorsing_rights * endorsement_reward
+                computed_reward_amount = total_estimated_block_reward + total_estimated_endorsement_reward
+            elif rewards_type.isActual():
+                logger.info("Using actual rewards for payouts calculations")
+                if self.pay_denunciation_rewards:
+                    computed_reward_amount = reward_model.total_reward_amount
+                else:
+                    # omit denunciation rewards
+                    computed_reward_amount = reward_model.rewards_and_fees - reward_model.equivocation_losses
+            elif rewards_type.isIdeal():
+                logger.info("Using ideal rewards for payouts calculations")
+                if self.pay_denunciation_rewards:
+                    computed_reward_amount = reward_model.total_reward_amount + reward_model.offline_losses
+                else:
+                    # omit denunciation rewards and double baking loss
+                    computed_reward_amount = reward_model.rewards_and_fees + reward_model.offline_losses
+
+            # 3- calculate rewards for delegators
+            reward_logs, total_amount = self.payment_calc.calculate(reward_model, computed_reward_amount)
+
+            # 4- set cycle info
             for rl in reward_logs:
                 rl.cycle = pymnt_cycle
             total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
 
-            # 4- if total_rewards > 0, proceed with payment
+            # 5- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
 
-                # 5- send to payment consumer
+                # 6- send to payment consumer
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
 
                 sleep(5.0)
 
-                # 6- create calculations report file. This file contains calculations details
+                # 7- create calculations report file. This file contains calculations details
                 report_file_path = get_calculation_report_file(self.calculations_dir, pymnt_cycle)
                 logger.debug("Creating calculation report (%s)", report_file_path)
                 self.create_calculations_report(reward_logs, report_file_path, total_amount, rewards_type)
 
-                # 7- processing of cycle is done
+                # 8- processing of cycle is done
                 logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
 
             elif total_amount_to_pay == 0:

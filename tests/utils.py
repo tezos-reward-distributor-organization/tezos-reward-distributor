@@ -131,5 +131,13 @@ def mock_request_get(url, timeout):
                 {"kind": "contract", "contract": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "change": "14626175032"}
             ]
         })
+    if path == "/chains/main/blocks/178177/helpers/baking_rights":
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
+    if path == "/chains/main/blocks/178177/helpers/endorsing_rights":
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
+    if path == "/chains/main/blocks/196609/helpers/baking_rights":
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
+    if path == "/chains/main/blocks/196609/helpers/endorsing_rights":
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
 
-    raise MagicMock(status_code=HTTPStatus.NOT_FOUND, json=lambda: {"Not Found"})
+    raise Exception("Mocked URL not found")

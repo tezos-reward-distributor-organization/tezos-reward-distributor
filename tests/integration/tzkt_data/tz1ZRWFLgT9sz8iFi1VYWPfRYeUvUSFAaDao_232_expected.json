@@ -1,6 +1,12 @@
 {
   "delegate_staking_balance": 342580974952,
-  "total_reward_amount": 172500000,
+  "total_reward_amount": 165021555,
+  "rewards_and_fees": 165021555,
+  "equivocation_losses": 0,
+  "offline_losses": 6250000,
+  "num_baking_rights": 2,
+  "num_endorsing_rights": 74,
+  "denunciation_rewards": 0,
   "delegator_balance_dict": {
     "tz1S7BFYFFYz3MGwe59zcW5qi1Mbo3XNG9Vd": {
       "staking_balance": 1896223

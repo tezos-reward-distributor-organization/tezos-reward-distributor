@@ -76,64 +76,61 @@ class RpcRewardApiImpl(RewardApi):
                          .format(cycle, self.preserved_cycles, self.blocks_per_cycle,
                                  level_of_first_block_in_preserved_cycles, level_of_last_block_in_unfreeze_cycle))
 
-            # Decide on if paying actual rewards earned, or paying estimated/ideal rewards
-            if rewards_type.isEstimated():
+            # Determine how many priority 0 baking rights delegate had
+            baking_rights = self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles)
+            endorsement_rights = self.__get_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles)
+            nb_blocks = len([r for r in baking_rights if r["priority"] == 0])
+            nb_endorsements = sum([len(r["slots"]) for r in endorsement_rights])
 
-                # Determine how many priority 0 baking rights delegate had
-                nb_blocks = len([r for r in self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles) if r["priority"] == 0])
-                nb_endorsements = sum([len(r["slots"]) for r in self.__get_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles)])
-
-                logger.debug("Number of 0 priority blocks: {}, Number of endorsements: {}".format(nb_blocks, nb_endorsements))
-                logger.debug("Block reward: {}, Endorsement Reward: {}".format(self.block_reward, self.endorsement_reward))
-
-                # "ideally", the baker baked every priority 0 block they had rights for,
-                # and every block they baked contained 32 endorsements
-                total_block_reward = nb_blocks * self.block_reward
-                total_endorsement_reward = nb_endorsements * self.endorsement_reward
-
-                logger.info("Estimated rewards for cycle {:d}, {:,} block rewards ({:d} blocks), {:,} endorsing rewards ({:d} slots)".format(
-                            cycle, total_block_reward, nb_blocks, total_endorsement_reward, nb_endorsements))
-
-                reward_data["total_rewards"] = total_block_reward + total_endorsement_reward
-
-            # Calculate actual rewards
-            else:
-
+            total_reward_amount = None
+            if not rewards_type.isEstimated():
+                # Calculate actual rewards
                 if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
                     unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(level_of_last_block_in_unfreeze_cycle, cycle)
-                    total_actual_rewards = unfrozen_fees + unfrozen_rewards
+                    total_reward_amount = unfrozen_fees + unfrozen_rewards
                 else:
                     frozen_fees, frozen_rewards = self.__get_frozen_rewards(cycle, current_level)
-                    total_actual_rewards = frozen_fees + frozen_rewards
-                if rewards_type.isActual():
-                    reward_data["total_rewards"] = total_actual_rewards
-                elif rewards_type.isIdeal():
-                    missed_baking_income = 0
-                    for r in self.__get_baking_rights(cycle, level_of_first_block_in_preserved_cycles):
-                        if r["priority"] == 0:
-                            if self.__get_block_author(r["level"]) != self.baking_address:
-                                logger.warning("Found missed baking slot {}, adding {} mutez reward anyway.".format(r, self.block_reward))
-                                missed_baking_income += self.block_reward
-                    missed_endorsing_income = 0
-                    for r in self.__get_endorsement_rights(cycle, level_of_first_block_in_preserved_cycles):
-                        authored_endorsement_slots = self.__get_authored_endorsement_slots_by_level(r["level"] + 1)
-                        if authored_endorsement_slots != r["slots"]:
-                            mutez_to_add = self.endorsement_reward * len(r["slots"])
-                            logger.warning("Found {} missed endorsement(s) at level {}, adding {} mutez reward anyway.".format(len(r["slots"]), r["level"], mutez_to_add))
-                            missed_endorsing_income += mutez_to_add
-                    logger.warning("total rewards %s" % (total_actual_rewards + missed_baking_income + missed_endorsing_income))
-                    reward_data["total_rewards"] = total_actual_rewards + missed_baking_income + missed_endorsing_income
+                    total_reward_amount = frozen_fees + frozen_rewards
+
+            # Without an indexer, it is not possible to itemize rewards
+            # so setting these values below to "None"
+            rewards_and_fees = None
+            equivocation_losses = None
+            denunciation_rewards = None
+
+            offline_losses = None
+            if rewards_type.isIdeal():
+                # Calculate offline losses
+                missed_baking_income = 0
+                for count, r in enumerate(baking_rights):
+                    if (count % 10 == 0):
+                        logger.info("Verifying bake ({}/{}).".format(count, len(baking_rights)))
+                    if r["priority"] == 0:
+                        if self.__get_block_author(r["level"]) != self.baking_address:
+                            logger.warning("Found missed baking slot {}, adding {} mutez reward anyway.".format(r, self.block_reward))
+                            missed_baking_income += self.block_reward
+                missed_endorsing_income = 0
+                for count, r in enumerate(endorsement_rights):
+                    if (count % 10 == 0):
+                        logger.info("Verifying endorsement ({}/{}).".format(count, len(endorsement_rights)))
+                    authored_endorsement_slots = self.__get_authored_endorsement_slots_by_level(r["level"] + 1)
+                    if authored_endorsement_slots != r["slots"]:
+                        mutez_to_add = self.endorsement_reward * len(r["slots"])
+                        logger.warning("Found {} missed endorsement(s) at level {}, adding {} mutez reward anyway.".format(len(r["slots"]), r["level"], mutez_to_add))
+                        missed_endorsing_income += mutez_to_add
+                offline_losses = missed_baking_income + missed_endorsing_income
 
             # TODO: support Dexter for RPC
             # _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
             # for delegator in self.dexter_contracts_set:
             #     dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
 
-            reward_model = RewardProviderModel(reward_data["delegate_staking_balance"], reward_data["total_rewards"],
+            reward_model = RewardProviderModel(reward_data["delegate_staking_balance"],
+                                               nb_blocks, nb_endorsements, total_reward_amount, rewards_and_fees, equivocation_losses, denunciation_rewards, offline_losses,
                                                reward_data["delegators"])
 
-            logger.debug("delegate_staking_balance = {:d}, total_rewards = {:f}"
-                         .format(reward_data["delegate_staking_balance"], reward_data["total_rewards"]))
+            logger.debug("delegate_staking_balance = {:d}"
+                         .format(reward_data["delegate_staking_balance"]))
             logger.debug("delegators = {}".format(reward_data["delegators"]))
 
             return reward_model
@@ -420,6 +417,8 @@ class RpcRewardApiImpl(RewardApi):
 
                 logger.debug("Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} "
                              .format(idx + 1, d_a_len, delegator, d_info["staking_balance"], d_info["current_balance"]))
+                if (idx % 10 == 0):
+                    logger.info("Delegator info ({}/{}) fetched.".format(idx + 1, d_a_len))
 
                 # "append" to master dict
                 delegators[delegator] = d_info

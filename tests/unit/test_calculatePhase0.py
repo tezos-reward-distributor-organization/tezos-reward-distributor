@@ -20,7 +20,7 @@ class TestCalculatePhase0(TestCase):
         model = api.get_rewards_for_cycle_map(CYCLE, REWARDS_TYPE)
 
         phase0 = CalculatePhase0(model)
-        reward_data, total_rewards = phase0.calculate()
+        reward_data = phase0.calculate()
 
         delegate_staking_balance = int(model.delegate_staking_balance)
 

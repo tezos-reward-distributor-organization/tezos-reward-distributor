@@ -148,6 +148,13 @@ Available configuration parameters are:
 
     delegator_pays_ra_fee : False
 
+**pay_denunciation_rewards**
+  True/False - Baker may get rewarded for denunciating another baker's equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker's account, allowing the baker to reimburse the party at fault if they desire. Must be set to True when using RPC backend as RPC is not able to itemize rewards.
+
+  Example::
+
+    pay_denunciation_rewards: True
+
 **rules_map**
   The rules_map is needed to redirect payments. A pre-defined source (left side) is mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.
 
