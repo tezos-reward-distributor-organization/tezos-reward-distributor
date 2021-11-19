@@ -3,1468 +3,1102 @@
   "total_reward_amount": 372500000,
   "delegator_balance_dict": {
     "tz1eNby3LNdPffLAXe4mArWSukQKLF3hmwyy": {
-      "staking_balance": 2889467859,
-      "current_balance": 2898377589
+      "staking_balance": 2889467859
     },
     "tz1VgjWqJRgWgC7DVUy4iJWyW3NX8EJe9fDa": {
-      "staking_balance": 1196506311,
-      "current_balance": 1200187675
+      "staking_balance": 1196506311
     },
     "tz1Q4WuaFky71bDcqFkjnARpxLA7sSKX4eTZ": {
-      "staking_balance": 250895002,
-      "current_balance": 366217404
+      "staking_balance": 250895002
     },
     "tz1eahXww27PwFnQB6rJ4SM3zc9eSG3ySCpv": {
-      "staking_balance": 365585858,
-      "current_balance": 366702000
+      "staking_balance": 365585858
     },
     "tz1W9bJQHBc7U5gugvwu3yefSL88U9Ct4ziZ": {
-      "staking_balance": 791042675,
-      "current_balance": 793463222
+      "staking_balance": 791042675
     },
     "KT1DAQP6eEUtUFd3K32n3oDZMPrqG3NSQig2": {
-      "staking_balance": 1,
-      "current_balance": 413
+      "staking_balance": 1
     },
     "KT1GjF4sKGMh2anx5k6MADV2yCPvsEaq1iKC": {
-      "staking_balance": 1326318394,
-      "current_balance": 1330400513
+      "staking_balance": 1326318394
     },
     "KT1CeQACvhfKVs7cvSYeK3VYLFJ3tSEcEg1b": {
-      "staking_balance": 21882169,
-      "current_balance": 21937228
+      "staking_balance": 21882169
     },
     "KT1CfkT8Kq2tRPJfHgXoqR7ytRxa8oVWCzdP": {
-      "staking_balance": 49543617282,
-      "current_balance": 49118230637
+      "staking_balance": 49543617282
     },
     "tz1eE5AJ69Hi37mhDq5js6JA9KkCPfhfn7zs": {
-      "staking_balance": 1458586,
-      "current_balance": 1458586
+      "staking_balance": 1458586
     },
     "KT1RrCxZmLPav23cCsKbmedJD1YHajYeHXDJ": {
-      "staking_balance": 348,
-      "current_balance": 348
+      "staking_balance": 348
     },
     "KT1Xstn162HLVJqYbPB7PBizqm2DTcRw6Eqn": {
-      "staking_balance": 1560661088,
-      "current_balance": 1565466671
+      "staking_balance": 1560661088
     },
     "tz1aRmZn9o6WGrubfy5yFbLL6Vnh1LHGYDAR": {
-      "staking_balance": 8357936426,
-      "current_balance": 8437492609
+      "staking_balance": 8357936426
     },
     "KT1U6zqZcgigk2vZVvs1ohWBcZJhWmomq4ZU": {
-      "staking_balance": 5000,
-      "current_balance": 5000
+      "staking_balance": 5000
     },
     "KT1KZquqNDRb3rc7AnWLEbPQYhPqc3e8XtSp": {
-      "staking_balance": 1739250,
-      "current_balance": 1739250
+      "staking_balance": 1739250
     },
     "KT1PxQxTmMb8cBGXXDrDs25xF2EHPPWGutFo": {
-      "staking_balance": 198684485,
-      "current_balance": 199285369
+      "staking_balance": 198684485
     },
     "tz1hERmWh7kMmv8nFA5pdJ566Mwgt4xDC4hC": {
-      "staking_balance": 744763,
-      "current_balance": 744763
+      "staking_balance": 744763
     },
     "KT1WvkLroSTJgDbF53mGpBFriW9RMB4mHj61": {
-      "staking_balance": 356576,
-      "current_balance": 356576
+      "staking_balance": 356576
     },
     "KT1VMAUzJ6PoGkLbudT6ByPycDfzwKmUtJXa": {
-      "staking_balance": 67142357055,
-      "current_balance": 67349626645
+      "staking_balance": 67142357055
     },
     "KT1CALwg2KJkDXH5kvt2FqMQF1V94aP24feC": {
-      "staking_balance": 2157733295,
-      "current_balance": 2164382161
+      "staking_balance": 2157733295
     },
     "KT1PNhEmeFStnubLBh6Y5MNHWceLXfyNCriQ": {
-      "staking_balance": 1015471248,
-      "current_balance": 1018593719
+      "staking_balance": 1015471248
     },
     "KT1L6MjXMLoYsRE5QYTsuQ1CBJC9pzAod9sJ": {
-      "staking_balance": 3022693962,
-      "current_balance": 3002003185
+      "staking_balance": 3022693962
     },
     "tz1YjxFG5VUeM56aTqHPbgvxQn5b2wMUUSji": {
-      "staking_balance": 10056701200,
-      "current_balance": 10088485154
+      "staking_balance": 10056701200
     },
     "KT1Nux6SmBHcPvNDudrzHjV42c31bB4478A6": {
-      "staking_balance": 5852623920,
-      "current_balance": 5870679662
+      "staking_balance": 5852623920
     },
     "KT1WkhSuNW94C4iCDsWKdcsvYjVuqHUpcktN": {
-      "staking_balance": 31848571,
-      "current_balance": 31934400
+      "staking_balance": 31848571
     },
     "KT1V3wpB4NKPkqmRXdCU5P3NvfMP6HGfhB1T": {
-      "staking_balance": 814224,
-      "current_balance": 814224
+      "staking_balance": 814224
     },
     "KT1QXKsNhPhQcUnkNK45qAdaVpJ9cyRr4WnZ": {
-      "staking_balance": 460778279,
-      "current_balance": 462188300
+      "staking_balance": 460778279
     },
     "KT1UyXsBsvGy6a3EvDkPrwU3jnsE5oTuBXxt": {
-      "staking_balance": 1,
-      "current_balance": 1
+      "staking_balance": 1
     },
     "tz1i9vEQSZJXQJF4jASZmRo5yA5A7oHug8vs": {
-      "staking_balance": 333489999,
-      "current_balance": 334507056
+      "staking_balance": 333489999
     },
     "KT1LkyJrmxptcwXgtfBvV38JekE6nRwDM4LR": {
-      "staking_balance": 190762,
-      "current_balance": 190762
+      "staking_balance": 190762
     },
     "tz1MBRkVcayZPJ7SZEBnUkUNSq7bpYWF7ci9": {
-      "staking_balance": 10083651270,
-      "current_balance": 10114768696
+      "staking_balance": 10083651270
     },
     "tz1ZcsGTWJPVtbcw9hD31ypomB4ebvHk2Ac2": {
-      "staking_balance": 150694297,
-      "current_balance": 151204103
+      "staking_balance": 150694297
     },
     "KT1Ly1EghG451og1aFjgH1112c6Dw2gUW9Hp": {
-      "staking_balance": 19194008813,
-      "current_balance": 19253252118
+      "staking_balance": 19194008813
     },
     "tz1XndNTVmad6gsKW3rWUzcYAE9kzWv1NcKW": {
-      "staking_balance": 3135943104,
-      "current_balance": 3145611903
+      "staking_balance": 3135943104
     },
     "KT1AnzeUE8fR8aZxtZT2Mm6aFgW2L7CsLsdF": {
-      "staking_balance": 15523783000,
-      "current_balance": 15571695573
+      "staking_balance": 15523783000
     },
     "KT1CnMjFC6sEb492PmiRLD3dUqPGbQ4zi28X": {
-      "staking_balance": 62673,
-      "current_balance": 75532
+      "staking_balance": 62673
     },
     "KT1Ljegq2h5ADeZTFiAxogecHqyJYAWKQxu5": {
-      "staking_balance": 133306,
-      "current_balance": 133306
+      "staking_balance": 133306
     },
     "KT1CVzrTNwCEyd1p8yD6wPWw6gHyRr4ABELf": {
-      "staking_balance": 302139,
-      "current_balance": 302139
+      "staking_balance": 302139
     },
     "KT1RrDfcWytdtFzhLRAApYL23cBRAWep3FPR": {
-      "staking_balance": 5000,
-      "current_balance": 5000
+      "staking_balance": 5000
     },
     "tz1b6J9ib8sAvsVfHk56115MnDHM7oXPdcFn": {
-      "staking_balance": 3663946211,
-      "current_balance": 2425235702
+      "staking_balance": 3663946211
     },
     "KT1PqhbhQjWNnoDjciS68goHR5t1eTqt8LQV": {
-      "staking_balance": 46002,
-      "current_balance": 46002
+      "staking_balance": 46002
     },
     "tz1hQo5PNY4MbTJqBqczKWRTne86J1AUwirK": {
-      "staking_balance": 61028373,
-      "current_balance": 61204551
+      "staking_balance": 61028373
     },
     "KT1Ect8Vqv58QH8FC2DgPxSjGzZoZsZJYL54": {
-      "staking_balance": 6218327862,
-      "current_balance": 6237486087
+      "staking_balance": 6218327862
     },
     "KT1TboE17QKZawGwXpxwKtxGTQNV2CkXdbPD": {
-      "staking_balance": 8179408,
-      "current_balance": 8192206
+      "staking_balance": 8179408
     },
     "tz1N3Ky1b7xVR7gu2umdTD2TqJFsXwy2PBhc": {
-      "staking_balance": 200344505,
-      "current_balance": 200398013
+      "staking_balance": 200344505
     },
     "tz1Vyzw4MdkVjwfdqJjxZDGrgtsuRb3WRtGq": {
-      "staking_balance": 44452939966,
-      "current_balance": 44583105745
+      "staking_balance": 44452939966
     },
     "tz1Q9B4kYvZfQPY5CurqU4jJQ8QnLT3gPY23": {
-      "staking_balance": 590332566,
-      "current_balance": 592142532
+      "staking_balance": 590332566
     },
     "KT1PbUqTNkgUB3MfFjrvLNdQvu7vzEQJ3G7Q": {
-      "staking_balance": 2654186600,
-      "current_balance": 2662368117
+      "staking_balance": 2654186600
     },
     "KT1VWyRSC1qLoZaytv6Z9UUftcD1WYnSDByg": {
-      "staking_balance": 921881,
-      "current_balance": 921881
+      "staking_balance": 921881
     },
     "tz1YGh55G7vySHS1JCPpPemn2XQyHb5VEQhe": {
-      "staking_balance": 2490215396,
-      "current_balance": 2497890700
+      "staking_balance": 2490215396
     },
     "KT1AN3FT1jjoKhb5ejHxh7JrF14HUJkQDGD1": {
-      "staking_balance": 5000,
-      "current_balance": 5000
+      "staking_balance": 5000
     },
     "tz1hNu9Jpx1amNjnyL1qjSP6bGR7Dx44zfPN": {
-      "staking_balance": 96857391,
-      "current_balance": 97143915
+      "staking_balance": 96857391
     },
     "KT1SLSqdvoRJXPrRD5npaf1tiEKeULAnkGxT": {
-      "staking_balance": 6734413439,
-      "current_balance": 6755191446
+      "staking_balance": 6734413439
     },
     "tz1WPeC9UPfTR2usAknmuuab9rJavzJLiVPX": {
-      "staking_balance": 1190088646,
-      "current_balance": 1193750196
+      "staking_balance": 1190088646
     },
     "KT1UmKnKg58jpJTFp2czbyBBQpooX6h5FXQr": {
-      "staking_balance": 24318355,
-      "current_balance": 24380937
+      "staking_balance": 24318355
     },
     "KT1X31BErNVtQo8m1LHEniCdsMFhaVpfp6Ah": {
-      "staking_balance": 10569974691,
-      "current_balance": 10602593854
+      "staking_balance": 10569974691
     },
     "KT1Nh8Bmgm1BSMUCNcdXr4aun4jkVLy26aAp": {
-      "staking_balance": 10162672880,
-      "current_balance": 10194034618
+      "staking_balance": 10162672880
     },
     "KT1RgaPnaSoGFTGWx6QhXxtytafDEktj9h7E": {
-      "staking_balance": 34545,
-      "current_balance": 34545
+      "staking_balance": 34545
     },
     "tz1SYCmB3fcUVXkrcvQFBbbt3VzBNWnfVXoq": {
-      "staking_balance": 7074161222,
-      "current_balance": 7095973767
+      "staking_balance": 7074161222
     },
     "tz1VYHC1z2jX8Uuog8fARdzTbgnW8bKrbvdP": {
-      "staking_balance": 92892833932,
-      "current_balance": 93179600467
+      "staking_balance": 92892833932
     },
     "KT1ShGKeeakuf1gGuH6MjBndKz4k16W6eq4o": {
-      "staking_balance": 1217571,
-      "current_balance": 1231148
+      "staking_balance": 1217571
     },
     "tz1dsQoeP4AkcdvyAwhs9hh26fb3eceJ4D9M": {
-      "staking_balance": 98544,
-      "current_balance": 98544
+      "staking_balance": 98544
     },
     "KT1UKdun6jbipBYaJBteRe41Qa42aM7pB1dF": {
-      "staking_balance": 55635847,
-      "current_balance": 55795110
+      "staking_balance": 55635847
     },
     "KT19chPDVZsrQtLJvMgvQRTehKFVA9NUHoTm": {
-      "staking_balance": 5727066,
-      "current_balance": 5732799
+      "staking_balance": 5727066
     },
     "KT1VGKnL9aAnRyPkc3zEVdK4r7FXch8cfAPt": {
-      "staking_balance": 44492550,
-      "current_balance": 44617417
+      "staking_balance": 44492550
     },
     "KT1XZGr9tDEavkwGjTbEqVMbrC4P1oxponWT": {
-      "staking_balance": 5708498,
-      "current_balance": 5714178
+      "staking_balance": 5708498
     },
     "tz1KnUj2aXNtiUswb5v7451Rt8Jxp5LZsQXC": {
-      "staking_balance": 1513233295,
-      "current_balance": 1517892460
+      "staking_balance": 1513233295
     },
     "KT1EuXPdC2FNPtFnz1iZKifqnipxZEefEgcf": {
-      "staking_balance": 1267886,
-      "current_balance": 1267886
+      "staking_balance": 1267886
     },
     "KT1QMgtsQjYJerotqq8DW49sp7ULwrpEZD79": {
-      "staking_balance": 635995,
-      "current_balance": 635995
+      "staking_balance": 635995
     },
     "KT1R7XnjmQJLvddnkaPP4bomTVjHyiGk29sA": {
-      "staking_balance": 987688227,
-      "current_balance": 992827620
+      "staking_balance": 987688227
     },
     "KT1FFj64FhJMjvRzzvHJrB6JHG6xBUNhZBkX": {
-      "staking_balance": 75680691,
-      "current_balance": 75901838
+      "staking_balance": 75680691
     },
     "tz1NY8PPzuqLacp3Cbui7t1X5Dm3tk29yq6q": {
-      "staking_balance": 3554624715,
-      "current_balance": 3565585936
+      "staking_balance": 3554624715
     },
     "KT18go2T2yZ83wdDQWgdW89ecP87UvQzXYpY": {
-      "staking_balance": 1556395070,
-      "current_balance": 1561187482
+      "staking_balance": 1556395070
     },
     "KT1Lcp1txygPTJrE2Kt6oqp6tQDHsbv26ibr": {
-      "staking_balance": 150471142,
-      "current_balance": 150923183
+      "staking_balance": 150471142
     },
     "tz1ZfXNLtqxRWKt5fY1SMrUjM2si8DDxsxKY": {
-      "staking_balance": 5965396,
-      "current_balance": 5971813
+      "staking_balance": 5965396
     },
     "tz1UuXnSEr3nPcf2WDXD74cWpRt853yfSZLd": {
-      "staking_balance": 1021771067,
-      "current_balance": 1024912986
+      "staking_balance": 1021771067
     },
     "tz1ezhha5eKgHzzM9LdkvMWWwCBR3B1UpKMZ": {
-      "staking_balance": 85679371,
-      "current_balance": 0
+      "staking_balance": 85679371
     },
     "tz1VnmpWATf1SjZiurt9EU7JSSroUjHCKsY2": {
-      "staking_balance": 6995041677,
-      "current_balance": 7321131982
+      "staking_balance": 6995041677
     },
     "KT1FBdztGLgsdW32ru4fn1oeqADxMSsaN7rr": {
-      "staking_balance": 101075615,
-      "current_balance": 101375160
+      "staking_balance": 101075615
     },
     "KT1DUeDTC5k4ZuNaP9mTeHA46sghyBLsPN3F": {
-      "staking_balance": 566549,
-      "current_balance": 566549
+      "staking_balance": 566549
     },
     "KT1TqowQaxqs1nqSvn9KvB9Zco9sa7bWCyfn": {
-      "staking_balance": 16835,
-      "current_balance": 16835
+      "staking_balance": 16835
     },
     "tz1YjahMjE7nBu3sAH9VNpofwqhopGWkDazX": {
-      "staking_balance": 1026701616,
-      "current_balance": 1028672288
+      "staking_balance": 1026701616
     },
     "KT197yR4cauy7hz6JQp14AwCa9X7DCnrmJ5i": {
-      "staking_balance": 5041085416,
-      "current_balance": 5056635776
+      "staking_balance": 5041085416
     },
     "KT1Ew2TwicBEgfb6Jt3Bv4UuYTEy9hmrEuqW": {
-      "staking_balance": 2210336796,
-      "current_balance": 2217148059
+      "staking_balance": 2210336796
     },
     "tz1ZshTmtorFVkcZ7CpceCAxCn7HBJqTfmpk": {
-      "staking_balance": 8792900,
-      "current_balance": 8807610
+      "staking_balance": 8792900
     },
     "tz1ceM4RnSW7fFDcWQcYujJuFGwcEpMFxQZA": {
-      "staking_balance": 6199928,
-      "current_balance": 6207018
+      "staking_balance": 6199928
     },
     "tz1RJTLee1JMDskpixR4mqBsT8iXGdZJJhX4": {
-      "staking_balance": 18922175026,
-      "current_balance": 18980579126
+      "staking_balance": 18922175026
     },
     "tz1gvUd3RWtL8HHMbYzy4Wqm5fvrn4xin1V9": {
-      "staking_balance": 2703223222,
-      "current_balance": 2711556124
+      "staking_balance": 2703223222
     },
     "tz1ckALeQzBTHxAP1b7nQUC8R89nZKsvxth7": {
-      "staking_balance": 687,
-      "current_balance": 687
+      "staking_balance": 687
     },
     "tz1dWRGnC5hhojBtSVSWYMqnuqr6V9zprKFL": {
-      "staking_balance": 5075150,
-      "current_balance": 5079188
+      "staking_balance": 5075150
     },
     "tz1aognvSdJLR53HC24QSEwUj9qQLEpFTQWG": {
-      "staking_balance": 991231,
-      "current_balance": 991231
+      "staking_balance": 991231
     },
     "tz1gEgpFVQJjCHMKGcTLuxQgnZux5Xa4bXk6": {
-      "staking_balance": 7704896,
-      "current_balance": 7716307
+      "staking_balance": 7704896
     },
     "tz1MiCexgqqggtce1LipUCmBUN8QhTHirQFq": {
-      "staking_balance": 1568,
-      "current_balance": 1568
+      "staking_balance": 1568
     },
     "tz1bKXwiejdAvSPzpUmNXpsoY6hxD9KPLZig": {
-      "staking_balance": 19257,
-      "current_balance": 19257
+      "staking_balance": 19257
     },
     "tz1fiftcZ4CR4iw1628M8ciimouysVhrLhhG": {
-      "staking_balance": 27296,
-      "current_balance": 27296
+      "staking_balance": 27296
     },
     "tz1WHAtQ4WExHXaMNccuFfapwtgj5Q7aKhgN": {
-      "staking_balance": 717716276,
-      "current_balance": 719919518
+      "staking_balance": 717716276
     },
     "tz1W4Cz2Qnc4zmX3k72vJ6Cj1kkVeEATWoEK": {
-      "staking_balance": 1163592565,
-      "current_balance": 1167172316
+      "staking_balance": 1163592565
     },
     "tz1Y4fZ93mChWkiq4WrJLiDUCfPSXWyeU1ou": {
-      "staking_balance": 13024020,
-      "current_balance": 13024020
+      "staking_balance": 13024020
     },
     "tz1aW2hvJwRazWDr7748YYKSqk7kmjJH8zqZ": {
-      "staking_balance": 175486,
-      "current_balance": 175486
+      "staking_balance": 175486
     },
     "tz1ikNBaoXsp9cDnU4xJdodUeCizAKUhfj3v": {
-      "staking_balance": 106681586,
-      "current_balance": 106998203
+      "staking_balance": 106681586
     },
     "tz1e8T7B5Kr21xv8WfDVS7SUFMCQkens26A6": {
-      "staking_balance": 51401499,
-      "current_balance": 51547690
+      "staking_balance": 51401499
     },
     "tz1Ksuwr1RyYJDmznYHMTAxcBYxputWQ23wt": {
-      "staking_balance": 5055788,
-      "current_balance": 5058520
+      "staking_balance": 5055788
     },
     "tz1Po6LwXe5KGhpR2KY92ak3tfxQ5SaNtsK5": {
-      "staking_balance": 395435031,
-      "current_balance": 396643326
+      "staking_balance": 395435031
     },
     "tz1ND6476rFb1zWRT148MnYCtumsSUcr12Mm": {
-      "staking_balance": 5370001,
-      "current_balance": 5370001
+      "staking_balance": 5370001
     },
     "tz1Zgsbpc2NmjEPyo8CKVtB5NqM8bpuUW2dZ": {
-      "staking_balance": 163792937,
-      "current_balance": 201232902
+      "staking_balance": 163792937
     },
     "tz1XNVaA3gNzbD5F6eaHJA9vUfLjWdj7xfuF": {
-      "staking_balance": 41624648994,
-      "current_balance": 41756421301
+      "staking_balance": 41624648994
     },
     "tz1grg9gGaXh5bX2tLAtkZPe3yAXsyLd2vFY": {
-      "staking_balance": 175245495,
-      "current_balance": 175774019
+      "staking_balance": 175245495
     },
     "tz1WdonKdJPeaRbrq6Sp7Tzp3UUhgQB63G9d": {
-      "staking_balance": 6215557440,
-      "current_balance": 6234733633
+      "staking_balance": 6215557440
     },
     "tz1WLaCAgQv584bD4rAxJ6JAdknVV6XdWyu7": {
-      "staking_balance": 32580126,
-      "current_balance": 32620919
+      "staking_balance": 32580126
     },
     "tz1gHaZy8zK2jc8tFYQx3g68xahaUJP4JUo7": {
-      "staking_balance": 17878699,
-      "current_balance": 17921398
+      "staking_balance": 17878699
     },
     "tz1dm3mzTA2k6JV4xyLTRjaMkZf7TCRFoLi7": {
-      "staking_balance": 5968724,
-      "current_balance": 60975178
+      "staking_balance": 5968724
     },
     "tz1NVopUTZJ3YRj7GJSjwUkLpdR5yfy3yfCX": {
-      "staking_balance": 54902899,
-      "current_balance": 55059901
+      "staking_balance": 54902899
     },
     "tz1dDLkRM7FW93ZYWyw6vi99Gr5fhGFHGjZ3": {
-      "staking_balance": 736889959,
-      "current_balance": 738302337
+      "staking_balance": 736889959
     },
     "tz1aq98F8GGrUCJDUNiVBiynp2ePjL5ibRhT": {
-      "staking_balance": 73929333,
-      "current_balance": 74145072
+      "staking_balance": 73929333
     },
     "tz1ZpfkGD5Ro5fNqbjvHwbuabxFtm1a3t52K": {
-      "staking_balance": 2349497259,
-      "current_balance": 2356738140
+      "staking_balance": 2349497259
     },
     "tz1Zhuzs6MWY7SnCKKFk3CSCSet7VzoNXbwc": {
-      "staking_balance": 172802064,
-      "current_balance": 173325324
+      "staking_balance": 172802064
     },
     "tz1Yy6YJuzgi6y5i3X8FzxhdzwaLfGVpa63o": {
-      "staking_balance": 15006335065,
-      "current_balance": 15053277670
+      "staking_balance": 15006335065
     },
     "tz1d1HbHWfpqgUx2vaPAVAAL8YXQMtv5M1ao": {
-      "staking_balance": 684177119,
-      "current_balance": 686276819
+      "staking_balance": 684177119
     },
     "tz1VS1QR7TYdR2oY9F5YMPiWT6Mq9kLTAyQU": {
-      "staking_balance": 4838458,
-      "current_balance": 4841891
+      "staking_balance": 4838458
     },
     "tz1VGMpi8Ro6yMZEEFRTu6nE1tFPVZeppszu": {
-      "staking_balance": 21310879,
-      "current_balance": 21322670
+      "staking_balance": 21310879
     },
     "tz1UvJveHCAjpTe66SEgF4J9Q2ZALoZ8wkbG": {
-      "staking_balance": 904770867,
-      "current_balance": 907551584
+      "staking_balance": 904770867
     },
     "tz1bhW6XCWg11Zp4K7Uj5QQYWkBx6MUEimvY": {
-      "staking_balance": 232468424,
-      "current_balance": 233173606
+      "staking_balance": 232468424
     },
     "tz1WniT6f1y6m9HdyHME4WhCyrTN79LYLeMV": {
-      "staking_balance": 3608405223,
-      "current_balance": 3619532609
+      "staking_balance": 3608405223
     },
     "tz1dHfJ6UW8TXR3SJULGEkz89sV3Vhg47QHz": {
-      "staking_balance": 16709752,
-      "current_balance": 16748843
+      "staking_balance": 16709752
     },
     "tz1XRP86iteKEaVtVyTDFjk2y9BetYpfDPMa": {
-      "staking_balance": 510805977,
-      "current_balance": 689400295
+      "staking_balance": 510805977
     },
     "tz1h7LgnzJetZsNvVXi1SU5uhMHqbFPsQgsq": {
-      "staking_balance": 5160343274,
-      "current_balance": 5176261807
+      "staking_balance": 5160343274
     },
     "tz1TF6VsMHakU5TniTx7guRosJJFoRFdMbqN": {
-      "staking_balance": 812730173,
-      "current_balance": 815226742
+      "staking_balance": 812730173
     },
     "tz1PViutgpEWWWCN5V2wCmfwDJm8y1JQPMMV": {
-      "staking_balance": 128171646,
-      "current_balance": 128554842
+      "staking_balance": 128171646
     },
     "tz1ZqBXinDQyWVCyKpbo1bGKfbfbNWdSjYdc": {
-      "staking_balance": 1671143830,
-      "current_balance": 1711841366
+      "staking_balance": 1671143830
     },
     "tz1XP7udMTEKvJ5SWEgTQcFp4F5SseV3hrZT": {
-      "staking_balance": 169664097,
-      "current_balance": 170175496
+      "staking_balance": 169664097
     },
     "tz1UPRpzaMbEFu3UZtUE3E7DLH3Xd5jbVsE3": {
-      "staking_balance": 324979870,
-      "current_balance": 325970654
+      "staking_balance": 324979870
     },
     "tz1URaj5d47RHwKsXtAvSHdJdYbJhJp3UpVF": {
-      "staking_balance": 1280620295,
-      "current_balance": 1284561336
+      "staking_balance": 1280620295
     },
     "tz1Yo5oTurnMMwa8yPcCJZxbDvgPpbmDGGga": {
-      "staking_balance": 79510309,
-      "current_balance": 79743938
+      "staking_balance": 79510309
     },
     "tz1avPnmjQtsXtugNvcTntr1MuRCk79Ws9u6": {
-      "staking_balance": 1102780935,
-      "current_balance": 1106172947
+      "staking_balance": 1102780935
     },
     "tz1adiZZMXxkYmZFTfXCG75xngDWfgGQDg6s": {
-      "staking_balance": 21129629,
-      "current_balance": 21182364
+      "staking_balance": 21129629
     },
     "tz1aDAKZuYDZAVcdPPqUwkkSpw5xVefSRWAK": {
-      "staking_balance": 502251125,
-      "current_balance": 503636021
+      "staking_balance": 502251125
     },
     "tz1bYGTbUVC9B643n5dWnsztGgAstP31KsUp": {
-      "staking_balance": 2465981456,
-      "current_balance": 2473261437
+      "staking_balance": 2465981456
     },
     "tz1c29eY1hUh1L5wbe9n2doWDhvtzrPdmis7": {
-      "staking_balance": 309366,
-      "current_balance": 309366
+      "staking_balance": 309366
     },
     "tz1agdcXABxJaSDGunfEf7yMU8VVxLyd7FLn": {
-      "staking_balance": 42792839,
-      "current_balance": 42912454
+      "staking_balance": 42792839
     },
     "tz1YwKBW87TgumyAphrjK5wVBcdA3wFuv3Xr": {
-      "staking_balance": 190048229,
-      "current_balance": 190622451
+      "staking_balance": 190048229
     },
     "tz1RfhvdwpoMxgrDpEBmbQqSqJUphvv3bwDp": {
-      "staking_balance": 1293953737,
-      "current_balance": 1410365267
+      "staking_balance": 1293953737
     },
     "tz1byP7vQPsxGSWj3VWHzi1e99kP28mDVcPy": {
-      "staking_balance": 12149656,
-      "current_balance": 12174671
+      "staking_balance": 12149656
     },
     "tz1hdX1NXnhpvXbTbZPbgSyQ791KWDLEiMbc": {
-      "staking_balance": 988741573,
-      "current_balance": 991781147
+      "staking_balance": 988741573
     },
     "tz1Qgyhw3FzbFntdRR7vpV6AmDd5KJ7H3EVm": {
-      "staking_balance": 224845160,
-      "current_balance": 225526806
+      "staking_balance": 224845160
     },
     "tz1Nx3DbZocTY65NZokdxLWv3jPnBfmE9xsE": {
-      "staking_balance": 1532918658,
-      "current_balance": 1537638677
+      "staking_balance": 1532918658
     },
     "tz1eyufxFZQhBsXuYS1jGH8SneirRF7R4ey5": {
-      "staking_balance": 10123494,
-      "current_balance": 10142253
+      "staking_balance": 10123494
     },
     "tz1hCkvk9jrySjx96kZE8RN2buVucoM63M7c": {
-      "staking_balance": 527511520,
-      "current_balance": 529127560
+      "staking_balance": 527511520
     },
     "tz1PZL1gvPDcVngELczioWmP4RqAQrW6ZHLe": {
-      "staking_balance": 177325166,
-      "current_balance": 178063543
+      "staking_balance": 177325166
     },
     "tz1PhmQmiZ3VZTowpqyVBPaDWwuKdVoRCwet": {
-      "staking_balance": 67159472,
-      "current_balance": 67354311
+      "staking_balance": 67159472
     },
     "tz1X2PX1VtoRJvJWSRzJDqEie29X7R1AGwyB": {
-      "staking_balance": 13997583464,
-      "current_balance": 14039509488
+      "staking_balance": 13997583464
     },
     "tz1RcWi2RoMzS5g4b5amf4stx3KzE9sEL5E9": {
-      "staking_balance": 1008476924,
-      "current_balance": 1011578051
+      "staking_balance": 1008476924
     },
     "tz1a7FUE6rqdUX35AfQBjuXM6kmasiPiLCAc": {
-      "staking_balance": 172770877,
-      "current_balance": 173291760
+      "staking_balance": 172770877
     },
     "tz1Q1CXLdztfQQ61578zBiphcLSMr3pPMsTg": {
-      "staking_balance": 9812476480,
-      "current_balance": 9847872730
+      "staking_balance": 9812476480
     },
     "tz1eS2QMpgG25utuaiH24619p5AMofNNM68Y": {
-      "staking_balance": 396139547,
-      "current_balance": 406991022
+      "staking_balance": 396139547
     },
     "tz1ey1C84cpQ8pkn9fRAPFmuma6W7b89Jng6": {
-      "staking_balance": 8168816410,
-      "current_balance": 8194022711
+      "staking_balance": 8168816410
     },
     "tz1MmMuFyxPy1U6ibEoPHe2G28cuKAGjZpoK": {
-      "staking_balance": 3224730,
-      "current_balance": 3224994
+      "staking_balance": 3224730
     },
     "tz1WBquBHTpjLN2F9qUs9EcZ9gYBG87PT4eS": {
-      "staking_balance": 812987187,
-      "current_balance": 815484809
+      "staking_balance": 812987187
     },
     "tz1NyxzLRLf3AM3oqjV5qSYy6WNUCPiLoNyk": {
-      "staking_balance": 5077997100,
-      "current_balance": 5093661412
+      "staking_balance": 5077997100
     },
     "tz1grFopmCgP7Wvs2btaE7L4LG4uW1Wyqm91": {
-      "staking_balance": 816840356,
-      "current_balance": 819349614
+      "staking_balance": 816840356
     },
     "tz1byNJ83dURzx7fj6W64AmZU7C7gcMa8iKz": {
-      "staking_balance": 43869848,
-      "current_balance": 43993330
+      "staking_balance": 43869848
     },
     "tz1X53Si2nhPwmDJ6FanBJs4gkLDMKu9C5Nk": {
-      "staking_balance": 2034975136,
-      "current_balance": 2041245028
+      "staking_balance": 2034975136
     },
     "tz1b4wZQxjzZBP2xqHpzaQ52DPcfmFfZd2Se": {
-      "staking_balance": 4958063,
-      "current_balance": 4961803
+      "staking_balance": 4958063
     },
     "tz1QC7aWBazB6B74tNZJcMdJBEepgswKLTCj": {
-      "staking_balance": 5078225403,
-      "current_balance": 5093890421
+      "staking_balance": 5078225403
     },
     "tz1YmbpHjKTxbXR9i42MR7Ng1YGKRiyoXRq1": {
-      "staking_balance": 1509211875,
-      "current_balance": 1485776992
+      "staking_balance": 1509211875
     },
     "tz1LESLb2pZdYh73q3aqqWtYPoAsWquVaxAQ": {
-      "staking_balance": 22023703,
-      "current_balance": 22079200
+      "staking_balance": 22023703
     },
     "tz1VcsxtoJ8Q73qqQuunJvHDBVFxvreS8QZu": {
-      "staking_balance": 19818130,
-      "current_balance": 19866817
+      "staking_balance": 19818130
     },
     "tz1cR1iJKLAoj5WppboH15B4ELczYYDEVd6R": {
-      "staking_balance": 1547035147,
-      "current_balance": 1551798663
+      "staking_balance": 1547035147
     },
     "tz1h5jRJt84iFTAYyLmTv1GmR44nyHLMykxH": {
-      "staking_balance": 819397410,
-      "current_balance": 821915085
+      "staking_balance": 819397410
     },
     "tz1WLuRRmg7mNTYC6YmkEwKqzYAaXFtbj4vm": {
-      "staking_balance": 507799990,
-      "current_balance": 509355176
+      "staking_balance": 507799990
     },
     "tz1h3mBvQa9WVAJJQJJeyEprUi3mjjg7PunW": {
-      "staking_balance": 10061884,
-      "current_balance": 10080452
+      "staking_balance": 10061884
     },
     "tz1ic5DU8enzHyStpxkBWm9qh55uiYhXB6QX": {
-      "staking_balance": 17702599,
-      "current_balance": 17744755
+      "staking_balance": 17702599
     },
     "tz1cs7W42hRkC4CTh43JaCrG5H46rYn6o4Up": {
-      "staking_balance": 188165378,
-      "current_balance": 188733787
+      "staking_balance": 188165378
     },
     "tz1gz1mN7eNcx81Yfn6Sowx1zvBRDXo4BeP8": {
-      "staking_balance": 1500,
-      "current_balance": 1500
+      "staking_balance": 1500
     },
     "tz1iP3Y7NPDX5ZjYsimDBUXavUDXDvFL21S5": {
-      "staking_balance": 5078566897,
-      "current_balance": 5094232969
+      "staking_balance": 5078566897
     },
     "tz1ak1NrrYgvFdhW5c59BwFEUEW1YLMHM15A": {
-      "staking_balance": 81057387,
-      "current_balance": 81295133
+      "staking_balance": 81057387
     },
     "tz1d3T2mKZ5sukWWM7dcGRgrFyJXZknamVCG": {
-      "staking_balance": 1873572167,
-      "current_balance": 1873572167
+      "staking_balance": 1873572167
     },
     "tz1i4mtD96JtokQHuF7SzUaS8JoqUCL6gyqF": {
-      "staking_balance": 3190698993,
-      "current_balance": 3200537640
+      "staking_balance": 3190698993
     },
     "tz1RmEVJHebLSHRrNGLMohj4Jt2rCbWbZb6t": {
-      "staking_balance": 5071523919,
-      "current_balance": 5087168248
+      "staking_balance": 5071523919
     },
     "tz1N4coG3AoLr4zSHxgp2sGA618Eo3m3rqM9": {
-      "staking_balance": 1420,
-      "current_balance": 1420
+      "staking_balance": 1420
     },
     "tz1R2unVHUoXUnAFahD7FHVeiE3UDUXgfnqj": {
-      "staking_balance": 1500,
-      "current_balance": 1500
+      "staking_balance": 1500
     },
     "tz1Mn51s3aH9VJXUrqax9e9cuJDLhFDiZMq7": {
-      "staking_balance": 315000,
-      "current_balance": 315000
+      "staking_balance": 315000
     },
     "tz1T1qtdUv6QiQLYCVEw7ZsnqwRueKgui2CP": {
-      "staking_balance": 389730800,
-      "current_balance": 390921482
+      "staking_balance": 389730800
     },
     "tz1eNingAPDnyusEq2YqoaTSri1VZrLYXw1y": {
-      "staking_balance": 106520844,
-      "current_balance": 106837406
+      "staking_balance": 106520844
     },
     "tz1VsZQAe8HrsSkGstnUQEctyzJDRpHU7Ahj": {
-      "staking_balance": 140880784,
-      "current_balance": 141303216
+      "staking_balance": 140880784
     },
     "tz1XgEhZEMcAg8KzRo4ymZSSb2TEXoPZBWLc": {
-      "staking_balance": 7632976227,
-      "current_balance": 7657807779
+      "staking_balance": 7632976227
     },
     "tz1erTd9G3WkY4dNxmLxgyJuBC1J2gESEvoJ": {
-      "staking_balance": 80276912,
-      "current_balance": 80512233
+      "staking_balance": 80276912
     },
     "tz1ZFFgamrwjmSNgBNSFS31oVBBpM8DuRzxj": {
-      "staking_balance": 202375335,
-      "current_balance": 202987614
+      "staking_balance": 202375335
     },
     "tz1Y1psQ9VPSoj6Qwok35T4HKWGnoZapHrC2": {
-      "staking_balance": 146115345,
-      "current_balance": 146553878
+      "staking_balance": 146115345
     },
     "tz1gsN7r2wc54FF5ERSGS844WER6A6h44x2d": {
-      "staking_balance": 152336182,
-      "current_balance": 152669714
+      "staking_balance": 152336182
     },
     "tz1hkH8HVeHcrLcbD3JjCvsBbihB6NHsefAZ": {
-      "staking_balance": 2849855415,
-      "current_balance": 2858640966
+      "staking_balance": 2849855415
     },
     "tz1fj4UmhABTkSo2iy4dF51TBEWJE9mQ3fcE": {
-      "staking_balance": 478673625,
-      "current_balance": 1126848
+      "staking_balance": 478673625
     },
     "tz1X9mMYaTURv5TRXJ1zewyZFXyVEWL3BGvE": {
-      "staking_balance": 53913568,
-      "current_balance": 54067515
+      "staking_balance": 53913568
     },
     "tz1ToVWifMgQX4XQy5mi3jcNuFPAh89XqXxS": {
-      "staking_balance": 5285367,
-      "current_balance": 5289950
+      "staking_balance": 5285367
     },
     "tz1hSqfcnfrVYKwwRnovrQk2J8CsW7HCosrm": {
-      "staking_balance": 33594668,
-      "current_balance": 33594668
+      "staking_balance": 33594668
     },
     "tz1PB1vKFomDuiM6iieEuhkYcU8vTJAvCvAs": {
-      "staking_balance": 541492412,
-      "current_balance": 543158859
+      "staking_balance": 541492412
     },
     "tz1Po79acpbg1UA1E67mVck1UDYXXSFK6jy4": {
-      "staking_balance": 742342224,
-      "current_balance": 744624155
+      "staking_balance": 742342224
     },
     "tz1eSeRJYAxurUhz3YsP7dV3WLhL3DjWkA8d": {
-      "staking_balance": 1043316716,
-      "current_balance": 1046528900
+      "staking_balance": 1043316716
     },
     "tz1dA49pHmDHZP8GQZLMS3m3z6Mipe77wXac": {
-      "staking_balance": 1043345771,
-      "current_balance": 1046558047
+      "staking_balance": 1043345771
     },
     "tz1dam8iB6xzyCBq1w1uG6bZrK9VAW9az6sX": {
-      "staking_balance": 1043376913,
-      "current_balance": 1046589283
+      "staking_balance": 1043376913
     },
     "tz1PpbecJdscEyjhit2rLeasQfHUiRW5uyf6": {
-      "staking_balance": 242395134,
-      "current_balance": 242981364
+      "staking_balance": 242395134
     },
     "tz1cNsanBuzBawEudhyvgVNCxZUNFW5cc3FD": {
-      "staking_balance": 399990726,
-      "current_balance": 401121420
+      "staking_balance": 399990726
     },
     "tz1iZQa4Lnc98GWvLud83N9vPVvs6Lk1FWEn": {
-      "staking_balance": 15571903,
-      "current_balance": 15607482
+      "staking_balance": 15571903
     },
     "tz1TeLLF4QEx9Fzs4oBhHfM168h4GGSRshmo": {
-      "staking_balance": 1266456459,
-      "current_balance": 1309477
+      "staking_balance": 1266456459
     },
     "tz1LMro4PdVF8reegVityiTDZAsgQLhqsVEN": {
-      "staking_balance": 68446043,
-      "current_balance": 68517023
+      "staking_balance": 68446043
     },
     "tz1f6e14dBzNk19T2nastQd7NfXBB28GGi4U": {
-      "staking_balance": 22551709,
-      "current_balance": 22623344
+      "staking_balance": 22551709
     },
     "tz1YTt8LuxVkrwsoS2xGxXB2wozvsWsgkWGM": {
-      "staking_balance": 286912471,
-      "current_balance": 287789048
+      "staking_balance": 286912471
     },
     "tz1ash4GHJKC3uoZZbT2eC1rvP3EwUMd6eQP": {
-      "staking_balance": 50325189,
-      "current_balance": 232430674
+      "staking_balance": 50325189
     },
     "tz1XC97p4DFhrDNBEMsPRRd8RL5pbbgKMfNX": {
-      "staking_balance": 129376012,
-      "current_balance": 92338840
+      "staking_balance": 129376012
     },
     "tz1RKsRDYfrgaskHLoLbhuz1VuHKhF6RmUdX": {
-      "staking_balance": 69696263,
-      "current_balance": 69878219
+      "staking_balance": 69696263
     },
     "tz1VRMUKomcuNfzzFgFe6YHUow2UwvHHCQen": {
-      "staking_balance": 160425129,
-      "current_balance": 160907897
+      "staking_balance": 160425129
     },
     "tz1PQqrAtsqYEbRDb6LDaM79Tpetm2NJW6Hh": {
-      "staking_balance": 1962727,
-      "current_balance": 1962727
+      "staking_balance": 1962727
     },
     "tz1g26x8YP9ZLxajB11pYKcmyhoCfErmXxnH": {
-      "staking_balance": 140129,
-      "current_balance": 140129
+      "staking_balance": 140129
     },
     "tz1hNpPVw76g4Qa7xMKRoWiF29ijMEg5Yndn": {
-      "staking_balance": 249937984,
-      "current_balance": 250068732
+      "staking_balance": 249937984
     },
     "tz1XAK4JGwECw4em5LfCixVdeoCHYjCTrwVz": {
-      "staking_balance": 101040108,
-      "current_balance": 119563775
+      "staking_balance": 101040108
     },
     "tz1dmdiEA1PGEDDvUouvqZkMip4awasMxWAC": {
-      "staking_balance": 7733101397,
-      "current_balance": 7747991289
+      "staking_balance": 7733101397
     },
     "tz1e2b1w1u9SBxCidUyxMQgkvK8j6LgRW454": {
-      "staking_balance": 555081454,
-      "current_balance": 799818
+      "staking_balance": 555081454
     },
     "tz1afKf2aC9x2bw9tYTZVMuHeX2das11yEpu": {
-      "staking_balance": 25997397800,
-      "current_balance": 26042956105
+      "staking_balance": 25997397800
     },
     "tz1PoHNfjH43uMpBUS2QeX5HwQZcF4e6QB4Y": {
-      "staking_balance": 201109035,
-      "current_balance": 201696347
+      "staking_balance": 201109035
     },
     "tz1a82hVcwefhgiNyR1CokwFvsnEx4xiW7gV": {
-      "staking_balance": 159926642,
-      "current_balance": 160408230
+      "staking_balance": 159926642
     },
     "tz1R1wfhLkA4FMsrGkrXMXt2xwix7ra1XYCF": {
-      "staking_balance": 49979416,
-      "current_balance": 50044864
+      "staking_balance": 49979416
     },
     "tz1YT5HUGUU9cppejVspj2po1DA1ybCGUVEc": {
-      "staking_balance": 1005852248,
-      "current_balance": 1008944988
+      "staking_balance": 1005852248
     },
     "tz1Sy6Kmu6tcY6b7zCEjWDCB91EAQmRQHcD1": {
-      "staking_balance": 100856138,
-      "current_balance": 101155002
+      "staking_balance": 100856138
     },
     "KT1KXHGAbigkJXyJzvzriY3FuZUoGxUWmkdB": {
-      "staking_balance": 3146733715,
-      "current_balance": 3156429575
+      "staking_balance": 3146733715
     },
     "tz1V2zt3vSzDxorZM3oQmA8mrQVCrnJrZWHQ": {
-      "staking_balance": 1391223072,
-      "current_balance": 5968789375
+      "staking_balance": 1391223072
     },
     "tz1RB8BM9KD1FrGHa6uSKXN1ZxvNMSaJdsEf": {
-      "staking_balance": 2421964,
-      "current_balance": 4543620
+      "staking_balance": 2421964
     },
     "tz1TNUzBU6f9CZrfE1m2Vr5HtN4S55HXp4vr": {
-      "staking_balance": 7292330075,
-      "current_balance": 7302658385
+      "staking_balance": 7292330075
     },
     "tz1dFYFwEoqQsJiCr5T2PxD4bedFY9qg3pTB": {
-      "staking_balance": 39649857,
-      "current_balance": 39759766
+      "staking_balance": 39649857
     },
     "tz1V43XJ2dcdxtCggsuqTjKQyJxNmcpsQUGT": {
-      "staking_balance": 566212852,
-      "current_balance": 567948981
+      "staking_balance": 566212852
     },
     "tz1fkgwdv469DEtWKXwwRKdRWKQQB3UyyTqv": {
-      "staking_balance": 56176789,
-      "current_balance": 56299953
+      "staking_balance": 56176789
     },
     "tz1iKPheJfZ8HRoqZeYWrPTXJtxM3yhEkEAL": {
-      "staking_balance": 864041731,
-      "current_balance": 865260756
+      "staking_balance": 864041731
     },
     "tz1QhroKNoArjBbPTH4kGeNH6WroWEDbCcNB": {
-      "staking_balance": 6575201,
-      "current_balance": 6583372
+      "staking_balance": 6575201
     },
     "tz1dGAHHDgNiaJMMnYoRRzdL7YSA8FCVAeDD": {
-      "staking_balance": 456885331,
-      "current_balance": 458284367
+      "staking_balance": 456885331
     },
     "tz1hMYxt3pWYqaa1vsyJ7XdABAzX1UzqNk9d": {
-      "staking_balance": 310609790,
-      "current_balance": 311556912
+      "staking_balance": 310609790
     },
     "tz1YJKtjfE5hk6FVnuCwTm2Gk4X9GLeQJMDL": {
-      "staking_balance": 1057847556,
-      "current_balance": 1061095642
+      "staking_balance": 1057847556
     },
     "tz1i3V3iGa4ic7sqJ7DPVQG8aYeKTWXD1fLs": {
-      "staking_balance": 731534516,
-      "current_balance": 733788760
+      "staking_balance": 731534516
     },
     "tz1fjiKYY5Z2mhBnrmjCMYGPY4bfDEoXM4es": {
-      "staking_balance": 151468053,
-      "current_balance": 151838048
+      "staking_balance": 151468053
     },
     "tz1QfqGBEw66iN1je2arFPddUf35r4NRkWos": {
-      "staking_balance": 4498067,
-      "current_balance": 4500636
+      "staking_balance": 4498067
     },
     "tz1TL9UeXsgMMHxDtoWNXfM5hbnGjBw9aWPh": {
-      "staking_balance": 139839375,
-      "current_balance": 140032160
+      "staking_balance": 139839375
     },
     "tz1bFoSLWrF2A9aMihmb2Pqa4GXLvk8djyLi": {
-      "staking_balance": 478053689,
-      "current_balance": 479518755
+      "staking_balance": 478053689
     },
     "tz1WAkkhBK6T8Ab2Q7nu2vWkwDXcLXfaKrPo": {
-      "staking_balance": 49724368,
-      "current_balance": 49865603
+      "staking_balance": 49724368
     },
     "tz1XtZDiEyW9ZsFL4qA6XQ5aRjMUtMT5Qh5Y": {
-      "staking_balance": 271459755,
-      "current_balance": 272286590
+      "staking_balance": 271459755
     },
     "tz1N2iy2KrbbXHrUzGYZGRHrdr5Dqa3MpV3x": {
-      "staking_balance": 6103265934,
-      "current_balance": 6122334982
+      "staking_balance": 6103265934
     },
     "tz1KkoAtUA2TMkF3XKPAb1j8yvPeUujUydbK": {
-      "staking_balance": 24465118,
-      "current_balance": 24528254
+      "staking_balance": 24465118
     },
     "tz1Z8ikooMufi5GDdZpHiKry8iEna6ggBhvg": {
-      "staking_balance": 466179072,
-      "current_balance": 467609834
+      "staking_balance": 466179072
     },
     "tz1MPWQ2QmmUy6YH2hj5n5mmqVp13q8sFMjp": {
-      "staking_balance": 6020599274,
-      "current_balance": 6013834514
+      "staking_balance": 6020599274
     },
     "tz1Qa7zj3d55MidtryAK41F8Mfyx4PyBL5ar": {
-      "staking_balance": 1500,
-      "current_balance": 1500
+      "staking_balance": 1500
     },
     "tz1hKwrT2JWD9554Q5UqJfd28PZqX1kKhtNx": {
-      "staking_balance": 150268676,
-      "current_balance": 200706518
+      "staking_balance": 150268676
     },
     "tz1a9WhfVqr8CnyJMkST93cqd3TsAehcysL3": {
-      "staking_balance": 152718132,
-      "current_balance": 153178005
+      "staking_balance": 152718132
     },
     "tz1NjBVrWgthWtP9iwS5FHMsrpqJ6MKVaWoR": {
-      "staking_balance": 64952631,
-      "current_balance": 118394189
+      "staking_balance": 64952631
     },
     "tz1PQ9rXBAd1tYCB5otkMWjd4VEfisFwHy3y": {
-      "staking_balance": 52529078,
-      "current_balance": 52679212
+      "staking_balance": 52529078
     },
     "tz1L13m8gcbfcppA9vsfbYZy4GGpg3b3jdKi": {
-      "staking_balance": 480150294,
-      "current_balance": 481279427
+      "staking_balance": 480150294
     },
     "tz1Kfore4A7AvveRroCq5zNmcCWSRjsBASQz": {
-      "staking_balance": 1308654060,
-      "current_balance": 1312226141
+      "staking_balance": 1308654060
     },
     "tz1TbTdEKrNXEQzfGGgxvwyhDGbR3mSsh7vk": {
-      "staking_balance": 59418659,
-      "current_balance": 101248692
+      "staking_balance": 59418659
     },
     "tz1cbhFfAjRUz5yhPVKQgpHtEyTyJcGv4dnn": {
-      "staking_balance": 129465541,
-      "current_balance": 129853914
+      "staking_balance": 129465541
     },
     "tz1aj5ZE97CHjgaXq6kw2APuMt1ULiSKRa5S": {
-      "staking_balance": 1001751219,
-      "current_balance": 1004842262
+      "staking_balance": 1001751219
     },
     "tz1Uhp4XYkXvAsEwB8ecKWq7nmSv7DsAi3eg": {
-      "staking_balance": 992229,
-      "current_balance": 992229
+      "staking_balance": 992229
     },
     "tz1MBEgQBzvFUbFSWcL4BarQu2bBhPPyqPSK": {
-      "staking_balance": 1892220,
-      "current_balance": 1892220
+      "staking_balance": 1892220
     },
     "tz1XKoRCJAYmYMUKoLGtyfiQnyh1LEUUpaB3": {
-      "staking_balance": 25889255,
-      "current_balance": 35397628
+      "staking_balance": 25889255
     },
     "tz1c6pugszFJf3UfPFsGkh9emL9RQkWer3rN": {
-      "staking_balance": 179494173,
-      "current_balance": 313006717
+      "staking_balance": 179494173
     },
     "tz1e9EvAKHbaNBJvvLND46y6Uaf1UodPesec": {
-      "staking_balance": 54941,
-      "current_balance": 176075
+      "staking_balance": 54941
     },
     "tz1Q3RngJridHmvwUztb83fTYPTu9KXDuWdf": {
-      "staking_balance": 2962594,
-      "current_balance": 2962692
+      "staking_balance": 2962594
     },
     "tz1VfizAKaR9Q1U1DrKmw2FbdCc53uyUbupm": {
-      "staking_balance": 38024945,
-      "current_balance": 38093641
+      "staking_balance": 38024945
     },
     "tz1Kyn2qUkywe1KW1Ma6aFprrAzomP6nv5UW": {
-      "staking_balance": 343068049,
-      "current_balance": 344061325
+      "staking_balance": 343068049
     },
     "KT1TXqrvAMdpTb7pfxVjobeMCh34t7Gp4Y6Q": {
-      "staking_balance": 1,
-      "current_balance": 1
+      "staking_balance": 1
     },
     "tz1hnrkET7LMjoRQBeADRRgBGxrrm1pB28yN": {
-      "staking_balance": 263215780,
-      "current_balance": 263970651
+      "staking_balance": 263215780
     },
     "tz1TpkMnacTRftngXvMvQeEk7BaDXiX927Xa": {
-      "staking_balance": 1500,
-      "current_balance": 1500
+      "staking_balance": 1500
     },
     "tz1hk916dkKHBU1agFGoKeND8cqvkjmh3SVM": {
-      "staking_balance": 152800675,
-      "current_balance": 246021071
+      "staking_balance": 152800675
     },
     "tz1cUz9X6vxyPYT9iRJQdxQGTogiDcMBPWxw": {
-      "staking_balance": 3799662,
-      "current_balance": 3800660
+      "staking_balance": 3799662
     },
     "tz1VscRjx4mDhqbUMeKMSiHGfZx84FZstqpA": {
-      "staking_balance": 441286160,
-      "current_balance": 442559474
+      "staking_balance": 441286160
     },
     "tz1Yo1FG6WF6fegDLb8ZdeHrSPh9ubCokfDa": {
-      "staking_balance": 4971458,
-      "current_balance": 1985184
+      "staking_balance": 4971458
     },
     "tz1fihTSVbU62ASYERQv3irFbRdwXRuShyMC": {
-      "staking_balance": 559003622,
-      "current_balance": 560551442
+      "staking_balance": 559003622
     },
     "tz1UYxuXjG5URd4eWmXTUSrHHSog6xmQPvGD": {
-      "staking_balance": 46097262,
-      "current_balance": 46157209
+      "staking_balance": 46097262
     },
     "tz1gh4nAnuRKjsju8UHsCLqC9F8a31FsCFrX": {
-      "staking_balance": 60987498,
-      "current_balance": 61164056
+      "staking_balance": 60987498
     },
     "tz1PhvPfBuwLnFY9YTMPkJZrQp1evxe8a8W4": {
-      "staking_balance": 2515043094,
-      "current_balance": 2521236914
+      "staking_balance": 2515043094
     },
     "tz1dvtpi7bCrtFo7ozbREQBSHdoZJCTu1xHZ": {
-      "staking_balance": 11382672,
-      "current_balance": 11406106
+      "staking_balance": 11382672
     },
     "tz1PKopmrUgqjDMeyPswUdbrTJ3nKGA4265H": {
-      "staking_balance": 19965000,
-      "current_balance": 20007440
+      "staking_balance": 19965000
     },
     "tz1iE1aFQsbRRuW5aff2rxbmTRrmHLfkyPqZ": {
-      "staking_balance": 219082941,
-      "current_balance": 219749703
+      "staking_balance": 219082941
     },
     "tz1YJPtmkyeYw3VuHCxMLsveobCVh6NTgRYT": {
-      "staking_balance": 192066470,
-      "current_balance": 204877376
+      "staking_balance": 192066470
     },
     "tz1Yrav26TzBoc8xzhf58K9iZfzvRkTn5bTC": {
-      "staking_balance": 225258880,
-      "current_balance": 234225472
+      "staking_balance": 225258880
     },
     "tz1ea2bsii3A2tm3HR5sKdwmohKBcbffGQ2D": {
-      "staking_balance": 778633074,
-      "current_balance": 780539974
+      "staking_balance": 778633074
     },
     "tz1YKyqpQ2hGT2v4BLNr1VGxLg62C2XzchQB": {
-      "staking_balance": 746151446,
-      "current_balance": 747978349
+      "staking_balance": 746151446
     },
     "tz1LJRNNGwmajQFcpDVqKvEwNL6ZUeh8TLUS": {
-      "staking_balance": 1052679773,
-      "current_balance": 1057306462
+      "staking_balance": 1052679773
     },
     "tz1Unx3Mh6L9HhLBSJbeSmHqUhYEE4VHDFik": {
-      "staking_balance": 116940000,
-      "current_balance": 131629477
+      "staking_balance": 116940000
     },
     "tz1Nmk1ZvAHaUw3V6Aj2dYd6597opqQbet8H": {
-      "staking_balance": 2002038805,
-      "current_balance": 2006958764
+      "staking_balance": 2002038805
     },
     "tz1YdVf74wfotBnzHQo4ucTTSbweom2qsRfN": {
-      "staking_balance": 311394808,
-      "current_balance": 448547928
+      "staking_balance": 311394808
     },
     "tz1MRXJAYvsrt9NV2iy99Naxmro9JoaAjoAx": {
-      "staking_balance": 7942822,
-      "current_balance": 7951694
+      "staking_balance": 7942822
     },
     "tz1g2k5gh2k6q1HxxZPQdbYUjnLyK5BT9n7t": {
-      "staking_balance": 207076890,
-      "current_balance": 743709710
+      "staking_balance": 207076890
     },
     "tz1eriCeex3vM7iYw85MSFffz4mprpVAPXLf": {
-      "staking_balance": 250565714,
-      "current_balance": 251172066
+      "staking_balance": 250565714
     },
     "tz1Z3tbgDVF1WTgjJbaHJUNkLj3nZaPZDSS2": {
-      "staking_balance": 31145490,
-      "current_balance": 31211444
+      "staking_balance": 31145490
     },
     "tz1UDbVVrJGiqGv2RM6CYT1gdd5qte2ezjRd": {
-      "staking_balance": 35014773,
-      "current_balance": 35039531
+      "staking_balance": 35014773
     },
     "tz1Sr3roYn9XgMqhQBEJxg9M7KkRd3PHCB5e": {
-      "staking_balance": 121921067,
-      "current_balance": 0
+      "staking_balance": 121921067
     },
     "tz1QhwGSQKkfVXs1EyJcY7zxtxxyPaj4Uf28": {
-      "staking_balance": 741897400,
-      "current_balance": 1093554047
+      "staking_balance": 741897400
     },
     "tz1dXvwJm3RLFYBJFTVVn41NtJkfmNgWcdVg": {
-      "staking_balance": 2106267,
-      "current_balance": 2106267
+      "staking_balance": 2106267
     },
     "tz1YRJkrMKPyLgUKdwMxDTBjnmr9fzdFyHnC": {
-      "staking_balance": 66587739,
-      "current_balance": 66728273
+      "staking_balance": 66587739
     },
     "tz1WiNYZ2YX9r2FJ34Q3BttxYQGVLjW44buw": {
-      "staking_balance": 10225699,
-      "current_balance": 10239696
+      "staking_balance": 10225699
     },
     "tz1Ryp5oRExXUeXwH8XroeSAjXQLD16VVtgK": {
-      "staking_balance": 666044269,
-      "current_balance": 667437653
+      "staking_balance": 666044269
     },
     "tz1PmT4NYGL1N2rzYaD3xkyQBCWfPbsL53r3": {
-      "staking_balance": 1941389833,
-      "current_balance": 694573737
+      "staking_balance": 1941389833
     },
     "tz1dM1SGJnQb7pD8qorfe4qouRrvoSozpRS7": {
-      "staking_balance": 3293093359,
-      "current_balance": 3434056279
+      "staking_balance": 3293093359
     },
     "tz1WSsYuFPomxwnQP8MMBexBSMFtRVgdiCwq": {
-      "staking_balance": 4467171,
-      "current_balance": 4465608
+      "staking_balance": 4467171
     },
     "tz1S1wM5Bpkp8CDPAS1HL17fNSUctSz6ZVq7": {
-      "staking_balance": 36114879,
-      "current_balance": 48481951
+      "staking_balance": 36114879
     },
     "tz1c7Myv38rhRx55g7qPJJJQSzKx2eufFdkq": {
-      "staking_balance": 980582,
-      "current_balance": 980582
+      "staking_balance": 980582
     },
     "tz1h2ehtb5yX7CtxhKmvDf47tB7RaFxxkHeq": {
-      "staking_balance": 303715721,
-      "current_balance": 304293631
+      "staking_balance": 303715721
     },
     "tz1gUTp12we5z6RZT8V38ocX2jHpxiQ8W9oM": {
-      "staking_balance": 1007777214,
-      "current_balance": 1008329475
+      "staking_balance": 1007777214
     },
     "tz1NvQmHzM7gTQ9GNPmYgB6ZAT98YZCxZN7b": {
-      "staking_balance": 61285596,
-      "current_balance": 61393127
+      "staking_balance": 61285596
     },
     "tz1NGA1AkiyLndtWt1XdZ94JzzCzeofVUrDq": {
-      "staking_balance": 151949700,
-      "current_balance": 152235248
+      "staking_balance": 151949700
     },
     "tz1QDkPybnf9NPMXvzMQ9xoAHwKniz9zQoDH": {
-      "staking_balance": 362171864,
-      "current_balance": 680337417
+      "staking_balance": 362171864
     },
     "tz1N8kS7oZdxP9bvbF7SC32a6mApos4QuojW": {
-      "staking_balance": 199974560,
-      "current_balance": 0
+      "staking_balance": 199974560
     },
     "tz1Svif2fBC7tjYhnvxyrrqJTuCaQY2tqcjR": {
-      "staking_balance": 132417732,
-      "current_balance": 132486160
+      "staking_balance": 132417732
     },
     "KT1TqMxiGMmvq6ixuBkx165uUV6yK7p1y19A": {
-      "staking_balance": 450000000,
-      "current_balance": 450859713
+      "staking_balance": 450000000
     },
     "tz1PmyuqFD89KJAv11kPLSF7dME4WmCAqVXJ": {
-      "staking_balance": 1835929812,
-      "current_balance": 2132430453
+      "staking_balance": 1835929812
     },
     "tz1aemmWg9bRWAzmZSaMyk3UPoKep5omKxE3": {
-      "staking_balance": 11603248,
-      "current_balance": 23894119
+      "staking_balance": 11603248
     },
     "tz1Vj554dhRoBtSiMuTfUU9HPopERsqpoAuo": {
-      "staking_balance": 204236765,
-      "current_balance": 204482503
+      "staking_balance": 204236765
     },
     "tz1bZcYT7NkswPc7uaSeg25a1vUndnA6f1Vg": {
-      "staking_balance": 99978446,
-      "current_balance": 100114746
+      "staking_balance": 99978446
     },
     "tz1XJC96yrRQAdwnPcZreBnbH64ro53NxPFw": {
-      "staking_balance": 4955487,
-      "current_balance": 4957865
+      "staking_balance": 4955487
     },
     "tz1ThAmSRaiP5kYMHvin5Rs5XbVRWpywFg1v": {
-      "staking_balance": 51082600,
-      "current_balance": 51105448
+      "staking_balance": 51082600
     },
     "tz1McdxchEg1E13ScqAxbHEnfXkwxqrda65h": {
-      "staking_balance": 15932080,
-      "current_balance": 15947898
+      "staking_balance": 15932080
     },
     "tz1RhPp1B5MRafuDGRFoFhPsCA11nJx67J9p": {
-      "staking_balance": 2101794812,
-      "current_balance": 2104763226
+      "staking_balance": 2101794812
     },
     "tz1eXxzDJg7CGEt4z8ffzXBafCq5kSWGMsVg": {
-      "staking_balance": 125552740,
-      "current_balance": 125725281
+      "staking_balance": 125552740
     },
     "tz1VxVupXof6Wg94tfBef9atf4iu7ASXAyLU": {
-      "staking_balance": 1749935260,
-      "current_balance": 1754763924
-    },
-    "tz1dLe9cveN9Nz1gJjJgvnUSyJ8nxSpfXUys": {
-      "staking_balance": 176670000,
-      "current_balance": 176914976
+      "staking_balance": 1749935260
     },
     "tz1U5AnKxLC2DNhXZNLog6HSrYLrqpGwJF7J": {
-      "staking_balance": 9570510,
-      "current_balance": 9578696
+      "staking_balance": 9570510
+    },
+    "tz1dLe9cveN9Nz1gJjJgvnUSyJ8nxSpfXUys": {
+      "staking_balance": 176670000
     },
     "tz1dHMcNXyc6gr9qbwsZ6Cn8Q1At7Tcf38ar": {
-      "staking_balance": 67433699,
-      "current_balance": 2522381
+      "staking_balance": 67433699
     },
     "tz1Q7MsABhWJ6ZiQkEEuLQnvZubbMyiiywYH": {
-      "staking_balance": 503064583,
-      "current_balance": 977357489
+      "staking_balance": 503064583
     },
     "tz1iZe1kod4gWe7TXk7hJ7KJUTDDXuiWiTri": {
-      "staking_balance": 503400244,
-      "current_balance": 922215527
+      "staking_balance": 503400244
     },
     "tz1R4mdXQCzq7deATe8rcKg8WHqdzPQR4ACs": {
-      "staking_balance": 250427140,
-      "current_balance": 250479894
+      "staking_balance": 250427140
     },
     "tz1gtWe6pbH8MfdVWgnajJXR1UhJJFouHKTG": {
-      "staking_balance": 112117035,
-      "current_balance": 112270536
+      "staking_balance": 112117035
     },
     "tz1Sru7UwZYG5S923G2HbGj11c9WukpDxX7u": {
-      "staking_balance": 201796041,
-      "current_balance": 202076622
+      "staking_balance": 201796041
     },
     "tz1cmD4nS9m7mojn29KYkEBtnmVweZ9Tcbtt": {
-      "staking_balance": 256976279,
-      "current_balance": 257335056
+      "staking_balance": 256976279
     },
     "tz1XV7qMDAHbtCKyZKkXf3UUTDUBKbuHg23b": {
-      "staking_balance": 94074099,
-      "current_balance": 96189013
+      "staking_balance": 94074099
     },
     "tz1cUzo8iG4zUzWizuZ5cEJUH7nEu6peNSxM": {
-      "staking_balance": 216974600,
-      "current_balance": 217276690
+      "staking_balance": 216974600
     },
     "tz1XSi7BZrGUA2QFefqJiEYwMCtQCbn8k8FZ": {
-      "staking_balance": 57576480,
-      "current_balance": 0
+      "staking_balance": 57576480
     },
     "tz1fTK3yg4AjFepviz44RWCGkpYiiZTEYMon": {
-      "staking_balance": 1141492109,
-      "current_balance": 1143104299
+      "staking_balance": 1141492109
     },
     "tz1RewCXyYKE4G8bfGgevz6W4wQKShWZAN3q": {
-      "staking_balance": 257286272,
-      "current_balance": 257645487
+      "staking_balance": 257286272
     },
     "tz1f2iLJqLuDsQajVH8q2vRHB5bEgKnG8kby": {
-      "staking_balance": 15036148,
-      "current_balance": 15052079
+      "staking_balance": 15036148
     },
     "tz1heH5ZKA4XnWe7vqpPKaYkQ9L4guYgkztV": {
-      "staking_balance": 393831092,
-      "current_balance": 394369516
+      "staking_balance": 393831092
     },
     "tz1i1hvcBeb9TAqQDrjfJKBcWVuN6Y6CufqF": {
-      "staking_balance": 2001914333,
-      "current_balance": 2015403010
+      "staking_balance": 2001914333
     },
     "tz1ZJY6XMkh3AYK1Xyrz6GT4oQMvSd1JtZrT": {
-      "staking_balance": 2165740,
-      "current_balance": 1500
+      "staking_balance": 2165740
     },
     "tz1aAPR2C3qf9Wjjem4pHTe32DyDP42rTavo": {
-      "staking_balance": 13692500,
-      "current_balance": 13702307
+      "staking_balance": 13692500
     },
     "tz1WaEqJ7Amxd7Nvx4nNau29TtmyE8gxoDTh": {
-      "staking_balance": 1500,
-      "current_balance": 525531
+      "staking_balance": 1500
     },
     "tz1XWJ9YMxikUSJqoSsAaApMMJXU9Gs6BAcc": {
-      "staking_balance": 2995500,
-      "current_balance": 2995500
+      "staking_balance": 2995500
     },
     "tz1ZBodFria7xknAzcQ1RpjDsbjUv7KGqAq8": {
-      "staking_balance": 285000,
-      "current_balance": 295000
+      "staking_balance": 285000
     },
     "tz1gAGWovbCjFpdhweaudY7DVi5CVkeTmafv": {
-      "staking_balance": 9485500,
-      "current_balance": 9485500
+      "staking_balance": 9485500
     },
     "tz1UgZuZQzCAFKHN5MSERKYZ2KaWe6eqfR6K": {
-      "staking_balance": 1500,
-      "current_balance": 1500
+      "staking_balance": 1500
     },
     "KT1VNgNp1SksGNbTv3fLAer58HNiNcZXLwif": {
-      "staking_balance": 352210000,
-      "current_balance": 352210000
+      "staking_balance": 352210000
     },
     "tz1X4W34p5sGwpnNTF3vDgTDYRRKxbPP3wha": {
-      "staking_balance": 24997000,
-      "current_balance": 24997000
+      "staking_balance": 24997000
     },
     "tz1SYDrHyTzXXUuApBoEywVtYoD9dwH6rU5u": {
-      "staking_balance": 1500,
-      "current_balance": 227152
-    },
-    "tz1bQqtiPwJZJtC9KLdZ1689bHt9Ej5s4AEJ": {
-      "staking_balance": 7000,
-      "current_balance": 7000
+      "staking_balance": 1500
     },
     "tz1TEGNKYpPE5GauFQ67SjEAKpa9ooDcsFS4": {
-      "staking_balance": 83756474,
-      "current_balance": 83983601
+      "staking_balance": 83756474
+    },
+    "tz1bQqtiPwJZJtC9KLdZ1689bHt9Ej5s4AEJ": {
+      "staking_balance": 7000
     },
     "tz1cY86nFLUuNAd93K4jz11L2cmkHEr9wDgJ": {
-      "staking_balance": 55200168,
-      "current_balance": 256627477
+      "staking_balance": 55200168
     },
     "tz1S2eDrMWmCTAMfEEMj5M6smbi3mEdRDjeB": {
-      "staking_balance": 64264274,
-      "current_balance": 172235694
+      "staking_balance": 64264274
     },
     "tz1Rnh7SAQXPwf2XdyBZgZ68XMZRqUcidXsi": {
-      "staking_balance": 98975160,
-      "current_balance": 98975160
+      "staking_balance": 98975160
     },
     "tz1QwGxAqkQ76gHoBFHRRtWDJo4Py7WEMRFQ": {
-      "staking_balance": 940000,
-      "current_balance": 940000
+      "staking_balance": 940000
     },
     "tz1L7Qc9Gcco6gLdukggjjc91kAdzzNV4tQr": {
-      "staking_balance": 7399846,
-      "current_balance": 7399846
+      "staking_balance": 7399846
     },
     "tz1hQKFdAnLdcmJgspNoPRcHhEryYhDjXpMr": {
-      "staking_balance": 7027588,
-      "current_balance": 37029805
+      "staking_balance": 7027588
     },
     "tz1ZmrRKnLujY55qDZgc9Nh4tKXMRx3CRG4H": {
-      "staking_balance": 16489999,
-      "current_balance": 16489999
+      "staking_balance": 16489999
     },
     "tz1UzytvAYubquFgAryMJdH9X8U5GMG7zeVy": {
-      "staking_balance": 5028901732,
-      "current_balance": 5028901732
+      "staking_balance": 5028901732
     },
     "tz1PDtYfkseLho7yZCjM3k1E87SPgkwqESbf": {
-      "staking_balance": 23769856,
-      "current_balance": 23769856
+      "staking_balance": 23769856
     },
     "tz1P2n2QzTEGVtGJ6KxdWFAgUVfsE6nEtF1T": {
-      "staking_balance": 198226322,
-      "current_balance": 198226322
+      "staking_balance": 198226322
     },
     "tz1ibrS5tSc5hyvWRwqTJZg837bxtujLyQCF": {
-      "staking_balance": 252554742,
-      "current_balance": 252487299
+      "staking_balance": 252554742
     },
     "tz1f1wPKyFdTEiFddaZQ1FP2kds1HjkLJGAG": {
-      "staking_balance": 112752140,
-      "current_balance": 112752140
+      "staking_balance": 112752140
     },
     "tz1hTpFsdtbLtaTvpnbZKf1Z2CTSsR8buVAW": {
-      "staking_balance": 9158241,
-      "current_balance": 9158241
+      "staking_balance": 9158241
     },
     "tz1NRh1Hi8rbop4BWgkEbGM6pa8SPWAjN6vt": {
-      "staking_balance": 24987280,
-      "current_balance": 100340382
+      "staking_balance": 24987280
     },
     "tz1f8csmgSSFUAwLg16HuozBHZ9cPQTZviQS": {
-      "staking_balance": 22742200,
-      "current_balance": 22742200
+      "staking_balance": 22742200
     },
     "tz1VDNYswobwAdo6NdFdHqL4DARJBRDahfob": {
-      "staking_balance": 8039627600,
-      "current_balance": 8039627600
+      "staking_balance": 8039627600
     },
     "tz1NWCoSfyAopotcurCrkccR9fakgQGLdt2J": {
-      "staking_balance": 17775094,
-      "current_balance": 748877745
+      "staking_balance": 17775094
     },
     "tz1aMBMyxjiapxwAgiwwK5DHmuTJVrgDLTHF": {
-      "staking_balance": 1982760,
-      "current_balance": 1982760
+      "staking_balance": 1982760
     }
   }
 }
