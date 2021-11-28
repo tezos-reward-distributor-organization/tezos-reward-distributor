@@ -1,6 +1,7 @@
 import _thread
 import csv
 import os
+import shutil
 import threading
 from datetime import datetime, timedelta
 from time import sleep
@@ -149,6 +150,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             sleep(5)
 
             try:
+
+                # Exit if disk is full
+                # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
+                if self.disk_is_full():
+                    self.exit()
+                    break
 
                 # Check if local node is bootstrapped; sleep if needed; restart loop
                 if not self.node_is_bootstrapped():
@@ -312,6 +319,15 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             if not self.life_cycle.is_running():
                 self.exit()
                 break
+
+    def disk_is_full(self):
+        total, _, free = shutil.disk_usage("/")
+        if free < 5e8:
+            # Return true if the system has less then 500Mb left
+            logger.error("Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports."
+                         .format(free/1e9, total/1e9))
+            return True
+        return False
 
     def node_is_bootstrapped(self):
         # Get RPC node's (-A) bootstrap time. If bootstrap time + 2 minutes is
