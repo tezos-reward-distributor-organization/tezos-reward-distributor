@@ -6,7 +6,7 @@ import threading
 from datetime import datetime, timedelta
 from time import sleep
 from requests import ReadTimeout, ConnectTimeout
-from Constants import MUTEZ, RunMode
+from Constants import MUTEZ, RunMode, DISK_LIMIT, GIGA_BYTE
 from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from exception.api_provider import ApiProviderException
@@ -322,10 +322,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
     def disk_is_full(self):
         total, _, free = shutil.disk_usage("/")
-        if free < 5e8:
+        if free < DISK_LIMIT:
             # Return true if the system has less then 500Mb left
             logger.error("Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports."
-                         .format(free/1e9, total/1e9))
+                         .format(free / GIGA_BYTE, total / GIGA_BYTE))
             return True
         return False
 

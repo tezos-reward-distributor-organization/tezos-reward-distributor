@@ -41,6 +41,10 @@ MUTEZ = 1e6
 
 VERSION = 9.0
 
+DISK_LIMIT = 5e8
+
+GIGA_BYTE = 1e9
+
 
 class RunMode(Enum):
     FOREVER = 1
