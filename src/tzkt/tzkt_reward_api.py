@@ -101,7 +101,7 @@ class TzKTRewardApiImpl(RewardApi):
         return RewardProviderModel(delegate_staking_balance,
                                    num_blocks, num_endorsements, total_reward_amount, rewards_and_fees,
                                    equivocation_losses, denunciation_rewards, offline_losses,
-                                   delegators_balances)
+                                   delegators_balances, None)
 
     def update_current_balances(self, reward_logs: List[RewardLog]):
         """

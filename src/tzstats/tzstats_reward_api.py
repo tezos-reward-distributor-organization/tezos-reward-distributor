@@ -38,7 +38,7 @@ class TzStatsRewardApiImpl(RewardApi):
                 logger.warning(f"The configured Dexter account {delegator} is not delegated to {self.helper.baking_address} "
                                f"at snapshot level {snapshot_level} corresponding to payout cycle {cycle} or has a zero rewards")
 
-        return RewardProviderModel(delegate_staking_balance, num_baking_rights, num_endorsing_rights, total_reward_amount, rewards_and_fees, equivocation_losses, denunciation_rewards, offline_losses, delegators_balances_dict)
+        return RewardProviderModel(delegate_staking_balance, num_baking_rights, num_endorsing_rights, total_reward_amount, rewards_and_fees, equivocation_losses, denunciation_rewards, offline_losses, delegators_balances_dict, None)
 
     def update_current_balances(self, reward_logs):
         self.helper.update_current_balances(reward_logs)

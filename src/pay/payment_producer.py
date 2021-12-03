@@ -293,10 +293,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             endorsement_reward = network_config["ENDORSEMENT_REWARD"]
 
             # 2- compute reward amount to distribute based on configuration
-            computed_reward_amount = self.compute_rewards(reward_model, rewards_type)
+            reward_model.computed_reward_amount = self.compute_rewards(reward_model, rewards_type)
 
             # 3- calculate rewards for delegators
-            reward_logs, total_amount = self.payment_calc.calculate(reward_model, computed_reward_amount)
+            reward_logs, total_amount = self.payment_calc.calculate(reward_model)
 
             # 4- set cycle info
             for rl in reward_logs:

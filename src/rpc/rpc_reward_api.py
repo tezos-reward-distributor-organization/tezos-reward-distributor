@@ -127,7 +127,7 @@ class RpcRewardApiImpl(RewardApi):
 
             reward_model = RewardProviderModel(reward_data["delegate_staking_balance"],
                                                nb_blocks, nb_endorsements, total_reward_amount, rewards_and_fees, equivocation_losses, denunciation_rewards, offline_losses,
-                                               reward_data["delegators"])
+                                               reward_data["delegators"], None)
 
             logger.debug("delegate_staking_balance = {:d}"
                          .format(reward_data["delegate_staking_balance"]))
