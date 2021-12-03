@@ -253,6 +253,28 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
+    def compute_rewards(self, reward_model, rewards_type):
+        if rewards_type.isEstimated():
+            logger.info("Using estimated rewards for payouts calculations")
+            total_estimated_block_reward = reward_model.num_baking_rights * block_reward
+            total_estimated_endorsement_reward = reward_model.num_endorsing_rights * endorsement_reward
+            computed_reward_amount = total_estimated_block_reward + total_estimated_endorsement_reward
+        elif rewards_type.isActual():
+            logger.info("Using actual rewards for payouts calculations")
+            if self.pay_denunciation_rewards:
+                computed_reward_amount = reward_model.total_reward_amount
+            else:
+                # omit denunciation rewards
+                computed_reward_amount = reward_model.rewards_and_fees - reward_model.equivocation_losses
+        elif rewards_type.isIdeal():
+            logger.info("Using ideal rewards for payouts calculations")
+            if self.pay_denunciation_rewards:
+                computed_reward_amount = reward_model.total_reward_amount + reward_model.offline_losses
+            else:
+                # omit denunciation rewards and double baking loss
+                computed_reward_amount = reward_model.rewards_and_fees + reward_model.offline_losses
+        return computed_reward_amount
+
     def try_to_pay(self, pymnt_cycle, rewards_type, network_config):
         try:
             logger.info("Payment cycle is {:s}".format(str(pymnt_cycle)))
@@ -271,25 +293,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             endorsement_reward = network_config["ENDORSEMENT_REWARD"]
 
             # 2- compute reward amount to distribute based on configuration
-            if rewards_type.isEstimated():
-                logger.info("Using estimated rewards for payouts calculations")
-                total_estimated_block_reward = reward_model.num_baking_rights * block_reward
-                total_estimated_endorsement_reward = reward_model.num_endorsing_rights * endorsement_reward
-                computed_reward_amount = total_estimated_block_reward + total_estimated_endorsement_reward
-            elif rewards_type.isActual():
-                logger.info("Using actual rewards for payouts calculations")
-                if self.pay_denunciation_rewards:
-                    computed_reward_amount = reward_model.total_reward_amount
-                else:
-                    # omit denunciation rewards
-                    computed_reward_amount = reward_model.rewards_and_fees - reward_model.equivocation_losses
-            elif rewards_type.isIdeal():
-                logger.info("Using ideal rewards for payouts calculations")
-                if self.pay_denunciation_rewards:
-                    computed_reward_amount = reward_model.total_reward_amount + reward_model.offline_losses
-                else:
-                    # omit denunciation rewards and double baking loss
-                    computed_reward_amount = reward_model.rewards_and_fees + reward_model.offline_losses
+            computed_reward_amount = self.compute_rewards(reward_model, rewards_type)
 
             # 3- calculate rewards for delegators
             reward_logs, total_amount = self.payment_calc.calculate(reward_model, computed_reward_amount)
