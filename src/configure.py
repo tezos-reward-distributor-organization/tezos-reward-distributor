@@ -20,7 +20,7 @@ from launch_common import print_banner, add_argument_network, add_argument_repor
 from log_config import main_logger, init
 from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
     MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
-    REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET, REWARDS_TYPE
+    REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET, REWARDS_TYPE, PAY_DENUNCIATION_REWARDS
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -43,6 +43,7 @@ messages = {
     'reactivatezeroed': "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes",
     'delegatorpaysxfrfee': "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator",
     'delegatorpaysrafee': "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
+    'paydenunciationrewards': "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Type enter for No",
     'supporters': "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
     'specials': "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
     'noplugins': "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually."
@@ -312,6 +313,20 @@ def ondelegatorpaysrafee(input):
     fsm.go()
 
 
+def onpaydenunciationrewards(input):
+    try:
+        if not input:
+            input = "1"
+        if input != "0" and input != "1":
+            raise Exception("Please enter '0' or '1'")
+        global parser
+        parser.set(PAY_DENUNCIATION_REWARDS, input != "1")
+    except Exception as e:
+        printe("Invalid input: {}".format(str(e)))
+        return
+    fsm.go()
+
+
 def onreactivatezeroed(input):
     try:
         if not input:
@@ -344,6 +359,7 @@ callbacks = {
     'reactivatezeroed': onreactivatezeroed,
     'delegatorpaysxfrfee': ondelegatorpaysxfrfee,
     'delegatorpaysrafee': ondelegatorpaysrafee,
+    'paydenunciationrewards': onpaydenunciationrewards,
     'supporters': onsupporters,
     'specials': onspecials,
     'prefinal': onprefinal,
@@ -364,7 +380,8 @@ fsm = Fysom({'initial': 'hello', 'final': 'final',
                  {'name': 'go', 'src': 'redirect', 'dst': 'reactivatezeroed'},
                  {'name': 'go', 'src': 'reactivatezeroed', 'dst': 'delegatorpaysrafee'},
                  {'name': 'go', 'src': 'delegatorpaysrafee', 'dst': 'delegatorpaysxfrfee'},
-                 {'name': 'go', 'src': 'delegatorpaysxfrfee', 'dst': 'specials'},
+                 {'name': 'go', 'src': 'delegatorpaysxfrfee', 'dst': 'paydenunciationrewards'},
+                 {'name': 'go', 'src': 'paydenunciationrewards', 'dst': 'specials'},
                  {'name': 'go', 'src': 'specials', 'dst': 'supporters'},
                  {'name': 'go', 'src': 'supporters', 'dst': 'final'}],
              'callbacks': {

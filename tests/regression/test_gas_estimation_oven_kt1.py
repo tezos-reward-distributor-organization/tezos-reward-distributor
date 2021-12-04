@@ -103,6 +103,7 @@ def test_batch_payer_total_payout_amount():
         reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE, RewardsType.ACTUAL)
 
         # Calculate rewards - payment_producer.py
+        reward_model.computed_reward_amount = reward_model.total_reward_amount
         reward_logs, total_amount = payment_calc.calculate(reward_model)
 
         # Check total reward amount matches sums of records

@@ -15,6 +15,7 @@ DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
 DELEGATOR_PAYS_RA_FEE = 'delegator_pays_ra_fee'
 PLUGINS_CONF = 'plugins'
 REWARDS_TYPE = 'rewards_type'
+PAY_DENUNCIATION_REWARDS = 'pay_denunciation_rewards'
 
 # extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
@@ -102,6 +103,9 @@ class BakingConf:
 
     def get_rewards_type(self):
         return self.get_attribute(REWARDS_TYPE)
+
+    def get_pay_denunciation_rewards(self):
+        return self.get_attribute(PAY_DENUNCIATION_REWARDS)
 
     def __repr__(self) -> str:
         return json.dumps(self.__dict__, cls=CustomJsonEncoder, indent=1)
