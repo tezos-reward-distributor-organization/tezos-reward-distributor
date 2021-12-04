@@ -253,9 +253,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def compute_rewards(self, reward_model, rewards_type):
+    def compute_rewards(self, reward_model, rewards_type, network_config):
         if rewards_type.isEstimated():
             logger.info("Using estimated rewards for payouts calculations")
+            block_reward = network_config["BLOCK_REWARD"]
+            endorsement_reward = network_config["ENDORSEMENT_REWARD"]
             total_estimated_block_reward = reward_model.num_baking_rights * block_reward
             total_estimated_endorsement_reward = reward_model.num_endorsing_rights * endorsement_reward
             computed_reward_amount = total_estimated_block_reward + total_estimated_endorsement_reward
@@ -289,11 +291,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             # 1- get reward data
             reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, rewards_type)
 
-            block_reward = network_config["BLOCK_REWARD"]
-            endorsement_reward = network_config["ENDORSEMENT_REWARD"]
-
             # 2- compute reward amount to distribute based on configuration
-            reward_model.computed_reward_amount = self.compute_rewards(reward_model, rewards_type)
+            reward_model.computed_reward_amount = self.compute_rewards(reward_model, rewards_type, network_config)
 
             # 3- calculate rewards for delegators
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
