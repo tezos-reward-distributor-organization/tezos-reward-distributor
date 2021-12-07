@@ -1,5 +1,6 @@
 import logging
 
+from Constants import MUTEZ
 from log_config import verbose_logger
 from plugins import plugins
 
@@ -7,7 +8,6 @@ from plugins import plugins
 import requests
 
 logger = logging.getLogger("main.plugins.telegram")
-MUTEZ = 1e6
 
 plugin_name = 'TelegramPlugin'
 
