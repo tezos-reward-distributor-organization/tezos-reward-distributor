@@ -162,8 +162,10 @@ class PaymentConsumer(threading.Thread):
 
             # 9- publish anonymous stats
             if self.publish_stats and self.args and not self.dry_run:
-                stats_dict = self.create_stats_dict(nb_failed, nb_unknown, pymnt_cycle, payment_logs, total_attempts)
+                stats_dict = self.create_stats_dict(self.key_name, nb_failed, nb_unknown, pymnt_cycle, payment_logs, total_attempts)
                 stats_publisher(stats_dict)
+            else:
+                logger.info("Anonymous statistics disabled{:s}", (self.dry_run ? " (Dry run)" : ""))
 
         except Exception:
             logger.error("Error at reward payment", exc_info=True)
@@ -213,9 +215,9 @@ class PaymentConsumer(threading.Thread):
 
         return report_file
 
-    def create_stats_dict(self, nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts):
+    def create_stats_dict(self, key_name, nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts):
 
-        from uuid import uuid1
+        from uuid import NAMESPACE_URL, uuid3
 
         n_f_type = len([pl for pl in payment_logs if pl.type == TYPE_FOUNDER])
         n_o_type = len([pl for pl in payment_logs if pl.type == TYPE_OWNER])
@@ -223,7 +225,7 @@ class PaymentConsumer(threading.Thread):
         n_m_type = len([pl for pl in payment_logs if pl.type == TYPE_MERGED])
 
         stats_dict = {}
-        stats_dict['uuid'] = str(uuid1())
+        stats_dict['uuid'] = str(uuid3(namespace=NAMESPACE_URL, name=key_name))
         stats_dict['cycle'] = payment_cycle
         stats_dict['network'] = self.args.network
         stats_dict['total_amount'] = int(sum([rl.amount for rl in payment_logs]) / MUTEZ)
