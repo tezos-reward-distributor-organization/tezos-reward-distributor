@@ -165,7 +165,7 @@ class PaymentConsumer(threading.Thread):
                 stats_dict = self.create_stats_dict(self.key_name, nb_failed, nb_unknown, pymnt_cycle, payment_logs, total_attempts)
                 stats_publisher(stats_dict)
             else:
-                logger.info("Anonymous statistics disabled{:s}", (self.dry_run ? " (Dry run)" : ""))
+                logger.info("Anonymous statistics disabled{:s}".format(", (Dry run)" if self.dry_run else ""))
 
         except Exception:
             logger.error("Error at reward payment", exc_info=True)
