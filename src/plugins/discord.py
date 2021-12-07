@@ -5,7 +5,6 @@ from plugins import plugins
 
 # Plugin specific libs
 import requests
-from time import time
 
 logger = logging.getLogger("main.plugins.discord")
 
@@ -14,7 +13,7 @@ plugin_name = "DiscordPlugin"
 
 class DiscordPlugin(plugins.Plugin):
 
-    _req_cfg_keys = ["endpoint", "discord_text"]
+    _req_cfg_keys = ["endpoint", "discord_text", "send_admin"]
 
     def __init__(self, cfg):
         super().__init__("Discord", cfg["discord"])
@@ -23,7 +22,8 @@ class DiscordPlugin(plugins.Plugin):
     def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
 
         admin_text = "**{:s}**\n{:s}".format(subject, message)
-        self.post_to_discord(admin_text, "ADMIN")
+        if self.send_admin:
+            self.post_to_discord(admin_text, "ADMIN")
 
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
 
@@ -63,6 +63,7 @@ class DiscordPlugin(plugins.Plugin):
         # Set config
         self.endpoint = self.cfg["endpoint"]
         self.discord_text = self.cfg["discord_text"]
+        self.send_admin = self.cfg["send_admin"]
 
         # Sanity
         if self.endpoint is None:
