@@ -177,6 +177,10 @@ plugins:
       We paid out %TREWARDS% XTZ in rewards to %NDELEGATORS% delegators.        
 ```
 
+### Example Result
+
+![PayoutsDiscordImage](https://i.imgur.com/kjuiHSm.png)
+
 ## Webhook Plugin
 
 This plugin makes an HTTP POST request to an endpoint. This endpoint will receive a JSON object containing the reward data.
