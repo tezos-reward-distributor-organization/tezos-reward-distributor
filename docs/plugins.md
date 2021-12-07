@@ -159,7 +159,7 @@ This plugin makes an HTTP POST request to a Discord Webhook URL.
 
 You must be an admin of a discord server to generate a webhook URL. Do so by going to 'Server Settings' -> 'Integrations' -> 'New Webhook'. Select the name, upload an avatar icon (if desired), and select which channel the messages will appear.
 
-Paste the generated URL into the appropriate field in the plugin section. You can customize the message for 'payouts' notifications. This is handled exactly as in the twitter plygin
+Paste the generated URL into the appropriate field in the plugin section. You can customize the message for 'payouts' notifications. This is handled exactly as in the Twitter plugin.
 
 ### Example Config
 
