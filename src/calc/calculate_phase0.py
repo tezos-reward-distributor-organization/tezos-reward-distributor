@@ -21,7 +21,7 @@ class CalculatePhase0(CalculatePhaseBase):
     def calculate(self, reward_logs=None, total_reward_amount=None):
         """
         :param reward_logs: Nothing is expected. This value is not used. reward_logs are generated from provider object.
-        :param total_reward_amount: Nothing is expected. This value is not used. total amount is taken from provider object.
+        :param total_reward_amount: Nothing is expected. This value is not used. total amount is calculated in calling function.
         :return: tuple (reward_logs, total reward amount)
 
         reward_logs is a list of RewardLog objects. Last item is owners_parent record.
@@ -66,4 +66,4 @@ class CalculatePhase0(CalculatePhaseBase):
 
         reward_logs.append(owners_rl)
 
-        return reward_logs, self.reward_provider_model.total_reward_amount
+        return reward_logs

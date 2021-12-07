@@ -25,7 +25,14 @@ def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
         return RewardProviderModel(
             delegate_staking_balance=data['delegate_staking_balance'],
             total_reward_amount=data['total_reward_amount'],
-            delegator_balance_dict=data['delegator_balance_dict'])
+            rewards_and_fees=data['rewards_and_fees'],
+            equivocation_losses=data['equivocation_losses'],
+            offline_losses=data['offline_losses'],
+            num_baking_rights=data['num_baking_rights'],
+            num_endorsing_rights=data['num_endorsing_rights'],
+            denunciation_rewards=data['denunciation_rewards'],
+            delegator_balance_dict=data['delegator_balance_dict'],
+            computed_reward_amount=None)
     else:
         return None
 
@@ -35,8 +42,14 @@ def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
     data = dict(
         delegate_staking_balance=model.delegate_staking_balance,
         total_reward_amount=model.total_reward_amount,
+        rewards_and_fees=model.rewards_and_fees,
+        equivocation_losses=model.equivocation_losses,
+        offline_losses=model.offline_losses,
+        num_baking_rights=model.num_baking_rights,
+        num_endorsing_rights=model.num_endorsing_rights,
+        denunciation_rewards=model.denunciation_rewards,
         delegator_balance_dict={
-            k: {'staking_balance': v['staking_balance']}
+            k: {i: v[i] for i in v if i != 'current_balance'}
             for k, v in model.delegator_balance_dict.items()
             if v['staking_balance'] > 0
         }
@@ -65,24 +78,20 @@ class RewardApiImplTests(unittest.TestCase):
             self.assertAlmostEqual(balances['staking_balance'], actual[address]['staking_balance'], delta=delta, msg=address)
 
     @parameterized.expand([
-        ('tz1ZRWFLgT9sz8iFi1VYWPfRYeUvUSFAaDao', 201, 0),
-        ('tz1Lhf4J9Qxoe3DZ2nfe8FGDnvVj7oKjnMY6', 185, 0),  # double baking (loss)
-        ('tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8', 74, 32000000),   # double baking (gain)
-        ('tz1PeZx7FXy7QRuMREGXGxeipb24RsMMzUNe', 135, 0),  # double endorsement (loss)
-        ('tz1gk3TDbU7cJuiBRMhwQXVvgDnjsxuWhcEA', 135, 19328043790),  # double endorsement (gain)
-        ('tz1S1Aew75hMrPUymqenKfHo8FspppXKpW7h', 233, 0),  # revelation rewards
-        ('tz1UUgPwikRHW1mEyVZfGYy6QaxrY6Y7WaG5', 207, 0),  # revelation miss
+        ('tz1ZRWFLgT9sz8iFi1VYWPfRYeUvUSFAaDao', 201),
+        ('tz1Lhf4J9Qxoe3DZ2nfe8FGDnvVj7oKjnMY6', 185),  # double baking (loss)
+        ('tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8', 74),   # double baking (gain)
+        ('tz1PeZx7FXy7QRuMREGXGxeipb24RsMMzUNe', 135),  # double endorsement (loss)
+        ('tz1gk3TDbU7cJuiBRMhwQXVvgDnjsxuWhcEA', 135),  # double endorsement (gain)
+        ('tz1S1Aew75hMrPUymqenKfHo8FspppXKpW7h', 233),  # revelation rewards
+        ('tz1UUgPwikRHW1mEyVZfGYy6QaxrY6Y7WaG5', 207),  # revelation miss
     ])
-    def test_get_rewards_for_cycle_map(self, address, cycle, hardcoded_denunciation_reward):
+    def test_get_rewards_for_cycle_map(self, address, cycle):
         '''
-        This test compares the total rewards and balance according to tzkt,
+        This test compares the total rewards and balance accoring to tzkt,
         to the total rewards according to rpc.
 
         It also compares the balances per delegator.
-
-        Note: double baking and double endorsement gain are taken into account
-        by the protocol but not by TRD, so there are discrepancies. To resolve,
-        we are hardcoding the expected gain in hardcoded_denunciation_reward.
         '''
         rpc_rewards = load_reward_model(address, cycle, 'actual')
         if rpc_rewards is None:
@@ -98,10 +107,8 @@ class RewardApiImplTests(unittest.TestCase):
             baking_address=address)
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
-        total_reward_amount = rpc_rewards.total_reward_amount - hardcoded_denunciation_reward
-
         self.assertAlmostEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance, delta=1)
-        self.assertAlmostEqual(total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
+        self.assertAlmostEqual(rpc_rewards.total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
         self.assertBalancesAlmostEqual(rpc_rewards.delegator_balance_dict, tzkt_rewards.delegator_balance_dict, delta=1)
 
     @parameterized.expand([

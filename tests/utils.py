@@ -131,5 +131,13 @@ def mock_request_get(url, timeout):
                 {"kind": "contract", "contract": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V", "change": "14626175032"}
             ]
         })
+    if path == "/chains/main/blocks/196609/helpers/baking_rights":
+        # return empty list - not accurate for estimated reward calculation.
+        # However, we do not test for this. We just have to return something
+        # so the model gets filled with data.
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
+    if path == "/chains/main/blocks/196609/helpers/endorsing_rights":
+        # return emtpy list - same comment as above
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
 
-    raise MagicMock(status_code=HTTPStatus.NOT_FOUND, json=lambda: {"Not Found"})
+    raise Exception("Mocked URL not found")
