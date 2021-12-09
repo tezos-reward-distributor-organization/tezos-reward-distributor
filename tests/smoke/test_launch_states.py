@@ -25,9 +25,9 @@ test_logger.addHandler(sh)
 @pytest.fixture
 def args():
     # Test with PRPC node
-    args = Args(initial_cycle=10, reward_data_provider='tzkt', api_base_url='https://api.carthage.tzkt.io/v1/')
+    args = Args(initial_cycle=10, reward_data_provider='tzkt', api_base_url='https://api.hangzhounet.tzkt.io/v1/')
     args.network = 'EDO2NET'
-    args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
+    args.node_endpoint = 'https://testnet-tezos.giganode.io'
     args.docker = True
     args.dry_run = True
     args.dry_run_no_consumers = True
@@ -71,7 +71,7 @@ def test_illegal_baking_file(args):
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
 def test_wrong_api_base_url(args):
-    args.api_base_url = "https://api.carthage.tzkt.io_no_such_api/v1/"
+    args.api_base_url = "https://api.hangzhounet.tzkt.io_no_such_api/v1/"
     assert start_application(args) == 0
 
 
@@ -81,7 +81,7 @@ def test_wrong_api_base_url(args):
 @patch('util.config_life_cycle.ConfigParser.load_file', MagicMock(return_value=parsed_config))
 @patch('util.config_life_cycle.ConfigLifeCycle.get_baking_cfg_file', MagicMock(return_value=""))
 def test_wrong_node_end_point(args):
-    args.node_endpoint = 'https://testnet-tezos.giganode.io:4433'
+    args.node_endpoint = 'https://testnet-tezos.giganode.io'
     assert start_application(args) == 0
 
 

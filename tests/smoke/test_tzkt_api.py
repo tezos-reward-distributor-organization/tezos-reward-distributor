@@ -14,7 +14,7 @@ def args():
         api_base_url='https://api.tzkt.io/v1/',
     )
     args.network = 'MAINNET'
-    args.node_endpoint = 'https://testnet-tezos.giganode.io:443'
+    args.node_endpoint = 'https://testnet-tezos.giganode.io'
     args.docker = True
     args.dry_run = True
     args.dry_run_no_consumers = True
@@ -58,5 +58,5 @@ def test_base_url(ConfigParser, args):
         )
     )
     args.initial_cycle = 100
-    args.api_base_url = 'https://api.carthage.tzkt.io/v1/'
+    args.api_base_url = 'https://api.tzkt.io/v1/'
     assert start_application(args) == 0

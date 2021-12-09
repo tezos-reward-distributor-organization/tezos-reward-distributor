@@ -1,8 +1,8 @@
 from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
-
-CURRENT_TESTNET = 'GRANADANET'
+PROTOCOL_NAME = 'GRANADA'
+CURRENT_TESTNET = '{}NET'.format(PROTOCOL_NAME)
 
 FIRST_GRANADA_LEVEL = 1589249
 
@@ -10,13 +10,13 @@ FIRST_GRANADA_LEVEL = 1589249
 # Public RPC
 PUBLIC_NODE_URL = {
     'MAINNET': 'https://mainnet-tezos.giganode.io',
-    CURRENT_TESTNET: 'https://granadanet.smartpy.io'
+    CURRENT_TESTNET: 'https://{}.smartpy.io'.format(CURRENT_TESTNET)
 }
 
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.granada.tzstats.com'
+    CURRENT_TESTNET: 'https://api.{}.tzstats.com'.format(PROTOCOL_NAME)
 }
 
 # TzKT
@@ -35,11 +35,9 @@ DEFAULT_NETWORK_CONFIG_MAP = {
 }
 
 
-TEZOS_RPC_PORT = 8732
-
 MUTEZ = 1e6
 
-VERSION = 9.0
+VERSION = 11.0
 
 DISK_LIMIT_PERCENTAGE = 0.1
 

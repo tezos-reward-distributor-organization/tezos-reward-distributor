@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 from http import HTTPStatus
 
-from Constants import TEZOS_RPC_PORT
 from exception.client import ClientException
 from log_config import main_logger, verbose_logger
 
@@ -24,8 +23,6 @@ class ClientManager:
             else:
                 self.node_endpoint = 'https://' + self.node_endpoint
                 logger.info("Node endpoint URL points to an SSL endpoint. Using HTTPS protocol prefix.")
-        if len(self.node_endpoint.split(':')) < 3:
-            self.node_endpoint += f':{TEZOS_RPC_PORT}'
         self.signer_endpoint = signer_endpoint
 
     def get_node_url(self) -> str:
