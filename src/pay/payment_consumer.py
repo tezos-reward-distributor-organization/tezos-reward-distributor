@@ -1,8 +1,9 @@
 import functools
 import os
 import threading
+import shutil
 from time import sleep
-from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
+from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus, DISK_LIMIT_PERCENTAGE, GIGA_BYTE
 from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
@@ -39,6 +40,7 @@ class PaymentConsumer(threading.Thread):
 
         self.dest_map = dest_map if dest_map else {}
         self.name = name
+        self.event = threading.Event()
         self.payments_dir = payments_dir
         self.key_name = key_name
         self.payments_queue = payments_queue
@@ -58,9 +60,29 @@ class PaymentConsumer(threading.Thread):
 
         return
 
+    @staticmethod
+    def disk_usage():
+        return shutil.disk_usage("/")
+
+    def disk_is_full(self):
+        total, _, free = self.disk_usage()
+        free_percentage = free / total
+        if free_percentage < DISK_LIMIT_PERCENTAGE:
+            # Return true if the system has less then 10% free disk space
+            logger.critical("Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports."
+                            .format(free / GIGA_BYTE, total / GIGA_BYTE))
+            return True
+        return False
+
     def run(self):
         running = True
         while running:
+            # Exit if disk is full
+            # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
+            if self.disk_is_full():
+                running = False
+                break
+
             # Wait until a reward is present
             payment_batch = self.payments_queue.get(True)
 
@@ -256,3 +278,6 @@ class PaymentConsumer(threading.Thread):
             stats_dict['m_docker'] = 1 if self.args.docker else 0
 
         return stats_dict
+
+    def stop(self):
+        self.event.set()

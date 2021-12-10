@@ -3,7 +3,9 @@ import queue
 import logging
 from unittest.mock import patch
 from pay.payment_producer import PaymentProducer
+from pay.payment_consumer import PaymentConsumer
 from tests.utils import Args, make_config
+from plugins import plugins
 from Constants import RunMode
 from cli.client_manager import ClientManager
 from NetworkConfiguration import init_network_config
@@ -48,7 +50,7 @@ def args():
 
 
 @patch("log_config.main_logger", logger)
-def test_disk_full(args, caplog):
+def test_disk_full_payment_producer(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
     client_manager = ClientManager(args.node_endpoint, args.signer_endpoint)
     network_config_map = init_network_config(args.network, client_manager)
@@ -105,5 +107,60 @@ def test_disk_full(args, caplog):
 
     assert (
         "Disk is becoming full. Only 0.50 Gb left from 10.00 Gb. Please clean up disk to continue saving logs and reports."
+        in caplog.text
+    )
+
+
+@patch("log_config.main_logger", logger)
+def test_disk_full_payment_consumer(args, caplog):
+    # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
+    client_manager = ClientManager(args.node_endpoint, args.signer_endpoint)
+    network_config_map = init_network_config(args.network, client_manager)
+    factory = ProviderFactory(provider="prpc")
+    parser = BakingYamlConfParser(
+        baking_config, None, None, None, None, block_api=factory, api_base_url=None
+    )
+    parser.parse()
+    parser.process()
+
+    cfg_dict = parser.get_conf_obj()
+    baking_cfg = BakingConf(cfg_dict)
+    baking_dirs = BakingDirs(args, baking_cfg.get_baking_address())
+    payments_queue = queue.Queue(50)
+    plugins_manager = plugins.PluginManager(baking_cfg.get_plugins_conf(), args.dry_run)
+    pc = PaymentConsumer(
+        name="consumer0",
+        payments_dir=baking_dirs.payments_root,
+        key_name=baking_cfg.get_payment_address(),
+        payments_queue=payments_queue,
+        node_addr=args.node_endpoint,
+        client_manager=client_manager,
+        plugins_manager=plugins_manager,
+        rewards_type=baking_cfg.get_rewards_type(),
+        args=args,
+        dry_run=args.dry_run,
+        reactivate_zeroed=baking_cfg.get_reactivate_zeroed(),
+        delegator_pays_ra_fee=baking_cfg.get_delegator_pays_ra_fee(),
+        delegator_pays_xfer_fee=baking_cfg.get_delegator_pays_xfer_fee(),
+        dest_map=baking_cfg.get_dest_map(),
+        network_config=network_config_map[args.network],
+        publish_stats=not args.do_not_publish_stats,
+    )
+
+    pc.disk_usage = lambda: (10e9, 9e9, 1e9)
+    assert not pc.disk_is_full()
+
+    pc.disk_usage = lambda: (11e9, 8e9, 3e8)
+    assert pc.disk_is_full()
+
+    try:
+        pc.daemon = True
+        pc.start()
+
+    finally:
+        pc.stop()
+
+    assert (
+        "Disk is becoming full. Only 0.30 Gb left from 11.00 Gb. Please clean up disk to continue saving logs and reports."
         in caplog.text
     )
