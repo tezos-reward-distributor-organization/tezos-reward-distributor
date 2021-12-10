@@ -44,7 +44,7 @@ def main():
                 service_file.write(content)
         except Exception as e:
             import errno
-            print("Exception during write operation invoked.")
+            print("Exception during write operation invoked: {}".format(e))
             if e.errno == errno.ENOSPC:
                 print("Not enough space on device!")
             exit()

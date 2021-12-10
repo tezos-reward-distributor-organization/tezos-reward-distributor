@@ -30,7 +30,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                  dry_run, client_manager, node_url, reward_data_provider, node_url_public='', api_base_url=None,
                  retry_injected=False):
         super(PaymentProducer, self).__init__()
-
+        self.event = threading.Event()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
         self.baking_address = baking_cfg.get_baking_address()
@@ -260,6 +260,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
+    def stop(self):
+        self.exit()
+        self.event.set()
+
     def compute_rewards(self, reward_model, rewards_type, network_config):
         if rewards_type.isEstimated():
             logger.info("Using estimated rewards for payouts calculations")
@@ -437,7 +441,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         except Exception as e:
             import errno
-            print("Exception during write operation invoked.")
+            print("Exception during write operation invoked: {}".format(e))
             if e.errno == errno.ENOSPC:
                 print("Not enough space on device!")
             exit()

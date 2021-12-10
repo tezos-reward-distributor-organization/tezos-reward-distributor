@@ -436,7 +436,7 @@ def main(args):
             yaml.dump(cfg_dict_plain, outfile, default_flow_style=False, indent=4)
     except Exception as e:
         import errno
-        print("Exception during write operation invoked.")
+        print("Exception during write operation invoked: {}".format(e))
         if e.errno == errno.ENOSPC:
             print("Not enough space on device!")
         exit()
