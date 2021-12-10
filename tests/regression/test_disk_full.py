@@ -95,14 +95,14 @@ def test_disk_full(args, caplog):
 
     pp.disk_usage = lambda: (10e9, 9e9, 5e8)
     assert pp.disk_is_full()
-    
+
     try:
         pp.daemon = True
         pp.start()
-    
+
     finally:
         pp.stop()
-    
+
     assert (
         "Disk is becoming full. Only 0.50 Gb left from 10.00 Gb. Please clean up disk to continue saving logs and reports."
         in caplog.text
