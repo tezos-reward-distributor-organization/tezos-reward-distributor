@@ -347,12 +347,16 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.exit()
                 break
 
+    @staticmethod
+    def disk_usage():
+        return shutil.disk_usage("/")
+
     def disk_is_full(self):
-        total, _, free = shutil.disk_usage("/")
+        total, _, free = self.disk_usage()
         free_percentage = free / total
         if free_percentage < DISK_LIMIT_PERCENTAGE:
-            # Return true if the system has less then 500Mb left
-            logger.error("Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports."
+            # Return true if the system has less then 10% free disk space
+            logger.critical("Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports."
                          .format(free / GIGA_BYTE, total / GIGA_BYTE))
             return True
         return False
