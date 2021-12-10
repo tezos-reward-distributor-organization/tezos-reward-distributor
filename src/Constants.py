@@ -2,21 +2,21 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 
-CURRENT_TESTNET = 'GRANADANET'
+CURRENT_TESTNET = 'HANGZHOU2NET'
 
-FIRST_GRANADA_LEVEL = 1589249
+FIRST_GRANADA_LEVEL = 1916929
 
 # Providers api prefix
 # Public RPC
 PUBLIC_NODE_URL = {
     'MAINNET': 'https://mainnet-tezos.giganode.io',
-    CURRENT_TESTNET: 'https://granadanet.smartpy.io'
+    CURRENT_TESTNET: 'https://hangzhou.smartpy.io'
 }
 
 # TzStats
 TZSTATS_PREFIX_API = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.granada.tzstats.com'
+    CURRENT_TESTNET: 'https://api.hangzhou.tzstats.com'
 }
 
 # TzKT
