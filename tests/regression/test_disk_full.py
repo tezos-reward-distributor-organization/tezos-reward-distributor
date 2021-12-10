@@ -52,7 +52,7 @@ def test_disk_full(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
     client_manager = ClientManager(args.node_endpoint, args.signer_endpoint)
     network_config_map = init_network_config(args.network, client_manager)
-    factory = ProviderFactory(provider="tzkt")
+    factory = ProviderFactory(provider="prpc")
     parser = BakingYamlConfParser(
         baking_config, None, None, None, None, block_api=factory, api_base_url=None
     )

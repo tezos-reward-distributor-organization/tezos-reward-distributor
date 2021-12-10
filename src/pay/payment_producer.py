@@ -357,7 +357,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         if free_percentage < DISK_LIMIT_PERCENTAGE:
             # Return true if the system has less then 10% free disk space
             logger.critical("Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports."
-                         .format(free / GIGA_BYTE, total / GIGA_BYTE))
+                            .format(free / GIGA_BYTE, total / GIGA_BYTE))
             return True
         return False
 
@@ -388,52 +388,59 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         elif rewards_type.isIdeal():
             rt = "I"
 
-        # Open reports file and write; auto-closes file
-        with open(report_file_path, 'w', newline='') as f:
+        try:
 
-            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            # Open reports file and write; auto-closes file
+            with open(report_file_path, 'w', newline='') as f:
 
-            # write headers and total rewards
-            writer.writerow(
-                ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
-                 "skipped", "atphase", "desc", "payment_address", "rewards_type"])
+                writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-            # First row is for the baker
-            writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
-                             "{0:f}".format(1.0),
-                             "{0:f}".format(1.0),
-                             "{0:f}".format(0.0),
-                             "{0:f}".format(total_rewards),
-                             "{0:f}".format(0.0),
-                             "{0:f}".format(0.0),
-                             "0", "0", "-1", "Baker",
-                             "None", rt
-                             ])
+                # write headers and total rewards
+                writer.writerow(["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
+                                "skipped", "atphase", "desc", "payment_address", "rewards_type"])
 
-            for pymnt_log in payment_logs:
-                # write row to csv file
-                array = [pymnt_log.address, pymnt_log.type, pymnt_log.staking_balance, pymnt_log.current_balance,
-                         "{0:.10f}".format(pymnt_log.ratio),
-                         "{0:.10f}".format(pymnt_log.service_fee_ratio),
-                         "{0:f}".format(pymnt_log.amount),
-                         "{0:f}".format(pymnt_log.service_fee_amount),
-                         "{0:f}".format(pymnt_log.service_fee_rate),
-                         "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
-                         pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
-                         pymnt_log.desc if pymnt_log.desc else "None",
-                         pymnt_log.paymentaddress, rt]
-                writer.writerow(array)
+                # First row is for the baker
+                writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
+                                "{0:f}".format(1.0),
+                                "{0:f}".format(1.0),
+                                "{0:f}".format(0.0),
+                                "{0:f}".format(total_rewards),
+                                "{0:f}".format(0.0),
+                                "{0:f}".format(0.0),
+                                "0", "0", "-1", "Baker",
+                                "None", rt])
 
-                logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
-                             "desc: {:s}, pay_addr: {:s}, type: {:s}"
-                             .format(pymnt_log.address, pymnt_log.type,
-                                     pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
-                                     pymnt_log.ratio, pymnt_log.service_fee_ratio,
-                                     pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
-                                     pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
-                                     "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
-                                     pymnt_log.desc, pymnt_log.paymentaddress, rt))
+                for pymnt_log in payment_logs:
+                    # write row to csv file
+                    array = [pymnt_log.address, pymnt_log.type, pymnt_log.staking_balance, pymnt_log.current_balance,
+                            "{0:.10f}".format(pymnt_log.ratio),
+                            "{0:.10f}".format(pymnt_log.service_fee_ratio),
+                            "{0:f}".format(pymnt_log.amount),
+                            "{0:f}".format(pymnt_log.service_fee_amount),
+                            "{0:f}".format(pymnt_log.service_fee_rate),
+                            "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
+                            pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
+                            pymnt_log.desc if pymnt_log.desc else "None",
+                            pymnt_log.paymentaddress, rt]
+                    writer.writerow(array)
+
+                    logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                                "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                                "desc: {:s}, pay_addr: {:s}, type: {:s}"
+                                .format(pymnt_log.address, pymnt_log.type,
+                                        pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
+                                        pymnt_log.ratio, pymnt_log.service_fee_ratio,
+                                        pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
+                                        pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
+                                        "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
+                                        pymnt_log.desc, pymnt_log.paymentaddress, rt))
+
+        except Exception as e:
+            import errno
+            print("Exception during write operation invoked.")
+            if e.errno == errno.ENOSPC:
+                print("Not enough space on device!")
+            exit()
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
