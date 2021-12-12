@@ -26,9 +26,17 @@ class TwitterPlugin(plugins.Plugin):
 
         self.twitter = tweepy.API(auth)
 
+        version = tweepy.__version__.split(".")
+        # tweepy version 4 broke lots of compatibilty, we need to sperate from v3
+        majorversion = int(version[0])
         # If the authentication was successful, you should
         # see the name of the account print out
-        logger.info("[TwitterPlugin] Authenticated '{:s}'".format(self.twitter.me().name))
+        #older than v4 we use old function
+        if majorversion < 4:
+            logger.info("[TwitterPlugin] Authenticated '{:s}'".format(self.twitter.me().name))
+        # this is the call for version 4 and above
+        else:
+            logger.info("[TwitterPlugin] Authenticated '{:s}'".format(self.twitter.verify_credentials().name))
 
     def send_admin_notification(self, title, message, attachments=None, reward_data=None):
         logger.debug("[TwitterPlugin] Admin notifications not implemented")
