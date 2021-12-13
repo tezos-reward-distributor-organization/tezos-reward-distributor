@@ -15,7 +15,7 @@ class TestCalculatePhase0(TestCase):
 
         nw = DEFAULT_NETWORK_CONFIG_MAP[CURRENT_TESTNET]
 
-        api = ProviderFactory(provider='tzkt').newRewardApi(nw, BAKING_ADDRESS, '')
+        api = ProviderFactory(provider='prpc').newRewardApi(nw, BAKING_ADDRESS, '')
 
         model = api.get_rewards_for_cycle_map(CYCLE, REWARDS_TYPE)
 
