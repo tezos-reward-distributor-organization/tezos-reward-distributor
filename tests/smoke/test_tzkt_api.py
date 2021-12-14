@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 from datetime import datetime
 from main import start_application
 from tests.utils import Args, make_config
+from Constants import TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
 
 
 @pytest.fixture
@@ -11,10 +12,10 @@ def args():
     args = Args(
         initial_cycle=201,
         reward_data_provider='tzkt',
-        api_base_url='https://api.tzkt.io/v1/',
+        api_base_url=TZKT_PUBLIC_API_URL["MAINNET"],
     )
     args.network = 'MAINNET'
-    args.node_endpoint = 'https://testnet-tezos.giganode.io'
+    args.node_endpoint = PUBLIC_NODE_URL["MAINNET"]
     args.docker = True
     args.dry_run = True
     args.dry_run_no_consumers = True
@@ -58,5 +59,5 @@ def test_base_url(ConfigParser, args):
         )
     )
     args.initial_cycle = 100
-    args.api_base_url = 'https://api.tzkt.io/v1/'
+    args.api_base_url = TZKT_PUBLIC_API_URL["MAINNET"]
     assert start_application(args) == 0

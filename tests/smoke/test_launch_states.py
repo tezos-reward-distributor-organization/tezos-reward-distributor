@@ -2,7 +2,7 @@ import logging
 import pytest
 from datetime import datetime
 from unittest.mock import MagicMock, patch
-
+from Constants import CURRENT_TESTNET, TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
 from main import start_application
 from tests.utils import Args, make_config
 
@@ -25,9 +25,9 @@ test_logger.addHandler(sh)
 @pytest.fixture
 def args():
     # Test with PRPC node
-    args = Args(initial_cycle=10, reward_data_provider='tzkt', api_base_url='https://api.hangzhounet.tzkt.io/v1/')
-    args.network = 'EDO2NET'
-    args.node_endpoint = 'https://testnet-tezos.giganode.io'
+    args = Args(initial_cycle=10, reward_data_provider='tzkt', api_base_url=TZKT_PUBLIC_API_URL[CURRENT_TESTNET])
+    args.network = CURRENT_TESTNET
+    args.node_endpoint = PUBLIC_NODE_URL[CURRENT_TESTNET]
     args.docker = True
     args.dry_run = True
     args.dry_run_no_consumers = True

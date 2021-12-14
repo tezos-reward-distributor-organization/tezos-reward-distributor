@@ -14,13 +14,13 @@ PUBLIC_NODE_URL = {
 }
 
 # TzStats
-TZSTATS_PREFIX_API = {
+TZSTATS_PUBLIC_API_URL = {
     'MAINNET': 'https://api.tzstats.com',
     CURRENT_TESTNET: 'https://api.{}.tzstats.com'.format(PROTOCOL_NAME)
 }
 
 # TzKT
-TZKT_API_PREFIX = {
+TZKT_PUBLIC_API_URL = {
     'MAINNET': 'https://api.tzkt.io/v1',
     CURRENT_TESTNET: 'https://api.{}.tzkt.io/v1'.format(CURRENT_TESTNET)
 }

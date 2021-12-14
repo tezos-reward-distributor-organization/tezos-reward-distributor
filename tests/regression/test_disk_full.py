@@ -6,7 +6,7 @@ from pay.payment_producer import PaymentProducer
 from pay.payment_consumer import PaymentConsumer
 from tests.utils import Args, make_config
 from plugins import plugins
-from Constants import RunMode
+from Constants import RunMode, TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
 from cli.client_manager import ClientManager
 from NetworkConfiguration import init_network_config
 from model.baking_dirs import BakingDirs
@@ -34,10 +34,10 @@ def args():
     args = Args(
         initial_cycle=10,
         reward_data_provider="tzkt",
-        api_base_url="https://api.tzkt.io/v1/",
+        api_base_url=TZKT_PUBLIC_API_URL["MAINNET"],
     )
     args.network = "MAINNET"
-    args.node_endpoint = "https://testnet-tezos.giganode.io"
+    args.node_endpoint = PUBLIC_NODE_URL["MAINNET"]
     args.docker = True
     args.dry_run = True
     args.dry_run_no_consumers = True

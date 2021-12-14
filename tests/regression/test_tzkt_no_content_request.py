@@ -2,7 +2,7 @@ import pytest
 from http import HTTPStatus
 from unittest.mock import patch, MagicMock
 from tzkt.tzkt_api import TzKTApi, TzKTApiError
-
+from Constants import RunMode, TZKT_PUBLIC_API_URL
 
 class NoContentResponse:
     status_code = HTTPStatus.NO_CONTENT
@@ -44,7 +44,7 @@ def test_request_dns_lookup_error():
 def test_request_content_response():
     """Test the handling of API calls which respond with a content (200)."""
     baker_address = "tz1NortRftucvAkD1J58L32EhSVrQEWJCEnB"
-    base_url = "https://api.tzkt.io/v1/"
+    base_url = TZKT_PUBLIC_API_URL["MAINNET"]
     timeout = 30
     cycle = 201
     tzkt = TzKTApi(base_url, timeout)

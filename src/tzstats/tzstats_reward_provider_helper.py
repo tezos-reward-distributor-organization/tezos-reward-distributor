@@ -10,7 +10,7 @@ from tzstats.tzstats_api_constants import idx_n_baking_rights, idx_n_endorsing_r
     idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
     idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance, idx_income_missed_baking_income, \
     idx_income_missed_endorsing_income, idx_income_double_baking_income, idx_income_double_endorsing_income
-from Constants import TZSTATS_PREFIX_API
+from Constants import TZSTATS_PUBLIC_API_URL
 
 logger = main_logger
 
@@ -37,7 +37,7 @@ class TzStatsRewardProviderHelper:
 
         self.preserved_cycles = nw['NB_FREEZE_CYCLE']
 
-        self.api = TZSTATS_PREFIX_API[nw['NAME']]
+        self.api = TZSTATS_PUBLIC_API_URL[nw['NAME']]
         if self.api is None:
             raise ApiProviderException("Unknown network {}".format(nw))
 
