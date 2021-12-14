@@ -10,10 +10,8 @@ from rpc.rpc_block_api import RpcBlockApiImpl
 # Giganode endpoint is too slow.
 # Using Madfish Solutions endpoint to fix failing CI
 # Switch back to Giganode once it's reliable:
-# from Constants import PUBLIC_NODE_URL
-# node_endpoint = PUBLIC_NODE_URL["MAINNET"]
-
-node_endpoint = 'https://mainnet-node.madfish.solutions'
+from Constants import PUBLIC_NODE_URL
+node_endpoint = PUBLIC_NODE_URL["MAINNET"]
 signer_endpoint = "http://127.0.0.1:6732"
 network = {'NAME': 'MAINNET'}
 
