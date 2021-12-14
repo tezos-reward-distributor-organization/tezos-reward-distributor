@@ -4,6 +4,7 @@ from Constants import DISK_LIMIT_PERCENTAGE, GIGA_BYTE
 
 logger = main_logger
 
+
 def disk_is_full(path="/"):
     total, _, free = shutil.disk_usage(path)
     free_percentage = free / total

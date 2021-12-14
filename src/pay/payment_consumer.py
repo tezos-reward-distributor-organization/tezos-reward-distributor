@@ -1,9 +1,8 @@
 import functools
 import os
 import threading
-import shutil
 from time import sleep
-from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus, DISK_LIMIT_PERCENTAGE, GIGA_BYTE
+from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
 from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance

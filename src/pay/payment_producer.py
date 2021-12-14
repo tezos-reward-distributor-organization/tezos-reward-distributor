@@ -5,7 +5,7 @@ import threading
 from datetime import datetime, timedelta
 from time import sleep
 from requests import ReadTimeout, ConnectTimeout
-from Constants import MUTEZ, RunMode, DISK_LIMIT_PERCENTAGE, GIGA_BYTE
+from Constants import MUTEZ, RunMode
 from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from exception.api_provider import ApiProviderException

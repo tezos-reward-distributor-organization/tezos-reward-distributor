@@ -69,7 +69,7 @@ def main(args):
     # 8- Check the disk size at the reports dir location
     if disk_is_full(reports_dir):
         raise Exception("Disk is full at {}. Please free space to continue saving reports.".format(reports_dir))
-    
+
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
