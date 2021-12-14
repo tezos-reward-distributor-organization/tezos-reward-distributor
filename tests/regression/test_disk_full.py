@@ -1,7 +1,7 @@
 import pytest
 import queue
 import logging
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from pay.payment_producer import PaymentProducer
 from pay.payment_consumer import PaymentConsumer
 from tests.utils import Args, make_config
@@ -15,6 +15,7 @@ from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from calc.service_fee_calculator import ServiceFeeCalculator
 from util.process_life_cycle import ProcessLifeCycle
+from util.disk_is_full import disk_is_full
 
 logger = logging.getLogger("unittesting")
 logger.setLevel(logging.DEBUG)
@@ -50,6 +51,7 @@ def args():
 
 
 @patch("log_config.main_logger", logger)
+@patch("util.disk_is_full.shutil.disk_usage", MagicMock(return_value=(10e9, 9e9, 5e8)))
 def test_disk_full_payment_producer(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
     client_manager = ClientManager(args.node_endpoint, args.signer_endpoint)
@@ -92,11 +94,7 @@ def test_disk_full_payment_producer(args, caplog):
         retry_injected=args.retry_injected,
         initial_payment_cycle=args.initial_cycle,
     )
-    pp.disk_usage = lambda: (10e9, 9e9, 1e9)
-    assert not pp.disk_is_full()
-
-    pp.disk_usage = lambda: (10e9, 9e9, 5e8)
-    assert pp.disk_is_full()
+    assert disk_is_full()
 
     try:
         pp.daemon = True
@@ -112,6 +110,7 @@ def test_disk_full_payment_producer(args, caplog):
 
 
 @patch("log_config.main_logger", logger)
+@patch("util.disk_is_full.shutil.disk_usage", MagicMock(return_value=(11e9, 8e9, 3e8)))
 def test_disk_full_payment_consumer(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
     client_manager = ClientManager(args.node_endpoint, args.signer_endpoint)
@@ -147,11 +146,7 @@ def test_disk_full_payment_consumer(args, caplog):
         publish_stats=not args.do_not_publish_stats,
     )
 
-    pc.disk_usage = lambda: (10e9, 9e9, 1e9)
-    assert not pc.disk_is_full()
-
-    pc.disk_usage = lambda: (11e9, 8e9, 3e8)
-    assert pc.disk_is_full()
+    assert disk_is_full()
 
     try:
         pc.daemon = True

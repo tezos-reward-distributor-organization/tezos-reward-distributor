@@ -16,6 +16,7 @@ from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
 from util.dir_utils import get_payment_root, \
     get_successful_payments_dir, get_failed_payments_dir
+from util.disk_is_full import disk_is_full
 from util.process_life_cycle import ProcessLifeCycle
 
 LINER = "--------------------------------------------"
@@ -64,6 +65,11 @@ def main(args):
 
     # 7- get reporting directories
     reports_dir = os.path.expanduser(args.reports_dir)
+
+    # 8- Check the disk size at the reports dir location
+    if disk_is_full(reports_dir):
+        raise Exception("Disk is full at {}. Please free space to continue saving reports.".format(reports_dir))
+    
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:

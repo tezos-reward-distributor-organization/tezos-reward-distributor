@@ -1,7 +1,6 @@
 import _thread
 import csv
 import os
-import shutil
 import threading
 from datetime import datetime, timedelta
 from time import sleep
@@ -18,6 +17,7 @@ from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
 from util.dir_utils import get_calculation_report_file
+from util.disk_is_full import disk_is_full
 
 logger = main_logger.getChild("payment_producer")
 
@@ -154,7 +154,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                 # Exit if disk is full
                 # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
-                if self.disk_is_full():
+                if disk_is_full():
                     self.exit()
                     break
 
@@ -350,20 +350,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             if not self.life_cycle.is_running():
                 self.exit()
                 break
-
-    @staticmethod
-    def disk_usage():
-        return shutil.disk_usage("/")
-
-    def disk_is_full(self):
-        total, _, free = self.disk_usage()
-        free_percentage = free / total
-        if free_percentage < DISK_LIMIT_PERCENTAGE:
-            # Return true if the system has less then 10% free disk space
-            logger.critical("Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports."
-                            .format(free / GIGA_BYTE, total / GIGA_BYTE))
-            return True
-        return False
 
     def node_is_bootstrapped(self):
         # Get RPC node's (-A) bootstrap time. If bootstrap time + 2 minutes is
