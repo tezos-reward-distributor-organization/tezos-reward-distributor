@@ -2,7 +2,7 @@ from unittest import TestCase
 from calc.calculate_phase0 import CalculatePhase0
 from model.reward_log import TYPE_OWNERS_PARENT
 from api.provider_factory import ProviderFactory
-from Constants import CURRENT_TESTNET, DEFAULT_NETWORK_CONFIG_MAP, RewardsType
+from Constants import DEFAULT_NETWORK_CONFIG_MAP, RewardsType
 
 BAKING_ADDRESS = "tz1RpNqAzQNaZuxeLSbfEzVEzUWssddsL6Kw"
 CYCLE = 68
@@ -13,7 +13,7 @@ class TestCalculatePhase0(TestCase):
 
     def test_calculate(self):
 
-        nw = DEFAULT_NETWORK_CONFIG_MAP[CURRENT_TESTNET]
+        nw = DEFAULT_NETWORK_CONFIG_MAP["MAINNET"]
 
         api = ProviderFactory(provider='prpc').newRewardApi(nw, BAKING_ADDRESS, '')
 
