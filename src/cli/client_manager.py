@@ -12,6 +12,11 @@ logger = main_logger
 
 COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 MAX_NB_TRIES = 3
+PUBLIC_NODE_URLS = [
+    PUBLIC_NODE_URL[CURRENT_TESTNET], PUBLIC_NODE_URL["MAINNET"],
+    TZSTATS_PUBLIC_API_URL[CURRENT_TESTNET], TZSTATS_PUBLIC_API_URL["MAINNET"],
+    TZKT_PUBLIC_API_URL[CURRENT_TESTNET], TZKT_PUBLIC_API_URL["MAINNET"],
+]
 
 
 class ClientManager:
@@ -26,12 +31,7 @@ class ClientManager:
                 logger.info("Node endpoint URL points to an SSL endpoint. Using HTTPS protocol prefix.")
         if len(self.node_endpoint.split(':')) < 3:
             # public node urls does not need to have port assignments
-            public_node_urls = [
-                PUBLIC_NODE_URL[CURRENT_TESTNET], PUBLIC_NODE_URL["MAINNET"],
-                TZSTATS_PUBLIC_API_URL[CURRENT_TESTNET], TZSTATS_PUBLIC_API_URL["MAINNET"],
-                TZKT_PUBLIC_API_URL[CURRENT_TESTNET], TZKT_PUBLIC_API_URL["MAINNET"],
-            ]
-            if self.node_endpoint not in public_node_urls:
+            if self.node_endpoint not in PUBLIC_NODE_URLS:
                 self.node_endpoint += f':{TEZOS_RPC_PORT}'
         self.signer_endpoint = signer_endpoint
 
