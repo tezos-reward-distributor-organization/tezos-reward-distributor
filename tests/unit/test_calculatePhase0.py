@@ -4,8 +4,8 @@ from model.reward_log import TYPE_OWNERS_PARENT
 from api.provider_factory import ProviderFactory
 from Constants import DEFAULT_NETWORK_CONFIG_MAP, RewardsType
 
-BAKING_ADDRESS = "tz1RpNqAzQNaZuxeLSbfEzVEzUWssddsL6Kw"
-CYCLE = 68
+BAKING_ADDRESS = "tz1fikAGfa1MTxX2oJ7UCtvDpVKeH4KTp1UY"
+CYCLE = 420
 REWARDS_TYPE = RewardsType.ACTUAL
 
 
