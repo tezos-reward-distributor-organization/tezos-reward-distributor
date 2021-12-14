@@ -2,7 +2,7 @@ import pytest
 from http import HTTPStatus
 from unittest.mock import patch, MagicMock
 from tzkt.tzkt_api import TzKTApi, TzKTApiError
-from Constants import RunMode, TZKT_PUBLIC_API_URL
+from Constants import TZKT_PUBLIC_API_URL
 
 class NoContentResponse:
     status_code = HTTPStatus.NO_CONTENT
