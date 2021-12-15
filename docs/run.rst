@@ -35,7 +35,7 @@ Options
 ``-O --payment_offset <int>``
     Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
 
-``-N --network <MAINNET|GRANADANET>``
+``-N --network <MAINNET|HANGZHOU2NET>``
     Network name. Default value: ``MAINNET``. The current test network of Tezos is ``HANGZHOU2NET``.
 
 ``-A --node_endpoint <node_url:port>``
