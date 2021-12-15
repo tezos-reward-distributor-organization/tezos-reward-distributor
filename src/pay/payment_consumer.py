@@ -9,6 +9,7 @@ from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 from log_config import main_logger
 from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
 from pay.batch_payer import BatchPayer
+from util.disk_is_full import disk_is_full
 from stats.stats_publisher import stats_publisher
 from util.csv_payment_file_parser import CsvPaymentFileParser
 from util.dir_utils import payment_report_file_path, get_busy_file
@@ -39,6 +40,7 @@ class PaymentConsumer(threading.Thread):
 
         self.dest_map = dest_map if dest_map else {}
         self.name = name
+        self.event = threading.Event()
         self.payments_dir = payments_dir
         self.key_name = key_name
         self.payments_queue = payments_queue
@@ -61,6 +63,12 @@ class PaymentConsumer(threading.Thread):
     def run(self):
         running = True
         while running:
+            # Exit if disk is full
+            # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
+            if disk_is_full():
+                running = False
+                break
+
             # Wait until a reward is present
             payment_batch = self.payments_queue.get(True)
 
@@ -162,8 +170,10 @@ class PaymentConsumer(threading.Thread):
 
             # 9- publish anonymous stats
             if self.publish_stats and self.args and not self.dry_run:
-                stats_dict = self.create_stats_dict(nb_failed, nb_unknown, pymnt_cycle, payment_logs, total_attempts)
+                stats_dict = self.create_stats_dict(self.key_name, nb_failed, nb_unknown, pymnt_cycle, payment_logs, total_attempts)
                 stats_publisher(stats_dict)
+            else:
+                logger.info("Anonymous statistics disabled{:s}".format(", (Dry run)" if self.dry_run else ""))
 
         except Exception:
             logger.error("Error at reward payment", exc_info=True)
@@ -213,9 +223,9 @@ class PaymentConsumer(threading.Thread):
 
         return report_file
 
-    def create_stats_dict(self, nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts):
+    def create_stats_dict(self, key_name, nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts):
 
-        from uuid import uuid1
+        from uuid import NAMESPACE_URL, uuid3
 
         n_f_type = len([pl for pl in payment_logs if pl.type == TYPE_FOUNDER])
         n_o_type = len([pl for pl in payment_logs if pl.type == TYPE_OWNER])
@@ -223,7 +233,7 @@ class PaymentConsumer(threading.Thread):
         n_m_type = len([pl for pl in payment_logs if pl.type == TYPE_MERGED])
 
         stats_dict = {}
-        stats_dict['uuid'] = str(uuid1())
+        stats_dict['uuid'] = str(uuid3(namespace=NAMESPACE_URL, name=key_name))
         stats_dict['cycle'] = payment_cycle
         stats_dict['network'] = self.args.network
         stats_dict['total_amount'] = int(sum([rl.amount for rl in payment_logs]) / MUTEZ)
@@ -256,3 +266,6 @@ class PaymentConsumer(threading.Thread):
             stats_dict['m_docker'] = 1 if self.args.docker else 0
 
         return stats_dict
+
+    def stop(self):
+        self.event.set()

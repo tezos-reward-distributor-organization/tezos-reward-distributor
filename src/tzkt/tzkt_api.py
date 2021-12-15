@@ -5,7 +5,7 @@ from pprint import pformat
 from os.path import join
 from json import JSONDecodeError
 
-from Constants import VERSION, TZKT_API_PREFIX
+from Constants import VERSION, TZKT_PUBLIC_API_URL
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 
@@ -32,7 +32,7 @@ class TzKTApi:
         :param network: one of `mainnet`, current testnet
         :param timeout: request timeout in seconds (default = 30)
         """
-        base_urls = TZKT_API_PREFIX
+        base_urls = TZKT_PUBLIC_API_URL
         assert network in base_urls, f'Unsupported network {network}'
         return TzKTApi(base_url=base_urls[network], timeout=timeout)
 
