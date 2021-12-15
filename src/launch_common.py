@@ -124,7 +124,7 @@ def add_argument_payment_offset(parser):
 def add_argument_network(parser):
     parser.add_argument("-N", "--network",
                         help="Network name. Default is MAINNET. The current test network is GRANADANET.",
-                        choices=['MAINNET', 'HANGZHOU2NET'],
+                        choices=['MAINNET', 'GRANADANET'],
                         default='MAINNET')
 
 
