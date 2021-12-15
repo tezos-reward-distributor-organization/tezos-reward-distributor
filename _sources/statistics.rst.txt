@@ -7,7 +7,7 @@ Nothing that TRD collects can be traced back to a specific delegate or delegator
 
 * We *do not* collect any implicit or originated addresses.
 * We *do not* collect any IP, or hostname related information.
-* We *do not* generate identifiers using any address information.
+* Anonymous identifiers are calculated using an MD5 hash of the payout address.
 
 If you wish to opt-out of this anonymous data collection, start TRD using the `--do_not_publish_stats` option.
 
@@ -21,7 +21,7 @@ TRD collects the following statistics after each payout:
 * Anonymous identifier
 * Payout cycle
 * Total payout amount
-* Which network is in use (ie: mainnet, carthagenet, etc)
+* Which network is in use (ie: mainnet, testnets, etc)
 * Number of founders
 * Number of owners
 * Number of delegators
