@@ -2,7 +2,8 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = 'hangzhou'
-CURRENT_TESTNET = '{}2net'.format(PROTOCOL_NAME).upper()
+CURRENT_TESTNET = ('{}2net'.format(PROTOCOL_NAME)).upper()
+
 
 FIRST_GRANADA_LEVEL = 1589249
 
