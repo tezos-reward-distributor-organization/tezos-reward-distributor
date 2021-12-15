@@ -54,8 +54,15 @@ def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
             if v['staking_balance'] > 0
         }
     )
-    with open(path, 'w+') as f:
-        f.write(json.dumps(data, indent=2))
+    try:
+        with open(path, 'w+') as f:
+            f.write(json.dumps(data, indent=2))
+    except Exception as e:
+        import errno
+        print("Exception during write operation invoked: {}".format(e))
+        if e.errno == errno.ENOSPC:
+            print("Not enough space on device!")
+        exit()
 
 
 dummy_addr_dict = dict(

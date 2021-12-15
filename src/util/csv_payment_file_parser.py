@@ -29,10 +29,18 @@ class CsvPaymentFileParser:
 
     @staticmethod
     def write(report_file, payment_logs):
-        with open(report_file, "w") as f:
-            csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            csv_writer.writerow(["address", "type", "amount", "hash", "paid"])
+        try:
+            with open(report_file, "w") as f:
+                csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                csv_writer.writerow(["address", "type", "amount", "hash", "paid"])
 
-            for pl in payment_logs:
-                # write row to csv file
-                csv_writer.writerow([pl.paymentaddress, pl.type, pl.amount, pl.hash if pl.hash else "None", pl.paid.value])
+                for pl in payment_logs:
+                    # write row to csv file
+                    csv_writer.writerow([pl.paymentaddress, pl.type, pl.amount, pl.hash if pl.hash else "None", pl.paid.value])
+
+        except Exception as e:
+            import errno
+            print("Exception during write operation invoked: {}".format(e))
+            if e.errno == errno.ENOSPC:
+                print("Not enough space on device!")
+            exit()

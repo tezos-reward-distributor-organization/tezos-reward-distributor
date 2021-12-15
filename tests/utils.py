@@ -63,6 +63,8 @@ def make_config(baking_address, payment_address, service_fee, min_delegation_amt
         tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk: 1.0
     payment_address: {:s}
     reactivate_zeroed: true
+    rewards_type: "A"
+    pay_denunciation_rewards: false
     rules_map:
         tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP: tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs
         tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: TOB
