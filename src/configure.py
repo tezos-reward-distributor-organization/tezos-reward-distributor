@@ -430,8 +430,16 @@ def main(args):
 
     config_file_path = os.path.join(os.path.abspath(config_dir), cfg.get_baking_address() + '.yaml')
     cfg_dict_plain = {k: v for k, v in cfg_dict.items() if not k.startswith('__')}
-    with open(config_file_path, 'w') as outfile:
-        yaml.dump(cfg_dict_plain, outfile, default_flow_style=False, indent=4)
+
+    try:
+        with open(config_file_path, 'w') as outfile:
+            yaml.dump(cfg_dict_plain, outfile, default_flow_style=False, indent=4)
+    except Exception as e:
+        import errno
+        print("Exception during write operation invoked: {}".format(e))
+        if e.errno == errno.ENOSPC:
+            print("Not enough space on device!")
+        exit()
 
     print(messages['noplugins'])
     print("Configuration file is created at '{}'".format(config_file_path))
