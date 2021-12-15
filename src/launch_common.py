@@ -3,6 +3,7 @@ from time import sleep
 
 from log_config import main_logger, DEFAULT_LOG_FILE
 from NetworkConfiguration import default_network_config_map
+from Constants import CURRENT_TESTNET
 
 
 REQUIREMENTS_FILE_PATH = 'requirements.txt'
@@ -123,8 +124,8 @@ def add_argument_payment_offset(parser):
 
 def add_argument_network(parser):
     parser.add_argument("-N", "--network",
-                        help="Network name. Default is MAINNET. The current test network is GRANADANET.",
-                        choices=['MAINNET', 'GRANADANET'],
+                        help="Network name. Default is MAINNET. The current test network is HANGZHOUT2NET.",
+                        choices=['MAINNET', CURRENT_TESTNET],
                         default='MAINNET')
 
 
