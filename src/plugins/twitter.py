@@ -31,7 +31,7 @@ class TwitterPlugin(plugins.Plugin):
         majorversion = int(version[0])
         # If the authentication was successful, you should
         # see the name of the account print out
-        #older than v4 we use old function
+        # older than v4 we use old function
         if majorversion < 4:
             logger.info("[TwitterPlugin] Authenticated '{:s}'".format(self.twitter.me().name))
         # this is the call for version 4 and above
