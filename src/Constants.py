@@ -2,7 +2,8 @@ from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = 'hangzhou'
-CURRENT_TESTNET = '{}2net'.format(PROTOCOL_NAME)
+CURRENT_TESTNET = ('{}2net'.format(PROTOCOL_NAME)).upper()
+
 
 FIRST_GRANADA_LEVEL = 1589249
 
@@ -22,7 +23,7 @@ TZSTATS_PUBLIC_API_URL = {
 # TzKT
 TZKT_PUBLIC_API_URL = {
     'MAINNET': 'https://api.tzkt.io/v1',
-    CURRENT_TESTNET: 'https://api.{}.tzkt.io/v1'.format(CURRENT_TESTNET)
+    CURRENT_TESTNET: 'https://api.{}.tzkt.io/v1'.format(CURRENT_TESTNET).lower()
 }
 
 
