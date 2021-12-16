@@ -1,7 +1,6 @@
 name: Docker
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
@@ -27,6 +26,10 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: trdo/tezos-reward-distributor
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
