@@ -34,7 +34,12 @@ jobs:
       fail-fast: false
       matrix:
         runs-on: [ubuntu-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9, 3.10]
+        python:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+        - "3.9"
+        - "3.10"
 
     name: "🐍 ${{ matrix.python-version  }} • ${{ matrix.runs-on }}"
     runs-on: ${{ matrix.runs-on }}
