@@ -24,8 +24,8 @@ def test_request_no_content_response():
     cycle = 201
     tzkt = TzKTApi(base_url, timeout)
     request_path = f"rewards/split/{baker_address}/{cycle}"
-    with pytest.raises(TzKTApiError, match="TzKT returned 204 error"):
-        _ = tzkt._request(request_path, offset=0, limit=10000)
+    res = tzkt._request(request_path, offset=0, limit=10000)
+    assert res is None
 
 
 def test_request_dns_lookup_error():

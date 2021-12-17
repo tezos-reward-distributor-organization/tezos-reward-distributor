@@ -66,6 +66,9 @@ class TzKTApi:
         except requests.RequestException as e:
             raise TzKTApiError(e)
 
+        if response.status_code == HTTPStatus.NO_CONTENT:
+            return None
+
         if response.status_code != HTTPStatus.OK:
             raise TzKTApiError(f'TzKT returned {response.status_code} error:\n{response.text}')
 
