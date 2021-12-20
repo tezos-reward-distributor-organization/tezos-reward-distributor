@@ -7,11 +7,22 @@ from model.reward_log import RewardLog
 class TestCalculatePhase2(TestCase):
     def test_calculate(self):
         rewards = []
-        ratios = {"addr1": 0.25, "addr2": 0.05, "addr3": 0.3, "addr4": 0.15, "addr5": 0.25}
+        ratios = {
+            "addr1": 0.25,
+            "addr2": 0.05,
+            "addr3": 0.3,
+            "addr4": 0.15,
+            "addr5": 0.25,
+        }
         total_reward = 1000
 
         for i, addr in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratios[addr], current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratios[addr],
+                current_balance=0,
+            )
             rl0.ratio1 = ratios[addr]
             rewards.append(rl0)
 
@@ -39,9 +50,12 @@ class TestCalculatePhase2(TestCase):
             # C+C*(a/1-a)-C = C*(a/1-a)
             # -->
             # C'*Total = C *Total + C*(a/1-a)*Total
-            self.assertAlmostEqual(ratio1 * total_reward,
-                                   pr_new.ratio2 * new_total_reward - ratio1 * (0.25 / 0.75) * new_total_reward,
-                                   delta=0.000001)
+            self.assertAlmostEqual(
+                ratio1 * total_reward,
+                pr_new.ratio2 * new_total_reward
+                - ratio1 * (0.25 / 0.75) * new_total_reward,
+                delta=0.000001,
+            )
         ratio_sum = 0.0
         for pr_new in new_rewards:
             if pr_new.ratio2 is None:

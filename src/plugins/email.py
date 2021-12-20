@@ -12,20 +12,37 @@ from os.path import basename
 
 logger = logging.getLogger("main.plugins.email")
 
-plugin_name = 'EmailPlugin'
+plugin_name = "EmailPlugin"
 
 
 class EmailPlugin(plugins.Plugin):
 
-    _req_cfg_keys = ["smtp_user", "smtp_pass", "smtp_host", "smtp_port", "smtp_tls", "smtp_sender", "smtp_recipients"]
+    _req_cfg_keys = [
+        "smtp_user",
+        "smtp_pass",
+        "smtp_host",
+        "smtp_port",
+        "smtp_tls",
+        "smtp_sender",
+        "smtp_recipients",
+    ]
 
     def __init__(self, cfg):
         super().__init__("Email", cfg["email"])
 
-        logger.info("[EmailPlugin] From: {:s}, To: [{:s}], Via: {:s}:{:d} ({:s}SSL/TLS)".format(
-                    self.sender, ", ".join(self.recipients), self.host, self.port, "" if self.use_tls else "No "))
+        logger.info(
+            "[EmailPlugin] From: {:s}, To: [{:s}], Via: {:s}:{:d} ({:s}SSL/TLS)".format(
+                self.sender,
+                ", ".join(self.recipients),
+                self.host,
+                self.port,
+                "" if self.use_tls else "No ",
+            )
+        )
 
-    def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
+    def send_admin_notification(
+        self, subject, message, attachments=None, reward_data=None
+    ):
 
         self.send_email(subject, message, attachments)
 
@@ -39,10 +56,10 @@ class EmailPlugin(plugins.Plugin):
 
         # Create email and basic headers
         msg = MIMEMultipart()
-        msg['From'] = self.sender
-        msg['To'] = ", ".join(self.recipients)
-        msg['Date'] = formatdate(localtime=True)
-        msg['Subject'] = subject
+        msg["From"] = self.sender
+        msg["To"] = ", ".join(self.recipients)
+        msg["Date"] = formatdate(localtime=True)
+        msg["Subject"] = subject
 
         msg.attach(MIMEText(message))
 
@@ -53,7 +70,7 @@ class EmailPlugin(plugins.Plugin):
                     part = MIMEApplication(fil.read(), Name=basename(f))
 
                 # After the file is closed
-                part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
+                part["Content-Disposition"] = 'attachment; filename="%s"' % basename(f)
                 msg.attach(part)
 
         # Connection
@@ -69,13 +86,15 @@ class EmailPlugin(plugins.Plugin):
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
-           parameters to run the Plugin
+        parameters to run the Plugin
         """
         cfg_keys = self.cfg.keys()
 
         for k in self._req_cfg_keys:
             if k not in cfg_keys:
-                raise plugins.PluginConfigurationError("[{:s}] {:s} config key not found".format(self.name, k))
+                raise plugins.PluginConfigurationError(
+                    "[{:s}] {:s} config key not found".format(self.name, k)
+                )
 
         # Set config
         self.host = self.cfg["smtp_host"]
@@ -87,8 +106,12 @@ class EmailPlugin(plugins.Plugin):
 
         self.recipients = self.cfg["smtp_recipients"]
         if not isinstance(self.recipients, list):
-            raise plugins.PluginConfigurationError("[{:s}] 'smtp_recipients' not configured correctly".format(self.name))
+            raise plugins.PluginConfigurationError(
+                "[{:s}] 'smtp_recipients' not configured correctly".format(self.name)
+            )
 
         # Sanity
         if self.host is None or self.user is None or self.recipients is None:
-            raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
+            raise plugins.PluginConfigurationError(
+                "[{:s}] Not Configured".format(self.name)
+            )

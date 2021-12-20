@@ -14,7 +14,10 @@ class ServiceFeeCalculator:
     def calculate(self, address):
         service_fee = self.standard_fee
 
-        if address in self.supporters_set or address in [TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT]:
+        if address in self.supporters_set or address in [
+            TYPE_FOUNDERS_PARENT,
+            TYPE_OWNERS_PARENT,
+        ]:
             service_fee = 0.0
         elif address in self.specials_map:
             service_fee = self.specials_map[address]

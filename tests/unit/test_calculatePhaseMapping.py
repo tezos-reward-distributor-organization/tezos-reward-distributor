@@ -11,7 +11,12 @@ class TestCalculatePhaseMapping(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratio,
+                current_balance=0,
+            )
             rl0.ratio = ratio
             rl0.ratio4 = ratio
             rewards.append(rl0)
@@ -35,9 +40,16 @@ class TestCalculatePhaseMapping(TestCase):
         self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
 
         # ratio of records having payment address addr1 must be 0.30 (0.25+0.05)
-        self.assertAlmostEqual(0.30,
-                               sum(rl.ratio for rl in list(
-                                   filter(lambda rl: rl.paymentaddress == "addr1",
-                                          filter(lambda rl: not rl.skipped, new_rewards))
-                               )),
-                               delta=1e-6)
+        self.assertAlmostEqual(
+            0.30,
+            sum(
+                rl.ratio
+                for rl in list(
+                    filter(
+                        lambda rl: rl.paymentaddress == "addr1",
+                        filter(lambda rl: not rl.skipped, new_rewards),
+                    )
+                )
+            ),
+            delta=1e-6,
+        )

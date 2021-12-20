@@ -31,7 +31,6 @@ class ConfigEvent(Enum):
 
 
 class ConfigLifeCycle:
-
     def __init__(self, args, nw_cfg, node_client, callback):
         self.__args = args
         self.__nw_cfg = nw_cfg
@@ -44,20 +43,37 @@ class ConfigLifeCycle:
 
     def get_fsm_builder(self):
         fsm_builder = TransitionsFsmBuilder()
-        fsm_builder.add_initial_state(ConfigState.INITIAL, on_leave=lambda e: logger.debug("Loading baking configuration file ..."))
+        fsm_builder.add_initial_state(
+            ConfigState.INITIAL,
+            on_leave=lambda e: logger.debug("Loading baking configuration file ..."),
+        )
         fsm_builder.add_state(ConfigState.READ, on_enter=self.do_read_cfg_file)
         fsm_builder.add_state(ConfigState.BUILT, on_enter=self.do_build_parser)
         fsm_builder.add_state(ConfigState.PARSED, on_enter=self.do_parse_cfg)
         fsm_builder.add_state(ConfigState.VALIDATED, on_enter=self.do_validate_cfg)
         fsm_builder.add_state(ConfigState.PROCESSED, on_enter=self.do_process_cfg)
-        fsm_builder.add_final_state(ConfigState.COMPLETED, on_enter=lambda e: self.__callback(self.get_conf()))
+        fsm_builder.add_final_state(
+            ConfigState.COMPLETED, on_enter=lambda e: self.__callback(self.get_conf())
+        )
 
-        fsm_builder.add_transition(ConfigEvent.READ, ConfigState.INITIAL, ConfigState.READ)
-        fsm_builder.add_transition(ConfigEvent.BUILD, ConfigState.READ, ConfigState.BUILT)
-        fsm_builder.add_transition(ConfigEvent.PARSE, ConfigState.BUILT, ConfigState.PARSED)
-        fsm_builder.add_transition(ConfigEvent.VALIDATE, ConfigState.PARSED, ConfigState.VALIDATED)
-        fsm_builder.add_transition(ConfigEvent.PROCESS, ConfigState.VALIDATED, ConfigState.PROCESSED)
-        fsm_builder.add_transition(ConfigEvent.COMPLETE, ConfigState.PROCESSED, ConfigState.COMPLETED)
+        fsm_builder.add_transition(
+            ConfigEvent.READ, ConfigState.INITIAL, ConfigState.READ
+        )
+        fsm_builder.add_transition(
+            ConfigEvent.BUILD, ConfigState.READ, ConfigState.BUILT
+        )
+        fsm_builder.add_transition(
+            ConfigEvent.PARSE, ConfigState.BUILT, ConfigState.PARSED
+        )
+        fsm_builder.add_transition(
+            ConfigEvent.VALIDATE, ConfigState.PARSED, ConfigState.VALIDATED
+        )
+        fsm_builder.add_transition(
+            ConfigEvent.PROCESS, ConfigState.VALIDATED, ConfigState.PROCESSED
+        )
+        fsm_builder.add_transition(
+            ConfigEvent.COMPLETE, ConfigState.PROCESSED, ConfigState.COMPLETED
+        )
         return fsm_builder
 
     def start(self):
@@ -86,9 +102,14 @@ class ConfigLifeCycle:
     def do_build_parser(self, e):
         provider_factory = ProviderFactory(self.args.reward_data_provider)
 
-        self.__parser = BakingYamlConfParser(yaml_text=self.__config_text, clnt_mngr=self.__node_client,
-                                             provider_factory=provider_factory, network_config=self.__nw_cfg,
-                                             node_url=self.args.node_endpoint, api_base_url=self.args.api_base_url)
+        self.__parser = BakingYamlConfParser(
+            yaml_text=self.__config_text,
+            clnt_mngr=self.__node_client,
+            provider_factory=provider_factory,
+            network_config=self.__nw_cfg,
+            node_url=self.args.node_endpoint,
+            api_base_url=self.args.api_base_url,
+        )
 
     def do_parse_cfg(self, e):
         self.__parser.parse()
@@ -113,10 +134,18 @@ class ConfigLifeCycle:
         for file in os.listdir(cfg_dir):
             if file.endswith(".yaml") and not file.startswith("master"):
                 if cfg_file:
-                    raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format(cfg_file, file))
+                    raise Exception(
+                        "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
+                            cfg_file, file
+                        )
+                    )
                 cfg_file = file
 
         if cfg_file is None:
-            raise Exception("Unable to find any '.yaml' configuration files inside configuration directory({})".format(cfg_dir))
+            raise Exception(
+                "Unable to find any '.yaml' configuration files inside configuration directory({})".format(
+                    cfg_dir
+                )
+            )
 
         return os.path.join(cfg_dir, cfg_file)

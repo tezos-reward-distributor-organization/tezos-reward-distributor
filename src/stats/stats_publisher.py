@@ -11,15 +11,19 @@ logger = main_logger
 
 def stats_publisher(stats_dict):
 
-    logger.info("Sending anonymous statistics; See docs/statistics.rst for more information.")
+    logger.info(
+        "Sending anonymous statistics; See docs/statistics.rst for more information."
+    )
 
     try:
-        stats_dict['pythonver'] = "{}.{}".format(version_info.major, version_info.minor)
-        stats_dict['os'] = platform()
+        stats_dict["pythonver"] = "{}.{}".format(version_info.major, version_info.minor)
+        stats_dict["os"] = platform()
 
         logger.debug("stats_publisher data: {}".format(stats_dict))
 
-        resp = requests.post(STATS_URL, json=stats_dict, timeout=15, headers={'user-agent': 'trd/0.0.1'})
+        resp = requests.post(
+            STATS_URL, json=stats_dict, timeout=15, headers={"user-agent": "trd/0.0.1"}
+        )
 
         if resp.status_code != HTTPStatus.OK:
             raise Exception("Unable to POST anonymous stats: {}".format(resp.text))

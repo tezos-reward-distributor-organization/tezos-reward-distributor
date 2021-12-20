@@ -1,7 +1,11 @@
 from _decimal import ROUND_HALF_DOWN
 from decimal import Decimal
 
-from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
+from calc.calculate_phase_base import (
+    CalculatePhaseBase,
+    BY_CONFIGURATION,
+    BY_MIN_DELEGATION,
+)
 from model.baking_conf import MIN_DELEGATION_KEY
 
 
@@ -43,7 +47,10 @@ class CalculatePhase1(CalculatePhaseBase):
                 rl0.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 rewards.append(rl0)
                 total_balance_excluded += rl0.staking_balance
-            elif MIN_DELEGATION_KEY in self.excluded_set and rl0.staking_balance < self.min_delegation_amount:
+            elif (
+                MIN_DELEGATION_KEY in self.excluded_set
+                and rl0.staking_balance < self.min_delegation_amount
+            ):
                 rl0.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 rewards.append(rl0)
                 total_balance_excluded += rl0.staking_balance
@@ -60,7 +67,10 @@ class CalculatePhase1(CalculatePhaseBase):
 
         # total reward amount needs to be diminished at the same rate total balance diminishes
         new_total_amnt_multiplier = new_total_balance / total_balance
-        new_total_amount = \
-            int(Decimal(total_amount * new_total_amnt_multiplier).to_integral_value(rounding=ROUND_HALF_DOWN))
+        new_total_amount = int(
+            Decimal(total_amount * new_total_amnt_multiplier).to_integral_value(
+                rounding=ROUND_HALF_DOWN
+            )
+        )
 
         return rewards, new_total_amount

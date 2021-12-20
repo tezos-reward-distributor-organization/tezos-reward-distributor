@@ -99,7 +99,9 @@ def test_batch_payer_total_payout_amount():
 
         # Reward data
         # Fetch cycle 51 of granadanet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
-        reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE, RewardsType.ACTUAL)
+        reward_model = rewardApi.get_rewards_for_cycle_map(
+            PAYOUT_CYCLE, RewardsType.ACTUAL
+        )
 
         # Calculate rewards - payment_producer.py
         reward_model.computed_reward_amount = reward_model.total_reward_amount
@@ -152,4 +154,6 @@ def test_batch_payer_total_payout_amount():
 
     assert total_attempts == 3
     assert total_payout_amount == 238211030
-    assert (PAYMENT_ADDRESS_BALANCE // total_payout_amount) - 1 == number_future_payable_cycles
+    assert (
+        PAYMENT_ADDRESS_BALANCE // total_payout_amount
+    ) - 1 == number_future_payable_cycles

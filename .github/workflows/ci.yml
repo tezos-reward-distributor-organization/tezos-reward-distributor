@@ -23,11 +23,14 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Install linter dependencies
-      run: pip install flake8
+    - name: Install linter and formater dependencies
+      run: pip install black flake8
 
     - name: Lint with flake8 
       run: flake8 src/ tests/
+
+    - name: Check black format 
+      run:  black --check src/ tests/
 
   build-trd:
     strategy:

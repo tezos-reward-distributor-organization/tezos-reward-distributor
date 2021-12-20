@@ -28,16 +28,26 @@ class CalculatePhaseZeroBalance(CalculatePhaseBase):
             # in the CSV payment report
 
             # KT1 accounts do not require reactivation on 0 balance
-            if (delegate.type == reward_log.TYPE_DELEGATOR
-                    and delegate.current_balance == 0
-                    and not delegate.paymentaddress.startswith("KT1")):
+            if (
+                delegate.type == reward_log.TYPE_DELEGATOR
+                and delegate.current_balance == 0
+                and not delegate.paymentaddress.startswith("KT1")
+            ):
 
                 if reactivate_zeroed:
                     delegate.needs_activation = True
-                    logger.info("{:s} has a 0 balance and will be reactivated".format(delegate.address))
+                    logger.info(
+                        "{:s} has a 0 balance and will be reactivated".format(
+                            delegate.address
+                        )
+                    )
                 else:
                     delegate.skip(BY_ZERO_BALANCE, self.phase)
-                    logger.info("{:s} has a 0 balance and will NOT be reactivated".format(delegate.address))
+                    logger.info(
+                        "{:s} has a 0 balance and will NOT be reactivated".format(
+                            delegate.address
+                        )
+                    )
 
             reward_data7.append(delegate)
 
