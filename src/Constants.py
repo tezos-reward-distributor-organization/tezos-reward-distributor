@@ -1,8 +1,9 @@
 from enum import Enum
 
 EXIT_PAYMENT_TYPE = "exit"
+PROTOCOL_NAME = 'hangzhou'
+CURRENT_TESTNET = ('{}2net'.format(PROTOCOL_NAME)).upper()
 
-CURRENT_TESTNET = 'GRANADANET'
 
 FIRST_GRANADA_LEVEL = 1589249
 
@@ -10,19 +11,19 @@ FIRST_GRANADA_LEVEL = 1589249
 # Public RPC
 PUBLIC_NODE_URL = {
     'MAINNET': 'https://mainnet-tezos.giganode.io',
-    CURRENT_TESTNET: 'https://granadanet.smartpy.io'
+    CURRENT_TESTNET: 'https://testnet-tezos.giganode.io'
 }
 
 # TzStats
-TZSTATS_PREFIX_API = {
+TZSTATS_PUBLIC_API_URL = {
     'MAINNET': 'https://api.tzstats.com',
-    CURRENT_TESTNET: 'https://api.granada.tzstats.com'
+    CURRENT_TESTNET: 'https://api.{}.tzstats.com'.format(PROTOCOL_NAME)
 }
 
 # TzKT
-TZKT_API_PREFIX = {
+TZKT_PUBLIC_API_URL = {
     'MAINNET': 'https://api.tzkt.io/v1',
-    CURRENT_TESTNET: 'https://api.{}.tzkt.io/v1'.format(CURRENT_TESTNET)
+    CURRENT_TESTNET: 'https://api.{}.tzkt.io/v1'.format(CURRENT_TESTNET).lower()
 }
 
 
@@ -30,7 +31,7 @@ TZKT_API_PREFIX = {
 DEFAULT_NETWORK_CONFIG_MAP = {
     'MAINNET': {'NAME': 'MAINNET', 'NB_FREEZE_CYCLE': 5, 'BLOCK_TIME_IN_SEC': 60, 'MINIMAL_BLOCK_DELAY': 30, 'BLOCKS_PER_CYCLE': 8192,
                 'BLOCKS_PER_ROLL_SNAPSHOT': 512, 'BLOCK_REWARD': 20000000, 'ENDORSEMENT_REWARD': 78125},
-    CURRENT_TESTNET: {'NAME': CURRENT_TESTNET, 'NB_FREEZE_CYCLE': 3, 'BLOCK_TIME_IN_SEC': 30, 'MINIMAL_BLOCK_DELAY': 15, 'BLOCKS_PER_CYCLE': 4096,
+    CURRENT_TESTNET: {'NAME': CURRENT_TESTNET, 'NB_FREEZE_CYCLE': 3, 'BLOCK_TIME_IN_SEC': 15, 'MINIMAL_BLOCK_DELAY': 15, 'BLOCKS_PER_CYCLE': 4096,
                       'BLOCKS_PER_ROLL_SNAPSHOT': 256, 'BLOCK_REWARD': 20000000, 'ENDORSEMENT_REWARD': 78125},
 }
 
@@ -39,7 +40,11 @@ TEZOS_RPC_PORT = 8732
 
 MUTEZ = 1e6
 
-VERSION = 9.0
+VERSION = 10.0
+
+DISK_LIMIT_PERCENTAGE = 0.1
+
+GIGA_BYTE = 1e9
 
 
 class RunMode(Enum):

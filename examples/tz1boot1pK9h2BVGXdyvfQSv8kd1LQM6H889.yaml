@@ -62,3 +62,9 @@ plugins:
   webhook:
     endpoint: https://mydomain.com/webhook.php
     token: Xynl6svphysd3BhjLP6IS
+  discord:
+    endpoint: https://discord.com/api/webhooks/9876543212345678/OmAfadfasdfasdfasdfasdfasdfasfsdf
+    send_admin: False
+    discord_text: >
+      Rewards for cycle %CYCLE% are completed.
+      We paid out %TREWARDS% XTZ in rewards to %NDELEGATORS% delegators.

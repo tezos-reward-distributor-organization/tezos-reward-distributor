@@ -2,7 +2,7 @@ import requests
 from api.block_api import BlockApi
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
-from Constants import TZSTATS_PREFIX_API
+from Constants import TZSTATS_PUBLIC_API_URL
 
 logger = main_logger
 
@@ -12,7 +12,7 @@ class TzStatsBlockApiImpl(BlockApi):
     def __init__(self, nw):
         super(TzStatsBlockApiImpl, self).__init__(nw)
 
-        self.head_api = TZSTATS_PREFIX_API[nw['NAME']]
+        self.head_api = TZSTATS_PUBLIC_API_URL[nw['NAME']]
         if self.head_api is None:
             raise Exception("Unknown network {}".format(nw))
 
