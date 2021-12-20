@@ -41,13 +41,15 @@ This plugin will send the configured recipients an 'administrative style' email 
 
 ### Parameters
 
-* smtp_user: The username for SMTP authentication
-* smtp_pass: The password or application token for SMTP authentication
-* smtp_host: The host of your SMTP server
-* smtp_port: The port for communication to your SMTP server. TLS uses 587.
-* smtp_tls: true/false. Only TLS is supported as SSL is usually deprecated in email servers.
-* smtp_sender: The address for 'From' in the email
-* smtp_recipients: A YAML list containing email addresses of intended recipients. Must be list format even if 1 recipient.
+* smtp_user: (Required unless no login is used) The username for SMTP authentication
+* smtp_pass: (Required unless no login is used) The password or application token for SMTP authentication
+* smtp_nologin: (Optional) true or false, set to true to send without login, it will work if recipients are local to the server you connect to.
+* smtp_host: (Required) The host of your SMTP server
+* smtp_port: (Required) The port for communication to your SMTP server. TLS uses 587.
+* smtp_tls: (Optional) true/false. Only TLS is supported as SSL is usually deprecated in email servers.
+* smtp_sender: (Required) The address for 'From' in the email
+* smtp_sender_name: (Optional) String - You can specify the display name for the sender, put a name to the sender, instead of just having the email address
+* smtp_recipients: (Required) A YAML list containing email addresses of intended recipients. Must be list format even if 1 recipient.
 
 ### Example Config
 

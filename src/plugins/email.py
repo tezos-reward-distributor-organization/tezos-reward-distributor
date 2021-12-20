@@ -41,7 +41,7 @@ class EmailPlugin(plugins.Plugin):
         # Create email and basic headers
         msg = MIMEMultipart()
         if self.sender_name is not None:
-            msg['From'] = formataddr((self.sender_name, self.sender)) 
+            msg['From'] = formataddr((self.sender_name, self.sender))
         else:
             msg['From'] = self.sender
         msg['To'] = ", ".join(self.recipients)
@@ -99,7 +99,7 @@ class EmailPlugin(plugins.Plugin):
         # default value if not set is False
         if self.nologin is None:
             self.nologin = False
-        
+
         # Sanity when nolo
         if self.nologin and (self.host is None or self.recipients is None):
             raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
