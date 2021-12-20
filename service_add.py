@@ -38,8 +38,16 @@ def main():
         print("-------------")
         print(content)
         print("-------------")
-        with open(path_service, 'w') as service_file:
-            service_file.write(content)
+        
+        try:
+            with open(path_service, 'w') as service_file:
+                service_file.write(content)
+        except Exception as e:
+            import errno
+            print("Exception during write operation invoked: {}".format(e))
+            if e.errno == errno.ENOSPC:
+                print("Not enough space on device!")
+            exit()
 
     cmd = "systemctl enable " + path_service
     print("Running command:'{}'".format("systemctl enable " + path_service))

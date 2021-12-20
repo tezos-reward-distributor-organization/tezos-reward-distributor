@@ -20,6 +20,10 @@ idx_income_lost_accusation_deposits = 35
 idx_income_lost_revelation_fees = 36
 idx_income_lost_revelation_rewards = 37
 
+# Rights
+idx_n_baking_rights = 7
+idx_n_endorsing_rights = 8
+
 # Cycle Snapshot
 idx_balance = 0
 idx_baker_delegated = 1

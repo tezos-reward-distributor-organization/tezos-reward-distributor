@@ -17,6 +17,7 @@ from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
 from util.dir_utils import get_calculation_report_file
+from util.disk_is_full import disk_is_full
 
 logger = main_logger.getChild("payment_producer")
 
@@ -29,7 +30,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                  dry_run, client_manager, node_url, reward_data_provider, node_url_public='', api_base_url=None,
                  retry_injected=False):
         super(PaymentProducer, self).__init__()
-
+        self.event = threading.Event()
         self.rules_model = RulesModel(baking_cfg.get_excluded_set_tob(), baking_cfg.get_excluded_set_toe(),
                                       baking_cfg.get_excluded_set_tof(), baking_cfg.get_dest_map())
         self.baking_address = baking_cfg.get_baking_address()
@@ -53,6 +54,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.reward_api.set_dexter_contracts_set(dexter_contracts_set)
 
         self.rewards_type = baking_cfg.get_rewards_type()
+        self.pay_denunciation_rewards = baking_cfg.get_pay_denunciation_rewards()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
 
@@ -150,6 +152,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             try:
 
+                # Exit if disk is full
+                # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
+                if disk_is_full():
+                    self.exit()
+                    break
+
                 # Check if local node is bootstrapped; sleep if needed; restart loop
                 if not self.node_is_bootstrapped():
                     logger.info("Local node {} is not in sync with the Tezos network. Will sleep for {} blocks and check again." .format(self.node_url, BOOTSTRAP_SLEEP))
@@ -170,6 +178,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 # payments should not pass beyond last released reward cycle
                 if pymnt_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override:
                     if not self.payments_queue.full():
+                        if (not self.pay_denunciation_rewards) and self.reward_api.name == 'RPC':
+                            logger.info("Error: pay_denunciation_rewards=False requires an indexer since it is not possible to distinguish reward source using RPC")
+                            e = "You must set 'pay_denunciation_rewards' to True when using RPC provider."
+                            logger.error(e)
+                            self.exit()
+                            break
 
                         # Paying upcoming cycles (-R in [-6, -11] )
                         if pymnt_cycle >= current_cycle:
@@ -192,7 +206,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             continue  # Break/Repeat loop
 
                         else:
-                            result = self.try_to_pay(pymnt_cycle, self.rewards_type)
+                            result = self.try_to_pay(pymnt_cycle, self.rewards_type, self.nw_config)
 
                         if result:
                             # single run is done. Do not continue.
@@ -246,7 +260,35 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         return
 
-    def try_to_pay(self, pymnt_cycle, rewards_type):
+    def stop(self):
+        self.exit()
+        self.event.set()
+
+    def compute_rewards(self, reward_model, rewards_type, network_config):
+        if rewards_type.isEstimated():
+            logger.info("Using estimated rewards for payouts calculations")
+            block_reward = network_config["BLOCK_REWARD"]
+            endorsement_reward = network_config["ENDORSEMENT_REWARD"]
+            total_estimated_block_reward = reward_model.num_baking_rights * block_reward
+            total_estimated_endorsement_reward = reward_model.num_endorsing_rights * endorsement_reward
+            computed_reward_amount = total_estimated_block_reward + total_estimated_endorsement_reward
+        elif rewards_type.isActual():
+            logger.info("Using actual rewards for payouts calculations")
+            if self.pay_denunciation_rewards:
+                computed_reward_amount = reward_model.total_reward_amount
+            else:
+                # omit denunciation rewards
+                computed_reward_amount = reward_model.rewards_and_fees - reward_model.equivocation_losses
+        elif rewards_type.isIdeal():
+            logger.info("Using ideal rewards for payouts calculations")
+            if self.pay_denunciation_rewards:
+                computed_reward_amount = reward_model.total_reward_amount + reward_model.offline_losses
+            else:
+                # omit denunciation rewards and double baking loss
+                computed_reward_amount = reward_model.rewards_and_fees + reward_model.offline_losses
+        return computed_reward_amount
+
+    def try_to_pay(self, pymnt_cycle, rewards_type, network_config):
         try:
             logger.info("Payment cycle is {:s}".format(str(pymnt_cycle)))
 
@@ -258,37 +300,33 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 return True
 
             # 1- get reward data
-            if rewards_type.isEstimated():
-                logger.info("Using estimated rewards for payouts calculations")
-            elif rewards_type.isActual():
-                logger.info("Using actual rewards for payouts calculations")
-            elif rewards_type.isIdeal():
-                logger.info("Using ideal rewards for payouts calculations")
-
             reward_model = self.reward_api.get_rewards_for_cycle_map(pymnt_cycle, rewards_type)
 
-            # 2- calculate rewards
+            # 2- compute reward amount to distribute based on configuration
+            reward_model.computed_reward_amount = self.compute_rewards(reward_model, rewards_type, network_config)
+
+            # 3- calculate rewards for delegators
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
 
-            # 3- set cycle info
+            # 4- set cycle info
             for rl in reward_logs:
                 rl.cycle = pymnt_cycle
             total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
 
-            # 4- if total_rewards > 0, proceed with payment
+            # 5- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
 
-                # 5- send to payment consumer
+                # 6- send to payment consumer
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
 
                 sleep(5.0)
 
-                # 6- create calculations report file. This file contains calculations details
+                # 7- create calculations report file. This file contains calculations details
                 report_file_path = get_calculation_report_file(self.calculations_dir, pymnt_cycle)
                 logger.debug("Creating calculation report (%s)", report_file_path)
                 self.create_calculations_report(reward_logs, report_file_path, total_amount, rewards_type)
 
-                # 7- processing of cycle is done
+                # 8- processing of cycle is done
                 logger.info("Reward creation is done for cycle {}, created {} rewards.".format(pymnt_cycle, len(reward_logs)))
 
             elif total_amount_to_pay == 0:
@@ -340,52 +378,59 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         elif rewards_type.isIdeal():
             rt = "I"
 
-        # Open reports file and write; auto-closes file
-        with open(report_file_path, 'w', newline='') as f:
+        try:
 
-            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            # Open reports file and write; auto-closes file
+            with open(report_file_path, 'w', newline='') as f:
 
-            # write headers and total rewards
-            writer.writerow(
-                ["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
-                 "skipped", "atphase", "desc", "payment_address", "rewards_type"])
+                writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-            # First row is for the baker
-            writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
-                             "{0:f}".format(1.0),
-                             "{0:f}".format(1.0),
-                             "{0:f}".format(0.0),
-                             "{0:f}".format(total_rewards),
-                             "{0:f}".format(0.0),
-                             "{0:f}".format(0.0),
-                             "0", "0", "-1", "Baker",
-                             "None", rt
-                             ])
+                # write headers and total rewards
+                writer.writerow(["address", "type", "staked_balance", "current_balance", "ratio", "fee_ratio", "amount", "fee_amount", "fee_rate", "payable",
+                                "skipped", "atphase", "desc", "payment_address", "rewards_type"])
 
-            for pymnt_log in payment_logs:
-                # write row to csv file
-                array = [pymnt_log.address, pymnt_log.type, pymnt_log.staking_balance, pymnt_log.current_balance,
-                         "{0:.10f}".format(pymnt_log.ratio),
-                         "{0:.10f}".format(pymnt_log.service_fee_ratio),
-                         "{0:f}".format(pymnt_log.amount),
-                         "{0:f}".format(pymnt_log.service_fee_amount),
-                         "{0:f}".format(pymnt_log.service_fee_rate),
-                         "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
-                         pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
-                         pymnt_log.desc if pymnt_log.desc else "None",
-                         pymnt_log.paymentaddress, rt]
-                writer.writerow(array)
+                # First row is for the baker
+                writer.writerow([self.baking_address, "B", sum([pl.staking_balance for pl in payment_logs]),
+                                 "{0:f}".format(1.0),
+                                 "{0:f}".format(1.0),
+                                 "{0:f}".format(0.0),
+                                 "{0:f}".format(total_rewards),
+                                 "{0:f}".format(0.0),
+                                 "{0:f}".format(0.0),
+                                 "0", "0", "-1", "Baker",
+                                 "None", rt])
 
-                logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                             "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
-                             "desc: {:s}, pay_addr: {:s}, type: {:s}"
-                             .format(pymnt_log.address, pymnt_log.type,
-                                     pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
-                                     pymnt_log.ratio, pymnt_log.service_fee_ratio,
-                                     pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
-                                     pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
-                                     "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
-                                     pymnt_log.desc, pymnt_log.paymentaddress, rt))
+                for pymnt_log in payment_logs:
+                    # write row to csv file
+                    array = [pymnt_log.address, pymnt_log.type, pymnt_log.staking_balance, pymnt_log.current_balance,
+                             "{0:.10f}".format(pymnt_log.ratio),
+                             "{0:.10f}".format(pymnt_log.service_fee_ratio),
+                             "{0:f}".format(pymnt_log.amount),
+                             "{0:f}".format(pymnt_log.service_fee_amount),
+                             "{0:f}".format(pymnt_log.service_fee_rate),
+                             "1" if pymnt_log.payable else "0", "1" if pymnt_log.skipped else "0",
+                             pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
+                             pymnt_log.desc if pymnt_log.desc else "None",
+                             pymnt_log.paymentaddress, rt]
+                    writer.writerow(array)
+
+                    logger.debug("Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                                 "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                                 "desc: {:s}, pay_addr: {:s}, type: {:s}"
+                                 .format(pymnt_log.address, pymnt_log.type,
+                                         pymnt_log.staking_balance / MUTEZ, pymnt_log.current_balance / MUTEZ,
+                                         pymnt_log.ratio, pymnt_log.service_fee_ratio,
+                                         pymnt_log.amount / MUTEZ, pymnt_log.service_fee_amount / MUTEZ,
+                                         pymnt_log.service_fee_rate, "Y" if pymnt_log.payable else "N",
+                                         "Y" if pymnt_log.skipped else "N", pymnt_log.skippedatphase,
+                                         pymnt_log.desc, pymnt_log.paymentaddress, rt))
+
+        except Exception as e:
+            import errno
+            print("Exception during write operation invoked: {}".format(e))
+            if e.errno == errno.ENOSPC:
+                print("Not enough space on device!")
+            exit()
 
         logger.info("Calculation report is created at '{}'".format(report_file_path))
 
