@@ -3,7 +3,7 @@ from time import sleep
 
 from log_config import main_logger, DEFAULT_LOG_FILE
 from NetworkConfiguration import default_network_config_map
-from Constants import CURRENT_TESTNET, PRIVATE_NODE_URL, PUBLIC_NODE_URL
+from Constants import CURRENT_TESTNET, PRIVATE_NODE_URL, PUBLIC_NODE_URL, PRIVATE_SIGNER_URL
 
 
 REQUIREMENTS_FILE_PATH = 'requirements.txt'
@@ -183,7 +183,7 @@ def add_argument_dry_no_consumer(parser):
 def add_argument_signer_endpoint(parser):
     parser.add_argument("-E", "--signer_endpoint",
                         help="URL used by the Tezos-signer to accept HTTP requests.",
-                        default='http://127.0.0.1:6732')
+                        default=PRIVATE_SIGNER_URL)
 
 
 def add_argument_docker(parser):
