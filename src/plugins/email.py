@@ -103,7 +103,7 @@ class EmailPlugin(plugins.Plugin):
         if not isinstance(self.recipients, list):
             raise plugins.PluginConfigurationError("[{:s}] 'smtp_recipients' not configured correctly".format(self.name))
 
-        # Sanity check, when nologin enabled smtp_user is not required
+        # Sanity check, when nologin is enabled smtp_user is not required
         if self.nologin and (self.host is None or self.recipients is None):
             raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
         # Sanity check, when nologin is disabled, smtp_user is required
