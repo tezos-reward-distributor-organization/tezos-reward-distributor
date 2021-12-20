@@ -8,6 +8,7 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
+from email.utils import formataddr
 from os.path import basename
 
 logger = logging.getLogger("main.plugins.email")
@@ -39,7 +40,10 @@ class EmailPlugin(plugins.Plugin):
 
         # Create email and basic headers
         msg = MIMEMultipart()
-        msg['From'] = self.sender
+        if self.sender_name is not None:
+            msg['From'] = formataddr((self.sender_name, self.sender)) 
+        else:
+            msg['From'] = self.sender
         msg['To'] = ", ".join(self.recipients)
         msg['Date'] = formatdate(localtime=True)
         msg['Subject'] = subject
@@ -63,7 +67,8 @@ class EmailPlugin(plugins.Plugin):
             smtp.starttls(context=ssl_context)
             smtp.ehlo()
 
-        smtp.login(self.user, self.password)
+        if not self.nologin:
+            smtp.login(self.user, self.password)
         smtp.sendmail(self.sender, self.recipients, msg.as_string())
         smtp.close()
 
@@ -82,13 +87,21 @@ class EmailPlugin(plugins.Plugin):
         self.port = self.cfg["smtp_port"]
         self.use_tls = self.cfg["smtp_tls"]
         self.sender = self.cfg["smtp_sender"]
+        self.sender_name = self.cfg["smtp_sender_name"]
         self.user = self.cfg["smtp_user"]
         self.password = self.cfg["smtp_pass"]
+        self.nologin = self.cfg["nologin"]
 
         self.recipients = self.cfg["smtp_recipients"]
         if not isinstance(self.recipients, list):
             raise plugins.PluginConfigurationError("[{:s}] 'smtp_recipients' not configured correctly".format(self.name))
 
-        # Sanity
-        if self.host is None or self.user is None or self.recipients is None:
+        # default value if not set is False
+        if self.nologin is None:
+            self.nologin = False
+        
+        # Sanity when nolo
+        if self.nologin and (self.host is None or self.recipients is None):
+            raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
+        elif self.host is None or self.user is None or self.recipients is None:
             raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
