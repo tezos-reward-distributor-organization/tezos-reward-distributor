@@ -11,8 +11,15 @@ class LockFile:
         self.tryLock()
 
         pid = os.getpid()
-        with open(self.lock_file_path, 'w') as f:
-            f.write(str(pid))
+        try:
+            with open(self.lock_file_path, 'w') as f:
+                f.write(str(pid))
+        except Exception as e:
+            import errno
+            print("Exception during write operation invoked: {}".format(e))
+            if e.errno == errno.ENOSPC:
+                print("Not enough space on device!")
+            exit()
 
         self.lock_acquired = True
 

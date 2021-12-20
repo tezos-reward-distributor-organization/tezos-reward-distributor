@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from http import HTTPStatus
 
-from Constants import TEZOS_RPC_PORT
+from Constants import TEZOS_RPC_PORT, PUBLIC_NODE_URL, TZSTATS_PUBLIC_API_URL, TZKT_PUBLIC_API_URL, CURRENT_TESTNET
 from exception.client import ClientException
 from log_config import main_logger, verbose_logger
 
@@ -12,6 +12,11 @@ logger = main_logger
 
 COMM_BOOTSTRAP = "{}/monitor/bootstrapped"
 MAX_NB_TRIES = 3
+PUBLIC_NODE_URLS = [
+    PUBLIC_NODE_URL[CURRENT_TESTNET], PUBLIC_NODE_URL["MAINNET"],
+    TZSTATS_PUBLIC_API_URL[CURRENT_TESTNET], TZSTATS_PUBLIC_API_URL["MAINNET"],
+    TZKT_PUBLIC_API_URL[CURRENT_TESTNET], TZKT_PUBLIC_API_URL["MAINNET"],
+]
 
 
 class ClientManager:
@@ -25,7 +30,9 @@ class ClientManager:
                 self.node_endpoint = 'https://' + self.node_endpoint
                 logger.info("Node endpoint URL points to an SSL endpoint. Using HTTPS protocol prefix.")
         if len(self.node_endpoint.split(':')) < 3:
-            self.node_endpoint += f':{TEZOS_RPC_PORT}'
+            # public node urls does not need to have port assignments
+            if self.node_endpoint not in PUBLIC_NODE_URLS:
+                self.node_endpoint += f':{TEZOS_RPC_PORT}'
         self.signer_endpoint = signer_endpoint
 
     def get_node_url(self) -> str:

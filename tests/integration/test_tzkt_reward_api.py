@@ -12,6 +12,10 @@ from tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
 from NetworkConfiguration import default_network_config_map
 from parameterized import parameterized
 
+'''
+These tests are cached. To re-run, delete contents of the tzkt_data folder.
+'''
+
 
 def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
     path = join(dirname(__file__), f'tzkt_data/{address}_{cycle}_{suffix}.json')
@@ -21,7 +25,14 @@ def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
         return RewardProviderModel(
             delegate_staking_balance=data['delegate_staking_balance'],
             total_reward_amount=data['total_reward_amount'],
-            delegator_balance_dict=data['delegator_balance_dict'])
+            rewards_and_fees=data['rewards_and_fees'],
+            equivocation_losses=data['equivocation_losses'],
+            offline_losses=data['offline_losses'],
+            num_baking_rights=data['num_baking_rights'],
+            num_endorsing_rights=data['num_endorsing_rights'],
+            denunciation_rewards=data['denunciation_rewards'],
+            delegator_balance_dict=data['delegator_balance_dict'],
+            computed_reward_amount=None)
     else:
         return None
 
@@ -31,14 +42,27 @@ def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
     data = dict(
         delegate_staking_balance=model.delegate_staking_balance,
         total_reward_amount=model.total_reward_amount,
+        rewards_and_fees=model.rewards_and_fees,
+        equivocation_losses=model.equivocation_losses,
+        offline_losses=model.offline_losses,
+        num_baking_rights=model.num_baking_rights,
+        num_endorsing_rights=model.num_endorsing_rights,
+        denunciation_rewards=model.denunciation_rewards,
         delegator_balance_dict={
-            k: v
+            k: {i: v[i] for i in v if i != 'current_balance'}
             for k, v in model.delegator_balance_dict.items()
             if v['staking_balance'] > 0
         }
     )
-    with open(path, 'w+') as f:
-        f.write(json.dumps(data))
+    try:
+        with open(path, 'w+') as f:
+            f.write(json.dumps(data, indent=2))
+    except Exception as e:
+        import errno
+        print("Exception during write operation invoked: {}".format(e))
+        if e.errno == errno.ENOSPC:
+            print("Not enough space on device!")
+        exit()
 
 
 dummy_addr_dict = dict(
@@ -70,6 +94,12 @@ class RewardApiImplTests(unittest.TestCase):
         ('tz1UUgPwikRHW1mEyVZfGYy6QaxrY6Y7WaG5', 207),  # revelation miss
     ])
     def test_get_rewards_for_cycle_map(self, address, cycle):
+        '''
+        This test compares the total rewards and balance accoring to tzkt,
+        to the total rewards according to rpc.
+
+        It also compares the balances per delegator.
+        '''
         rpc_rewards = load_reward_model(address, cycle, 'actual')
         if rpc_rewards is None:
             rpc_impl = RpcRewardApiImpl(
@@ -134,7 +164,7 @@ class RewardApiImplTests(unittest.TestCase):
             baking_address=address)
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
-        self.assertNotEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance)
+        self.assertAlmostEqual(rpc_rewards.delegate_staking_balance, tzkt_rewards.delegate_staking_balance)
         self.assertAlmostEqual(rpc_rewards.total_reward_amount, tzkt_rewards.total_reward_amount, delta=1)
 
     def test_update_current_balances(self):
