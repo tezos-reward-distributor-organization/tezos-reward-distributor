@@ -67,24 +67,6 @@ plugins:
       - alice@hotmail.com
 ```
 
-### Example 2 config
-```
-plugins:
-  email:
-    smtp_nologin: true
-    smtp_host: smtp.domain.com
-    smtp_port: 587
-    smtp_tls: true
-    smtp_sender: trdnotice@domain.com
-    smtp_sender_name: "TRD Notification Source X"
-    # when using nologin, you cannot relay externally, all recipients must be 
-    # from a domain local to the server you connect with smtp_host.
-    # in this case dmain.com is the server that is reponsible for domain.com email.
-    smtp_recipients:
-      - bob@domain.com
-      - alice@domain.com
-```
-
 ## Telegram Plugin
 
 This plugin allows payouts notifications to be sent via Telegram bot to specific chatIds, including groups.
