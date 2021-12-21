@@ -8,7 +8,7 @@ from Constants import RewardsType
 from rpc.rpc_block_api import RpcBlockApiImpl
 
 node_endpoint = PUBLIC_NODE_URL["MAINNET"]
-network = {'NAME': 'MAINNET'}
+network = {"NAME": "MAINNET"}
 
 
 @patch(

@@ -3,7 +3,12 @@ from time import sleep
 
 from log_config import main_logger, DEFAULT_LOG_FILE
 from NetworkConfiguration import default_network_config_map
-from Constants import CURRENT_TESTNET, PRIVATE_NODE_URL, PUBLIC_NODE_URL, PRIVATE_SIGNER_URL
+from Constants import (
+    CURRENT_TESTNET,
+    PRIVATE_NODE_URL,
+    PUBLIC_NODE_URL,
+    PRIVATE_SIGNER_URL,
+)
 
 
 REQUIREMENTS_FILE_PATH = "requirements.txt"
@@ -158,10 +163,15 @@ def add_argument_network(parser):
 
 
 def add_argument_node_endpoint(parser):
-    parser.add_argument("-A", "--node_endpoint",
-                        help=("Node (host:port pair) potentially with protocol prefix especially if TLS encryption is used. Default is {}. "
-                              "This is the main Tezos node used by the client for rpc queries and operation injections.").format(PRIVATE_NODE_URL),
-                        default=PRIVATE_NODE_URL)
+    parser.add_argument(
+        "-A",
+        "--node_endpoint",
+        help=(
+            "Node (host:port pair) potentially with protocol prefix especially if TLS encryption is used. Default is {}. "
+            "This is the main Tezos node used by the client for rpc queries and operation injections."
+        ).format(PRIVATE_NODE_URL),
+        default=PRIVATE_NODE_URL,
+    )
 
 
 def add_argument_provider(parser):
@@ -179,12 +189,17 @@ def add_argument_provider(parser):
 
 
 def add_argument_node_addr_public(parser):
-    parser.add_argument("-Ap", "--node_addr_public",
-                        help=("Public node base URL. Default is {}. "
-                              "This argument will only be used in case the reward provider is set to 'prpc'. "
-                              "This node will only be used to query reward data and delegator list. "
-                              "It must be an ARCHIVE node.").format(PUBLIC_NODE_URL["MAINNET"]),
-                        default=PUBLIC_NODE_URL["MAINNET"])
+    parser.add_argument(
+        "-Ap",
+        "--node_addr_public",
+        help=(
+            "Public node base URL. Default is {}. "
+            "This argument will only be used in case the reward provider is set to 'prpc'. "
+            "This node will only be used to query reward data and delegator list. "
+            "It must be an ARCHIVE node."
+        ).format(PUBLIC_NODE_URL["MAINNET"]),
+        default=PUBLIC_NODE_URL["MAINNET"],
+    )
 
 
 def add_argument_reports_base(parser):
@@ -224,9 +239,12 @@ def add_argument_dry_no_consumer(parser):
 
 
 def add_argument_signer_endpoint(parser):
-    parser.add_argument("-E", "--signer_endpoint",
-                        help="URL used by the Tezos-signer to accept HTTP requests.",
-                        default=PRIVATE_SIGNER_URL)
+    parser.add_argument(
+        "-E",
+        "--signer_endpoint",
+        help="URL used by the Tezos-signer to accept HTTP requests.",
+        default=PRIVATE_SIGNER_URL,
+    )
 
 
 def add_argument_docker(parser):
