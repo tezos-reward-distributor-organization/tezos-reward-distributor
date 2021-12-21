@@ -81,8 +81,7 @@ class WebhookPlugin(plugins.Plugin):
         return
 
     def cast(self, reward):
-        """Explicit casting of reward log elements.
-        """
+        """Explicit casting of reward log elements."""
         reward.address = str(reward.address)
         reward.paymentaddress = str(reward.paymentaddress)
         reward.type = str(reward.type)

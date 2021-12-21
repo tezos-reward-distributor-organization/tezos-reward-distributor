@@ -6,11 +6,10 @@ logger = main_logger.getChild("tzkt_block_api")
 
 
 class TzKTBlockApiImpl(BlockApi):
-
     def __init__(self, nw, base_url=None):
         super(TzKTBlockApiImpl, self).__init__(nw)
         if base_url is None:
-            self.api = TzKTApi.from_network(nw['NAME'])
+            self.api = TzKTApi.from_network(nw["NAME"])
         else:
             self.api = TzKTApi.from_url(base_url)
 
@@ -20,11 +19,11 @@ class TzKTBlockApiImpl(BlockApi):
         :returns: 0
         """
         head = self.api.get_head()
-        if not head.get('synced'):
-            raise TzKTApiError('Not synced')
+        if not head.get("synced"):
+            raise TzKTApiError("Not synced")
 
-        current_cycle = int(head['cycle'])
-        current_level = int(head['level'])
+        current_cycle = int(head["cycle"])
+        current_level = int(head["level"])
 
         return (current_cycle, current_level)
 

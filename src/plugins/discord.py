@@ -19,7 +19,9 @@ class DiscordPlugin(plugins.Plugin):
         super().__init__("Discord", cfg["discord"])
         logger.info("[DiscordPlugin] WebHook URL: {:s}".format(self.endpoint))
 
-    def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
+    def send_admin_notification(
+        self, subject, message, attachments=None, reward_data=None
+    ):
 
         admin_text = "**{:s}**\n{:s}".format(subject, message)
         if self.send_admin:
@@ -28,10 +30,11 @@ class DiscordPlugin(plugins.Plugin):
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
 
         # Do template replacements
-        payout_message = self.discord_text \
-            .replace("%CYCLE%", str(cycle)) \
-            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ, 2))) \
+        payout_message = (
+            self.discord_text.replace("%CYCLE%", str(cycle))
+            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ, 2)))
             .replace("%NDELEGATORS%", str(nb_delegators))
+        )
         self.post_to_discord(payout_message, "PAYOUT")
 
     def post_to_discord(self, message, type):
@@ -48,7 +51,11 @@ class DiscordPlugin(plugins.Plugin):
             return
 
         # else, no error
-        logger.info("[DiscordPlugin] {:s} Notification sent; Response {:d} {:s}".format(type, resp.status_code, resp.text))
+        logger.info(
+            "[DiscordPlugin] {:s} Notification sent; Response {:d} {:s}".format(
+                type, resp.status_code, resp.text
+            )
+        )
 
     def validateConfig(self):
         """Check that that passed config contains all the necessary
@@ -58,7 +65,9 @@ class DiscordPlugin(plugins.Plugin):
 
         for k in self._req_cfg_keys:
             if k not in cfg_keys:
-                raise plugins.PluginConfigurationError("[{:s}] '{:s}' setting not found".format(self.name, k))
+                raise plugins.PluginConfigurationError(
+                    "[{:s}] '{:s}' setting not found".format(self.name, k)
+                )
 
         # Set config
         self.endpoint = self.cfg["endpoint"]
@@ -67,7 +76,13 @@ class DiscordPlugin(plugins.Plugin):
 
         # Sanity
         if self.endpoint is None:
-            raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
+            raise plugins.PluginConfigurationError(
+                "[{:s}] Not Configured".format(self.name)
+            )
 
         if len(self.discord_text) < 10:
-            raise plugins.PluginConfigurationError("[{:s}] 'discord_text' must be longer than 10 characters".format(self.name))
+            raise plugins.PluginConfigurationError(
+                "[{:s}] 'discord_text' must be longer than 10 characters".format(
+                    self.name
+                )
+            )

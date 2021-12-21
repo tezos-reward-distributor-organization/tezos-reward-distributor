@@ -12,7 +12,12 @@ class TestCalculatePhase3(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratio,
+                current_balance=0,
+            )
             rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
@@ -58,7 +63,12 @@ class TestCalculatePhase3(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratio,
+                current_balance=0,
+            )
             rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
@@ -69,7 +79,9 @@ class TestCalculatePhase3(TestCase):
         supporters_set = {"addr2"}
         specials_map = {"addr3": 30}
 
-        fee_calculator = ServiceFeeCalculator(supporters_set, specials_map, 20)  # 20% fee
+        fee_calculator = ServiceFeeCalculator(
+            supporters_set, specials_map, 20
+        )  # 20% fee
         phase3 = CalculatePhase3(fee_calculator, excluded_set)
 
         new_rewards, new_total_reward = phase3.calculate(rewards, total_reward)
@@ -110,4 +122,6 @@ class TestCalculatePhase3(TestCase):
 
             if rl3.address == "addr3":
                 self.assertEqual(0.3, rl3.service_fee_rate)
-                self.assertEqual(specials_map["addr3"] / 100 * rl3.ratio2, rl3.service_fee_ratio)
+                self.assertEqual(
+                    specials_map["addr3"] / 100 * rl3.ratio2, rl3.service_fee_ratio
+                )

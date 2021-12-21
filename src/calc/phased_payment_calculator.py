@@ -6,7 +6,11 @@ from calc.calculate_phase2 import CalculatePhase2
 from calc.calculate_phase3 import CalculatePhase3
 from calc.calculate_phase4 import CalculatePhase4
 from calc.calculate_phase_final import CalculatePhaseFinal
-from model.reward_log import TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, cmp_by_type_balance
+from model.reward_log import (
+    TYPE_FOUNDERS_PARENT,
+    TYPE_OWNERS_PARENT,
+    cmp_by_type_balance,
+)
 from log_config import main_logger
 
 logger = main_logger.getChild("phased_calculator")
@@ -27,7 +31,14 @@ class PhasedPaymentCalculator:
     -- Phase Last : Payment Phase
     """
 
-    def __init__(self, founders_map, owners_map, service_fee_calculator, min_delegation_amount, rules_model):
+    def __init__(
+        self,
+        founders_map,
+        owners_map,
+        service_fee_calculator,
+        min_delegation_amount,
+        rules_model,
+    ):
         self.rules_model = rules_model
         self.owners_map = owners_map
         self.founders_map = founders_map
@@ -48,42 +59,64 @@ class PhasedPaymentCalculator:
         rwrd_logs = phase0.calculate()
 
         total_rwrd_amnt = reward_provider_model.computed_reward_amount
-        logger.info("Total rewards before processing is {:,} mutez.".format(total_rwrd_amnt))
+        logger.info(
+            "Total rewards before processing is {:,} mutez.".format(total_rwrd_amnt)
+        )
         if total_rwrd_amnt == 0:
             logger.debug("NO REWARDS to process!")
             return [], 0
 
-        assert reward_provider_model.delegate_staking_balance == sum([rl.staking_balance for rl in rwrd_logs])
+        assert reward_provider_model.delegate_staking_balance == sum(
+            [rl.staking_balance for rl in rwrd_logs]
+        )
         assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs]))
 
         # calculate phase 1
-        phase1 = CalculatePhase1(self.rules_model.exclusion_set1, self.min_delegation_amnt)
+        phase1 = CalculatePhase1(
+            self.rules_model.exclusion_set1, self.min_delegation_amnt
+        )
         rwrd_logs, total_rwrd_amnt = phase1.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped]))
+        assert self.almost_equal(
+            1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped])
+        )
 
         # calculate phase 2
-        phase2 = CalculatePhase2(self.rules_model.exclusion_set2, self.min_delegation_amnt)
+        phase2 = CalculatePhase2(
+            self.rules_model.exclusion_set2, self.min_delegation_amnt
+        )
         rwrd_logs, total_rwrd_amnt = phase2.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped]))
+        assert self.almost_equal(
+            1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped])
+        )
 
         # calculate phase 3
-        phase3 = CalculatePhase3(self.fee_calc, self.rules_model.exclusion_set3, self.min_delegation_amnt)
+        phase3 = CalculatePhase3(
+            self.fee_calc, self.rules_model.exclusion_set3, self.min_delegation_amnt
+        )
         rwrd_logs, total_rwrd_amnt = phase3.calculate(rwrd_logs, total_rwrd_amnt)
 
-        assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped]))
+        assert self.almost_equal(
+            1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped])
+        )
 
-        founder_parent = next(filter(lambda x: x.type == TYPE_FOUNDERS_PARENT, rwrd_logs), None)
+        founder_parent = next(
+            filter(lambda x: x.type == TYPE_FOUNDERS_PARENT, rwrd_logs), None
+        )
 
-        calculated_founder_rewards = sum([rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]) + sum([rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])
+        calculated_founder_rewards = sum(
+            [rl.ratio2 for rl in rwrd_logs if rl.skippedatphase == 3]
+        ) + sum([rl.service_fee_ratio for rl in rwrd_logs if not rl.skipped])
 
         if founder_parent:
             assert self.almost_equal(founder_parent.ratio3, calculated_founder_rewards)
         else:
             assert self.almost_equal(0, calculated_founder_rewards)
 
-        owners_parent = next(filter(lambda x: x.type == TYPE_OWNERS_PARENT, rwrd_logs), None)
+        owners_parent = next(
+            filter(lambda x: x.type == TYPE_OWNERS_PARENT, rwrd_logs), None
+        )
         if owners_parent:
             assert owners_parent.service_fee_rate == 0
 
@@ -101,11 +134,16 @@ class PhasedPaymentCalculator:
         total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
         amnt_pay_diff = abs(total_rwrd_amnt - total_amount_to_pay)
 
-        logger.info("Total rewards after processing is {:,} mutez.".format(total_rwrd_amnt))
+        logger.info(
+            "Total rewards after processing is {:,} mutez.".format(total_rwrd_amnt)
+        )
         logger.info("Total amount to pay is {:,} mutez".format(total_amount_to_pay))
-        logger.info("Difference between total rewards and total payment amount is {:,} mutez. "
-                    "This is due to floating point arithmetic. (max allowed diff is {:,})"
-                    .format(amnt_pay_diff, MINOR_DIFF))
+        logger.info(
+            "Difference between total rewards and total payment amount is {:,} mutez. "
+            "This is due to floating point arithmetic. (max allowed diff is {:,})".format(
+                amnt_pay_diff, MINOR_DIFF
+            )
+        )
 
         return rwrd_logs, total_rwrd_amnt
 

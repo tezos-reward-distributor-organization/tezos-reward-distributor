@@ -11,7 +11,12 @@ class TestCalculatePhase1(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratio,
+                current_balance=0,
+            )
             rl0.ratio0 = ratio
             rewards.append(rl0)
 
@@ -33,6 +38,8 @@ class TestCalculatePhase1(TestCase):
         for pr_new, ratio0 in zip(new_rewards[1:], ratios[1:]):
             ratio_sum += pr_new.ratio1
 
-            self.assertAlmostEqual(ratio0 * total_reward, pr_new.ratio1 * new_total_reward, delta=0.000001)
+            self.assertAlmostEqual(
+                ratio0 * total_reward, pr_new.ratio1 * new_total_reward, delta=0.000001
+            )
 
         self.assertEqual(1.0, ratio_sum)

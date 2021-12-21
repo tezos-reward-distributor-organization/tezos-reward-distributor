@@ -8,14 +8,27 @@ from datetime import datetime
 
 from cli.client_manager import ClientManager
 from log_config import main_logger, init
-from launch_common import print_banner, add_argument_network, add_argument_provider, add_argument_reports_base, \
-    add_argument_config_dir, add_argument_node_endpoint, add_argument_dry, add_argument_dry_no_consumer, \
-    add_argument_signer_endpoint, add_argument_docker, add_argument_verbose
+from launch_common import (
+    print_banner,
+    add_argument_network,
+    add_argument_provider,
+    add_argument_reports_base,
+    add_argument_config_dir,
+    add_argument_node_endpoint,
+    add_argument_dry,
+    add_argument_dry_no_consumer,
+    add_argument_signer_endpoint,
+    add_argument_docker,
+    add_argument_verbose,
+)
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
-from util.dir_utils import get_payment_root, \
-    get_successful_payments_dir, get_failed_payments_dir
+from util.dir_utils import (
+    get_payment_root,
+    get_successful_payments_dir,
+    get_failed_payments_dir,
+)
 from util.disk_is_full import disk_is_full
 from util.process_life_cycle import ProcessLifeCycle
 
@@ -31,7 +44,9 @@ MUTEZ = 1
 
 
 def main(args):
-    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
+    logger.info(
+        "Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1))
+    )
 
     # 1- find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -46,7 +61,7 @@ def main(args):
     if not os.path.isfile(payments_file):
         raise Exception("payments_file ({}) does not exist.".format(payments_file))
 
-    with open(payments_file, 'r') as file:
+    with open(payments_file, "r") as file:
         payment_lines = file.readlines()
 
     payments_dict = {}
@@ -68,7 +83,11 @@ def main(args):
 
     # 8- Check the disk size at the reports dir location
     if disk_is_full(reports_dir):
-        raise Exception("Disk is full at {}. Please free space to continue saving reports.".format(reports_dir))
+        raise Exception(
+            "Disk is full at {}. Please free space to continue saving reports.".format(
+                reports_dir
+            )
+        )
 
     # if in reports run mode, do not create consumers
     # create reports in reports directory
@@ -81,19 +100,23 @@ def main(args):
     get_successful_payments_dir(payments_root, create=True)
     get_failed_payments_dir(payments_root, create=True)
 
-    client_manager = ClientManager(node_endpoint=args.node_endpoint,
-                                   signer_endpoint=args.signer_endpoint)
+    client_manager = ClientManager(
+        node_endpoint=args.node_endpoint, signer_endpoint=args.signer_endpoint
+    )
 
     for i in range(NB_CONSUMERS):
-        c = PaymentConsumer(name='manual_payment_consumer', payments_dir=payments_root,
-                            key_name=args.paymentaddress,
-                            payments_queue=payments_queue,
-                            node_addr=args.node_endpoint,
-                            client_manager=client_manager,
-                            dry_run=dry_run,
-                            reactivate_zeroed=False,
-                            delegator_pays_ra_fee=False,
-                            delegator_pays_xfer_fee=False)
+        c = PaymentConsumer(
+            name="manual_payment_consumer",
+            payments_dir=payments_root,
+            key_name=args.paymentaddress,
+            payments_queue=payments_queue,
+            node_addr=args.node_endpoint,
+            client_manager=client_manager,
+            dry_run=dry_run,
+            reactivate_zeroed=False,
+            delegator_pays_ra_fee=False,
+            delegator_pays_xfer_fee=False,
+        )
         time.sleep(1)
         c.start()
 
@@ -109,7 +132,14 @@ def main(args):
         pi.payment = pi.payment * MUTEZ
         payment_items.append(pi)
 
-        logger.info("Reward created for cycle %s address %s amount %f fee %f tz type %s", pi.cycle, pi.address, pi.payment, pi.fee, pi.type)
+        logger.info(
+            "Reward created for cycle %s address %s amount %f fee %f tz type %s",
+            pi.cycle,
+            pi.address,
+            pi.payment,
+            pi.fee,
+            pi.type,
+        )
 
     payments_queue.put(PaymentBatch(None, 0, payment_items))
     payments_queue.put(PaymentBatch(None, 0, [RewardLog.ExitInstance()]))
@@ -120,10 +150,18 @@ def get_baking_configuration_file(config_dir):
     for file in os.listdir(config_dir):
         if file.endswith(".yaml") and not file.startswith("master"):
             if config_file:
-                raise Exception("Application only supports one baking configuration file. Found at least 2 {}, {}".format(config_file, file))
+                raise Exception(
+                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
+                        config_file, file
+                    )
+                )
             config_file = file
     if config_file is None:
-        raise Exception("Unable to find any '.yaml' configuration files inside configuration directory({})".format(config_dir))
+        raise Exception(
+            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(
+                config_dir
+            )
+        )
 
     return os.path.join(config_dir, config_file)
 
@@ -131,16 +169,21 @@ def get_baking_configuration_file(config_dir):
 class ReleaseOverrideAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         if not -11 <= values:
-            parser.error("Valid range for release-override({0}) is [-11,) ".format(option_string))
+            parser.error(
+                "Valid range for release-override({0}) is [-11,) ".format(option_string)
+            )
 
         setattr(namespace, "realase_override", values)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
         raise Exception(
-            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+            "Must be using Python 3.6 or later but it is {}.{}".format(
+                sys.version_info.major, sys.version_info.minor
+            )
+        )
 
     parser = argparse.ArgumentParser()
     add_argument_network(parser)
@@ -154,15 +197,20 @@ if __name__ == '__main__':
     add_argument_docker(parser)
     add_argument_verbose(parser)
 
-    parser.add_argument("paymentaddress",
-                        help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
-                             "to sign for the address, it is necessary to use an alias.")
-    parser.add_argument("payments_file", help="File of payment lines. Each line should contain PKH:amount. "
-                                              "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33")
+    parser.add_argument(
+        "paymentaddress",
+        help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
+        "to sign for the address, it is necessary to use an alias.",
+    )
+    parser.add_argument(
+        "payments_file",
+        help="File of payment lines. Each line should contain PKH:amount. "
+        "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33",
+    )
 
     args = parser.parse_args()
 
-    init(args.syslog, args.log_file, args.verbose == 'on', mode='payfor')
+    init(args.syslog, args.log_file, args.verbose == "on", mode="payfor")
 
     script_name = " - Pay For Script"
     print_banner(args, script_name)

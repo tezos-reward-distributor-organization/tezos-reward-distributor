@@ -1,5 +1,4 @@
 class FeeValidator:
-
     def __init__(self, specifier) -> None:
         super().__init__()
         self.specifier = specifier
@@ -13,4 +12,8 @@ class FeeValidator:
             failed = True
 
         if failed:
-            raise Exception("Fee for {} cannot be {}. Valid range is [0-100]".format(self.specifier, fee))
+            raise Exception(
+                "Fee for {} cannot be {}. Valid range is [0-100]".format(
+                    self.specifier, fee
+                )
+            )

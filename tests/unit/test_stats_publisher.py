@@ -11,8 +11,12 @@ logger.addHandler(logging.StreamHandler())
 
 
 class TestStatsPublish(TestCase):
-
-    @patch('stats.stats_publisher.logger', MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)))
+    @patch(
+        "stats.stats_publisher.logger",
+        MagicMock(
+            debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)
+        ),
+    )
     def test_publish(self):
 
         stats_dict = {
@@ -37,7 +41,7 @@ class TestStatsPublish(TestCase):
             "m_offset": 16,
             "m_docker": 0,
             "pythonver": "3.6",
-            "os": "Linux-3.10.0-957.12.2.el7.x86_64-x86_64-with-centos-7.7.1908-Core"
+            "os": "Linux-3.10.0-957.12.2.el7.x86_64-x86_64-with-centos-7.7.1908-Core",
         }
 
         try:

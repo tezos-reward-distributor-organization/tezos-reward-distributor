@@ -6,7 +6,16 @@ import shutil
 
 
 class VerboseLoggingHelper:
-    def __init__(self, logging_dir, enabled, verbose_logger, main_logger, formatter, keep_at_most, mode):
+    def __init__(
+        self,
+        logging_dir,
+        enabled,
+        verbose_logger,
+        main_logger,
+        formatter,
+        keep_at_most,
+        mode,
+    ):
         self.main_logger = main_logger
         self.logging_dir = logging_dir
         self.formatter = formatter
@@ -30,7 +39,7 @@ class VerboseLoggingHelper:
 
     def change_file_handler(self, mode):
         self.log_file_path = self.get_log_file_path(mode)
-        self.handler = logging.FileHandler(self.log_file_path, 'a')
+        self.handler = logging.FileHandler(self.log_file_path, "a")
         self.handler.setLevel(logging.DEBUG)
         self.handler.setFormatter(self.formatter)
         self.main_logger.addHandler(self.handler)
@@ -51,7 +60,9 @@ class VerboseLoggingHelper:
 
     def get_log_file_path(self, cycle):
         formatted_date = datetime.now().strftime("%Y%m%d_%H%M%S")
-        return os.path.join(self.logging_dir, f'app_verbose_{cycle}_{formatted_date}.log')
+        return os.path.join(
+            self.logging_dir, f"app_verbose_{cycle}_{formatted_date}.log"
+        )
 
     def reset(self, cycle):
         if not self.enabled:
@@ -69,13 +80,15 @@ class VerboseLoggingHelper:
         self.handler.close()
 
     def archive(self, path):
-        archive_dir = os.path.join(self.logging_dir, 'verbose_backup')
+        archive_dir = os.path.join(self.logging_dir, "verbose_backup")
         os.makedirs(archive_dir, exist_ok=True)
 
-        archive_file = os.path.join(archive_dir, os.path.splitext(os.path.basename(path))[0] + '.gz')
+        archive_file = os.path.join(
+            archive_dir, os.path.splitext(os.path.basename(path))[0] + ".gz"
+        )
 
-        with open(path, 'rb') as f_in:
-            with gzip.open(archive_file, 'wb') as f_out:
+        with open(path, "rb") as f_in:
+            with gzip.open(archive_file, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
         os.remove(path)
@@ -83,7 +96,11 @@ class VerboseLoggingHelper:
         self.remove_oldest(archive_dir)
 
     def remove_oldest(self, archive_dir):
-        files = [os.path.join(archive_dir, f) for f in os.listdir(archive_dir) if self.is_archive_file(f)]
+        files = [
+            os.path.join(archive_dir, f)
+            for f in os.listdir(archive_dir)
+            if self.is_archive_file(f)
+        ]
         sorted_files = sorted(files, key=os.path.getmtime)
 
         if len(sorted_files) > self.keep_at_most:
