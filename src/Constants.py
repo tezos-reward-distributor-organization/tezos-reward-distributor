@@ -1,5 +1,6 @@
 from enum import Enum
 
+LOCAL_HOST = '127.0.0.1'
 EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = 'hangzhou'
 CURRENT_TESTNET = ('{}2net'.format(PROTOCOL_NAME)).upper()
@@ -7,7 +8,17 @@ CURRENT_TESTNET = ('{}2net'.format(PROTOCOL_NAME)).upper()
 
 FIRST_GRANADA_LEVEL = 1589249
 
+TEZOS_RPC_PORT = 8732
+
+SIGNER_PORT = 6732
+
+PRIVATE_SIGNER_URL = 'http://{}:{}'.format(LOCAL_HOST, SIGNER_PORT)
+
 # Providers api prefix
+# Private RPC
+
+PRIVATE_NODE_URL = 'http://{}:{}'.format(LOCAL_HOST, TEZOS_RPC_PORT)
+
 # Public RPC
 PUBLIC_NODE_URL = {
     'MAINNET': 'https://mainnet-tezos.giganode.io',
@@ -35,8 +46,6 @@ DEFAULT_NETWORK_CONFIG_MAP = {
                       'BLOCKS_PER_ROLL_SNAPSHOT': 256, 'BLOCK_REWARD': 20000000, 'ENDORSEMENT_REWARD': 78125},
 }
 
-
-TEZOS_RPC_PORT = 8732
 
 MUTEZ = 1e6
 

@@ -3,7 +3,7 @@ from pay.batch_payer import BatchPayer, TZTX_FEE, MUTEZ_PER_GAS_UNIT
 from model.reward_log import RewardLog
 from cli.client_manager import ClientManager
 from http import HTTPStatus
-from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, PaymentStatus
+from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, PRIVATE_SIGNER_URL, PaymentStatus
 
 run_ops_parsed = {
     "contents": [
@@ -33,7 +33,7 @@ def test_simulate_single_operation():
         pymnt_addr="tz1234567890123456789012345678901234",
         clnt_mngr=ClientManager(
             node_endpoint=PUBLIC_NODE_URL[CURRENT_TESTNET],
-            signer_endpoint="http://127.0.0.1:6732",
+            signer_endpoint=PRIVATE_SIGNER_URL,
         ),
         delegator_pays_ra_fee=True,
         delegator_pays_xfer_fee=True,
