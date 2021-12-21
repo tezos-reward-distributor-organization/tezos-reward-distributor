@@ -41,7 +41,7 @@ class EmailPlugin(plugins.Plugin):
         # Create email and basic headers
         msg = MIMEMultipart()
         if self.sender_name is not None:
-            msg['From'] = formataddr((self.sender_name, self.sender)) 
+            msg['From'] = formataddr((self.sender_name, self.sender))
         else:
             msg['From'] = self.sender
         msg['To'] = ", ".join(self.recipients)
@@ -87,24 +87,21 @@ class EmailPlugin(plugins.Plugin):
         self.port = self.cfg["smtp_port"]
         self.use_tls = self.cfg["smtp_tls"]
         self.sender = self.cfg["smtp_sender"]
+        self.sender_name = self.cfg["smtp_sender_name"]
         self.user = self.cfg["smtp_user"]
         self.password = self.cfg["smtp_pass"]
-        if "smtp_nologin" not in self.cfg:
-            self.cfg["smtp_nologin"] = False
-
-        self.nologin = self.cfg["smtp_nologin"]
-        
-        if "smtp_sender_name" in self.cfg['smtp_sender_name']:
-            self.cfg["smtp_sender_name"] = None
-
-        self.sender_name = self.cfg["smtp_sender_name"]
+        self.nologin = self.cfg["nologin"]
 
         self.recipients = self.cfg["smtp_recipients"]
         if not isinstance(self.recipients, list):
             raise plugins.PluginConfigurationError("[{:s}] 'smtp_recipients' not configured correctly".format(self.name))
 
+        # default value if not set is False
+        if self.nologin is None:
+            self.nologin = False
+
         # Sanity when nolo
         if self.nologin and (self.host is None or self.recipients is None):
             raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
-        elif not self.nologin and (self.host is None or self.user is None or self.recipients is None):
+        elif self.host is None or self.user is None or self.recipients is None:
             raise plugins.PluginConfigurationError("[{:s}] Not Configured".format(self.name))
