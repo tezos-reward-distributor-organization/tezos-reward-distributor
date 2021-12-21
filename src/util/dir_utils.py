@@ -12,7 +12,13 @@ CALCULATIONS_ROOT_DIR = "calculations"
 
 
 def payment_report_file_path(pymnt_root, pymnt_cycle, nb_failed):
-    return os.path.abspath(os.path.join(pymnt_root, PAYMENT_DONE_DIR if nb_failed == 0 else PAYMENT_FAILED_DIR, str(pymnt_cycle) + '.csv'))
+    return os.path.abspath(
+        os.path.join(
+            pymnt_root,
+            PAYMENT_DONE_DIR if nb_failed == 0 else PAYMENT_FAILED_DIR,
+            str(pymnt_cycle) + ".csv",
+        )
+    )
 
 
 def get_successful_payments_dir(pymnt_root, create=None):

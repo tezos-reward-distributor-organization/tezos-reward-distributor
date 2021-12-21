@@ -17,7 +17,7 @@ class BlockApi(ABC):
     def level_in_cycle(self, level):
         if level >= FIRST_GRANADA_LEVEL:
             # Since protocol Granada
-            return ((level - FIRST_GRANADA_LEVEL) % self.nw['BLOCKS_PER_CYCLE'])
+            return (level - FIRST_GRANADA_LEVEL) % self.nw["BLOCKS_PER_CYCLE"]
         else:
             # Until protocol Florence
-            return (level % self.nw['BLOCKS_PER_CYCLE']) - 1
+            return (level % self.nw["BLOCKS_PER_CYCLE"]) - 1

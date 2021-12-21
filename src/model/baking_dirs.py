@@ -1,4 +1,9 @@
-from util.dir_utils import get_payment_root, get_calculations_root, get_successful_payments_dir, get_failed_payments_dir
+from util.dir_utils import (
+    get_payment_root,
+    get_calculations_root,
+    get_successful_payments_dir,
+    get_failed_payments_dir,
+)
 import os
 
 
@@ -17,5 +22,9 @@ class BakingDirs:
         self.reports_dir = os.path.join(reports_base, baking_address)
         self.payments_root = get_payment_root(self.reports_dir, create=True)
         self.calculations_root = get_calculations_root(self.reports_dir, create=True)
-        self.successful_payments_dir = get_successful_payments_dir(self.payments_root, create=True)
-        self.failed_payments_dir = get_failed_payments_dir(self.payments_root, create=True)
+        self.successful_payments_dir = get_successful_payments_dir(
+            self.payments_root, create=True
+        )
+        self.failed_payments_dir = get_failed_payments_dir(
+            self.payments_root, create=True
+        )

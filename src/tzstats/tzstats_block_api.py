@@ -8,16 +8,15 @@ logger = main_logger
 
 
 class TzStatsBlockApiImpl(BlockApi):
-
     def __init__(self, nw):
         super(TzStatsBlockApiImpl, self).__init__(nw)
 
-        self.head_api = TZSTATS_PUBLIC_API_URL[nw['NAME']]
+        self.head_api = TZSTATS_PUBLIC_API_URL[nw["NAME"]]
         if self.head_api is None:
             raise Exception("Unknown network {}".format(nw))
 
     def get_current_cycle_and_level(self):
-        uri = self.head_api + '/explorer/tip'
+        uri = self.head_api + "/explorer/tip"
 
         verbose_logger.debug("Requesting {}".format(uri))
 
@@ -33,24 +32,28 @@ class TzStatsBlockApiImpl(BlockApi):
 
     def get_revelation(self, pkh, verbose=False):
         try:
-            uri = self.head_api + '/explorer/account/{}'.format(pkh)
+            uri = self.head_api + "/explorer/account/{}".format(pkh)
             verbose_logger.debug("Requesting {}".format(uri))
             response = requests.get(uri)
             account = response.json()
             return bool(account["is_revealed"])
         except requests.exceptions.RequestException as e:
-            message = "[{}] - Unable to fetch revelation: {:s}".format(__class__.__name__, str(e))
+            message = "[{}] - Unable to fetch revelation: {:s}".format(
+                __class__.__name__, str(e)
+            )
             logger.error(message)
             raise ApiProviderException(message)
 
     def get_delegatable(self, pkh):
         try:
-            uri = self.head_api + '/explorer/account/{}'.format(pkh)
+            uri = self.head_api + "/explorer/account/{}".format(pkh)
             verbose_logger.debug("Requesting {}".format(uri))
             response = requests.get(uri)
             account = response.json()
             return bool(account["is_delegate"]) and bool(account["is_active_delegate"])
         except requests.exceptions.RequestException as e:
-            message = "[{}] - Unable to fetch delegate: {:s}".format(__class__.__name__, str(e))
+            message = "[{}] - Unable to fetch delegate: {:s}".format(
+                __class__.__name__, str(e)
+            )
             logger.error(message)
             raise ApiProviderException(message)

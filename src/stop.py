@@ -24,7 +24,7 @@ def pid_exists(pid):
         # in the process group of the calling process.
         # On certain systems 0 is a valid PID but we have no way
         # to know that in a portable fashion.
-        raise ValueError('invalid PID 0')
+        raise ValueError("invalid PID 0")
     try:
         os.kill(pid, signal.SIGTERM)
     except OSError as err:
@@ -45,7 +45,7 @@ def pid_exists(pid):
 def stop():
     pid = None
     try:
-        with open("./lock", 'rt') as f:
+        with open("./lock", "rt") as f:
             pid = f.readline()
             pid = int(pid)
     except FileNotFoundError:
@@ -65,5 +65,5 @@ def stop():
     print("Application with pid {} is stopped!".format(pid))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

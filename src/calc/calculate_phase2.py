@@ -1,4 +1,8 @@
-from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
+from calc.calculate_phase_base import (
+    CalculatePhaseBase,
+    BY_CONFIGURATION,
+    BY_MIN_DELEGATION,
+)
 from model.baking_conf import MIN_DELEGATION_KEY
 
 
@@ -43,7 +47,10 @@ class CalculatePhase2(CalculatePhaseBase):
                 rl1.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 rewards.append(rl1)
                 total_balance_excluded += rl1.staking_balance
-            elif MIN_DELEGATION_KEY in self.excluded_set and rl1.staking_balance < self.min_delegation_amount:
+            elif (
+                MIN_DELEGATION_KEY in self.excluded_set
+                and rl1.staking_balance < self.min_delegation_amount
+            ):
                 rl1.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 rewards.append(rl1)
                 total_balance_excluded += rl1.staking_balance

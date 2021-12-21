@@ -42,15 +42,21 @@ class CalculatePhase0(CalculatePhaseBase):
 
             staking_balance = delegator_info["staking_balance"]
             current_balance = delegator_info["current_balance"]
-            originaladdress = delegator_info["originaladdress"] if "originaladdress" in delegator_info else None
+            originaladdress = (
+                delegator_info["originaladdress"]
+                if "originaladdress" in delegator_info
+                else None
+            )
             total_delegator_balance += staking_balance
 
             ratio = staking_balance / delegate_staking_balance
-            reward_item = RewardLog(address=address,
-                                    type=reward_log.TYPE_DELEGATOR,
-                                    staking_balance=staking_balance,
-                                    current_balance=current_balance,
-                                    originaladdress=originaladdress)
+            reward_item = RewardLog(
+                address=address,
+                type=reward_log.TYPE_DELEGATOR,
+                staking_balance=staking_balance,
+                current_balance=current_balance,
+                originaladdress=originaladdress,
+            )
             reward_item.ratio = ratio
             reward_item.ratio0 = reward_item.ratio
 
@@ -58,10 +64,13 @@ class CalculatePhase0(CalculatePhaseBase):
 
             reward_logs.append(reward_item)
 
-        owners_rl = RewardLog(address=reward_log.TYPE_OWNERS_PARENT, type=reward_log.TYPE_OWNERS_PARENT,
-                              staking_balance=delegate_staking_balance - total_delegator_balance,
-                              current_balance=0)
-        owners_rl.ratio = (1 - ratio_sum)
+        owners_rl = RewardLog(
+            address=reward_log.TYPE_OWNERS_PARENT,
+            type=reward_log.TYPE_OWNERS_PARENT,
+            staking_balance=delegate_staking_balance - total_delegator_balance,
+            current_balance=0,
+        )
+        owners_rl.ratio = 1 - ratio_sum
         owners_rl.ratio0 = owners_rl.ratio
 
         reward_logs.append(owners_rl)

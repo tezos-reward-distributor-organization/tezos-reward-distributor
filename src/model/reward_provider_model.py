@@ -1,7 +1,17 @@
 class RewardProviderModel:
-    def __init__(self, delegate_staking_balance, num_baking_rights, num_endorsing_rights,
-                 total_reward_amount, rewards_and_fees, equivocation_losses, denunciation_rewards,
-                 offline_losses, delegator_balance_dict, computed_reward_amount) -> None:
+    def __init__(
+        self,
+        delegate_staking_balance,
+        num_baking_rights,
+        num_endorsing_rights,
+        total_reward_amount,
+        rewards_and_fees,
+        equivocation_losses,
+        denunciation_rewards,
+        offline_losses,
+        delegator_balance_dict,
+        computed_reward_amount,
+    ) -> None:
         super().__init__()
         self.delegator_balance_dict = delegator_balance_dict
         self.delegate_staking_balance = delegate_staking_balance

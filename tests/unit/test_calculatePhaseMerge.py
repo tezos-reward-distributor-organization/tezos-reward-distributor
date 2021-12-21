@@ -5,38 +5,49 @@ from model.reward_log import RewardLog, TYPE_MERGED, TYPE_DELEGATOR
 
 
 class TestCalculatePhaseMerge(TestCase):
-
     def test_merge(self):
 
         rewards = []
 
         #
         # Alice is a delegate, owner and founder
-        rlAD = RewardLog(address="tz1Alice01", type="D", staking_balance=10000, current_balance=20000)
+        rlAD = RewardLog(
+            address="tz1Alice01", type="D", staking_balance=10000, current_balance=20000
+        )
         rlAD.amount = 1234
         rewards.append(rlAD)
 
-        rlAO = RewardLog(address="tz1Alice01", type="O", staking_balance=10000, current_balance=0)
+        rlAO = RewardLog(
+            address="tz1Alice01", type="O", staking_balance=10000, current_balance=0
+        )
         rlAO.amount = 2345
         rewards.append(rlAO)
 
-        rlAF = RewardLog(address="tz1Alice01", type="F", staking_balance=10000, current_balance=0)
+        rlAF = RewardLog(
+            address="tz1Alice01", type="F", staking_balance=10000, current_balance=0
+        )
         rlAF.amount = 3456
         rewards.append(rlAF)
 
         #
         # Bob is only a delegate
-        rlBD = RewardLog(address="tz1Bob01", type="D", staking_balance=10000, current_balance=0)
+        rlBD = RewardLog(
+            address="tz1Bob01", type="D", staking_balance=10000, current_balance=0
+        )
         rlBD.amount = 5000
         rewards.append(rlBD)
 
         #
         # Charlie is an Owner and Founder, not a delegate
-        rlCO = RewardLog(address="tz1Charlie01", type="O", staking_balance=10000, current_balance=0)
+        rlCO = RewardLog(
+            address="tz1Charlie01", type="O", staking_balance=10000, current_balance=0
+        )
         rlCO.amount = 1122
         rewards.append(rlCO)
 
-        rlCF = RewardLog(address="tz1Charlie01", type="F", staking_balance=10000, current_balance=0)
+        rlCF = RewardLog(
+            address="tz1Charlie01", type="F", staking_balance=10000, current_balance=0
+        )
         rlCF.amount = 2233
         rewards.append(rlCF)
 

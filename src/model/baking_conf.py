@@ -1,21 +1,21 @@
 import json
 from model.custom_json_encoder import CustomJsonEncoder
 
-SERVICE_FEE = 'service_fee'
-OWNERS_MAP = 'owners_map'
-FOUNDERS_MAP = 'founders_map'
-BAKING_ADDRESS = 'baking_address'
-SPECIALS_MAP = 'specials_map'
-RULES_MAP = 'rules_map'
-SUPPORTERS_SET = 'supporters_set'
-PAYMENT_ADDRESS = 'payment_address'
-MIN_DELEGATION_AMT = 'min_delegation_amt'
-REACTIVATE_ZEROED = 'reactivate_zeroed'
-DELEGATOR_PAYS_XFER_FEE = 'delegator_pays_xfer_fee'
-DELEGATOR_PAYS_RA_FEE = 'delegator_pays_ra_fee'
-PLUGINS_CONF = 'plugins'
-REWARDS_TYPE = 'rewards_type'
-PAY_DENUNCIATION_REWARDS = 'pay_denunciation_rewards'
+SERVICE_FEE = "service_fee"
+OWNERS_MAP = "owners_map"
+FOUNDERS_MAP = "founders_map"
+BAKING_ADDRESS = "baking_address"
+SPECIALS_MAP = "specials_map"
+RULES_MAP = "rules_map"
+SUPPORTERS_SET = "supporters_set"
+PAYMENT_ADDRESS = "payment_address"
+MIN_DELEGATION_AMT = "min_delegation_amt"
+REACTIVATE_ZEROED = "reactivate_zeroed"
+DELEGATOR_PAYS_XFER_FEE = "delegator_pays_xfer_fee"
+DELEGATOR_PAYS_RA_FEE = "delegator_pays_ra_fee"
+PLUGINS_CONF = "plugins"
+REWARDS_TYPE = "rewards_type"
+PAY_DENUNCIATION_REWARDS = "pay_denunciation_rewards"
 
 # extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
@@ -23,14 +23,14 @@ EXCLUDED_DELEGATORS_SET_TOB = "__excluded_delegators_set_tob"
 EXCLUDED_DELEGATORS_SET_TOE = "__excluded_delegators_set_toe"
 EXCLUDED_DELEGATORS_SET_TOF = "__excluded_delegators_set_tof"
 DEST_MAP = "__destination_map"
-CONTRACTS_SET = '__contracts_set'
+CONTRACTS_SET = "__contracts_set"
 
 # destination map
 TOF = "TOF"
 TOB = "TOB"
 TOE = "TOE"
-MIN_DELEGATION_KEY = 'mindelegation'
-DEXTER = 'dexter'
+MIN_DELEGATION_KEY = "mindelegation"
+DEXTER = "dexter"
 
 
 class BakingConf:
@@ -42,7 +42,9 @@ class BakingConf:
         if attr in self.cfg_dict:
             return self.cfg_dict[attr]
 
-        raise Exception("Attribute {} not found in application configuration.".format(attr))
+        raise Exception(
+            "Attribute {} not found in application configuration.".format(attr)
+        )
 
     def get_baking_address(self):
         return self.get_attribute(BAKING_ADDRESS)
