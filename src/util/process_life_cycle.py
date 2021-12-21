@@ -321,7 +321,7 @@ class ProcessLifeCycle:
         )
 
     def do_lock(self, e):
-        LockFile().lock()
+        LockFile(self.args).lock()
         self.__lock_taken = True
 
     def do_load_plugins(self, e):
@@ -381,7 +381,7 @@ class ProcessLifeCycle:
         logger.info("--------------------------------------------------------")
 
         if self.__lock_taken:
-            LockFile().release()
+            LockFile(self.args).release()
             logger.info("Lock file removed!")
 
     def stop_handler(self, signum, frame):

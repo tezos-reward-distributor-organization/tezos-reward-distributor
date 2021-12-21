@@ -3,8 +3,8 @@ import sys
 
 
 class LockFile:
-    def __init__(self):
-        self.lock_file_path = "./lock"
+    def __init__(self, args):
+        self.lock_file_path = os.path.join(args.config_dir, "lock")
         self.lock_acquired = False
 
     def lock(self):
