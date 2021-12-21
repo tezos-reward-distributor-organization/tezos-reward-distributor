@@ -8,7 +8,6 @@ BY_ZERO_BALANCE = "Excluded by zero balance"
 
 
 class CalculatePhaseBase(ABC):
-
     @abstractmethod
     def calculate(self, input_list, total_amount):
         pass

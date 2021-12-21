@@ -9,7 +9,6 @@ EMAIL_INI_PATH = "./email.ini"
 
 # Manager class for the plugin subsystem
 class PluginManager(object):
-
     def __init__(self, cfg, dry_run=False):
         self.plugins = []
         self.dry_run = dry_run
@@ -17,14 +16,18 @@ class PluginManager(object):
         # Temporary message to notify of upgrade. Should be removed on next release.
         # Look for older email.ini file and print notice of upgrade
         if path.isfile(EMAIL_INI_PATH):
-            logger.warning("[Plugins] Detected obsolete email config file. Please copy the settings from 'email.ini' to the new plugins system. 'email.ini' has renamed 'email.ini.old'")
+            logger.warning(
+                "[Plugins] Detected obsolete email config file. Please copy the settings from 'email.ini' to the new plugins system. 'email.ini' has renamed 'email.ini.old'"
+            )
             rename(EMAIL_INI_PATH, "{:s}.old".format(EMAIL_INI_PATH))
 
         # Get the list of enabled plugins, and attempt to load
         if cfg["enabled"] is not None:
 
             if not isinstance(cfg["enabled"], list):
-                raise PluginConfigurationError("[Plugins] 'enabled' list is not properly configured.")
+                raise PluginConfigurationError(
+                    "[Plugins] 'enabled' list is not properly configured."
+                )
 
             for p in cfg["enabled"]:
                 self.loadPlugin(p, cfg)
@@ -35,7 +38,9 @@ class PluginManager(object):
 
     # Go through each plugin module and call send_admin_notification
     # TODO: Optimize DRY
-    def send_admin_notification(self, subject, message, attachments=None, reward_data=None):
+    def send_admin_notification(
+        self, subject, message, attachments=None, reward_data=None
+    ):
 
         if not self.plugins:
             logger.info("[Plugins] Not sending notification; no plugins enabled")
@@ -43,11 +48,19 @@ class PluginManager(object):
         for p in self.plugins:
             if not self.dry_run:
                 try:
-                    p.send_admin_notification(subject, message, attachments, reward_data)
+                    p.send_admin_notification(
+                        subject, message, attachments, reward_data
+                    )
                 except Exception as e:
-                    logger.error("[Plugins] [{:s}] Unknown Error: {:s}".format(p.name, str(e)))
+                    logger.error(
+                        "[Plugins] [{:s}] Unknown Error: {:s}".format(p.name, str(e))
+                    )
             else:
-                logger.info("[Plugins] [{:s}] send_admin_notification (Dry-Run mode)".format(p.name))
+                logger.info(
+                    "[Plugins] [{:s}] send_admin_notification (Dry-Run mode)".format(
+                        p.name
+                    )
+                )
 
     # Go through each plugin module and call send_payout_notification
     # TODO: Optimize DRY
@@ -61,9 +74,15 @@ class PluginManager(object):
                 try:
                     p.send_payout_notification(cycle, payout_amount, nb_delegators)
                 except Exception as e:
-                    logger.error("[Plugins] [{:s}] Unknown Error: {:s}".format(p.name, str(e)))
+                    logger.error(
+                        "[Plugins] [{:s}] Unknown Error: {:s}".format(p.name, str(e))
+                    )
             else:
-                logger.info("[Plugins] [{:s}] send_payout_notification (Dry-Run mode)".format(p.name))
+                logger.info(
+                    "[Plugins] [{:s}] send_payout_notification (Dry-Run mode)".format(
+                        p.name
+                    )
+                )
 
     # Dynamically load python modules as plugins
     def loadPlugin(self, plugin_name, cfg):
@@ -86,7 +105,11 @@ class PluginManager(object):
             logger.info("[Plugins] Loaded plugin {:s}".format(plugin.name))
 
         except ModuleNotFoundError as pe:
-            logger.error("[Plugins] Unable to load plugin '{:s}': {:s}. Please check documentation.".format(plugin_name, str(pe)))
+            logger.error(
+                "[Plugins] Unable to load plugin '{:s}': {:s}. Please check documentation.".format(
+                    plugin_name, str(pe)
+                )
+            )
         except PluginConfigurationError as pe:
             logger.error("[Plugins] Unable to load plugin: {:s}".format(str(pe)))
 

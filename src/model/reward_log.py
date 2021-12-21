@@ -14,18 +14,22 @@ types = {
     TYPE_FOUNDER: 3,
     TYPE_OWNERS_PARENT: 2,
     TYPE_FOUNDERS_PARENT: 1,
-    TYPE_MERGED: 0
+    TYPE_MERGED: 0,
 }
 
 
 class RewardLog:
-    def __init__(self, address, type, staking_balance, current_balance, originaladdress=None) -> None:
+    def __init__(
+        self, address, type, staking_balance, current_balance, originaladdress=None
+    ) -> None:
         super().__init__()
         self.staking_balance = staking_balance
         self.current_balance = current_balance
         self.address = address
         self.paymentaddress = address
-        self.originaladdress = originaladdress if originaladdress is not None else address
+        self.originaladdress = (
+            originaladdress if originaladdress is not None else address
+        )
         self.needs_activation = False
         self.type = type
         self.desc = ""
@@ -62,14 +66,27 @@ class RewardLog:
         return self
 
     def __repr__(self) -> str:
-        return "Address: {} ({}), T: {}, SB: {}, CB: {}, Amt: {}, Skp: {}, NA: {}".format(
-            self.address, self.paymentaddress, self.type,
-            self.staking_balance, self.current_balance, self.amount,
-            self.skipped, self.needs_activation)
+        return (
+            "Address: {} ({}), T: {}, SB: {}, CB: {}, Amt: {}, Skp: {}, NA: {}".format(
+                self.address,
+                self.paymentaddress,
+                self.type,
+                self.staking_balance,
+                self.current_balance,
+                self.amount,
+                self.skipped,
+                self.needs_activation,
+            )
+        )
 
     @staticmethod
     def ExitInstance():
-        return RewardLog(address=EXIT_PAYMENT_TYPE, type=EXIT_PAYMENT_TYPE, staking_balance=0, current_balance=0)
+        return RewardLog(
+            address=EXIT_PAYMENT_TYPE,
+            type=EXIT_PAYMENT_TYPE,
+            staking_balance=0,
+            current_balance=0,
+        )
 
     @staticmethod
     def ExternalInstance(file_name, address, amount):

@@ -7,7 +7,13 @@ from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 from log_config import main_logger
-from model.reward_log import cmp_by_type_balance, TYPE_MERGED, TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR
+from model.reward_log import (
+    cmp_by_type_balance,
+    TYPE_MERGED,
+    TYPE_FOUNDER,
+    TYPE_OWNER,
+    TYPE_DELEGATOR,
+)
 from pay.batch_payer import BatchPayer
 from util.disk_is_full import disk_is_full
 from stats.stats_publisher import stats_publisher
@@ -33,9 +39,25 @@ def count_and_log_failed(payment_logs):
 
 
 class PaymentConsumer(threading.Thread):
-    def __init__(self, name, payments_dir, key_name, payments_queue, node_addr, client_manager,
-                 network_config, plugins_manager, rewards_type, args=None, dry_run=None, reactivate_zeroed=True,
-                 delegator_pays_ra_fee=True, delegator_pays_xfer_fee=True, dest_map=None, publish_stats=True):
+    def __init__(
+        self,
+        name,
+        payments_dir,
+        key_name,
+        payments_queue,
+        node_addr,
+        client_manager,
+        network_config,
+        plugins_manager,
+        rewards_type,
+        args=None,
+        dry_run=None,
+        reactivate_zeroed=True,
+        delegator_pays_ra_fee=True,
+        delegator_pays_xfer_fee=True,
+        dest_map=None,
+        publish_stats=True,
+    ):
         super(PaymentConsumer, self).__init__()
 
         self.dest_map = dest_map if dest_map else {}
@@ -111,18 +133,30 @@ class PaymentConsumer(threading.Thread):
 
             # Filter zero-balance addresses based on config
             phaseZeroBalance = CalculatePhaseZeroBalance()
-            payment_items = phaseZeroBalance.calculate(payment_items, self.reactivate_zeroed)
+            payment_items = phaseZeroBalance.calculate(
+                payment_items, self.reactivate_zeroed
+            )
 
             payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
-            batch_payer = BatchPayer(self.node_addr, self.key_name, self.client_manager,
-                                     self.delegator_pays_ra_fee, self.delegator_pays_xfer_fee,
-                                     self.network_config, self.plugins_manager,
-                                     self.dry_run)
+            batch_payer = BatchPayer(
+                self.node_addr,
+                self.key_name,
+                self.client_manager,
+                self.delegator_pays_ra_fee,
+                self.delegator_pays_xfer_fee,
+                self.network_config,
+                self.plugins_manager,
+                self.dry_run,
+            )
 
             # 3- do the payment
-            payment_logs, total_attempts, total_payout_amount, number_future_payable_cycles = \
-                batch_payer.pay(payment_items, dry_run=self.dry_run)
+            (
+                payment_logs,
+                total_attempts,
+                total_payout_amount,
+                number_future_payable_cycles,
+            ) = batch_payer.pay(payment_items, dry_run=self.dry_run)
 
             # override batch data
             payment_batch.batch = payment_logs
@@ -131,7 +165,9 @@ class PaymentConsumer(threading.Thread):
             nb_paid, nb_failed, nb_unknown = count_and_log_failed(payment_logs)
 
             # 5- create payment report file
-            report_file = self.create_payment_report(nb_failed, payment_logs, pymnt_cycle, already_paid_items)
+            report_file = self.create_payment_report(
+                nb_failed, payment_logs, pymnt_cycle, already_paid_items
+            )
 
             # 6- Clean failure reports
             self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
@@ -149,31 +185,53 @@ class PaymentConsumer(threading.Thread):
 
                 subject = "Reward Payouts for Cycle {:d}".format(pymnt_cycle)
 
-                status = ''
+                status = ""
                 if nb_failed == 0 and nb_unknown == 0:
-                    status = status + 'Completed Successfully!'
+                    status = status + "Completed Successfully!"
                 else:
-                    status = status + 'attempted'
+                    status = status + "attempted"
                     if nb_failed > 0:
                         status = status + ", {:d} failed".format(nb_failed)
                     if nb_unknown > 0:
-                        status = status + ", {:d} injected but final state not known".format(nb_unknown)
-                subject = subject + ' ' + status
+                        status = (
+                            status
+                            + ", {:d} injected but final state not known".format(
+                                nb_unknown
+                            )
+                        )
+                subject = subject + " " + status
 
-                admin_message = "The current payout account balance is expected to last for the next {:d} cycle(s)!".format(number_future_payable_cycles)
+                admin_message = "The current payout account balance is expected to last for the next {:d} cycle(s)!".format(
+                    number_future_payable_cycles
+                )
 
                 # Payout notification receives cycle, rewards total, number of delegators
-                self.plugins_manager.send_payout_notification(pymnt_cycle, total_payout_amount, (nb_paid + nb_failed + nb_unknown))
+                self.plugins_manager.send_payout_notification(
+                    pymnt_cycle, total_payout_amount, (nb_paid + nb_failed + nb_unknown)
+                )
 
                 # Admin notification receives subject, message, CSV report, raw log objects
-                self.plugins_manager.send_admin_notification(subject, admin_message, [report_file], payment_logs)
+                self.plugins_manager.send_admin_notification(
+                    subject, admin_message, [report_file], payment_logs
+                )
 
             # 9- publish anonymous stats
             if self.publish_stats and self.args and not self.dry_run:
-                stats_dict = self.create_stats_dict(self.key_name, nb_failed, nb_unknown, pymnt_cycle, payment_logs, total_attempts)
+                stats_dict = self.create_stats_dict(
+                    self.key_name,
+                    nb_failed,
+                    nb_unknown,
+                    pymnt_cycle,
+                    payment_logs,
+                    total_attempts,
+                )
                 stats_publisher(stats_dict)
             else:
-                logger.info("Anonymous statistics disabled{:s}".format(", (Dry run)" if self.dry_run else ""))
+                logger.info(
+                    "Anonymous statistics disabled{:s}".format(
+                        ", (Dry run)" if self.dry_run else ""
+                    )
+                )
 
         except Exception:
             logger.error("Error at reward payment", exc_info=True)
@@ -183,7 +241,9 @@ class PaymentConsumer(threading.Thread):
     def clean_failed_payment_reports(self, payment_cycle, success):
         # 1- generate path of a assumed failure report file
         # if it exists and payments were successful, remove it
-        failure_report_file = payment_report_file_path(self.payments_dir, payment_cycle, 1)
+        failure_report_file = payment_report_file_path(
+            self.payments_dir, payment_cycle, 1
+        )
         if success and os.path.isfile(failure_report_file):
             os.remove(failure_report_file)
         # 2- generate path of a assumed busy failure report file
@@ -199,10 +259,19 @@ class PaymentConsumer(threading.Thread):
 
     #
     # create report file
-    def create_payment_report(self, nb_failed, payment_logs, payment_cycle, already_paid_items):
+    def create_payment_report(
+        self, nb_failed, payment_logs, payment_cycle, already_paid_items
+    ):
 
-        logger.info("Processing completed for {} payment items{}.".format(len(payment_logs), ", {} failed".format(nb_failed) if nb_failed > 0 else ""))
-        logger.debug("Adding {} already paid items to the report".format(len(already_paid_items)))
+        logger.info(
+            "Processing completed for {} payment items{}.".format(
+                len(payment_logs),
+                ", {} failed".format(nb_failed) if nb_failed > 0 else "",
+            )
+        )
+        logger.debug(
+            "Adding {} already paid items to the report".format(len(already_paid_items))
+        )
 
         payouts = already_paid_items + payment_logs
 
@@ -214,16 +283,30 @@ class PaymentConsumer(threading.Thread):
         logger.info("Payment report is created at '{}'".format(report_file))
 
         if nb_failed > 0:
-            report_file = payment_report_file_path(self.payments_dir, payment_cycle, nb_failed)
+            report_file = payment_report_file_path(
+                self.payments_dir, payment_cycle, nb_failed
+            )
             CsvPaymentFileParser().write(report_file, unsuccessful_payouts)
             logger.info("Payment report is created at '{}'".format(report_file))
 
         for pl in payment_logs:
-            logger.debug("Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}".format(pl.address, pl.type, pl.amount / MUTEZ, pl.paid))
+            logger.debug(
+                "Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}".format(
+                    pl.address, pl.type, pl.amount / MUTEZ, pl.paid
+                )
+            )
 
         return report_file
 
-    def create_stats_dict(self, key_name, nb_failed, nb_unknown, payment_cycle, payment_logs, total_attempts):
+    def create_stats_dict(
+        self,
+        key_name,
+        nb_failed,
+        nb_unknown,
+        payment_cycle,
+        payment_logs,
+        total_attempts,
+    ):
 
         from uuid import NAMESPACE_URL, uuid3
 
@@ -233,37 +316,45 @@ class PaymentConsumer(threading.Thread):
         n_m_type = len([pl for pl in payment_logs if pl.type == TYPE_MERGED])
 
         stats_dict = {}
-        stats_dict['uuid'] = str(uuid3(namespace=NAMESPACE_URL, name=key_name))
-        stats_dict['cycle'] = payment_cycle
-        stats_dict['network'] = self.args.network
-        stats_dict['total_amount'] = int(sum([rl.amount for rl in payment_logs]) / MUTEZ)
-        stats_dict['nb_pay'] = int(len(payment_logs))
-        stats_dict['nb_failed'] = nb_failed
-        stats_dict['nb_unknown'] = nb_unknown
-        stats_dict['total_attmpts'] = total_attempts
-        stats_dict['nb_founders'] = n_f_type
-        stats_dict['nb_owners'] = n_o_type
-        stats_dict['nb_merged'] = n_m_type
-        stats_dict['nb_delegators'] = n_d_type
-        stats_dict['pay_xfer_fee'] = 1 if self.delegator_pays_xfer_fee else 0
-        stats_dict['pay_ra_fee'] = 1 if self.delegator_pays_ra_fee else 0
+        stats_dict["uuid"] = str(uuid3(namespace=NAMESPACE_URL, name=key_name))
+        stats_dict["cycle"] = payment_cycle
+        stats_dict["network"] = self.args.network
+        stats_dict["total_amount"] = int(
+            sum([rl.amount for rl in payment_logs]) / MUTEZ
+        )
+        stats_dict["nb_pay"] = int(len(payment_logs))
+        stats_dict["nb_failed"] = nb_failed
+        stats_dict["nb_unknown"] = nb_unknown
+        stats_dict["total_attmpts"] = total_attempts
+        stats_dict["nb_founders"] = n_f_type
+        stats_dict["nb_owners"] = n_o_type
+        stats_dict["nb_merged"] = n_m_type
+        stats_dict["nb_delegators"] = n_d_type
+        stats_dict["pay_xfer_fee"] = 1 if self.delegator_pays_xfer_fee else 0
+        stats_dict["pay_ra_fee"] = 1 if self.delegator_pays_ra_fee else 0
         if self.rewards_type.isIdeal():
-            stats_dict['rewards_type'] = "I"
+            stats_dict["rewards_type"] = "I"
         elif self.rewards_type.isEstimated():
-            stats_dict['rewards_type'] = "E"
+            stats_dict["rewards_type"] = "E"
         elif self.rewards_type.isActual():
-            stats_dict['rewards_type'] = "A"
+            stats_dict["rewards_type"] = "A"
         else:
-            stats_dict['rewards_type'] = "A"
-            logger.info("Reward type is set to actual by default - please check your configuration")
-        stats_dict['trdver'] = str(VERSION)
+            stats_dict["rewards_type"] = "A"
+            logger.info(
+                "Reward type is set to actual by default - please check your configuration"
+            )
+        stats_dict["trdver"] = str(VERSION)
 
         if self.args:
-            stats_dict['m_run'] = 1 if self.args.background_service else 0
-            stats_dict['m_prov'] = self.args.reward_data_provider
-            stats_dict['m_relov'] = self.args.release_override if self.args.release_override else 0
-            stats_dict['m_offset'] = self.args.payment_offset if self.args.payment_offset else 0
-            stats_dict['m_docker'] = 1 if self.args.docker else 0
+            stats_dict["m_run"] = 1 if self.args.background_service else 0
+            stats_dict["m_prov"] = self.args.reward_data_provider
+            stats_dict["m_relov"] = (
+                self.args.release_override if self.args.release_override else 0
+            )
+            stats_dict["m_offset"] = (
+                self.args.payment_offset if self.args.payment_offset else 0
+            )
+            stats_dict["m_docker"] = 1 if self.args.docker else 0
 
         return stats_dict
 

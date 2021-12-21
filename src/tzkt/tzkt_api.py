@@ -33,7 +33,7 @@ class TzKTApi:
         :param timeout: request timeout in seconds (default = 30)
         """
         base_urls = TZKT_PUBLIC_API_URL
-        assert network in base_urls, f'Unsupported network {network}'
+        assert network in base_urls, f"Unsupported network {network}"
         return TzKTApi(base_url=base_urls[network], timeout=timeout)
 
     @staticmethod
@@ -56,13 +56,14 @@ class TzKTApi:
                 url=url,
                 params=data,
                 timeout=self.timeout,
-                headers={'User-Agent': f'trd-{VERSION}'})
+                headers={"User-Agent": f"trd-{VERSION}"},
+            )
         except requests.Timeout:
-            raise TzKTApiError('Request timeout')
+            raise TzKTApiError("Request timeout")
         except requests.ConnectionError:
-            raise TzKTApiError('DNS lookup failed')
+            raise TzKTApiError("DNS lookup failed")
         except requests.HTTPError as e:
-            raise TzKTApiError('HTTP Error occurred: {}'.format(e))
+            raise TzKTApiError("HTTP Error occurred: {}".format(e))
         except requests.RequestException as e:
             raise TzKTApiError(e)
 
@@ -70,14 +71,16 @@ class TzKTApi:
             return None
 
         if response.status_code != HTTPStatus.OK:
-            raise TzKTApiError(f'TzKT returned {response.status_code} error:\n{response.text}')
+            raise TzKTApiError(
+                f"TzKT returned {response.status_code} error:\n{response.text}"
+            )
 
         try:
             res = response.json()
         except JSONDecodeError:
-            raise TzKTApiError(f'Failed to decode JSON:\n{response.text}')
+            raise TzKTApiError(f"Failed to decode JSON:\n{response.text}")
 
-        verbose_logger.debug(f'Response from TzKT is:\n{pformat(res)}')
+        verbose_logger.debug(f"Response from TzKT is:\n{pformat(res)}")
 
         return res
 
@@ -94,7 +97,7 @@ class TzKTApi:
             "synced": true
         }
         """
-        return self._request('head')
+        return self._request("head")
 
     def get_reward_split(self, address, cycle, fetch_delegators=True) -> dict:
         """
@@ -168,22 +171,26 @@ class TzKTApi:
         limit = self.max_page_size if fetch_delegators else 0
 
         for i in range(self.max_sequent_calls):
-            page = self._request(f'rewards/split/{address}/{cycle}', offset=offset, limit=limit)
-            assert isinstance(page, dict) and 'delegators' in page
+            page = self._request(
+                f"rewards/split/{address}/{cycle}", offset=offset, limit=limit
+            )
+            assert isinstance(page, dict) and "delegators" in page
 
             if res is None:
                 res = page
             else:
-                assert isinstance(res, dict) and 'delegators' in res
-                res['delegators'].extend(page['delegators'])
+                assert isinstance(res, dict) and "delegators" in res
+                res["delegators"].extend(page["delegators"])
 
-            if not fetch_delegators or len(res['delegators']) == res['numDelegators']:
+            if not fetch_delegators or len(res["delegators"]) == res["numDelegators"]:
                 return res
             else:
                 offset += limit
                 sleep(self.delay_between_calls)
 
-        raise TzKTApiError(f'Max sequent calls number exceeded ({self.max_sequent_calls})')
+        raise TzKTApiError(
+            f"Max sequent calls number exceeded ({self.max_sequent_calls})"
+        )
 
     def get_account_by_address(self, address) -> dict:
         """
@@ -243,7 +250,7 @@ class TzKTApi:
             }
         }
         """
-        return self._request(f'accounts/{address}')
+        return self._request(f"accounts/{address}")
 
     def get_protocol_by_cycle(self, cycle: int) -> dict:
         """
@@ -285,7 +292,7 @@ class TzKTApi:
             }
         }
         """
-        return self._request(f'protocols/cycles/{cycle}')
+        return self._request(f"protocols/cycles/{cycle}")
 
     def get_snapshot_level(self, cycle):
-        return self._request(f'cycles/{cycle}')['snapshotLevel']
+        return self._request(f"cycles/{cycle}")["snapshotLevel"]

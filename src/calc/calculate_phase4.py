@@ -1,5 +1,11 @@
 from calc.calculate_phase_base import CalculatePhaseBase
-from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT, TYPE_OWNERS_PARENT, TYPE_FOUNDER, TYPE_OWNER
+from model.reward_log import (
+    RewardLog,
+    TYPE_FOUNDERS_PARENT,
+    TYPE_OWNERS_PARENT,
+    TYPE_FOUNDER,
+    TYPE_OWNER,
+)
 
 
 class CalculatePhase4(CalculatePhaseBase):

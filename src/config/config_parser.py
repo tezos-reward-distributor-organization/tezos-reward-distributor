@@ -25,7 +25,7 @@ class ConfigParser(ABC):
         if not os.path.isfile(conf_file_path):
             raise ValueError("No such config file: '{}'".format(conf_file_path))
 
-        with open(conf_file_path, 'r') as file:
+        with open(conf_file_path, "r") as file:
             return file.read()
 
     def set_conf_obj(self, conf_obj):

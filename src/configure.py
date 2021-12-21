@@ -14,13 +14,39 @@ from api.provider_factory import ProviderFactory
 from cli.client_manager import ClientManager
 from Constants import RewardsType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
-from launch_common import print_banner, add_argument_network, add_argument_reports_base, \
-    add_argument_config_dir, add_argument_node_endpoint, add_argument_signer_endpoint, add_argument_docker, \
-    add_argument_verbose, add_argument_dry, add_argument_provider, add_argument_api_base_url, add_argument_log_file
+from launch_common import (
+    print_banner,
+    add_argument_network,
+    add_argument_reports_base,
+    add_argument_config_dir,
+    add_argument_node_endpoint,
+    add_argument_signer_endpoint,
+    add_argument_docker,
+    add_argument_verbose,
+    add_argument_dry,
+    add_argument_provider,
+    add_argument_api_base_url,
+    add_argument_log_file,
+)
 from log_config import main_logger, init
-from model.baking_conf import BakingConf, BAKING_ADDRESS, PAYMENT_ADDRESS, SERVICE_FEE, FOUNDERS_MAP, OWNERS_MAP, \
-    MIN_DELEGATION_AMT, RULES_MAP, MIN_DELEGATION_KEY, DELEGATOR_PAYS_XFER_FEE, DELEGATOR_PAYS_RA_FEE, \
-    REACTIVATE_ZEROED, SPECIALS_MAP, SUPPORTERS_SET, REWARDS_TYPE, PAY_DENUNCIATION_REWARDS
+from model.baking_conf import (
+    BakingConf,
+    BAKING_ADDRESS,
+    PAYMENT_ADDRESS,
+    SERVICE_FEE,
+    FOUNDERS_MAP,
+    OWNERS_MAP,
+    MIN_DELEGATION_AMT,
+    RULES_MAP,
+    MIN_DELEGATION_KEY,
+    DELEGATOR_PAYS_XFER_FEE,
+    DELEGATOR_PAYS_RA_FEE,
+    REACTIVATE_ZEROED,
+    SPECIALS_MAP,
+    SUPPORTERS_SET,
+    REWARDS_TYPE,
+    PAY_DENUNCIATION_REWARDS,
+)
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
@@ -29,24 +55,24 @@ LINER = "--------------------------------------------"
 logger = main_logger
 
 messages = {
-    'hello': 'This application will help you configure TRD to manage payouts for your bakery. Type enter to continue',
-    'bakingaddress': 'Specify your baking address public key hash (Processing may take a few seconds)',
-    'paymentaddress': 'Specify your payouts public key hash. It can be the same as your baking address, or a different one.',
-    'servicefee': 'Specify bakery fee [0:100]',
-    'rewardstype': "Specify if baker pays 'ideal', 'estimated' or 'actual' rewards (Be sure to read the documentation to understand the difference). Type enter for 'actual'",
-    'foundersmap': "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
-    'ownersmap': "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
-    'mindelegation': "Specify minimum delegation amount in tez. Type enter for 0",
-    'mindelegationtarget': "Specify where the reward for delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB",
-    'exclude': "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip",
-    'redirect': "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
-    'reactivatezeroed': "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes",
-    'delegatorpaysxfrfee': "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator",
-    'delegatorpaysrafee': "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
-    'paydenunciationrewards': "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Type enter for No",
-    'supporters': "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
-    'specials': "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
-    'noplugins': "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually."
+    "hello": "This application will help you configure TRD to manage payouts for your bakery. Type enter to continue",
+    "bakingaddress": "Specify your baking address public key hash (Processing may take a few seconds)",
+    "paymentaddress": "Specify your payouts public key hash. It can be the same as your baking address, or a different one.",
+    "servicefee": "Specify bakery fee [0:100]",
+    "rewardstype": "Specify if baker pays 'ideal', 'estimated' or 'actual' rewards (Be sure to read the documentation to understand the difference). Type enter for 'actual'",
+    "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
+    "ownersmap": "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
+    "mindelegation": "Specify minimum delegation amount in tez. Type enter for 0",
+    "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB",
+    "exclude": "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip",
+    "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
+    "reactivatezeroed": "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes",
+    "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator",
+    "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
+    "paydenunciationrewards": "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Type enter for No",
+    "supporters": "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
+    "specials": "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
+    "noplugins": "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually.",
 }
 
 parser = None
@@ -74,8 +100,14 @@ def onbakingaddress(input):
         return
     provider_factory = ProviderFactory(args.reward_data_provider)
     global parser
-    parser = BakingYamlConfParser(None, client_manager, provider_factory, network_config, args.node_endpoint,
-                                  api_base_url=args.api_base_url)
+    parser = BakingYamlConfParser(
+        None,
+        client_manager,
+        provider_factory,
+        network_config,
+        args.node_endpoint,
+        api_base_url=args.api_base_url,
+    )
     parser.set(BAKING_ADDRESS, input)
     fsm.go()
 
@@ -101,7 +133,9 @@ def onservicefee(input):
         parser.set(SERVICE_FEE, float(input))
         parser.validate_service_fee(parser.get_conf_obj())
     except Exception as e:
-        printe(f"Invalid service fee: {str(e)}\nPlease enter a value between 0 and 100.")
+        printe(
+            f"Invalid service fee: {str(e)}\nPlease enter a value between 0 and 100."
+        )
         return
 
     fsm.go()
@@ -109,14 +143,16 @@ def onservicefee(input):
 
 def onrewardstype(input):
     if not input:
-        input = 'actual'
+        input = "actual"
 
     try:
         global parser
         rt = RewardsType(input.lower())
         parser.set(REWARDS_TYPE, str(rt))
     except Exception:
-        printe("Invalid option for rewards type. Please enter 'actual', 'estimated' or 'ideal'.")
+        printe(
+            "Invalid option for rewards type. Please enter 'actual', 'estimated' or 'ideal'."
+        )
         return
 
     fsm.go()
@@ -125,7 +161,7 @@ def onrewardstype(input):
 def onfoundersmap(input):
     try:
         global parser
-        dict = ast.literal_eval('{' + input + '}')
+        dict = ast.literal_eval("{" + input + "}")
         parser.set(FOUNDERS_MAP, dict)
         parser.validate_share_map(parser.get_conf_obj(), FOUNDERS_MAP)
     except Exception:
@@ -138,7 +174,7 @@ def onfoundersmap(input):
 def onownersmap(input):
     try:
         global parser
-        dict = ast.literal_eval('{' + input + '}')
+        dict = ast.literal_eval("{" + input + "}")
         parser.set(OWNERS_MAP, dict)
         parser.validate_share_map(parser.get_conf_obj(), OWNERS_MAP)
     except Exception:
@@ -163,10 +199,10 @@ def onmindelegation(input):
 
 def onmindelegationtarget(input):
     if not input:
-        input = 'TOB'
+        input = "TOB"
 
     try:
-        options = ['TOB', 'TOE', 'TOF']
+        options = ["TOB", "TOE", "TOF"]
         if input not in options:
             printe("Invalid target, available options are {}".format(options))
             return
@@ -191,11 +227,11 @@ def onexclude(input):
         return
 
     try:
-        address_target = input.split(',')
+        address_target = input.split(",")
         address = address_target[0].strip()
         target = address_target[1].strip()
         AddressValidator("excluded address").validate(address)
-        options = ['TOB', 'TOE', 'TOF']
+        options = ["TOB", "TOE", "TOF"]
         if target not in options:
             printe("Invalid target, available options are {}".format(options))
             return
@@ -219,7 +255,7 @@ def onspecials(input):
         return
 
     try:
-        address_target = input.split(',')
+        address_target = input.split(",")
         address = address_target[0].strip()
         fee = float(address_target[1].strip())
         AddressValidator("special address").validate(address)
@@ -265,7 +301,7 @@ def onredirect(input):
         return
 
     try:
-        address1_address2 = input.split(',')
+        address1_address2 = input.split(",")
         address1 = address1_address2[0].strip()
         address2 = address1_address2[1].strip()
 
@@ -346,51 +382,61 @@ def onprefinal(input):
 
 
 callbacks = {
-    'bakingaddress': onbakingaddress,
-    'paymentaddress': onpaymentaddress,
-    'servicefee': onservicefee,
-    'rewardstype': onrewardstype,
-    'foundersmap': onfoundersmap,
-    'ownersmap': onownersmap,
-    'mindelegation': onmindelegation,
-    'mindelegationtarget': onmindelegationtarget,
-    'exclude': onexclude,
-    'redirect': onredirect,
-    'reactivatezeroed': onreactivatezeroed,
-    'delegatorpaysxfrfee': ondelegatorpaysxfrfee,
-    'delegatorpaysrafee': ondelegatorpaysrafee,
-    'paydenunciationrewards': onpaydenunciationrewards,
-    'supporters': onsupporters,
-    'specials': onspecials,
-    'prefinal': onprefinal,
+    "bakingaddress": onbakingaddress,
+    "paymentaddress": onpaymentaddress,
+    "servicefee": onservicefee,
+    "rewardstype": onrewardstype,
+    "foundersmap": onfoundersmap,
+    "ownersmap": onownersmap,
+    "mindelegation": onmindelegation,
+    "mindelegationtarget": onmindelegationtarget,
+    "exclude": onexclude,
+    "redirect": onredirect,
+    "reactivatezeroed": onreactivatezeroed,
+    "delegatorpaysxfrfee": ondelegatorpaysxfrfee,
+    "delegatorpaysrafee": ondelegatorpaysrafee,
+    "paydenunciationrewards": onpaydenunciationrewards,
+    "supporters": onsupporters,
+    "specials": onspecials,
+    "prefinal": onprefinal,
 }
 
-fsm = Fysom({'initial': 'hello', 'final': 'final',
-             'events': [
-                 {'name': 'go', 'src': 'hello', 'dst': 'bakingaddress'},
-                 {'name': 'go', 'src': 'bakingaddress', 'dst': 'paymentaddress'},
-                 {'name': 'go', 'src': 'paymentaddress', 'dst': 'servicefee'},
-                 {'name': 'go', 'src': 'servicefee', 'dst': 'rewardstype'},
-                 {'name': 'go', 'src': 'rewardstype', 'dst': 'foundersmap'},
-                 {'name': 'go', 'src': 'foundersmap', 'dst': 'ownersmap'},
-                 {'name': 'go', 'src': 'ownersmap', 'dst': 'mindelegation'},
-                 {'name': 'go', 'src': 'mindelegation', 'dst': 'mindelegationtarget'},
-                 {'name': 'go', 'src': 'mindelegationtarget', 'dst': 'exclude'},
-                 {'name': 'go', 'src': 'exclude', 'dst': 'redirect'},
-                 {'name': 'go', 'src': 'redirect', 'dst': 'reactivatezeroed'},
-                 {'name': 'go', 'src': 'reactivatezeroed', 'dst': 'delegatorpaysrafee'},
-                 {'name': 'go', 'src': 'delegatorpaysrafee', 'dst': 'delegatorpaysxfrfee'},
-                 {'name': 'go', 'src': 'delegatorpaysxfrfee', 'dst': 'paydenunciationrewards'},
-                 {'name': 'go', 'src': 'paydenunciationrewards', 'dst': 'specials'},
-                 {'name': 'go', 'src': 'specials', 'dst': 'supporters'},
-                 {'name': 'go', 'src': 'supporters', 'dst': 'final'}],
-             'callbacks': {
-                 'bakingaddress': onbakingaddress}
-             })
+fsm = Fysom(
+    {
+        "initial": "hello",
+        "final": "final",
+        "events": [
+            {"name": "go", "src": "hello", "dst": "bakingaddress"},
+            {"name": "go", "src": "bakingaddress", "dst": "paymentaddress"},
+            {"name": "go", "src": "paymentaddress", "dst": "servicefee"},
+            {"name": "go", "src": "servicefee", "dst": "rewardstype"},
+            {"name": "go", "src": "rewardstype", "dst": "foundersmap"},
+            {"name": "go", "src": "foundersmap", "dst": "ownersmap"},
+            {"name": "go", "src": "ownersmap", "dst": "mindelegation"},
+            {"name": "go", "src": "mindelegation", "dst": "mindelegationtarget"},
+            {"name": "go", "src": "mindelegationtarget", "dst": "exclude"},
+            {"name": "go", "src": "exclude", "dst": "redirect"},
+            {"name": "go", "src": "redirect", "dst": "reactivatezeroed"},
+            {"name": "go", "src": "reactivatezeroed", "dst": "delegatorpaysrafee"},
+            {"name": "go", "src": "delegatorpaysrafee", "dst": "delegatorpaysxfrfee"},
+            {
+                "name": "go",
+                "src": "delegatorpaysxfrfee",
+                "dst": "paydenunciationrewards",
+            },
+            {"name": "go", "src": "paydenunciationrewards", "dst": "specials"},
+            {"name": "go", "src": "specials", "dst": "supporters"},
+            {"name": "go", "src": "supporters", "dst": "final"},
+        ],
+        "callbacks": {"bakingaddress": onbakingaddress},
+    }
+)
 
 
 def main(args):
-    logger.info("Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1)))
+    logger.info(
+        "Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1))
+    )
 
     # 1. find where configuration is
     config_dir = os.path.expanduser(args.config_dir)
@@ -402,8 +448,9 @@ def main(args):
 
     # 2. get network config
     global client_manager
-    client_manager = ClientManager(node_endpoint=args.node_endpoint,
-                                   signer_endpoint=args.signer_endpoint)
+    client_manager = ClientManager(
+        node_endpoint=args.node_endpoint, signer_endpoint=args.signer_endpoint
+    )
 
     network_config_map = init_network_config(args.network, client_manager)
     global network_config
@@ -411,7 +458,7 @@ def main(args):
     logger.debug("Network config {}".format(network_config))
 
     # hello state
-    input("{} >".format(messages['hello'])).strip()
+    input("{} >".format(messages["hello"])).strip()
     start()
 
     # 3. loop while collecting information
@@ -428,36 +475,46 @@ def main(args):
     # dictionary to BakingConf object, for a bit of type safety
     cfg = BakingConf(cfg_dict)
 
-    config_file_path = os.path.join(os.path.abspath(config_dir), cfg.get_baking_address() + '.yaml')
-    cfg_dict_plain = {k: v for k, v in cfg_dict.items() if not k.startswith('__')}
+    config_file_path = os.path.join(
+        os.path.abspath(config_dir), cfg.get_baking_address() + ".yaml"
+    )
+    cfg_dict_plain = {k: v for k, v in cfg_dict.items() if not k.startswith("__")}
 
     try:
-        with open(config_file_path, 'w') as outfile:
+        with open(config_file_path, "w") as outfile:
             yaml.dump(cfg_dict_plain, outfile, default_flow_style=False, indent=4)
     except Exception as e:
         import errno
+
         print("Exception during write operation invoked: {}".format(e))
         if e.errno == errno.ENOSPC:
             print("Not enough space on device!")
         exit()
 
-    print(messages['noplugins'])
+    print(messages["noplugins"])
     print("Configuration file is created at '{}'".format(config_file_path))
 
 
 class ReleaseOverrideAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         if values < -11 or values > 0:
-            parser.error("release-override({0}) must be in the range of [-11,-1] to override, default is 0".format(option_string))
+            parser.error(
+                "release-override({0}) must be in the range of [-11,-1] to override, default is 0".format(
+                    option_string
+                )
+            )
 
         setattr(namespace, "release_override", values)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
         raise Exception(
-            "Must be using Python 3.6 or later but it is {}.{}".format(sys.version_info.major, sys.version_info.minor))
+            "Must be using Python 3.6 or later but it is {}.{}".format(
+                sys.version_info.major, sys.version_info.minor
+            )
+        )
 
     argparser = argparse.ArgumentParser()
 
@@ -475,7 +532,7 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
-    init(False, args.log_file, args.verbose == 'on', mode='configure')
+    init(False, args.log_file, args.verbose == "on", mode="configure")
 
     script_name = " Baker Configuration Tool"
     args.dry_run = False

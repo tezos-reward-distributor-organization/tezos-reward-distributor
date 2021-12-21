@@ -5,39 +5,58 @@ from time import sleep
 from exception.api_provider import ApiProviderException
 
 from log_config import main_logger, verbose_logger
-from tzstats.tzstats_api_constants import idx_n_baking_rights, idx_n_endorsing_rights, idx_income_baking_income, idx_income_endorsing_income, \
-    idx_income_seed_income, idx_income_fees_income, idx_income_lost_accusation_fees, idx_income_lost_accusation_rewards, \
-    idx_income_lost_revelation_fees, idx_income_lost_revelation_rewards, idx_delegator_address, idx_balance, \
-    idx_baker_delegated, idx_cb_delegator_address, idx_cb_current_balance, idx_income_missed_baking_income, \
-    idx_income_missed_endorsing_income, idx_income_double_baking_income, idx_income_double_endorsing_income
+from tzstats.tzstats_api_constants import (
+    idx_n_baking_rights,
+    idx_n_endorsing_rights,
+    idx_income_baking_income,
+    idx_income_endorsing_income,
+    idx_income_seed_income,
+    idx_income_fees_income,
+    idx_income_lost_accusation_fees,
+    idx_income_lost_accusation_rewards,
+    idx_income_lost_revelation_fees,
+    idx_income_lost_revelation_rewards,
+    idx_delegator_address,
+    idx_balance,
+    idx_baker_delegated,
+    idx_cb_delegator_address,
+    idx_cb_current_balance,
+    idx_income_missed_baking_income,
+    idx_income_missed_endorsing_income,
+    idx_income_double_baking_income,
+    idx_income_double_endorsing_income,
+)
 from Constants import TZSTATS_PUBLIC_API_URL
 
 logger = main_logger
 
-rewards_split_call = '/tables/income?address={}&cycle={}'
-delegators_call = '/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000'
+rewards_split_call = "/tables/income?address={}&cycle={}"
+delegators_call = "/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000"
 
-batch_current_balance_call = '/tables/account?delegate={}&columns=row_id,spendable_balance,address&limit=50000'
-single_current_balance_call = '/tables/account?address.in={}&columns=row_id,spendable_balance,address'
-snapshot_cycle = '/explorer/cycle/{}'
+batch_current_balance_call = (
+    "/tables/account?delegate={}&columns=row_id,spendable_balance,address&limit=50000"
+)
+single_current_balance_call = (
+    "/tables/account?address.in={}&columns=row_id,spendable_balance,address"
+)
+snapshot_cycle = "/explorer/cycle/{}"
 
-contract_storage = '/explorer/contract/{}/storage'
-balance_LP_call = '/explorer/bigmap/{}/values?limit=100&offset={}&block={}'
+contract_storage = "/explorer/contract/{}/storage"
+balance_LP_call = "/explorer/bigmap/{}/values?limit=100&offset={}&block={}"
 
 
 def split(input, n):
     for i in range(0, len(input), n):
-        yield input[i:i + n]
+        yield input[i : i + n]
 
 
 class TzStatsRewardProviderHelper:
-
     def __init__(self, nw, baking_address):
         super(TzStatsRewardProviderHelper, self).__init__()
 
-        self.preserved_cycles = nw['NB_FREEZE_CYCLE']
+        self.preserved_cycles = nw["NB_FREEZE_CYCLE"]
 
-        self.api = TZSTATS_PUBLIC_API_URL[nw['NAME']]
+        self.api = TZSTATS_PUBLIC_API_URL[nw["NAME"]]
         if self.api is None:
             raise ApiProviderException("Unknown network {}".format(nw))
 
@@ -45,9 +64,15 @@ class TzStatsRewardProviderHelper:
 
     def get_rewards_for_cycle(self, cycle):
 
-        root = {"delegate_staking_balance": 0, "num_baking_rights": 0,
-                "num_endorsing_rights": 0, "rewards_and_fees": 0,
-                "equivocation_losses": 0, "offline_losses": 0, "delegators_balances": {}}
+        root = {
+            "delegate_staking_balance": 0,
+            "num_baking_rights": 0,
+            "num_endorsing_rights": 0,
+            "rewards_and_fees": 0,
+            "equivocation_losses": 0,
+            "offline_losses": 0,
+            "delegators_balances": {},
+        }
 
         #
         # Get rewards breakdown for cycle
@@ -60,11 +85,13 @@ class TzStatsRewardProviderHelper:
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug(
+            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+        )
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
-            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
         resp = resp.json()[0]
 
@@ -72,37 +99,63 @@ class TzStatsRewardProviderHelper:
         root["num_endorsing_rights"] = resp[idx_n_endorsing_rights]
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)
-        root["rewards_and_fees"] = int(1e6 * (float(resp[idx_income_baking_income])
-                                       + float(resp[idx_income_endorsing_income])
-                                       + float(resp[idx_income_seed_income])
-                                       + float(resp[idx_income_fees_income])))
+        root["rewards_and_fees"] = int(
+            1e6
+            * (
+                float(resp[idx_income_baking_income])
+                + float(resp[idx_income_endorsing_income])
+                + float(resp[idx_income_seed_income])
+                + float(resp[idx_income_fees_income])
+            )
+        )
         # losses due to baker double baking, double endorsing or missing nonce
-        root["equivocation_losses"] = int(1e6 * (float(resp[idx_income_lost_accusation_fees])
-                                          + float(resp[idx_income_lost_accusation_rewards])
-                                          + float(resp[idx_income_lost_revelation_fees])
-                                          + float(resp[idx_income_lost_revelation_rewards])))
-        root["denunciation_rewards"] = int(1e6 * (float(resp[idx_income_double_baking_income])
-                                           + float(resp[idx_income_double_endorsing_income])))
+        root["equivocation_losses"] = int(
+            1e6
+            * (
+                float(resp[idx_income_lost_accusation_fees])
+                + float(resp[idx_income_lost_accusation_rewards])
+                + float(resp[idx_income_lost_revelation_fees])
+                + float(resp[idx_income_lost_revelation_rewards])
+            )
+        )
+        root["denunciation_rewards"] = int(
+            1e6
+            * (
+                float(resp[idx_income_double_baking_income])
+                + float(resp[idx_income_double_endorsing_income])
+            )
+        )
         # losses due to being offline or not having enough bond
-        root["offline_losses"] = int(1e6 * (float(resp[idx_income_missed_baking_income])
-                                     + float(resp[idx_income_missed_endorsing_income])))
+        root["offline_losses"] = int(
+            1e6
+            * (
+                float(resp[idx_income_missed_baking_income])
+                + float(resp[idx_income_missed_endorsing_income])
+            )
+        )
 
         #
         # Get staking balances of delegators at snapshot block
         #
-        uri = self.api + delegators_call.format(cycle - self.preserved_cycles - 2, self.baking_address)
+        uri = self.api + delegators_call.format(
+            cycle - self.preserved_cycles - 2, self.baking_address
+        )
 
         sleep(0.5)  # be nice to tzstats
 
-        verbose_logger.debug("Requesting staking balances of delegators, {}".format(uri))
+        verbose_logger.debug(
+            "Requesting staking balances of delegators, {}".format(uri)
+        )
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug(
+            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+        )
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
-            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
         resp = resp.json()
 
@@ -110,11 +163,20 @@ class TzStatsRewardProviderHelper:
 
             if delegator[idx_delegator_address] == self.baking_address:
                 root["delegate_staking_balance"] = int(
-                    1e6 * (float(delegator[idx_balance]) + float(delegator[idx_baker_delegated])))
+                    1e6
+                    * (
+                        float(delegator[idx_balance])
+                        + float(delegator[idx_baker_delegated])
+                    )
+                )
             else:
                 delegator_info = {"staking_balance": 0, "current_balance": 0}
-                delegator_info["staking_balance"] = int(1e6 * float(delegator[idx_balance]))
-                root["delegators_balances"][delegator[idx_delegator_address]] = delegator_info
+                delegator_info["staking_balance"] = int(
+                    1e6 * float(delegator[idx_balance])
+                )
+                root["delegators_balances"][
+                    delegator[idx_delegator_address]
+                ] = delegator_info
 
         #
         # Get current balance of delegates
@@ -132,15 +194,19 @@ class TzStatsRewardProviderHelper:
 
         sleep(0.5)  # be nice to tzstats
 
-        verbose_logger.debug("Requesting current balance of delegators, phase 1, {}".format(uri))
+        verbose_logger.debug(
+            "Requesting current balance of delegators, phase 1, {}".format(uri)
+        )
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug(
+            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+        )
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
-            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
         resp = resp.json()
 
@@ -158,14 +224,17 @@ class TzStatsRewardProviderHelper:
                 continue
 
             root["delegators_balances"][delegator_addr]["current_balance"] = int(
-                1e6 * float(delegator[idx_cb_current_balance]))
+                1e6 * float(delegator[idx_cb_current_balance])
+            )
             curr_bal_delegators.append(delegator_addr)
 
         # Phase 2
         #
 
         # Who was not in this result?
-        need_curr_balance_fetch = list(set(staked_bal_delegators) - set(curr_bal_delegators))
+        need_curr_balance_fetch = list(
+            set(staked_bal_delegators) - set(curr_bal_delegators)
+        )
 
         # Fetch individual not in original batch
         if len(need_curr_balance_fetch) > 0:
@@ -173,7 +242,9 @@ class TzStatsRewardProviderHelper:
             for list_address in split_addresses:
                 list_curr_balances = self.__fetch_current_balance(list_address)
                 for d in list_address:
-                    root["delegators_balances"][d]["current_balance"] = list_curr_balances[d]
+                    root["delegators_balances"][d][
+                        "current_balance"
+                    ] = list_curr_balances[d]
                     curr_bal_delegators.append(d)
 
         # All done fetching balances.
@@ -182,7 +253,11 @@ class TzStatsRewardProviderHelper:
         n_stake_balance = len(staked_bal_delegators)
 
         if n_curr_balance != n_stake_balance:
-            raise ApiProviderException('Did not fetch all balances {}/{}'.format(n_curr_balance, n_stake_balance))
+            raise ApiProviderException(
+                "Did not fetch all balances {}/{}".format(
+                    n_curr_balance, n_stake_balance
+                )
+            )
 
         return root
 
@@ -203,35 +278,41 @@ class TzStatsRewardProviderHelper:
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
-            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
-        snapshot_height = resp.json()['snapshot_cycle']['snapshot_height']
+        snapshot_height = resp.json()["snapshot_cycle"]["snapshot_height"]
         return snapshot_height
 
     def __fetch_current_balance(self, address_list):
-        param_txt = ''
+        param_txt = ""
         for address in address_list:
-            param_txt += address + ','
+            param_txt += address + ","
         param_txt = param_txt[:-1]
         uri = self.api + single_current_balance_call.format(param_txt)
 
         sleep(0.5)  # be nice to tzstats
 
-        verbose_logger.debug("Requesting current balance of delegator, phase 2, {}".format(uri))
+        verbose_logger.debug(
+            "Requesting current balance of delegator, phase 2, {}".format(uri)
+        )
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug(
+            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+        )
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
-            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
         resp = resp.json()
 
         ret_list = {}
         for item in resp:
-            ret_list[item[idx_cb_delegator_address]] = int(1e6 * float(item[idx_cb_current_balance]))
+            ret_list[item[idx_cb_delegator_address]] = int(
+                1e6 * float(item[idx_cb_current_balance])
+            )
 
         return ret_list
 
@@ -242,20 +323,22 @@ class TzStatsRewardProviderHelper:
 
         resp = requests.get(uri, timeout=5)
 
-        verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+        verbose_logger.debug(
+            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+        )
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
-            raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+            raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
         resp = resp.json()
 
-        return resp['value']['accounts']
+        return resp["value"]["accounts"]
 
     def get_liquidity_providers_list(self, big_map_id, snapshot_block):
         offset = 0
         listLPs = {}
-        resp = ' '
+        resp = " "
         while resp != []:
             uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
             offset += 100
@@ -264,15 +347,17 @@ class TzStatsRewardProviderHelper:
 
             resp = requests.get(uri, timeout=5)
 
-            verbose_logger.debug("Response from tzstats is {}".format(resp.content.decode("utf8")))
+            verbose_logger.debug(
+                "Response from tzstats is {}".format(resp.content.decode("utf8"))
+            )
 
             if resp.status_code != HTTPStatus.OK:
                 # This means something went wrong.
-                raise ApiProviderException('GET {} {}'.format(uri, resp.status_code))
+                raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
             resp = resp.json()
             for item in resp:
-                listLPs[item['key']] = int(item['value']['balance'])
+                listLPs[item["key"]] = int(item["value"]["balance"])
 
         return listLPs
 

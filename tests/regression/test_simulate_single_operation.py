@@ -3,7 +3,12 @@ from pay.batch_payer import BatchPayer, TZTX_FEE, MUTEZ_PER_GAS_UNIT
 from model.reward_log import RewardLog
 from cli.client_manager import ClientManager
 from http import HTTPStatus
-from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, PRIVATE_SIGNER_URL, PaymentStatus
+from Constants import (
+    CURRENT_TESTNET,
+    PUBLIC_NODE_URL,
+    PRIVATE_SIGNER_URL,
+    PaymentStatus,
+)
 
 run_ops_parsed = {
     "contents": [
