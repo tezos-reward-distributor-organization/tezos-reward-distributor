@@ -2,14 +2,13 @@ import pytest
 from cli.client_manager import ClientManager
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from exception.configuration import ConfigurationException
-from Constants import PUBLIC_NODE_URL
+from Constants import PUBLIC_NODE_URL, PRIVATE_SIGNER_URL
 from rpc.rpc_block_api import RpcBlockApiImpl
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzstats.tzstats_block_api import TzStatsBlockApiImpl
 
 
 node_endpoint = PUBLIC_NODE_URL["MAINNET"]
-signer_endpoint = "http://127.0.0.1:6732"
 network = {"NAME": "MAINNET"}
 
 
@@ -27,7 +26,7 @@ def test_address_is_baker_address(block_api):
     baking_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
     """
 
-    wallet_client_manager = ClientManager(node_endpoint, signer_endpoint)
+    wallet_client_manager = ClientManager(node_endpoint, PRIVATE_SIGNER_URL)
     cnf_prsr = BakingYamlConfParser(
         data_fine,
         wallet_client_manager,
@@ -54,7 +53,7 @@ def test_address_is_not_baker_address(block_api):
     baking_address: tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
     """
 
-    wallet_client_manager = ClientManager(node_endpoint, signer_endpoint)
+    wallet_client_manager = ClientManager(node_endpoint, PRIVATE_SIGNER_URL)
     cnf_prsr = BakingYamlConfParser(
         data_fine,
         wallet_client_manager,
@@ -85,7 +84,7 @@ def test_invalid_baking_address(block_api):
     baking_address: tz123
     """
 
-    wallet_client_manager = ClientManager(node_endpoint, signer_endpoint)
+    wallet_client_manager = ClientManager(node_endpoint, PRIVATE_SIGNER_URL)
     cnf_prsr = BakingYamlConfParser(
         data_fine,
         wallet_client_manager,

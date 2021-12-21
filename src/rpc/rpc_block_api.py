@@ -1,4 +1,5 @@
 import requests
+from Constants import PRIVATE_NODE_URL
 from api.block_api import BlockApi
 from exception.api_provider import ApiProviderException
 from log_config import main_logger
@@ -55,7 +56,7 @@ class RpcBlockApiImpl(BlockApi):
 
 def test_get_revelation():
 
-    address_api = RpcBlockApiImpl({"NAME": "ALPHANET"}, "127.0.0.1:8732")
+    address_api = RpcBlockApiImpl({"NAME": "ALPHANET"}, PRIVATE_NODE_URL)
     print(address_api.get_revelation("tz1N5cvoGZFNYWBp2NbCWhaRXuLQf6e1gZrv"))
     print(address_api.get_revelation("KT1FXQjnbdqDdKNpjeM6o8PF1w8Rn2j8BmmG"))
     print(address_api.get_revelation("tz1YVxe7FFisREKXWNxdrrwqvw3o2jeXzaNb"))

@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from http import HTTPStatus
 
-from Constants import TEZOS_RPC_PORT, PUBLIC_NODE_URL, TZSTATS_PUBLIC_API_URL, TZKT_PUBLIC_API_URL, CURRENT_TESTNET
+from Constants import TEZOS_RPC_PORT, PUBLIC_NODE_URL, TZSTATS_PUBLIC_API_URL, TZKT_PUBLIC_API_URL, CURRENT_TESTNET, PRIVATE_SIGNER_URL
 from exception.client import ClientException
 from log_config import main_logger, verbose_logger
 
@@ -112,7 +112,7 @@ class ClientManager:
         signer_exception = f'Error querying the signer at url {signer_url}. \n' \
                            f'Please make sure you have started the signer using "./tezos-signer launch http signer", \n' \
                            f'imported the secret key of the payout address {key_name}, \n' \
-                           f'and specified the URL of signer using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)'
+                           f'and specified the URL of signer using the flag -E http://<signer_addr>:<port> (default {PRIVATE_SIGNER_URL})'
 
         try:
             response = self._do_request(method="GET",
@@ -137,7 +137,7 @@ class ClientManager:
         signer_exception = f'Error querying the signer at url {signer_url}. \n' \
                            f'Please make sure to start the signer using "./tezos-signer launch http signer", \n' \
                            f'import the secret key of the payout address \n' \
-                           f'and specify the url using the flag -E http://<signer_addr>:<port> (default http://127.0.0.1:6732)'
+                           f'and specify the url using the flag -E http://<signer_addr>:<port> (default {PRIVATE_SIGNER_URL})'
 
         try:
             response = self._do_request(method="GET",
