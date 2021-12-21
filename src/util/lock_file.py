@@ -1,10 +1,10 @@
 import os
 import sys
-
-
+# from util.config_life_cycle import CONFIG_DIR
 class LockFile:
-    def __init__(self):
-        self.lock_file_path = "./lock"
+    def __init__(self, args):
+        # self.lock_file_path = "./lock"
+        self.lock_file_path = os.path.join(args.config_dir,"lock")
         self.lock_acquired = False
 
     def lock(self):

@@ -219,7 +219,7 @@ class ProcessLifeCycle:
         self.__srvc_fee_calc = ServiceFeeCalculator(self.__cfg.get_full_supporters_set(), self.__cfg.get_specials_map(), self.__cfg.get_service_fee())
 
     def do_lock(self, e):
-        LockFile().lock()
+        LockFile(self.args).lock()
         self.__lock_taken = True
 
     def do_load_plugins(self, e):
@@ -274,7 +274,7 @@ class ProcessLifeCycle:
         logger.info("--------------------------------------------------------")
 
         if self.__lock_taken:
-            LockFile().release()
+            LockFile(self.args).release()
             logger.info("Lock file removed!")
 
     def stop_handler(self, signum, frame):
