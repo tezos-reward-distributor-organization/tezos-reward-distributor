@@ -4,7 +4,7 @@ from model.reward_log import cmp_by_type_balance
 
 from pay.batch_payer import BatchPayer
 from cli.client_manager import ClientManager
-from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, RewardsType
+from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, RewardsType, PRIVATE_SIGNER_URL
 from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from model.baking_conf import BakingConf
@@ -20,7 +20,6 @@ from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 
 node_endpoint = PUBLIC_NODE_URL[CURRENT_TESTNET]
-signer_endpoint = "http://127.0.0.1:6732"
 network = {"NAME": CURRENT_TESTNET, "MINIMAL_BLOCK_DELAY": 5}
 
 baking_config = make_config(
@@ -131,7 +130,7 @@ def test_batch_payer_total_payout_amount():
     batch_payer = BatchPayer(
         node_url=node_endpoint,
         pymnt_addr="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
-        clnt_mngr=ClientManager(node_endpoint, signer_endpoint),
+        clnt_mngr=ClientManager(node_endpoint, PRIVATE_SIGNER_URL),
         delegator_pays_ra_fee=True,
         delegator_pays_xfer_fee=True,
         network_config=network,

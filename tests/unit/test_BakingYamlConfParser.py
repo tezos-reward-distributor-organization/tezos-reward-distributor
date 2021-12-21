@@ -1,6 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
-from Constants import PUBLIC_NODE_URL
+from Constants import PUBLIC_NODE_URL, PRIVATE_SIGNER_URL
 from cli.client_manager import ClientManager
 from config.addr_type import AddrType
 from config.yaml_baking_conf_parser import BakingYamlConfParser
@@ -8,7 +8,6 @@ from Constants import RewardsType
 from rpc.rpc_block_api import RpcBlockApiImpl
 
 node_endpoint = PUBLIC_NODE_URL["MAINNET"]
-signer_endpoint = "http://127.0.0.1:6732"
 network = {'NAME': 'MAINNET'}
 
 
@@ -17,7 +16,7 @@ class TestYamlAppConfParser(TestCase):
 
     def setUp(self):
         self.mainnet_public_node_url = node_endpoint
-        self.signer_endpoint = signer_endpoint
+        self.signer_endpoint = PRIVATE_SIGNER_URL
 
     def test_validate(self):
         data_fine = """
