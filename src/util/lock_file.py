@@ -4,7 +4,8 @@ import sys
 
 class LockFile:
     def __init__(self, args):
-        self.lock_file_path = os.path.join(args.config_dir, "lock")
+        config_dir = os.path.expanduser(args.config_dir)
+        self.lock_file_path = os.path.join(config_dir, "lock")
         self.lock_acquired = False
 
     def lock(self):
