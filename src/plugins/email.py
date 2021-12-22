@@ -59,12 +59,12 @@ class EmailPlugin(plugins.Plugin):
         msg = MIMEMultipart()
 
         if self.sender_name is not None:
-            msg['From'] = formataddr((self.sender_name, self.sender))
+            msg["From"] = formataddr((self.sender_name, self.sender))
         else:
-            msg['From'] = self.sender
-        msg['To'] = ", ".join(self.recipients)
-        msg['Date'] = formatdate(localtime=True)
-        msg['Subject'] = subject
+            msg["From"] = self.sender
+        msg["To"] = ", ".join(self.recipients)
+        msg["Date"] = formatdate(localtime=True)
+        msg["Subject"] = subject
 
         msg.attach(MIMEText(message))
 
@@ -114,7 +114,7 @@ class EmailPlugin(plugins.Plugin):
 
         self.nologin = self.cfg["smtp_nologin"]
 
-        if "smtp_sender_name" in self.cfg['smtp_sender_name']:
+        if "smtp_sender_name" in self.cfg["smtp_sender_name"]:
             self.cfg["smtp_sender_name"] = None
 
         self.sender_name = self.cfg["smtp_sender_name"]
@@ -131,7 +131,9 @@ class EmailPlugin(plugins.Plugin):
                 "[{:s}] Not Configured".format(self.name)
             )
         # Sanity check, when nologin is disabled, smtp_user is required
-        elif not self.nologin and (self.host is None or self.user is None or self.recipients is None):
+        elif not self.nologin and (
+            self.host is None or self.user is None or self.recipients is None
+        ):
             raise plugins.PluginConfigurationError(
                 "[{:s}] Not Configured".format(self.name)
             )
