@@ -1,14 +1,28 @@
 import os
+import argparse
 import signal
 import errno
 import time
 
 
+def command_line_arguments():
+    parser = argparse.ArgumentParser(
+        description="Stop the running trd process.", prog="trd_stopper"
+    )
+    parser.add_argument(
+        "-f",
+        "--config_dir",
+        help="Directory to find configuration files and the lock file.",
+        default="~/pymnt/cfg",
+    )
+    return parser.parse_args()
+
+
 def main():
     print("Stopping reward distributor")
-
-    stop()
-
+    args = command_line_arguments()
+    config_dir = os.path.expanduser(args.config_dir)
+    stop(config_dir)
     time.sleep(1)
 
 
@@ -42,18 +56,19 @@ def pid_exists(pid):
         return True
 
 
-def stop():
+def stop(config_path):
     pid = None
+    lock_path = os.path.join(config_path, "lock")
     try:
-        with open("./lock", "rt") as f:
+        with open(lock_path, "rt") as f:
             pid = f.readline()
             pid = int(pid)
     except FileNotFoundError:
-        print("No lock file. No running process")
+        print("No lock file found at {}. No running process!".format(lock_path))
         return
 
     if not pid_exists(pid):
-        os.remove("./lock")
+        os.remove(lock_path)
         return
 
     os.kill(pid, signal.SIGTERM)
