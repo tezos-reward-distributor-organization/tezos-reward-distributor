@@ -7,8 +7,7 @@ import ssl
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formatdate
-from email.utils import formataddr
+from email.utils import formatdate, formataddr
 from os.path import basename
 
 logger = logging.getLogger("main.plugins.email")
