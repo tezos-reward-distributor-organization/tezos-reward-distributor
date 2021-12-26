@@ -85,7 +85,7 @@ class EmailPlugin(plugins.Plugin):
             smtp.starttls(context=ssl_context)
             smtp.ehlo()
 
-        # Defsault value is False, if set we skip login,
+        # Default value is False, if set we skip login,
         # either relay is allowed, or destination is internal only.
         if not self.nologin:
             smtp.login(self.user, self.password)
