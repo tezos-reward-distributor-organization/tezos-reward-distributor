@@ -113,7 +113,7 @@ class EmailPlugin(plugins.Plugin):
 
         self.nologin = self.cfg["smtp_nologin"]
 
-        if "smtp_sender_name" in self.cfg["smtp_sender_name"]:
+        if "smtp_sender_name" not in self.cfg:
             self.cfg["smtp_sender_name"] = None
 
         self.sender_name = self.cfg["smtp_sender_name"]
