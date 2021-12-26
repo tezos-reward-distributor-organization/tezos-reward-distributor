@@ -57,6 +57,7 @@ class EmailPlugin(plugins.Plugin):
         # Create email and basic headers
         msg = MIMEMultipart()
 
+        # Default value is None, if set we use it.
         if self.sender_name is not None:
             msg["From"] = formataddr((self.sender_name, self.sender))
         else:
@@ -84,6 +85,8 @@ class EmailPlugin(plugins.Plugin):
             smtp.starttls(context=ssl_context)
             smtp.ehlo()
 
+        # Defsault value is False, if set we skip login,
+        # either relay is allowed, or destination is internal only.
         if not self.nologin:
             smtp.login(self.user, self.password)
         smtp.sendmail(self.sender, self.recipients, msg.as_string())
@@ -108,11 +111,15 @@ class EmailPlugin(plugins.Plugin):
         self.sender = self.cfg["smtp_sender"]
         self.user = self.cfg["smtp_user"]
         self.password = self.cfg["smtp_pass"]
+        # this parameter is optional, so we check if it is not set,
+        # and if not set we set it to False (default value)
         if "smtp_nologin" not in self.cfg:
             self.cfg["smtp_nologin"] = False
 
         self.nologin = self.cfg["smtp_nologin"]
 
+        # this parameter is optional, so we check if it is not set,
+        # and if not set we set it to None
         if "smtp_sender_name" not in self.cfg:
             self.cfg["smtp_sender_name"] = None
 
