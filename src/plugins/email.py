@@ -7,7 +7,7 @@ import ssl
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formatdate
+from email.utils import formatdate, formataddr
 from os.path import basename
 
 logger = logging.getLogger("main.plugins.email")
@@ -56,7 +56,12 @@ class EmailPlugin(plugins.Plugin):
 
         # Create email and basic headers
         msg = MIMEMultipart()
-        msg["From"] = self.sender
+
+        # Default value is None, if set we use it.
+        if self.sender_name is not None:
+            msg["From"] = formataddr((self.sender_name, self.sender))
+        else:
+            msg["From"] = self.sender
         msg["To"] = ", ".join(self.recipients)
         msg["Date"] = formatdate(localtime=True)
         msg["Subject"] = subject
@@ -80,7 +85,10 @@ class EmailPlugin(plugins.Plugin):
             smtp.starttls(context=ssl_context)
             smtp.ehlo()
 
-        smtp.login(self.user, self.password)
+        # Default value is False, if set we skip login,
+        # either relay is allowed, or destination is internal only.
+        if not self.nologin:
+            smtp.login(self.user, self.password)
         smtp.sendmail(self.sender, self.recipients, msg.as_string())
         smtp.close()
 
@@ -103,6 +111,19 @@ class EmailPlugin(plugins.Plugin):
         self.sender = self.cfg["smtp_sender"]
         self.user = self.cfg["smtp_user"]
         self.password = self.cfg["smtp_pass"]
+        # this parameter is optional, so we check if it is not set,
+        # and if not set we set it to False (default value)
+        if "smtp_nologin" not in self.cfg:
+            self.cfg["smtp_nologin"] = False
+
+        self.nologin = self.cfg["smtp_nologin"]
+
+        # this parameter is optional, so we check if it is not set,
+        # and if not set we set it to None
+        if "smtp_sender_name" not in self.cfg:
+            self.cfg["smtp_sender_name"] = None
+
+        self.sender_name = self.cfg["smtp_sender_name"]
 
         self.recipients = self.cfg["smtp_recipients"]
         if not isinstance(self.recipients, list):
@@ -110,8 +131,15 @@ class EmailPlugin(plugins.Plugin):
                 "[{:s}] 'smtp_recipients' not configured correctly".format(self.name)
             )
 
-        # Sanity
-        if self.host is None or self.user is None or self.recipients is None:
+        # Sanity check, when nologin is enabled smtp_user is not required
+        if self.nologin and (self.host is None or self.recipients is None):
+            raise plugins.PluginConfigurationError(
+                "[{:s}] Not Configured".format(self.name)
+            )
+        # Sanity check, when nologin is disabled, smtp_user is required
+        elif not self.nologin and (
+            self.host is None or self.user is None or self.recipients is None
+        ):
             raise plugins.PluginConfigurationError(
                 "[{:s}] Not Configured".format(self.name)
             )
