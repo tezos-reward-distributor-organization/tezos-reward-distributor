@@ -51,6 +51,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#email-plugin">Email Plugin</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#example-config">Example Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-2-config">Example 2 config</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#telegram-plugin">Telegram Plugin</a><ul>
@@ -139,13 +140,15 @@
 <div class="section" id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline"></a></h3>
 <ul class="simple">
-<li><p>smtp_user: The username for SMTP authentication</p></li>
-<li><p>smtp_pass: The password or application token for SMTP authentication</p></li>
-<li><p>smtp_host: The host of your SMTP server</p></li>
-<li><p>smtp_port: The port for communication to your SMTP server. TLS uses 587.</p></li>
-<li><p>smtp_tls: true/false. Only TLS is supported as SSL is usually deprecated in email servers.</p></li>
-<li><p>smtp_sender: The address for ‘From’ in the email</p></li>
-<li><p>smtp_recipients: A YAML list containing email addresses of intended recipients. Must be list format even if 1 recipient.</p></li>
+<li><p>smtp_user: (Required unless no login is used) The username for SMTP authentication</p></li>
+<li><p>smtp_pass: (Required unless no login is used) The password or application token for SMTP authentication</p></li>
+<li><p>smtp_nologin: (Optional) true or false, set to true to send without login, it will work if recipients are local to the server you connect to.</p></li>
+<li><p>smtp_host: (Required) The host of your SMTP server</p></li>
+<li><p>smtp_port: (Required) The port for communication to your SMTP server. TLS uses 587.</p></li>
+<li><p>smtp_tls: (Optional) true/false. Only TLS is supported as SSL is usually deprecated in email servers.</p></li>
+<li><p>smtp_sender: (Required) The address for ‘From’ in the email</p></li>
+<li><p>smtp_sender_name: (Optional) String - You can specify the display name for the sender, put a name to the sender, instead of just having the email address</p></li>
+<li><p>smtp_recipients: (Required) A YAML list containing email addresses of intended recipients. Must be list format even if 1 recipient.</p></li>
 </ul>
 </div>
 <div class="section" id="example-config">
@@ -161,6 +164,25 @@
     <span class="n">smtp_recipients</span><span class="p">:</span>
       <span class="o">-</span> <span class="n">bob</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
       <span class="o">-</span> <span class="n">alice</span><span class="nd">@hotmail</span><span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2-config">
+<h3>Example 2 config<a class="headerlink" href="#example-2-config" title="Permalink to this headline"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
+  <span class="n">email</span><span class="p">:</span>
+    <span class="n">smtp_nologin</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">smtp_host</span><span class="p">:</span> <span class="n">smtp</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">smtp_port</span><span class="p">:</span> <span class="mi">587</span>
+    <span class="n">smtp_tls</span><span class="p">:</span> <span class="n">true</span>
+    <span class="n">smtp_sender</span><span class="p">:</span> <span class="n">trdnotice</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
+    <span class="n">smtp_sender_name</span><span class="p">:</span> <span class="s2">&quot;TRD Notification Source X&quot;</span>
+    <span class="c1"># when using nologin, you cannot relay externally, all recipients must be </span>
+    <span class="c1"># from a domain local to the server you connect with smtp_host.</span>
+    <span class="c1"># in this case dmain.com is the server that is reponsible for domain.com email.</span>
+    <span class="n">smtp_recipients</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">bob</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
+      <span class="o">-</span> <span class="n">alice</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
 </pre></div>
 </div>
 </div>
