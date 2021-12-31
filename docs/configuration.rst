@@ -56,17 +56,11 @@ Available configuration parameters are:
   There are three options for calculating the total rewards earned by a baker at the end of each cycle. If this parameter is missing, 'actual' rewards take affect.
   
   - 'actual': Rewards are calculated based on the actual number of bakes, at any priority, and any endorsements. Transaction fees and other block rewards are included in the rewards. If a bake or endorsement is missed or rewards are lost again due to accusations, rewards are not earned and therefore not included.
-  - 'estimated': Rewards are calculated using the number of baking rights granted at priority 0, plus the count of all endorsing slots. If a bake or endorsement is missed, rewards are calculated as if there was no miss. No additional block rewards or transaction fees are included in this method. This allows to pay future rewards, before the cycle actually runs.
   - 'ideal': Rewards are calculated assuming ideal behaviour of the baker, and actual behaviour of other bakers. If a bake or endorsement is missed, rewards are paid out despite not having been earned. Lost income due to other baker downtime is not included. Transaction fees and other block rewards are included in the rewards. Any lost rewards due to double-baking, double endorsing, or missing nonces are compensated at the expense of the baker. Select this type of rewards to insure against downtime of your baker but still account for real world conditions. This way, you will get optimal ranking in baker evaluation services despite any downtime.
 
   Example::
 
     rewards_type: actual
-
-  Note that 'actual' payouts will throw an error if:
-
-#. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -5, since the payouts are done before the cycle is completed, or
-#. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -1, and the backend API is a Tezos node RPC, as actual payout calculation in this context is not implemented.
 
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.

@@ -53,7 +53,7 @@ class PhasedPaymentCalculator:
     # owners reward = owners payment = total reward - delegators reward
     # founders reward = delegators fee = total reward - delegators reward
     ####
-    def calculate(self, reward_provider_model):
+    def calculate(self, reward_provider_model, adjustments=None):
 
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs = phase0.calculate()
@@ -125,21 +125,43 @@ class PhasedPaymentCalculator:
 
         # calculate amounts
         phase_last = CalculatePhaseFinal()
-        rwrd_logs, total_rwrd_amnt = phase_last.calculate(rwrd_logs, total_rwrd_amnt)
+        rwrd_logs, total_rwrd_amnt = phase_last.calculate(
+            rwrd_logs, total_rwrd_amnt, adjustments
+        )
 
         # sort rewards according to type and balance
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
         # check if there is difference between sum of calculated amounts and total_rewards
-        total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
-        amnt_pay_diff = abs(total_rwrd_amnt - total_amount_to_pay)
+        total_delegator_amounts = sum(
+            [rl.adjusted_amount for rl in rwrd_logs if not rl.skipped]
+        )
+        total_adjustments = sum([rl.adjustment for rl in rwrd_logs if not rl.skipped])
+        amnt_pay_diff = abs(
+            total_rwrd_amnt + total_adjustments - total_delegator_amounts
+        )
 
         logger.info(
             "Total rewards after processing is {:,} mutez.".format(total_rwrd_amnt)
         )
-        logger.info("Total amount to pay is {:,} mutez".format(total_amount_to_pay))
+        if total_adjustments < 0:
+            logger.info(
+                "Total adjustment for past early payout is {:,} mutez.".format(
+                    total_adjustments
+                )
+            )
+            logger.info(
+                "Adjusted total rewards is {:,} mutez.".format(
+                    total_rwrd_amnt + total_adjustments
+                )
+            )
         logger.info(
-            "Difference between total rewards and total payment amount is {:,} mutez. "
+            "Sum of amounts allocated to delegators is {:,} mutez".format(
+                total_delegator_amounts
+            )
+        )
+        logger.info(
+            "Difference between total rewards and sum of amounts allocated to delegators is {:,} mutez. "
             "This is due to floating point arithmetic. (max allowed diff is {:,})".format(
                 amnt_pay_diff, MINOR_DIFF
             )
