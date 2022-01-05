@@ -133,18 +133,12 @@ This plugin allows payout notifications to be sent via a Twitter tweet. This plu
 Follow this outline to generate the API tokens and secrets for the plugin:
 
 1. Sign up as a developer at https://developer.twitter.com/
-2. Create a Twitter app
+2. Create a Twitter app. N.B. you will need to apply for [Elevated Access](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level).
 3. Enable Read and Write permissions on the app
 4. Under 'Keys and Tokens' there are two sections: Consumer Keys, and Authentication Tokens
 	* Under 'Consumer Keys', generate 'API Key and Secret'
 	* Under 'Authentication Tokens', generate 'Access Token & Secret'
 	* You can ignore 'Bearer Token'
-
-You must also install an additional Python library, [tweepy](https://github.com/tweepy/tweepy)
-
-```
-pip3 install -u tweepy
-```
 
 ### Example Config
 
