@@ -4,3 +4,4 @@ pyyaml>=4.2b1
 fysom==2.1.5
 parse
 transitions
+tweepy
