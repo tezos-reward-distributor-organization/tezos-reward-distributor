@@ -32,7 +32,7 @@ def test_get_rewards_for_cycle_map(address_api):
         )
     assert rewards.delegate_staking_balance == 162719327201
     assert rewards.total_reward_amount == 123000000
-    assert len(rewards.delegator_balance_dict) == 20
+    assert len(rewards.delegator_balance_dict) == 19
 
 
 class Mock_404_Response:
@@ -56,7 +56,7 @@ def test_rpc_terminate_404(address_api):
         ApiProviderException,
         match="RPC URL 'https://rpc.tzkt.io/mainnet/chains/main/blocks/head' not found. Is this node in archive mode?",
     ):
-        rewards = address_api.get_rewards_for_cycle_map(
+        _ = address_api.get_rewards_for_cycle_map(
             cycle=CYCLE, rewards_type=RewardsType.ACTUAL
         )
 
@@ -72,6 +72,6 @@ def test_rpc_contract_storage(address_api):
         ApiProviderException,
         match="RPC URL 'https://rpc.tzkt.io/mainnet/chains/main/blocks/head/context/contracts/KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU/storage' not found. Is this node in archive mode?",
     ):
-        contract_storage = address_api.get_contract_storage(
+        _ = address_api.get_contract_storage(
             contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block="head"
         )

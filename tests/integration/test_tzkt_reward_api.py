@@ -55,7 +55,7 @@ def store_reward_model(
         delegator_balance_dict={
             k: {i: v[i] for i in v if i != "current_balance"}
             for k, v in model.delegator_balance_dict.items()
-            if v["staking_balance"] >= 0
+            if v["staking_balance"] > 0
         },
     )
     try:
