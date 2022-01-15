@@ -22,12 +22,6 @@ def address_api():
     return TzKTBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"])
 
 
-def test_get_head(address_api):
-    (cycle, level) = address_api.get_current_cycle_and_level()
-    assert cycle > 300
-    assert level > 900000
-
-
 class MockRelevationResponse(MockResponse):
     def json(self):
         return {"revealed": True}
