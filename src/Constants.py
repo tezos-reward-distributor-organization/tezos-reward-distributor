@@ -25,6 +25,10 @@ PUBLIC_NODE_URL = {
     CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
 }
 
+RPC_PUBLIC_API_URL = {
+    "MAINNET": "https://rpc.tzkt.io/mainnet",
+}
+
 # TzStats
 TZSTATS_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzstats.com",

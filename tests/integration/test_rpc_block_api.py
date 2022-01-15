@@ -2,9 +2,10 @@ import pytest
 from src.rpc.rpc_block_api import RpcBlockApiImpl
 from unittest.mock import patch, MagicMock
 from src.Constants import PUBLIC_NODE_URL, DEFAULT_NETWORK_CONFIG_MAP
+from tests.utils import Constants
 
-NORMAL_TEZOS_ADDRESS = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"
-STAKENOW_ADDRESS = "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"
+NORMAL_TEZOS_ADDRESS = Constants.NORMAL_TEZOS_ADDRESS
+STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
 
 
 class MockResponse:

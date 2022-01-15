@@ -213,3 +213,8 @@ def mock_request_get(url, timeout):
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
 
     raise Exception("Mocked URL not found")
+
+
+class Constants:
+    NORMAL_TEZOS_ADDRESS = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"
+    STAKENOW_ADDRESS = "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"

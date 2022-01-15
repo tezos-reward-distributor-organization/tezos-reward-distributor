@@ -5,11 +5,10 @@ from typing import Optional
 from unittest.mock import patch, MagicMock
 from os.path import dirname, join
 
-from Constants import RewardsType
+from Constants import RewardsType, DEFAULT_NETWORK_CONFIG_MAP, RPC_PUBLIC_API_URL
 from rpc.rpc_reward_api import RpcRewardApiImpl
 from tzstats.tzstats_reward_api import TzStatsRewardApiImpl, RewardProviderModel
 from tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
-from NetworkConfiguration import default_network_config_map
 from parameterized import parameterized
 
 """
@@ -17,8 +16,10 @@ These tests are cached. To re-run, delete contents of the tzkt_data folder.
 """
 
 
-def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
-    path = join(dirname(__file__), f"tzkt_data/{address}_{cycle}_{suffix}.json")
+def load_reward_model(
+    address, cycle, suffix, dir_name="tzkt_data"
+) -> Optional[RewardProviderModel]:
+    path = join(dirname(__file__), f"{dir_name}/{address}_{cycle}_{suffix}.json")
     if os.path.exists(path):
         with open(path, "r") as f:
             data = json.loads(f.read())
@@ -38,8 +39,10 @@ def load_reward_model(address, cycle, suffix) -> Optional[RewardProviderModel]:
         return None
 
 
-def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
-    path = join(dirname(__file__), f"tzkt_data/{address}_{cycle}_{suffix}.json")
+def store_reward_model(
+    address, cycle, suffix, model: RewardProviderModel, dir_name="tzkt_data"
+):
+    path = join(dirname(__file__), f"{dir_name}/{address}_{cycle}_{suffix}.json")
     data = dict(
         delegate_staking_balance=model.delegate_staking_balance,
         total_reward_amount=model.total_reward_amount,
@@ -52,7 +55,7 @@ def store_reward_model(address, cycle, suffix, model: RewardProviderModel):
         delegator_balance_dict={
             k: {i: v[i] for i in v if i != "current_balance"}
             for k, v in model.delegator_balance_dict.items()
-            if v["staking_balance"] > 0
+            if v["staking_balance"] >= 0
         },
     )
     try:
@@ -103,7 +106,7 @@ class RewardApiImplTests(unittest.TestCase):
     )
     def test_get_rewards_for_cycle_map(self, address, cycle):
         """
-        This test compares the total rewards and balance accoring to tzkt,
+        This test compares the total rewards and balance according to tzkt,
         to the total rewards according to rpc.
 
         It also compares the balances per delegator.
@@ -111,15 +114,15 @@ class RewardApiImplTests(unittest.TestCase):
         rpc_rewards = load_reward_model(address, cycle, "actual")
         if rpc_rewards is None:
             rpc_impl = RpcRewardApiImpl(
-                nw=default_network_config_map["MAINNET"],
+                nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
                 baking_address=address,
-                node_url="https://rpc.tzkt.io/mainnet",
+                node_url=RPC_PUBLIC_API_URL["MAINNET"],
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
             store_reward_model(address, cycle, "actual", rpc_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
-            nw=default_network_config_map["MAINNET"], baking_address=address
+            nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
         )
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
@@ -150,7 +153,7 @@ class RewardApiImplTests(unittest.TestCase):
         tzstats_rewards = load_reward_model(address, cycle, "expected")
         if tzstats_rewards is None:
             tzstats_impl = TzStatsRewardApiImpl(
-                nw=default_network_config_map["MAINNET"], baking_address=address
+                nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
             )
             tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(
                 cycle, RewardsType.ESTIMATED
@@ -158,7 +161,7 @@ class RewardApiImplTests(unittest.TestCase):
             store_reward_model(address, cycle, "expected", tzstats_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
-            nw=default_network_config_map["MAINNET"], baking_address=address
+            nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
         )
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ESTIMATED)
 
@@ -185,15 +188,15 @@ class RewardApiImplTests(unittest.TestCase):
         rpc_rewards = load_reward_model(address, cycle, "actual")
         if rpc_rewards is None:
             rpc_impl = RpcRewardApiImpl(
-                nw=default_network_config_map["MAINNET"],
+                nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
                 baking_address=address,
-                node_url="https://rpc.tzkt.io/mainnet",
+                node_url=RPC_PUBLIC_API_URL["MAINNET"],
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
             store_reward_model(address, cycle, "actual", rpc_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
-            nw=default_network_config_map["MAINNET"], baking_address=address
+            nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
         )
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
@@ -214,7 +217,7 @@ class RewardApiImplTests(unittest.TestCase):
             )
         ]
         tzkt_impl = TzKTRewardApiImpl(
-            nw=default_network_config_map["MAINNET"],
+            nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
             baking_address="tz1gk3TDbU7cJuiBRMhwQXVvgDnjsxuWhcEA",
         )
         tzkt_impl.update_current_balances(log_items)
