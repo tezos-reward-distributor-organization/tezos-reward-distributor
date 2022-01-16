@@ -208,16 +208,14 @@ class RpcRewardApiImpl(RewardApi):
             # necessary data to properly compute rewards
             raise e from e
 
-    def __get_response(self, address, request_function, response=None):
+    def __get_response(self, address, request, response=None):
         retry_count = 0
         while (not response) and (retry_count < MAX_SEQUENT_CALLS):
             retry_count += 1
             sleep(RPC_REQUEST_BUFFER_SECONDS)  # Be nice to public RPC
             try:
                 logger.info("Fetching address {:s} ...".format(address))
-                response = self.do_rpc_request(
-                    request_function, time_out=5
-                )
+                response = self.do_rpc_request(request, time_out=5)
             except requests.exceptions.RequestException as e:
                 # Catch HTTP-related errors and retry
                 logger.warning(
@@ -558,7 +556,9 @@ class RpcRewardApiImpl(RewardApi):
                 get_staking_balance_request = COMM_DELEGATE_BALANCE.format(
                     self.node_url, level_snapshot_block, delegator
                 )
-                d_info["staking_balance"] = int(self.__get_response(delegator, get_staking_balance_request))
+                d_info["staking_balance"] = int(
+                    self.__get_response(delegator, get_staking_balance_request)
+                )
 
                 sleep(
                     0.5
