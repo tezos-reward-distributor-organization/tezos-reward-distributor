@@ -5,7 +5,7 @@ from pprint import pformat
 from os.path import join
 from json import JSONDecodeError
 
-from Constants import VERSION, TZKT_PUBLIC_API_URL
+from Constants import VERSION, TZKT_PUBLIC_API_URL, MAX_SEQUENT_CALLS
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 
@@ -18,7 +18,6 @@ class TzKTApiError(ApiProviderException):
 
 class TzKTApi:
     max_page_size = 10000
-    max_sequent_calls = 257  # to prevent possible endless looping
     delay_between_calls = 0.1  # in seconds
 
     def __init__(self, base_url, timeout):
@@ -170,7 +169,7 @@ class TzKTApi:
         offset = 0
         limit = self.max_page_size if fetch_delegators else 0
 
-        for i in range(self.max_sequent_calls):
+        for i in range(MAX_SEQUENT_CALLS):
             page = self._request(
                 f"rewards/split/{address}/{cycle}", offset=offset, limit=limit
             )
@@ -188,9 +187,7 @@ class TzKTApi:
                 offset += limit
                 sleep(self.delay_between_calls)
 
-        raise TzKTApiError(
-            f"Max sequent calls number exceeded ({self.max_sequent_calls})"
-        )
+        raise TzKTApiError(f"Max sequent calls number exceeded ({MAX_SEQUENT_CALLS})")
 
     def get_account_by_address(self, address) -> dict:
         """

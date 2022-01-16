@@ -5,6 +5,7 @@ EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = "hangzhou"
 CURRENT_TESTNET = ("{}2net".format(PROTOCOL_NAME)).upper()
 
+MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
 FIRST_GRANADA_LEVEL = 1589249
 

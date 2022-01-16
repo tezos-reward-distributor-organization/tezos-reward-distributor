@@ -8,6 +8,7 @@ from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 from model.reward_provider_model import RewardProviderModel
 from Dexter import dexter_utils as dxtz
+from Constants import MAX_SEQUENT_CALLS
 
 logger = main_logger.getChild("rpc_reward_api")
 
@@ -38,6 +39,9 @@ BLOCKS_PER_CYCLE_BEFORE_GRANADA = 4096
 BLOCK_PER_ROLL_SNAPSHOT_BEFORE_GRANADA = 256
 FIRST_CYCLE_REWARDS_GRANADA = 394
 FIRST_CYCLE_SNAPSHOT_GRANADA = 396
+
+RPC_REQUEST_BUFFER_SECONDS = 0.4
+RPC_RETRY_TIMEOUT_SECONDS = 2.0
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -376,8 +380,13 @@ class RpcRewardApiImpl(RewardApi):
                 "RPC URL '{}' not found. Is this node in archive mode?".format(request)
             )
 
-        # URL returned something broken
-        if resp.status_code != HTTPStatus.OK:
+        # URL returned something broken from the client side 4xx
+        # server side errors 5xx can pass for a retry
+        if (
+            HTTPStatus.BAD_REQUEST
+            <= resp.status_code
+            < HTTPStatus.INTERNAL_SERVER_ERROR
+        ):
             message = "[do_rpc_request] Requesting URL '{:s}' failed ({:d})".format(
                 request, resp.status_code
             )
@@ -411,21 +420,23 @@ class RpcRewardApiImpl(RewardApi):
         )
 
         contract_storage_response = None
-
-        while not contract_storage_response:
-            sleep(0.4)  # Be nice to public RPC
+        retry_count = 0
+        while (not contract_storage_response) and (retry_count < MAX_SEQUENT_CALLS):
+            retry_count += 1
+            sleep(RPC_REQUEST_BUFFER_SECONDS)  # Be nice to public RPC
             try:
+                logger.info("Fetching contract storage {:s} ...".format(contract_id))
                 contract_storage_response = self.do_rpc_request(
                     get_contract_storage_request, time_out=5
                 )
             except requests.exceptions.RequestException as e:
                 # Catch HTTP-related errors and retry
-                logger.debug(
-                    "Fetching contract storage {:s} failed, will retry: {:s}".format(
-                        contract_id, str(e)
+                logger.warning(
+                    "Failed with exception, will retry ({}) : {}".format(
+                        retry_count, str(e)
                     )
                 )
-                sleep(2.0)
+                sleep(RPC_RETRY_TIMEOUT_SECONDS)
             except Exception as e:
                 # Anything else, raise up
                 raise e from e
@@ -445,21 +456,23 @@ class RpcRewardApiImpl(RewardApi):
         )
 
         address_value_response = None
-
-        while not address_value_response:
-            sleep(0.4)  # Be nice to public RPC
+        retry_count = 0
+        while (not address_value_response) and (retry_count < MAX_SEQUENT_CALLS):
+            retry_count += 1
+            sleep(RPC_REQUEST_BUFFER_SECONDS)  # Be nice to public RPC
             try:
+                logger.info("Fetching address value {} ...".format(address_script_expr))
                 address_value_response = self.do_rpc_request(
                     get_address_value_request, time_out=5
                 )
             except requests.exceptions.RequestException as e:
                 # Catch HTTP-related errors and retry
-                logger.debug(
-                    "Fetching address value {} failed, will retry: {:s}".format(
-                        address_script_expr, str(e)
+                logger.warning(
+                    "Failed with exception, will retry ({}) : {}".format(
+                        retry_count, str(e)
                     )
                 )
-                sleep(2.0)
+                sleep(RPC_RETRY_TIMEOUT_SECONDS)
             except Exception as e:
                 # Anything else, raise up
                 raise e from e
@@ -569,19 +582,28 @@ class RpcRewardApiImpl(RewardApi):
                 )
 
                 staking_balance_response = None
-
-                while not staking_balance_response:
+                retry_count = 0
+                while (not staking_balance_response) and (
+                    retry_count < MAX_SEQUENT_CALLS
+                ):
+                    retry_count += 1
+                    sleep(RPC_REQUEST_BUFFER_SECONDS)  # Be nice to public RPC
                     try:
+                        logger.info(
+                            "Fetching delegator {:s} staking balance ...".format(
+                                delegator
+                            )
+                        )
                         staking_balance_response = self.do_rpc_request(
                             get_staking_balance_request, time_out=5
                         )
                     except Exception as e:
-                        logger.debug(
-                            "[get_d_d_b] Fetching delegator {:s} staking balance failed: {:s}, will retry".format(
-                                delegator, str(e)
+                        logger.warning(
+                            "Failed with exception, will retry ({}) : {}".format(
+                                retry_count, str(e)
                             )
                         )
-                        sleep(1.0)  # Sleep between failure
+                        sleep(RPC_RETRY_TIMEOUT_SECONDS)  # Sleep between failure
 
                 d_info["staking_balance"] = int(staking_balance_response)
 
@@ -639,21 +661,25 @@ class RpcRewardApiImpl(RewardApi):
         )
 
         current_balance_response = None
-
-        while not current_balance_response:
-            sleep(0.4)  # Be nice to public RPC
+        retry_count = 0
+        while (not current_balance_response) and (retry_count < MAX_SEQUENT_CALLS):
+            retry_count += 1
+            sleep(RPC_REQUEST_BUFFER_SECONDS)  # Be nice to public RPC
             try:
+                logger.info(
+                    "Fetching delegator {:s} current balance ...".format(address)
+                )
                 current_balance_response = self.do_rpc_request(
                     get_current_balance_request, time_out=5
                 )
             except ApiProviderException as e:
                 # Catch HTTP-related errors and retry
                 logger.warning(
-                    "Fetching delegator {:s} current balance failed, will retry: {:s}".format(
-                        address, str(e)
+                    "Failed with exception, will retry ({}) : {}".format(
+                        retry_count, str(e)
                     )
                 )
-                sleep(2.0)
+                sleep(RPC_RETRY_TIMEOUT_SECONDS)
             except Exception as e:
                 # Anything else, raise up
                 raise e from e
