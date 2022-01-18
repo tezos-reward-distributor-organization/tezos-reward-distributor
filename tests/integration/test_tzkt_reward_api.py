@@ -1,74 +1,25 @@
 import unittest
-import os
-import json
-from typing import Optional
+import pytest
 from unittest.mock import patch, MagicMock
-from os.path import dirname, join
-
-from Constants import RewardsType, DEFAULT_NETWORK_CONFIG_MAP, RPC_PUBLIC_API_URL
+from Constants import (
+    RewardsType,
+    DEFAULT_NETWORK_CONFIG_MAP,
+    RPC_PUBLIC_API_URL,
+    MAX_SEQUENT_CALLS,
+)
 from rpc.rpc_reward_api import RpcRewardApiImpl
-from tzstats.tzstats_reward_api import TzStatsRewardApiImpl, RewardProviderModel
+from tzstats.tzstats_reward_api import TzStatsRewardApiImpl
 from tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
+from tzkt.tzkt_api import TzKTApiError
 from parameterized import parameterized
+from tests.utils import load_reward_model, store_reward_model, Constants
+
+STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
+CYCLE = 100
 
 """
 These tests are cached. To re-run, delete contents of the tzkt_data folder.
 """
-
-
-def load_reward_model(
-    address, cycle, suffix, dir_name="tzkt_data"
-) -> Optional[RewardProviderModel]:
-    path = join(dirname(__file__), f"{dir_name}/{address}_{cycle}_{suffix}.json")
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            data = json.loads(f.read())
-        return RewardProviderModel(
-            delegate_staking_balance=data["delegate_staking_balance"],
-            total_reward_amount=data["total_reward_amount"],
-            rewards_and_fees=data["rewards_and_fees"],
-            equivocation_losses=data["equivocation_losses"],
-            offline_losses=data["offline_losses"],
-            num_baking_rights=data["num_baking_rights"],
-            num_endorsing_rights=data["num_endorsing_rights"],
-            denunciation_rewards=data["denunciation_rewards"],
-            delegator_balance_dict=data["delegator_balance_dict"],
-            computed_reward_amount=None,
-        )
-    else:
-        return None
-
-
-def store_reward_model(
-    address, cycle, suffix, model: RewardProviderModel, dir_name="tzkt_data"
-):
-    path = join(dirname(__file__), f"{dir_name}/{address}_{cycle}_{suffix}.json")
-    data = dict(
-        delegate_staking_balance=model.delegate_staking_balance,
-        total_reward_amount=model.total_reward_amount,
-        rewards_and_fees=model.rewards_and_fees,
-        equivocation_losses=model.equivocation_losses,
-        offline_losses=model.offline_losses,
-        num_baking_rights=model.num_baking_rights,
-        num_endorsing_rights=model.num_endorsing_rights,
-        denunciation_rewards=model.denunciation_rewards,
-        delegator_balance_dict={
-            k: {i: v[i] for i in v if i != "current_balance"}
-            for k, v in model.delegator_balance_dict.items()
-            if v["staking_balance"] > 0
-        },
-    )
-    try:
-        with open(path, "w+") as f:
-            f.write(json.dumps(data, indent=2))
-    except Exception as e:
-        import errno
-
-        print("Exception during write operation invoked: {}".format(e))
-        if e.errno == errno.ENOSPC:
-            print("Not enough space on device!")
-        exit()
-
 
 dummy_addr_dict = dict(
     pkh="pkh",
@@ -111,7 +62,7 @@ class RewardApiImplTests(unittest.TestCase):
 
         It also compares the balances per delegator.
         """
-        rpc_rewards = load_reward_model(address, cycle, "actual")
+        rpc_rewards = load_reward_model(address, cycle, "actual", dir_name="tzkt_data")
         if rpc_rewards is None:
             rpc_impl = RpcRewardApiImpl(
                 nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
@@ -119,7 +70,9 @@ class RewardApiImplTests(unittest.TestCase):
                 node_url=RPC_PUBLIC_API_URL["MAINNET"],
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
-            store_reward_model(address, cycle, "actual", rpc_rewards)
+            store_reward_model(
+                address, cycle, "actual", rpc_rewards, dir_name="tzkt_data"
+            )
 
         tzkt_impl = TzKTRewardApiImpl(
             nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
@@ -222,3 +175,97 @@ class RewardApiImplTests(unittest.TestCase):
         )
         tzkt_impl.update_current_balances(log_items)
         self.assertNotEqual(0, log_items[0].current_balance)
+
+
+@pytest.fixture
+def address_api():
+    return TzKTRewardApiImpl(
+        nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=STAKENOW_ADDRESS
+    )
+
+
+class Mock_404_Response:
+    def json(self):
+        return None
+
+    @property
+    def status_code(self):
+        return 404
+
+    @property
+    def text(self):
+        return "404 Error happened"
+
+
+@patch(
+    "src.tzkt.tzkt_api.requests.get",
+    MagicMock(return_value=Mock_404_Response()),
+)
+@patch("tzkt.tzkt_api.sleep", MagicMock())
+@patch("tzkt.tzkt_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+def test_tzkt_terminate_404(address_api):
+    with pytest.raises(
+        TzKTApiError,
+        match="TzKT returned 404 error:\n404 Error happened",
+    ):
+        _ = address_api.get_rewards_for_cycle_map(
+            cycle=CYCLE, rewards_type=RewardsType.ACTUAL
+        )
+
+
+class Mock_500_Response:
+    def json(self):
+        return {}
+
+    @property
+    def status_code(self):
+        return 500
+
+    @property
+    def text(self):
+        return "500 BAD REQUEST"
+
+
+@patch(
+    "src.tzkt.tzkt_api.requests.get",
+    MagicMock(return_value=Mock_500_Response()),
+)
+@patch("tzkt.tzkt_api.sleep", MagicMock())
+@patch("tzkt.tzkt_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+def test_tzkt_retry_500(address_api):
+    with pytest.raises(
+        TzKTApiError,
+        match=r"Max sequent calls number exceeded \({}\)".format(MAX_SEQUENT_CALLS),
+    ):
+        _ = address_api.get_rewards_for_cycle_map(
+            cycle=CYCLE, rewards_type=RewardsType.ACTUAL
+        )
+
+
+class Mock_204_Response:
+    def json(self):
+        return {}
+
+    @property
+    def status_code(self):
+        return 204
+
+    @property
+    def text(self):
+        return "204 NO CONTENT"
+
+
+@patch(
+    "src.tzkt.tzkt_api.requests.get",
+    MagicMock(return_value=Mock_204_Response()),
+)
+@patch("tzkt.tzkt_api.sleep", MagicMock())
+@patch("tzkt.tzkt_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+def test_tzkt_retry_204(address_api):
+    with pytest.raises(
+        TzKTApiError,
+        match=r"Max sequent calls number exceeded \({}\)".format(MAX_SEQUENT_CALLS),
+    ):
+        _ = address_api.get_rewards_for_cycle_map(
+            cycle=CYCLE, rewards_type=RewardsType.ACTUAL
+        )

@@ -7,10 +7,9 @@ from Constants import (
     RewardsType,
     MAX_SEQUENT_CALLS,
 )
-from tests.integration.test_tzkt_reward_api import load_reward_model, store_reward_model
+from tests.utils import load_reward_model, store_reward_model, Constants
 from exception.api_provider import ApiProviderException
 from requests.exceptions import RequestException
-from tests.utils import Constants
 
 STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
 CYCLE = 100

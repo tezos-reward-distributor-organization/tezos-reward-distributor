@@ -1,10 +1,9 @@
 import pytest
 from tzstats.tzstats_reward_api import TzStatsRewardApiImpl
 from unittest.mock import patch, MagicMock
-from Constants import RPC_PUBLIC_API_URL, DEFAULT_NETWORK_CONFIG_MAP, RewardsType
-from tests.integration.test_tzkt_reward_api import load_reward_model, store_reward_model
+from Constants import DEFAULT_NETWORK_CONFIG_MAP, RewardsType
+from tests.utils import load_reward_model, store_reward_model, Constants
 from exception.api_provider import ApiProviderException
-from tests.utils import Constants
 
 STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
 CYCLE = 100
