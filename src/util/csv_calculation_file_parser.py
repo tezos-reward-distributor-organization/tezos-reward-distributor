@@ -42,7 +42,10 @@ class CsvCalculationFileParser:
         rl.amount = float(row["amount"])
         rl.service_fee_amount = float(row["fee_amount"])
         rl.service_fee_rate = float(row["fee_rate"])
-        rl.overestimate = float(row["overestimate"]) if "overestimate" in row else 0
+        if "overestimate" in row:
+            rl.overestimate = None if row["overestimate"] == "pending" else float(row["overestimate"])
+        else:
+            rl.overestimate = 0
         rl.adjustment = float(row["adjustment"]) if "adjustment" in row else float(0)
         rl.adjusted_amount = float(
             row["adjusted_amount"] if "adjusted_amount" in row else row["amount"]

@@ -494,7 +494,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 completed_cycle_report_file_path, self.baking_address
             )
             # check that the overestimate has not been computed yet
-            if sum([rl.overestimate for rl in reward_logs_from_report]) > 0:
+            if sum([rl.overestimate or 0 for rl in reward_logs_from_report]) > 0:
                 logger.info(
                     "Overestimate has already been calculated for cycle {:s}, not calculating it again.".format(
                         str(completed_cycle)
