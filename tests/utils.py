@@ -36,7 +36,9 @@ def load_reward_model(
 def store_reward_model(
     address, cycle, suffix, model: RewardProviderModel, dir_name="tzkt_data"
 ):
-    path = join(dirname(__file__), f"{dir_name}/{address}_{cycle}_{suffix}.json")
+    path = join(
+        dirname(__file__), f"integration/{dir_name}/{address}_{cycle}_{suffix}.json"
+    )
     data = dict(
         delegate_staking_balance=model.delegate_staking_balance,
         total_reward_amount=model.total_reward_amount,
