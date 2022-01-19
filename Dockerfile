@@ -4,6 +4,7 @@ COPY . /app
 # Create a unprivileged user
 RUN addgroup trd \
     && adduser -G trd -D -h /app trd \
+    && mkdir /app/config \
     && chown -R trd:trd /app
 
 WORKDIR /app
