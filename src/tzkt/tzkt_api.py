@@ -5,7 +5,7 @@ from pprint import pformat
 from os.path import join
 from json import JSONDecodeError
 
-from Constants import VERSION, TZKT_PUBLIC_API_URL
+from Constants import VERSION, TZKT_PUBLIC_API_URL, MAX_SEQUENT_CALLS
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 
@@ -16,10 +16,14 @@ class TzKTApiError(ApiProviderException):
     pass
 
 
+MAX_PAGE_SIZE = 10000
+TZKT_REQUEST_BUFFER_SECONDS = 0.1
+TZKT_RETRY_TIMEOUT_SECONDS = 2.0
+
+
 class TzKTApi:
-    max_page_size = 10000
-    max_sequent_calls = 257  # to prevent possible endless looping
-    delay_between_calls = 0.1  # in seconds
+    max_page_size = MAX_PAGE_SIZE
+    delay_between_calls = TZKT_REQUEST_BUFFER_SECONDS  # in seconds
 
     def __init__(self, base_url, timeout):
         self.base_url = base_url
@@ -67,13 +71,22 @@ class TzKTApi:
         except requests.RequestException as e:
             raise TzKTApiError(e)
 
-        if response.status_code == HTTPStatus.NO_CONTENT:
-            return None
-
-        if response.status_code != HTTPStatus.OK:
+        # Raise exception for client side errors (4xx)
+        if (
+            HTTPStatus.BAD_REQUEST
+            <= response.status_code
+            < HTTPStatus.INTERNAL_SERVER_ERROR
+        ):
             raise TzKTApiError(
                 f"TzKT returned {response.status_code} error:\n{response.text}"
             )
+
+        # Return None if empty content
+        # or we get a server side error (5xx)
+        if (response.status_code == HTTPStatus.NO_CONTENT) or (
+            response.status_code >= HTTPStatus.INTERNAL_SERVER_ERROR
+        ):
+            return None
 
         try:
             res = response.json()
@@ -170,10 +183,18 @@ class TzKTApi:
         offset = 0
         limit = self.max_page_size if fetch_delegators else 0
 
-        for i in range(self.max_sequent_calls):
+        for call_count in range(MAX_SEQUENT_CALLS):
             page = self._request(
                 f"rewards/split/{address}/{cycle}", offset=offset, limit=limit
             )
+
+            if page is None:
+                verbose_logger.warning(
+                    f"Retry getting rewards/split/{address}/{cycle} ({call_count}) ..."
+                )
+                sleep(TZKT_RETRY_TIMEOUT_SECONDS)
+                continue
+
             assert isinstance(page, dict) and "delegators" in page
 
             if res is None:
@@ -188,9 +209,7 @@ class TzKTApi:
                 offset += limit
                 sleep(self.delay_between_calls)
 
-        raise TzKTApiError(
-            f"Max sequent calls number exceeded ({self.max_sequent_calls})"
-        )
+        raise TzKTApiError(f"Max sequent calls number exceeded ({MAX_SEQUENT_CALLS})")
 
     def get_account_by_address(self, address) -> dict:
         """
