@@ -8,6 +8,7 @@ from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 from model.reward_provider_model import RewardProviderModel
 from Dexter import dexter_utils as dxtz
+from Constants import MAX_SEQUENT_CALLS
 
 logger = main_logger.getChild("rpc_reward_api")
 
@@ -38,6 +39,9 @@ BLOCKS_PER_CYCLE_BEFORE_GRANADA = 4096
 BLOCK_PER_ROLL_SNAPSHOT_BEFORE_GRANADA = 256
 FIRST_CYCLE_REWARDS_GRANADA = 394
 FIRST_CYCLE_SNAPSHOT_GRANADA = 396
+
+RPC_REQUEST_BUFFER_SECONDS = 0.4
+RPC_RETRY_TIMEOUT_SECONDS = 2.0
 
 
 class RpcRewardApiImpl(RewardApi):
@@ -203,6 +207,28 @@ class RpcRewardApiImpl(RewardApi):
             # We should abort here on any exception as we did not fetch all
             # necessary data to properly compute rewards
             raise e from e
+
+    def __get_response(self, address, request, response=None):
+        retry_count = 0
+        while (not response) and (retry_count < MAX_SEQUENT_CALLS):
+            retry_count += 1
+            sleep(RPC_REQUEST_BUFFER_SECONDS)  # Be nice to public RPC
+            try:
+                logger.info("Fetching address {:s} ...".format(address))
+                response = self.do_rpc_request(request, time_out=5)
+            except requests.exceptions.RequestException as e:
+                # Catch HTTP-related errors and retry
+                logger.warning(
+                    "Failed with exception, will retry ({}) : {}".format(
+                        retry_count, str(e)
+                    )
+                )
+                sleep(RPC_RETRY_TIMEOUT_SECONDS)
+            except Exception as e:
+                # Anything else, raise up
+                raise e from e
+
+        return response
 
     def __get_baking_rights(self, cycle, level):
         """
@@ -376,8 +402,13 @@ class RpcRewardApiImpl(RewardApi):
                 "RPC URL '{}' not found. Is this node in archive mode?".format(request)
             )
 
-        # URL returned something broken
-        if resp.status_code != HTTPStatus.OK:
+        # URL returned something broken from the client side 4xx
+        # server side errors 5xx can pass for a retry
+        if (
+            HTTPStatus.BAD_REQUEST
+            <= resp.status_code
+            < HTTPStatus.INTERNAL_SERVER_ERROR
+        ):
             message = "[do_rpc_request] Requesting URL '{:s}' failed ({:d})".format(
                 request, resp.status_code
             )
@@ -409,28 +440,7 @@ class RpcRewardApiImpl(RewardApi):
         get_contract_storage_request = COMM_CONTRACT_STORAGE.format(
             self.node_url, block, contract_id
         )
-
-        contract_storage_response = None
-
-        while not contract_storage_response:
-            sleep(0.4)  # Be nice to public RPC
-            try:
-                contract_storage_response = self.do_rpc_request(
-                    get_contract_storage_request, time_out=5
-                )
-            except requests.exceptions.RequestException as e:
-                # Catch HTTP-related errors and retry
-                logger.debug(
-                    "Fetching contract storage {:s} failed, will retry: {:s}".format(
-                        contract_id, str(e)
-                    )
-                )
-                sleep(2.0)
-            except Exception as e:
-                # Anything else, raise up
-                raise e from e
-
-        return contract_storage_response
+        return self.__get_response(contract_id, get_contract_storage_request)
 
     def get_big_map_id(self, contract_id):
         storage = self.get_contract_storage(contract_id, "head")
@@ -443,28 +453,7 @@ class RpcRewardApiImpl(RewardApi):
         get_address_value_request = COMM_BIGMAP_QUERY.format(
             self.node_url, snapshot_block, big_map_id, address_script_expr
         )
-
-        address_value_response = None
-
-        while not address_value_response:
-            sleep(0.4)  # Be nice to public RPC
-            try:
-                address_value_response = self.do_rpc_request(
-                    get_address_value_request, time_out=5
-                )
-            except requests.exceptions.RequestException as e:
-                # Catch HTTP-related errors and retry
-                logger.debug(
-                    "Fetching address value {} failed, will retry: {:s}".format(
-                        address_script_expr, str(e)
-                    )
-                )
-                sleep(2.0)
-            except Exception as e:
-                # Anything else, raise up
-                raise e from e
-
-        return address_value_response
+        return self.__get_response(address_script_expr, get_address_value_request)
 
     def get_liquidity_provider_balance(
         self, big_map_id, address_script_expr, snapshot_block
@@ -567,23 +556,9 @@ class RpcRewardApiImpl(RewardApi):
                 get_staking_balance_request = COMM_DELEGATE_BALANCE.format(
                     self.node_url, level_snapshot_block, delegator
                 )
-
-                staking_balance_response = None
-
-                while not staking_balance_response:
-                    try:
-                        staking_balance_response = self.do_rpc_request(
-                            get_staking_balance_request, time_out=5
-                        )
-                    except Exception as e:
-                        logger.debug(
-                            "[get_d_d_b] Fetching delegator {:s} staking balance failed: {:s}, will retry".format(
-                                delegator, str(e)
-                            )
-                        )
-                        sleep(1.0)  # Sleep between failure
-
-                d_info["staking_balance"] = int(staking_balance_response)
+                d_info["staking_balance"] = int(
+                    self.__get_response(delegator, get_staking_balance_request)
+                )
 
                 sleep(
                     0.5
@@ -637,28 +612,7 @@ class RpcRewardApiImpl(RewardApi):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format(
             self.node_url, "head", address
         )
-
-        current_balance_response = None
-
-        while not current_balance_response:
-            sleep(0.4)  # Be nice to public RPC
-            try:
-                current_balance_response = self.do_rpc_request(
-                    get_current_balance_request, time_out=5
-                )
-            except ApiProviderException as e:
-                # Catch HTTP-related errors and retry
-                logger.warning(
-                    "Fetching delegator {:s} current balance failed, will retry: {:s}".format(
-                        address, str(e)
-                    )
-                )
-                sleep(2.0)
-            except Exception as e:
-                # Anything else, raise up
-                raise e from e
-
-        return int(current_balance_response)
+        return int(self.__get_response(address, get_current_balance_request))
 
     def __get_roll_snapshot_block_level(self, cycle, current_level):
         # Granada doubled the number of [blocks_per_cycle] (8192 vs 4096)

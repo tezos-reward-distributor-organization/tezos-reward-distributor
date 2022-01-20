@@ -66,11 +66,3 @@ class RpcBlockApiImpl(BlockApi):
             )
             logger.error(message)
             raise ApiProviderException(message)
-
-
-def test_get_revelation():
-
-    address_api = RpcBlockApiImpl({"NAME": "ALPHANET"}, PRIVATE_NODE_URL)
-    print(address_api.get_revelation("tz1N5cvoGZFNYWBp2NbCWhaRXuLQf6e1gZrv"))
-    print(address_api.get_revelation("KT1FXQjnbdqDdKNpjeM6o8PF1w8Rn2j8BmmG"))
-    print(address_api.get_revelation("tz1YVxe7FFisREKXWNxdrrwqvw3o2jeXzaNb"))
