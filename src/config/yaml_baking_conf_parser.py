@@ -320,8 +320,9 @@ class BakingYamlConfParser(YamlConfParser):
 
         if conf_obj[REWARDS_TYPE] == "estimated":
             raise ConfigurationException(
-                "'ESTIMATED' is no longer a valid option for rewards payout type. \n"
-                "Please see https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/540"
+                "Setting 'rewards_type' to 'estimated' is no longer supported.\n"
+                "Please see https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/payouttiming.html\n"
+                "for details on how to configure a improved method."
             )
 
         # Validate correct value
