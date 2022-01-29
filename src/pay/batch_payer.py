@@ -523,6 +523,7 @@ class BatchPayer:
                 self.gas_limit,
                 self.default_fee,
             )
+            payment_item.transaction_fee = tx_fee
 
             # TRD extension for non scriptless contract accounts
             if payment_item.paymentaddress.startswith("KT"):
@@ -540,6 +541,7 @@ class BatchPayer:
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
                 total_fee = tx_fee + burn_fee
+                payment_item.transaction_fee = total_fee
 
                 if KT1_FEE_SAFETY_CHECK:
                     if total_fee > FEE_LIMIT_CONTRACTS:

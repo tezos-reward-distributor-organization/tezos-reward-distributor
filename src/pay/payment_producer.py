@@ -464,9 +464,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             reward_logs, total_amount = self.payment_calc.calculate(reward_model)
 
             # 4- set cycle info
-            for rl in reward_logs:
-                rl.cycle = pymnt_cycle
-            total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
+            for reward_log in reward_logs:
+                reward_log.cycle = pymnt_cycle
+            total_amount_to_pay = sum(
+                [reward_log.amount for reward_log in reward_logs if reward_log.payable]
+            )
 
             # 5- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
@@ -542,11 +544,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
     ):
 
         if rewards_type.isEstimated():
-            rt = "E"
+            reward_type_char = "E"
         elif rewards_type.isActual():
-            rt = "A"
+            reward_type_char = "A"
         elif rewards_type.isIdeal():
-            rt = "I"
+            reward_type_char = "I"
 
         try:
 
@@ -583,7 +585,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     [
                         self.baking_address,
                         "B",
-                        sum([pl.staking_balance for pl in payment_logs]),
+                        sum(
+                            [
+                                payment_log.staking_balance
+                                for payment_log in payment_logs
+                            ]
+                        ),
                         "{0:f}".format(1.0),
                         "{0:f}".format(1.0),
                         "{0:f}".format(0.0),
@@ -595,28 +602,28 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         "-1",
                         "Baker",
                         "None",
-                        rt,
+                        reward_type_char,
                     ]
                 )
 
-                for pymnt_log in payment_logs:
+                for payment_log in payment_logs:
                     # write row to csv file
                     array = [
-                        pymnt_log.address,
-                        pymnt_log.type,
-                        pymnt_log.staking_balance,
-                        pymnt_log.current_balance,
-                        "{0:.10f}".format(pymnt_log.ratio),
-                        "{0:.10f}".format(pymnt_log.service_fee_ratio),
-                        "{0:f}".format(pymnt_log.amount),
-                        "{0:f}".format(pymnt_log.service_fee_amount),
-                        "{0:f}".format(pymnt_log.service_fee_rate),
-                        "1" if pymnt_log.payable else "0",
-                        "1" if pymnt_log.skipped else "0",
-                        pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
-                        pymnt_log.desc if pymnt_log.desc else "None",
-                        pymnt_log.paymentaddress,
-                        rt,
+                        payment_log.address,
+                        payment_log.type,
+                        payment_log.staking_balance,
+                        payment_log.current_balance,
+                        "{0:.10f}".format(payment_log.ratio),
+                        "{0:.10f}".format(payment_log.service_fee_ratio),
+                        "{0:f}".format(payment_log.amount),
+                        "{0:f}".format(payment_log.service_fee_amount),
+                        "{0:f}".format(payment_log.service_fee_rate),
+                        "1" if payment_log.payable else "0",
+                        "1" if payment_log.skipped else "0",
+                        payment_log.skippedatphase if payment_log.skipped else "-1",
+                        payment_log.desc if payment_log.desc else "None",
+                        payment_log.paymentaddress,
+                        reward_type_char,
                     ]
                     writer.writerow(array)
 
@@ -624,21 +631,21 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         "Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
                         "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
                         "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
-                            pymnt_log.address,
-                            pymnt_log.type,
-                            pymnt_log.staking_balance / MUTEZ,
-                            pymnt_log.current_balance / MUTEZ,
-                            pymnt_log.ratio,
-                            pymnt_log.service_fee_ratio,
-                            pymnt_log.amount / MUTEZ,
-                            pymnt_log.service_fee_amount / MUTEZ,
-                            pymnt_log.service_fee_rate,
-                            "Y" if pymnt_log.payable else "N",
-                            "Y" if pymnt_log.skipped else "N",
-                            pymnt_log.skippedatphase,
-                            pymnt_log.desc,
-                            pymnt_log.paymentaddress,
-                            rt,
+                            payment_log.address,
+                            payment_log.type,
+                            payment_log.staking_balance / MUTEZ,
+                            payment_log.current_balance / MUTEZ,
+                            payment_log.ratio,
+                            payment_log.service_fee_ratio,
+                            payment_log.amount / MUTEZ,
+                            payment_log.service_fee_amount / MUTEZ,
+                            payment_log.service_fee_rate,
+                            "Y" if payment_log.payable else "N",
+                            "Y" if payment_log.skipped else "N",
+                            payment_log.skippedatphase,
+                            payment_log.desc,
+                            payment_log.paymentaddress,
+                            reward_type_char,
                         )
                     )
 

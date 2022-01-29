@@ -257,8 +257,6 @@ class PaymentConsumer(threading.Thread):
         if os.path.isfile(failure_report_busy_file):
             os.remove(failure_report_busy_file)
 
-    #
-    # create report file
     def create_payment_report(
         self, nb_failed, payment_logs, payment_cycle, already_paid_items
     ):
@@ -275,8 +273,12 @@ class PaymentConsumer(threading.Thread):
 
         payouts = already_paid_items + payment_logs
 
-        successful_payouts = [x for x in payouts if x.paid != PaymentStatus.FAIL]
-        unsuccessful_payouts = [x for x in payouts if x.paid == PaymentStatus.FAIL]
+        successful_payouts = [
+            payout for payout in payouts if payout.paid != PaymentStatus.FAIL
+        ]
+        unsuccessful_payouts = [
+            payout for payout in payouts if payout.paid == PaymentStatus.FAIL
+        ]
 
         report_file = payment_report_file_path(self.payments_dir, payment_cycle, 0)
         CsvPaymentFileParser().write(report_file, successful_payouts)

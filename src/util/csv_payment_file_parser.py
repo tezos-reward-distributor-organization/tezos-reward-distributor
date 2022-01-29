@@ -22,13 +22,13 @@ class CsvPaymentFileParser:
 
     @staticmethod
     def from_payment_csv_dict_row(row, cycle):
-        rl = RewardLog(row["address"], row["type"], 0, 0)
-        rl.cycle = cycle
-        rl.amount = int(row["amount"])
-        rl.hash = None if row["hash"] == "None" else row["hash"]
-        rl.paid = PaymentStatus(int(row["paid"]))
+        reward_log = RewardLog(row["address"], row["type"], 0, 0)
+        reward_log.cycle = cycle
+        reward_log.amount = int(row["amount"])
+        reward_log.hash = None if row["hash"] == "None" else row["hash"]
+        reward_log.paid = PaymentStatus(int(row["paid"]))
 
-        return rl
+        return reward_log
 
     @staticmethod
     def write(report_file, payment_logs):
@@ -37,17 +37,19 @@ class CsvPaymentFileParser:
                 csv_writer = csv.writer(
                     f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
-                csv_writer.writerow(["address", "type", "amount", "hash", "paid"])
+                csv_writer.writerow(
+                    ["address", "type", "amount", "hash", "paid", "transaction_fee"]
+                )
 
-                for pl in payment_logs:
-                    # write row to csv file
+                for payment_log in payment_logs:
                     csv_writer.writerow(
                         [
-                            pl.paymentaddress,
-                            pl.type,
-                            pl.amount,
-                            pl.hash if pl.hash else "None",
-                            pl.paid.value,
+                            payment_log.paymentaddress,
+                            payment_log.type,
+                            payment_log.amount,
+                            payment_log.hash if payment_log.hash else "None",
+                            payment_log.paid.value,
+                            payment_log.transaction_fee,
                         ]
                     )
 
