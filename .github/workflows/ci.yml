@@ -30,7 +30,7 @@ jobs:
       run: flake8 src/ tests/
 
     - name: Check black format 
-      run:  black --check src/ tests/
+      run:  black --check --diff src/ tests/
 
   build-trd:
     strategy:
