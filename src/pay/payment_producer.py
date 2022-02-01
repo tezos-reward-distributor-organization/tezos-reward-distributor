@@ -282,6 +282,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                         if pymnt_cycle >= current_cycle:
                             logger.warn(
                                 "Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation."
+                                "TRD will attempt to adjust the amount after the cycle runs, but it may not work."
                             )
 
                         # Paying cycles with frozen rewards (-R in [-1, -5] )
