@@ -877,3 +877,7 @@ class OpCounter:
     def set(self, counter):
         self.__counter = counter
         self.__counter_backup = counter
+
+    @property
+    def counter(self):
+        return self.__counter
