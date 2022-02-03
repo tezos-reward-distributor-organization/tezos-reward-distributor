@@ -7,11 +7,14 @@ REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 
 def installed(package):
-    if hasattr(pip, "main"):
-        pip.main(["install", package])
+    if hasattr(pip, 'main'):
+        code = pip.main(['install', package])
     else:
-        pip._internal.main(["install", package])
-    return True
+        code = pip._internal.main(['install', package])
+    if code != 0:
+        return False
+    else:
+        return True
 
 
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
