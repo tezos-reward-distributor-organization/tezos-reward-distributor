@@ -8,7 +8,7 @@ REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 def installed(package):
     """
-    The sucess status is 0. (bool(0) == False)
+    The success status is 0. (bool(0) == False)
     The error status is 1. (bool(1) == True)
     """
     if hasattr(pip, "main"):
