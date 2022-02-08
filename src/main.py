@@ -7,11 +7,15 @@ REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 
 def installed(package):
+    """
+    The success status is 0. (bool(0) == False)
+    The error status is 1. (bool(1) == True)
+    """
     if hasattr(pip, "main"):
-        pip.main(["install", package])
+        status_code = pip.main(["install", package])
     else:
-        pip._internal.main(["install", package])
-    return True
+        status_code = pip._internal.main(["install", package])
+    return not bool(status_code)
 
 
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
