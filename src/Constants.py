@@ -2,8 +2,8 @@ from enum import Enum
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
-PROTOCOL_NAME = "hangzhou"
-CURRENT_TESTNET = ("{}2net".format(PROTOCOL_NAME)).upper()
+PROTOCOL_NAME = "ithaca"
+CURRENT_TESTNET = ("{}net".format(PROTOCOL_NAME)).upper()
 
 MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
@@ -23,7 +23,7 @@ PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 # Public RPC
 PUBLIC_NODE_URL = {
     "MAINNET": "https://mainnet-tezos.giganode.io",
-    CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
+    CURRENT_TESTNET: "https://rpc.ithacanet.teztnets.xyz",
 }
 
 RPC_PUBLIC_API_URL = {

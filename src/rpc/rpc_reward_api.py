@@ -15,18 +15,16 @@ logger = main_logger.getChild("rpc_reward_api")
 # RPC constants
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
+COMM_MANAGER_KEY = "{}/chains/main/blocks/{}/context/contracts/{}/manager_key"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_BLOCK_METADATA = "{}/chains/main/blocks/{}/metadata"
 COMM_BLOCK_OPERATIONS = "{}/chains/main/blocks/{}/operations"
-COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
+COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 COMM_BAKING_RIGHTS = (
-    "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}"
-)
-COMM_ENDORSING_RIGHTS = (
-    "{}/chains/main/blocks/{}/helpers/endorsing_rights?cycle={}&delegate={}"
+    "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=0"
 )
 COMM_FROZEN_BALANCE = (
     "{}/chains/main/blocks/{}/context/delegates/{}/frozen_balance_by_cycle"
@@ -54,7 +52,6 @@ class RpcRewardApiImpl(RewardApi):
         self.preserved_cycles = nw["NB_FREEZE_CYCLE"]
         self.blocks_per_roll_snapshot = nw["BLOCKS_PER_ROLL_SNAPSHOT"]
         self.block_reward = nw["BLOCK_REWARD"]
-        self.endorsement_reward = nw["ENDORSEMENT_REWARD"]
 
         self.baking_address = baking_address
         self.node_url = node_url
@@ -108,15 +105,11 @@ class RpcRewardApiImpl(RewardApi):
                 )
             )
 
-            # Determine how many priority 0 baking rights delegate had
+            # Determine how many round 0 baking rights delegate had
             baking_rights = self.__get_baking_rights(
                 cycle, level_of_first_block_in_preserved_cycles
             )
-            endorsement_rights = self.__get_endorsement_rights(
-                cycle, level_of_first_block_in_preserved_cycles
-            )
-            nb_blocks = len([r for r in baking_rights if r["priority"] == 0])
-            nb_endorsements = sum([len(r["slots"]) for r in endorsement_rights])
+            nb_blocks = len([r for r in baking_rights if r["round"] == 0])
 
             total_reward_amount = None
             if not rewards_type.isEstimated():
@@ -155,32 +148,10 @@ class RpcRewardApiImpl(RewardApi):
                                 )
                             )
                             missed_baking_income += self.block_reward
-                missed_endorsing_income = 0
-                for count, r in enumerate(endorsement_rights):
-                    if count % 10 == 0:
-                        logger.info(
-                            "Verifying endorsement ({}/{}).".format(
-                                count, len(endorsement_rights)
-                            )
-                        )
-                    authored_endorsement_slots = (
-                        self.__get_authored_endorsement_slots_by_level(r["level"] + 1)
-                    )
-                    if authored_endorsement_slots != r["slots"]:
-                        mutez_to_add = self.endorsement_reward * len(r["slots"])
-                        logger.warning(
-                            "Found {} missed endorsement(s) at level {}, adding {} mutez reward anyway.".format(
-                                len(r["slots"]), r["level"], mutez_to_add
-                            )
-                        )
-                        missed_endorsing_income += mutez_to_add
-                offline_losses = missed_baking_income + missed_endorsing_income
+                offline_losses = missed_baking_income
 
-            # TODO: support Dexter for RPC
-            # _, snapshot_level = self.__get_roll_snapshot_block_level(cycle, current_level)
-            # for delegator in self.dexter_contracts_set:
-            #     dxtz.process_original_delegators_map(reward_data["delegators"], delegator, snapshot_level)
 
+            nb_endorsements = 0
             reward_model = RewardProviderModel(
                 reward_data["delegate_staking_balance"],
                 nb_blocks,
@@ -256,48 +227,6 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_endorsement_rights(self, cycle, level):
-        """
-        Returns list of endorsements rights for a cycle.
-        """
-
-        try:
-            endorsing_rights_rpc = COMM_ENDORSING_RIGHTS.format(
-                self.node_url, level, cycle, self.baking_address
-            )
-            return self.do_rpc_request(endorsing_rights_rpc)
-
-        except ApiProviderException as e:
-            raise e from e
-
-    def __get_authored_endorsement_slots_by_level(self, level):
-        """
-        Returns a list of endorsements authored by the baker for a given block level.
-        """
-
-        try:
-            block_operations_rpc = COMM_BLOCK_OPERATIONS.format(self.node_url, level)
-            block_operations = self.do_rpc_request(block_operations_rpc)[0]
-            endorsements = [
-                b
-                for b in block_operations
-                if b["contents"][0]["kind"] == "endorsement_with_slot"
-            ]
-            if len(endorsements) == 0:
-                logger.error("Can not parse endorsements from RPC. Aborting.")
-                logger.info(
-                    "TRD can not process rewards for protocols older than Florence."
-                )
-                raise Exception("Can not parse endorsements from RPC.")
-
-            for e in endorsements:
-                if e["contents"][0]["metadata"]["delegate"] == self.baking_address:
-                    return e["contents"][0]["metadata"]["slots"]
-            return []
-
-        except ApiProviderException as e:
-            raise e from e
-
     def __get_frozen_rewards(self, cycle, current_level):
         try:
             frozen_balance_by_cycle_rpc = COMM_FROZEN_BALANCE.format(
@@ -366,6 +295,8 @@ class RpcRewardApiImpl(RewardApi):
                                 balance_update
                             )
                         )
+
+        return unfrozen_fees, unfrozen_rewards
 
         return unfrozen_fees, unfrozen_rewards
 
@@ -494,11 +425,23 @@ class RpcRewardApiImpl(RewardApi):
                     roll_snapshot
                 )
             )
-
         # construct RPC for getting list of delegates and staking balance
+        # FIXME replace "head" with the block we actually need
         get_delegates_request = COMM_DELEGATES.format(
-            self.node_url, level_snapshot_block, self.baking_address
+            self.node_url, "head", self.baking_address
         )
+
+        # get RPC response for delegates and staking balance
+        response = self.do_rpc_request(get_delegates_request)
+        delegate_staking_balance = int(response["staking_balance"])
+        all_delegates = []
+        for pkh in response["delegated_contracts"]:
+            get_pk = COMM_MANAGER_KEY.format(
+                    self.node_url, "head", pkh)
+            all_delegates.append(
+                self.do_rpc_request(get_pk)
+            )
+
 
         delegate_staking_balance = 0
         d_a_len = 0
@@ -508,34 +451,6 @@ class RpcRewardApiImpl(RewardApi):
             # get RPC response for delegates and staking balance
             response = self.do_rpc_request(get_delegates_request)
             delegate_staking_balance = int(response["staking_balance"])
-
-            # If roll_snapshot == 15, we need to adjust the baker's staking balance
-            # by subtracting unfrozen rewards due to when the snapshot is taken
-            # within the block context. For more information, see:
-            # https://medium.com/@_MisterWalker_/we-all-were-wrong-baking-bad-and-most-bakers-were-using-wrong-data-to-calculate-staking-rewards-a8c26f5ec62b
-            if roll_snapshot == 15:
-                if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
-                    # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
-                    # Cycles start at 0.
-                    old_rewards_cycle = (
-                        CYCLES_BEFORE_GRANADA
-                        + (
-                            (level_snapshot_block - BLOCKS_BEFORE_GRANADA)
-                            / self.blocks_per_cycle
-                        )
-                        - self.preserved_cycles
-                        - 1
-                    )
-                else:
-                    old_rewards_cycle = (
-                        (level_snapshot_block / BLOCKS_PER_CYCLE_BEFORE_GRANADA)
-                        - self.preserved_cycles
-                        - 1
-                    )
-                _, unfrozen_rewards = self.__get_unfrozen_rewards(
-                    level_snapshot_block, old_rewards_cycle
-                )
-                delegate_staking_balance -= unfrozen_rewards
 
             # Remove baker's address from list of delegators
             delegators_addresses = list(
@@ -640,7 +555,7 @@ class RpcRewardApiImpl(RewardApi):
         logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
 
         if current_level - snapshot_level >= 0:
-            request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
+            request = COMM_SNAPSHOT.format(self.node_url, "head")
             chosen_snapshot = self.do_rpc_request(request)
 
             if cycle >= FIRST_CYCLE_SNAPSHOT_GRANADA:
