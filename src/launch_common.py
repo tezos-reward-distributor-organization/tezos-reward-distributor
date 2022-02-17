@@ -209,13 +209,19 @@ def add_argument_reports_base(parser):
     parser.add_argument(
         "-r",
         "--reports_base",
-        help=("The base path for all TRD data. Default: {} "
-              "The directory contains the following folders: "
-              "1. {} "
-              "2. {} "
-              "3. {} "
-              "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
-             ).format(BASE_DIR, BASE_DIR+CONFIG_DIR, BASE_DIR+SIMULATIONS_DIR, BASE_DIR+REPORTS_DIR),
+        help=(
+            "The base path for all TRD data. Default: {} "
+            "The directory contains the following folders: "
+            "1. {} "
+            "2. {} "
+            "3. {} "
+            "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
+        ).format(
+            BASE_DIR,
+            BASE_DIR + CONFIG_DIR,
+            BASE_DIR + SIMULATIONS_DIR,
+            BASE_DIR + REPORTS_DIR,
+        ),
         default=BASE_DIR,
     )
 

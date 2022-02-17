@@ -7,10 +7,10 @@ from util.dir_utils import (
 import os
 from src.Constants import REPORTS_DIR, SIMULATIONS_DIR
 
-#trd-data
-#└──configurations
+# trd-data
+# └──configurations
 #    └── tz1xx.yaml
-#└──simulations
+# └──simulations
 #    └── tz1xxx
 #       ├── calculations
 #       │   └── 449.csv
@@ -19,7 +19,7 @@ from src.Constants import REPORTS_DIR, SIMULATIONS_DIR
 #           │   └── 449.csv
 #           └── failed
 #               └── 449.csv
-#└──reports
+# └──reports
 #    └── tz1xxx
 #       ├── calculations
 #       │   └── 449.csv
@@ -34,9 +34,9 @@ class BakingDirs:
 
         # 7- get reporting directories
         if args.dry_run:
-            reports_base = os.path.expanduser(args.reports_base+SIMULATIONS_DIR)
+            reports_base = os.path.expanduser(args.reports_base + SIMULATIONS_DIR)
         else:
-            reports_base = os.path.expanduser(args.reports_base+REPORTS_DIR)
+            reports_base = os.path.expanduser(args.reports_base + REPORTS_DIR)
 
         self.reports_dir = os.path.join(reports_base, baking_address)
         self.payments_root = get_payment_root(self.reports_dir, create=True)
