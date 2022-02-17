@@ -438,7 +438,7 @@ def main(args):
     )
 
     # 1. find where configuration is
-    config_dir = os.path.expanduser(args.reports_base + CONFIG_DIR)
+    config_dir = os.path.expanduser(os.path.join(args.reports_base + CONFIG_DIR))
 
     # create configuration directory if it is not present
     # so that user can easily put his configuration there

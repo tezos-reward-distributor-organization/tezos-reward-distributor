@@ -23,7 +23,7 @@ from launch_common import (
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
-from Constants import CONFIG_DIR
+from Constants import CONFIG_DIR, REPORTS_DIR, SIMULATIONS_DIR
 from util.dir_utils import (
     get_payment_root,
     get_successful_payments_dir,
@@ -48,15 +48,15 @@ def main(args):
         "Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1))
     )
 
-    # 1- find where configuration is
-    config_dir = os.path.expanduser(args.reports_base + CONFIG_DIR)
+    # Find where configuration is
+    config_dir = os.path.expanduser(os.path.join(args.reports_base + CONFIG_DIR))
 
-    # create configuration directory if it is not present
+    # Create configuration directory if it is not present
     # so that user can easily put his configuration there
     if config_dir and not os.path.exists(config_dir):
         os.makedirs(config_dir)
 
-    # 3- load payments file
+    # Load payments file
     payments_file = os.path.expanduser(args.payments_file)
     if not os.path.isfile(payments_file):
         raise Exception("payments_file ({}) does not exist.".format(payments_file))
@@ -75,13 +75,13 @@ def main(args):
     if not payments_dict:
         raise Exception("No payments to process")
 
-    # 6- is it a reports run
+    # Check if dry-run
     dry_run = args.dry_run
 
-    # 7- get reporting directories
-    reports_dir = os.path.expanduser(args.reports_dir)
+    # Get reporting directories
+    reports_dir = os.path.expanduser(args.reports_base)
 
-    # 8- Check the disk size at the reports dir location
+    # Check the disk size at the reports dir location
     if disk_is_full(reports_dir):
         raise Exception(
             "Disk is full at {}. Please free space to continue saving reports.".format(
@@ -92,7 +92,9 @@ def main(args):
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
-        reports_dir = os.path.expanduser("./reports")
+        reports_dir = os.path.expanduser(os.path.join(reports_dir, SIMULATIONS_DIR))
+    else:
+        reports_dir = os.path.expanduser(os.path.join(reports_dir, REPORTS_DIR))
 
     reports_dir = os.path.join(reports_dir, "manual")
 
