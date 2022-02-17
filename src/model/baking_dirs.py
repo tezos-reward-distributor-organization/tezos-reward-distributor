@@ -5,7 +5,7 @@ from util.dir_utils import (
     get_failed_payments_dir,
 )
 import os
-from src.Constants import REPORTS_DIR, SIMULATIONS_DIR
+from Constants import REPORTS_DIR, SIMULATIONS_DIR
 
 
 # trd-data

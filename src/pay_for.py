@@ -23,7 +23,7 @@ from launch_common import (
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
-from src.Constants import CONFIG_DIR
+from Constants import CONFIG_DIR
 from util.dir_utils import (
     get_payment_root,
     get_successful_payments_dir,

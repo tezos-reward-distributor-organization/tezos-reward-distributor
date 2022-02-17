@@ -3,7 +3,7 @@ import argparse
 import signal
 import errno
 import time
-from src.Constants import BASE_DIR, CONFIG_DIR
+from Constants import BASE_DIR, CONFIG_DIR
 
 
 def command_line_arguments():
