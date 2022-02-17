@@ -12,7 +12,7 @@ from fysom import Fysom
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from cli.client_manager import ClientManager
-from Constants import RewardsType
+from Constants import RewardsType, CONFIG_DIR
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from launch_common import (
     print_banner,
@@ -48,7 +48,6 @@ from model.baking_conf import (
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
-from Constants import CONFIG_DIR
 
 LINER = "--------------------------------------------"
 

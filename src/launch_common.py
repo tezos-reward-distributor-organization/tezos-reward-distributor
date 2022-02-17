@@ -77,8 +77,9 @@ def parse_arguments():
     return args
 
 
+# TODO: Properly format the help section, see: https://www.programcreek.com/python/example/51784/argparse.HelpFormatter
 def build_parser():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="TRD")
     add_argument_cycle(parser)
     add_argument_mode(parser)
     add_argument_release_override(parser)
@@ -211,11 +212,11 @@ def add_argument_reports_base(parser):
         "--reports_base",
         help=(
             "The base path for all TRD data. Default: {} "
-            "The directory contains the following folders: "
-            "1. {} "
-            "2. {} "
-            "3. {} "
-            "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
+            + "The directory contains the following folders: "
+            + "1. {} "
+            + "2. {} "
+            + "3. {} "
+            + "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
         ).format(
             BASE_DIR,
             BASE_DIR + CONFIG_DIR,
