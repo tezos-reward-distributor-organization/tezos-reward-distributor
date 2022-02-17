@@ -13,7 +13,6 @@ from launch_common import (
     add_argument_network,
     add_argument_provider,
     add_argument_reports_base,
-    add_argument_config_dir,
     add_argument_node_endpoint,
     add_argument_dry,
     add_argument_dry_no_consumer,
@@ -24,6 +23,7 @@ from launch_common import (
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
+from src.Constants import CONFIG_DIR
 from util.dir_utils import (
     get_payment_root,
     get_successful_payments_dir,
@@ -49,7 +49,7 @@ def main(args):
     )
 
     # 1- find where configuration is
-    config_dir = os.path.expanduser(args.config_dir)
+    config_dir = os.path.expanduser(args.reports_base + CONFIG_DIR)
 
     # create configuration directory if it is not present
     # so that user can easily put his configuration there
@@ -189,7 +189,6 @@ if __name__ == "__main__":
     add_argument_network(parser)
     add_argument_provider(parser)
     add_argument_reports_base(parser)
-    add_argument_config_dir(parser)
     add_argument_node_endpoint(parser)
     add_argument_dry(parser)
     add_argument_dry_no_consumer(parser)

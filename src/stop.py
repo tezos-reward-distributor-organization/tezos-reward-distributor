@@ -3,6 +3,7 @@ import argparse
 import signal
 import errno
 import time
+from src.Constants import BASE_DIR, CONFIG_DIR
 
 
 def command_line_arguments():
@@ -12,8 +13,9 @@ def command_line_arguments():
     parser.add_argument(
         "-f",
         "--config_dir",
-        help="Directory to find configuration files and the lock file.",
-        default="~/pymnt/cfg",
+        help=("Directory to find configuration files and the lock file. "
+              "Default: {}").format(BASE_DIR+CONFIG_DIR),
+        default=BASE_DIR+CONFIG_DIR,
     )
     return parser.parse_args()
 

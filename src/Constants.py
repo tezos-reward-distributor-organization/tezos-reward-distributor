@@ -1,5 +1,11 @@
 from enum import Enum
 
+# Persistent data directories
+BASE_DIR = "../trd-data"
+CONFIG_DIR = "/configurations"
+SIMULATIONS_DIR = "/simulations"
+REPORTS_DIR = "/reports"
+
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = "hangzhou"

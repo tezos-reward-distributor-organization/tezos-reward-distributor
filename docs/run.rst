@@ -48,10 +48,7 @@ Options
     Public node base URL. Default is ``https://mainnet-tezos.giganode.io``. This argument will only be used in case the reward provider is set to ``prpc``. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.
 
 ``-r --reports_base <path>``
-    Directory to create reports. Default value: ``~/pymnt/reports``.
-
-``-f --config_dir <path>``
-    Directory to find baking configuration. Default value: ``~/pymnt/cfg``.
+    Directory to create reports. Default value: ``../trd-data``.
 
 ``-D --dry_run``
     Run without injecting payments. Suitable for testing. Does not require locking.

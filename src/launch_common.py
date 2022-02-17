@@ -4,6 +4,10 @@ from time import sleep
 from log_config import main_logger, DEFAULT_LOG_FILE
 from NetworkConfiguration import default_network_config_map
 from Constants import (
+    BASE_DIR,
+    CONFIG_DIR,
+    REPORTS_DIR,
+    SIMULATIONS_DIR,
     CURRENT_TESTNET,
     PRIVATE_NODE_URL,
     PUBLIC_NODE_URL,
@@ -84,7 +88,6 @@ def build_parser():
     add_argument_provider(parser)
     add_argument_node_addr_public(parser)
     add_argument_reports_base(parser)
-    add_argument_config_dir(parser)
     add_argument_dry(parser)
     add_argument_dry_no_consumer(parser)
     add_argument_signer_endpoint(parser)
@@ -206,17 +209,14 @@ def add_argument_reports_base(parser):
     parser.add_argument(
         "-r",
         "--reports_base",
-        help="Directory to create reports",
-        default="~/pymnt/reports",
-    )
-
-
-def add_argument_config_dir(parser):
-    parser.add_argument(
-        "-f",
-        "--config_dir",
-        help="Directory to find baking configuration",
-        default="~/pymnt/cfg",
+        help=("The base path for all TRD data. Default: {} "
+              "The directory contains the following folders: "
+              "1. {} "
+              "2. {} "
+              "3. {} "
+              "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
+             ).format(BASE_DIR, BASE_DIR+CONFIG_DIR, BASE_DIR+SIMULATIONS_DIR, BASE_DIR+REPORTS_DIR),
+        default=BASE_DIR,
     )
 
 
