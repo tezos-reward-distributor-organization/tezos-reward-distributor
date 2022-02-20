@@ -481,8 +481,43 @@ class BatchPayer:
             )
             return PaymentStatus.FAIL, []
 
-        # Calculate needed fee for extra consumed gas
+        # Calculate needed fee for the transaction, for that we need the size of the forged transaction in bytes
         tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
+        content = (
+            CONTENT.replace("%SOURCE%", self.source)
+            .replace("%DESTINATION%", payment_item.paymentaddress)
+            .replace("%AMOUNT%", str(pymnt_amnt))
+            .replace("%COUNTER%", str(self.base_counter + 1))
+            .replace("%fee%", str(tx_fee))
+            .replace("%gas_limit%", consumed_gas)
+            .replace("%storage_limit%", consumed_storage)
+        )
+        forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace("%CONTENT%", content)
+        status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
+        if status != HTTPStatus.OK:
+            logger.error("Error in forge operation")
+            return PaymentStatus.FAIL, ""
+        # Now that we have the size of the transaction, compute the required fee
+        size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
+        required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+        # Check if the pre-computed tx_fee is higher or equal than the minimal required fee
+        while tx_fee < required_fee:
+            # Re-adjust according to the new fee
+            tx_fee = required_fee
+            tx = json.loads(content)
+            tx["fee"] = str(tx_fee)
+            content = json.dumps(tx)
+            forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace("%CONTENT%", content)
+            status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
+            if status != HTTPStatus.OK:
+                logger.error("Error in forge operation")
+                return PaymentStatus.FAIL, ""
+
+            # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
+            # because of the increase in the fee of the first transaction
+            size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
+            required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+
         simulation_results = consumed_gas, tx_fee, consumed_storage
 
         return PaymentStatus.DONE, simulation_results
@@ -513,11 +548,13 @@ class BatchPayer:
 
         content_list = []
 
-        total_gas = total_fees = 0
+        total_gas = total_tx_fees = total_burn_fees = 0
 
         for payment_item in payment_records:
 
             pymnt_amnt = payment_item.amount  # expected in micro tez
+            # Get initial default values for storage, gas and fees
+            # These default values are used for non-empty tz1 accounts transactions
             storage_limit, gas_limit, tx_fee = (
                 self.storage_limit,
                 self.gas_limit,
@@ -538,12 +575,15 @@ class BatchPayer:
                     )
                     payment_item.paid = PaymentStatus.AVOIDED
                     continue
+
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
-                total_fee = tx_fee + burn_fee
-                payment_item.transaction_fee = total_fee
+                total_burn_fees += burn_fee
+
+                payment_item.transaction_fee = tx_fee
 
                 if KT1_FEE_SAFETY_CHECK:
+                    total_fee = tx_fee + burn_fee
                     if total_fee > FEE_LIMIT_CONTRACTS:
                         logger.info(
                             "Payment to {:s} script requires higher fees than reward amount. Skipping. Needed fee: {:10.6f} XTZ, max fee: {:10.6f} XTZ. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation.".format(
@@ -569,9 +609,12 @@ class BatchPayer:
 
                 # Subtract burn fee from the payment amount
                 orig_pymnt_amnt = pymnt_amnt
-                pymnt_amnt = max(pymnt_amnt - burn_fee, 0)  # ensure not less than 0
+                if self.delegator_pays_ra_fee:
+                    pymnt_amnt = max(pymnt_amnt - burn_fee, 0)  # ensure not less than 0
+
                 logger.info(
-                    "Payment to {} script requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} burn fee; Payment reduced from {:10.6f} to {:10.6f}".format(
+                    "Payment to {} script requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} burn fee; "
+                    "Payment reduced from {:10.6f} to {:10.6f}".format(
                         payment_item.paymentaddress,
                         gas_limit,
                         MUTEZ_PER_GAS_UNIT,
@@ -585,6 +628,7 @@ class BatchPayer:
                 # An implicit tz1 account
                 if payment_item.needs_activation:
                     storage_limit += RA_STORAGE
+                    total_burn_fees += COST_PER_BYTE * RA_STORAGE
                     if self.delegator_pays_ra_fee:
                         # Subtract reactivation fee from the payment amount
                         orig_pymnt_amnt = pymnt_amnt
@@ -624,7 +668,7 @@ class BatchPayer:
             op_counter.inc()
 
             total_gas += int(gas_limit)
-            total_fees += int(tx_fee)
+            total_tx_fees += int(tx_fee)
 
             content = (
                 CONTENT.replace("%SOURCE%", self.source)
@@ -644,7 +688,7 @@ class BatchPayer:
             return PaymentStatus.DONE, ""
         contents_string = ",".join(content_list)
 
-        # run the operations
+        # run the operations for simulation results
         logger.debug("Running {} operations".format(len(content_list)))
         runops_json = RUNOPS_JSON.replace("%BRANCH%", branch).replace(
             "%CONTENT%", contents_string
@@ -683,26 +727,33 @@ class BatchPayer:
         forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace(
             "%CONTENT%", contents_string
         )
-
-        # if verbose: print("--> forge_command_str is |{}|".format(forge_command_str))
-
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, ""
+
+        # Re-compute minimal required fee by the batch transaction and re-adjust the fee if necessary
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
         required_fee = math.ceil(
             MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size
         )
         logger.info(
-            f"minimal required fee is {required_fee}, current used fee is {total_fees}"
+            f"minimal required fee is {required_fee}, current used fee is {total_tx_fees}"
         )
-
-        while total_fees < required_fee:
-            difference_fees = int(math.ceil(required_fee - total_fees))
+        # If all fees are computed correctly above, the condition of this loop should not be True
+        # It is still recommended to leave this block here in order to double-check that all fee calculations
+        # were verified and that in the worst case any tiny differences in fee computations are adjusted
+        while total_tx_fees < required_fee:
+            # The difference in fees will be added to the fee of the first transaction
+            # This works because the Tezos blockchain is interested in the sum of all fees in a batch transaction
+            # and not in the individual fees of each transaction
+            difference_fees = int(math.ceil(required_fee - total_tx_fees))
             first_tx = json.loads(content_list[0])
             first_tx["fee"] = str(int(int(first_tx["fee"]) + difference_fees))
-            total_fees = required_fee
+            payment_records[0].transaction_fee += difference_fees
+
+            # Re-adjust the contents according to the new fee
+            total_tx_fees = required_fee
             content_list[0] = json.dumps(first_tx)
             contents_string = ",".join(content_list)
             forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace(
@@ -712,6 +763,9 @@ class BatchPayer:
             if status != HTTPStatus.OK:
                 logger.error("Error in forge operation")
                 return PaymentStatus.FAIL, ""
+
+            # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
+            # because of the increase in the fee of the first transaction
             size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
             required_fee = math.ceil(
                 MINIMUM_FEE_MUTEZ
@@ -719,9 +773,10 @@ class BatchPayer:
                 + MUTEZ_PER_BYTE * size
             )
             logger.info(
-                f"minimal required fee is {required_fee}, current used fee is {total_fees}"
+                f"minimal required fee is {required_fee}, current used fee is {total_tx_fees}"
             )
 
+        # Sign the batch transaction
         signed_bytes = self.clnt_mngr.sign(bytes, self.manager)
 
         # pre-apply operations
