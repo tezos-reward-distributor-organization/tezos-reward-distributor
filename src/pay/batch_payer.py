@@ -492,14 +492,18 @@ class BatchPayer:
             .replace("%gas_limit%", consumed_gas)
             .replace("%storage_limit%", consumed_storage)
         )
-        forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace("%CONTENT%", content)
+        forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace(
+            "%CONTENT%", content
+        )
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, ""
         # Now that we have the size of the transaction, compute the required fee
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
-        required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+        required_fee = math.ceil(
+            MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size
+        )
         # Check if the pre-computed tx_fee is higher or equal than the minimal required fee
         while tx_fee < required_fee:
             # Re-adjust according to the new fee
@@ -507,7 +511,9 @@ class BatchPayer:
             tx = json.loads(content)
             tx["fee"] = str(tx_fee)
             content = json.dumps(tx)
-            forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace("%CONTENT%", content)
+            forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace(
+                "%CONTENT%", content
+            )
             status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
             if status != HTTPStatus.OK:
                 logger.error("Error in forge operation")
@@ -516,7 +522,11 @@ class BatchPayer:
             # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
             # because of the increase in the fee of the first transaction
             size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
-            required_fee = math.ceil(MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size)
+            required_fee = math.ceil(
+                MINIMUM_FEE_MUTEZ
+                + MUTEZ_PER_GAS_UNIT * total_gas
+                + MUTEZ_PER_BYTE * size
+            )
 
         simulation_results = consumed_gas, tx_fee, consumed_storage
 
