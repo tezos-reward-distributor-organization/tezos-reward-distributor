@@ -1,4 +1,4 @@
-from src.main import requirements_installed
+from src.main import requirements_installed, installed
 from main import start_application
 from unittest.mock import patch, MagicMock
 
@@ -33,3 +33,11 @@ def test_user_wants_to_install_missing_not_existent_package():
 @patch("src.main.installed", MagicMock(return_value=True))
 def test_user_wants_to_install_missing_existent_package():
     assert requirements_installed("tests/regression/dummy_requirements.txt") is False
+
+
+def test_installed():
+    assert installed("pytest")
+
+
+def test_not_installed():
+    assert not installed("some_unknown_random_package_name")

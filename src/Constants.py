@@ -5,6 +5,7 @@ EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = "hangzhou"
 CURRENT_TESTNET = ("{}2net".format(PROTOCOL_NAME)).upper()
 
+MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
 FIRST_GRANADA_LEVEL = 1589249
 
@@ -23,6 +24,10 @@ PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 PUBLIC_NODE_URL = {
     "MAINNET": "https://mainnet-tezos.giganode.io",
     CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
+}
+
+RPC_PUBLIC_API_URL = {
+    "MAINNET": "https://rpc.tzkt.io/mainnet",
 }
 
 # TzStats

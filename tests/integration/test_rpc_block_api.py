@@ -1,7 +1,7 @@
 import pytest
+from src.rpc.rpc_block_api import RpcBlockApiImpl
 from unittest.mock import patch, MagicMock
-from src.Constants import DEFAULT_NETWORK_CONFIG_MAP
-from tzkt.tzkt_block_api import TzKTBlockApiImpl
+from src.Constants import PUBLIC_NODE_URL, DEFAULT_NETWORK_CONFIG_MAP
 from tests.utils import Constants
 
 NORMAL_TEZOS_ADDRESS = Constants.NORMAL_TEZOS_ADDRESS
@@ -19,16 +19,18 @@ class MockResponse:
 
 @pytest.fixture
 def address_api():
-    return TzKTBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"])
+    return RpcBlockApiImpl(
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], PUBLIC_NODE_URL["MAINNET"]
+    )
 
 
 class MockRelevationResponse(MockResponse):
     def json(self):
-        return {"revealed": True}
+        return "edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3"
 
 
 @patch(
-    "src.tzkt.tzkt_api.requests.get",
+    "src.rpc.rpc_block_api.requests.get",
     MagicMock(return_value=MockRelevationResponse()),
 )
 def test_get_revelation(address_api):
@@ -37,11 +39,11 @@ def test_get_revelation(address_api):
 
 class MockCycleLevelResponse(MockResponse):
     def json(self):
-        return {"synced": True, "cycle": 434, "level": 1972459}
+        return {"metadata": {"level_info": {"cycle": 434, "level": 1972459}}}
 
 
 @patch(
-    "src.tzkt.tzkt_api.requests.get",
+    "src.rpc.rpc_block_api.requests.get",
     MagicMock(return_value=MockCycleLevelResponse()),
 )
 def test_get_current_cycle_and_level(address_api):
@@ -50,11 +52,11 @@ def test_get_current_cycle_and_level(address_api):
 
 class MockDelegatableResponse(MockResponse):
     def json(self):
-        return {"type": "delegate", "active": True}
+        return {"delegated_contracts": [], "deactivated": False}
 
 
 @patch(
-    "src.tzkt.tzkt_api.requests.get",
+    "src.rpc.rpc_block_api.requests.get",
     MagicMock(return_value=MockDelegatableResponse()),
 )
 def test_get_delegatable_baker(address_api):
@@ -63,11 +65,11 @@ def test_get_delegatable_baker(address_api):
 
 class MockNonDelegatableResponse(MockResponse):
     def json(self):
-        return {"type": "user", "active": True}
+        return {}
 
 
 @patch(
-    "src.tzkt.tzkt_api.requests.get",
+    "src.rpc.rpc_block_api.requests.get",
     MagicMock(return_value=MockNonDelegatableResponse()),
 )
 def test_get_delegatable_non_baker(address_api):
