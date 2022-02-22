@@ -102,8 +102,8 @@ class EmailPlugin(plugins.Plugin):
 
         for k in self._req_cfg_keys:
             if k not in cfg_keys:
-                if (k == 'smtp_user' and 'SMTP_USER' in os.environ) or (
-                    k == 'smtp_pass' and 'SMTP_PASS' in os.environ
+                if (k == "smtp_user" and "SMTP_USER" in os.environ) or (
+                    k == "smtp_pass" and "SMTP_PASS" in os.environ
                 ):
                     continue
                 raise plugins.PluginConfigurationError(
