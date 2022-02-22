@@ -85,6 +85,14 @@ plugins:
       - alice@domain.com
 ```
 
+**Note about environment variables**:
+
+To avoid the storage of sensitive values, smtp_user and smtp_pass can be defined as environment values. 
+
+Environment variables will supersede yaml values.
+* smtp_user will become SMTP_USER
+* smtp_pass will become SMTP_PASS
+
 ## Telegram Plugin
 
 This plugin allows payouts notifications to be sent via Telegram bot to specific chatIds, including groups.

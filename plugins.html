@@ -185,6 +185,13 @@
       <span class="o">-</span> <span class="n">alice</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
 </pre></div>
 </div>
+<p><strong>Note about environment variables</strong>:</p>
+<p>To avoid the storage of sensitive values, smtp_user and smtp_pass can be defined as environment values.</p>
+<p>Environment variables will supersede yaml values.</p>
+<ul class="simple">
+<li><p>smtp_user will become SMTP_USER</p></li>
+<li><p>smtp_pass will become SMTP_PASS</p></li>
+</ul>
 </div>
 </div>
 <div class="section" id="telegram-plugin">
