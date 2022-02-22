@@ -102,7 +102,9 @@ class EmailPlugin(plugins.Plugin):
 
         for k in self._req_cfg_keys:
             if k not in cfg_keys:
-                if (k == 'smtp_user' and 'SMTP_USER' in os.environ) or (k == 'smtp_pass' and 'SMTP_PASS' in os.environ):
+                if (k == 'smtp_user' and 'SMTP_USER' in os.environ) or (
+                    k == 'smtp_pass' and 'SMTP_PASS' in os.environ
+                ):
                     continue
                 raise plugins.PluginConfigurationError(
                     "[{:s}] {:s} config key not found".format(self.name, k)
@@ -113,12 +115,12 @@ class EmailPlugin(plugins.Plugin):
         self.port = self.cfg["smtp_port"]
         self.use_tls = self.cfg["smtp_tls"]
         self.sender = self.cfg["smtp_sender"]
-        if 'SMTP_USER' in os.environ:
-            self.user = os.environ.get('SMTP_USER')
+        if "SMTP_USER" in os.environ:
+            self.user = os.environ.get("SMTP_USER")
         else:
             self.user = self.cfg["smtp_user"]
-        if 'SMTP_PASS' in os.environ:
-            self.password = os.environ.get('SMTP_PASS')
+        if "SMTP_PASS" in os.environ:
+            self.password = os.environ.get("SMTP_PASS")
         else:
             self.password = self.cfg["smtp_pass"]
         # this parameter is optional, so we check if it is not set,
