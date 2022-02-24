@@ -39,6 +39,8 @@ If that doesn't make sense to you, please read the [YAML format documentation](h
 
 This plugin will send the configured recipients an 'administrative style' email of payouts status with a CSV report attached.
 
+**NOTE**: The file `email.ini` has been deprecated and is no longer used.
+
 ### Parameters
 
 * smtp_user: (Required unless no login is used) The username for SMTP authentication
