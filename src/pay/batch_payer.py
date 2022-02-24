@@ -11,9 +11,14 @@ from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
+# These values may change with protocol upgrades
 TZTX_FEE = 395
 TZTX_GAS_LIMIT = 1420
 TZTX_STORAGE_LIMIT = 65
+RA_BURN_FEE = 257000  # 0.257 XTZ
+RA_STORAGE = 300
+ZERO_THRESHOLD = 1  # 1 mutez = 0.000001 XTZ
+
 MAX_TX_PER_BLOCK_TZ = 400
 MAX_TX_PER_BLOCK_KT = 10
 PKH_LENGTH = 36
@@ -37,20 +42,15 @@ COMM_PREAPPLY = "/chains/main/blocks/head/helpers/preapply/operations"
 COMM_INJECT = "/injection/operation"
 COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 
-RA_BURN_FEE = 257000  # 0.257 XTZ
-RA_STORAGE = 300
-
 # This fee limit is set to allow payouts to ovens
 # Other KT accounts with higher fee requirements will be skipped
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
 FEE_LIMIT_CONTRACTS = 100000
-
 KT1_FEE_SAFETY_CHECK = True
 
 # For simulation
 HARD_GAS_LIMIT_PER_OPERATION = 1040000
 HARD_STORAGE_LIMIT_PER_OPERATION = 60000
-
 COST_PER_BYTE = 250
 MINIMUM_FEE_MUTEZ = 100
 MUTEZ_PER_GAS_UNIT = 0.1
@@ -73,7 +73,7 @@ class BatchPayer:
         self.node_url = node_url
         self.clnt_mngr = clnt_mngr
         self.network_config = network_config
-        self.zero_threshold = 1  # 1 mutez = 0.000001 XTZ
+        self.zero_threshold = ZERO_THRESHOLD
         self.plugins_manager = plugins_manager
         self.dry_run = dry_run
 
@@ -85,6 +85,7 @@ class BatchPayer:
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
 
         # If delegator pays the fee, then the cutoff should be transaction-fee + 1
+        # Fixed value can only be used to determine threshold for tz addresses
         # Ex: Delegator reward is 1800 mutez, txn fee is 1792 mutez, reward - txn fee = 8 mutez payable reward
         #     If delegate pays fee, then cutoff is 1 mutez payable reward
         if self.delegator_pays_xfer_fee:
@@ -112,15 +113,10 @@ class BatchPayer:
         ):
             self.source = self.pymnt_addr
         else:
-            known_contracts = self.clnt_mngr.get_known_contracts_by_alias()
-            if self.pymnt_addr in known_contracts:
-                self.source = known_contracts[self.pymnt_addr]
-            else:
-                raise Exception(
-                    "pymnt_addr cannot be translated into a PKH or alias: {}".format(
-                        self.pymnt_addr
-                    )
-                )
+            # Aliases have been depricated
+            raise Exception(
+                "pymnt_addr cannot be translated into a PKH: {}".format(self.pymnt_addr)
+            )
 
         self.manager = self.source
         logger.debug("Payment address is {}".format(self.source))
@@ -197,6 +193,7 @@ class BatchPayer:
                 payment_logs.append(pi)
                 continue
 
+            # TODO: Check if needed as it may be a duplicate. What about kt adresses?
             zt = self.zero_threshold
             if pi.needs_activation and self.delegator_pays_ra_fee:
                 # Need to apply this fee to only those which need reactivation
@@ -242,9 +239,11 @@ class BatchPayer:
             for i in range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)
         ]
         payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
-
+        # TODO: Do all the simulations before this step
         total_amount_to_pay = sum([pl.amount for pl in payment_items])
+        # TODO: The burn fees of kt accounts is not simulated yet. This step is too ealry.
         total_amount_to_pay += sum_burn_fees
+        # Also wrong as it is only valid for tz addresses
         if not self.delegator_pays_xfer_fee:
             total_amount_to_pay += self.default_fee * len(payment_items)
 
@@ -502,7 +501,9 @@ class BatchPayer:
         # Now that we have the size of the transaction, compute the required fee
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
         required_fee = math.ceil(
-            MINIMUM_FEE_MUTEZ + MUTEZ_PER_GAS_UNIT * total_gas + MUTEZ_PER_BYTE * size
+            MINIMUM_FEE_MUTEZ
+            + MUTEZ_PER_GAS_UNIT * consumed_gas
+            + MUTEZ_PER_BYTE * size
         )
         # Check if the pre-computed tx_fee is higher or equal than the minimal required fee
         while tx_fee < required_fee:
@@ -524,7 +525,7 @@ class BatchPayer:
             size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
             required_fee = math.ceil(
                 MINIMUM_FEE_MUTEZ
-                + MUTEZ_PER_GAS_UNIT * total_gas
+                + MUTEZ_PER_GAS_UNIT * consumed_gas
                 + MUTEZ_PER_BYTE * size
             )
 
@@ -558,8 +559,9 @@ class BatchPayer:
 
         content_list = []
 
-        total_gas = total_tx_fees = total_burn_fees = 0
+        total_gas = total_tx_fees = total_burn_fees = burn_fee = 0
 
+        # TODO: Log burn fee in report
         for payment_item in payment_records:
 
             pymnt_amnt = payment_item.amount  # expected in micro tez
@@ -570,13 +572,14 @@ class BatchPayer:
                 self.gas_limit,
                 self.default_fee,
             )
-            payment_item.transaction_fee = tx_fee
+            payment_item.transaction_fee = None
 
             # TRD extension for non scriptless contract accounts
             if payment_item.paymentaddress.startswith("KT"):
                 simulation_status, simulation_results = self.simulate_single_operation(
                     payment_item, pymnt_amnt, branch, chain_id
                 )
+                # TODO: Check if reason and debugging hints are in the report
                 if simulation_status == PaymentStatus.FAIL:
                     logger.info(
                         "Payment to {} script could not be processed. Possible reason: liquidated contract. Skipping. Think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers.".format(
@@ -588,8 +591,6 @@ class BatchPayer:
 
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
-                total_burn_fees += burn_fee
-
                 payment_item.transaction_fee = tx_fee
 
                 if KT1_FEE_SAFETY_CHECK:
@@ -605,7 +606,7 @@ class BatchPayer:
                         payment_item.paid = PaymentStatus.AVOIDED
                         continue
 
-                    if total_fee > pymnt_amnt:
+                    if (pymnt_amnt - tx_fee) < ZERO_THRESHOLD:
                         logger.info(
                             "Payment to {:s} requires fees of {:10.6f} higher than payment amount of {:10.6f}."
                             "Payment avoided due KT1_FEE_SAFETY_CHECK set to True.".format(
@@ -620,7 +621,9 @@ class BatchPayer:
                 # Subtract burn fee from the payment amount
                 orig_pymnt_amnt = pymnt_amnt
                 if self.delegator_pays_ra_fee:
-                    pymnt_amnt = max(pymnt_amnt - burn_fee, 0)  # ensure not less than 0
+                    pymnt_amnt = max(
+                        pymnt_amnt - burn_fee, ZERO_THRESHOLD
+                    )  # ensure not less than ZERO_THRESHOLD
 
                 logger.info(
                     "Payment to {} script requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} burn fee; "
@@ -635,16 +638,17 @@ class BatchPayer:
                 )
 
             else:
+                payment_item.transaction_fee = tx_fee
                 # An implicit tz1 account
                 if payment_item.needs_activation:
                     storage_limit += RA_STORAGE
-                    total_burn_fees += COST_PER_BYTE * RA_STORAGE
+                    burn_fee = COST_PER_BYTE * RA_STORAGE
                     if self.delegator_pays_ra_fee:
                         # Subtract reactivation fee from the payment amount
                         orig_pymnt_amnt = pymnt_amnt
                         pymnt_amnt = max(
-                            pymnt_amnt - RA_BURN_FEE, 0
-                        )  # ensure not less than 0
+                            pymnt_amnt - RA_BURN_FEE, ZERO_THRESHOLD
+                        )  # ensure not less than ZERO_THRESHOLD
                         logger.info(
                             "Payment to {:s} reduced from {:>10.6f} to {:>10.6f} due to reactivation fee".format(
                                 payment_item.address,
@@ -655,16 +659,19 @@ class BatchPayer:
 
             # Subtract transaction's fee from the payment amount if delegator has to pay for it
             if self.delegator_pays_xfer_fee:
-                pymnt_amnt = max(pymnt_amnt - tx_fee, 0)  # ensure not less than 0
+                pymnt_amnt = max(
+                    pymnt_amnt - tx_fee, ZERO_THRESHOLD
+                )  # ensure not less than ZERO_THRESHOLD
 
             # Resume main logic
 
-            # if pymnt_amnt becomes 0, don't pay
-            if pymnt_amnt == 0:
+            # if pymnt_amnt becomes <= ZERO_THRESHOLD, don't pay
+            if pymnt_amnt <= ZERO_THRESHOLD:
                 payment_item.paid = PaymentStatus.DONE
+                payment_item.transaction_fee = 0
                 logger.info(
-                    "Payment to {:s} became 0 after deducting fees. Skipping.".format(
-                        payment_item.paymentaddress
+                    "Payment to {:s} became <= {:10.6f} tez after deducting fees. Skipping.".format(
+                        payment_item.paymentaddress, ZERO_THRESHOLD / MUTEZ
                     )
                 )
                 continue
@@ -678,6 +685,7 @@ class BatchPayer:
             op_counter.inc()
 
             total_gas += int(gas_limit)
+            total_burn_fees += int(burn_fee)
             total_tx_fees += int(tx_fee)
 
             content = (
@@ -750,6 +758,7 @@ class BatchPayer:
         logger.info(
             f"minimal required fee is {required_fee}, current used fee is {total_tx_fees}"
         )
+        # TODO: This should be a function to be more modular as it is called twice
         # If all fees are computed correctly above, the condition of this loop should not be True
         # It is still recommended to leave this block here in order to double-check that all fee calculations
         # were verified and that in the worst case any tiny differences in fee computations are adjusted
