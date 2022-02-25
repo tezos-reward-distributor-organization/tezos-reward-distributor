@@ -1,0 +1,13 @@
+# hidden files and directories
+.*
+.*/
+
+# files
+tezos-reward.service_template
+service_add.py
+*.csv
+
+# directories
+docs/
+tests/
+examples/
