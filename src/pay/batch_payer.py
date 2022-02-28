@@ -190,42 +190,44 @@ class BatchPayer:
         # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it, and burn fee
         payment_items = []
         estimated_sum_burn_fees = 0
-        for pi in unprocessed_payment_items:
+        for payment_item in unprocessed_payment_items:
 
             # Reinitialize status for items fetched from failed payment files
-            if pi.paid == PaymentStatus.FAIL:
-                pi.paid = PaymentStatus.UNDEFINED
+            if payment_item.paid == PaymentStatus.FAIL:
+                payment_item.paid = PaymentStatus.UNDEFINED
 
             # Check if payment item was skipped due to any of the phase calculations.
             # Add any items which are marked as skipped to the returning array so that they are logged to reports.
-            if not pi.payable:
+            if not payment_item.payable:
                 logger.info(
                     "Skipping payout to {:s} {:>10.6f}, reason: {:s}".format(
-                        pi.address, pi.amount / MUTEZ, pi.desc
+                        payment_item.address,
+                        payment_item.amount / MUTEZ,
+                        payment_item.desc,
                     )
                 )
-                payment_logs.append(pi)
+                payment_logs.append(payment_item)
                 continue
 
             zt = self.zero_threshold
-            if pi.needs_activation and self.delegator_pays_ra_fee:
+            if payment_item.needs_activation and self.delegator_pays_ra_fee:
                 # Need to apply this fee to only those which need reactivation
                 zt += RA_BURN_FEE
 
                 # Check here if payout amount is greater than, or equal to new zero threshold with reactivation fee added.
                 # If so, add burn fee to global total. If not, payout will not get appended to list and therefor burn fee should not be added to global total.
-                if pi.amount >= zt:
+                if payment_item.amount >= zt:
                     estimated_sum_burn_fees += RA_BURN_FEE
 
             # If payout total greater than, or equal to zero threshold, append payout record to master array
-            if pi.amount >= zt:
-                payment_items.append(pi)
+            if payment_item.amount >= zt:
+                payment_items.append(payment_item)
             else:
-                pi.paid = PaymentStatus.AVOIDED
-                payment_logs.append(pi)
+                payment_item.paid = PaymentStatus.AVOIDED
+                payment_logs.append(payment_item)
                 logger.info(
                     "Skipping payout to {:s} ({:>10.6f} XTZ), reason: payout below minimum ({:>10.6f} XTZ)".format(
-                        pi.address, pi.amount / MUTEZ, zt / MUTEZ
+                        payment_item.address, payment_item.amount / MUTEZ, zt / MUTEZ
                     )
                 )
 
@@ -235,7 +237,9 @@ class BatchPayer:
 
         # This is an estimate to predict if the payment account holds enough funds to payout this cycle and the number of future cycles
         # It neglects the correct fees of kt accounts
-        estimated_amount_to_pay = sum([pl.amount for pl in payment_items])
+        estimated_amount_to_pay = sum(
+            [payment_item.amount for payment_item in payment_items]
+        )
         estimated_amount_to_pay += estimated_sum_burn_fees
         if not self.delegator_pays_xfer_fee:
             estimated_amount_to_pay += self.default_fee * len(payment_items)
@@ -292,8 +296,8 @@ class BatchPayer:
 
             if number_future_payable_cycles < 0:
 
-                for pi in payment_items:
-                    pi.paid = PaymentStatus.FAIL
+                for payment_item in payment_items:
+                    payment_item.paid = PaymentStatus.FAIL
 
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
@@ -336,6 +340,7 @@ class BatchPayer:
 
         total_attempts = 0
         op_counter = OpCounter()
+        temp_payment_logs = []
 
         for i_batch, payment_items_chunk in enumerate(payment_items_chunks):
             logger.debug("Payment of batch {} started".format(i_batch + 1))
@@ -349,27 +354,43 @@ class BatchPayer:
                 )
             )
 
-            # TODO: Log actual amount to pay out.
-            payment_logs.extend(payment_log)
+            temp_payment_logs.extend(payment_log)
             total_attempts += attempt
+
+        # Calculate actual payment amount after previous estimate
+        amount_to_pay = delegator_transaction_fees = delegate_transaction_fees = 0
+        for payment_item in temp_payment_logs:
+            if (
+                payment_item.paid == PaymentStatus.PAID
+                or payment_item.paid == PaymentStatus.INJECTED
+            ):
+                amount_to_pay += payment_item.amount
+                delegator_transaction_fees += payment_item.delegator_transaction_fee
+                delegate_transaction_fees += payment_item.delegate_transaction_fee
+
+        amount_to_pay = (
+            amount_to_pay - delegator_transaction_fees + delegate_transaction_fees
+        )
+
+        payment_logs.extend(temp_payment_logs)
 
         return (
             payment_logs,
             total_attempts,
-            estimated_amount_to_pay,
+            amount_to_pay,
             number_future_payable_cycles,
         )
 
     def log_processed_items(self, payment_logs):
         if payment_logs:
-            for pl in payment_logs:
+            for payment_item in payment_logs:
                 logger.debug(
                     "Reward already %s for cycle %s address %s amount %f tz type %s",
-                    pl.paid,
-                    pl.cycle,
-                    pl.address,
-                    pl.amount,
-                    pl.type,
+                    payment_item.paid,
+                    payment_item.cycle,
+                    payment_item.address,
+                    payment_item.amount,
+                    payment_item.type,
                 )
 
     def pay_single_batch(self, payment_items, op_counter, dry_run=None):
