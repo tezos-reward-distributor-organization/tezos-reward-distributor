@@ -121,15 +121,13 @@ class BatchPayer:
             "Transfer fees and storage burn fees for kt accounts are determined by simulation."
         )
 
-        # If pymnt_addr has a length of 36 and starts with tz or KT then it is a public key, else it is an alias
-        if len(self.pymnt_addr) == PKH_LENGTH and (
-            self.pymnt_addr.startswith("KT") or self.pymnt_addr.startswith("tz")
-        ):
+        # If pymnt_addr has a length of 36 and starts with tz then it is a public key, else it is an alias or kt
+        if len(self.pymnt_addr) == PKH_LENGTH and self.pymnt_addr.startswith("tz"):
             self.source = self.pymnt_addr
         else:
             # Aliases have been depricated
             raise Exception(
-                "Payment address cannot be translated into a PKH: {}".format(
+                "Payment address cannot be translated into a PKH or is kt script: {}".format(
                     self.pymnt_addr
                 )
             )
