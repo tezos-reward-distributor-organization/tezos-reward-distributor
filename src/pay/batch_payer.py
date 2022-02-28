@@ -18,6 +18,7 @@ TZTX_STORAGE_LIMIT = 65
 RA_BURN_FEE = 257000  # 0.257 XTZ
 RA_STORAGE = 300
 ZERO_THRESHOLD = 1  # 1 mutez = 0.000001 XTZ
+PAYMENT_ACCOUNT_SAFETY_MARGIN = 1.05  # 105%
 
 MAX_TX_PER_BLOCK_TZ = 400
 MAX_TX_PER_BLOCK_KT = 10
@@ -56,6 +57,14 @@ MINIMUM_FEE_MUTEZ = 100
 MUTEZ_PER_GAS_UNIT = 0.1
 MUTEZ_PER_BYTE = 1
 
+# TODO: We need to refactor the whole class and all its functions.
+# Procedure needs to be transitioned to:
+# 1) Calculate all payments
+# 2) Simulate all fees
+# 3) Sort and exclude payments due to e.g. too high fees or too small payment amount
+# 4) Create batches
+# 5) Inject payments
+
 
 class BatchPayer:
     def __init__(
@@ -92,19 +101,24 @@ class BatchPayer:
             self.zero_threshold += self.default_fee
 
         logger.info(
-            "Transfer fee is {:.6f} XTZ and is paid by {}".format(
+            "Transfer fee is {:.6f} tez for tz addresses and is paid by {}.".format(
                 self.default_fee / MUTEZ,
                 "Delegator" if self.delegator_pays_xfer_fee else "Delegate",
             )
         )
         logger.info(
-            "Reactivation fee is {:.6f} XTZ and is paid by {}".format(
+            "Reactivation fee (burn fee) for tz addresses is {:.6f} tez and is paid by {}.".format(
                 RA_BURN_FEE / MUTEZ,
                 "Delegator" if self.delegator_pays_ra_fee else "Delegate",
             )
         )
         logger.info(
-            "Payment amount minimum is {:.6f} XTZ".format(self.zero_threshold / MUTEZ)
+            "Minimum payment amount is {:.6f} tez for tz addresses.".format(
+                self.zero_threshold / MUTEZ
+            )
+        )
+        logger.info(
+            "Transfer fees and storage burn fees for kt accounts are determined by simulation."
         )
 
         # If pymnt_addr has a length of 36 and starts with tz or KT then it is a public key, else it is an alias
@@ -115,7 +129,9 @@ class BatchPayer:
         else:
             # Aliases have been depricated
             raise Exception(
-                "pymnt_addr cannot be translated into a PKH: {}".format(self.pymnt_addr)
+                "Payment address cannot be translated into a PKH: {}".format(
+                    self.pymnt_addr
+                )
             )
 
         self.manager = self.source
@@ -175,7 +191,7 @@ class BatchPayer:
         # gather up all unprocessed_payment_items that are greater than, or equal to the zero_threshold
         # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it, and burn fee
         payment_items = []
-        sum_burn_fees = 0
+        estimated_sum_burn_fees = 0
         for pi in unprocessed_payment_items:
 
             # Reinitialize status for items fetched from failed payment files
@@ -193,7 +209,6 @@ class BatchPayer:
                 payment_logs.append(pi)
                 continue
 
-            # TODO: Check if needed as it may be a duplicate. What about kt adresses?
             zt = self.zero_threshold
             if pi.needs_activation and self.delegator_pays_ra_fee:
                 # Need to apply this fee to only those which need reactivation
@@ -202,12 +217,14 @@ class BatchPayer:
                 # Check here if payout amount is greater than, or equal to new zero threshold with reactivation fee added.
                 # If so, add burn fee to global total. If not, payout will not get appended to list and therefor burn fee should not be added to global total.
                 if pi.amount >= zt:
-                    sum_burn_fees += RA_BURN_FEE
+                    estimated_sum_burn_fees += RA_BURN_FEE
 
             # If payout total greater than, or equal to zero threshold, append payout record to master array
             if pi.amount >= zt:
                 payment_items.append(pi)
             else:
+                pi.paid = PaymentStatus.AVOIDED
+                payment_logs.append(pi)
                 logger.info(
                     "Skipping payout to {:s} ({:>10.6f} XTZ), reason: payout below minimum ({:>10.6f} XTZ)".format(
                         pi.address, pi.amount / MUTEZ, zt / MUTEZ
@@ -216,7 +233,14 @@ class BatchPayer:
 
         if not payment_items:
             logger.info("No payment items found, returning...")
-            return payment_items_in, 0, 0, 0
+            return payment_logs, 0, 0, 0
+
+        # This is an estimate to predict if the payment account holds enough funds to payout this cycle and the number of future cycles
+        # It neglects the correct fees of kt accounts
+        estimated_amount_to_pay = sum([pl.amount for pl in payment_items])
+        estimated_amount_to_pay += estimated_sum_burn_fees
+        if not self.delegator_pays_xfer_fee:
+            estimated_amount_to_pay += self.default_fee * len(payment_items)
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
@@ -239,17 +263,12 @@ class BatchPayer:
             for i in range(0, len(payment_items_KT), MAX_TX_PER_BLOCK_KT)
         ]
         payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
-        # TODO: Do all the simulations before this step
-        total_amount_to_pay = sum([pl.amount for pl in payment_items])
-        # TODO: The burn fees of kt accounts is not simulated yet. This step is too ealry.
-        total_amount_to_pay += sum_burn_fees
-        # Also wrong as it is only valid for tz addresses
-        if not self.delegator_pays_xfer_fee:
-            total_amount_to_pay += self.default_fee * len(payment_items)
 
         payment_address_balance = self.get_payment_address_balance()
         logger.info(
-            "Total amount to pay out is {:,} mutez.".format(total_amount_to_pay)
+            "Total estimated amount to pay out is {:,} tez.".format(
+                estimated_amount_to_pay / MUTEZ
+            )
         )
         logger.info(
             "{} payments will be done in {} batches".format(
@@ -260,13 +279,17 @@ class BatchPayer:
         if payment_address_balance is not None:
 
             logger.info(
-                "Current balance in payout address is {:,} mutez.".format(
-                    payment_address_balance
+                "Current balance in payout address is {:,} tez.".format(
+                    payment_address_balance / MUTEZ
                 )
             )
 
             number_future_payable_cycles = (
-                int(payment_address_balance / total_amount_to_pay) - 1
+                int(
+                    payment_address_balance
+                    / (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
+                )
+                - 1
             )
 
             if number_future_payable_cycles < 0:
@@ -277,8 +300,10 @@ class BatchPayer:
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
                     "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:,} mutez, is insufficient to pay cycle rewards of {:,} mutez".format(
-                        payment_address_balance, total_amount_to_pay
+                    "The current balance, {:,} tez, is insufficient to pay cycle rewards of {:,} tez. Including a safety margin of {} %.".format(
+                        payment_address_balance / MUTEZ,
+                        estimated_amount_to_pay / MUTEZ,
+                        (PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100,
                     )
                 )
 
@@ -286,16 +311,18 @@ class BatchPayer:
                 logger.error(message)
                 self.plugins_manager.send_admin_notification(subject, message)
 
+                payment_logs.extend(payment_items)
+
                 # Exit early since nothing can be paid
-                return payment_items, 0, 0, 0
+                return payment_logs, 0, 0, 0
 
             elif number_future_payable_cycles < 1:
 
                 subject = "WARNING Payouts - Low Payment Address Funds"
                 message = (
-                    "The payout address will soon run out of funds. The current balance, {:,} mutez, "
+                    "The payout address will soon run out of funds. The current balance, {:,} tez, "
                     "might not be sufficient for the next cycle".format(
-                        payment_address_balance
+                        payment_address_balance / MUTEZ
                     )
                 )
 
@@ -314,7 +341,7 @@ class BatchPayer:
 
         for i_batch, payment_items_chunk in enumerate(payment_items_chunks):
             logger.debug("Payment of batch {} started".format(i_batch + 1))
-            payments_log, attempt = self.pay_single_batch(
+            payment_log, attempt = self.pay_single_batch(
                 payment_items_chunk, dry_run=dry_run, op_counter=op_counter
             )
 
@@ -324,13 +351,14 @@ class BatchPayer:
                 )
             )
 
-            payment_logs.extend(payments_log)
+            # TODO: Log actual amount to pay out.
+            payment_logs.extend(payment_log)
             total_attempts += attempt
 
         return (
             payment_logs,
             total_attempts,
-            total_amount_to_pay,
+            estimated_amount_to_pay,
             number_future_payable_cycles,
         )
 
@@ -356,7 +384,7 @@ class BatchPayer:
         # for failed operations, trying after some time should be OK
         for attempt in range(max_try):
             try:
-                status, operation_hash = self.attempt_single_batch(
+                status, operation_hash, payment_log = self.attempt_single_batch(
                     payment_items, op_counter, dry_run=dry_run
                 )
             except Exception:
@@ -388,12 +416,12 @@ class BatchPayer:
             if attempt < max_try - 1:
                 self.wait_random()
 
-        for payment_item in payment_items:
+        for payment_item in payment_log:
             if payment_item.paid == PaymentStatus.UNDEFINED:
                 payment_item.paid = status
                 payment_item.hash = operation_hash
 
-        return payment_items, attempt_count
+        return payment_log, attempt_count
 
     def wait_random(self):
         block_time = self.network_config["MINIMAL_BLOCK_DELAY"]
@@ -533,7 +561,7 @@ class BatchPayer:
 
         return PaymentStatus.DONE, simulation_results
 
-    def attempt_single_batch(self, payment_records, op_counter, dry_run=None):
+    def attempt_single_batch(self, payment_items, op_counter, dry_run=None):
         if not op_counter.get():
             status, counter = self.clnt_mngr.request_url(self.comm_counter)
             if status != HTTPStatus.OK:
@@ -559,27 +587,26 @@ class BatchPayer:
 
         content_list = []
 
-        total_gas = total_tx_fees = total_burn_fees = burn_fee = 0
+        total_gas = total_tx_fees = total_burn_fees = 0
 
-        # TODO: Log burn fee in report
-        for payment_item in payment_records:
+        for payment_item in payment_items:
 
             pymnt_amnt = payment_item.amount  # expected in micro tez
             # Get initial default values for storage, gas and fees
             # These default values are used for non-empty tz1 accounts transactions
-            storage_limit, gas_limit, tx_fee = (
+            storage_limit, gas_limit, tx_fee, burn_fee = (
                 self.storage_limit,
                 self.gas_limit,
                 self.default_fee,
+                0,
             )
-            payment_item.transaction_fee = None
 
             # TRD extension for non scriptless contract accounts
             if payment_item.paymentaddress.startswith("KT"):
                 simulation_status, simulation_results = self.simulate_single_operation(
                     payment_item, pymnt_amnt, branch, chain_id
                 )
-                # TODO: Check if reason and debugging hints are in the report
+
                 if simulation_status == PaymentStatus.FAIL:
                     logger.info(
                         "Payment to {} script could not be processed. Possible reason: liquidated contract. Skipping. Think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers.".format(
@@ -587,6 +614,9 @@ class BatchPayer:
                         )
                     )
                     payment_item.paid = PaymentStatus.AVOIDED
+                    payment_item.desc += (
+                        " Investigate: liquidated or no default entry point."
+                    )
                     continue
 
                 gas_limit, tx_fee, storage_limit = simulation_results
@@ -597,16 +627,19 @@ class BatchPayer:
                     total_fee = tx_fee + burn_fee
                     if total_fee > FEE_LIMIT_CONTRACTS:
                         logger.info(
-                            "Payment to {:s} script requires higher fees than reward amount. Skipping. Needed fee: {:10.6f} XTZ, max fee: {:10.6f} XTZ. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation.".format(
+                            "Payment to {:s} script requires higher fees than allowed maximum. Skipping. Needed fee: {:10.6f} tez, max fee: {:10.6f} tez. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation.".format(
                                 payment_item.paymentaddress,
                                 total_fee / MUTEZ,
                                 FEE_LIMIT_CONTRACTS / MUTEZ,
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
+                        payment_item.desc += " Fees higher then allowed maximum fee: {:10.6f} tez.".format(
+                            FEE_LIMIT_CONTRACTS / MUTEZ,
+                        )
                         continue
 
-                    if (pymnt_amnt - tx_fee) < ZERO_THRESHOLD:
+                    if (pymnt_amnt - total_fee) < ZERO_THRESHOLD:
                         logger.info(
                             "Payment to {:s} requires fees of {:10.6f} higher than payment amount of {:10.6f}."
                             "Payment avoided due KT1_FEE_SAFETY_CHECK set to True.".format(
@@ -616,17 +649,30 @@ class BatchPayer:
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
+                        payment_item.desc += (
+                            " Burn + transaction fees higher then payment amount."
+                        )
                         continue
 
+            else:
+                # An implicit tz1 account
+                if payment_item.needs_activation:
+                    storage_limit += RA_STORAGE
+                    # TODO: Check what value is actually correct here
+                    # burn_fee = COST_PER_BYTE * RA_STORAGE
+                    burn_fee = RA_BURN_FEE
+
+            if burn_fee > 0:
                 # Subtract burn fee from the payment amount
                 orig_pymnt_amnt = pymnt_amnt
                 if self.delegator_pays_ra_fee:
-                    pymnt_amnt = max(
-                        pymnt_amnt - burn_fee, ZERO_THRESHOLD
-                    )  # ensure not less than ZERO_THRESHOLD
+                    pymnt_amnt = max(pymnt_amnt - burn_fee, 0)
+                    payment_item.delegator_transaction_fee += burn_fee
+                else:
+                    payment_item.delegate_transaction_fee += burn_fee
 
                 logger.info(
-                    "Payment to {} script requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} burn fee; "
+                    "Payment to {} requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} burn fee; "
                     "Payment reduced from {:10.6f} to {:10.6f}".format(
                         payment_item.paymentaddress,
                         gas_limit,
@@ -637,40 +683,25 @@ class BatchPayer:
                     )
                 )
 
-            else:
-                payment_item.transaction_fee = tx_fee
-                # An implicit tz1 account
-                if payment_item.needs_activation:
-                    storage_limit += RA_STORAGE
-                    burn_fee = COST_PER_BYTE * RA_STORAGE
-                    if self.delegator_pays_ra_fee:
-                        # Subtract reactivation fee from the payment amount
-                        orig_pymnt_amnt = pymnt_amnt
-                        pymnt_amnt = max(
-                            pymnt_amnt - RA_BURN_FEE, ZERO_THRESHOLD
-                        )  # ensure not less than ZERO_THRESHOLD
-                        logger.info(
-                            "Payment to {:s} reduced from {:>10.6f} to {:>10.6f} due to reactivation fee".format(
-                                payment_item.address,
-                                orig_pymnt_amnt / MUTEZ,
-                                pymnt_amnt / MUTEZ,
-                            )
-                        )
-
             # Subtract transaction's fee from the payment amount if delegator has to pay for it
             if self.delegator_pays_xfer_fee:
-                pymnt_amnt = max(
-                    pymnt_amnt - tx_fee, ZERO_THRESHOLD
-                )  # ensure not less than ZERO_THRESHOLD
+                pymnt_amnt = max(pymnt_amnt - tx_fee, 0)
+                payment_item.delegator_transaction_fee += tx_fee
+            else:
+                payment_item.delegate_transaction_fee += tx_fee
 
             # Resume main logic
 
-            # if pymnt_amnt becomes <= ZERO_THRESHOLD, don't pay
-            if pymnt_amnt <= ZERO_THRESHOLD:
-                payment_item.paid = PaymentStatus.DONE
-                payment_item.transaction_fee = 0
+            # if pymnt_amnt becomes < ZERO_THRESHOLD, don't pay
+            if pymnt_amnt < ZERO_THRESHOLD:
+                payment_item.paid = PaymentStatus.AVOIDED
+                payment_item.delegator_transaction_fee = 0
+                payment_item.delegate_transaction_fee = 0
+                payment_item.desc += (
+                    " Substracted fees resulted in payment amount < ZERO_THRESHOLD."
+                )
                 logger.info(
-                    "Payment to {:s} became <= {:10.6f} tez after deducting fees. Skipping.".format(
+                    "Payment to {:s} became < {:10.6f} tez after deducting fees. Skipping.".format(
                         payment_item.paymentaddress, ZERO_THRESHOLD / MUTEZ
                     )
                 )
@@ -703,7 +734,7 @@ class BatchPayer:
             verbose_logger.info("Payment content: {}".format(content))
 
         if len(content_list) == 0:
-            return PaymentStatus.DONE, ""
+            return PaymentStatus.DONE, "", payment_items
         contents_string = ",".join(content_list)
 
         # run the operations for simulation results
@@ -720,7 +751,7 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in run_operation")
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.FAIL, "", payment_items
 
         # Check each contents object for failure
         for op in run_ops_parsed["contents"]:
@@ -734,7 +765,7 @@ class BatchPayer:
                             op_status, op_error
                         )
                     )
-                    return PaymentStatus.AVOIDED, ""
+                    return PaymentStatus.FAIL, "", payment_items
             except KeyError:
                 logger.debug(
                     "Unable to find metadata->operation_result->{status,errors} in run_ops response"
@@ -748,7 +779,7 @@ class BatchPayer:
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.FAIL, "", payment_items
 
         # Re-compute minimal required fee by the batch transaction and re-adjust the fee if necessary
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
@@ -769,7 +800,9 @@ class BatchPayer:
             difference_fees = int(math.ceil(required_fee - total_tx_fees))
             first_tx = json.loads(content_list[0])
             first_tx["fee"] = str(int(int(first_tx["fee"]) + difference_fees))
-            payment_records[0].transaction_fee += difference_fees
+            # We do not want to adjust the content (payment amount) anymore and let the delegate pay this fee
+            # TODO: Log info in description?
+            payment_items[0].delegate_transaction_fee += difference_fees
 
             # Re-adjust the contents according to the new fee
             total_tx_fees = required_fee
@@ -781,7 +814,7 @@ class BatchPayer:
             status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
             if status != HTTPStatus.OK:
                 logger.error("Error in forge operation")
-                return PaymentStatus.FAIL, ""
+                return PaymentStatus.FAIL, "", payment_items
 
             # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
             # because of the increase in the fee of the first transaction
@@ -814,11 +847,11 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in preapply operation")
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.FAIL, "", payment_items
 
         # if dry_run, skip injection
         if dry_run:
-            return PaymentStatus.DONE, ""
+            return PaymentStatus.DONE, "", payment_items
 
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
@@ -863,7 +896,7 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in inject operation")
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.FAIL, "", payment_items
 
         logger.info("Operation hash is {}".format(operation_hash))
 
@@ -898,7 +931,7 @@ class BatchPayer:
             for op_hashes in list_op_hash:
                 if operation_hash in op_hashes:
                     logger.info("Operation {} is included".format(operation_hash))
-                    return PaymentStatus.PAID, operation_hash
+                    return PaymentStatus.PAID, operation_hash, payment_items
             logger.debug(
                 "Operation {} is not included at level {}".format(operation_hash, i)
             )
@@ -908,7 +941,7 @@ class BatchPayer:
                 operation_hash
             )
         )
-        return PaymentStatus.INJECTED, operation_hash
+        return PaymentStatus.INJECTED, operation_hash, payment_items
 
     def get_payment_address_balance(self):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)

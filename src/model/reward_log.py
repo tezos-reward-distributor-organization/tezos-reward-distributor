@@ -48,7 +48,8 @@ class RewardLog:
         self.service_fee_rate = 0
         self.service_fee_ratio = 0
         self.amount = 0
-        self.transaction_fee = 0
+        self.delegate_transaction_fee = 0
+        self.delegator_transaction_fee = 0
         self.parents = None
 
         self.paid = PaymentStatus.UNDEFINED
