@@ -12,7 +12,7 @@ from launch_common import (
     print_banner,
     add_argument_network,
     add_argument_provider,
-    add_argument_reports_base,
+    add_argument_base_directory,
     add_argument_node_endpoint,
     add_argument_dry,
     add_argument_dry_no_consumer,
@@ -72,7 +72,7 @@ def main(args):
     dry_run = args.dry_run
 
     # Get reporting directories
-    reports_dir = os.path.expanduser(args.reports_base)
+    reports_dir = os.path.expanduser(args.base_directory)
 
     # Check the disk size at the reports dir location
     if disk_is_full(reports_dir):
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     add_argument_network(argparser)
     add_argument_provider(argparser)
-    add_argument_reports_base(argparser)
+    add_argument_base_directory(argparser)
     add_argument_node_endpoint(argparser)
     add_argument_dry(argparser)
     add_argument_dry_no_consumer(argparser)

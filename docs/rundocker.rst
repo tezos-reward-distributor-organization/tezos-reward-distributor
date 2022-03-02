@@ -30,7 +30,7 @@ Here are the steps:
 
   ::
 
-      docker run --network=host -v $(pwd)/reports:/app/reports:z -v $(pwd)/config:/app/config:z trdo/tezos-reward-distributor --reports_base /app/trd-data <ARGS>
+      docker run --network=host -v $(pwd)/reports:/app/reports:z -v $(pwd)/config:/app/config:z trdo/tezos-reward-distributor --base_directory /app/trd-data <ARGS>
 
 <ARGS> are the other arguments that you would normally pass to the TRD program.
 

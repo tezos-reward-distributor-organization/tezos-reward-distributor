@@ -17,7 +17,7 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from launch_common import (
     print_banner,
     add_argument_network,
-    add_argument_reports_base,
+    add_argument_base_directory,
     add_argument_node_endpoint,
     add_argument_signer_endpoint,
     add_argument_docker,
@@ -439,7 +439,7 @@ def main(args):
     )
 
     # 1. find where configuration is
-    config_dir = os.path.expanduser(os.path.join(args.reports_base + CONFIG_DIR))
+    config_dir = os.path.expanduser(os.path.join(args.base_directory + CONFIG_DIR))
 
     # create configuration directory if it is not present
     # so that user can easily put his configuration there
@@ -508,7 +508,7 @@ if __name__ == "__main__":
 
     add_argument_provider(argparser)
     add_argument_network(argparser)
-    add_argument_reports_base(argparser)
+    add_argument_base_directory(argparser)
     add_argument_node_endpoint(argparser)
     add_argument_signer_endpoint(argparser)
     add_argument_docker(argparser)

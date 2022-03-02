@@ -47,7 +47,7 @@ Options
 ``-Ap --node_addr_public <url>``
     Public node base URL. Default is ``https://mainnet-tezos.giganode.io``. This argument will only be used in case the reward provider is set to ``prpc``. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.
 
-``-r --reports_base <path>``
+``-b --base_directory <path>``
     Directory for reports and configurations. Default value: ``../trd-data``.
 
 ``-D --dry_run``

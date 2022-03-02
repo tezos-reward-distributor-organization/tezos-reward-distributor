@@ -48,7 +48,9 @@ class ConfigLifeCycle:
             ConfigState.INITIAL,
             on_leave=lambda e: logger.debug("Loading baking configuration file ..."),
         )
-        fsm_builder.add_state(ConfigState.READ, on_enter=self.do_read_cfg_file)
+        fsm_builder.add_state(
+            ConfigState.READ, on_enter=self.do_read_configuration_file
+        )
         fsm_builder.add_state(ConfigState.BUILT, on_enter=self.do_build_parser)
         fsm_builder.add_state(ConfigState.PARSED, on_enter=self.do_parse_cfg)
         fsm_builder.add_state(ConfigState.VALIDATED, on_enter=self.do_validate_cfg)
@@ -85,29 +87,10 @@ class ConfigLifeCycle:
         self.fsm.trigger_event(ConfigEvent.PROCESS)
         self.fsm.trigger_event(ConfigEvent.COMPLETE)
 
-    def do_read_cfg_file(self, e):
+    def do_read_configuration_file(self, e):
         config_dir = os.path.expanduser(
-            os.path.join(self.args.reports_base + CONFIG_DIR)
+            os.path.join(self.args.base_directory + CONFIG_DIR)
         )
-
-        # Check for successful data directory migration and guide user if config exists in old directory
-        config_dir_old = os.path.expanduser(
-            os.path.join(self.args.reports_base + "/cfg")
-        )
-
-        if config_dir_old and os.path.exists(config_dir_old):
-            try:
-                config_file_path_old = self.get_baking_cfg_file(config_dir_old)
-                if config_file_path_old:
-                    logger.error(
-                        "Configuration present: {}. The data folder structure has changed. Please migrate to new structure!".format(
-                            config_file_path_old
-                        )
-                    )
-            except Exception:
-                logger.debug(
-                    "No configuration in old path present: {}".format(config_dir_old)
-                )
 
         # create configuration directory if it is not present
         # so that user can easily put his configuration there

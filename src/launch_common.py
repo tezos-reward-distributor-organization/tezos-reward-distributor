@@ -92,7 +92,7 @@ def build_parser():
     add_argument_node_endpoint(argparser)
     add_argument_provider(argparser)
     add_argument_node_addr_public(argparser)
-    add_argument_reports_base(argparser)
+    add_argument_base_directory(argparser)
     add_argument_dry(argparser)
     add_argument_dry_no_consumer(argparser)
     add_argument_signer_endpoint(argparser)
@@ -210,10 +210,10 @@ def add_argument_node_addr_public(argparser):
     )
 
 
-def add_argument_reports_base(argparser):
+def add_argument_base_directory(argparser):
     argparser.add_argument(
-        "-r",
-        "--reports_base",
+        "-b",
+        "--base_directory",
         help=(
             "The base path for all TRD data. Default: {} "
             + "The directory contains the following folders: "

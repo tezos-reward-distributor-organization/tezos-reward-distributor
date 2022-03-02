@@ -3,6 +3,8 @@ import sys
 import pip
 import pkg_resources
 
+from util.config_life_cycle import get_baking_cfg_file, do_set_up_dirs
+
 REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 
@@ -60,8 +62,33 @@ def check_fee_ini(args=None):
     return 1
 
 
+def check_migration_complete(args=None):
+    # Check for successful data directory migration and guide user if config exists in old directory
+    config_dir_old = os.path.expanduser("~/pymnt/cfg")
+    reports_dir_old = os.path.expanduser("~/pymnt/reports")
+
+    if config_dir_old and os.path.exists(config_dir_old):
+        print("Old configuration folder found: {}".format(config_dir_old))
+        print("Did you complete the data migration needed for TRD v11? (y/n)")
+        value = input().lower()
+        if value == "yes" or value == "y":
+            print("To avoid this message delete the old folder structure.")
+        else:
+            raise Exception("Data must be migrated and folders deleted.")
+
+    if reports_dir_old and os.path.exists(reports_dir_old):
+        print("Old reports folder found: {}".format(reports_dir_old))
+        print("Did you complete the data migration needed for TRD v11? (y/n)")
+        value = input().lower()
+        if value == "yes" or value == "y":
+            print("To avoid this message delete the old folder structure.")
+        else:
+            raise Exception("Data must be migrated and folders deleted.")
+
+
 def start_application(args=None):
     check_fee_ini()
+    check_migration_complete()
 
     # Requirements need to be checked outside of the state machine
     # because the library transitions could not be present
