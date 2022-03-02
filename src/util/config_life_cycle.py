@@ -104,7 +104,7 @@ class ConfigLifeCycle:
                             config_file_path_old
                         )
                     )
-            except:
+            except Exception:
                 logger.debug(
                     "No configuration in old path present: {}".format(config_dir_old)
                 )
