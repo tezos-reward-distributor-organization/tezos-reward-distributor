@@ -95,7 +95,7 @@ class ConfigLifeCycle:
             os.path.join(self.args.reports_base + "/cfg")
         )
 
-        if config_dir and os.path.exists(config_dir):
+        if config_dir_old and os.path.exists(config_dir_old):
             try:
                 config_file_path_old = self.get_baking_cfg_file(config_dir_old)
                 if config_file_path_old:
