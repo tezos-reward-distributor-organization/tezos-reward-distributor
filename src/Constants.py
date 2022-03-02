@@ -1,7 +1,7 @@
 from enum import Enum
 
 # Persistent data directories
-BASE_DIR = "~/pymnt"
+BASE_DIR = "~/pymnt/"
 CONFIG_DIR = "cfg"
 SIMULATIONS_DIR = "simulations"
 REPORTS_DIR = "reports"
