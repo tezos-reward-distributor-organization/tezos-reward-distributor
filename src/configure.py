@@ -26,6 +26,7 @@ from launch_common import (
     add_argument_provider,
     add_argument_api_base_url,
     add_argument_log_file,
+    args_validation,
 )
 from log_config import main_logger, init
 from model.baking_conf import (
@@ -494,18 +495,6 @@ def main(args):
     print("Configuration file is created at '{}'".format(config_file_path))
 
 
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if values < -11 or values > 0:
-            parser.error(
-                "release-override({0}) must be in the range of [-11,-1] to override, default is 0".format(
-                    option_string
-                )
-            )
-
-        setattr(namespace, "release_override", values)
-
-
 if __name__ == "__main__":
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
@@ -529,6 +518,9 @@ if __name__ == "__main__":
     add_argument_log_file(argparser)
 
     args = argparser.parse_args()
+    # Basic validations
+    # You only have access to the parsed values after you parse_args()
+    args_validation(args, argparser)
 
     init(False, args.log_file, args.verbose == "on", mode="configure")
 

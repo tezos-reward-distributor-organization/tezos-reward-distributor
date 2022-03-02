@@ -19,6 +19,7 @@ from launch_common import (
     add_argument_signer_endpoint,
     add_argument_docker,
     add_argument_verbose,
+    args_validation,
 )
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
@@ -149,29 +150,32 @@ if __name__ == "__main__":
             )
         )
 
-    parser = argparse.ArgumentParser()
-    add_argument_network(parser)
-    add_argument_provider(parser)
-    add_argument_reports_base(parser)
-    add_argument_node_endpoint(parser)
-    add_argument_dry(parser)
-    add_argument_dry_no_consumer(parser)
-    add_argument_signer_endpoint(parser)
-    add_argument_docker(parser)
-    add_argument_verbose(parser)
+    argparser = argparse.ArgumentParser()
+    add_argument_network(argparser)
+    add_argument_provider(argparser)
+    add_argument_reports_base(argparser)
+    add_argument_node_endpoint(argparser)
+    add_argument_dry(argparser)
+    add_argument_dry_no_consumer(argparser)
+    add_argument_signer_endpoint(argparser)
+    add_argument_docker(argparser)
+    add_argument_verbose(argparser)
 
-    parser.add_argument(
+    argparser.add_argument(
         "paymentaddress",
         help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
         "to sign for the address, it is necessary to use an alias.",
     )
-    parser.add_argument(
+    argparser.add_argument(
         "payments_file",
         help="File of payment lines. Each line should contain PKH:amount. "
         "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33",
     )
 
-    args = parser.parse_args()
+    args = argparser.parse_args()
+    # Basic validations
+    # You only have access to the parsed values after you parse_args()
+    args_validation(args, argparser)
 
     init(args.syslog, args.log_file, args.verbose == "on", mode="payfor")
 

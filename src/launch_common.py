@@ -35,41 +35,12 @@ def print_banner(args, script_name):
 
 
 def parse_arguments():
-    parser = build_parser()
+    argparser = build_parser()
+    args = argparser.parse_args()
 
-    args = parser.parse_args()
-
-    #
     # Basic validations
     # You only have access to the parsed values after you parse_args()
-    #
-
-    # Validate offset within known network defaults
-    network = args.network
-    blocks_per_cycle = 0
-    payment_offset = args.payment_offset
-    if network in default_network_config_map:
-        blocks_per_cycle = default_network_config_map[network]["BLOCKS_PER_CYCLE"]
-    if not (payment_offset >= 0 and payment_offset < blocks_per_cycle):
-        parser.error(
-            "Valid range for payment offset on {:s} is between 0 and {:d}".format(
-                network, blocks_per_cycle
-            )
-        )
-
-    # Verify cycle initial cycle within range
-    initial_cycle = args.initial_cycle
-    if initial_cycle < -1:
-        parser.error(
-            "initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle"
-        )
-
-    # Verify cycle release override within range
-    release_override = args.release_override
-    if release_override < -11 or release_override > 0:
-        parser.error(
-            "release-override must be in the range of [-11,-1] to override, default is 0"
-        )
+    args_validation(args, argparser)
 
     args.dry_run = args.dry_run or args.dry_run_no_consumers
 
@@ -77,34 +48,67 @@ def parse_arguments():
     return args
 
 
+def args_validation(args, argparser):
+    # Validate offset within known network defaults
+    blocks_per_cycle = 0
+
+    if args.network:
+        network = args.network
+        if network in default_network_config_map:
+            blocks_per_cycle = default_network_config_map[network]["BLOCKS_PER_CYCLE"]
+
+    if args.payment_offset:
+        payment_offset = args.payment_offset
+        if not (payment_offset >= 0 and payment_offset < blocks_per_cycle):
+            argparser.error(
+                "Valid range for payment offset on {:s} is between 0 and {:d}".format(
+                    network, blocks_per_cycle
+                )
+            )
+
+    if args.initial_cycle:
+        initial_cycle = args.initial_cycle
+        if initial_cycle < -1:
+            argparser.error(
+                "initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle"
+            )
+
+    if args.release_override:
+        release_override = args.release_override
+        if release_override < -11 or release_override > 0:
+            argparser.error(
+                "release-override must be in the range of [-11,-1] to override, default is 0"
+            )
+
+
 # TODO: Properly format the help section, see: https://www.programcreek.com/python/example/51784/argparse.HelpFormatter
 def build_parser():
-    parser = argparse.ArgumentParser(prog="TRD")
-    add_argument_cycle(parser)
-    add_argument_mode(parser)
-    add_argument_release_override(parser)
-    add_argument_payment_offset(parser)
-    add_argument_network(parser)
-    add_argument_node_endpoint(parser)
-    add_argument_provider(parser)
-    add_argument_node_addr_public(parser)
-    add_argument_reports_base(parser)
-    add_argument_dry(parser)
-    add_argument_dry_no_consumer(parser)
-    add_argument_signer_endpoint(parser)
-    add_argument_docker(parser)
-    add_argument_background_service(parser)
-    add_argument_stats(parser)
-    add_argument_verbose(parser)
-    add_argument_api_base_url(parser)
-    add_argument_retry_injected(parser)
-    add_argument_syslog(parser)
-    add_argument_log_file(parser)
-    return parser
+    argparser = argparse.ArgumentParser(prog="TRD")
+    add_argument_cycle(argparser)
+    add_argument_mode(argparser)
+    add_argument_release_override(argparser)
+    add_argument_payment_offset(argparser)
+    add_argument_network(argparser)
+    add_argument_node_endpoint(argparser)
+    add_argument_provider(argparser)
+    add_argument_node_addr_public(argparser)
+    add_argument_reports_base(argparser)
+    add_argument_dry(argparser)
+    add_argument_dry_no_consumer(argparser)
+    add_argument_signer_endpoint(argparser)
+    add_argument_docker(argparser)
+    add_argument_background_service(argparser)
+    add_argument_stats(argparser)
+    add_argument_verbose(argparser)
+    add_argument_api_base_url(argparser)
+    add_argument_retry_injected(argparser)
+    add_argument_syslog(argparser)
+    add_argument_log_file(argparser)
+    return argparser
 
 
-def add_argument_cycle(parser):
-    parser.add_argument(
+def add_argument_cycle(argparser):
+    argparser.add_argument(
         "-C",
         "--initial_cycle",
         help="Cycle to start payment(s) from."
@@ -117,8 +121,8 @@ def add_argument_cycle(parser):
     )
 
 
-def add_argument_mode(parser):
-    parser.add_argument(
+def add_argument_mode(argparser):
+    argparser.add_argument(
         "-M",
         "--run_mode",
         help="Waiting decision after making pending payments. 1: default option. Run forever. "
@@ -131,8 +135,8 @@ def add_argument_mode(parser):
     )
 
 
-def add_argument_release_override(parser):
-    parser.add_argument(
+def add_argument_release_override(argparser):
+    argparser.add_argument(
         "-R",
         "--release_override",
         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
@@ -143,8 +147,8 @@ def add_argument_release_override(parser):
     )
 
 
-def add_argument_payment_offset(parser):
-    parser.add_argument(
+def add_argument_payment_offset(argparser):
+    argparser.add_argument(
         "-O",
         "--payment_offset",
         help="Number of blocks to wait after a cycle starts before starting payments. "
@@ -154,8 +158,8 @@ def add_argument_payment_offset(parser):
     )
 
 
-def add_argument_network(parser):
-    parser.add_argument(
+def add_argument_network(argparser):
+    argparser.add_argument(
         "-N",
         "--network",
         help="Network name. Default is MAINNET. The current test network is {0}.".format(
@@ -166,8 +170,8 @@ def add_argument_network(parser):
     )
 
 
-def add_argument_node_endpoint(parser):
-    parser.add_argument(
+def add_argument_node_endpoint(argparser):
+    argparser.add_argument(
         "-A",
         "--node_endpoint",
         help=(
@@ -178,8 +182,8 @@ def add_argument_node_endpoint(parser):
     )
 
 
-def add_argument_provider(parser):
-    parser.add_argument(
+def add_argument_provider(argparser):
+    argparser.add_argument(
         "-P",
         "--reward_data_provider",
         help="Source of reward data. The default is 'tzkt' (TzKT API). "
@@ -192,8 +196,8 @@ def add_argument_provider(parser):
     )
 
 
-def add_argument_node_addr_public(parser):
-    parser.add_argument(
+def add_argument_node_addr_public(argparser):
+    argparser.add_argument(
         "-Ap",
         "--node_addr_public",
         help=(
@@ -206,8 +210,8 @@ def add_argument_node_addr_public(parser):
     )
 
 
-def add_argument_reports_base(parser):
-    parser.add_argument(
+def add_argument_reports_base(argparser):
+    argparser.add_argument(
         "-r",
         "--reports_base",
         help=(
@@ -227,8 +231,8 @@ def add_argument_reports_base(parser):
     )
 
 
-def add_argument_dry(parser):
-    parser.add_argument(
+def add_argument_dry(argparser):
+    argparser.add_argument(
         "-D",
         "--dry_run",
         help="Run without injecting payments. Suitable for testing. Does not require locking.",
@@ -236,8 +240,8 @@ def add_argument_dry(parser):
     )
 
 
-def add_argument_dry_no_consumer(parser):
-    parser.add_argument(
+def add_argument_dry_no_consumer(argparser):
+    argparser.add_argument(
         "-Dc",
         "--dry_run_no_consumers",
         help="Run without any consumers. Suitable for testing. Does not require locking.",
@@ -245,8 +249,8 @@ def add_argument_dry_no_consumer(parser):
     )
 
 
-def add_argument_signer_endpoint(parser):
-    parser.add_argument(
+def add_argument_signer_endpoint(argparser):
+    argparser.add_argument(
         "-E",
         "--signer_endpoint",
         help="URL used by the Tezos-signer to accept HTTP requests.",
@@ -254,8 +258,8 @@ def add_argument_signer_endpoint(parser):
     )
 
 
-def add_argument_docker(parser):
-    parser.add_argument(
+def add_argument_docker(argparser):
+    argparser.add_argument(
         "-d",
         "--docker",
         help="Docker installation flag. When set, docker script location should be set in -E",
@@ -263,8 +267,8 @@ def add_argument_docker(parser):
     )
 
 
-def add_argument_background_service(parser):
-    parser.add_argument(
+def add_argument_background_service(argparser):
+    argparser.add_argument(
         "-s",
         "--background_service",
         help="Marker to indicate that TRD is running in daemon mode. "
@@ -273,8 +277,8 @@ def add_argument_background_service(parser):
     )
 
 
-def add_argument_stats(parser):
-    parser.add_argument(
+def add_argument_stats(argparser):
+    argparser.add_argument(
         "-Dp",
         "--do_not_publish_stats",
         help="Do not publish anonymous usage statistics",
@@ -282,8 +286,8 @@ def add_argument_stats(parser):
     )
 
 
-def add_argument_verbose(parser):
-    parser.add_argument(
+def add_argument_verbose(argparser):
+    argparser.add_argument(
         "-V",
         "--verbose",
         help="Produces a lot of logs. Good for trouble shooting. Verbose logs go into app_verbose log "
@@ -295,8 +299,8 @@ def add_argument_verbose(parser):
     )
 
 
-def add_argument_api_base_url(parser: argparse.ArgumentParser):
-    parser.add_argument(
+def add_argument_api_base_url(argparser):
+    argparser.add_argument(
         "-U",
         "--api-base-url",
         help="Base API url for non-rpc providers. If not set, public endpoints will be used.",
@@ -304,8 +308,8 @@ def add_argument_api_base_url(parser: argparse.ArgumentParser):
     )
 
 
-def add_argument_retry_injected(parser):
-    parser.add_argument(
+def add_argument_retry_injected(argparser):
+    argparser.add_argument(
         "-inj",
         "--retry_injected",
         help="Try to pay injected payment items. Use this option only if you are sure that payment items were injected but not actually paid.",
@@ -313,11 +317,13 @@ def add_argument_retry_injected(parser):
     )
 
 
-def add_argument_syslog(parser):
-    parser.add_argument(
+def add_argument_syslog(argparser):
+    argparser.add_argument(
         "--syslog", help="Log to syslog. Useful in daemon mode.", action="store_true"
     )
 
 
-def add_argument_log_file(parser):
-    parser.add_argument("--log-file", help="Log output file", default=DEFAULT_LOG_FILE)
+def add_argument_log_file(argparser):
+    argparser.add_argument(
+        "--log-file", help="Log output file", default=DEFAULT_LOG_FILE
+    )
