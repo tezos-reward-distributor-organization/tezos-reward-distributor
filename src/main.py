@@ -88,7 +88,7 @@ def check_migration_complete(args=None):
 
 def start_application(args=None):
     check_fee_ini()
-    check_migration_complete()
+    #check_migration_complete()
 
     # Requirements need to be checked outside of the state machine
     # because the library transitions could not be present
