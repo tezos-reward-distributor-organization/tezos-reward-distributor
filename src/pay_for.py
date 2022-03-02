@@ -23,7 +23,7 @@ from launch_common import (
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
-from Constants import CONFIG_DIR, REPORTS_DIR, SIMULATIONS_DIR
+from Constants import REPORTS_DIR, SIMULATIONS_DIR
 from util.dir_utils import (
     get_payment_root,
     get_successful_payments_dir,
@@ -31,6 +31,7 @@ from util.dir_utils import (
 )
 from util.disk_is_full import disk_is_full
 from util.process_life_cycle import ProcessLifeCycle
+from util.config_life_cycle import get_baking_cfg_file
 
 LINER = "--------------------------------------------"
 
@@ -47,14 +48,6 @@ def main(args):
     logger.info(
         "Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1))
     )
-
-    # Find where configuration is
-    config_dir = os.path.expanduser(os.path.join(args.reports_base + CONFIG_DIR))
-
-    # Create configuration directory if it is not present
-    # so that user can easily put his configuration there
-    if config_dir and not os.path.exists(config_dir):
-        os.makedirs(config_dir)
 
     # Load payments file
     payments_file = os.path.expanduser(args.payments_file)
@@ -145,37 +138,6 @@ def main(args):
 
     payments_queue.put(PaymentBatch(None, 0, payment_items))
     payments_queue.put(PaymentBatch(None, 0, [RewardLog.ExitInstance()]))
-
-
-def get_baking_configuration_file(config_dir):
-    config_file = None
-    for file in os.listdir(config_dir):
-        if file.endswith(".yaml") and not file.startswith("master"):
-            if config_file:
-                raise Exception(
-                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
-                        config_file, file
-                    )
-                )
-            config_file = file
-    if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(
-                config_dir
-            )
-        )
-
-    return os.path.join(config_dir, config_file)
-
-
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error(
-                "Valid range for release-override({0}) is [-11,) ".format(option_string)
-            )
-
-        setattr(namespace, "realase_override", values)
 
 
 if __name__ == "__main__":
