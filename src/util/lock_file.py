@@ -6,7 +6,7 @@ from Constants import CONFIG_DIR
 class LockFile:
     def __init__(self, args):
         config_dir = os.path.join(
-            os.path.expanduser(os.path.normpath(self.args.base_directory)),
+            os.path.expanduser(os.path.normpath(args.base_directory)),
             CONFIG_DIR,
             "",
         )
