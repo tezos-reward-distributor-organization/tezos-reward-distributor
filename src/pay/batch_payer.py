@@ -302,10 +302,10 @@ class BatchPayer:
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
                     "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:,} tez, is insufficient to pay cycle rewards of {:,} tez. Including a safety margin of {0:.2f} %.".format(
+                    "The current balance, {:,} tez, is insufficient to pay cycle rewards of {:,} tez. Including a safety margin of {} %.".format(
                         payment_address_balance / MUTEZ,
                         estimated_amount_to_pay / MUTEZ,
-                        (PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100,
+                        int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
                     )
                 )
 
