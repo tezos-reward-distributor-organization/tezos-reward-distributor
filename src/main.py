@@ -3,7 +3,6 @@ import sys
 import pip
 import pkg_resources
 
-
 REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 
