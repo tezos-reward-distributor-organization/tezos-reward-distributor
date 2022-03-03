@@ -8,8 +8,8 @@ import os
 from Constants import REPORTS_DIR, SIMULATIONS_DIR
 
 
-# trd-data
-# └──configurations
+# ~/pymnt/
+# └──cfg
 #    └── tz1xx.yaml
 # └──simulations
 #    └── tz1xxx
