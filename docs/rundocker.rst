@@ -8,6 +8,7 @@ You will need a pre-existing configuration file. It is recommended to run `confi
 The following mount points are expected:
 
   * `pymnt` folder containing the overall folder structure
+  * `pymnt/cfg` folder for the configuration file created before
 
 Access to a signer endpoint and node endpoint are assumed in the host network.
 

@@ -48,7 +48,7 @@ Options
     Public node base URL. Default is ``https://mainnet-tezos.giganode.io``. This argument will only be used in case the reward provider is set to ``prpc``. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.
 
 ``-b --base_directory <path>``
-    Directory for reports and configurations. Default value: ``~/pymnt``.
+    Directory for reports, configuration and logs. Default value: ``~/pymnt``.
 
 ``-D --dry_run``
     Run without injecting payments. Suitable for testing. Does not require locking.
@@ -81,7 +81,7 @@ Options
     Log to syslog. Useful in daemon mode.
 
 ``--log-file <path>``
-    Log output file.
+    Log output file name and full path. Default value: ``~/pymnt/logs/app.log``.
 
 Examples
 --------

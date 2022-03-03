@@ -42,9 +42,7 @@ def parse_arguments():
 
     # Basic validations
     # You only have access to the parsed values after you parse_args()
-    args_validation(args, argparser)
-
-    args.dry_run = args.dry_run or args.dry_run_no_consumers
+    args = args_validation(args, argparser)
 
     # All passed
     return args
@@ -81,6 +79,19 @@ def args_validation(args, argparser):
             argparser.error(
                 "release-override must be in the range of [-11,-1] to override, default is 0"
             )
+
+    default_base_dir = os.path.normpath(BASE_DIR)
+    default_log_file = os.path.join(
+        os.path.normpath(BASE_DIR), os.path.normpath(DEFAULT_LOG_FILE)
+    )
+    if args.base_directory != default_base_dir and args.log_file == default_log_file:
+        args.log_file = os.path.join(
+            os.path.normpath(args.base_directory), os.path.normpath(DEFAULT_LOG_FILE)
+        )
+
+    args.dry_run = args.dry_run or args.dry_run_no_consumers
+
+    return args
 
 
 # TODO: Properly format the help section, see: https://www.programcreek.com/python/example/51784/argparse.HelpFormatter
@@ -305,7 +316,7 @@ def add_argument_verbose(argparser):
 def add_argument_api_base_url(argparser):
     argparser.add_argument(
         "-U",
-        "--api-base-url",
+        "--api_base_url",
         help="Base API url for non-rpc providers. If not set, public endpoints will be used.",
         type=str,
     )
@@ -331,7 +342,9 @@ def add_argument_log_file(argparser):
         os.path.normpath(BASE_DIR), os.path.normpath(DEFAULT_LOG_FILE)
     )
     argparser.add_argument(
-        "--log-file",
-        help="Log output file. Default: {}".format(default_log_file),
+        "--log_file",
+        help="Application log output folder path and file name. By default the logs are placed into the --base_directory e.g.: {}".format(
+            default_log_file
+        ),
         default=default_log_file,
     )

@@ -7,10 +7,16 @@ from util.dir_utils import (
 import os
 from Constants import REPORTS_DIR, SIMULATIONS_DIR
 
-
+# Default folder structure:
+#
 # ~/pymnt/
 # └──cfg
 #    └── tz1xx.yaml
+# └──logs
+#    └── verbose_backup
+#    │   └── app_verbose.gz
+#    └── app.log
+#    └── app_verbose.log
 # └──simulations
 #    └── tz1xxx
 #       ├── calculations

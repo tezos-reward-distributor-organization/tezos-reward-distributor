@@ -522,7 +522,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
     # Basic validations
     # You only have access to the parsed values after you parse_args()
-    args_validation(args, argparser)
+    args = args_validation(args, argparser)
 
     init(False, args.log_file, args.verbose == "on", mode="configure")
 

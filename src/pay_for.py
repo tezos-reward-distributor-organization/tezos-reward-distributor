@@ -19,6 +19,7 @@ from launch_common import (
     add_argument_signer_endpoint,
     add_argument_docker,
     add_argument_verbose,
+    add_argument_log_file,
     args_validation,
 )
 from model.reward_log import RewardLog
@@ -159,6 +160,7 @@ if __name__ == "__main__":
     add_argument_signer_endpoint(argparser)
     add_argument_docker(argparser)
     add_argument_verbose(argparser)
+    add_argument_log_file(argparser)
 
     argparser.add_argument(
         "paymentaddress",
@@ -174,7 +176,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
     # Basic validations
     # You only have access to the parsed values after you parse_args()
-    args_validation(args, argparser)
+    args = args_validation(args, argparser)
 
     init(args.syslog, args.log_file, args.verbose == "on", mode="payfor")
 
