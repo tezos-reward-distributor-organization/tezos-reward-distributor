@@ -91,9 +91,9 @@ Available configuration parameters are:
   
   Example::
 
-    Current Baker Balance: 17,400 XTZ
-    Total Delegations: 69,520 XTZ
-    Total Staked: 86,920 XTZ
+    Current Baker Balance: 17,400 tez
+    Total Delegations: 69,520 tez
+    Total Staked: 86,920 tez
 
     service_fee: 9
     owners_map:
@@ -121,7 +121,7 @@ Available configuration parameters are:
                     'tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17'}
 
 **min_delegation_amt**
-  A minimum delegation amount can be set here. If this value is set to 10, 10 XTZ are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.
+  A minimum delegation amount can be set here. If this value is set to 10, 10 tez are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.
 
   Example::
 

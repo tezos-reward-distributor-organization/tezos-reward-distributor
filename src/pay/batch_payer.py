@@ -15,9 +15,9 @@ logger = main_logger
 TZTX_FEE = 395
 TZTX_GAS_LIMIT = 1420
 TZTX_STORAGE_LIMIT = 65
-RA_BURN_FEE = 257000  # 0.257 XTZ
+RA_BURN_FEE = 257000  # 0.257 tez
 RA_STORAGE = 300
-ZERO_THRESHOLD = 1  # 1 mutez = 0.000001 XTZ
+ZERO_THRESHOLD = 1  # 1 mutez = 0.000001 tez
 PAYMENT_ACCOUNT_SAFETY_MARGIN = 1.05  # 105%
 
 MAX_TX_PER_BLOCK_TZ = 400
@@ -125,7 +125,7 @@ class BatchPayer:
         if len(self.pymnt_addr) == PKH_LENGTH and self.pymnt_addr.startswith("tz"):
             self.source = self.pymnt_addr
         else:
-            # Aliases have been depricated
+            # Aliases have been deprecated
             raise Exception(
                 "Payment address cannot be translated into a PKH or is kt script: {}".format(
                     self.pymnt_addr
@@ -226,7 +226,7 @@ class BatchPayer:
                 payment_item.paid = PaymentStatus.AVOIDED
                 payment_logs.append(payment_item)
                 logger.info(
-                    "Skipping payout to {:s} ({:>10.6f} XTZ), reason: payout below minimum ({:>10.6f} XTZ)".format(
+                    "Skipping payout to {:s} ({:>10.6f} tez), reason: payout below minimum ({:>10.6f} tez)".format(
                         payment_item.address, payment_item.amount / MUTEZ, zt / MUTEZ
                     )
                 )
@@ -302,7 +302,7 @@ class BatchPayer:
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
                     "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:,} tez, is insufficient to pay cycle rewards of {:,} tez. Including a safety margin of {} %.".format(
+                    "The current balance, {:,} tez, is insufficient to pay cycle rewards of {:,} tez. Including a safety margin of {0:.2f} %.".format(
                         payment_address_balance / MUTEZ,
                         estimated_amount_to_pay / MUTEZ,
                         (PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100,
