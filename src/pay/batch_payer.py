@@ -457,8 +457,8 @@ class BatchPayer:
         tx_fee = self.default_fee
 
         content = (
-            CONTENT.replace("%SOURCE%", self.source)
-            .replace("%DESTINATION%", payment_item.paymentaddress)
+            CONTENT.replace("%SOURCE%", str(self.source))
+            .replace("%DESTINATION%", str(payment_item.paymentaddress))
             .replace("%AMOUNT%", str(pymnt_amnt))
             .replace("%COUNTER%", str(self.base_counter + 1))
             .replace("%fee%", str(tx_fee))
@@ -530,13 +530,13 @@ class BatchPayer:
         # Calculate needed fee for the transaction, for that we need the size of the forged transaction in bytes
         tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
         content = (
-            CONTENT.replace("%SOURCE%", self.source)
-            .replace("%DESTINATION%", payment_item.paymentaddress)
+            CONTENT.replace("%SOURCE%", str(self.source))
+            .replace("%DESTINATION%", str(payment_item.paymentaddress))
             .replace("%AMOUNT%", str(pymnt_amnt))
             .replace("%COUNTER%", str(self.base_counter + 1))
             .replace("%fee%", str(tx_fee))
-            .replace("%gas_limit%", consumed_gas)
-            .replace("%storage_limit%", consumed_storage)
+            .replace("%gas_limit%", str(consumed_gas))
+            .replace("%storage_limit%", str(consumed_storage))
         )
         forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace(
             "%CONTENT%", content
