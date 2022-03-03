@@ -46,6 +46,7 @@ class CsvPaymentFileParser:
                         "paid",
                         "delegate_transaction_fee",
                         "delegator_transaction_fee",
+                        "description",
                     ]
                 )
 
@@ -59,6 +60,7 @@ class CsvPaymentFileParser:
                             payment_log.paid.value,
                             payment_log.delegate_transaction_fee,
                             payment_log.delegator_transaction_fee,
+                            payment_log.desc,
                         ]
                     )
 

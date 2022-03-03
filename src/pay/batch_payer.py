@@ -224,6 +224,7 @@ class BatchPayer:
                 payment_items.append(payment_item)
             else:
                 payment_item.paid = PaymentStatus.AVOIDED
+                payment_item.desc += " reason: payout below minimum."
                 payment_logs.append(payment_item)
                 logger.info(
                     "Skipping payout to {:s} ({:>10.6f} tez), reason: payout below minimum ({:>10.6f} tez)".format(
