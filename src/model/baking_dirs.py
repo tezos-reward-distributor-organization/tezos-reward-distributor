@@ -35,15 +35,20 @@ class BakingDirs:
 
         # Get reporting directories
         if args.dry_run:
-            base_directory = os.path.expanduser(
-                os.path.join(args.base_directory, SIMULATIONS_DIR)
-            )
-        else:
-            base_directory = os.path.expanduser(
-                os.path.join(args.base_directory, REPORTS_DIR)
+            base_directory = os.path.join(
+                os.path.expanduser(os.path.normpath(args.base_directory)),
+                SIMULATIONS_DIR,
+                "",
             )
 
-        self.reports_dir = os.path.join(base_directory, baking_address)
+        else:
+            base_directory = os.path.join(
+                os.path.expanduser(os.path.normpath(args.base_directory)),
+                REPORTS_DIR,
+                "",
+            )
+
+        self.reports_dir = os.path.join(base_directory, baking_address, "")
         self.payments_root = get_payment_root(self.reports_dir, create=True)
         self.calculations_root = get_calculations_root(self.reports_dir, create=True)
         self.successful_payments_dir = get_successful_payments_dir(

@@ -5,8 +5,10 @@ from Constants import CONFIG_DIR
 
 class LockFile:
     def __init__(self, args):
-        config_dir = os.path.expanduser(
-            os.path.join(self.args.base_directory + CONFIG_DIR)
+        config_dir = os.path.join(
+            os.path.expanduser(os.path.normpath(self.args.base_directory)),
+            CONFIG_DIR,
+            "",
         )
         self.lock_file_path = os.path.join(config_dir, "lock")
         self.lock_acquired = False

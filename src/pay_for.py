@@ -50,7 +50,7 @@ def main(args):
     )
 
     # Load payments file
-    payments_file = os.path.expanduser(args.payments_file)
+    payments_file = os.path.expanduser(os.path.normpath(args.payments_file))
     if not os.path.isfile(payments_file):
         raise Exception("payments_file ({}) does not exist.".format(payments_file))
 
@@ -72,7 +72,7 @@ def main(args):
     dry_run = args.dry_run
 
     # Get reporting directories
-    reports_dir = os.path.expanduser(args.base_directory)
+    reports_dir = os.path.expanduser(os.path.normpath(args.base_directory))
 
     # Check the disk size at the reports dir location
     if disk_is_full(reports_dir):
@@ -85,11 +85,11 @@ def main(args):
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
-        reports_dir = os.path.expanduser(os.path.join(reports_dir, SIMULATIONS_DIR))
+        reports_dir = os.path.join(reports_dir, SIMULATIONS_DIR, "")
     else:
-        reports_dir = os.path.expanduser(os.path.join(reports_dir, REPORTS_DIR))
+        reports_dir = os.path.join(reports_dir, REPORTS_DIR, "")
 
-    reports_dir = os.path.join(reports_dir, "manual")
+    reports_dir = os.path.join(reports_dir, "manual", "")
 
     payments_root = get_payment_root(reports_dir, create=True)
     get_successful_payments_dir(payments_root, create=True)

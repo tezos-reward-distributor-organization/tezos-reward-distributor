@@ -1,13 +1,15 @@
+import os
 import argparse
 from time import sleep
 
-from log_config import main_logger, DEFAULT_LOG_FILE
+from log_config import main_logger
 from NetworkConfiguration import default_network_config_map
 from Constants import (
     BASE_DIR,
     CONFIG_DIR,
     REPORTS_DIR,
     SIMULATIONS_DIR,
+    DEFAULT_LOG_FILE,
     CURRENT_TESTNET,
     PRIVATE_NODE_URL,
     PUBLIC_NODE_URL,
@@ -211,6 +213,7 @@ def add_argument_node_addr_public(argparser):
 
 
 def add_argument_base_directory(argparser):
+    default_dir = os.path.normpath(BASE_DIR)
     argparser.add_argument(
         "-b",
         "--base_directory",
@@ -222,10 +225,10 @@ def add_argument_base_directory(argparser):
             + "3. {} "
             + "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
         ).format(
-            BASE_DIR,
-            BASE_DIR + CONFIG_DIR,
-            BASE_DIR + SIMULATIONS_DIR,
-            BASE_DIR + REPORTS_DIR,
+            default_dir,
+            os.path.join(default_dir, CONFIG_DIR, ""),
+            os.path.join(default_dir, SIMULATIONS_DIR, ""),
+            os.path.join(default_dir, REPORTS_DIR, ""),
         ),
         default=BASE_DIR,
     )
@@ -324,6 +327,11 @@ def add_argument_syslog(argparser):
 
 
 def add_argument_log_file(argparser):
+    default_log_file = os.path.join(
+        os.path.normpath(BASE_DIR), os.path.normpath(DEFAULT_LOG_FILE)
+    )
     argparser.add_argument(
-        "--log-file", help="Log output file", default=DEFAULT_LOG_FILE
+        "--log-file",
+        help="Log output file. Default: {}".format(default_log_file),
+        default=default_log_file,
     )

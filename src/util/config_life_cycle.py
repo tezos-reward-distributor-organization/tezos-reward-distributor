@@ -88,8 +88,10 @@ class ConfigLifeCycle:
         self.fsm.trigger_event(ConfigEvent.COMPLETE)
 
     def do_read_configuration_file(self, e):
-        config_dir = os.path.expanduser(
-            os.path.join(self.args.base_directory + CONFIG_DIR)
+        config_dir = os.path.join(
+            os.path.expanduser(os.path.normpath(self.args.base_directory)),
+            CONFIG_DIR,
+            "",
         )
 
         # create configuration directory if it is not present
