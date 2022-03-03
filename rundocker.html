@@ -83,12 +83,12 @@
   <div class="section" id="how-to-run-trd-in-docker">
 <h1>How to run TRD in Docker<a class="headerlink" href="#how-to-run-trd-in-docker" title="Permalink to this headline"></a></h1>
 <p>It is possible to run TRD within Docker.</p>
-<p>You will need a pre-existing configuration file. It is recommended to run <cite>configure.py</cite> script outside of docker, then put the configuration yaml file in a <cite>config</cite> folder mounted in the container.</p>
+<p>You will need a pre-existing configuration file. It is recommended to run <cite>configure.py</cite> script outside of docker, then put the configuration yaml file in the <cite>cfg</cite> folder mounted in the container.</p>
 <p>The following mount points are expected:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><cite>config</cite> folder containing config file</p></li>
-<li><p><cite>reports</cite> folder containing payout reports</p></li>
+<li><p><cite>pymnt</cite> folder containing the overall folder structure</p></li>
+<li><p><cite>pymnt/cfg</cite> folder for the configuration file created before</p></li>
 </ul>
 </div></blockquote>
 <p>Access to a signer endpoint and node endpoint are assumed in the host network.</p>
@@ -113,7 +113,7 @@
 <li><p>Run the container:</p></li>
 </ol>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --network=host -v $(pwd)/reports:/app/reports:z -v $(pwd)/config:/app/config:z trdo/tezos-reward-distributor --config_dir /app/config --reports_base /app/reports &lt;ARGS&gt;
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --network=host -v $(pwd)/pymnt:/app/pymnt:z trdo/tezos-reward-distributor --base_directory /app/pymnt &lt;ARGS&gt;
 </pre></div>
 </div>
 </div></blockquote>

@@ -123,9 +123,14 @@
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-Ap</span> <span class="pre">--node_addr_public</span> <span class="pre">&lt;url&gt;</span></code></dt><dd><p>Public node base URL. Default is <code class="docutils literal notranslate"><span class="pre">https://mainnet-tezos.giganode.io</span></code>. This argument will only be used in case the reward provider is set to <code class="docutils literal notranslate"><span class="pre">prpc</span></code>. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">--reports_base</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Directory to create reports. Default value: <code class="docutils literal notranslate"><span class="pre">~/pymnt/reports</span></code>.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">--config_dir</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Directory to find baking configuration. Default value: <code class="docutils literal notranslate"><span class="pre">~/pymnt/cfg</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">--base_directory</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Directory for reports, configuration and logs. Default value: <code class="docutils literal notranslate"><span class="pre">~/pymnt</span></code>.
+The directory contains the following folders:</p>
+<ol class="arabic simple">
+<li><p>~/pymnt/cfg</p></li>
+<li><p>~/pymnt/simulations</p></li>
+<li><p>~/pymnt/reports</p></li>
+<li><p>~/pymnt/logs</p></li>
+</ol>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">--dry_run</span></code></dt><dd><p>Run without injecting payments. Suitable for testing. Does not require locking.</p>
 </dd>
@@ -147,7 +152,7 @@
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">--syslog</span></code></dt><dd><p>Log to syslog. Useful in daemon mode.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">--log-file</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Log output file.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">--log_file</span> <span class="pre">&lt;path&gt;</span></code></dt><dd><p>Application log output folder path and file name. By default the logs are placed into the –base_directory e.g.:: <code class="docutils literal notranslate"><span class="pre">~/pymnt/logs/app.log</span></code>.</p>
 </dd>
 </dl>
 </div>

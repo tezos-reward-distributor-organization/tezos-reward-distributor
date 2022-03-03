@@ -3,12 +3,12 @@ How to run TRD in Docker
 
 It is possible to run TRD within Docker.
 
-You will need a pre-existing configuration file. It is recommended to run `configure.py` script outside of docker, then put the configuration yaml file in a `config` folder mounted in the container.
+You will need a pre-existing configuration file. It is recommended to run `configure.py` script outside of docker, then put the configuration yaml file in the `cfg` folder mounted in the container.
 
 The following mount points are expected:
 
-  * `config` folder containing config file
-  * `reports` folder containing payout reports
+  * `pymnt` folder containing the overall folder structure
+  * `pymnt/cfg` folder for the configuration file created before
 
 Access to a signer endpoint and node endpoint are assumed in the host network.
 
@@ -30,7 +30,7 @@ Here are the steps:
 
   ::
 
-      docker run --network=host -v $(pwd)/reports:/app/reports:z -v $(pwd)/config:/app/config:z trdo/tezos-reward-distributor --config_dir /app/config --reports_base /app/reports <ARGS>
+      docker run --network=host -v $(pwd)/pymnt:/app/pymnt:z trdo/tezos-reward-distributor --base_directory /app/pymnt <ARGS>
 
 <ARGS> are the other arguments that you would normally pass to the TRD program.
 
