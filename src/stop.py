@@ -3,17 +3,21 @@ import argparse
 import signal
 import errno
 import time
+from Constants import BASE_DIR, CONFIG_DIR
 
 
 def command_line_arguments():
     parser = argparse.ArgumentParser(
         description="Stop the running trd process.", prog="trd_stopper"
     )
+    default_config_dir = os.path.join(os.path.normpath(BASE_DIR), CONFIG_DIR, "")
     parser.add_argument(
         "-f",
         "--config_dir",
-        help="Directory to find configuration files and the lock file.",
-        default="~/pymnt/cfg",
+        help=(
+            "Directory to find configuration files and the lock file. " "Default: {}"
+        ).format(default_config_dir),
+        default=default_config_dir,
     )
     return parser.parse_args()
 
@@ -21,7 +25,7 @@ def command_line_arguments():
 def main():
     print("Stopping reward distributor")
     args = command_line_arguments()
-    config_dir = os.path.expanduser(args.config_dir)
+    config_dir = os.path.join(os.path.expanduser(os.path.normpath(args.config_dir), ""))
     stop(config_dir)
     time.sleep(1)
 

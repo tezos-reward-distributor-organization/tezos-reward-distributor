@@ -88,7 +88,7 @@ class Args:
         self.signer_endpoint = ""
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = node_addr_public
-        self.reports_base = join(dirname(__file__), reward_data_provider)
+        self.base_directory = join(dirname(__file__), reward_data_provider)
         self.config_dir = dirname(__file__)
         self.dry_run = True
         self.dry_run_no_consumers = True

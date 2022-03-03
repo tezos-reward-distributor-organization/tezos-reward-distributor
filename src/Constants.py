@@ -1,5 +1,12 @@
 from enum import Enum
 
+# Persistent data directories
+BASE_DIR = "~/pymnt"
+CONFIG_DIR = "cfg"
+SIMULATIONS_DIR = "simulations"
+REPORTS_DIR = "reports"
+DEFAULT_LOG_FILE = "logs/app.log"
+
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = "hangzhou"
