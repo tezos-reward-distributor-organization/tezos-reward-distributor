@@ -38,7 +38,15 @@ class CsvPaymentFileParser:
                     f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
                 csv_writer.writerow(
-                    ["address", "type", "amount", "hash", "paid", "delegate_transaction_fee", "delegator_transaction_fee"]
+                    [
+                        "address",
+                        "type",
+                        "amount",
+                        "hash",
+                        "paid",
+                        "delegate_transaction_fee",
+                        "delegator_transaction_fee",
+                    ]
                 )
 
                 for payment_log in payment_logs:
