@@ -230,16 +230,18 @@ def add_argument_base_directory(argparser):
         "--base_directory",
         help=(
             "The base path for all TRD data. Default: {} "
-            + "The directory contains the following folders: "
-            + "1. {} "
-            + "2. {} "
-            + "3. {} "
-            + "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
+            "The directory contains the following folders: "
+            "1. {} "
+            "2. {} "
+            "3. {} "
+            "4. {} "
+            "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
         ).format(
             default_dir,
             os.path.join(default_dir, CONFIG_DIR, ""),
             os.path.join(default_dir, SIMULATIONS_DIR, ""),
             os.path.join(default_dir, REPORTS_DIR, ""),
+            os.path.join(default_dir, "logs", ""),
         ),
         default=BASE_DIR,
     )
