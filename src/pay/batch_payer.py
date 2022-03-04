@@ -26,6 +26,7 @@ PKH_LENGTH = 36
 SIGNATURE_BYTES_SIZE = 64
 MAX_NUM_TRIALS_PER_BLOCK = 2
 MAX_BLOCKS_TO_CHECK_AFTER_INJECTION = 5
+MAX_BATCH_PAYMENT_ATTEMPTS = 3
 
 COMM_DELEGATE_BALANCE = "/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_PAYMENT_HEAD = "/chains/main/blocks/head~10"
@@ -224,7 +225,7 @@ class BatchPayer:
                 payment_items.append(payment_item)
             else:
                 payment_item.paid = PaymentStatus.AVOIDED
-                payment_item.desc += " reason: payout below minimum."
+                payment_item.desc += " Payment amount < ZERO_THRESHOLD."
                 payment_logs.append(payment_item)
                 logger.info(
                     "Skipping payout to {:s} ({:>10.6f} tez), reason: payout below minimum ({:>10.6f} tez)".format(
@@ -299,6 +300,7 @@ class BatchPayer:
 
                 for payment_item in payment_items:
                     payment_item.paid = PaymentStatus.FAIL
+                    payment_item.desc += " Insufficient funds."
 
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
@@ -396,8 +398,8 @@ class BatchPayer:
 
     def pay_single_batch(self, payment_items, op_counter, dry_run=None):
 
-        max_try = 3
-        status = PaymentStatus.FAIL
+        max_try = MAX_BATCH_PAYMENT_ATTEMPTS
+        status = None
         operation_hash = ""
         attempt_count = 0
 
@@ -453,8 +455,8 @@ class BatchPayer:
 
     def simulate_single_operation(self, payment_item, pymnt_amnt, branch, chain_id):
         # Initial gas, storage and transaction limits
-        gas_limit = str(HARD_GAS_LIMIT_PER_OPERATION)
-        storage_limit = str(HARD_STORAGE_LIMIT_PER_OPERATION)
+        gas_limit = HARD_GAS_LIMIT_PER_OPERATION
+        storage_limit = HARD_STORAGE_LIMIT_PER_OPERATION
         tx_fee = self.default_fee
 
         content = (
@@ -463,8 +465,8 @@ class BatchPayer:
             .replace("%AMOUNT%", str(pymnt_amnt))
             .replace("%COUNTER%", str(self.base_counter + 1))
             .replace("%fee%", str(tx_fee))
-            .replace("%gas_limit%", gas_limit)
-            .replace("%storage_limit%", storage_limit)
+            .replace("%gas_limit%", str(gas_limit))
+            .replace("%storage_limit%", str(storage_limit))
         )
 
         runops_json = RUNOPS_JSON.replace("%BRANCH%", branch).replace(
@@ -529,7 +531,7 @@ class BatchPayer:
             return PaymentStatus.FAIL, []
 
         # Calculate needed fee for the transaction, for that we need the size of the forged transaction in bytes
-        tx_fee += int(consumed_gas * MUTEZ_PER_GAS_UNIT)
+        tx_fee += math.ceil(consumed_gas * MUTEZ_PER_GAS_UNIT)
         content = (
             CONTENT.replace("%SOURCE%", str(self.source))
             .replace("%DESTINATION%", str(payment_item.paymentaddress))
@@ -634,9 +636,7 @@ class BatchPayer:
                         )
                     )
                     payment_item.paid = PaymentStatus.AVOIDED
-                    payment_item.desc += (
-                        " Investigate: liquidated or no default entry point."
-                    )
+                    payment_item.desc += " Investigate with tzkt.io: Liquidated oven or no default entry point. Use rules map for payment redirect."
                     continue
 
                 gas_limit, tx_fee, storage_limit = simulation_results
@@ -654,7 +654,7 @@ class BatchPayer:
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
-                        payment_item.desc += " Fees higher then allowed maximum fee: {:10.6f} tez.".format(
+                        payment_item.desc += " Kt safety check: Transaction fees higher then allowed maximum: {:10.6f} tez.".format(
                             FEE_LIMIT_CONTRACTS / MUTEZ,
                         )
                         continue
@@ -669,9 +669,7 @@ class BatchPayer:
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
-                        payment_item.desc += (
-                            " Burn + transaction fees higher then payment amount."
-                        )
+                        payment_item.desc += " Kt safety check: Burn + transaction fees higher then payment amount."
                         continue
 
             else:
@@ -718,7 +716,7 @@ class BatchPayer:
                 payment_item.delegator_transaction_fee = 0
                 payment_item.delegate_transaction_fee = 0
                 payment_item.desc += (
-                    " Substracted fees resulted in payment amount < ZERO_THRESHOLD."
+                    " Payment amount < ZERO_THRESHOLD after substracting fees."
                 )
                 logger.info(
                     "Payment to {:s} became < {:10.6f} tez after deducting fees. Skipping.".format(
@@ -817,9 +815,9 @@ class BatchPayer:
             # The difference in fees will be added to the fee of the first transaction
             # This works because the Tezos blockchain is interested in the sum of all fees in a batch transaction
             # and not in the individual fees of each transaction
-            difference_fees = int(math.ceil(required_fee - total_tx_fees))
+            difference_fees = math.ceil(required_fee - total_tx_fees)
             first_tx = json.loads(content_list[0])
-            first_tx["fee"] = str(int(int(first_tx["fee"]) + difference_fees))
+            first_tx["fee"] = str(int(first_tx["fee"]) + difference_fees)
             # We do not want to adjust the content (payment amount) anymore and let the delegate pay this fee
             # TODO: Log info in description?
             payment_items[0].delegate_transaction_fee += difference_fees
