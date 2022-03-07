@@ -53,7 +53,7 @@ class RewardLog:
         self.parents = None
 
         self.paid = PaymentStatus.UNDEFINED
-        self.hash = "0"
+        self.hash = None
         self.payable = True
 
     def skip(self, desc, phase):

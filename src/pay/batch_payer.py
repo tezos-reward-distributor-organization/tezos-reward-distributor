@@ -400,7 +400,7 @@ class BatchPayer:
 
         max_try = MAX_BATCH_PAYMENT_ATTEMPTS
         status = None
-        operation_hash = ""
+        operation_hash = None
         attempt_count = 0
 
         # for failed operations, trying after some time should be OK
@@ -547,7 +547,7 @@ class BatchPayer:
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
-            return PaymentStatus.FAIL, ""
+            return PaymentStatus.FAIL, []
         # Now that we have the size of the transaction, compute the required fee
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
         required_fee = math.ceil(
@@ -568,7 +568,7 @@ class BatchPayer:
             status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
             if status != HTTPStatus.OK:
                 logger.error("Error in forge operation")
-                return PaymentStatus.FAIL, ""
+                return PaymentStatus.FAIL, []
 
             # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
             # because of the increase in the fee of the first transaction
@@ -752,7 +752,7 @@ class BatchPayer:
             verbose_logger.info("Payment content: {}".format(content))
 
         if len(content_list) == 0:
-            return PaymentStatus.DONE, "", payment_items
+            return PaymentStatus.DONE, None, payment_items
         contents_string = ",".join(content_list)
 
         # run the operations for simulation results
@@ -769,7 +769,7 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in run_operation")
-            return PaymentStatus.FAIL, "", payment_items
+            return PaymentStatus.FAIL, None, payment_items
 
         # Check each contents object for failure
         for op in run_ops_parsed["contents"]:
@@ -783,7 +783,7 @@ class BatchPayer:
                             op_status, op_error
                         )
                     )
-                    return PaymentStatus.FAIL, "", payment_items
+                    return PaymentStatus.FAIL, None, payment_items
             except KeyError:
                 logger.debug(
                     "Unable to find metadata->operation_result->{status,errors} in run_ops response"
@@ -797,7 +797,7 @@ class BatchPayer:
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
-            return PaymentStatus.FAIL, "", payment_items
+            return PaymentStatus.FAIL, None, payment_items
 
         # Re-compute minimal required fee by the batch transaction and re-adjust the fee if necessary
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
@@ -832,7 +832,7 @@ class BatchPayer:
             status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
             if status != HTTPStatus.OK:
                 logger.error("Error in forge operation")
-                return PaymentStatus.FAIL, "", payment_items
+                return PaymentStatus.FAIL, None, payment_items
 
             # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
             # because of the increase in the fee of the first transaction
@@ -865,11 +865,11 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in preapply operation")
-            return PaymentStatus.FAIL, "", payment_items
+            return PaymentStatus.FAIL, None, payment_items
 
         # if dry_run, skip injection
         if dry_run:
-            return PaymentStatus.DONE, "", payment_items
+            return PaymentStatus.DONE, None, payment_items
 
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
@@ -914,7 +914,7 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in inject operation")
-            return PaymentStatus.FAIL, "", payment_items
+            return PaymentStatus.FAIL, None, payment_items
 
         logger.info("Operation hash is {}".format(operation_hash))
 
