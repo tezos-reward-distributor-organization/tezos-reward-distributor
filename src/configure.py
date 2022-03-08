@@ -12,13 +12,12 @@ from fysom import Fysom
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from cli.client_manager import ClientManager
-from Constants import RewardsType
+from Constants import RewardsType, CONFIG_DIR
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from launch_common import (
     print_banner,
     add_argument_network,
-    add_argument_reports_base,
-    add_argument_config_dir,
+    add_argument_base_directory,
     add_argument_node_endpoint,
     add_argument_signer_endpoint,
     add_argument_docker,
@@ -27,6 +26,7 @@ from launch_common import (
     add_argument_provider,
     add_argument_api_base_url,
     add_argument_log_file,
+    args_validation,
 )
 from log_config import main_logger, init
 from model.baking_conf import (
@@ -437,7 +437,9 @@ def main(args):
     )
 
     # 1. find where configuration is
-    config_dir = os.path.expanduser(args.config_dir)
+    config_dir = os.path.join(
+        os.path.expanduser(os.path.normpath(args.base_directory)), CONFIG_DIR, ""
+    )
 
     # create configuration directory if it is not present
     # so that user can easily put his configuration there
@@ -493,18 +495,6 @@ def main(args):
     print("Configuration file is created at '{}'".format(config_file_path))
 
 
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if values < -11 or values > 0:
-            parser.error(
-                "release-override({0}) must be in the range of [-11,-1] to override, default is 0".format(
-                    option_string
-                )
-            )
-
-        setattr(namespace, "release_override", values)
-
-
 if __name__ == "__main__":
 
     if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
@@ -518,8 +508,7 @@ if __name__ == "__main__":
 
     add_argument_provider(argparser)
     add_argument_network(argparser)
-    add_argument_reports_base(argparser)
-    add_argument_config_dir(argparser)
+    add_argument_base_directory(argparser)
     add_argument_node_endpoint(argparser)
     add_argument_signer_endpoint(argparser)
     add_argument_docker(argparser)
@@ -529,6 +518,9 @@ if __name__ == "__main__":
     add_argument_log_file(argparser)
 
     args = argparser.parse_args()
+    # Basic validations
+    # You only have access to the parsed values after you parse_args()
+    args = args_validation(args, argparser)
 
     init(False, args.log_file, args.verbose == "on", mode="configure")
 

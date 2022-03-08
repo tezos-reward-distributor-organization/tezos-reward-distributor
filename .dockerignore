@@ -1,0 +1,23 @@
+# hidden files and directories
+.git
+.flake8
+.python-version
+.pytest_cache
+.github/
+.vscode/
+.idea/
+
+
+# files
+tezos-reward.service_template
+service_add.py
+*.md
+*.csv
+*.pyc
+
+# directories
+docs/
+tests/
+examples/
+*/*/__pycache__/
+*/__pycache__/
