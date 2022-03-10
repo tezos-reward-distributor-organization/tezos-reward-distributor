@@ -343,11 +343,13 @@ class BatchPayer:
 
         total_attempts = 0
         op_counter = OpCounter()
-        temp_payment_logs = []
+
+        # Calculate actual payment amount after previous estimate for each chunk in chunks iteratively
+        amount_to_pay = delegator_transaction_fees = delegate_transaction_fees = 0
 
         for i_batch, payment_items_chunk in enumerate(payment_items_chunks):
             logger.debug("Payment of batch {} started".format(i_batch + 1))
-            payment_log, attempt = self.pay_single_batch(
+            attempt = self.pay_single_batch(
                 payment_items_chunk, dry_run=dry_run, op_counter=op_counter
             )
 
@@ -357,25 +359,21 @@ class BatchPayer:
                 )
             )
 
-            temp_payment_logs.extend(payment_log)
-            total_attempts += attempt
+            for payment_item in payment_items_chunk:
+                if (
+                    payment_item.paid == PaymentStatus.PAID
+                    or payment_item.paid == PaymentStatus.INJECTED
+                ):
+                    amount_to_pay += payment_item.amount
+                    delegator_transaction_fees += payment_item.delegator_transaction_fee
+                    delegate_transaction_fees += payment_item.delegate_transaction_fee
 
-        # Calculate actual payment amount after previous estimate
-        amount_to_pay = delegator_transaction_fees = delegate_transaction_fees = 0
-        for payment_item in temp_payment_logs:
-            if (
-                payment_item.paid == PaymentStatus.PAID
-                or payment_item.paid == PaymentStatus.INJECTED
-            ):
-                amount_to_pay += payment_item.amount
-                delegator_transaction_fees += payment_item.delegator_transaction_fee
-                delegate_transaction_fees += payment_item.delegate_transaction_fee
+            payment_logs.extend(payment_items_chunk)
+            total_attempts += attempt
 
         amount_to_pay = (
             amount_to_pay - delegator_transaction_fees + delegate_transaction_fees
         )
-
-        payment_logs.extend(temp_payment_logs)
 
         return (
             payment_logs,
@@ -406,7 +404,7 @@ class BatchPayer:
         # for failed operations, trying after some time should be OK
         for attempt in range(max_try):
             try:
-                status, operation_hash, payment_log = self.attempt_single_batch(
+                status, operation_hash = self.attempt_single_batch(
                     payment_items, op_counter, dry_run=dry_run
                 )
             except Exception:
@@ -438,12 +436,12 @@ class BatchPayer:
             if attempt < max_try - 1:
                 self.wait_random()
 
-        for payment_item in payment_log:
+        for payment_item in payment_items:
             if payment_item.paid == PaymentStatus.UNDEFINED:
                 payment_item.paid = status
                 payment_item.hash = operation_hash
 
-        return payment_log, attempt_count
+        return attempt_count
 
     def wait_random(self):
         block_time = self.network_config["MINIMAL_BLOCK_DELAY"]
@@ -752,7 +750,7 @@ class BatchPayer:
             verbose_logger.info("Payment content: {}".format(content))
 
         if len(content_list) == 0:
-            return PaymentStatus.DONE, None, payment_items
+            return PaymentStatus.DONE, None
         contents_string = ",".join(content_list)
 
         # run the operations for simulation results
@@ -769,7 +767,7 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in run_operation")
-            return PaymentStatus.FAIL, None, payment_items
+            return PaymentStatus.FAIL, None
 
         # Check each contents object for failure
         for op in run_ops_parsed["contents"]:
@@ -783,7 +781,7 @@ class BatchPayer:
                             op_status, op_error
                         )
                     )
-                    return PaymentStatus.FAIL, None, payment_items
+                    return PaymentStatus.FAIL, None
             except KeyError:
                 logger.debug(
                     "Unable to find metadata->operation_result->{status,errors} in run_ops response"
@@ -797,7 +795,7 @@ class BatchPayer:
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
             logger.error("Error in forge operation")
-            return PaymentStatus.FAIL, None, payment_items
+            return PaymentStatus.FAIL, None
 
         # Re-compute minimal required fee by the batch transaction and re-adjust the fee if necessary
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
@@ -832,7 +830,7 @@ class BatchPayer:
             status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
             if status != HTTPStatus.OK:
                 logger.error("Error in forge operation")
-                return PaymentStatus.FAIL, None, payment_items
+                return PaymentStatus.FAIL, None
 
             # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
             # because of the increase in the fee of the first transaction
@@ -865,11 +863,11 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in preapply operation")
-            return PaymentStatus.FAIL, None, payment_items
+            return PaymentStatus.FAIL, None
 
         # if dry_run, skip injection
         if dry_run:
-            return PaymentStatus.DONE, None, payment_items
+            return PaymentStatus.DONE, None
 
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
@@ -914,7 +912,7 @@ class BatchPayer:
         )
         if status != HTTPStatus.OK:
             logger.error("Error in inject operation")
-            return PaymentStatus.FAIL, None, payment_items
+            return PaymentStatus.FAIL, None
 
         logger.info("Operation hash is {}".format(operation_hash))
 
@@ -949,7 +947,7 @@ class BatchPayer:
             for op_hashes in list_op_hash:
                 if operation_hash in op_hashes:
                     logger.info("Operation {} is included".format(operation_hash))
-                    return PaymentStatus.PAID, operation_hash, payment_items
+                    return PaymentStatus.PAID, operation_hash
             logger.debug(
                 "Operation {} is not included at level {}".format(operation_hash, i)
             )
@@ -959,7 +957,7 @@ class BatchPayer:
                 operation_hash
             )
         )
-        return PaymentStatus.INJECTED, operation_hash, payment_items
+        return PaymentStatus.INJECTED, operation_hash
 
     def get_payment_address_balance(self):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
