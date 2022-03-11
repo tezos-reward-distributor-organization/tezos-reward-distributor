@@ -62,6 +62,8 @@ Available configuration parameters are:
 
     rewards_type: actual
 
+    Note that setting 'RELEASE_OVERRIDE' in the range of [-11,-6] will trigger estimated payouts which are adjusted later on. See: :ref:`payout_timing`
+
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.
 

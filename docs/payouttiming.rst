@@ -36,7 +36,7 @@ Possible choices are:
 Adjusted early payouts
 ----------------------
 
-A ``release_override`` of ``-11`` will trigger adjusted early payouts.
+A ``release_override`` of ``[-11, -6]`` will trigger adjusted early payouts.
 
 When selected, this option calculates and pays out the expected rewards based on baking and
 endorsing rights only. It does not takes into account fee income,
