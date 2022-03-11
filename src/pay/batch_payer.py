@@ -191,7 +191,7 @@ class BatchPayer:
             if not pi.payable:
                 logger.info(
                     "Skipping payout to {:s} {:>10.6f}, reason: {:s}".format(
-                        pi.address, pi.amount / MUTEZ, pi.desc
+                        pi.address, pi.adjusted_amount / MUTEZ, pi.desc
                     )
                 )
                 payment_logs.append(pi)
