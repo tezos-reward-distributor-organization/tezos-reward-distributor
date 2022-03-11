@@ -25,7 +25,7 @@ def command_line_arguments():
 def main():
     print("Stopping reward distributor")
     args = command_line_arguments()
-    config_dir = os.path.join(os.path.expanduser(os.path.normpath(args.config_dir), ""))
+    config_dir = os.path.join(os.path.expanduser(os.path.normpath(args.config_dir)), "")
     stop(config_dir)
     time.sleep(1)
 
