@@ -612,6 +612,9 @@ class BatchPayer:
         for payment_item in payment_items:
 
             pymnt_amnt = payment_item.amount  # expected in micro tez
+            payment_item.transaction_fee = (
+                self.default_fee
+            )  # init transaction fee with the default fee
             # Get initial default values for storage, gas and fees
             # These default values are used for non-empty tz1 accounts transactions
             storage_limit, gas_limit, tx_fee, burn_fee = (

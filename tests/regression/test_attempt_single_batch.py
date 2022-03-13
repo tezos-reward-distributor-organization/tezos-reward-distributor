@@ -88,7 +88,7 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
         [reward_log], opt_counter, dry_run=True
     )
     assert status == PaymentStatus.DONE
-    assert operation_hash == ""
+    assert operation_hash is None
     assert reward_log.transaction_fee == TZTX_FEE
     assert opt_counter.counter == 3209358
 
@@ -100,10 +100,10 @@ TEST_KT_ADDRESS = "KT1SZrurTqTBWsWsZUVR27GZ8bHK3EhFV62g"
     "cli.client_manager.ClientManager.request_url_post",
     side_effect=[
         (HTTPStatus.OK, run_ops_parsed),
+        (HTTPStatus.OK, forge),
         (HTTPStatus.OK, run_ops_parsed),
         (HTTPStatus.OK, forge),
         (HTTPStatus.OK, forge),
-        (HTTPStatus.OK, None),
     ],
 )
 @patch(
@@ -121,7 +121,7 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
     network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
     batch_payer = BatchPayer(
         node_url="node_addr",
-        pymnt_addr=TEST_KT_ADDRESS,
+        pymnt_addr=TEST_TZ_ADDRESS,
         clnt_mngr=ClientManager(
             node_endpoint=PUBLIC_NODE_URL[CURRENT_TESTNET],
             signer_endpoint=PRIVATE_SIGNER_URL,
@@ -148,6 +148,6 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
         [reward_log], opt_counter, dry_run=True
     )
     assert status == PaymentStatus.DONE
-    assert operation_hash == ""
-    assert reward_log.transaction_fee == 6409
+    assert operation_hash is None
+    assert reward_log.transaction_fee == 409
     assert opt_counter.counter == 4
