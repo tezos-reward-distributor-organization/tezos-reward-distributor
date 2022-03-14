@@ -288,12 +288,9 @@ class BatchPayer:
                 )
             )
 
-            number_future_payable_cycles = (
-                int(
-                    payment_address_balance
-                    / (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
-                )
-                - 1
+            number_future_payable_cycles = int(
+                payment_address_balance
+                / (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
             )
 
             if number_future_payable_cycles < 0:
@@ -360,13 +357,9 @@ class BatchPayer:
             )
 
             for payment_item in payment_items_chunk:
-                if (
-                    payment_item.paid == PaymentStatus.PAID
-                    or payment_item.paid == PaymentStatus.INJECTED
-                ):
-                    amount_to_pay += payment_item.amount
-                    delegator_transaction_fees += payment_item.delegator_transaction_fee
-                    delegate_transaction_fees += payment_item.delegate_transaction_fee
+                amount_to_pay += payment_item.amount
+                delegator_transaction_fees += payment_item.delegator_transaction_fee
+                delegate_transaction_fees += payment_item.delegate_transaction_fee
 
             payment_logs.extend(payment_items_chunk)
             total_attempts += attempt

@@ -153,7 +153,7 @@ def test_batch_payer_total_payout_amount():
     ) = batch_payer.pay(reward_logs, dry_run=True)
 
     assert total_attempts == 3
-    assert total_payout_amount == 238211030
+    assert total_payout_amount == 238205105
     assert (
         PAYMENT_ADDRESS_BALANCE // total_payout_amount
     ) - 1 == number_future_payable_cycles
