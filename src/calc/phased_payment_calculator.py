@@ -60,7 +60,7 @@ class PhasedPaymentCalculator:
 
         total_rwrd_amnt = reward_provider_model.computed_reward_amount
         logger.info(
-            "Total rewards before processing is {:.6f} mutez.".format(total_rwrd_amnt)
+            "Total rewards before processing is {:<,d} mutez.".format(total_rwrd_amnt)
         )
         if total_rwrd_amnt == 0:
             logger.debug("NO REWARDS to process!")
@@ -135,11 +135,11 @@ class PhasedPaymentCalculator:
         amnt_pay_diff = abs(total_rwrd_amnt - total_amount_to_pay)
 
         logger.info(
-            "Total rewards after processing is {:.6f} mutez.".format(total_rwrd_amnt)
+            "Total rewards after processing is {:<,d} mutez.".format(total_rwrd_amnt)
         )
-        logger.info("Total amount to pay is {:.6f} mutez".format(total_amount_to_pay))
+        logger.info("Total amount to pay is {:<,d} mutez".format(total_amount_to_pay))
         logger.info(
-            "Difference between total rewards and total payment amount is {:.6f} mutez. "
+            "Difference between total rewards and total payment amount is {:<,d} mutez. "
             "This is due to floating point arithmetic. (max allowed diff is {:,})".format(
                 amnt_pay_diff, MINOR_DIFF
             )

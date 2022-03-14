@@ -628,8 +628,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     writer.writerow(array)
 
                     logger.debug(
-                        "Reward created for {:s} type: {:s}, stake bal: {:.6f} mutez, cur bal: {:.6f} mutez, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                        "amount: {:.6f} mutez, fee_amount: {:.6f} mutez, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                        "Reward created for {:s} type: {:s}, stake bal: {:<,d} mutez, cur bal: {:<,d} mutez, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                        "amount: {:<,d} mutez, fee_amount: {:<,d} mutez, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
                         "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
                             payment_log.address,
                             payment_log.type,

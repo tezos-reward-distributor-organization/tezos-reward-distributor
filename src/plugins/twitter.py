@@ -1,11 +1,11 @@
 import logging
 from plugins import plugins
+from Constants import MUTEZ
 
 # Plugin specific libs
 import tweepy
 
 logger = logging.getLogger("main.plugins.twitter")
-MUTEZ = 1e6
 
 plugin_name = "TwitterPlugin"
 

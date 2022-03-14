@@ -4,7 +4,7 @@ from model.reward_log import cmp_by_type_balance
 
 from pay.batch_payer import BatchPayer
 from cli.client_manager import ClientManager
-from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, RewardsType, PRIVATE_SIGNER_URL
+from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, RewardsType, PRIVATE_SIGNER_URL, MUTEZ
 from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from model.baking_conf import BakingConf
@@ -31,7 +31,6 @@ baking_config = make_config(
 
 
 PAYOUT_CYCLE = 51
-MUTEZ = 1e6
 PAYMENT_ADDRESS_BALANCE = 1000 * MUTEZ
 
 

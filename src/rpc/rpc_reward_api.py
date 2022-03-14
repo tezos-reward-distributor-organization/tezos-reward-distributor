@@ -150,7 +150,7 @@ class RpcRewardApiImpl(RewardApi):
                     if r["priority"] == 0:
                         if self.__get_block_author(r["level"]) != self.baking_address:
                             logger.warning(
-                                "Found missed baking slot {}, adding {} mutez reward anyway.".format(
+                                "Found missed baking slot {}, adding {:<,d} mutez reward anyway.".format(
                                     r, self.block_reward
                                 )
                             )
@@ -169,7 +169,7 @@ class RpcRewardApiImpl(RewardApi):
                     if authored_endorsement_slots != r["slots"]:
                         mutez_to_add = self.endorsement_reward * len(r["slots"])
                         logger.warning(
-                            "Found {} missed endorsement(s) at level {}, adding {} mutez reward anyway.".format(
+                            "Found {} missed endorsement(s) at level {}, adding {:<,d} mutez reward anyway.".format(
                                 len(r["slots"]), r["level"], mutez_to_add
                             )
                         )
