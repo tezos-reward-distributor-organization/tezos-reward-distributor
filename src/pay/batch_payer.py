@@ -358,9 +358,14 @@ class BatchPayer:
             )
 
             for payment_item in payment_items_chunk:
-                amount_to_pay += payment_item.amount
-                delegator_transaction_fees += payment_item.delegator_transaction_fee
-                delegate_transaction_fees += payment_item.delegate_transaction_fee
+                if (
+                    payment_item.paid == PaymentStatus.PAID
+                    or payment_item.paid == PaymentStatus.INJECTED
+                    or payment_item.paid == PaymentStatus.DONE
+                ):
+                    amount_to_pay += payment_item.amount
+                    delegator_transaction_fees += payment_item.delegator_transaction_fee
+                    delegate_transaction_fees += payment_item.delegate_transaction_fee
 
             payment_logs.extend(payment_items_chunk)
             total_attempts += attempt
