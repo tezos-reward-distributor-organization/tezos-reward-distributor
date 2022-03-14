@@ -605,9 +605,7 @@ class BatchPayer:
         for payment_item in payment_items:
 
             pymnt_amnt = payment_item.amount  # expected in micro tez
-            payment_item.transaction_fee = (
-                self.default_fee
-            )  # init transaction fee with the default fee
+
             # Get initial default values for storage, gas and fees
             # These default values are used for non-empty tz1 accounts transactions
             storage_limit, gas_limit, tx_fee, burn_fee = (
@@ -635,7 +633,6 @@ class BatchPayer:
 
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
-                payment_item.transaction_fee = tx_fee
 
                 if KT1_FEE_SAFETY_CHECK:
                     total_fee = tx_fee + burn_fee

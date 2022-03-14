@@ -89,7 +89,7 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
     )
     assert status == PaymentStatus.DONE
     assert operation_hash is None
-    assert reward_log.transaction_fee == TZTX_FEE
+    assert reward_log.delegator_transaction_fee == TZTX_FEE
     assert opt_counter.counter == 3209358
 
 
@@ -149,5 +149,5 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
     )
     assert status == PaymentStatus.DONE
     assert operation_hash is None
-    assert reward_log.transaction_fee == 409
+    assert reward_log.delegator_transaction_fee == 409
     assert opt_counter.counter == 4
