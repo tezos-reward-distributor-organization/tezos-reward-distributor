@@ -293,8 +293,8 @@ class PaymentConsumer(threading.Thread):
 
         for pl in payment_logs:
             logger.debug(
-                "Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}".format(
-                    pl.address, pl.type, pl.amount / MUTEZ, pl.paid
+                "Payment done for address {:s} type {:s} amount {:.6f} mutez paid {:s}".format(
+                    pl.address, pl.type, pl.amount, pl.paid
                 )
             )
 

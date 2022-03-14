@@ -628,17 +628,17 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     writer.writerow(array)
 
                     logger.debug(
-                        "Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                        "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                        "Reward created for {:s} type: {:s}, stake bal: {:.6f} mutez, cur bal: {:.6f} mutez, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                        "amount: {:.6f} mutez, fee_amount: {:.6f} mutez, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
                         "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
                             payment_log.address,
                             payment_log.type,
-                            payment_log.staking_balance / MUTEZ,
-                            payment_log.current_balance / MUTEZ,
+                            payment_log.staking_balance,
+                            payment_log.current_balance,
                             payment_log.ratio,
                             payment_log.service_fee_ratio,
-                            payment_log.amount / MUTEZ,
-                            payment_log.service_fee_amount / MUTEZ,
+                            payment_log.amount,
+                            payment_log.service_fee_amount,
                             payment_log.service_fee_rate,
                             "Y" if payment_log.payable else "N",
                             "Y" if payment_log.skipped else "N",

@@ -42,7 +42,6 @@ payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
 
 life_cycle = ProcessLifeCycle()
-MUTEZ = 1
 
 
 def main(args):
@@ -125,7 +124,7 @@ def main(args):
     payment_items = []
     for key, value in payments_dict.items():
         pi = RewardLog.ExternalInstance(file_name, key, value)
-        pi.payment = pi.payment * MUTEZ
+        pi.payment = pi.payment  # in mutez
         payment_items.append(pi)
 
         logger.info(
@@ -169,7 +168,7 @@ if __name__ == "__main__":
     )
     argparser.add_argument(
         "payments_file",
-        help="File of payment lines. Each line should contain PKH:amount. "
+        help="File of payment lines. Each line should contain PKH:amount in mutez "
         "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33",
     )
 

@@ -102,20 +102,20 @@ class BatchPayer:
             self.zero_threshold += self.default_fee
 
         logger.info(
-            "Transfer fee is {:.6f} tez for tz addresses and is paid by {}.".format(
-                self.default_fee / MUTEZ,
+            "Default transfer fee is {:.6f} mutez for tz addresses and is paid by {}.".format(
+                self.default_fee,
                 "Delegator" if self.delegator_pays_xfer_fee else "Delegate",
             )
         )
         logger.info(
-            "Reactivation fee (burn fee) for tz addresses is {:.6f} tez and is paid by {}.".format(
-                RA_BURN_FEE / MUTEZ,
+            "Reactivation fee (burn fee) for tz addresses is {:.6f} mutez and is paid by {}.".format(
+                RA_BURN_FEE,
                 "Delegator" if self.delegator_pays_ra_fee else "Delegate",
             )
         )
         logger.info(
-            "Minimum payment amount is {:.6f} tez for tz addresses.".format(
-                self.zero_threshold / MUTEZ
+            "Minimum payment amount is {:.6f} mutez for tz addresses.".format(
+                self.zero_threshold
             )
         )
         logger.info(
@@ -201,9 +201,9 @@ class BatchPayer:
             # Add any items which are marked as skipped to the returning array so that they are logged to reports.
             if not payment_item.payable:
                 logger.info(
-                    "Skipping payout to {:s} {:>10.6f}, reason: {:s}".format(
+                    "Skipping payout to {:s} of {:.6f} mutez, reason: {:s}".format(
                         payment_item.address,
-                        payment_item.amount / MUTEZ,
+                        payment_item.amount,
                         payment_item.desc,
                     )
                 )
@@ -228,8 +228,8 @@ class BatchPayer:
                 payment_item.desc += " Payment amount < ZERO_THRESHOLD."
                 payment_logs.append(payment_item)
                 logger.info(
-                    "Skipping payout to {:s} ({:>10.6f} tez), reason: payout below minimum ({:>10.6f} tez)".format(
-                        payment_item.address, payment_item.amount / MUTEZ, zt / MUTEZ
+                    "Skipping payout to {:s} of {:.6f} mutez, reason: payout below minimum of {:.6f} mutez".format(
+                        payment_item.address, payment_item.amount, zt
                     )
                 )
 
@@ -270,8 +270,8 @@ class BatchPayer:
 
         payment_address_balance = self.get_payment_address_balance()
         logger.info(
-            "Total estimated amount to pay out is {:,} tez.".format(
-                estimated_amount_to_pay / MUTEZ
+            "Total estimated amount to pay out is {:.6f} mutez.".format(
+                estimated_amount_to_pay
             )
         )
         logger.info(
@@ -283,14 +283,15 @@ class BatchPayer:
         if payment_address_balance is not None:
 
             logger.info(
-                "Current balance in payout address is {:,} tez.".format(
-                    payment_address_balance / MUTEZ
+                "Current balance in payout address is {:.6f} mutez.".format(
+                    payment_address_balance
                 )
             )
 
             number_future_payable_cycles = int(
                 payment_address_balance
                 / (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
+                - 1
             )
 
             if number_future_payable_cycles < 0:
@@ -302,9 +303,9 @@ class BatchPayer:
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
                     "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:,} tez, is insufficient to pay cycle rewards of {:,} tez. Including a safety margin of {} %.".format(
-                        payment_address_balance / MUTEZ,
-                        estimated_amount_to_pay / MUTEZ,
+                    "The current balance, {:.6f} mutez, is insufficient to pay cycle rewards of {:.6f} mutez. Including a safety margin of {} %.".format(
+                        payment_address_balance,
+                        estimated_amount_to_pay,
                         int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
                     )
                 )
@@ -322,9 +323,9 @@ class BatchPayer:
 
                 subject = "WARNING Payouts - Low Payment Address Funds"
                 message = (
-                    "The payout address will soon run out of funds. The current balance, {:,} tez, "
+                    "The payout address will soon run out of funds. The current balance, {:.6f} mutez, "
                     "might not be sufficient for the next cycle".format(
-                        payment_address_balance / MUTEZ
+                        payment_address_balance
                     )
                 )
 
@@ -638,25 +639,25 @@ class BatchPayer:
                     total_fee = tx_fee + burn_fee
                     if total_fee > FEE_LIMIT_CONTRACTS:
                         logger.info(
-                            "Payment to {:s} script requires higher fees than allowed maximum. Skipping. Needed fee: {:10.6f} tez, max fee: {:10.6f} tez. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation.".format(
+                            "Payment to {:s} script requires higher fees than allowed maximum. Skipping. Needed fee: {:.6f} mutez, max fee: {:.6f} mutez. Either configure a higher fee or redirect to the owner address using the maps rules. Refer to the TRD documentation.".format(
                                 payment_item.paymentaddress,
-                                total_fee / MUTEZ,
-                                FEE_LIMIT_CONTRACTS / MUTEZ,
+                                total_fee,
+                                FEE_LIMIT_CONTRACTS,
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
-                        payment_item.desc += " Kt safety check: Transaction fees higher then allowed maximum: {:10.6f} tez.".format(
-                            FEE_LIMIT_CONTRACTS / MUTEZ,
+                        payment_item.desc += " Kt safety check: Transaction fees higher then allowed maximum: {:.6f} mutez.".format(
+                            FEE_LIMIT_CONTRACTS,
                         )
                         continue
 
                     if (pymnt_amnt - total_fee) < ZERO_THRESHOLD:
                         logger.info(
-                            "Payment to {:s} requires fees of {:10.6f} higher than payment amount of {:10.6f}."
+                            "Payment to {:s} requires fees of {:.6f} mutez higher than payment amount of {:.6f} mutez."
                             "Payment avoided due KT1_FEE_SAFETY_CHECK set to True.".format(
                                 payment_item.paymentaddress,
-                                total_fee / MUTEZ,
-                                pymnt_amnt / MUTEZ,
+                                total_fee,
+                                pymnt_amnt,
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
@@ -681,14 +682,14 @@ class BatchPayer:
                     payment_item.delegate_transaction_fee += burn_fee
 
                 logger.info(
-                    "Payment to {} requires {:.0f} gas * {:.2f} mutez-per-gas + {:10.6f} burn fee; "
-                    "Payment reduced from {:10.6f} to {:10.6f}".format(
+                    "Payment to {} requires {:.0f} gas * {:.2f} mutez-per-gas + {:.6f} mutez burn fee; "
+                    "Payment reduced from {:.6f} mutez to {:.6f} mutez".format(
                         payment_item.paymentaddress,
                         gas_limit,
                         MUTEZ_PER_GAS_UNIT,
-                        burn_fee / MUTEZ,
-                        orig_pymnt_amnt / MUTEZ,
-                        pymnt_amnt / MUTEZ,
+                        burn_fee,
+                        orig_pymnt_amnt,
+                        pymnt_amnt,
                     )
                 )
 
@@ -710,15 +711,15 @@ class BatchPayer:
                     " Payment amount < ZERO_THRESHOLD after substracting fees."
                 )
                 logger.info(
-                    "Payment to {:s} became < {:10.6f} tez after deducting fees. Skipping.".format(
-                        payment_item.paymentaddress, ZERO_THRESHOLD / MUTEZ
+                    "Payment to {:s} became < {:.6f} mutez after deducting fees. Skipping.".format(
+                        payment_item.paymentaddress, ZERO_THRESHOLD
                     )
                 )
                 continue
             else:
                 logger.debug(
-                    "Payment to {:s} became {:10.6f} after deducting fees.".format(
-                        payment_item.paymentaddress, pymnt_amnt / MUTEZ
+                    "Payment to {:s} became {:.6f} mutez after deducting fees.".format(
+                        payment_item.paymentaddress, pymnt_amnt
                     )
                 )
 

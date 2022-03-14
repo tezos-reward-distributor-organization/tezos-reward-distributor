@@ -5,3 +5,7 @@ fysom==2.1.6
 parse
 transitions
 tweepy
+# developer
+parameterized
+Pygments
+graphviz
