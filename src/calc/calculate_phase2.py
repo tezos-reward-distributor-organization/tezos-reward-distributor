@@ -66,4 +66,4 @@ class CalculatePhase2(CalculatePhaseBase):
             rl2.ratio2 = rl2.ratio
 
         # total reward amount remains the same
-        return rewards, total_amount
+        return rewards, int(total_amount)

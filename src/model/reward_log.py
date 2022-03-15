@@ -23,33 +23,33 @@ class RewardLog:
         self, address, type, staking_balance, current_balance, originaladdress=None
     ) -> None:
         super().__init__()
-        self.staking_balance = staking_balance
-        self.current_balance = current_balance
-        self.address = address
-        self.paymentaddress = address
+        self.staking_balance = int(staking_balance)
+        self.current_balance = int(current_balance)
+        self.address = str(address)
+        self.paymentaddress = str(address)
         self.originaladdress = (
-            originaladdress if originaladdress is not None else address
+            originaladdress if originaladdress is not None else str(address)
         )
         self.needs_activation = False
         self.type = type
-        self.desc = ""
+        self.desc = str("")
         self.skipped = False
-        self.skippedatphase = 0
-        self.cycle = 0
-        self.ratio0 = 0
-        self.ratio1 = 0
-        self.ratio2 = 0
-        self.ratio3 = 0
-        self.ratio4 = 0
-        self.ratio5 = 0
-        self.ratio = 0
+        self.skippedatphase = int(0)
+        self.cycle = int(0)
+        self.ratio0 = float(0)
+        self.ratio1 = float(0)
+        self.ratio2 = float(0)
+        self.ratio3 = float(0)
+        self.ratio4 = float(0)
+        self.ratio5 = float(0)
+        self.ratio = float(0)
 
-        self.service_fee_amount = 0
-        self.service_fee_rate = 0
-        self.service_fee_ratio = 0
-        self.amount = 0
-        self.delegate_transaction_fee = 0
-        self.delegator_transaction_fee = 0
+        self.service_fee_amount = int(0)
+        self.service_fee_rate = float(0)
+        self.service_fee_ratio = float(0)
+        self.amount = int(0)
+        self.delegate_transaction_fee = int(0)
+        self.delegator_transaction_fee = int(0)
         self.parents = None
 
         self.paid = PaymentStatus.UNDEFINED

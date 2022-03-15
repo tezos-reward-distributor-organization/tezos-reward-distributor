@@ -83,13 +83,13 @@ class BatchPayer:
         self.node_url = node_url
         self.clnt_mngr = clnt_mngr
         self.network_config = network_config
-        self.zero_threshold = ZERO_THRESHOLD
+        self.zero_threshold = int(ZERO_THRESHOLD)
         self.plugins_manager = plugins_manager
         self.dry_run = dry_run
 
-        self.gas_limit = TZTX_GAS_LIMIT
-        self.storage_limit = TZTX_STORAGE_LIMIT
-        self.default_fee = TZTX_FEE
+        self.gas_limit = int(TZTX_GAS_LIMIT)
+        self.storage_limit = int(TZTX_STORAGE_LIMIT)
+        self.default_fee = int(TZTX_FEE)
 
         self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
@@ -109,7 +109,7 @@ class BatchPayer:
         )
         logger.info(
             "Reactivation fee (burn fee) for tz addresses is {:<,d} mutez and is paid by {}.".format(
-                RA_BURN_FEE,
+                int(RA_BURN_FEE),
                 "Delegator" if self.delegator_pays_ra_fee else "Delegate",
             )
         )
@@ -290,7 +290,7 @@ class BatchPayer:
 
             number_future_payable_cycles = int(
                 payment_address_balance
-                / (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
+                // (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
                 - 1
             )
 
@@ -301,13 +301,10 @@ class BatchPayer:
                     payment_item.desc += " Insufficient funds."
 
                 subject = "FAILED Payouts - Insufficient Funds"
-                message = (
-                    "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:<,d} mutez, is insufficient to pay cycle rewards of {:<,d} mutez. Including a safety margin of {} %.".format(
-                        payment_address_balance,
-                        estimated_amount_to_pay,
-                        int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
-                    )
+                message = "Payment attempt failed because of insufficient funds in the payout address. " "The current balance, {:<,d} mutez, is insufficient to pay cycle rewards of {:<,d} mutez. Including a safety margin of {} %.".format(
+                    payment_address_balance,
+                    estimated_amount_to_pay,
+                    int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
                 )
 
                 # Output to CLI, send notification using plugins
@@ -347,13 +344,14 @@ class BatchPayer:
 
         for i_batch, payment_items_chunk in enumerate(payment_items_chunks):
             logger.debug("Payment of batch {} started".format(i_batch + 1))
-            attempt = self.pay_single_batch(
+            status = PaymentStatus.UNDEFINED
+            attempt, status = self.pay_single_batch(
                 payment_items_chunk, dry_run=dry_run, op_counter=op_counter
             )
 
             logger.info(
-                "Payment of batch {} is complete, in {} attempt(s)".format(
-                    i_batch + 1, attempt
+                "Payment of batch {} {}, in {} attempt(s)".format(
+                    i_batch + 1, "failed" if status.is_fail() else "succeeded", attempt
                 )
             )
 
@@ -374,6 +372,12 @@ class BatchPayer:
 
         amount_to_pay = (
             amount_to_pay - delegator_transaction_fees + delegate_transaction_fees
+        )
+
+        logger.info(
+            "Total amount payed out is {:<,d} mutez in {} attempts and {} batches.".format(
+                amount_to_pay, total_attempts, len(payment_items_chunks)
+            )
         )
 
         return (
@@ -398,7 +402,7 @@ class BatchPayer:
     def pay_single_batch(self, payment_items, op_counter, dry_run=None):
 
         max_try = MAX_BATCH_PAYMENT_ATTEMPTS
-        status = None
+        status = PaymentStatus.UNDEFINED
         operation_hash = None
         attempt_count = 0
 
@@ -410,7 +414,7 @@ class BatchPayer:
                 )
             except Exception:
                 logger.error(
-                    "batch payment attempt {}/{} for current batch failed with error".format(
+                    "Batch payment attempt {}/{} for current batch failed with error".format(
                         attempt + 1, max_try
                     ),
                     exc_info=True,
@@ -427,11 +431,11 @@ class BatchPayer:
 
             attempt_count += 1
 
+            logger.debug("Payment attempt {}/{} failed".format(attempt + 1, max_try))
+
             # if not fail, do not try anymore
             if not status.is_fail():
                 break
-
-            logger.debug("payment attempt {}/{} failed".format(attempt + 1, max_try))
 
             # But do not wait after last attempt
             if attempt < max_try - 1:
@@ -442,7 +446,7 @@ class BatchPayer:
                 payment_item.paid = status
                 payment_item.hash = operation_hash
 
-        return attempt_count
+        return attempt_count, status
 
     def wait_random(self):
         block_time = self.network_config["MINIMAL_BLOCK_DELAY"]
@@ -660,7 +664,7 @@ class BatchPayer:
 
                     if (pymnt_amnt - total_fee) < ZERO_THRESHOLD:
                         logger.info(
-                            "Payment to {:s} requires fees of {:<,d} mutez higher than payment amount of {:<,d} mutez."
+                            "Payment to {:s} requires fees of {:<,d} mutez higher than payment amount of {:<,d} mutez. "
                             "Payment avoided due KT1_FEE_SAFETY_CHECK set to True.".format(
                                 payment_item.paymentaddress,
                                 total_fee,

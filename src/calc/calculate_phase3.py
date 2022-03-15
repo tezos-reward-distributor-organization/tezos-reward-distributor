@@ -77,4 +77,4 @@ class CalculatePhase3(CalculatePhaseBase):
 
             new_rewards.append(rl)
 
-        return new_rewards, total_amount
+        return new_rewards, int(total_amount)

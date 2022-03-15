@@ -58,7 +58,7 @@ class PhasedPaymentCalculator:
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs = phase0.calculate()
 
-        total_rwrd_amnt = reward_provider_model.computed_reward_amount
+        total_rwrd_amnt = int(reward_provider_model.computed_reward_amount)
         logger.info(
             "Total rewards before processing is {:<,d} mutez.".format(total_rwrd_amnt)
         )
@@ -131,7 +131,9 @@ class PhasedPaymentCalculator:
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
         # check if there is difference between sum of calculated amounts and total_rewards
-        total_amount_to_pay = sum([rl.amount for rl in rwrd_logs if not rl.skipped])
+        total_amount_to_pay = int(
+            sum([rl.amount for rl in rwrd_logs if not rl.skipped])
+        )
         amnt_pay_diff = abs(total_rwrd_amnt - total_amount_to_pay)
 
         logger.info(
