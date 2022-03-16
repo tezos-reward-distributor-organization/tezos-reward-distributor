@@ -52,6 +52,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rundocker.html">How to run TRD in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="payouttiming.html">Payout timing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
@@ -111,7 +112,7 @@
 <li><p>Retry failed payments and exit.</p></li>
 </ol>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">-R</span> <span class="pre">--release_override</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Override <code class="docutils literal notranslate"><span class="pre">NB_FREEZE_CYCLE</span></code> value, which is 5 by default. Valid range is <code class="docutils literal notranslate"><span class="pre">[-11,-1]</span></code>. Default value: <code class="docutils literal notranslate"><span class="pre">0</span></code> (with no effect). Last released payment cycle will be calculated based on the formula: <code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">-</span> <span class="pre">(NB_FREEZE_CYCLE+1)</span> <span class="pre">-</span> <span class="pre">release_override</span></code>. Suitable for future payments providing a negative value.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">-R</span> <span class="pre">--release_override</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Override <code class="docutils literal notranslate"><span class="pre">NB_FREEZE_CYCLE</span></code> value, which is 5 by default. Valid values are <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">-5</span></code>, <code class="docutils literal notranslate"><span class="pre">-11</span></code>. Default value: <code class="docutils literal notranslate"><span class="pre">0</span></code> (with no effect). See <a class="reference internal" href="payouttiming.html#payout-timing"><span class="std std-ref">Payout timing</span></a>.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--payment_offset</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.</p>
 </dd>
