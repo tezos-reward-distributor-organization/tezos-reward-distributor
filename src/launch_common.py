@@ -75,10 +75,8 @@ def args_validation(args, argparser):
 
     if args.release_override:
         release_override = args.release_override
-        if release_override < -11 or release_override > 0:
-            argparser.error(
-                "release-override must be in the range of [-11,-1] to override, default is 0"
-            )
+        if release_override not in [-11, -5, 0]:
+            argparser.error("release-override must be -11, -5 or 0. Default is 0")
 
     default_base_dir = os.path.normpath(BASE_DIR)
     default_log_file = os.path.join(
@@ -154,7 +152,7 @@ def add_argument_release_override(argparser):
         "--release_override",
         help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
         "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
-        "For future payments give negative values. Valid range is [-11,-1]. Default is 0 with no effect",
+        "For future payments give negative values. Valid values are -11, -5 and 0. Default is 0 with no effect",
         default=0,
         type=int,
     )

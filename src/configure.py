@@ -59,7 +59,7 @@ messages = {
     "bakingaddress": "Specify your baking address public key hash (Processing may take a few seconds)",
     "paymentaddress": "Specify your payouts public key hash. It can be the same as your baking address, or a different one.",
     "servicefee": "Specify bakery fee [0:100]",
-    "rewardstype": "Specify if baker pays 'ideal', 'estimated' or 'actual' rewards (Be sure to read the documentation to understand the difference). Type enter for 'actual'",
+    "rewardstype": "Specify if baker pays 'ideal' or 'actual' rewards (Be sure to read the documentation to understand the difference). Type enter for 'actual'",
     "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
     "ownersmap": "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
     "mindelegation": "Specify minimum delegation amount in tez. Type enter for 0",
@@ -150,9 +150,7 @@ def onrewardstype(input):
         rt = RewardsType(input.lower())
         parser.set(REWARDS_TYPE, str(rt))
     except Exception:
-        printe(
-            "Invalid option for rewards type. Please enter 'actual', 'estimated' or 'ideal'."
-        )
+        printe("Invalid option for rewards type. Please enter 'actual' or 'ideal'.")
         return
 
     fsm.go()

@@ -203,7 +203,7 @@ class BatchPayer:
                 logger.info(
                     "Skipping payout to {:s} of {:<,d} mutez, reason: {:s}".format(
                         payment_item.address,
-                        payment_item.amount,
+                        payment_item.adjusted_amount,
                         payment_item.desc,
                     )
                 )
@@ -217,11 +217,11 @@ class BatchPayer:
 
                 # Check here if payout amount is greater than, or equal to new zero threshold with reactivation fee added.
                 # If so, add burn fee to global total. If not, payout will not get appended to list and therefor burn fee should not be added to global total.
-                if payment_item.amount >= zt:
+                if payment_item.adjusted_amount >= zt:
                     estimated_sum_burn_fees += RA_BURN_FEE
 
             # If payout total greater than, or equal to zero threshold, append payout record to master array
-            if payment_item.amount >= zt:
+            if payment_item.adjusted_amount >= zt:
                 payment_items.append(payment_item)
             else:
                 payment_item.paid = PaymentStatus.AVOIDED
@@ -229,7 +229,7 @@ class BatchPayer:
                 payment_logs.append(payment_item)
                 logger.info(
                     "Skipping payout to {:s} of {:<,d} mutez, reason: payout below minimum of {:<,d} mutez".format(
-                        payment_item.address, payment_item.amount, zt
+                        payment_item.address, payment_item.adjusted_amount, zt
                     )
                 )
 
@@ -240,7 +240,7 @@ class BatchPayer:
         # This is an estimate to predict if the payment account holds enough funds to payout this cycle and the number of future cycles
         # It neglects the correct fees of kt accounts
         estimated_amount_to_pay = sum(
-            [payment_item.amount for payment_item in payment_items]
+            [payment_item.adjusted_amount for payment_item in payment_items]
         )
         estimated_amount_to_pay += estimated_sum_burn_fees
         if not self.delegator_pays_xfer_fee:
@@ -269,6 +269,7 @@ class BatchPayer:
         payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
 
         payment_address_balance = int(self.get_payment_address_balance())
+
         logger.info(
             "Total estimated amount to pay out is {:<,d} mutez.".format(
                 estimated_amount_to_pay
@@ -356,14 +357,12 @@ class BatchPayer:
             )
 
             for payment_item in payment_items_chunk:
-                logger.debug("Payment Status: {}".format(payment_item.paid))
-                logger.debug("Amount format test: {:<,d}".format(payment_item.amount))
                 if (
                     payment_item.paid == PaymentStatus.PAID
                     or payment_item.paid == PaymentStatus.INJECTED
                     or payment_item.paid == PaymentStatus.DONE
                 ):
-                    amount_to_pay += payment_item.amount
+                    amount_to_pay += payment_item.adjusted_amount
                     delegator_transaction_fees += payment_item.delegator_transaction_fee
                     delegate_transaction_fees += payment_item.delegate_transaction_fee
 
@@ -395,7 +394,7 @@ class BatchPayer:
                     payment_item.paid,
                     payment_item.cycle,
                     payment_item.address,
-                    payment_item.amount,
+                    payment_item.adjusted_amount,
                     payment_item.type,
                 )
 
@@ -616,7 +615,7 @@ class BatchPayer:
 
         for payment_item in payment_items:
 
-            pymnt_amnt = payment_item.amount  # expected in micro tez
+            pymnt_amnt = payment_item.adjusted_amount  # expected in micro tez
 
             # Get initial default values for storage, gas and fees
             # These default values are used for non-empty tz1 accounts transactions

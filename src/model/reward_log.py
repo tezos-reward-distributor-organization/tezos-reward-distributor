@@ -34,6 +34,7 @@ class RewardLog:
         self.type = type
         self.desc = str("")
         self.skipped = False
+        self.overestimate = int(0)
         self.skippedatphase = int(0)
         self.cycle = int(0)
         self.ratio0 = float(0)
@@ -43,15 +44,15 @@ class RewardLog:
         self.ratio4 = float(0)
         self.ratio5 = float(0)
         self.ratio = float(0)
-
         self.service_fee_amount = int(0)
         self.service_fee_rate = float(0)
         self.service_fee_ratio = float(0)
         self.amount = int(0)
+        self.adjusted_amount = int(0)
+        self.adjustment = int(0)
         self.delegate_transaction_fee = int(0)
         self.delegator_transaction_fee = int(0)
         self.parents = None
-
         self.paid = PaymentStatus.UNDEFINED
         self.hash = None
         self.payable = True
@@ -68,17 +69,16 @@ class RewardLog:
         return self
 
     def __repr__(self) -> str:
-        return (
-            "Address: {} ({}), T: {}, SB: {}, CB: {}, Amt: {}, Skp: {}, NA: {}".format(
-                self.address,
-                self.paymentaddress,
-                self.type,
-                self.staking_balance,
-                self.current_balance,
-                self.amount,
-                self.skipped,
-                self.needs_activation,
-            )
+        return "Address: {} ({}), T: {}, SB: {}, CB: {}, Amt: {}, AdjAmt: {}, Skp: {}, NA: {}".format(
+            self.address,
+            self.paymentaddress,
+            self.type,
+            self.staking_balance,
+            self.current_balance,
+            self.amount,
+            self.adjusted_amount,
+            self.skipped,
+            self.needs_activation,
         )
 
     @staticmethod
