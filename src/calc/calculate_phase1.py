@@ -66,7 +66,6 @@ class CalculatePhase1(CalculatePhaseBase):
             rl1.ratio1 = rl1.ratio
 
         # total reward amount needs to be diminished at the same rate total balance diminishes
-        # TODO: Why is the Decimal class created?
         new_total_amnt_multiplier = new_total_balance / total_balance
         new_total_amount = Decimal(
             total_amount * new_total_amnt_multiplier

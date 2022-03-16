@@ -168,7 +168,7 @@ if __name__ == "__main__":
     )
     argparser.add_argument(
         "payments_file",
-        help="File of payment lines. Each line should contain PKH:amount in mutez "
+        help="File of payment lines. Each line should contain PKH:amount in mutez. "
         "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33",
     )
 
