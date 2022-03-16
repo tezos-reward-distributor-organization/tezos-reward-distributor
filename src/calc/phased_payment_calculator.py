@@ -170,7 +170,7 @@ class PhasedPaymentCalculator:
             )
         )
 
-        return rwrd_logs, total_rwrd_amnt
+        return rwrd_logs, int(total_rwrd_amnt)
 
     def almost_equal(self, double1, double2):
         return abs(double1 - double2) < MINOR_RATIO_DIFF

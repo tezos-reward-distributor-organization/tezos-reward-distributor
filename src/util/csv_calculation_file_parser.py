@@ -1,6 +1,6 @@
 import csv
 from log_config import main_logger
-from Constants import MUTEZ, RewardsType
+from Constants import RewardsType
 
 from model.reward_log import RewardLog
 
@@ -168,17 +168,17 @@ class CsvCalculationFileParser:
                 csv_writer.writerow(array)
 
                 logger.debug(
-                    "Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                    "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                    "Reward created for {:s} type: {:s}, stake bal: {:<,d} mutez, cur bal: {:<,d} mutez, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                    "amount: {:<,d} mutez, fee_amount: {:<,d} mutez, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
                     "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
                         pymnt_log.address,
                         pymnt_log.type,
-                        pymnt_log.staking_balance / MUTEZ,
-                        pymnt_log.current_balance / MUTEZ,
+                        pymnt_log.staking_balance,
+                        pymnt_log.current_balance,
                         pymnt_log.ratio,
                         pymnt_log.service_fee_ratio,
-                        pymnt_log.amount / MUTEZ,
-                        pymnt_log.service_fee_amount / MUTEZ,
+                        pymnt_log.amount,
+                        pymnt_log.service_fee_amount,
                         pymnt_log.service_fee_rate,
                         "Y" if pymnt_log.payable else "N",
                         "Y" if pymnt_log.skipped else "N",

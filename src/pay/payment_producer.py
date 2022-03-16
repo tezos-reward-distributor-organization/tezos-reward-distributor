@@ -457,7 +457,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 reward_model.computed_reward_amount = (
                     reward_model.rewards_and_fees + reward_model.offline_losses
                 )
-        return self.payment_calc.calculate(reward_model, adjustments)
 
         # 3- calculate rewards for delegators
         return self.payment_calc.calculate(reward_model, adjustments)
@@ -514,9 +513,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 ) = self.compute_rewards(
                     completed_cycle, computation_type, network_config
                 )
-            overestimate = total_amount_from_report - completed_cycle_total_amount
+            overestimate = int(total_amount_from_report - completed_cycle_total_amount)
             logger.info(
-                "We {:s}estimated payout for cycle {:s} by {:,} mutez, will attempt to adjust.".format(
+                "We {:s}estimated payout for cycle {:s} by {:<,d} mutez, will attempt to adjust.".format(
                     ("over" if overestimate > 0 else "under"),
                     str(completed_cycle),
                     abs(overestimate),
