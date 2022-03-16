@@ -607,7 +607,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             for reward_log in reward_logs:
                 reward_log.cycle = pymnt_cycle
             total_amount_to_pay = sum(
-                [reward_log.adjusted_amount for reward_log in reward_logs if reward_log.payable]
+                [
+                    reward_log.adjusted_amount
+                    for reward_log in reward_logs
+                    if reward_log.payable
+                ]
             )
 
             # 5- if total_rewards > 0, proceed with payment

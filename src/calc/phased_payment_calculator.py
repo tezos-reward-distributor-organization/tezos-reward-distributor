@@ -133,13 +133,15 @@ class PhasedPaymentCalculator:
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
         # check if there is difference between sum of calculated amounts and total_rewards
-        total_delegator_amounts = int(sum(
-            [rl.adjusted_amount for rl in rwrd_logs if not rl.skipped]
-        ))
-        total_adjustments = int(sum([rl.adjustment for rl in rwrd_logs if not rl.skipped]))
-        amnt_pay_diff = int(abs(
-            total_rwrd_amnt + total_adjustments - total_delegator_amounts
-        ))
+        total_delegator_amounts = int(
+            sum([rl.adjusted_amount for rl in rwrd_logs if not rl.skipped])
+        )
+        total_adjustments = int(
+            sum([rl.adjustment for rl in rwrd_logs if not rl.skipped])
+        )
+        amnt_pay_diff = int(
+            abs(total_rwrd_amnt + total_adjustments - total_delegator_amounts)
+        )
 
         logger.info(
             "Total rewards after processing is {:<,d} mutez.".format(total_rwrd_amnt)
