@@ -14,7 +14,7 @@ class CalculatePhaseFinal(CalculatePhaseBase):
     def __init__(self) -> None:
         super().__init__()
 
-    def calculate(self, reward_data5, total_amount):
+    def calculate(self, reward_data5, total_amount, adjustments={}):
         skipped_rewards = list(self.iterateskipped(reward_data5))
         rewards = list(self.filterskipped(reward_data5))
 
@@ -29,7 +29,19 @@ class CalculatePhaseFinal(CalculatePhaseBase):
                     rounding=ROUND_HALF_DOWN
                 )
             )
-            rl.payable = rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR]
+            if adjustments and rl.address in adjustments.keys():
+                rl.adjustment = max(-adjustments[rl.address], -rl.amount)
+            else:
+                rl.adjustment = 0
+            rl.adjusted_amount = int(
+                Decimal((rl.ratio * total_amount) + rl.adjustment).to_integral_value(
+                    rounding=ROUND_HALF_DOWN
+                )
+            )
+            rl.payable = (
+                rl.type in [TYPE_FOUNDER, TYPE_OWNER, TYPE_DELEGATOR]
+                and rl.adjusted_amount > 0
+            )
             rl.service_fee_amount = int(
                 Decimal(rl.service_fee_ratio * total_amount).to_integral_value(
                     rounding=ROUND_HALF_DOWN

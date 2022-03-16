@@ -292,7 +292,7 @@ class PaymentConsumer(threading.Thread):
         for pl in payment_logs:
             logger.debug(
                 "Payment done for address {:s} type {:s} amount {:>10.6f} paid {:s}".format(
-                    pl.address, pl.type, pl.amount / MUTEZ, pl.paid
+                    pl.address, pl.type, pl.adjusted_amount / MUTEZ, pl.paid
                 )
             )
 
@@ -320,7 +320,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict["cycle"] = payment_cycle
         stats_dict["network"] = self.args.network
         stats_dict["total_amount"] = int(
-            sum([rl.amount for rl in payment_logs]) / MUTEZ
+            sum([rl.adjusted_amount for rl in payment_logs]) / MUTEZ
         )
         stats_dict["nb_pay"] = int(len(payment_logs))
         stats_dict["nb_failed"] = nb_failed
@@ -334,8 +334,6 @@ class PaymentConsumer(threading.Thread):
         stats_dict["pay_ra_fee"] = 1 if self.delegator_pays_ra_fee else 0
         if self.rewards_type.isIdeal():
             stats_dict["rewards_type"] = "I"
-        elif self.rewards_type.isEstimated():
-            stats_dict["rewards_type"] = "E"
         elif self.rewards_type.isActual():
             stats_dict["rewards_type"] = "A"
         else:

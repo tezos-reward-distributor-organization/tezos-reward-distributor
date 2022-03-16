@@ -3,9 +3,10 @@ import csv
 import os
 import threading
 from datetime import datetime, timedelta
+from _decimal import ROUND_HALF_DOWN, Decimal
 from time import sleep
 from requests import ReadTimeout, ConnectTimeout
-from Constants import MUTEZ, RunMode
+from Constants import MUTEZ, RunMode, RewardsType
 from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from exception.api_provider import ApiProviderException
@@ -16,6 +17,7 @@ from pay.double_payment_check import check_past_payment
 from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
+from util.csv_calculation_file_parser import CsvCalculationFileParser
 from util.dir_utils import get_calculation_report_file
 from util.disk_is_full import disk_is_full
 
@@ -276,19 +278,16 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             self.exit()
                             break
 
-                        # Paying upcoming cycles (-R in [-6, -11] )
+                        # Paying upcoming cycles (-R set to -11 )
                         if pymnt_cycle >= current_cycle:
                             logger.warn(
                                 "Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation."
                             )
-                            if not self.rewards_type.isEstimated():
-                                logger.error(
-                                    "For future rewards payout, you must configure the payout type to 'Estimated', see documentation"
-                                )
-                                self.exit()
-                                break
+                            logger.warn(
+                                "TRD will attempt to adjust the amount after the cycle runs, but it may not work."
+                            )
 
-                        # Paying cycles with frozen rewards (-R in [-1, -5] )
+                        # Paying cycles with frozen rewards (-R set to -5 )
                         elif (
                             pymnt_cycle
                             >= current_cycle - self.nw_config["NB_FREEZE_CYCLE"]
@@ -317,7 +316,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
                         else:
                             result = self.try_to_pay(
-                                pymnt_cycle, self.rewards_type, self.nw_config
+                                pymnt_cycle,
+                                self.rewards_type,
+                                self.nw_config,
+                                current_cycle,
                             )
 
                         if result:
@@ -405,8 +407,26 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.exit()
         self.event.set()
 
-    def compute_rewards(self, reward_model, rewards_type, network_config):
-        if rewards_type.isEstimated():
+    def compute_rewards(
+        self, pymnt_cycle, computation_type, network_config, adjustments={}
+    ):
+        """
+        Compute total rewards based on computation type and policy, then
+        calls payment_call.calculate to calculate rewards per delegator.
+
+        :param pymnt_cycle: the cycle for which rewards are being calculated
+        :param computation_type: calculate estimated, actual or ideal rewards
+        :param network_config: configuration of the current tezos network, needed to calc rewards.
+        :param adjustments: a map of adjustments per address. We add to amount to compute adjusted_amount
+        :return: rewards per delegator (reward logs) and total amount
+        """
+        # does calculation report file already exist for this cycle?
+
+        logger.info("Computing rewards for cycle {:s}.".format(str(pymnt_cycle)))
+        reward_model = self.reward_api.get_rewards_for_cycle_map(
+            pymnt_cycle, computation_type
+        )
+        if computation_type.isEstimated():
             logger.info("Using estimated rewards for payouts calculations")
             block_reward = network_config["BLOCK_REWARD"]
             endorsement_reward = network_config["ENDORSEMENT_REWARD"]
@@ -414,32 +434,119 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             total_estimated_endorsement_reward = (
                 reward_model.num_endorsing_rights * endorsement_reward
             )
-            computed_reward_amount = (
+            reward_model.computed_reward_amount = (
                 total_estimated_block_reward + total_estimated_endorsement_reward
             )
-        elif rewards_type.isActual():
+        elif computation_type.isActual():
             logger.info("Using actual rewards for payouts calculations")
             if self.pay_denunciation_rewards:
-                computed_reward_amount = reward_model.total_reward_amount
+                reward_model.computed_reward_amount = reward_model.total_reward_amount
             else:
                 # omit denunciation rewards
-                computed_reward_amount = (
+                reward_model.computed_reward_amount = (
                     reward_model.rewards_and_fees - reward_model.equivocation_losses
                 )
-        elif rewards_type.isIdeal():
+        elif computation_type.isIdeal():
             logger.info("Using ideal rewards for payouts calculations")
             if self.pay_denunciation_rewards:
-                computed_reward_amount = (
+                reward_model.computed_reward_amount = (
                     reward_model.total_reward_amount + reward_model.offline_losses
                 )
             else:
                 # omit denunciation rewards and double baking loss
-                computed_reward_amount = (
+                reward_model.computed_reward_amount = (
                     reward_model.rewards_and_fees + reward_model.offline_losses
                 )
-        return computed_reward_amount
+        return self.payment_calc.calculate(reward_model, adjustments)
 
-    def try_to_pay(self, pymnt_cycle, rewards_type, network_config):
+        # 3- calculate rewards for delegators
+        return self.payment_calc.calculate(reward_model, adjustments)
+
+    def recompute_rewards(self, completed_cycle, computation_type, network_config):
+        """
+        In case of early payout, the payout is already done when the cycle runs.
+        After a cycle has run, we redo the computations. If we find overpayemnt
+        (overestimate) or underpayment (negative overestimate), we record it in the
+        calculation report csv file and return an adjustment map.
+
+        :param completed_cycle: the cycle for which rewards are being recalculated
+        :param computation_type: calculate estimated, actual or ideal rewards
+        :param network_config: configuration of the current tezos network, needed to calc rewards.
+        :return: adjustments map showing negative of overestimates per delegator
+        """
+        logger.info(
+            "Checking for potential adjustment for recently completed cycle {:s}.".format(
+                str(completed_cycle)
+            )
+        )
+        completed_cycle_report_file_path = get_calculation_report_file(
+            self.calculations_dir, completed_cycle
+        )
+        adjustments = {}
+        if os.path.isfile(completed_cycle_report_file_path):
+            logger.info(
+                "TRD ran for cycle: {:s}, calculating adjustments.".format(
+                    str(completed_cycle)
+                )
+            )
+            (
+                reward_logs_from_report,
+                total_amount_from_report,
+                rewards_type_from_report,
+            ) = CsvCalculationFileParser().parse(
+                completed_cycle_report_file_path, self.baking_address
+            )
+            # check that the overestimate has not been computed yet
+            if sum([rl.overestimate or 0 for rl in reward_logs_from_report]) > 0:
+                logger.info(
+                    "Overestimate has already been calculated for cycle {:s}, not calculating it again.".format(
+                        str(completed_cycle)
+                    )
+                )
+                completed_cycle_reward_logs, completed_cycle_total_amount = (
+                    reward_logs_from_report,
+                    total_amount_from_report,
+                )
+            else:
+                (
+                    completed_cycle_reward_logs,
+                    completed_cycle_total_amount,
+                ) = self.compute_rewards(
+                    completed_cycle, computation_type, network_config
+                )
+            overestimate = total_amount_from_report - completed_cycle_total_amount
+            logger.info(
+                "We {:s}estimated payout for cycle {:s} by {:,} mutez, will attempt to adjust.".format(
+                    ("over" if overestimate > 0 else "under"),
+                    str(completed_cycle),
+                    abs(overestimate),
+                )
+            )
+            for rl in reward_logs_from_report:
+                # overwrite only overestimate in report csv file, leave the rest alone
+                rl.overestimate = int(
+                    Decimal(rl.ratio * overestimate).to_integral_value(
+                        rounding=ROUND_HALF_DOWN
+                    )
+                )
+                # we adjust the cycle we are paying out with the overestimate of the
+                # just completed cycle
+                adjustments[rl.address] = float(rl.overestimate)
+                logger.debug(
+                    f"Will try to recover {adjustments[rl.address]} mutez for {rl.address} based on past overpayment"
+                )
+
+            CsvCalculationFileParser().write(
+                reward_logs_from_report,
+                completed_cycle_report_file_path,
+                total_amount_from_report,
+                rewards_type_from_report,
+                self.baking_address,
+                False,
+            )
+        return adjustments
+
+    def try_to_pay(self, pymnt_cycle, rewards_type, network_config, current_cycle):
         try:
             logger.info("Payment cycle is {:s}".format(str(pymnt_cycle)))
 
@@ -450,42 +557,67 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 logger.warn(past_payment_state)
                 return True
 
-            # 1- get reward data
-            reward_model = self.reward_api.get_rewards_for_cycle_map(
-                pymnt_cycle, rewards_type
+            adjustments = {}
+            early_payout = False
+            current_cycle_rewards_type = rewards_type
+            # 1- adjust past cycle if necessary
+            if self.release_override == -11 and pymnt_cycle >= current_cycle:
+                early_payout = True
+                completed_cycle = pymnt_cycle - 6
+                adjustments = self.recompute_rewards(
+                    completed_cycle, rewards_type, network_config
+                )
+                # payout for current cycle will be estimated since we don't know actual rewards yet
+                current_cycle_rewards_type = RewardsType.ESTIMATED
+
+            # 2- get reward data and compute how to distribute them
+            reward_logs, total_amount = self.compute_rewards(
+                pymnt_cycle, current_cycle_rewards_type, network_config, adjustments
+            )
+            total_recovered_adjustments = sum([rl.adjustment for rl in reward_logs])
+            total_adjustments_to_recover = sum(adjustments.values())
+            if total_adjustments_to_recover > 0:
+                logger.debug(
+                    "Total adjustments to recover is {:,}, total recovered adjustment is {:,}.".format(
+                        total_adjustments_to_recover, total_recovered_adjustments
+                    )
+                )
+                logger.info(
+                    "After early payout of cycle {:s}, {:,} mutez were not recovered.".format(
+                        str(completed_cycle),
+                        total_adjustments_to_recover + total_recovered_adjustments,
+                    )
+                )
+
+            # 3- create calculations report file. This file contains calculations details
+            report_file_path = get_calculation_report_file(
+                self.calculations_dir, pymnt_cycle
+            )
+            logger.debug("Creating calculation report (%s)", report_file_path)
+            CsvCalculationFileParser().write(
+                reward_logs,
+                report_file_path,
+                total_amount,
+                current_cycle_rewards_type,
+                self.baking_address,
+                early_payout,
             )
 
-            # 2- compute reward amount to distribute based on configuration
-            reward_model.computed_reward_amount = self.compute_rewards(
-                reward_model, rewards_type, network_config
-            )
-
-            # 3- calculate rewards for delegators
-            reward_logs, total_amount = self.payment_calc.calculate(reward_model)
-
-            # 4- set cycle info
+            # 4- calcylate total amount
             for rl in reward_logs:
                 rl.cycle = pymnt_cycle
-            total_amount_to_pay = sum([rl.amount for rl in reward_logs if rl.payable])
+            total_amount_to_pay = sum(
+                [rl.adjusted_amount for rl in reward_logs if rl.payable]
+            )
 
             # 5- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
 
-                # 6- send to payment consumer
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
 
                 sleep(5.0)
 
-                # 7- create calculations report file. This file contains calculations details
-                report_file_path = get_calculation_report_file(
-                    self.calculations_dir, pymnt_cycle
-                )
-                logger.debug("Creating calculation report (%s)", report_file_path)
-                self.create_calculations_report(
-                    reward_logs, report_file_path, total_amount, rewards_type
-                )
-
-                # 8- processing of cycle is done
+                # 6- processing of cycle is done
                 logger.info(
                     "Reward creation is done for cycle {}, created {} rewards.".format(
                         pymnt_cycle, len(reward_logs)
@@ -536,121 +668,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 "Unable to determine local node's bootstrap status. Continuing..."
             )
         return True
-
-    def create_calculations_report(
-        self, payment_logs, report_file_path, total_rewards, rewards_type
-    ):
-
-        if rewards_type.isEstimated():
-            rt = "E"
-        elif rewards_type.isActual():
-            rt = "A"
-        elif rewards_type.isIdeal():
-            rt = "I"
-
-        try:
-
-            # Open reports file and write; auto-closes file
-            with open(report_file_path, "w", newline="") as f:
-
-                writer = csv.writer(
-                    f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
-                )
-
-                # write headers and total rewards
-                writer.writerow(
-                    [
-                        "address",
-                        "type",
-                        "staked_balance",
-                        "current_balance",
-                        "ratio",
-                        "fee_ratio",
-                        "amount",
-                        "fee_amount",
-                        "fee_rate",
-                        "payable",
-                        "skipped",
-                        "atphase",
-                        "desc",
-                        "payment_address",
-                        "rewards_type",
-                    ]
-                )
-
-                # First row is for the baker
-                writer.writerow(
-                    [
-                        self.baking_address,
-                        "B",
-                        sum([pl.staking_balance for pl in payment_logs]),
-                        "{0:f}".format(1.0),
-                        "{0:f}".format(1.0),
-                        "{0:f}".format(0.0),
-                        "{0:f}".format(total_rewards),
-                        "{0:f}".format(0.0),
-                        "{0:f}".format(0.0),
-                        "0",
-                        "0",
-                        "-1",
-                        "Baker",
-                        "None",
-                        rt,
-                    ]
-                )
-
-                for pymnt_log in payment_logs:
-                    # write row to csv file
-                    array = [
-                        pymnt_log.address,
-                        pymnt_log.type,
-                        pymnt_log.staking_balance,
-                        pymnt_log.current_balance,
-                        "{0:.10f}".format(pymnt_log.ratio),
-                        "{0:.10f}".format(pymnt_log.service_fee_ratio),
-                        "{0:f}".format(pymnt_log.amount),
-                        "{0:f}".format(pymnt_log.service_fee_amount),
-                        "{0:f}".format(pymnt_log.service_fee_rate),
-                        "1" if pymnt_log.payable else "0",
-                        "1" if pymnt_log.skipped else "0",
-                        pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
-                        pymnt_log.desc if pymnt_log.desc else "None",
-                        pymnt_log.paymentaddress,
-                        rt,
-                    ]
-                    writer.writerow(array)
-
-                    logger.debug(
-                        "Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                        "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
-                        "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
-                            pymnt_log.address,
-                            pymnt_log.type,
-                            pymnt_log.staking_balance / MUTEZ,
-                            pymnt_log.current_balance / MUTEZ,
-                            pymnt_log.ratio,
-                            pymnt_log.service_fee_ratio,
-                            pymnt_log.amount / MUTEZ,
-                            pymnt_log.service_fee_amount / MUTEZ,
-                            pymnt_log.service_fee_rate,
-                            "Y" if pymnt_log.payable else "N",
-                            "Y" if pymnt_log.skipped else "N",
-                            pymnt_log.skippedatphase,
-                            pymnt_log.desc,
-                            pymnt_log.paymentaddress,
-                            rt,
-                        )
-                    )
-
-        except Exception as e:
-            import errno
-
-            print("Exception during write operation invoked: {}".format(e))
-            if e.errno == errno.ENOSPC:
-                print("Not enough space on device!")
-            exit()
-
-        logger.info("Calculation report is created at '{}'".format(report_file_path))
 
     @staticmethod
     def create_exit_payment():

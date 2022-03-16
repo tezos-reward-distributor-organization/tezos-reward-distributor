@@ -191,7 +191,7 @@ class BatchPayer:
             if not pi.payable:
                 logger.info(
                     "Skipping payout to {:s} {:>10.6f}, reason: {:s}".format(
-                        pi.address, pi.amount / MUTEZ, pi.desc
+                        pi.address, pi.adjusted_amount / MUTEZ, pi.desc
                     )
                 )
                 payment_logs.append(pi)
@@ -204,16 +204,16 @@ class BatchPayer:
 
                 # Check here if payout amount is greater than, or equal to new zero threshold with reactivation fee added.
                 # If so, add burn fee to global total. If not, payout will not get appended to list and therefor burn fee should not be added to global total.
-                if pi.amount >= zt:
+                if pi.adjusted_amount >= zt:
                     sum_burn_fees += RA_BURN_FEE
 
             # If payout total greater than, or equal to zero threshold, append payout record to master array
-            if pi.amount >= zt:
+            if pi.adjusted_amount >= zt:
                 payment_items.append(pi)
             else:
                 logger.info(
                     "Skipping payout to {:s} ({:>10.6f} XTZ), reason: payout below minimum ({:>10.6f} XTZ)".format(
-                        pi.address, pi.amount / MUTEZ, zt / MUTEZ
+                        pi.address, pi.adjusted_amount / MUTEZ, zt / MUTEZ
                     )
                 )
 
@@ -243,7 +243,7 @@ class BatchPayer:
         ]
         payment_items_chunks = payment_items_chunks_tz + payment_items_chunks_KT
 
-        total_amount_to_pay = sum([pl.amount for pl in payment_items])
+        total_amount_to_pay = sum([pl.adjusted_amount for pl in payment_items])
         total_amount_to_pay += sum_burn_fees
         if not self.delegator_pays_xfer_fee:
             total_amount_to_pay += self.default_fee * len(payment_items)
@@ -343,7 +343,7 @@ class BatchPayer:
                     pl.paid,
                     pl.cycle,
                     pl.address,
-                    pl.amount,
+                    pl.adjusted_amount,
                     pl.type,
                 )
 
@@ -517,7 +517,7 @@ class BatchPayer:
 
         for payment_item in payment_records:
 
-            pymnt_amnt = payment_item.amount  # expected in micro tez
+            pymnt_amnt = payment_item.adjusted_amount  # expected in micro tez
             storage_limit, gas_limit, tx_fee = (
                 self.storage_limit,
                 self.gas_limit,

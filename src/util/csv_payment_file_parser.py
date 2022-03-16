@@ -24,7 +24,7 @@ class CsvPaymentFileParser:
     def from_payment_csv_dict_row(row, cycle):
         rl = RewardLog(row["address"], row["type"], 0, 0)
         rl.cycle = cycle
-        rl.amount = int(row["amount"])
+        rl.adjusted_amount = int(row["amount"])
         rl.hash = None if row["hash"] == "None" else row["hash"]
         rl.paid = PaymentStatus(int(row["paid"]))
 
@@ -45,7 +45,7 @@ class CsvPaymentFileParser:
                         [
                             pl.paymentaddress,
                             pl.type,
-                            pl.amount,
+                            pl.adjusted_amount,
                             pl.hash if pl.hash else "None",
                             pl.paid.value,
                         ]
