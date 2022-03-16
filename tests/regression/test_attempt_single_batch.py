@@ -80,7 +80,7 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
         current_balance=100,
     )
 
-    reward_log.amount = 15577803
+    reward_log.adjusted_amount = 15577803
     reward_log.skipped = False
 
     opt_counter = OpCounter()
@@ -140,7 +140,7 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
         current_balance=100,
     )
 
-    reward_log.amount = 15577803
+    reward_log.adjusted_amount = 15577803
     reward_log.skipped = False
 
     opt_counter = OpCounter()
