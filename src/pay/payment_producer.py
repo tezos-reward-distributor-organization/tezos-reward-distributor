@@ -278,7 +278,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             self.exit()
                             break
 
-                        # Paying upcoming cycles (-R in [-6, -11] )
+                        # Paying upcoming cycles (-R set to -11 )
                         if pymnt_cycle >= current_cycle:
                             logger.warn(
                                 "Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation."
@@ -287,7 +287,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                 "TRD will attempt to adjust the amount after the cycle runs, but it may not work."
                             )
 
-                        # Paying cycles with frozen rewards (-R in [-1, -5] )
+                        # Paying cycles with frozen rewards (-R set to -5 )
                         elif (
                             pymnt_cycle
                             >= current_cycle - self.nw_config["NB_FREEZE_CYCLE"]
