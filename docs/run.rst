@@ -30,7 +30,7 @@ Options
     4. Retry failed payments and exit.
 
 ``-R --release_override <int>``
-    Override ``NB_FREEZE_CYCLE`` value, which is 5 by default. Valid range is ``[-11,-1]``. Default value: ``0`` (with no effect). See :ref:`payout_timing`.
+    Override ``NB_FREEZE_CYCLE`` value, which is 5 by default. Valid values are ``0``, ``-5``, ``-11``. Default value: ``0`` (with no effect). See :ref:`payout_timing`.
 
 ``-O --payment_offset <int>``
     Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
