@@ -22,14 +22,18 @@ def address_api():
 )
 def test_get_rewards_for_cycle_map(address_api):
     rewards = load_reward_model(
-        STAKENOW_ADDRESS, CYCLE, "actual", dir_name="tzstats_data"
+        STAKENOW_ADDRESS, CYCLE, RewardsType.ACTUAL, dir_name="tzstats_data"
     )
     if rewards is None:
         rewards = address_api.get_rewards_for_cycle_map(
             cycle=CYCLE, rewards_type=RewardsType.ACTUAL
         )
         store_reward_model(
-            STAKENOW_ADDRESS, CYCLE, "actual", rewards, dir_name="tzstats_data"
+            STAKENOW_ADDRESS,
+            CYCLE,
+            RewardsType.ACTUAL,
+            rewards,
+            dir_name="tzstats_data",
         )
     assert rewards.delegate_staking_balance == 162719327201
     assert rewards.total_reward_amount == 123000000

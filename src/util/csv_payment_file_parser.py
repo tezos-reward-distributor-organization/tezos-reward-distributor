@@ -53,14 +53,14 @@ class CsvPaymentFileParser:
                 for payment_log in payment_logs:
                     csv_writer.writerow(
                         [
-                            payment_log.paymentaddress,
-                            payment_log.type,
-                            payment_log.adjusted_amount,
-                            payment_log.hash if payment_log.hash else "None",
-                            payment_log.paid.value,
-                            payment_log.delegate_transaction_fee,
-                            payment_log.delegator_transaction_fee,
-                            payment_log.desc,
+                            str(payment_log.paymentaddress),
+                            str(payment_log.type),
+                            int(payment_log.adjusted_amount),
+                            str(payment_log.hash) if payment_log.hash else "None",
+                            str(payment_log.paid.name).lower(),
+                            int(payment_log.delegate_transaction_fee),
+                            int(payment_log.delegator_transaction_fee),
+                            str(payment_log.desc),
                         ]
                     )
 

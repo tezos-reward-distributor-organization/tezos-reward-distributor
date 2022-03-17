@@ -35,33 +35,33 @@ class CsvCalculationFileParser:
     @staticmethod
     def from_payment_csv_dict_row(row):
         rl = RewardLog(row["address"], row["type"], 0, 0)
-        rl.ratio = float(row["ratio"])
         rl.staking_balance = int(row["staked_balance"])
-        rl.current_balance = int(float(row["current_balance"]))
+        rl.current_balance = int(row["current_balance"])
+        rl.ratio = float(row["ratio"])
         rl.service_fee_ratio = float(row["fee_ratio"])
-        rl.amount = float(row["amount"])
-        rl.service_fee_amount = float(row["fee_amount"])
+        rl.amount = int(row["amount"])
+        rl.service_fee_amount = int(row["fee_amount"])
         rl.service_fee_rate = float(row["fee_rate"])
         if "overestimate" in row:
             rl.overestimate = (
-                None if row["overestimate"] == "pending" else float(row["overestimate"])
+                int(0) if row["overestimate"] == "pending" else int(row["overestimate"])
             )
         else:
             rl.overestimate = 0
-        rl.adjustment = float(row["adjustment"]) if "adjustment" in row else float(0)
-        rl.adjusted_amount = float(
-            row["adjusted_amount"] if "adjusted_amount" in row else row["amount"]
+        rl.adjustment = int(row["adjustment"]) if "adjustment" in row else int(0)
+        rl.adjusted_amount = int(
+            row["adjusted_amount"] if "adjusted_amount" in row else int(row["amount"])
         )
         rl.payable = int(row["payable"])
         rl.skippedatphase = int(row["skipped"])
-        rl.desc = row["desc"]
-        rl.paymentaddress = row["address"]
+        rl.desc = str(row["desc"])
+        rl.paymentaddress = str(row["address"])
         if row["rewards_type"] == "E":
-            rl.rewards_type = "estimated"
+            rl.rewards_type = RewardsType.ESTIMATED
         elif row["rewards_type"] == "A":
-            rl.rewards_type = "actual"
+            rl.rewards_type = RewardsType.ACTUAL
         elif row["rewards_type"] == "I":
-            rl.rewards_type = "ideal"
+            rl.rewards_type = RewardsType.IDEAL
 
         return rl
 
@@ -74,6 +74,7 @@ class CsvCalculationFileParser:
         baking_address,
         early_payout,
     ):
+        # TODO: Think about chaning this to the actual strings
         if rewards_type.isEstimated():
             rt = "E"
         elif rewards_type.isActual():
@@ -109,67 +110,67 @@ class CsvCalculationFileParser:
                 ]
             )
 
+            # Note: values for True and False are marked with "0" and "1" in the excel for backwards compatibility
+
             # First row is for the baker
             csv_writer.writerow(
                 [
-                    baking_address,
-                    "B",
-                    sum([pl.staking_balance for pl in payment_logs]),
-                    "{0:f}".format(1.0),
-                    "{0:f}".format(1.0),
-                    "{0:f}".format(0.0),
-                    "{0:f}".format(total_rewards),
-                    "{0:f}".format(0.0),
-                    "{0:f}".format(0.0),
+                    str(baking_address),  # address
+                    str("B"),  # type
+                    int(
+                        sum([pl.staking_balance for pl in payment_logs])
+                    ),  # staking_balance
+                    int(1),  # current_balance
+                    "{0:10f}".format(1.0),  # ratio
+                    "{0:10f}".format(0.0),  # service_fee_ratio
+                    int(total_rewards),  # amount
+                    int(0),  # service_fee_amount
+                    "{0:f}".format(0.0),  # service_fee_rate
                     (
                         "pending"
                         if early_payout
-                        else "{0:f}".format(
-                            sum([pl.overestimate for pl in payment_logs])
-                        )
-                    ),
-                    "{0:f}".format(sum([pl.adjustment for pl in payment_logs])),
-                    "{0:f}".format(sum([pl.adjusted_amount for pl in payment_logs])),
-                    "0",
-                    "0",
-                    "-1",
-                    "Baker",
-                    "None",
-                    rt,
+                        else int(sum([pl.overestimate for pl in payment_logs]))
+                    ),  # overestimate
+                    int(sum([pl.adjustment for pl in payment_logs])),  # adjustments
+                    int(
+                        sum([pl.adjusted_amount for pl in payment_logs])
+                    ),  # adjustment_amounts
+                    int(0),  # not payable
+                    int(0),  # not skipped
+                    int(-1),  #
+                    str("Baker"),
+                    str("None"),
+                    str(rt),
                 ]
             )
 
             for pymnt_log in payment_logs:
                 # write row to csv file
                 array = [
-                    pymnt_log.address,
-                    pymnt_log.type,
-                    pymnt_log.staking_balance,
-                    pymnt_log.current_balance,
+                    str(pymnt_log.address),
+                    str(pymnt_log.type),
+                    int(pymnt_log.staking_balance),
+                    int(pymnt_log.current_balance),
                     "{0:.10f}".format(pymnt_log.ratio),
                     "{0:.10f}".format(pymnt_log.service_fee_ratio),
-                    "{0:f}".format(pymnt_log.amount),
-                    "{0:f}".format(pymnt_log.service_fee_amount),
+                    int(pymnt_log.amount),
+                    int(pymnt_log.service_fee_amount),
                     "{0:f}".format(pymnt_log.service_fee_rate),
-                    (
-                        "pending"
-                        if early_payout
-                        else "{0:f}".format(float(pymnt_log.overestimate))
-                    ),
-                    "{0:f}".format(pymnt_log.adjustment),
-                    "{0:f}".format(pymnt_log.adjusted_amount),
-                    "1" if pymnt_log.payable else "0",
-                    "1" if pymnt_log.skipped else "0",
-                    pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
-                    pymnt_log.desc if pymnt_log.desc else "None",
-                    pymnt_log.paymentaddress,
-                    rt,
+                    ("pending" if early_payout else int(pymnt_log.overestimate)),
+                    int(pymnt_log.adjustment),
+                    int(pymnt_log.adjusted_amount),
+                    int(1) if pymnt_log.payable else int(0),
+                    int(1) if pymnt_log.skipped else int(0),
+                    pymnt_log.skippedatphase if pymnt_log.skipped else int(-1),
+                    pymnt_log.desc if pymnt_log.desc else str("None"),
+                    str(pymnt_log.paymentaddress),
+                    str(rt),
                 ]
                 csv_writer.writerow(array)
 
                 logger.debug(
                     "Reward created for {:s} type: {:s}, stake bal: {:<,d} mutez, cur bal: {:<,d} mutez, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                    "amount: {:<,d} mutez, fee_amount: {:<,d} mutez, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                    "amount: {:<,d} mutez, fee_amount: {:<,d} mutez, fee_rate: {:.2f}, overestimate: {}, adjustment: {:<,d}, adjustment_amount: {:<,d}, payable: {:d}, skipped: {:d}, at-phase: {:d}, "
                     "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
                         pymnt_log.address,
                         pymnt_log.type,
@@ -180,8 +181,13 @@ class CsvCalculationFileParser:
                         pymnt_log.amount,
                         pymnt_log.service_fee_amount,
                         pymnt_log.service_fee_rate,
-                        "Y" if pymnt_log.payable else "N",
-                        "Y" if pymnt_log.skipped else "N",
+                        "pending"
+                        if early_payout
+                        else "{:d}".format(int(pymnt_log.overestimate)),
+                        pymnt_log.adjustment,
+                        pymnt_log.adjusted_amount,
+                        int(1) if pymnt_log.payable else int(0),
+                        int(1) if pymnt_log.skipped else int(0),
                         pymnt_log.skippedatphase,
                         pymnt_log.desc,
                         pymnt_log.paymentaddress,

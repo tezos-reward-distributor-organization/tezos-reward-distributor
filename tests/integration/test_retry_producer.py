@@ -5,7 +5,7 @@ from http import HTTPStatus
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
-from Constants import PaymentStatus
+from Constants import PaymentStatus, RewardsType
 from cli.client_manager import ClientManager
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer_abc import PaymentProducerABC
@@ -232,7 +232,7 @@ class TestRetryProducer(TestCase):
             ClientManager("", ""),
             nw,
             MagicMock(),
-            rewards_type="actual",
+            rewards_type=RewardsType.ACTUAL,
             dry_run=False,
         )
 

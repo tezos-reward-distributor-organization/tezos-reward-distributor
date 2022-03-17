@@ -530,7 +530,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 )
                 # we adjust the cycle we are paying out with the overestimate of the
                 # just completed cycle
-                adjustments[rl.address] = float(rl.overestimate)
+                adjustments[rl.address] = rl.overestimate
                 logger.debug(
                     f"Will try to recover {adjustments[rl.address]} mutez for {rl.address} based on past overpayment"
                 )
@@ -573,16 +573,18 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             reward_logs, total_amount = self.compute_rewards(
                 pymnt_cycle, current_cycle_rewards_type, network_config, adjustments
             )
-            total_recovered_adjustments = sum([rl.adjustment for rl in reward_logs])
-            total_adjustments_to_recover = sum(adjustments.values())
+            total_recovered_adjustments = int(
+                sum([rl.adjustment for rl in reward_logs])
+            )
+            total_adjustments_to_recover = int(sum(adjustments.values()))
             if total_adjustments_to_recover > 0:
                 logger.debug(
-                    "Total adjustments to recover is {:,}, total recovered adjustment is {:,}.".format(
+                    "Total adjustments to recover is {:<,d} mutez, total recovered adjustment is {:<,d} mutez.".format(
                         total_adjustments_to_recover, total_recovered_adjustments
                     )
                 )
                 logger.info(
-                    "After early payout of cycle {:s}, {:,} mutez were not recovered.".format(
+                    "After early payout of cycle {:s}, {:<,d} mutez were not recovered.".format(
                         str(completed_cycle),
                         total_adjustments_to_recover + total_recovered_adjustments,
                     )

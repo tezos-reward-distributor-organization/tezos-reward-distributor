@@ -143,7 +143,7 @@ def onservicefee(input):
 
 def onrewardstype(input):
     if not input:
-        input = "actual"
+        input = RewardsType.ACTUAL
 
     try:
         global parser

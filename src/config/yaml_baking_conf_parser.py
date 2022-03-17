@@ -312,13 +312,13 @@ class BakingYamlConfParser(YamlConfParser):
     def validate_rewards_type(self, conf_obj):
 
         if REWARDS_TYPE not in conf_obj or conf_obj[REWARDS_TYPE] is None:
-            conf_obj[REWARDS_TYPE] = "actual"
+            conf_obj[REWARDS_TYPE] = RewardsType.ACTUAL
             logger.warning(
                 "[config_parser] Parameter '{:s}' is missing or incorrectly configured. "
                 "Defaults to 'actual' rewards payout type.".format(REWARDS_TYPE)
             )
 
-        if conf_obj[REWARDS_TYPE] == "estimated":
+        if conf_obj[REWARDS_TYPE] == RewardsType.ESTIMATED:
             raise ConfigurationException(
                 "Setting 'rewards_type' to 'estimated' is no longer supported.\n"
                 "Please see https://tezos-reward-distributor-organization.github.io/tezos-reward-distributor/payouttiming.html\n"

@@ -302,13 +302,10 @@ class BatchPayer:
                     payment_item.desc += " Insufficient funds."
 
                 subject = "FAILED Payouts - Insufficient Funds"
-                message = (
-                    "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:<,d} mutez, is insufficient to pay cycle rewards of {:<,d} mutez. Including a safety margin of {} %.".format(
-                        payment_address_balance,
-                        estimated_amount_to_pay,
-                        int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
-                    )
+                message = "Payment attempt failed because of insufficient funds in the payout address. " "The current balance, {:<,d} mutez, is insufficient to pay cycle rewards of {:<,d} mutez. Including a safety margin of {} %.".format(
+                    payment_address_balance,
+                    estimated_amount_to_pay,
+                    int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
                 )
 
                 # Output to CLI, send notification using plugins
@@ -354,7 +351,7 @@ class BatchPayer:
             )
 
             logger.info(
-                "Payment of batch {} {}, in {} attempt(s)".format(
+                "Payment of batch {} {} in {} attempt(s)".format(
                     i_batch + 1, "failed" if status.is_fail() else "succeeded", attempt
                 )
             )
