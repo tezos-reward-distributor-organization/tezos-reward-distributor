@@ -92,9 +92,9 @@ class RewardLog:
 
     @staticmethod
     def ExternalInstance(file_name, address, amount):
-        rl = RewardLog(address, TYPE_EXTERNAL, 0)
-        rl.amount = amount
-        rl.desc = file_name
+        rl = RewardLog(address, TYPE_EXTERNAL, 0, 0)
+        rl.adjusted_amount = amount
+        rl.desc += file_name
         return rl
 
 

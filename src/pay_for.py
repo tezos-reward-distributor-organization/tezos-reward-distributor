@@ -61,7 +61,7 @@ def main(args):
     for line in payment_lines:
         pkh, amt = line.split(":")
         pkh = pkh.strip()
-        amt = float(amt.strip())
+        amt = int(amt.strip())
 
         payments_dict[pkh] = amt
 
@@ -124,15 +124,12 @@ def main(args):
     payment_items = []
     for key, value in payments_dict.items():
         pi = RewardLog.ExternalInstance(file_name, key, value)
-        pi.payment = pi.payment  # in mutez
         payment_items.append(pi)
 
         logger.info(
-            "Reward created for cycle %s address %s amount %f fee %f tz type %s",
-            pi.cycle,
+            "Reward created for address {s} amount {:<,d} mutez of type {s}",
             pi.address,
-            pi.payment,
-            pi.fee,
+            pi.adjusted_amount,
             pi.type,
         )
 
@@ -163,8 +160,7 @@ if __name__ == "__main__":
 
     argparser.add_argument(
         "paymentaddress",
-        help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
-        "to sign for the address, it is necessary to use an alias.",
+        help="Tezos account address (PKH) to make payments.",
     )
     argparser.add_argument(
         "payments_file",

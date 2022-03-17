@@ -26,7 +26,7 @@ from tzstats.tzstats_api_constants import (
     idx_income_double_baking_income,
     idx_income_double_endorsing_income,
 )
-from Constants import TZSTATS_PUBLIC_API_URL
+from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 
 logger = main_logger
 
@@ -100,7 +100,7 @@ class TzStatsRewardProviderHelper:
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)
         root["rewards_and_fees"] = int(
-            1e6
+            MUTEZ_PER_TEZ
             * (
                 float(resp[idx_income_baking_income])
                 + float(resp[idx_income_endorsing_income])
@@ -110,7 +110,7 @@ class TzStatsRewardProviderHelper:
         )
         # losses due to baker double baking, double endorsing or missing nonce
         root["equivocation_losses"] = int(
-            1e6
+            MUTEZ_PER_TEZ
             * (
                 float(resp[idx_income_lost_accusation_fees])
                 + float(resp[idx_income_lost_accusation_rewards])
@@ -119,7 +119,7 @@ class TzStatsRewardProviderHelper:
             )
         )
         root["denunciation_rewards"] = int(
-            1e6
+            MUTEZ_PER_TEZ
             * (
                 float(resp[idx_income_double_baking_income])
                 + float(resp[idx_income_double_endorsing_income])
@@ -127,7 +127,7 @@ class TzStatsRewardProviderHelper:
         )
         # losses due to being offline or not having enough bond
         root["offline_losses"] = int(
-            1e6
+            MUTEZ_PER_TEZ
             * (
                 float(resp[idx_income_missed_baking_income])
                 + float(resp[idx_income_missed_endorsing_income])
@@ -163,7 +163,7 @@ class TzStatsRewardProviderHelper:
 
             if delegator[idx_delegator_address] == self.baking_address:
                 root["delegate_staking_balance"] = int(
-                    1e6
+                    MUTEZ_PER_TEZ
                     * (
                         float(delegator[idx_balance])
                         + float(delegator[idx_baker_delegated])
@@ -172,7 +172,7 @@ class TzStatsRewardProviderHelper:
             else:
                 delegator_info = {"staking_balance": 0, "current_balance": 0}
                 delegator_info["staking_balance"] = int(
-                    1e6 * float(delegator[idx_balance])
+                    MUTEZ_PER_TEZ * float(delegator[idx_balance])
                 )
                 root["delegators_balances"][
                     delegator[idx_delegator_address]
@@ -224,7 +224,7 @@ class TzStatsRewardProviderHelper:
                 continue
 
             root["delegators_balances"][delegator_addr]["current_balance"] = int(
-                1e6 * float(delegator[idx_cb_current_balance])
+                MUTEZ_PER_TEZ * float(delegator[idx_cb_current_balance])
             )
             curr_bal_delegators.append(delegator_addr)
 
@@ -311,7 +311,7 @@ class TzStatsRewardProviderHelper:
         ret_list = {}
         for item in resp:
             ret_list[item[idx_cb_delegator_address]] = int(
-                1e6 * float(item[idx_cb_current_balance])
+                MUTEZ_PER_TEZ * float(item[idx_cb_current_balance])
             )
 
         return ret_list

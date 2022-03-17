@@ -2,7 +2,7 @@ import functools
 import os
 import threading
 from time import sleep
-from Constants import MUTEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
+from Constants import MUTEZ_PER_TEZ, VERSION, EXIT_PAYMENT_TYPE, PaymentStatus
 from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
@@ -322,7 +322,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict["cycle"] = payment_cycle
         stats_dict["network"] = self.args.network
         stats_dict["total_amount"] = int(
-            sum([rl.adjusted_amount for rl in payment_logs]) / MUTEZ
+            sum([rl.adjusted_amount for rl in payment_logs]) / MUTEZ_PER_TEZ
         )
         stats_dict["nb_pay"] = int(len(payment_logs))
         stats_dict["nb_failed"] = nb_failed

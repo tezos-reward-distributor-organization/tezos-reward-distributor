@@ -9,7 +9,7 @@ from Constants import (
     PUBLIC_NODE_URL,
     RewardsType,
     PRIVATE_SIGNER_URL,
-    MUTEZ,
+    MUTEZ_PER_TEZ,
 )
 from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
@@ -37,7 +37,7 @@ baking_config = make_config(
 
 
 PAYOUT_CYCLE = 51
-PAYMENT_ADDRESS_BALANCE = 1000 * MUTEZ
+PAYMENT_ADDRESS_BALANCE = int(1000 * MUTEZ_PER_TEZ)
 
 
 @patch("rpc.rpc_reward_api.requests.get", MagicMock(side_effect=mock_request_get))
@@ -87,7 +87,7 @@ def test_batch_payer_total_payout_amount():
         baking_cfg.get_founders_map(),
         baking_cfg.get_owners_map(),
         srvc_fee_calc,
-        baking_cfg.get_min_delegation_amount() * MUTEZ,
+        int(baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ),
         rules_model,
     )
 

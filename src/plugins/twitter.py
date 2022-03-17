@@ -1,6 +1,6 @@
 import logging
 from plugins import plugins
-from Constants import MUTEZ
+from Constants import MUTEZ_PER_TEZ
 
 # Plugin specific libs
 import tweepy
@@ -61,7 +61,7 @@ class TwitterPlugin(plugins.Plugin):
         # Replace template variables
         tweet = (
             self.tweet_text.replace("%CYCLE%", str(cycle))
-            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ, 2)))
+            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ_PER_TEZ, 2)))
             .replace("%NDELEGATORS%", str(nb_delegators))
         )
 

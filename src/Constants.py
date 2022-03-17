@@ -75,7 +75,10 @@ DEFAULT_NETWORK_CONFIG_MAP = {
 }
 
 
-MUTEZ = 1e6
+MUTEZ_PER_TEZ = 1e6
+ZERO_THRESHOLD = 1  # too less to payout in mutez
+MAXIMUM_ROUNDING_ERROR = 10  # mutez
+ALMOST_ZERO = 1e-6
 
 VERSION = 10.0
 

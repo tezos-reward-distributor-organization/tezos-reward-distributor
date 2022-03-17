@@ -5,6 +5,7 @@ from calc.calculate_phase_base import (
 )
 from model.baking_conf import MIN_DELEGATION_KEY
 from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
+from Constants import ALMOST_ZERO
 
 
 class CalculatePhase3(CalculatePhaseBase):
@@ -63,7 +64,7 @@ class CalculatePhase3(CalculatePhaseBase):
             total_service_fee_ratio += rl.service_fee_ratio
 
         # create founders parent record
-        if total_service_fee_ratio > 1e-6:  # >0
+        if total_service_fee_ratio > ALMOST_ZERO:
             rl = RewardLog(
                 address=TYPE_FOUNDERS_PARENT,
                 type=TYPE_FOUNDERS_PARENT,

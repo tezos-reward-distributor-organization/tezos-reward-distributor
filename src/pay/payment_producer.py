@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from _decimal import ROUND_HALF_DOWN, Decimal
 from time import sleep
 from requests import ReadTimeout, ConnectTimeout
-from Constants import MUTEZ, RunMode, RewardsType
+from Constants import MUTEZ_PER_TEZ, RunMode, RewardsType
 from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from exception.api_provider import ApiProviderException
@@ -60,8 +60,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
         self.founders_map = baking_cfg.get_founders_map()
-        self.min_delegation_amt_in_mutez = (
-            baking_cfg.get_min_delegation_amount() * MUTEZ
+        self.min_delegation_amt_in_mutez = int(
+            baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ
         )
         self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
         self.provider_factory = ProviderFactory(reward_data_provider)

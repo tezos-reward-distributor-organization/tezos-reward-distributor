@@ -8,6 +8,7 @@ from model.reward_log import (
     TYPE_OWNERS_PARENT,
     TYPE_FOUNDER,
 )
+from Constants import ALMOST_ZERO
 
 
 class TestCalculatePhase4(TestCase):
@@ -64,6 +65,6 @@ class TestCalculatePhase4(TestCase):
 
             ratio_sum += rl4.ratio4
 
-        self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.25, owner_ratio, delta=1e-6)
-        self.assertAlmostEqual(0.05, founder_ratio, delta=1e-6)
+        self.assertAlmostEqual(1.0, ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.25, owner_ratio, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.05, founder_ratio, delta=ALMOST_ZERO)

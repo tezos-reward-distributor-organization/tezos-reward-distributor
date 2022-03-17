@@ -6,7 +6,7 @@ import base58
 import json
 import math
 
-from Constants import PaymentStatus, MUTEZ
+from Constants import PaymentStatus, ZERO_THRESHOLD
 from log_config import main_logger, verbose_logger
 
 logger = main_logger
@@ -17,7 +17,6 @@ TZTX_GAS_LIMIT = 1420
 TZTX_STORAGE_LIMIT = 65
 RA_BURN_FEE = 257000  # 0.257 tez
 RA_STORAGE = 300
-ZERO_THRESHOLD = 1  # 1 mutez = 0.000001 tez
 PAYMENT_ACCOUNT_SAFETY_MARGIN = 1.05  # 105%
 
 MAX_TX_PER_BLOCK_TZ = 400
@@ -224,7 +223,7 @@ class BatchPayer:
             if payment_item.adjusted_amount >= zt:
                 payment_items.append(payment_item)
             else:
-                payment_item.paid = PaymentStatus.AVOIDED
+                payment_item.paid = PaymentStatus.DONE
                 payment_item.desc += " Payment amount < ZERO_THRESHOLD."
                 payment_logs.append(payment_item)
                 logger.info(
@@ -714,7 +713,7 @@ class BatchPayer:
 
             # if pymnt_amnt becomes < ZERO_THRESHOLD, don't pay
             if pymnt_amnt < ZERO_THRESHOLD:
-                payment_item.paid = PaymentStatus.AVOIDED
+                payment_item.paid = PaymentStatus.DONE
                 payment_item.delegator_transaction_fee = 0
                 payment_item.delegate_transaction_fee = 0
                 payment_item.desc += (

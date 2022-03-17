@@ -3,6 +3,7 @@ from unittest import TestCase
 from calc.calculate_phase3 import CalculatePhase3
 from calc.service_fee_calculator import ServiceFeeCalculator
 from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
+from Constants import ALMOST_ZERO
 
 
 class TestCalculatePhase3(TestCase):
@@ -53,9 +54,9 @@ class TestCalculatePhase3(TestCase):
             ratio_sum += rl3.ratio3
             service_fee_ratio_sum += rl3.service_fee_ratio
 
-        self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.15, service_fee_ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.4, founder_pl.ratio3, delta=1e-6)
+        self.assertAlmostEqual(1.0, ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.15, service_fee_ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.4, founder_pl.ratio3, delta=ALMOST_ZERO)
 
     def test_calculate_sepecials(self):
         rewards = []
@@ -108,9 +109,9 @@ class TestCalculatePhase3(TestCase):
             ratio_sum += rl3.ratio3
             service_fee_ratio_sum += rl3.service_fee_ratio
 
-        self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.17, service_fee_ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.42, founder_pl.ratio3, delta=1e-6)
+        self.assertAlmostEqual(1.0, ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.17, service_fee_ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.42, founder_pl.ratio3, delta=ALMOST_ZERO)
 
         for rl3 in new_rewards:
             if rl3.skipped:

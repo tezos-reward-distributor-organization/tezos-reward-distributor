@@ -1,5 +1,6 @@
 import functools
 
+from Constants import MAXIMUM_ROUNDING_ERROR, ALMOST_ZERO
 from calc.calculate_phase0 import CalculatePhase0
 from calc.calculate_phase1 import CalculatePhase1
 from calc.calculate_phase2 import CalculatePhase2
@@ -14,9 +15,6 @@ from model.reward_log import (
 from log_config import main_logger
 
 logger = main_logger.getChild("phased_calculator")
-
-MINOR_DIFF = 10
-MINOR_RATIO_DIFF = 1e-6
 
 
 class PhasedPaymentCalculator:
@@ -166,11 +164,11 @@ class PhasedPaymentCalculator:
         logger.info(
             "Difference between total rewards and sum of amounts allocated to delegators is {:<,d} mutez. "
             "This is due to floating point arithmetic. (max allowed diff is {:<,d} mutez)".format(
-                amnt_pay_diff, int(MINOR_DIFF)
+                amnt_pay_diff, int(MAXIMUM_ROUNDING_ERROR)
             )
         )
 
         return rwrd_logs, int(total_rwrd_amnt)
 
     def almost_equal(self, double1, double2):
-        return abs(double1 - double2) < MINOR_RATIO_DIFF
+        return abs(double1 - double2) < ALMOST_ZERO
