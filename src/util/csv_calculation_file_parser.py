@@ -223,7 +223,7 @@ class CsvCalculationFileParser:
                     int(1) if pymnt_log.payable else int(0),
                     int(1) if pymnt_log.skipped else int(0),
                     pymnt_log.skippedatphase if pymnt_log.skipped else int(-1),
-                    pymnt_log.desc if pymnt_log.desc else str("None"),
+                    str(pymnt_log.desc),
                     str(pymnt_log.paymentaddress),
                     str(rt),
                 ]
