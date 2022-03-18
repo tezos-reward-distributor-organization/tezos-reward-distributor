@@ -6,7 +6,7 @@ import base58
 import json
 import math
 
-from Constants import PaymentStatus, ZERO_THRESHOLD
+from Constants import PaymentStatus
 from log_config import main_logger, verbose_logger
 
 logger = main_logger
@@ -56,6 +56,7 @@ COST_PER_BYTE = 250
 MINIMUM_FEE_MUTEZ = 100
 MUTEZ_PER_GAS_UNIT = 0.1
 MUTEZ_PER_BYTE = 1
+ZERO_THRESHOLD = 1  # too less to payout in mutez
 
 # TODO: We need to refactor the whole class and all its functions.
 # Procedure needs to be transitioned to:

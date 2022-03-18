@@ -68,7 +68,7 @@ messages = {
     "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
     "reactivatezeroed": "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes",
     "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator",
-    "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
+    "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation or burn fees for kt accounts in general: 0 for delegator, 1 for delegate. Type enter for delegator",
     "paydenunciationrewards": "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Type enter for No",
     "supporters": "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
     "specials": "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",

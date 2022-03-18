@@ -146,6 +146,8 @@ Available configuration parameters are:
 
     delegator_pays_ra_fee : False
 
+    Note: This option does also apply to the burn fee needed to payout to kt accounts.
+
 **pay_denunciation_rewards**
   True/False - Baker may get rewarded for denunciating another baker's equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker's account, allowing the baker to reimburse the party at fault if they desire. Must be set to True when using RPC backend as RPC is not able to itemize rewards.
 

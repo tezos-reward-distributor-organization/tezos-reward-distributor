@@ -143,6 +143,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 and threading.current_thread() is not threading.main_thread()
             ):
                 _thread.interrupt_main()
+                logger.info("Sending KeyboardInterrupt signal.")
 
             if self.retry_fail_event:
                 self.retry_fail_event.set()
