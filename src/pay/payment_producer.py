@@ -18,7 +18,7 @@ from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
 from util.csv_calculation_file_parser import CsvCalculationFileParser
-from util.dir_utils import get_calculation_report_file
+from util.dir_utils import get_calculation_report_file_path
 from util.disk_is_full import disk_is_full
 
 logger = main_logger.getChild("payment_producer")
@@ -479,7 +479,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 str(completed_cycle)
             )
         )
-        completed_cycle_report_file_path = get_calculation_report_file(
+        completed_cycle_report_file_path = get_calculation_report_file_path(
             self.calculations_dir, completed_cycle
         )
         adjustments = {}
@@ -493,6 +493,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 reward_logs_from_report,
                 total_amount_from_report,
                 rewards_type_from_report,
+                _,
             ) = CsvCalculationFileParser().parse(
                 completed_cycle_report_file_path, self.baking_address
             )
@@ -592,7 +593,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 )
 
             # 3- create calculations report file. This file contains calculations details
-            report_file_path = get_calculation_report_file(
+            report_file_path = get_calculation_report_file_path(
                 self.calculations_dir, pymnt_cycle
             )
             logger.debug("Creating calculation report (%s)", report_file_path)

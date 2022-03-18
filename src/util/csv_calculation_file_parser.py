@@ -24,13 +24,32 @@ class CsvCalculationFileParser:
                 for row in dict_rows
                 if row["address"] != baking_address
             ]
+
+            early_payout = [
+                self.is_early_payout(row)
+                for row in dict_rows
+                if row["address"] == baking_address
+            ][0]
+
             baker_record = [
                 self.from_payment_csv_dict_row(row)
                 for row in dict_rows
                 if row["address"] == baking_address
             ][0]
 
-            return records, baker_record.amount, RewardsType(baker_record.rewards_type)
+            return (
+                records,
+                baker_record.amount,
+                RewardsType(baker_record.rewards_type),
+                early_payout,
+            )
+
+    @staticmethod
+    def is_early_payout(row):
+        if "overestimate" in row:
+            return True if row["overestimate"] == "pending" else False
+        else:
+            return False
 
     @staticmethod
     def from_payment_csv_dict_row(row):
@@ -47,11 +66,27 @@ class CsvCalculationFileParser:
                 int(0) if row["overestimate"] == "pending" else int(row["overestimate"])
             )
         else:
-            rl.overestimate = 0
+            rl.overestimate = int(0)
         rl.adjustment = int(row["adjustment"]) if "adjustment" in row else int(0)
         rl.adjusted_amount = int(
             row["adjusted_amount"] if "adjusted_amount" in row else int(row["amount"])
         )
+        if "delegate_transaction_fee" in row:
+            rl.delegate_transaction_fee = (
+                int(0)
+                if row["delegate_transaction_fee"] == "pending"
+                else int(row["delegate_transaction_fee"])
+            )
+        else:
+            rl.delegate_transaction_fee = int(0)
+        if "delegator_transaction_fee" in row:
+            rl.delegator_transaction_fee = (
+                int(0)
+                if row["delegator_transaction_fee"] == "pending"
+                else int(row["delegator_transaction_fee"])
+            )
+        else:
+            rl.delegator_transaction_fee = int(0)
         rl.payable = int(row["payable"])
         rl.skippedatphase = int(row["skipped"])
         rl.desc = str(row["desc"])
@@ -73,6 +108,7 @@ class CsvCalculationFileParser:
         rewards_type,
         baking_address,
         early_payout,
+        fees_simulated=False,
     ):
         # TODO: Think about chaning this to the actual strings
         if rewards_type.isEstimated():
@@ -101,6 +137,8 @@ class CsvCalculationFileParser:
                     "overestimate",
                     "adjustment",
                     "adjusted_amount",
+                    "delegate_transaction_fee",
+                    "delegator_transaction_fee",
                     "payable",
                     "skipped",
                     "atphase",
@@ -111,7 +149,6 @@ class CsvCalculationFileParser:
             )
 
             # Note: values for True and False are marked with "0" and "1" in the excel for backwards compatibility
-
             # First row is for the baker
             csv_writer.writerow(
                 [
@@ -130,11 +167,25 @@ class CsvCalculationFileParser:
                         "pending"
                         if early_payout
                         else int(sum([pl.overestimate for pl in payment_logs]))
-                    ),  # overestimate
+                    ),  # overestimates
                     int(sum([pl.adjustment for pl in payment_logs])),  # adjustments
                     int(
                         sum([pl.adjusted_amount for pl in payment_logs])
                     ),  # adjustment_amounts
+                    (
+                        "pending"
+                        if not fees_simulated
+                        else int(
+                            sum([pl.delegate_transaction_fee for pl in payment_logs])
+                        )
+                    ),  # delegate_transaction_fees
+                    (
+                        "pending"
+                        if not fees_simulated
+                        else int(
+                            sum([pl.delegator_transaction_fee for pl in payment_logs])
+                        )
+                    ),  # delegator_transaction_fees
                     int(0),  # not payable
                     int(0),  # not skipped
                     int(-1),  #
@@ -159,6 +210,16 @@ class CsvCalculationFileParser:
                     ("pending" if early_payout else int(pymnt_log.overestimate)),
                     int(pymnt_log.adjustment),
                     int(pymnt_log.adjusted_amount),
+                    (
+                        "pending"
+                        if not fees_simulated
+                        else int(pymnt_log.delegate_transaction_fee)
+                    ),
+                    (
+                        "pending"
+                        if not fees_simulated
+                        else int(pymnt_log.delegator_transaction_fee)
+                    ),
                     int(1) if pymnt_log.payable else int(0),
                     int(1) if pymnt_log.skipped else int(0),
                     pymnt_log.skippedatphase if pymnt_log.skipped else int(-1),
@@ -170,7 +231,7 @@ class CsvCalculationFileParser:
 
                 logger.debug(
                     "Reward created for {:s} type: {:s}, stake bal: {:<,d} mutez, cur bal: {:<,d} mutez, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                    "amount: {:<,d} mutez, fee_amount: {:<,d} mutez, fee_rate: {:.2f}, overestimate: {}, adjustment: {:<,d}, adjustment_amount: {:<,d}, payable: {:d}, skipped: {:d}, at-phase: {:d}, "
+                    "amount: {:<,d} mutez, fee_amount: {:<,d} mutez, fee_rate: {:.2f}, overestimate: {}, adjustment: {:<,d}, adjustment_amount: {:<,d}, delegate_transaction_fee: {}, delegator_transaction_fee: {}, payable: {:d}, skipped: {:d}, at-phase: {:d}, "
                     "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
                         pymnt_log.address,
                         pymnt_log.type,
@@ -186,6 +247,12 @@ class CsvCalculationFileParser:
                         else "{:d}".format(int(pymnt_log.overestimate)),
                         pymnt_log.adjustment,
                         pymnt_log.adjusted_amount,
+                        "pending"
+                        if not fees_simulated
+                        else "{:d}".format(int(pymnt_log.delegate_transaction_fee)),
+                        "pending"
+                        if not fees_simulated
+                        else "{:d}".format(int(pymnt_log.delegator_transaction_fee)),
                         int(1) if pymnt_log.payable else int(0),
                         int(1) if pymnt_log.skipped else int(0),
                         pymnt_log.skippedatphase,

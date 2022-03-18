@@ -26,7 +26,8 @@ class CsvPaymentFileParser:
         reward_log.cycle = cycle
         reward_log.adjusted_amount = int(row["amount"])
         reward_log.hash = None if row["hash"] == "None" else row["hash"]
-        reward_log.paid = PaymentStatus(int(row["paid"]))
+        reward_log.paid = PaymentStatus[str(row["paid"]).upper()]
+        reward_log.desc = str(row["description"])
 
         return reward_log
 
@@ -44,8 +45,6 @@ class CsvPaymentFileParser:
                         "amount",
                         "hash",
                         "paid",
-                        "delegate_transaction_fee",
-                        "delegator_transaction_fee",
                         "description",
                     ]
                 )
@@ -58,8 +57,6 @@ class CsvPaymentFileParser:
                             int(payment_log.adjusted_amount),
                             str(payment_log.hash) if payment_log.hash else "None",
                             str(payment_log.paid.name).lower(),
-                            int(payment_log.delegate_transaction_fee),
-                            int(payment_log.delegator_transaction_fee),
                             str(payment_log.desc),
                         ]
                     )

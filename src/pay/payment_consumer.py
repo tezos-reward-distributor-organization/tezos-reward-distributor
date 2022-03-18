@@ -18,7 +18,12 @@ from pay.batch_payer import BatchPayer
 from util.disk_is_full import disk_is_full
 from stats.stats_publisher import stats_publisher
 from util.csv_payment_file_parser import CsvPaymentFileParser
-from util.dir_utils import payment_report_file_path, get_busy_file
+from util.csv_calculation_file_parser import CsvCalculationFileParser
+from util.dir_utils import (
+    get_payment_report_file_path,
+    get_calculation_report_file_path,
+    get_busy_file,
+)
 
 logger = main_logger.getChild("payment_consumer")
 
@@ -57,6 +62,8 @@ class PaymentConsumer(threading.Thread):
         delegator_pays_xfer_fee=True,
         dest_map=None,
         publish_stats=True,
+        calculations_dir=None,
+        baking_address=None,
     ):
         super(PaymentConsumer, self).__init__()
 
@@ -77,6 +84,8 @@ class PaymentConsumer(threading.Thread):
         self.network_config = network_config
         self.plugins_manager = plugins_manager
         self.rewards_type = rewards_type
+        self.calculations_dir = calculations_dir
+        self.baking_address = baking_address
 
         logger.debug('Consumer "%s" created', self.name)
 
@@ -169,6 +178,12 @@ class PaymentConsumer(threading.Thread):
                 nb_failed, payment_logs, pymnt_cycle, already_paid_items
             )
 
+            # 5.1- modify calculations report
+            if total_attempts > 0:
+                self.add_transaction_fees_to_calculation_report(
+                    payment_logs, pymnt_cycle
+                )
+
             # 6- Clean failure reports
             self.clean_failed_payment_reports(pymnt_cycle, nb_failed == 0)
 
@@ -241,7 +256,7 @@ class PaymentConsumer(threading.Thread):
     def clean_failed_payment_reports(self, payment_cycle, success):
         # 1- generate path of a assumed failure report file
         # if it exists and payments were successful, remove it
-        failure_report_file = payment_report_file_path(
+        failure_report_file = get_payment_report_file_path(
             self.payments_dir, payment_cycle, 1
         )
         if success and os.path.isfile(failure_report_file):
@@ -280,12 +295,12 @@ class PaymentConsumer(threading.Thread):
             payout for payout in payouts if payout.paid == PaymentStatus.FAIL
         ]
 
-        report_file = payment_report_file_path(self.payments_dir, payment_cycle, 0)
+        report_file = get_payment_report_file_path(self.payments_dir, payment_cycle, 0)
         CsvPaymentFileParser().write(report_file, successful_payouts)
         logger.info("Payment report is created at '{}'".format(report_file))
 
         if nb_failed > 0:
-            report_file = payment_report_file_path(
+            report_file = get_payment_report_file_path(
                 self.payments_dir, payment_cycle, nb_failed
             )
             CsvPaymentFileParser().write(report_file, unsuccessful_payouts)
@@ -297,6 +312,51 @@ class PaymentConsumer(threading.Thread):
                     pl.address, pl.type, pl.adjusted_amount, pl.paid
                 )
             )
+
+        return report_file
+
+    def add_transaction_fees_to_calculation_report(self, payment_logs, payment_cycle):
+        if self.calculations_dir is not None:
+            report_file = get_calculation_report_file_path(
+                self.calculations_dir, payment_cycle
+            )
+
+            (
+                reward_logs_from_report,
+                total_amount_from_report,
+                rewards_type_from_report,
+                early_payout,
+            ) = CsvCalculationFileParser().parse(report_file, self.baking_address)
+
+            payment_logs_dict = {}
+            for pl in payment_logs:
+                payment_logs_dict.__setitem__(pl.address, pl)
+
+            for rl in reward_logs_from_report:
+                # overwrite only delegate_transaction_fee and delegator_transaction_fee in report csv file, leave the rest alone
+                if rl.address in payment_logs_dict:
+                    rl.delegate_transaction_fee = payment_logs_dict[
+                        rl.address
+                    ].delegate_transaction_fee
+                    rl.delegator_transaction_fee = payment_logs_dict[
+                        rl.address
+                    ].delegator_transaction_fee
+                else:
+                    rl.desc += " Not in payment log."
+
+            CsvCalculationFileParser().write(
+                reward_logs_from_report,
+                report_file,
+                total_amount_from_report,
+                rewards_type_from_report,
+                self.baking_address,
+                early_payout,
+                True,
+            )
+
+            logger.info("Simulated transaction_fees added to calculations file.")
+        else:
+            logger.info("Calculations file not modified.")
 
         return report_file
 
