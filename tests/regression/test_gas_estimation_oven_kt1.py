@@ -10,6 +10,7 @@ from Constants import (
     RewardsType,
     PRIVATE_SIGNER_URL,
     MUTEZ_PER_TEZ,
+    PaymentStatus,
 )
 from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
@@ -140,7 +141,7 @@ def test_batch_payer_total_payout_amount():
 
     batch_payer = BatchPayer(
         node_url=node_endpoint,
-        pymnt_addr="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+        pymnt_addr="tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ",
         clnt_mngr=ClientManager(node_endpoint, PRIVATE_SIGNER_URL),
         delegator_pays_ra_fee=True,
         delegator_pays_xfer_fee=True,
@@ -155,14 +156,20 @@ def test_batch_payer_total_payout_amount():
 
     # Do the payment
     (
-        payment_logs,
+        _,
         total_attempts,
         total_payout_amount,
         number_future_payable_cycles,
     ) = batch_payer.pay(reward_logs, dry_run=True)
 
-    # assert total_attempts == 3
-    # assert total_payout_amount == 238205105
-    # assert (
-    #    PAYMENT_ADDRESS_BALANCE // total_payout_amount
-    # ) - 1 == number_future_payable_cycles
+    # Payment does not have status done, paid or injected thus the total payout amount is zero
+    assert total_payout_amount == 0
+    assert number_future_payable_cycles == 2
+    assert total_attempts == 3
+
+    # Check the adjusted amount
+    assert reward_logs[0].adjusted_amount == 40418486
+    assert reward_logs[1].adjusted_amount == 10581272
+    assert reward_logs[2].adjusted_amount == 109732835
+    assert reward_logs[3].adjusted_amount == 48362127
+    assert reward_logs[4].adjusted_amount == 29116310
