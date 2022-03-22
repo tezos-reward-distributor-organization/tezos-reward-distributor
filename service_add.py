@@ -1,8 +1,8 @@
 import os
 import sys
 import argparse
-sys.path.insert(0, './src')
-from Constants import BASE_DIR, CONFIG_DIR
+from src.Constants import BASE_DIR, CONFIG_DIR
+
 
 def command_line_arguments():
     parser = argparse.ArgumentParser(
