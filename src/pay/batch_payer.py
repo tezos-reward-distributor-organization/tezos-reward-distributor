@@ -233,7 +233,7 @@ class BatchPayer:
                     )
                 )
 
-        if not payment_items:
+        if len(payment_items) == 0:
             logger.info("No payment items found, returning...")
             return payment_logs, 0, 0, 0
 
@@ -347,7 +347,7 @@ class BatchPayer:
         amount_to_pay = delegator_transaction_fees = delegate_transaction_fees = 0
 
         for i_batch, payment_items_chunk in enumerate(payment_items_chunks):
-            logger.debug("Payment of batch {} started".format(i_batch + 1))
+            logger.info("Payment of batch {} started".format(i_batch + 1))
             status = PaymentStatus.UNDEFINED
             attempt, status = self.pay_single_batch(
                 payment_items_chunk, dry_run=dry_run, op_counter=op_counter
