@@ -75,8 +75,11 @@ def args_validation(args, argparser):
 
     if args.release_override:
         release_override = args.release_override
-        if release_override not in [-11, -5, 0]:
-            argparser.error("release-override must be -11, -5 or 0. Default is 0")
+        preserved_cycles = default_network_config_map[network]["NB_FREEZE_CYCLE"]
+        estimated_reward_override = - preserved_cycles * 2 - 1
+        frozen_reward_override = - preserved_cycles
+        if release_override not in [estimated_reward_override, frozen_reward_override, 0]:
+            argparser.error(f"For {network}, release-override must be {estimated_reward_override} (to pay estimated rewards), {frozen_reward_override} (to pay frozen rewards) or 0. Default is 0.")
 
     default_base_dir = os.path.normpath(BASE_DIR)
     default_log_file = os.path.join(
