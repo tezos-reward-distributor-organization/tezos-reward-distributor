@@ -4,8 +4,6 @@ import argparse
 sys.path.insert(0, './src')
 from Constants import BASE_DIR, CONFIG_DIR
 # This should match the same as what is found in srv/Constants
-BASE_DIR = "~/pymnt"
-CONFIG_DIR = "cfg"
 
 
 def command_line_arguments():
