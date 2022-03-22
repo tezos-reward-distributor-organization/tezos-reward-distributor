@@ -39,6 +39,8 @@ If that doesn't make sense to you, please read the [YAML format documentation](h
 
 This plugin will send the configured recipients an 'administrative style' email of payouts status with a CSV report attached.
 
+**NOTE**: The file `email.ini` has been deprecated and is no longer used.
+
 ### Parameters
 
 * smtp_user: (Required unless no login is used) The username for SMTP authentication
@@ -85,6 +87,14 @@ plugins:
       - alice@domain.com
 ```
 
+**Note about environment variables**:
+
+To avoid the storage of sensitive values, smtp_user and smtp_pass can be defined as environment values. 
+
+Environment variables will supersede yaml values.
+* smtp_user will become SMTP_USER
+* smtp_pass will become SMTP_PASS
+
 ## Telegram Plugin
 
 This plugin allows payouts notifications to be sent via Telegram bot to specific chatIds, including groups.
@@ -115,7 +125,7 @@ plugins:
       - 827384777
     bot_api_key: 988877766:SKDJFLSJDFJLJSKDFJLKSDJFLKJDF
     telegram_text: >
-      &#x2728; Reward for cycle %CYCLE% <b>complete</b>! We had %NDELEGATORS% <i>delegators</i> in the cycle and paid out %TREWARDS% XTZ in rewards!
+      &#x2728; Reward for cycle %CYCLE% <b>complete</b>! We had %NDELEGATORS% <i>delegators</i> in the cycle and paid out %TREWARDS% tez in rewards!
 ```
 
 ### Example Result
@@ -156,14 +166,14 @@ plugins:
     access_token: YYYYYYYY
     access_secret: WWWWWWWW
     tweet_text: >
-      Reward for cycle %CYCLE% complete! We had %NDELEGATORS% delegators in the cycle and paid out %TREWARDS% XTZ in rewards. #ourbakery #rewards #tezos
+      Reward for cycle %CYCLE% complete! We had %NDELEGATORS% delegators in the cycle and paid out %TREWARDS% tez in rewards. #ourbakery #rewards #tezos
 ```
 
 The above example configuration will produce a tweet that looks like this:
 
 ```
 Reward for cycle 290 complete! We had 133 delegators
-in the cycle and paid out 1234.98 XTZ in rewards.
+in the cycle and paid out 1234.98 tez in rewards.
 #ourbakery #rewards #tezos
 ```
 
@@ -190,7 +200,7 @@ plugins:
     send_admin: False
     discord_text: >
       Rewards for cycle %CYCLE% are completed.
-      We paid out %TREWARDS% XTZ in rewards to %NDELEGATORS% delegators.        
+      We paid out %TREWARDS% tez in rewards to %NDELEGATORS% delegators.        
 ```
 
 ### Example Result

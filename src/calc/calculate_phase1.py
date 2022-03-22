@@ -67,10 +67,8 @@ class CalculatePhase1(CalculatePhaseBase):
 
         # total reward amount needs to be diminished at the same rate total balance diminishes
         new_total_amnt_multiplier = new_total_balance / total_balance
-        new_total_amount = int(
-            Decimal(total_amount * new_total_amnt_multiplier).to_integral_value(
-                rounding=ROUND_HALF_DOWN
-            )
-        )
+        new_total_amount = Decimal(
+            total_amount * new_total_amnt_multiplier
+        ).to_integral_value(rounding=ROUND_HALF_DOWN)
 
-        return rewards, new_total_amount
+        return rewards, int(new_total_amount)

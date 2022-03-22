@@ -56,17 +56,15 @@ Available configuration parameters are:
   There are three options for calculating the total rewards earned by a baker at the end of each cycle. If this parameter is missing, 'actual' rewards take affect.
   
   - 'actual': Rewards are calculated based on the actual number of bakes, at any priority, and any endorsements. Transaction fees and other block rewards are included in the rewards. If a bake or endorsement is missed or rewards are lost again due to accusations, rewards are not earned and therefore not included.
-  - 'estimated': Rewards are calculated using the number of baking rights granted at priority 0, plus the count of all endorsing slots. If a bake or endorsement is missed, rewards are calculated as if there was no miss. No additional block rewards or transaction fees are included in this method. This allows to pay future rewards, before the cycle actually runs.
   - 'ideal': Rewards are calculated assuming ideal behaviour of the baker, and actual behaviour of other bakers. If a bake or endorsement is missed, rewards are paid out despite not having been earned. Lost income due to other baker downtime is not included. Transaction fees and other block rewards are included in the rewards. Any lost rewards due to double-baking, double endorsing, or missing nonces are compensated at the expense of the baker. Select this type of rewards to insure against downtime of your baker but still account for real world conditions. This way, you will get optimal ranking in baker evaluation services despite any downtime.
 
   Example::
 
     rewards_type: actual
-
-  Note that 'actual' payouts will throw an error if:
-
-#. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -5, since the payouts are done before the cycle is completed, or
-#. The 'RELEASE_OVERRIDE' parameter is set to a value inferior or equal to -1, and the backend API is a Tezos node RPC, as actual payout calculation in this context is not implemented.
+    
+  Note::
+  
+  Setting 'RELEASE_OVERRIDE' to '-11' will trigger estimated payouts which are adjusted later on. See: :ref:`payout_timing`
 
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.
@@ -91,9 +89,9 @@ Available configuration parameters are:
   
   Example::
 
-    Current Baker Balance: 17,400 XTZ
-    Total Delegations: 69,520 XTZ
-    Total Staked: 86,920 XTZ
+    Current Baker Balance: 17,400 tez
+    Total Delegations: 69,520 tez
+    Total Staked: 86,920 tez
 
     service_fee: 9
     owners_map:
@@ -101,7 +99,7 @@ Available configuration parameters are:
        'tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17' : 0.4,
        'tz1VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf' : 0.2}
   
-  Charlie, and Dave, have each transfered 6,960 Tez to the baker address. Edwin has transfered 3,480 Tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: *service_fee*). That 9% is dispersed to any *founders*. If there are no founders, that 9% remains in the baker's balance.
+  Charlie, and Dave, have each transfered 6,960 tez to the baker address. Edwin has transfered 3,480 tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: *service_fee*). That 9% is dispersed to any *founders*. If there are no founders, that 9% remains in the baker's balance.
   The baker address is technically a delegator to itself. Its share of rewards are part of the overall cycle rewards. Charlie, Dave, and Edwin divide the "baker address rewards" as per the ratios in *owners_map*. Additionally, owners are *not* subject to the *service_fee*.
 
 **specials_map**
@@ -121,7 +119,7 @@ Available configuration parameters are:
                     'tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17'}
 
 **min_delegation_amt**
-  A minimum delegation amount can be set here. If this value is set to 10, 10 XTZ are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.
+  A minimum delegation amount can be set here. If this value is set to 10, 10 tez are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.
 
   Example::
 
@@ -147,6 +145,8 @@ Available configuration parameters are:
   Example::
 
     delegator_pays_ra_fee : False
+
+    Note: This option does also apply to the burn fee needed to payout to kt accounts.
 
 **pay_denunciation_rewards**
   True/False - Baker may get rewarded for denunciating another baker's equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker's account, allowing the baker to reimburse the party at fault if they desire. Must be set to True when using RPC backend as RPC is not able to itemize rewards.

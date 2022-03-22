@@ -143,7 +143,7 @@ class RpcRewardApiImpl(RewardApi):
                     if r["priority"] == 0:
                         if self.__get_block_author(r["level"]) != self.baking_address:
                             logger.warning(
-                                "Found missed baking slot {}, adding {} mutez reward anyway.".format(
+                                "Found missed baking slot {}, adding {:<,d} mutez reward anyway.".format(
                                     r, self.block_reward
                                 )
                             )

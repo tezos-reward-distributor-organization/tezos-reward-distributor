@@ -88,7 +88,7 @@ class Args:
         self.signer_endpoint = ""
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = node_addr_public
-        self.reports_base = join(dirname(__file__), reward_data_provider)
+        self.base_directory = join(dirname(__file__), reward_data_provider)
         self.config_dir = dirname(__file__)
         self.dry_run = True
         self.dry_run_no_consumers = True
@@ -131,7 +131,7 @@ def make_config(baking_address, payment_address, service_fee, min_delegation_amt
         tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP: tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs
         tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: TOB
         mindelegation: TOB
-    service_fee: {:d}
+    service_fee: {:f}
     specials_map: {{}}
     supporters_set: !!set {{}}
     plugins:
@@ -144,7 +144,7 @@ def make_config(baking_address, payment_address, service_fee, min_delegation_amt
 def mock_request_get(url, timeout):
 
     path = urlparse(url).path
-    # logger.debug("Mock URL: {}".format(path))
+    # print("Mock URL: {}".format(path))
 
     if path == "/chains/main/blocks/head":
         return MagicMock(

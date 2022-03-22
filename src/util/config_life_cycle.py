@@ -7,6 +7,7 @@ from config.yaml_baking_conf_parser import BakingYamlConfParser
 from fsm.TransitionsFsmBuilder import TransitionsFsmBuilder
 from log_config import main_logger
 from model.baking_conf import BakingConf
+from Constants import CONFIG_DIR
 
 logger = main_logger
 
@@ -47,7 +48,9 @@ class ConfigLifeCycle:
             ConfigState.INITIAL,
             on_leave=lambda e: logger.debug("Loading baking configuration file ..."),
         )
-        fsm_builder.add_state(ConfigState.READ, on_enter=self.do_read_cfg_file)
+        fsm_builder.add_state(
+            ConfigState.READ, on_enter=self.do_read_configuration_file
+        )
         fsm_builder.add_state(ConfigState.BUILT, on_enter=self.do_build_parser)
         fsm_builder.add_state(ConfigState.PARSED, on_enter=self.do_parse_cfg)
         fsm_builder.add_state(ConfigState.VALIDATED, on_enter=self.do_validate_cfg)
@@ -84,8 +87,12 @@ class ConfigLifeCycle:
         self.fsm.trigger_event(ConfigEvent.PROCESS)
         self.fsm.trigger_event(ConfigEvent.COMPLETE)
 
-    def do_read_cfg_file(self, e):
-        config_dir = os.path.expanduser(self.args.config_dir)
+    def do_read_configuration_file(self, e):
+        config_dir = os.path.join(
+            os.path.expanduser(os.path.normpath(self.args.base_directory)),
+            CONFIG_DIR,
+            "",
+        )
 
         # create configuration directory if it is not present
         # so that user can easily put his configuration there

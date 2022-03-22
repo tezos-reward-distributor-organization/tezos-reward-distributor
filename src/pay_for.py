@@ -12,18 +12,20 @@ from launch_common import (
     print_banner,
     add_argument_network,
     add_argument_provider,
-    add_argument_reports_base,
-    add_argument_config_dir,
+    add_argument_base_directory,
     add_argument_node_endpoint,
     add_argument_dry,
     add_argument_dry_no_consumer,
     add_argument_signer_endpoint,
     add_argument_docker,
     add_argument_verbose,
+    add_argument_log_file,
+    args_validation,
 )
 from model.reward_log import RewardLog
 from pay.payment_batch import PaymentBatch
 from pay.payment_consumer import PaymentConsumer
+from Constants import REPORTS_DIR, SIMULATIONS_DIR
 from util.dir_utils import (
     get_payment_root,
     get_successful_payments_dir,
@@ -40,7 +42,6 @@ payments_queue = queue.Queue(BUF_SIZE)
 logger = main_logger
 
 life_cycle = ProcessLifeCycle()
-MUTEZ = 1
 
 
 def main(args):
@@ -48,16 +49,8 @@ def main(args):
         "Arguments Configuration = {}".format(json.dumps(args.__dict__, indent=1))
     )
 
-    # 1- find where configuration is
-    config_dir = os.path.expanduser(args.config_dir)
-
-    # create configuration directory if it is not present
-    # so that user can easily put his configuration there
-    if config_dir and not os.path.exists(config_dir):
-        os.makedirs(config_dir)
-
-    # 3- load payments file
-    payments_file = os.path.expanduser(args.payments_file)
+    # Load payments file
+    payments_file = os.path.expanduser(os.path.normpath(args.payments_file))
     if not os.path.isfile(payments_file):
         raise Exception("payments_file ({}) does not exist.".format(payments_file))
 
@@ -68,20 +61,20 @@ def main(args):
     for line in payment_lines:
         pkh, amt = line.split(":")
         pkh = pkh.strip()
-        amt = float(amt.strip())
+        amt = int(amt.strip())
 
         payments_dict[pkh] = amt
 
     if not payments_dict:
         raise Exception("No payments to process")
 
-    # 6- is it a reports run
+    # Check if dry-run
     dry_run = args.dry_run
 
-    # 7- get reporting directories
-    reports_dir = os.path.expanduser(args.reports_dir)
+    # Get reporting directories
+    reports_dir = os.path.expanduser(os.path.normpath(args.base_directory))
 
-    # 8- Check the disk size at the reports dir location
+    # Check the disk size at the reports dir location
     if disk_is_full(reports_dir):
         raise Exception(
             "Disk is full at {}. Please free space to continue saving reports.".format(
@@ -92,9 +85,11 @@ def main(args):
     # if in reports run mode, do not create consumers
     # create reports in reports directory
     if dry_run:
-        reports_dir = os.path.expanduser("./reports")
+        reports_dir = os.path.join(reports_dir, SIMULATIONS_DIR, "")
+    else:
+        reports_dir = os.path.join(reports_dir, REPORTS_DIR, "")
 
-    reports_dir = os.path.join(reports_dir, "manual")
+    reports_dir = os.path.join(reports_dir, "manual", "")
 
     payments_root = get_payment_root(reports_dir, create=True)
     get_successful_payments_dir(payments_root, create=True)
@@ -129,51 +124,17 @@ def main(args):
     payment_items = []
     for key, value in payments_dict.items():
         pi = RewardLog.ExternalInstance(file_name, key, value)
-        pi.payment = pi.payment * MUTEZ
         payment_items.append(pi)
 
         logger.info(
-            "Reward created for cycle %s address %s amount %f fee %f tz type %s",
-            pi.cycle,
+            "Reward created for address {s} amount {:<,d} mutez of type {s}",
             pi.address,
-            pi.payment,
-            pi.fee,
+            pi.adjusted_amount,
             pi.type,
         )
 
     payments_queue.put(PaymentBatch(None, 0, payment_items))
     payments_queue.put(PaymentBatch(None, 0, [RewardLog.ExitInstance()]))
-
-
-def get_baking_configuration_file(config_dir):
-    config_file = None
-    for file in os.listdir(config_dir):
-        if file.endswith(".yaml") and not file.startswith("master"):
-            if config_file:
-                raise Exception(
-                    "Application only supports one baking configuration file. Found at least 2 {}, {}".format(
-                        config_file, file
-                    )
-                )
-            config_file = file
-    if config_file is None:
-        raise Exception(
-            "Unable to find any '.yaml' configuration files inside configuration directory({})".format(
-                config_dir
-            )
-        )
-
-    return os.path.join(config_dir, config_file)
-
-
-class ReleaseOverrideAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if not -11 <= values:
-            parser.error(
-                "Valid range for release-override({0}) is [-11,) ".format(option_string)
-            )
-
-        setattr(namespace, "realase_override", values)
 
 
 if __name__ == "__main__":
@@ -185,30 +146,32 @@ if __name__ == "__main__":
             )
         )
 
-    parser = argparse.ArgumentParser()
-    add_argument_network(parser)
-    add_argument_provider(parser)
-    add_argument_reports_base(parser)
-    add_argument_config_dir(parser)
-    add_argument_node_endpoint(parser)
-    add_argument_dry(parser)
-    add_argument_dry_no_consumer(parser)
-    add_argument_signer_endpoint(parser)
-    add_argument_docker(parser)
-    add_argument_verbose(parser)
+    argparser = argparse.ArgumentParser()
+    add_argument_network(argparser)
+    add_argument_provider(argparser)
+    add_argument_base_directory(argparser)
+    add_argument_node_endpoint(argparser)
+    add_argument_dry(argparser)
+    add_argument_dry_no_consumer(argparser)
+    add_argument_signer_endpoint(argparser)
+    add_argument_docker(argparser)
+    add_argument_verbose(argparser)
+    add_argument_log_file(argparser)
 
-    parser.add_argument(
+    argparser.add_argument(
         "paymentaddress",
-        help="tezos account address (PKH) or an alias to make payments. If tezos signer is used "
-        "to sign for the address, it is necessary to use an alias.",
+        help="Tezos account address (PKH) to make payments.",
     )
-    parser.add_argument(
+    argparser.add_argument(
         "payments_file",
-        help="File of payment lines. Each line should contain PKH:amount. "
+        help="File of payment lines. Each line should contain PKH:amount in mutez. "
         "For example: KT1QRZLh2kavAJdrQ6TjdhBgjpwKMRfwCBmQ:123.33",
     )
 
-    args = parser.parse_args()
+    args = argparser.parse_args()
+    # Basic validations
+    # You only have access to the parsed values after you parse_args()
+    args = args_validation(args, argparser)
 
     init(args.syslog, args.log_file, args.verbose == "on", mode="payfor")
 

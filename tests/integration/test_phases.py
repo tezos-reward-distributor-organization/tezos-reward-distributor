@@ -3,8 +3,7 @@ from time import sleep
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from Constants import CURRENT_TESTNET
-from Constants import RewardsType
+from Constants import CURRENT_TESTNET, RewardsType, MUTEZ_PER_TEZ
 from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from calc.calculate_phaseMapping import CalculatePhaseMapping
@@ -21,7 +20,6 @@ from NetworkConfiguration import default_network_config_map
 from tests.utils import mock_request_get
 
 PAYOUT_CYCLE = 51
-MUTEZ = 1e6
 
 logger = logging.getLogger("unittesting")
 logger.setLevel(logging.DEBUG)
@@ -107,7 +105,7 @@ class TestCalculatePhases(TestCase):
             baking_cfg.get_founders_map(),
             baking_cfg.get_owners_map(),
             srvc_fee_calc,
-            baking_cfg.get_min_delegation_amount() * MUTEZ,
+            int(baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ),
             rules_model,
         )
 

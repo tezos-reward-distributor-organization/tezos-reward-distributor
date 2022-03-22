@@ -66,4 +66,4 @@ class CalculatePhase4(CalculatePhaseBase):
                 rl3.ratio4 = rl3.ratio
                 new_rewards.append(rl3)
 
-        return new_rewards, total_amount
+        return new_rewards, int(total_amount)
