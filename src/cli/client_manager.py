@@ -11,6 +11,7 @@ from Constants import (
     TZKT_PUBLIC_API_URL,
     CURRENT_TESTNET,
     PRIVATE_SIGNER_URL,
+    RPC_PUBLIC_API_URL,
 )
 from exception.client import ClientException
 from log_config import main_logger, verbose_logger
@@ -26,6 +27,7 @@ PUBLIC_NODE_URLS = [
     TZSTATS_PUBLIC_API_URL["MAINNET"],
     TZKT_PUBLIC_API_URL[CURRENT_TESTNET],
     TZKT_PUBLIC_API_URL["MAINNET"],
+    RPC_PUBLIC_API_URL["MAINNET"],
 ]
 
 
