@@ -7,9 +7,9 @@ Documentation=https://tezos-reward-distributor-organization.github.io/tezos-rewa
 Type=simple
 User=<USER>
 WorkingDirectory=<ABS_PATH_TO_BASE>
-PIDFile=<ABS_PATH_TO_BASE>/lock
+PIDFile=<CONFIGDIR>lock
 ExecStart=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/main.py -s <OPTIONS>
-ExecStop=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/stop.py
+ExecStop=<PYTHON_PATH> <ABS_PATH_TO_BASE>/src/stop.py <STOPARGS>
 
 [Install]
 WantedBy=multi-user.target

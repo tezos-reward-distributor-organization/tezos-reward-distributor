@@ -1,9 +1,29 @@
 import os
 import sys
+import argparse
+sys.path.insert(0, './src')
+from Constants import BASE_DIR, CONFIG_DIR
+
+def command_line_arguments():
+    parser = argparse.ArgumentParser(
+        description="Stop the running trd process.", prog="trd_stopper"
+    )
+    default_config_dir = os.path.join(os.path.normpath(BASE_DIR), CONFIG_DIR, "")
+    parser.add_argument(
+        "-f",
+        "--config_dir",
+        help=(
+            "Directory to find configuration files and the lock file. " "Default: {}"
+        ).format(default_config_dir),
+        default=default_config_dir,
+    )
+    return parser.parse_args()
 
 
 def main():
     path_template = "tezos-reward.service_template"
+    args = command_line_arguments()
+    config_dir = os.path.join(os.path.expanduser(os.path.normpath(args.config_dir)), "")
     dir_path = os.path.dirname(os.path.realpath(__file__))
     path_service = os.path.join(dir_path, "tezos-reward.service")
     # in windows ['C:', 'Users', 'user_name', 'tezos-reward-distributor']
@@ -48,6 +68,8 @@ def main():
         content = content.replace("<PYTHON_PATH>", python_executable)
         content = content.replace("<ABS_PATH_TO_BASE>", dir_path)
         content = content.replace("<OPTIONS>", " ".join(sys.argv[1:]))
+        content = content.replace("<CONFIGDIR>", config_dir)
+        content = content.replace("<STOPARGS>", " --config_dir " + str(config_dir))
 
         print("Content is :")
         print("-------------")
