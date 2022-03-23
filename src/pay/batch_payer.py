@@ -13,7 +13,7 @@ logger = main_logger
 
 # These values may change with protocol upgrades
 TZTX_FEE = 395
-TZTX_GAS_LIMIT = 1420
+TZTX_GAS_LIMIT = 14200
 TZTX_STORAGE_LIMIT = 65
 RA_BURN_FEE = 257000  # 0.257 tez
 RA_STORAGE = 300
