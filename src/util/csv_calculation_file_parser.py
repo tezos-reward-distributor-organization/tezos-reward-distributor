@@ -87,8 +87,8 @@ class CsvCalculationFileParser:
             )
         else:
             rl.delegator_transaction_fee = int(0)
-        rl.payable = int(row["payable"])
-        rl.skipped = int(row["skipped"])
+        rl.payable = True if int(row["payable"]) == 1 else False
+        rl.skipped = True if int(row["skipped"]) == 1 else False
         rl.skippedatphase = int(row["atphase"])
         rl.desc = str(row["desc"])
         rl.paymentaddress = str(row["payment_address"])
