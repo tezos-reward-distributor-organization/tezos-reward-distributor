@@ -50,7 +50,7 @@ class RpcRewardApiImpl(RewardApi):
 
         self.blocks_per_cycle = nw["BLOCKS_PER_CYCLE"]
         self.preserved_cycles = nw["NB_FREEZE_CYCLE"]
-        self.blocks_per_roll_snapshot = nw["BLOCKS_PER_ROLL_SNAPSHOT"]
+        self.blocks_per_stake_snapshot = nw["BLOCKS_PER_STAKE_SNAPSHOT"]
         self.block_reward = nw["BLOCK_REWARD"]
 
         self.baking_address = baking_address
@@ -563,7 +563,7 @@ class RpcRewardApiImpl(RewardApi):
                 level_snapshot_block = BLOCKS_BEFORE_GRANADA + (
                     (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles - 2)
                     * self.blocks_per_cycle
-                    + (chosen_snapshot + 1) * self.blocks_per_roll_snapshot
+                    + (chosen_snapshot + 1) * self.blocks_per_stake_snapshot
                 )
             else:
                 # Using pre-Granada calculation
