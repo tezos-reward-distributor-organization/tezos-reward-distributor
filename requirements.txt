@@ -1,4 +1,4 @@
-requests>=2.20.0
+requests>=2.27.0
 base58>=1.0.2
 pyyaml>=5.3.1
 fysom==2.1.6
