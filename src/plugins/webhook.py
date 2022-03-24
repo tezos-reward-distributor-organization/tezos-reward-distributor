@@ -40,7 +40,7 @@ class WebhookPlugin(plugins.Plugin):
                 "stakingBalance": reward.staking_balance,
                 "ratio": reward.ratio,
                 "feeRatio": reward.service_fee_ratio,
-                "amount": reward.amount,
+                "adjustedAmount": reward.adjusted_amount,
                 "feeAmount": reward.service_fee_amount,
                 "feeRate": reward.service_fee_rate,
                 "payable": reward.payable,
@@ -89,7 +89,7 @@ class WebhookPlugin(plugins.Plugin):
         reward.staking_balance = int(reward.staking_balance)
         reward.ratio = round(float(reward.ratio), 8)
         reward.service_fee_ratio = round(float(reward.service_fee_ratio), 8)
-        reward.amount = int(reward.amount)
+        reward.adjusted_amount = int(reward.adjusted_amount)
         reward.service_fee_amount = int(reward.service_fee_amount)
         reward.service_fee_rate = float(reward.service_fee_rate)
         reward.payable = bool(reward.payable)

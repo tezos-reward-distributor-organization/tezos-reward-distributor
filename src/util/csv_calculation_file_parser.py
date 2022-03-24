@@ -87,10 +87,11 @@ class CsvCalculationFileParser:
             )
         else:
             rl.delegator_transaction_fee = int(0)
-        rl.payable = int(row["payable"])
-        rl.skippedatphase = int(row["skipped"])
+        rl.payable = True if int(row["payable"]) == 1 else False
+        rl.skipped = True if int(row["skipped"]) == 1 else False
+        rl.skippedatphase = int(row["atphase"])
         rl.desc = str(row["desc"])
-        rl.paymentaddress = str(row["address"])
+        rl.paymentaddress = str(row["payment_address"])
         if row["rewards_type"] == "E":
             rl.rewards_type = RewardsType.ESTIMATED
         elif row["rewards_type"] == "A":
@@ -188,10 +189,10 @@ class CsvCalculationFileParser:
                     ),  # delegator_transaction_fees
                     int(0),  # not payable
                     int(0),  # not skipped
-                    int(-1),  #
-                    str("Baker"),
-                    str("None"),
-                    str(rt),
+                    int(-1),  # atphase
+                    str("Baker"), # desc
+                    str("None"), # payment_address
+                    str(rt), # rewards_type
                 ]
             )
 
