@@ -31,10 +31,10 @@ from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 logger = main_logger
 
 rewards_split_call = "/tables/income?address={}&cycle={}"
-delegators_call = "/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000"
+delegators_call = "/tables/snapshot?cycle={}&is_selected=1&baker={}&columns=balance,delegated,address&limit=50000"
 
 batch_current_balance_call = (
-    "/tables/account?delegate={}&columns=row_id,spendable_balance,address&limit=50000"
+    "/tables/account?baker={}&columns=row_id,spendable_balance,address&limit=50000"
 )
 single_current_balance_call = (
     "/tables/account?address.in={}&columns=row_id,spendable_balance,address"
