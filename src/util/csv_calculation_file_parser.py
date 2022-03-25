@@ -190,9 +190,9 @@ class CsvCalculationFileParser:
                     int(0),  # not payable
                     int(0),  # not skipped
                     int(-1),  # atphase
-                    str("Baker"), # desc
-                    str("None"), # payment_address
-                    str(rt), # rewards_type
+                    str("Baker"),  # desc
+                    str("None"),  # payment_address
+                    str(rt),  # rewards_type
                 ]
             )
 
