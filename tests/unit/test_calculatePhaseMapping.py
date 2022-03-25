@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from calc.calculate_phaseMapping import CalculatePhaseMapping
 from model.reward_log import RewardLog
+from Constants import ALMOST_ZERO
 
 
 class TestCalculatePhaseMapping(TestCase):
@@ -37,7 +38,7 @@ class TestCalculatePhaseMapping(TestCase):
         payment_address_set = set(rl.paymentaddress for rl in new_rewards)
         self.assertEqual(4, len(payment_address_set))
 
-        self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
+        self.assertAlmostEqual(1.0, ratio_sum, delta=ALMOST_ZERO)
 
         # ratio of records having payment address addr1 must be 0.30 (0.25+0.05)
         self.assertAlmostEqual(
@@ -51,5 +52,5 @@ class TestCalculatePhaseMapping(TestCase):
                     )
                 )
             ),
-            delta=1e-6,
+            delta=ALMOST_ZERO,
         )

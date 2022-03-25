@@ -1,5 +1,6 @@
 import functools
 
+from Constants import MAXIMUM_ROUNDING_ERROR, ALMOST_ZERO
 from calc.calculate_phase0 import CalculatePhase0
 from calc.calculate_phase1 import CalculatePhase1
 from calc.calculate_phase2 import CalculatePhase2
@@ -14,9 +15,6 @@ from model.reward_log import (
 from log_config import main_logger
 
 logger = main_logger.getChild("phased_calculator")
-
-MINOR_DIFF = 10
-MINOR_RATIO_DIFF = 1e-6
 
 
 class PhasedPaymentCalculator:
@@ -58,9 +56,9 @@ class PhasedPaymentCalculator:
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs = phase0.calculate()
 
-        total_rwrd_amnt = reward_provider_model.computed_reward_amount
+        total_rwrd_amnt = int(reward_provider_model.computed_reward_amount)
         logger.info(
-            "Total rewards before processing is {:,} mutez.".format(total_rwrd_amnt)
+            "Total rewards before processing is {:<,d} mutez.".format(total_rwrd_amnt)
         )
         if total_rwrd_amnt == 0:
             logger.debug("NO REWARDS to process!")
@@ -133,41 +131,44 @@ class PhasedPaymentCalculator:
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
 
         # check if there is difference between sum of calculated amounts and total_rewards
-        total_delegator_amounts = sum(
-            [rl.adjusted_amount for rl in rwrd_logs if not rl.skipped]
+        total_delegator_amounts = int(
+            sum([rl.adjusted_amount for rl in rwrd_logs if not rl.skipped])
         )
-        total_adjustments = sum([rl.adjustment for rl in rwrd_logs if not rl.skipped])
-        amnt_pay_diff = abs(
-            total_rwrd_amnt + total_adjustments - total_delegator_amounts
+        total_adjustments = int(
+            sum([rl.adjustment for rl in rwrd_logs if not rl.skipped])
+        )
+        amnt_pay_diff = int(
+            abs(total_rwrd_amnt + total_adjustments - total_delegator_amounts)
         )
 
         logger.info(
-            "Total rewards after processing is {:,} mutez.".format(total_rwrd_amnt)
+            "Total rewards after processing is {:<,d} mutez.".format(total_rwrd_amnt)
         )
+
         if total_adjustments < 0:
             logger.info(
-                "Total adjustment for past early payout is {:,} mutez.".format(
+                "Total adjustment for past early payout is {:<,d} mutez.".format(
                     total_adjustments
                 )
             )
             logger.info(
-                "Adjusted total rewards is {:,} mutez.".format(
+                "Adjusted total rewards is {:<,d} mutez.".format(
                     total_rwrd_amnt + total_adjustments
                 )
             )
         logger.info(
-            "Sum of amounts allocated to delegators is {:,} mutez".format(
+            "Sum of amounts allocated to delegators is {:<,d} mutez".format(
                 total_delegator_amounts
             )
         )
         logger.info(
-            "Difference between total rewards and sum of amounts allocated to delegators is {:,} mutez. "
-            "This is due to floating point arithmetic. (max allowed diff is {:,})".format(
-                amnt_pay_diff, MINOR_DIFF
+            "Difference between total rewards and sum of amounts allocated to delegators is {:<,d} mutez. "
+            "This is due to floating point arithmetic. (max allowed diff is {:<,d} mutez)".format(
+                amnt_pay_diff, int(MAXIMUM_ROUNDING_ERROR)
             )
         )
 
-        return rwrd_logs, total_rwrd_amnt
+        return rwrd_logs, int(total_rwrd_amnt)
 
     def almost_equal(self, double1, double2):
-        return abs(double1 - double2) < MINOR_RATIO_DIFF
+        return abs(double1 - double2) < ALMOST_ZERO

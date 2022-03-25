@@ -14,7 +14,7 @@ rewardlog = RewardLog(
 rewardlog.cycle = 415
 rewardlog.ratio = 0.16080255
 rewardlog.service_fee_ratio = 0.01398283
-rewardlog.amount = 207756875
+rewardlog.adjusted_amount = 207756875
 rewardlog.service_fee_amount = 18065815
 rewardlog.service_fee_rate = 0.08
 rewardlog.payable = True
@@ -27,14 +27,14 @@ rewardlog.paid = PaymentStatus.DONE
 rewardlog2 = copy.deepcopy(rewardlog)
 rewardlog2.staking_balance = 123123123.0
 rewardlog2.current_balance = 1000000000.0
-rewardlog2.amount = 200066666.0
+rewardlog2.adjusted_amount = 200066666.0
 rewardlog2.service_fee_amount = 789789789.0
 
 # Third reward log with strings
 rewardlog3 = copy.deepcopy(rewardlog)
 rewardlog3.staking_balance = "98765643"
 rewardlog2.current_balance = "1000000000"
-rewardlog3.amount = "12345678900"
+rewardlog3.adjusted_amount = "12345678900"
 rewardlog3.service_fee_amount = "5555555"
 rewardlog3.ratio = "0.16080255"
 rewardlog3.service_fee_ratio = "0.01398283"
@@ -68,8 +68,8 @@ def test_webhook_payload_types():
         assert isinstance(payout["stakingBalance"], int)
         assert payout["stakingBalance"] == stakingBalances[index]
 
-        assert isinstance(payout["amount"], int)
-        assert payout["amount"] == amounts[index]
+        assert isinstance(payout["adjustedAmount"], int)
+        assert payout["adjustedAmount"] == amounts[index]
 
         assert isinstance(payout["feeAmount"], int)
         assert payout["feeAmount"] == feeAmounts[index]

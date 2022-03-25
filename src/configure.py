@@ -46,6 +46,9 @@ from model.baking_conf import (
     SUPPORTERS_SET,
     REWARDS_TYPE,
     PAY_DENUNCIATION_REWARDS,
+    TOB,
+    TOE,
+    TOF,
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
@@ -63,12 +66,16 @@ messages = {
     "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
     "ownersmap": "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
     "mindelegation": "Specify minimum delegation amount in tez. Type enter for 0",
-    "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. TOB: leave at balance, TOF: to founders, TOE: to everybody, default is TOB",
-    "exclude": "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are= TOB: leave at balance, TOF: to founders, TOE: to everybody. Type enter to skip",
+    "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. {}: leave at balance, {}: to founders, {}: to everybody, default is {}".format(
+        TOB, TOF, TOE, TOB
+    ),
+    "exclude": "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are = {}: leave at balance, {}: to founders, {}: to everybody. Type enter to skip".format(
+        TOB, TOF, TOE
+    ),
     "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
     "reactivatezeroed": "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes",
     "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator",
-    "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation/burn fee: 0 for delegator, 1 for delegate. Type enter for delegator",
+    "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation or burn fees for kt accounts in general: 0 for delegator, 1 for delegate. Type enter for delegator",
     "paydenunciationrewards": "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Type enter for No",
     "supporters": "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
     "specials": "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
@@ -143,7 +150,7 @@ def onservicefee(input):
 
 def onrewardstype(input):
     if not input:
-        input = "actual"
+        input = RewardsType.ACTUAL
 
     try:
         global parser
@@ -197,10 +204,10 @@ def onmindelegation(input):
 
 def onmindelegationtarget(input):
     if not input:
-        input = "TOB"
+        input = TOB
 
     try:
-        options = ["TOB", "TOE", "TOF"]
+        options = [TOB, TOE, TOF]
         if input not in options:
             printe("Invalid target, available options are {}".format(options))
             return
@@ -229,7 +236,7 @@ def onexclude(input):
         address = address_target[0].strip()
         target = address_target[1].strip()
         AddressValidator("excluded address").validate(address)
-        options = ["TOB", "TOE", "TOF"]
+        options = [TOB, TOE, TOF]
         if target not in options:
             printe("Invalid target, available options are {}".format(options))
             return

@@ -370,6 +370,8 @@ class ProcessLifeCycle:
             dest_map=self.__cfg.get_dest_map(),
             network_config=self.__nw_config,
             publish_stats=not self.args.do_not_publish_stats,
+            calculations_dir=self.__baking_dirs.calculations_root,
+            baking_address=self.__cfg.get_baking_address(),
         ).start()
 
     def do_shut_down(self, e):

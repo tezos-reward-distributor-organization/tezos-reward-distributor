@@ -5,13 +5,13 @@ from http import HTTPStatus
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
-from Constants import PaymentStatus
+from Constants import PaymentStatus, RewardsType
 from cli.client_manager import ClientManager
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
 from util.csv_payment_file_parser import CsvPaymentFileParser
-from util.dir_utils import payment_report_file_path
+from util.dir_utils import get_payment_report_file_path
 
 
 TEST_REPORT_DIR = "tests/integration/test_reports"
@@ -197,7 +197,7 @@ class TestRetryProducer(TestCase):
         payment_consumer = self.create_consumer(nw, payment_queue)
         payment_consumer._consume_batch(payment_batch)
 
-        success_report = payment_report_file_path(TEST_REPORT_TEMP_DIR, 10, 0)
+        success_report = get_payment_report_file_path(TEST_REPORT_TEMP_DIR, 10, 0)
         self.assertTrue(os.path.isfile(success_report))
 
         success_report_rows = CsvPaymentFileParser().parse(success_report, 10)
@@ -232,7 +232,7 @@ class TestRetryProducer(TestCase):
             ClientManager("", ""),
             nw,
             MagicMock(),
-            rewards_type="actual",
+            rewards_type=RewardsType.ACTUAL,
             dry_run=False,
         )
 
