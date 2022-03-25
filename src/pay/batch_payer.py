@@ -295,7 +295,7 @@ class BatchPayer:
                 - 1
             )
 
-            if False:  # number_future_payable_cycles < 0:
+            if number_future_payable_cycles < 0:
 
                 for payment_item in payment_items:
                     payment_item.paid = PaymentStatus.FAIL
@@ -405,13 +405,14 @@ class BatchPayer:
 
         max_try = MAX_BATCH_PAYMENT_ATTEMPTS
         status = PaymentStatus.UNDEFINED
+        error_message = ""
         operation_hash = None
         attempt_count = 0
 
         # for failed operations, trying after some time should be OK
         for attempt in range(max_try):
             try:
-                status, operation_hash = self.attempt_single_batch(
+                status, operation_hash, error_message = self.attempt_single_batch(
                     payment_items, op_counter, dry_run=dry_run
                 )
             except Exception:
@@ -447,6 +448,7 @@ class BatchPayer:
             if payment_item.paid == PaymentStatus.UNDEFINED:
                 payment_item.paid = status
                 payment_item.hash = operation_hash
+                payment_item.desc += error_message
 
         return attempt_count, status
 
@@ -642,7 +644,7 @@ class BatchPayer:
                         )
                     )
                     payment_item.paid = PaymentStatus.AVOIDED
-                    payment_item.desc += "Investigate with tzkt.io: Liquidated oven or no default entry point. Use rules map for payment redirect. "
+                    payment_item.desc += "Investigate on https://tzkt.io - Liquidated oven or no default entry point. Use rules map for payment redirect. "
                     continue
 
                 gas_limit, tx_fee, storage_limit = simulation_results
@@ -757,7 +759,7 @@ class BatchPayer:
             verbose_logger.info("Payment content: {}".format(content))
 
         if len(content_list) == 0:
-            return PaymentStatus.DONE, None
+            return PaymentStatus.DONE, None, ""
         contents_string = ",".join(content_list)
 
         # run the operations for simulation results
@@ -773,8 +775,9 @@ class BatchPayer:
             self.comm_runops, runops_json
         )
         if status != HTTPStatus.OK:
-            logger.error("Error in run_operation")
-            return PaymentStatus.FAIL, None
+            error_message = "Error in run_operation"
+            logger.error(error_message)
+            return PaymentStatus.FAIL, None, error_message
 
         # Check each contents object for failure
         for op in run_ops_parsed["contents"]:
@@ -783,12 +786,11 @@ class BatchPayer:
                 op_status = op["metadata"]["operation_result"]["status"]
                 if op_status == "failed":
                     op_error = op["metadata"]["operation_result"]["errors"][0]["id"]
-                    logger.error(
-                        "Error while validating operation - Status: {}, Message: {}".format(
-                            op_status, op_error
-                        )
+                    error_message = "Error while validating operation - Status: {}, Message: {}".format(
+                        op_status, op_error
                     )
-                    return PaymentStatus.FAIL, None
+                    logger.error(error_message)
+                    return PaymentStatus.FAIL, None, error_message
             except KeyError:
                 logger.debug(
                     "Unable to find metadata->operation_result->{status,errors} in run_ops response"
@@ -801,8 +803,9 @@ class BatchPayer:
         )
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
-            logger.error("Error in forge operation")
-            return PaymentStatus.FAIL, None
+            error_message = "Error in forge operation"
+            logger.error(error_message)
+            return PaymentStatus.FAIL, None, error_message
 
         # Re-compute minimal required fee by the batch transaction and re-adjust the fee if necessary
         size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
@@ -836,8 +839,9 @@ class BatchPayer:
             )
             status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
             if status != HTTPStatus.OK:
-                logger.error("Error in forge operation")
-                return PaymentStatus.FAIL, None
+                error_message = "Error in forge operation"
+                logger.error(error_message)
+                return PaymentStatus.FAIL, None, error_message
 
             # Compute the new required fee. It is possible that the size of the transaction in bytes is now higher
             # because of the increase in the fee of the first transaction
@@ -869,12 +873,13 @@ class BatchPayer:
             self.comm_preapply, preapply_json
         )
         if status != HTTPStatus.OK:
-            logger.error("Error in preapply operation")
-            return PaymentStatus.FAIL, None
+            error_message = "Error in preapply operation"
+            logger.error(error_message)
+            return PaymentStatus.FAIL, None, error_message
 
         # if dry_run, skip injection
         if dry_run:
-            return PaymentStatus.DONE, None
+            return PaymentStatus.DONE, None, ""
 
         # inject the operations
         logger.debug("Injecting {} operations".format(len(content_list)))
@@ -901,13 +906,11 @@ class BatchPayer:
             )
 
         if len(decoded_signature) != 128:  # must be 64 bytes
-            # raise Exception("Signature length must be 128 but it is {}. Signature is '{}'".format(len(signed_bytes), signed_bytes))
             logger.warn(
                 "Signature length must be 128 but it is {}. Signature is '{}'".format(
                     len(signed_bytes), signed_bytes
                 )
             )
-            # return False, ""
 
         signed_operation_bytes = bytes + decoded_signature
 
@@ -918,8 +921,9 @@ class BatchPayer:
             self.comm_inject, json.dumps(signed_operation_bytes)
         )
         if status != HTTPStatus.OK:
-            logger.error("Error in inject operation")
-            return PaymentStatus.FAIL, None
+            error_message = "Error in inject operation"
+            logger.error(error_message)
+            return PaymentStatus.FAIL, None, error_message
 
         logger.info("Operation hash is {}".format(operation_hash))
 
@@ -954,17 +958,17 @@ class BatchPayer:
             for op_hashes in list_op_hash:
                 if operation_hash in op_hashes:
                     logger.info("Operation {} is included".format(operation_hash))
-                    return PaymentStatus.PAID, operation_hash
+                    return PaymentStatus.PAID, operation_hash, ""
             logger.debug(
                 "Operation {} is not included at level {}".format(operation_hash, i)
             )
-
-        logger.warning(
-            "Operation {} wait is timed out. Not sure about the result!".format(
+        error_message = (
+            "Investigate on https://tzkt.io - Operation {} wait is timed out.".format(
                 operation_hash
             )
         )
-        return PaymentStatus.INJECTED, operation_hash
+        logger.warning(error_message)
+        return PaymentStatus.INJECTED, operation_hash, error_message
 
     def get_payment_address_balance(self):
         get_current_balance_request = COMM_DELEGATE_BALANCE.format("head", self.source)
