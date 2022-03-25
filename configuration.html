@@ -162,9 +162,9 @@ If you want to use with a decimal operator within your config, please use a deci
 </dd>
 <dt><strong>owners_map</strong></dt><dd><p>A dictionary of PKH and ratio ( decimal in the range [0-1]) pairs. Each item in this dictionary represents PKH of each balance owner and his ratio of the amount he owns in the total baking balance. Implicit or originated addresses are accepted. It is important that the sum of all ratios equals to 1. This map is optional if owners do not want to be paid for baking rewards, in this case, baking rewards remain in baking balance.</p>
 <p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Current</span> <span class="n">Baker</span> <span class="n">Balance</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span><span class="mi">400</span> <span class="n">XTZ</span>
-<span class="n">Total</span> <span class="n">Delegations</span><span class="p">:</span> <span class="mi">69</span><span class="p">,</span><span class="mi">520</span> <span class="n">XTZ</span>
-<span class="n">Total</span> <span class="n">Staked</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span><span class="mi">920</span> <span class="n">XTZ</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Current</span> <span class="n">Baker</span> <span class="n">Balance</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span><span class="mi">400</span> <span class="n">tez</span>
+<span class="n">Total</span> <span class="n">Delegations</span><span class="p">:</span> <span class="mi">69</span><span class="p">,</span><span class="mi">520</span> <span class="n">tez</span>
+<span class="n">Total</span> <span class="n">Staked</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span><span class="mi">920</span> <span class="n">tez</span>
 
 <span class="n">service_fee</span><span class="p">:</span> <span class="mi">9</span>
 <span class="n">owners_map</span><span class="p">:</span>
@@ -173,7 +173,7 @@ If you want to use with a decimal operator within your config, please use a deci
    <span class="s1">&#39;tz1VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf&#39;</span> <span class="p">:</span> <span class="mf">0.2</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>Charlie, and Dave, have each transfered 6,960 Tez to the baker address. Edwin has transfered 3,480 Tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: <em>service_fee</em>). That 9% is dispersed to any <em>founders</em>. If there are no founders, that 9% remains in the baker’s balance.
+<p>Charlie, and Dave, have each transfered 6,960 tez to the baker address. Edwin has transfered 3,480 tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: <em>service_fee</em>). That 9% is dispersed to any <em>founders</em>. If there are no founders, that 9% remains in the baker’s balance.
 The baker address is technically a delegator to itself. Its share of rewards are part of the overall cycle rewards. Charlie, Dave, and Edwin divide the “baker address rewards” as per the ratios in <em>owners_map</em>. Additionally, owners are <em>not</em> subject to the <em>service_fee</em>.</p>
 </dd>
 <dt><strong>specials_map</strong></dt><dd><p>A dictionary of PKH and fee (decimal in the range [0-100] ) pairs. This dictionary can be used to set special service fee values for desired delegators.</p>
@@ -190,7 +190,7 @@ The baker address is technically a delegator to itself. Its share of rewards are
 </pre></div>
 </div>
 </dd>
-<dt><strong>min_delegation_amt</strong></dt><dd><p>A minimum delegation amount can be set here. If this value is set to 10, 10 XTZ are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.</p>
+<dt><strong>min_delegation_amt</strong></dt><dd><p>A minimum delegation amount can be set here. If this value is set to 10, 10 tez are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">min_delegation_amt</span> <span class="p">:</span> <span class="mi">10</span>
 </pre></div>
@@ -211,6 +211,8 @@ The baker address is technically a delegator to itself. Its share of rewards are
 <dt><strong>delegator_pays_ra_fee</strong></dt><dd><p>True/False - Functions just like delegator_pays_xfer_fee, except refers to the burn/reactivation fee. If True, the burn fee is subtracted from the reward payment (ie: delegate pays). If False, burn fee is paid for by baker. If reactivate_zeroed: True and delegator_pays_ra_fee: True but the reward is smaller than the burn fee, their rewards will be ignored and will simply remain at the bakers address.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delegator_pays_ra_fee</span> <span class="p">:</span> <span class="kc">False</span>
+
+<span class="n">Note</span><span class="p">:</span> <span class="n">This</span> <span class="n">option</span> <span class="n">does</span> <span class="n">also</span> <span class="n">apply</span> <span class="n">to</span> <span class="n">the</span> <span class="n">burn</span> <span class="n">fee</span> <span class="n">needed</span> <span class="n">to</span> <span class="n">payout</span> <span class="n">to</span> <span class="n">kt</span> <span class="n">accounts</span><span class="o">.</span>
 </pre></div>
 </div>
 </dd>

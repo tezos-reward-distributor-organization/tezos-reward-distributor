@@ -89,9 +89,9 @@ Available configuration parameters are:
   
   Example::
 
-    Current Baker Balance: 17,400 XTZ
-    Total Delegations: 69,520 XTZ
-    Total Staked: 86,920 XTZ
+    Current Baker Balance: 17,400 tez
+    Total Delegations: 69,520 tez
+    Total Staked: 86,920 tez
 
     service_fee: 9
     owners_map:
@@ -99,7 +99,7 @@ Available configuration parameters are:
        'tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17' : 0.4,
        'tz1VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf' : 0.2}
   
-  Charlie, and Dave, have each transfered 6,960 Tez to the baker address. Edwin has transfered 3,480 Tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: *service_fee*). That 9% is dispersed to any *founders*. If there are no founders, that 9% remains in the baker's balance.
+  Charlie, and Dave, have each transfered 6,960 tez to the baker address. Edwin has transfered 3,480 tez. They are each partial owners of the baking balance. When rewards are delivered at the end of each cycle, 9% is taken as the bakery fee (ie: *service_fee*). That 9% is dispersed to any *founders*. If there are no founders, that 9% remains in the baker's balance.
   The baker address is technically a delegator to itself. Its share of rewards are part of the overall cycle rewards. Charlie, Dave, and Edwin divide the "baker address rewards" as per the ratios in *owners_map*. Additionally, owners are *not* subject to the *service_fee*.
 
 **specials_map**
@@ -119,7 +119,7 @@ Available configuration parameters are:
                     'tz1PirboZKFVqkfE45hVLpkpXaZtLk3mqC17'}
 
 **min_delegation_amt**
-  A minimum delegation amount can be set here. If this value is set to 10, 10 XTZ are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.
+  A minimum delegation amount can be set here. If this value is set to 10, 10 tez are required as minimum. It is important to define what happens to the rewards of excluded delegates that are below the minimum delegation balance in rules_map.
 
   Example::
 
@@ -145,6 +145,8 @@ Available configuration parameters are:
   Example::
 
     delegator_pays_ra_fee : False
+
+    Note: This option does also apply to the burn fee needed to payout to kt accounts.
 
 **pay_denunciation_rewards**
   True/False - Baker may get rewarded for denunciating another baker's equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker's account, allowing the baker to reimburse the party at fault if they desire. Must be set to True when using RPC backend as RPC is not able to itemize rewards.

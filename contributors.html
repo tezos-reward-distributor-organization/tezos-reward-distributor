@@ -51,7 +51,11 @@
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">For Developers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">For Developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general">General:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup">Setup:</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Test structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
@@ -83,6 +87,8 @@
              
   <div class="section" id="for-developers">
 <h1>For Developers<a class="headerlink" href="#for-developers" title="Permalink to this headline"></a></h1>
+<div class="section" id="general">
+<h2>General:<a class="headerlink" href="#general" title="Permalink to this headline"></a></h2>
 <p>If you are interested in improving our project, this is just great! Our community looks forward to your contribution. Please follow this process:</p>
 <ol class="arabic simple">
 <li><p>Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.</p></li>
@@ -126,6 +132,38 @@ You can always donate your contribution free of charge!</p>
 <li><p>The work efforts are paid out in a regular basis. The payments are documented in a dedicated file named <cite>contributor_payments.csv</cite>.</p></li>
 <li><p>For each payment, the reason for payment should be documented (commit hash, review efforts, etc.). Additionally, the paid amount in USD, the VWAP XTZ-USD on the payment day, the payed amount in XTZ and the transaction hash are documented.</p></li>
 </ol>
+</div>
+<div class="section" id="setup">
+<h2>Setup:<a class="headerlink" href="#setup" title="Permalink to this headline"></a></h2>
+<p>you can contribute to TRD using your the developer tool of your choice. The follwing setup helps with VS Code.</p>
+<ol class="arabic">
+<li><p>Creat a <cite>.env</cite> file in the workspace directory with the following content:</p>
+<blockquote>
+<div><p>Windows: PYTHONPATH=${PYTHONPATH};./src
+Mac/Linux: PYTHONPATH=${PYTHONPATH}:./src</p>
+</div></blockquote>
+</li>
+<li><p>Create a <cite>settings.json</cite> file in the folder <cite>.vscode</cite> with the following content:</p></li>
+</ol>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>  <span class="p">{</span>
+  <span class="nt">&quot;terminal.integrated.env.osx&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;PYTHONPATH&quot;</span><span class="p">:</span> <span class="s2">&quot;${env:PYTHONPATH}:${workspaceFolder}/src&quot;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;terminal.integrated.env.linux&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;PYTHONPATH&quot;</span><span class="p">:</span> <span class="s2">&quot;${env:PYTHONPATH}:${workspaceFolder}/src&quot;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;terminal.integrated.env.windows&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;PYTHONPATH&quot;</span><span class="p">:</span> <span class="s2">&quot;${env:PYTHONPATH};${workspaceFolder}/src&quot;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;python.testing.pytestArgs&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;tests&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;python.testing.unittestEnabled&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="nt">&quot;python.testing.pytestEnabled&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
