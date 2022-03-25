@@ -1,6 +1,6 @@
 import logging
 
-from Constants import MUTEZ
+from Constants import MUTEZ_PER_TEZ
 from plugins import plugins
 
 # Plugin specific libs
@@ -32,7 +32,7 @@ class DiscordPlugin(plugins.Plugin):
         # Do template replacements
         payout_message = (
             self.discord_text.replace("%CYCLE%", str(cycle))
-            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ, 2)))
+            .replace("%TREWARDS%", str(round(payout_amount / MUTEZ_PER_TEZ, 2)))
             .replace("%NDELEGATORS%", str(nb_delegators))
         )
         self.post_to_discord(payout_message, "PAYOUT")

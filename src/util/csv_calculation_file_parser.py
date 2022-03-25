@@ -1,6 +1,6 @@
 import csv
 from log_config import main_logger
-from Constants import MUTEZ, RewardsType
+from Constants import RewardsType
 
 from model.reward_log import RewardLog
 
@@ -24,44 +24,80 @@ class CsvCalculationFileParser:
                 for row in dict_rows
                 if row["address"] != baking_address
             ]
+
+            early_payout = [
+                self.is_early_payout(row)
+                for row in dict_rows
+                if row["address"] == baking_address
+            ][0]
+
             baker_record = [
                 self.from_payment_csv_dict_row(row)
                 for row in dict_rows
                 if row["address"] == baking_address
             ][0]
 
-            return records, baker_record.amount, RewardsType(baker_record.rewards_type)
+            return (
+                records,
+                baker_record.amount,
+                RewardsType(baker_record.rewards_type),
+                early_payout,
+            )
+
+    @staticmethod
+    def is_early_payout(row):
+        if "overestimate" in row:
+            return True if row["overestimate"] == "pending" else False
+        else:
+            return False
 
     @staticmethod
     def from_payment_csv_dict_row(row):
         rl = RewardLog(row["address"], row["type"], 0, 0)
-        rl.ratio = float(row["ratio"])
         rl.staking_balance = int(row["staked_balance"])
-        rl.current_balance = int(float(row["current_balance"]))
+        rl.current_balance = int(row["current_balance"])
+        rl.ratio = float(row["ratio"])
         rl.service_fee_ratio = float(row["fee_ratio"])
-        rl.amount = float(row["amount"])
-        rl.service_fee_amount = float(row["fee_amount"])
+        rl.amount = int(row["amount"])
+        rl.service_fee_amount = int(row["fee_amount"])
         rl.service_fee_rate = float(row["fee_rate"])
         if "overestimate" in row:
             rl.overestimate = (
-                None if row["overestimate"] == "pending" else float(row["overestimate"])
+                int(0) if row["overestimate"] == "pending" else int(row["overestimate"])
             )
         else:
-            rl.overestimate = 0
-        rl.adjustment = float(row["adjustment"]) if "adjustment" in row else float(0)
-        rl.adjusted_amount = float(
-            row["adjusted_amount"] if "adjusted_amount" in row else row["amount"]
+            rl.overestimate = int(0)
+        rl.adjustment = int(row["adjustment"]) if "adjustment" in row else int(0)
+        rl.adjusted_amount = int(
+            row["adjusted_amount"] if "adjusted_amount" in row else int(row["amount"])
         )
-        rl.payable = int(row["payable"])
-        rl.skippedatphase = int(row["skipped"])
-        rl.desc = row["desc"]
-        rl.paymentaddress = row["address"]
+        if "delegate_transaction_fee" in row:
+            rl.delegate_transaction_fee = (
+                int(0)
+                if row["delegate_transaction_fee"] == "pending"
+                else int(row["delegate_transaction_fee"])
+            )
+        else:
+            rl.delegate_transaction_fee = int(0)
+        if "delegator_transaction_fee" in row:
+            rl.delegator_transaction_fee = (
+                int(0)
+                if row["delegator_transaction_fee"] == "pending"
+                else int(row["delegator_transaction_fee"])
+            )
+        else:
+            rl.delegator_transaction_fee = int(0)
+        rl.payable = True if int(row["payable"]) == 1 else False
+        rl.skipped = True if int(row["skipped"]) == 1 else False
+        rl.skippedatphase = int(row["atphase"])
+        rl.desc = str(row["desc"])
+        rl.paymentaddress = str(row["payment_address"])
         if row["rewards_type"] == "E":
-            rl.rewards_type = "estimated"
+            rl.rewards_type = RewardsType.ESTIMATED
         elif row["rewards_type"] == "A":
-            rl.rewards_type = "actual"
+            rl.rewards_type = RewardsType.ACTUAL
         elif row["rewards_type"] == "I":
-            rl.rewards_type = "ideal"
+            rl.rewards_type = RewardsType.IDEAL
 
         return rl
 
@@ -73,7 +109,9 @@ class CsvCalculationFileParser:
         rewards_type,
         baking_address,
         early_payout,
+        fees_simulated=False,
     ):
+        # TODO: Think about chaning this to the actual strings
         if rewards_type.isEstimated():
             rt = "E"
         elif rewards_type.isActual():
@@ -100,6 +138,8 @@ class CsvCalculationFileParser:
                     "overestimate",
                     "adjustment",
                     "adjusted_amount",
+                    "delegate_transaction_fee",
+                    "delegator_transaction_fee",
                     "payable",
                     "skipped",
                     "atphase",
@@ -109,79 +149,113 @@ class CsvCalculationFileParser:
                 ]
             )
 
+            # Note: values for True and False are marked with "0" and "1" in the excel for backwards compatibility
             # First row is for the baker
             csv_writer.writerow(
                 [
-                    baking_address,
-                    "B",
-                    sum([pl.staking_balance for pl in payment_logs]),
-                    "{0:f}".format(1.0),
-                    "{0:f}".format(1.0),
-                    "{0:f}".format(0.0),
-                    "{0:f}".format(total_rewards),
-                    "{0:f}".format(0.0),
-                    "{0:f}".format(0.0),
+                    str(baking_address),  # address
+                    str("B"),  # type
+                    int(
+                        sum([pl.staking_balance for pl in payment_logs])
+                    ),  # staking_balance
+                    int(1),  # current_balance
+                    "{0:10f}".format(1.0),  # ratio
+                    "{0:10f}".format(0.0),  # service_fee_ratio
+                    int(total_rewards),  # amount
+                    int(0),  # service_fee_amount
+                    "{0:f}".format(0.0),  # service_fee_rate
                     (
                         "pending"
                         if early_payout
-                        else "{0:f}".format(
-                            sum([pl.overestimate for pl in payment_logs])
+                        else int(sum([pl.overestimate for pl in payment_logs]))
+                    ),  # overestimates
+                    int(sum([pl.adjustment for pl in payment_logs])),  # adjustments
+                    int(
+                        sum([pl.adjusted_amount for pl in payment_logs])
+                    ),  # adjustment_amounts
+                    (
+                        "pending"
+                        if not fees_simulated
+                        else int(
+                            sum([pl.delegate_transaction_fee for pl in payment_logs])
                         )
-                    ),
-                    "{0:f}".format(sum([pl.adjustment for pl in payment_logs])),
-                    "{0:f}".format(sum([pl.adjusted_amount for pl in payment_logs])),
-                    "0",
-                    "0",
-                    "-1",
-                    "Baker",
-                    "None",
-                    rt,
+                    ),  # delegate_transaction_fees
+                    (
+                        "pending"
+                        if not fees_simulated
+                        else int(
+                            sum([pl.delegator_transaction_fee for pl in payment_logs])
+                        )
+                    ),  # delegator_transaction_fees
+                    int(0),  # not payable
+                    int(0),  # not skipped
+                    int(-1),  # atphase
+                    str("Baker"),  # desc
+                    str("None"),  # payment_address
+                    str(rt),  # rewards_type
                 ]
             )
 
             for pymnt_log in payment_logs:
                 # write row to csv file
                 array = [
-                    pymnt_log.address,
-                    pymnt_log.type,
-                    pymnt_log.staking_balance,
-                    pymnt_log.current_balance,
+                    str(pymnt_log.address),
+                    str(pymnt_log.type),
+                    int(pymnt_log.staking_balance),
+                    int(pymnt_log.current_balance),
                     "{0:.10f}".format(pymnt_log.ratio),
                     "{0:.10f}".format(pymnt_log.service_fee_ratio),
-                    "{0:f}".format(pymnt_log.amount),
-                    "{0:f}".format(pymnt_log.service_fee_amount),
+                    int(pymnt_log.amount),
+                    int(pymnt_log.service_fee_amount),
                     "{0:f}".format(pymnt_log.service_fee_rate),
+                    ("pending" if early_payout else int(pymnt_log.overestimate)),
+                    int(pymnt_log.adjustment),
+                    int(pymnt_log.adjusted_amount),
                     (
                         "pending"
-                        if early_payout
-                        else "{0:f}".format(float(pymnt_log.overestimate))
+                        if not fees_simulated
+                        else int(pymnt_log.delegate_transaction_fee)
                     ),
-                    "{0:f}".format(pymnt_log.adjustment),
-                    "{0:f}".format(pymnt_log.adjusted_amount),
-                    "1" if pymnt_log.payable else "0",
-                    "1" if pymnt_log.skipped else "0",
-                    pymnt_log.skippedatphase if pymnt_log.skipped else "-1",
-                    pymnt_log.desc if pymnt_log.desc else "None",
-                    pymnt_log.paymentaddress,
-                    rt,
+                    (
+                        "pending"
+                        if not fees_simulated
+                        else int(pymnt_log.delegator_transaction_fee)
+                    ),
+                    int(1) if pymnt_log.payable else int(0),
+                    int(1) if pymnt_log.skipped else int(0),
+                    pymnt_log.skippedatphase if pymnt_log.skipped else int(-1),
+                    str(pymnt_log.desc),
+                    str(pymnt_log.paymentaddress),
+                    str(rt),
                 ]
                 csv_writer.writerow(array)
 
                 logger.debug(
-                    "Reward created for {:s} type: {:s}, stake bal: {:>10.2f}, cur bal: {:>10.2f}, ratio: {:.6f}, fee_ratio: {:.6f}, "
-                    "amount: {:>10.6f}, fee_amount: {:>4.6f}, fee_rate: {:.2f}, payable: {:s}, skipped: {:s}, at-phase: {:d}, "
+                    "Reward created for {:s} type: {:s}, stake bal: {:<,d} mutez, cur bal: {:<,d} mutez, ratio: {:.6f}, fee_ratio: {:.6f}, "
+                    "amount: {:<,d} mutez, fee_amount: {:<,d} mutez, fee_rate: {:.2f}, overestimate: {}, adjustment: {:<,d}, adjustment_amount: {:<,d}, delegate_transaction_fee: {}, delegator_transaction_fee: {}, payable: {:d}, skipped: {:d}, at-phase: {:d}, "
                     "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
                         pymnt_log.address,
                         pymnt_log.type,
-                        pymnt_log.staking_balance / MUTEZ,
-                        pymnt_log.current_balance / MUTEZ,
+                        pymnt_log.staking_balance,
+                        pymnt_log.current_balance,
                         pymnt_log.ratio,
                         pymnt_log.service_fee_ratio,
-                        pymnt_log.amount / MUTEZ,
-                        pymnt_log.service_fee_amount / MUTEZ,
+                        pymnt_log.amount,
+                        pymnt_log.service_fee_amount,
                         pymnt_log.service_fee_rate,
-                        "Y" if pymnt_log.payable else "N",
-                        "Y" if pymnt_log.skipped else "N",
+                        "pending"
+                        if early_payout
+                        else "{:d}".format(int(pymnt_log.overestimate)),
+                        pymnt_log.adjustment,
+                        pymnt_log.adjusted_amount,
+                        "pending"
+                        if not fees_simulated
+                        else "{:d}".format(int(pymnt_log.delegate_transaction_fee)),
+                        "pending"
+                        if not fees_simulated
+                        else "{:d}".format(int(pymnt_log.delegator_transaction_fee)),
+                        int(1) if pymnt_log.payable else int(0),
+                        int(1) if pymnt_log.skipped else int(0),
                         pymnt_log.skippedatphase,
                         pymnt_log.desc,
                         pymnt_log.paymentaddress,

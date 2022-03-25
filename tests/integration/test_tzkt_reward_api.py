@@ -62,7 +62,9 @@ class RewardApiImplTests(unittest.TestCase):
 
         It also compares the balances per delegator.
         """
-        rpc_rewards = load_reward_model(address, cycle, "actual", dir_name="tzkt_data")
+        rpc_rewards = load_reward_model(
+            address, cycle, RewardsType.ACTUAL, dir_name="tzkt_data"
+        )
         if rpc_rewards is None:
             rpc_impl = RpcRewardApiImpl(
                 nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
@@ -71,7 +73,7 @@ class RewardApiImplTests(unittest.TestCase):
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
             store_reward_model(
-                address, cycle, "actual", rpc_rewards, dir_name="tzkt_data"
+                address, cycle, RewardsType.ACTUAL, rpc_rewards, dir_name="tzkt_data"
             )
 
         tzkt_impl = TzKTRewardApiImpl(
@@ -138,7 +140,7 @@ class RewardApiImplTests(unittest.TestCase):
         address = "tz1V4qCyvPKZ5UeqdH14HN42rxvNPQfc9UZg"
         cycle = 220  # snapshot index == 15
 
-        rpc_rewards = load_reward_model(address, cycle, "actual")
+        rpc_rewards = load_reward_model(address, cycle, RewardsType.ACTUAL)
         if rpc_rewards is None:
             rpc_impl = RpcRewardApiImpl(
                 nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
@@ -146,7 +148,7 @@ class RewardApiImplTests(unittest.TestCase):
                 node_url=RPC_PUBLIC_API_URL["MAINNET"],
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
-            store_reward_model(address, cycle, "actual", rpc_rewards)
+            store_reward_model(address, cycle, RewardsType.ACTUAL, rpc_rewards)
 
         tzkt_impl = TzKTRewardApiImpl(
             nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address

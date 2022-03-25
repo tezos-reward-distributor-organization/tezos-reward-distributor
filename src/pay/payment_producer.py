@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from _decimal import ROUND_HALF_DOWN, Decimal
 from time import sleep
 from requests import ReadTimeout, ConnectTimeout
-from Constants import MUTEZ, RunMode, RewardsType
+from Constants import MUTEZ_PER_TEZ, RunMode, RewardsType
 from api.provider_factory import ProviderFactory
 from calc.phased_payment_calculator import PhasedPaymentCalculator
 from exception.api_provider import ApiProviderException
@@ -18,7 +18,7 @@ from pay.payment_batch import PaymentBatch
 from pay.payment_producer_abc import PaymentProducerABC
 from pay.retry_producer import RetryProducer
 from util.csv_calculation_file_parser import CsvCalculationFileParser
-from util.dir_utils import get_calculation_report_file
+from util.dir_utils import get_calculation_report_file_path
 from util.disk_is_full import disk_is_full
 
 logger = main_logger.getChild("payment_producer")
@@ -60,8 +60,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.baking_address = baking_cfg.get_baking_address()
         self.owners_map = baking_cfg.get_owners_map()
         self.founders_map = baking_cfg.get_founders_map()
-        self.min_delegation_amt_in_mutez = (
-            baking_cfg.get_min_delegation_amount() * MUTEZ
+        self.min_delegation_amt_in_mutez = int(
+            baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ
         )
         self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
         self.provider_factory = ProviderFactory(reward_data_provider)
@@ -143,6 +143,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 and threading.current_thread() is not threading.main_thread()
             ):
                 _thread.interrupt_main()
+                logger.info("Sending KeyboardInterrupt signal.")
 
             if self.retry_fail_event:
                 self.retry_fail_event.set()
@@ -457,7 +458,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 reward_model.computed_reward_amount = (
                     reward_model.rewards_and_fees + reward_model.offline_losses
                 )
-        return self.payment_calc.calculate(reward_model, adjustments)
 
         # 3- calculate rewards for delegators
         return self.payment_calc.calculate(reward_model, adjustments)
@@ -479,7 +479,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 str(completed_cycle)
             )
         )
-        completed_cycle_report_file_path = get_calculation_report_file(
+        completed_cycle_report_file_path = get_calculation_report_file_path(
             self.calculations_dir, completed_cycle
         )
         adjustments = {}
@@ -493,6 +493,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 reward_logs_from_report,
                 total_amount_from_report,
                 rewards_type_from_report,
+                _,
             ) = CsvCalculationFileParser().parse(
                 completed_cycle_report_file_path, self.baking_address
             )
@@ -514,9 +515,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 ) = self.compute_rewards(
                     completed_cycle, computation_type, network_config
                 )
-            overestimate = total_amount_from_report - completed_cycle_total_amount
+            overestimate = int(total_amount_from_report - completed_cycle_total_amount)
             logger.info(
-                "We {:s}estimated payout for cycle {:s} by {:,} mutez, will attempt to adjust.".format(
+                "We {:s}estimated payout for cycle {:s} by {:<,d} mutez, will attempt to adjust.".format(
                     ("over" if overestimate > 0 else "under"),
                     str(completed_cycle),
                     abs(overestimate),
@@ -531,7 +532,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 )
                 # we adjust the cycle we are paying out with the overestimate of the
                 # just completed cycle
-                adjustments[rl.address] = float(rl.overestimate)
+                adjustments[rl.address] = rl.overestimate
                 logger.debug(
                     f"Will try to recover {adjustments[rl.address]} mutez for {rl.address} based on past overpayment"
                 )
@@ -574,23 +575,25 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             reward_logs, total_amount = self.compute_rewards(
                 pymnt_cycle, current_cycle_rewards_type, network_config, adjustments
             )
-            total_recovered_adjustments = sum([rl.adjustment for rl in reward_logs])
-            total_adjustments_to_recover = sum(adjustments.values())
+            total_recovered_adjustments = int(
+                sum([rl.adjustment for rl in reward_logs])
+            )
+            total_adjustments_to_recover = int(sum(adjustments.values()))
             if total_adjustments_to_recover > 0:
                 logger.debug(
-                    "Total adjustments to recover is {:,}, total recovered adjustment is {:,}.".format(
+                    "Total adjustments to recover is {:<,d} mutez, total recovered adjustment is {:<,d} mutez.".format(
                         total_adjustments_to_recover, total_recovered_adjustments
                     )
                 )
                 logger.info(
-                    "After early payout of cycle {:s}, {:,} mutez were not recovered.".format(
+                    "After early payout of cycle {:s}, {:<,d} mutez were not recovered.".format(
                         str(completed_cycle),
                         total_adjustments_to_recover + total_recovered_adjustments,
                     )
                 )
 
             # 3- create calculations report file. This file contains calculations details
-            report_file_path = get_calculation_report_file(
+            report_file_path = get_calculation_report_file_path(
                 self.calculations_dir, pymnt_cycle
             )
             logger.debug("Creating calculation report (%s)", report_file_path)
@@ -603,11 +606,17 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 early_payout,
             )
 
-            # 4- calcylate total amount
-            for rl in reward_logs:
-                rl.cycle = pymnt_cycle
-            total_amount_to_pay = sum(
-                [rl.adjusted_amount for rl in reward_logs if rl.payable]
+            # 4- set cycle info
+            for reward_log in reward_logs:
+                reward_log.cycle = pymnt_cycle
+            total_amount_to_pay = int(
+                sum(
+                    [
+                        reward_log.adjusted_amount
+                        for reward_log in reward_logs
+                        if reward_log.payable
+                    ]
+                )
             )
 
             # 5- if total_rewards > 0, proceed with payment

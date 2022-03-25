@@ -11,7 +11,7 @@ PAYMENTS_ROOT_DIR = "payments"
 CALCULATIONS_ROOT_DIR = "calculations"
 
 
-def payment_report_file_path(pymnt_root, pymnt_cycle, nb_failed):
+def get_payment_report_file_path(pymnt_root, pymnt_cycle, nb_failed):
     return os.path.abspath(
         os.path.join(
             pymnt_root,
@@ -53,7 +53,7 @@ def get_calculations_root(report_root, create=None):
     return root_dir
 
 
-def get_calculation_report_file(calculations_root, cycle):
+def get_calculation_report_file_path(calculations_root, cycle):
     return os.path.abspath(os.path.join(calculations_root, str(cycle) + ".csv"))
 
 
