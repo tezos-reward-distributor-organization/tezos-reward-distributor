@@ -225,7 +225,7 @@ class BatchPayer:
                 payment_items.append(payment_item)
             else:
                 payment_item.paid = PaymentStatus.DONE
-                payment_item.desc += " Payment amount < ZERO_THRESHOLD."
+                payment_item.desc += "Payment amount < ZERO_THRESHOLD. "
                 payment_logs.append(payment_item)
                 logger.info(
                     "Skipping payout to {:s} of {:<,d} mutez, reason: payout below minimum of {:<,d} mutez".format(
@@ -295,11 +295,11 @@ class BatchPayer:
                 - 1
             )
 
-            if number_future_payable_cycles < 0:
+            if False:  # number_future_payable_cycles < 0:
 
                 for payment_item in payment_items:
                     payment_item.paid = PaymentStatus.FAIL
-                    payment_item.desc += " Insufficient funds."
+                    payment_item.desc += "Insufficient funds. "
 
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
@@ -642,7 +642,7 @@ class BatchPayer:
                         )
                     )
                     payment_item.paid = PaymentStatus.AVOIDED
-                    payment_item.desc += " Investigate with tzkt.io: Liquidated oven or no default entry point. Use rules map for payment redirect."
+                    payment_item.desc += "Investigate with tzkt.io: Liquidated oven or no default entry point. Use rules map for payment redirect. "
                     continue
 
                 gas_limit, tx_fee, storage_limit = simulation_results
@@ -659,7 +659,7 @@ class BatchPayer:
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
-                        payment_item.desc += " Kt safety check: Transaction fees higher then allowed maximum: {:<,d} mutez.".format(
+                        payment_item.desc += "Kt safety check: Transaction fees higher then allowed maximum: {:<,d} mutez. ".format(
                             FEE_LIMIT_CONTRACTS,
                         )
                         continue
@@ -674,7 +674,7 @@ class BatchPayer:
                             )
                         )
                         payment_item.paid = PaymentStatus.AVOIDED
-                        payment_item.desc += " Kt safety check: Burn + transaction fees higher then payment amount."
+                        payment_item.desc += "Kt safety check: Burn + transaction fees higher then payment amount. "
                         continue
 
             else:
@@ -721,7 +721,7 @@ class BatchPayer:
                 payment_item.delegator_transaction_fee = 0
                 payment_item.delegate_transaction_fee = 0
                 payment_item.desc += (
-                    " Payment amount < ZERO_THRESHOLD after substracting fees."
+                    "Payment amount < ZERO_THRESHOLD after substracting fees. "
                 )
                 logger.info(
                     "Payment to {:s} became < {:<,d} mutez after deducting fees. Skipping.".format(
