@@ -295,7 +295,7 @@ class BatchPayer:
                 - 1
             )
 
-            if False: #number_future_payable_cycles < 0:
+            if False:  # number_future_payable_cycles < 0:
 
                 for payment_item in payment_items:
                     payment_item.paid = PaymentStatus.FAIL

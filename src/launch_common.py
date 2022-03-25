@@ -109,7 +109,7 @@ def args_validation(args, argparser):
         args.log_file
     except AttributeError:
         args.log_file = default_log_file
-    
+
     if args.base_directory != default_base_dir and args.log_file == default_log_file:
         args.log_file = os.path.join(
             os.path.normpath(args.base_directory), os.path.normpath(DEFAULT_LOG_FILE)
