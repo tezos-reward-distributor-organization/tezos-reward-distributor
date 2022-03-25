@@ -342,7 +342,7 @@ class PaymentConsumer(threading.Thread):
                         rl.address
                     ].delegator_transaction_fee
                 else:
-                    rl.desc += " Not in payment log."
+                    rl.desc += "Not in payment log. "
 
             CsvCalculationFileParser().write(
                 reward_logs_from_report,
