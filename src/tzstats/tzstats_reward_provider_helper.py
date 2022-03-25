@@ -112,25 +112,28 @@ class TzStatsRewardProviderHelper:
         root["equivocation_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_lost_accusation_fees])
-                + float(resp[idx_income_lost_accusation_rewards])
-                + float(resp[idx_income_lost_revelation_fees])
-                + float(resp[idx_income_lost_revelation_rewards])
+                0
+                #float(resp[idx_income_lost_accusation_fees])
+                #+ float(resp[idx_income_lost_accusation_rewards])
+                #+ float(resp[idx_income_lost_revelation_fees])
+                #+ float(resp[idx_income_lost_revelation_rewards])
             )
         )
         root["denunciation_rewards"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_double_baking_income])
-                + float(resp[idx_income_double_endorsing_income])
+                0
+                #float(resp[idx_income_double_baking_income])
+                #+ float(resp[idx_income_double_endorsing_income])
             )
         )
         # losses due to being offline or not having enough bond
         root["offline_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_missed_baking_income])
-                + float(resp[idx_income_missed_endorsing_income])
+                0
+                #float(resp[idx_income_missed_baking_income])
+                #+ float(resp[idx_income_missed_endorsing_income])
             )
         )
 
