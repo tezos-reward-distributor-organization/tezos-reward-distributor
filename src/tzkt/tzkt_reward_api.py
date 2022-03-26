@@ -21,18 +21,7 @@ class TzKTRewardApiImpl(RewardApi):
         """
         Returns reward split in a specified format
         :param cycle:
-        :return: RewardProviderModel(
-            delegate_staking_balance=5265698993303,
-            num_blocks=333,
-            num_endorsements=3333,
-            delegators_balances={
-                'tz1azSbB91MbdcEquhsmJvjVroLs5t4kpdCn': {
-                    'staking_balance': 1935059821,
-                    'current_balance': 1977503559
-                }
-            }
-
-        )
+        :rtype: RewardProviderModel
         """
         split = self.api.get_reward_split(
             address=self.baking_address, cycle=cycle, fetch_delegators=True
@@ -42,56 +31,43 @@ class TzKTRewardApiImpl(RewardApi):
 
         # calculate estimated rewards
         num_blocks = (
-            split["ownBlocks"]
-            + split["missedOwnBlocks"]
-            + split["uncoveredOwnBlocks"]
+            split["blocks"]
+            + split["missedBlocks"]
             + split["futureBlocks"]
         )
 
         num_endorsements = (
             split["endorsements"]
             + split["missedEndorsements"]
-            + split["uncoveredEndorsements"]
             + split["futureEndorsements"]
         )
 
         # rewards earned (excluding equivocation losses)
         rewards_and_fees = (
-            split["ownBlockRewards"]
-            + split["extraBlockRewards"]
+            split["blockRewards"]
             + split["endorsementRewards"]
-            + split["ownBlockFees"]
-            + split["extraBlockFees"]
+            + split["blockFees"]
             + split["revelationRewards"]
         )
         denunciation_rewards = (
-            split["doubleBakingRewards"] + split["doubleEndorsingRewards"]
+            split["doubleBakingRewards"]
+            + split["doubleEndorsingRewards"]
+            + split["doublePreendorsingRewards"]
         )
         equivocation_losses = (
-            split["doubleBakingLostDeposits"]
-            + split["doubleBakingLostRewards"]
-            + split["doubleBakingLostFees"]
-            + split["doubleEndorsingLostDeposits"]
-            + split["doubleEndorsingLostRewards"]
-            + split["doubleEndorsingLostFees"]
-            + split["revelationLostRewards"]
-            + split["revelationLostFees"]
+            split["doubleBakingLosses"]
+            + split["doubleEndorsingLosses"]
+            + split["doublePreendorsingLosses"]
+            + split["revelationLosses"]
         )
         total_reward_amount = max(
             0, rewards_and_fees + denunciation_rewards - equivocation_losses
         )
         # losses due to being offline or not having enough bond
         offline_losses = (
-            split["missedOwnBlockRewards"]
-            + split["missedExtraBlockRewards"]
-            + split["uncoveredOwnBlockRewards"]
-            + split["uncoveredExtraBlockRewards"]
+            split["missedBlockRewards"]
+            + split["missedBlockFees"]
             + split["missedEndorsementRewards"]
-            + split["uncoveredEndorsementRewards"]
-            + split["missedOwnBlockFees"]
-            + split["missedExtraBlockFees"]
-            + split["uncoveredOwnBlockFees"]
-            + split["uncoveredExtraBlockFees"]
         )
 
         delegators_balances = {

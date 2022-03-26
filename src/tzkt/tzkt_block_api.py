@@ -1,6 +1,7 @@
 from tzkt.tzkt_api import TzKTApi, TzKTApiError
 from api.block_api import BlockApi
 from log_config import main_logger
+from typing import Tuple
 
 logger = main_logger.getChild("tzkt_block_api")
 
@@ -13,7 +14,7 @@ class TzKTBlockApiImpl(BlockApi):
         else:
             self.api = TzKTApi.from_url(base_url)
 
-    def get_current_cycle_and_level(self) -> (int, int):
+    def get_current_cycle_and_level(self) -> Tuple[int, int]:
         """
         Get head cycle and level
         :returns: 0
