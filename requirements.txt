@@ -9,3 +9,5 @@ tweepy
 parameterized
 Pygments
 graphviz
+black==22.1.0
+flake8==4.0.1
