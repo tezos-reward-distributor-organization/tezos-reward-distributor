@@ -55,7 +55,7 @@ def args_validation(args, argparser):
     try:
         args.network
     except AttributeError:
-        logger.info("args: network argument does not exist")
+        logger.info("args: network argument does not exist.")
     else:
         network = args.network
         if network in default_network_config_map:
@@ -64,12 +64,12 @@ def args_validation(args, argparser):
     try:
         args.payment_offset
     except AttributeError:
-        logger.info("args: payment_offset argument does not exist")
+        logger.info("args: payment_offset argument does not exist.")
     else:
         payment_offset = args.payment_offset
         if not (payment_offset >= 0 and payment_offset < blocks_per_cycle):
             argparser.error(
-                "Valid range for payment offset on {:s} is between 0 and {:d}".format(
+                "Valid range for payment offset on {:s} is between 0 and {:d}.".format(
                     network, blocks_per_cycle
                 )
             )
@@ -77,22 +77,22 @@ def args_validation(args, argparser):
     try:
         args.initial_cycle
     except AttributeError:
-        logger.info("args: initial_cycle argument does not exist")
+        logger.info("args: initial_cycle argument does not exist.")
     else:
         initial_cycle = args.initial_cycle
         if initial_cycle < -1:
             argparser.error(
-                "initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle"
+                "initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle."
             )
 
     try:
         args.release_override
     except AttributeError:
-        logger.info("args: release_override argument does not exist")
+        logger.info("args: release_override argument does not exist.")
     else:
         release_override = args.release_override
         if release_override not in [-11, -5, 0]:
-            argparser.error("release-override must be -11, -5 or 0. Default is 0")
+            argparser.error("release-override must be -11, -5 or 0. Default is 0.")
 
     default_base_dir = os.path.normpath(BASE_DIR)
     default_log_file = os.path.join(
@@ -118,18 +118,18 @@ def args_validation(args, argparser):
     try:
         args.dry_run
     except AttributeError:
-        logger.info("args: dry_run argument does not exist")
+        logger.info("args: dry_run argument does not exist.")
         try:
             args.dry_run_no_consumers
         except AttributeError:
-            logger.info("args: dry_run_no_consumers argument does not exist")
+            logger.info("args: dry_run_no_consumers argument does not exist.")
         else:
             args.dry_run = args.dry_run_no_consumers
     else:
         try:
             args.dry_run_no_consumers
         except AttributeError:
-            logger.info("args: dry_run_no_consumers argument does not exist")
+            logger.info("args: dry_run_no_consumers argument does not exist.")
         else:
             args.dry_run = args.dry_run or args.dry_run_no_consumers
 
