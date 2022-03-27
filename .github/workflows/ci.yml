@@ -24,7 +24,7 @@ jobs:
         python-version: 3.9
 
     - name: Install linter and formatter dependencies
-      run: ppip install black==22.1.0 flake8==4.0.1
+      run: pip install black==22.1.0 flake8==4.0.1
 
     - name: Lint with flake8 
       run: flake8 src/ tests/
