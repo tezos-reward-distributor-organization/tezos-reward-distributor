@@ -3,12 +3,7 @@ Tests
 
 Test Execution
 ---------------
-To run the tests locally you need to have `pytest <https://pypi.org/project/pytest/>`_ installed:
-::
-
-    pip install pytest
-
-afterwards you can run the tests via:
+To run the tests locally you need to have `pytest <https://pypi.org/project/pytest/>`_ installed. It is already part of the `requirements_developers.txt` file. You can run the tests via:
 ::
 
     pytest tests/
@@ -84,17 +79,12 @@ Check the `pytest documentation and tutorials <https://docs.pytest.org/en/7.1.x/
 Visual Studio Code Test Execution (optional)
 ----------------------------------------------
 
-If you are using `Visual Studio Code <https://code.visualstudio.com/>`_ and want to use it with the 
-`Python Test Explorer <https://marketplace.visualstudio.com/items?itemName=LittleFoxTeam.vscode-python-test-adapter>`_ 
-extension you need to first download it at the Extension tab:
+If you are using `Visual Studio Code <https://code.visualstudio.com/>`_, you want to use it with the extensions installed in the previous section and check them here:
 
 .. image:: img/extension_vscode.png
   :width: 350
   :alt: Click extension tab
 
-.. image:: img/extension_vscode_2.png
-  :width: 350
-  :alt: Install the extension
 
 Then click on the test icon tab
 
