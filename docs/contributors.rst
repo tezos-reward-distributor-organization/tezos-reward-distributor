@@ -8,9 +8,10 @@ If you are interested in improving our project, this is just great! Our communit
 
 1. Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.
 2. Use a suitable code editor like `Visual Studio Code <https://code.visualstudio.com/>`_ or PyCharm. If you want to work on the documentation, please use a suitable plugin for .rst files. Also make sure to that lines will wrap at the viewport width.
-3. Install the requirements via:
+3. Install the requirements and developer/test requirements via:
    ::
 
+    pip install -r requirements.txt
     pip install -r requirements_developers.txt
 
 4. Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.
