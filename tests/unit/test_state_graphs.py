@@ -1,4 +1,5 @@
 import os
+import graphviz
 
 
 def test_draw_process_life_cycle():
@@ -12,10 +13,7 @@ def test_draw_process_life_cycle():
         process_life_cycle.get_fsm_builder().draw(file_path)
         assert os.path.isfile(file_path) is True
     finally:
-        try:
-            os.remove(file_path)
-        except OSError:
-            assert "Unable to remove file. Please investigate."
+        os.remove(file_path)
 
 
 def test_draw_config_life_cycle():
@@ -29,7 +27,4 @@ def test_draw_config_life_cycle():
         config_life_cycle.get_fsm_builder().draw(file_path)
         assert os.path.isfile(file_path) is True
     finally:
-        try:
-            os.remove(file_path)
-        except OSError:
-            assert "Unable to remove file. Please investigate."
+        os.remove(file_path)
