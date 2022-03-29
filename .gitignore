@@ -1,17 +1,24 @@
+# Folders
 logs/
 reports/
 .vscode/
-.env
+.idea/
 */*/__pycache__/
 */__pycache__/
-email.ini*
-fee.ini*
 docs/build/
-*.pyc
 venv/
 src/tzkt/logs
 src/tzkt/reports
+
+# File extensions
+.env
+email.ini*
+fee.ini*
+*.pyc
 .pytest_cache
-.idea/
 .python-version
 lock
+
+# State diagram outputs
+config_cycle_state_diagram.png
+launch_state_diagram.png
