@@ -26,9 +26,6 @@ COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 COMM_BAKING_RIGHTS = (
     "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=0"
 )
-COMM_FROZEN_BALANCE = (
-    "{}/chains/main/blocks/{}/context/delegates/{}/frozen_balance_by_cycle"
-)
 
 # Constants used for calculations related to the cycles before Granada
 CYCLES_BEFORE_GRANADA = 388
@@ -72,7 +69,7 @@ class RpcRewardApiImpl(RewardApi):
             ) = self.__get_delegators_and_delgators_balances(cycle, current_level)
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
-            # Get last block in cycle where rewards are unfrozen
+            # Get last block in cycle, where endorsement rewards are distributed by the proto
             if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
                 # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
                 # Cycles start at 0
@@ -111,10 +108,10 @@ class RpcRewardApiImpl(RewardApi):
             total_reward_amount = None
             if not rewards_type.isEstimated():
                 # Calculate actual rewards
-                unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(
+                fees, rewards = self.__get_rewards(
                     level_of_last_block_in_unfreeze_cycle, cycle
                 )
-                total_reward_amount = unfrozen_fees + unfrozen_rewards
+                total_reward_amount = fees + rewards
 
             # Without an indexer, it is not possible to itemize rewards
             # so setting these values below to "None"
@@ -218,30 +215,14 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_frozen_rewards(self, cycle, current_level):
-        try:
-            frozen_balance_by_cycle_rpc = COMM_FROZEN_BALANCE.format(
-                self.node_url, current_level, self.baking_address
-            )
-            f = [
-                f
-                for f in self.do_rpc_request(frozen_balance_by_cycle_rpc)
-                if f["cycle"] == cycle
-            ][0]
-
-            return int(f["fees"]), int(f["rewards"])
-
-        except ApiProviderException as e:
-            raise e from e
-
-    def __get_unfrozen_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
+    def __get_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
         request_metadata = (
             COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle)
             + "/metadata"
         )
         metadata = self.do_rpc_request(request_metadata)
         balance_updates = metadata["balance_updates"]
-        unfrozen_rewards = unfrozen_fees = 0
+        rewards = fees = 0
 
         for i in range(len(balance_updates)):
             balance_update = balance_updates[i]
@@ -254,10 +235,10 @@ class RpcRewardApiImpl(RewardApi):
                 endorsing_reward = int(balance_update["change"])
                 logger.info("COINCOIN Found endorsing reward of %s" % endorsing_reward)
 
-        unfrozen_fees = 0
-        unfrozen_rewards = endorsing_reward
+        fees = 0
+        rewards = endorsing_reward
 
-        return unfrozen_fees, unfrozen_rewards
+        return fees, rewards
 
     def do_rpc_request(self, request, time_out=120):
 
