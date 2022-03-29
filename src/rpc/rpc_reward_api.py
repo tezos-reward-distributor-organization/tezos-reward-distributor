@@ -108,7 +108,7 @@ class RpcRewardApiImpl(RewardApi):
             total_reward_amount = None
             if not rewards_type.isEstimated():
                 # Calculate actual rewards
-                fees, rewards = self.__get_rewards(
+                fees, rewards, lost_endorsing_rewards = self.__get_rewards(
                     level_of_last_block_in_unfreeze_cycle, cycle
                 )
                 total_reward_amount = fees + rewards
@@ -222,7 +222,7 @@ class RpcRewardApiImpl(RewardApi):
         )
         metadata = self.do_rpc_request(request_metadata)
         balance_updates = metadata["balance_updates"]
-        rewards = fees = 0
+        endorsing_rewards = lost_endorsing_rewards = fees = 0
 
         for i in range(len(balance_updates)):
             balance_update = balance_updates[i]
@@ -232,13 +232,17 @@ class RpcRewardApiImpl(RewardApi):
                 balance_updates[i - 1]["category"] == "endorsing rewards" and \
                 int(balance_updates[i - 1]["change"]) == - int(balance_update["change"]):
 
-                endorsing_reward = int(balance_update["change"])
-                logger.info("COINCOIN Found endorsing reward of %s" % endorsing_reward)
+                endorsing_rewards = int(balance_update["change"])
+                logger.info(f"Found endorsing rewards of {endorsing_rewards}")
+            elif balance_update["kind"] == "burned" and \
+                "contract" in balance_update and \
+                balance_update["contract"] == self.baking_address and \
+                balance_update["category"] == "lost endorsing rewards":
+                lost_endorsing_rewards = int(balance_update["change"])
+                logger.info(f"Found lost endorsing reward of {lost_endorsing_rewards}")
 
-        fees = 0
-        rewards = endorsing_reward
 
-        return fees, rewards
+        return fees, endorsing_rewards, lost_endorsing_rewards
 
     def do_rpc_request(self, request, time_out=120):
 
