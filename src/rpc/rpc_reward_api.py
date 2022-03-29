@@ -23,8 +23,9 @@ COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
+# max rounds set to 2; will scan for stolen blocks up to this round
 COMM_BAKING_RIGHTS = (
-    "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=0"
+    "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
 )
 
 # Constants used for calculations related to the cycles before Granada
@@ -108,10 +109,10 @@ class RpcRewardApiImpl(RewardApi):
             total_reward_amount = None
             if not rewards_type.isEstimated():
                 # Calculate actual rewards
-                fees, rewards, lost_endorsing_rewards = self.__get_rewards(
+                endorsing_rewards, lost_endorsing_rewards = self.__get_endorsing_rewards(
                     level_of_last_block_in_unfreeze_cycle, cycle
                 )
-                total_reward_amount = fees + rewards
+                total_reward_amount = endorsing_rewards
 
             # Without an indexer, it is not possible to itemize rewards
             # so setting these values below to "None"
@@ -120,24 +121,30 @@ class RpcRewardApiImpl(RewardApi):
             denunciation_rewards = None
 
             offline_losses = None
-            if rewards_type.isIdeal():
-                # Calculate offline losses
-                missed_baking_income = 0
-                for count, r in enumerate(baking_rights):
-                    if count % 10 == 0:
-                        logger.info(
-                            "Verifying bake ({}/{}).".format(count, len(baking_rights))
-                        )
-                    if r["priority"] == 0:
-                        if self.__get_block_author(r["level"]) != self.baking_address:
-                            logger.warning(
-                                "Found missed baking slot {}, adding {:<,d} mutez reward anyway.".format(
-                                    r, self.block_reward
-                                )
+            missed_baking_income = 0
+            for count, r in enumerate(baking_rights):
+                if count % 10 == 0:
+                    logger.info(
+                        "Scanning blocks ({}/{}).".format(count, len(baking_rights))
+                    )
+                block_author = self.__get_block_author(r['level'])
+                if r["round"] == 0:
+                    if self.__get_block_author(r["level"]) != self.baking_address:
+                        logger.warning(
+                            "Found missed baking slot {}.".format(
+                                r
                             )
-                            missed_baking_income += self.block_reward
+                        )
+                        missed_baking_income += self.block_reward
+                if r["round"] != 0:
+                    if self.__get_block_author(r["level"]) == self.baking_address:
+                        logger.info(
+                            "Found stolen baking slot {}.".format(
+                                r
+                            )
+                        )
 
-                offline_losses = missed_baking_income
+            offline_losses = missed_baking_income
 
             nb_endorsements = 0
             reward_model = RewardProviderModel(
@@ -215,14 +222,14 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
+    def __get_endorsing_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
         request_metadata = (
             COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle)
             + "/metadata"
         )
         metadata = self.do_rpc_request(request_metadata)
         balance_updates = metadata["balance_updates"]
-        endorsing_rewards = lost_endorsing_rewards = fees = 0
+        endorsing_rewards = lost_endorsing_rewards = 0
 
         for i in range(len(balance_updates)):
             balance_update = balance_updates[i]
@@ -242,7 +249,7 @@ class RpcRewardApiImpl(RewardApi):
                 logger.info(f"Found lost endorsing reward of {lost_endorsing_rewards}")
 
 
-        return fees, endorsing_rewards, lost_endorsing_rewards
+        return endorsing_rewards, lost_endorsing_rewards
 
     def do_rpc_request(self, request, time_out=120):
 
