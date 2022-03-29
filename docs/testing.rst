@@ -1,7 +1,17 @@
-Test structure
-====================
+Tests
+========
 
-The tests in TRD are run in the following order:
+Test Execution
+---------------
+To run the tests locally you need to have `pytest <https://pypi.org/project/pytest/>`_ installed. It is already part of the `requirements_developers.txt` file. You can run the tests via:
+::
+
+    pytest tests/
+
+Structure
+--------------
+
+The tests which are executed in TRD are as follows:
 
 1. unit tests
 
@@ -56,5 +66,59 @@ Verification (WIP)
 -------------------
 Checking the FSM model systematically with exhaustive exploration. 
 This consists of exploring all states and transitions in the model (`source`_).
+
+Test Format
+-------------
+Name the test file according to the feature/function you want to test and the "test\_" prefix (e.g. test_sample.py).
+Only use functions to write the actual tests for simplicity. 
+If applicable make use of pytest's fixtures to avoid code duplication.
+Check the `pytest documentation and tutorials <https://docs.pytest.org/en/7.1.x/contents.html>`_ for more info on how to write pytest tests.
+
+
+Visual Studio Code Test Execution (optional)
+----------------------------------------------
+
+If you are using `Visual Studio Code <https://code.visualstudio.com/>`_, you want to use it with the extensions installed in the previous section and check them here:
+
+.. image:: img/extension_vscode.png
+  :width: 350
+  :alt: Click extension tab
+
+
+Then click on the test icon tab
+
+.. image:: img/test_vscode.png
+  :width: 350
+  :alt: Click test tab
+
+Click on Configure Python Tests
+
+.. image:: img/test_vscode_2.png
+  :width: 350
+  :alt: Click test tab
+
+Select pytest
+
+.. image:: img/test_vscode_3.png
+  :width: 500
+  :alt: Pytest Selection
+
+Select the test folder
+
+.. image:: img/test_vscode_4.png
+  :width: 500
+  :alt: Test folder
+
+Now you can see all the test which are runnable
+
+.. image:: img/test_vscode_5.png
+  :width: 350
+  :alt: Runnable tests
+
+Now run all tests
+
+.. image:: img/test_vscode_6.png
+  :width: 350
+  :alt: Run all tests
 
 .. _source: https://en.wikipedia.org/wiki/Formal_verification
