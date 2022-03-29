@@ -56,12 +56,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         sudo apt-get update -y
-        sudo apt-get install libenchant1c2a -y
         sudo apt-get install graphviz -y
         pip install -r requirements.txt
-        pip install pytest
-        pip install parameterized
-        pip install graphviz
+        pip install -r requirements_developers.txt
 
     - name: Test with pytest
       run: pytest tests/
@@ -84,7 +81,7 @@ jobs:
       run: |
         sudo apt-get install graphviz -y
         pip install -r requirements.txt
-        pip install graphviz
+        pip install -r requirements_developers.txt
         python docs/fsm/graphviz/draw_state_diagrams.py
 
     - name: Build documentation
@@ -94,9 +91,7 @@ jobs:
         pre-build-command: |
           mkdir -p docs/build/
           touch docs/build/.nojekyll
-          pip install sphinx_rtd_theme
-          pip install sphinxcontrib.spelling
-          pip install --upgrade recommonmark
+          pip install -r requirements_developers.txt
         build-command: sphinx-build -b html . build
 
   build-docker:
@@ -110,4 +105,3 @@ jobs:
 
     - name: Build the docker image
       run: docker build -t trdo/tezos-reward-distributor .
-
