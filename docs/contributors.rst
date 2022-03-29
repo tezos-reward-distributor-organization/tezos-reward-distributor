@@ -4,9 +4,6 @@ For Developers
 General:
 ---------
 
-General:
----------
-
 If you are interested in improving our project, this is just great! Our community looks forward to your contribution. Please follow this process:
 
 1. Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.
@@ -75,43 +72,6 @@ Guidelines for rewarding PRs in the context of the TRD grant:
 2. The contributor should respect the process preceding a PR (start an issue and create a branch) and submit a PR in accordance with the PR template.
 3. The PR can only be merged if approved by at least one maintainer. Before approving a PR, the issue should be fully solved and the changes should be tested and documented.
 4. The PR can only be approved if an agreement about the work effort (in hrs) is made.
-<<<<<<< HEAD
-5. The PR should be merged using a squash merge, the work effort of the contributor and reviewer should be documented in the squash merge commit message.
-6. The work efforts are paid out in a regular basis. The payments are documented in a dedicated file named `contributor_payments.csv`.
-7. For each payment, the reason for payment should be documented (commit hash, review efforts, etc.). Additionally, the paid amount in USD, the VWAP XTZ-USD on the payment day, the payed amount in XTZ and the transaction hash are documented.
-
-Setup:
--------
-
-you can contribute to TRD using your the developer tool of your choice. The follwing setup helps with VS Code.
-
-1. Creat a `.env` file in the workspace directory with the following content:
-
-    Windows: PYTHONPATH=${PYTHONPATH};./src
-    Mac/Linux: PYTHONPATH=${PYTHONPATH}:./src
-
-2. Create a `settings.json` file in the folder `.vscode` with the following content:
-
-.. code-block:: JSON
-
-    {
-    "terminal.integrated.env.osx": {
-      "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}/src",
-    },
-    "terminal.integrated.env.linux": {
-      "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}/src",
-    },
-    "terminal.integrated.env.windows": {
-      "PYTHONPATH": "${env:PYTHONPATH};${workspaceFolder}/src",
-    },
-    "python.testing.pytestArgs": [
-      "tests"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-  }
-=======
 5. The PR is merged using a squash merge by the maintainer, the work effort of the contributor and reviewer is documented in the squash merge commit message.
 6. The work efforts are paid out for each release of TRD. The payments are documented in a dedicated file named `contributor_payments.csv`.
 7. For each payment, the reason for payment should be documented (commit hash, review efforts, etc.). Additionally, the paid amount in USD, the VWAP XTZ-USD on the payment day, the payed amount in XTZ and the transaction hash are documented.
->>>>>>> master

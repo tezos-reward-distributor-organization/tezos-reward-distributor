@@ -1,8 +1,8 @@
 How to configure TRD?
-==========================================
+======================
 
 Fee Setup
-------------------------
+-----------
 
 fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.
 
@@ -64,7 +64,7 @@ Available configuration parameters are:
     
   Note::
   
-  Setting 'RELEASE_OVERRIDE' to '-11' will trigger estimated payouts which are adjusted later on. See: :ref:`payout_timing`
+    Setting 'RELEASE_OVERRIDE' to '-11' will trigger estimated payouts which are adjusted later on. See: :ref:`payout_timing`
 
 **service_fee**
   A decimal in range [0-100]. Also known as the baker's fee. This is evaluated as a percentage value. Example: If set to 5, then 5% of baking rewards are kept as a service fee by the baker.
