@@ -8,10 +8,7 @@ from log_config import main_logger, verbose_logger
 from tzstats.tzstats_api_constants import (
     idx_n_baking_rights,
     idx_n_endorsing_rights,
-    idx_income_baking_income,
-    idx_income_endorsing_income,
-    idx_income_seed_income,
-    idx_income_fees_income,
+    idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
     idx_income_lost_revelation_fees,
@@ -102,10 +99,7 @@ class TzStatsRewardProviderHelper:
         root["rewards_and_fees"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_baking_income])
-                + float(resp[idx_income_endorsing_income])
-                + float(resp[idx_income_seed_income])
-                + float(resp[idx_income_fees_income])
+                float(resp[idx_income_total_income])
             )
         )
         # losses due to baker double baking, double endorsing or missing nonce

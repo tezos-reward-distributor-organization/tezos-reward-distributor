@@ -1,7 +1,7 @@
 # Income/Rewards Breakdown
-idx_income_expected_income = 18
-idx_income_total_income = 19
-idx_income_total_bonds = 20
+idx_income_expected_income = 17
+idx_income_total_income = 18
+idx_income_total_bonds = 19
 
 idx_income_baking_income = 21
 idx_income_endorsing_income = 22
