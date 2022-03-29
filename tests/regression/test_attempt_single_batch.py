@@ -84,7 +84,8 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
     reward_log.skipped = False
 
     opt_counter = OpCounter()
-    status, operation_hash = batch_payer.attempt_single_batch(
+
+    status, operation_hash, _ = batch_payer.attempt_single_batch(
         [reward_log], opt_counter, dry_run=True
     )
     assert status == PaymentStatus.DONE
@@ -144,7 +145,8 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
     reward_log.skipped = False
 
     opt_counter = OpCounter()
-    status, operation_hash = batch_payer.attempt_single_batch(
+
+    status, operation_hash, _ = batch_payer.attempt_single_batch(
         [reward_log], opt_counter, dry_run=True
     )
     assert status == PaymentStatus.DONE

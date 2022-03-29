@@ -21,9 +21,6 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Set the python path
-      run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
-
     - name: Generate diagrams
       run: |
         sudo apt-get install graphviz -y

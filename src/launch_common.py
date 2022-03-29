@@ -52,28 +52,44 @@ def args_validation(args, argparser):
     # Validate offset within known network defaults
     blocks_per_cycle = 0
 
-    if args.network:
+    try:
+        args.network
+    except AttributeError:
+        logger.info("args: network argument does not exist.")
+    else:
         network = args.network
         if network in default_network_config_map:
             blocks_per_cycle = default_network_config_map[network]["BLOCKS_PER_CYCLE"]
 
-    if args.payment_offset:
+    try:
+        args.payment_offset
+    except AttributeError:
+        logger.info("args: payment_offset argument does not exist.")
+    else:
         payment_offset = args.payment_offset
         if not (payment_offset >= 0 and payment_offset < blocks_per_cycle):
             argparser.error(
-                "Valid range for payment offset on {:s} is between 0 and {:d}".format(
+                "Valid range for payment offset on {:s} is between 0 and {:d}.".format(
                     network, blocks_per_cycle
                 )
             )
 
-    if args.initial_cycle:
+    try:
+        args.initial_cycle
+    except AttributeError:
+        logger.info("args: initial_cycle argument does not exist.")
+    else:
         initial_cycle = args.initial_cycle
         if initial_cycle < -1:
             argparser.error(
-                "initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle"
+                "initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle."
             )
 
-    if args.release_override:
+    try:
+        args.release_override
+    except AttributeError:
+        logger.info("args: release_override argument does not exist.")
+    else:
         release_override = args.release_override
         preserved_cycles = default_network_config_map[network]["NB_FREEZE_CYCLE"]
         estimated_reward_override = - preserved_cycles * 2 - 1
@@ -85,12 +101,40 @@ def args_validation(args, argparser):
     default_log_file = os.path.join(
         os.path.normpath(BASE_DIR), os.path.normpath(DEFAULT_LOG_FILE)
     )
+
+    # set possibly missing vital args
+    try:
+        args.base_directory
+    except AttributeError:
+        args.base_directory = default_base_dir
+
+    try:
+        args.log_file
+    except AttributeError:
+        args.log_file = default_log_file
+
     if args.base_directory != default_base_dir and args.log_file == default_log_file:
         args.log_file = os.path.join(
             os.path.normpath(args.base_directory), os.path.normpath(DEFAULT_LOG_FILE)
         )
 
-    args.dry_run = args.dry_run or args.dry_run_no_consumers
+    try:
+        args.dry_run
+    except AttributeError:
+        logger.info("args: dry_run argument does not exist.")
+        try:
+            args.dry_run_no_consumers
+        except AttributeError:
+            logger.info("args: dry_run_no_consumers argument does not exist.")
+        else:
+            args.dry_run = args.dry_run_no_consumers
+    else:
+        try:
+            args.dry_run_no_consumers
+        except AttributeError:
+            logger.info("args: dry_run_no_consumers argument does not exist.")
+        else:
+            args.dry_run = args.dry_run or args.dry_run_no_consumers
 
     return args
 

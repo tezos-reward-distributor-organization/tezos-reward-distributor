@@ -148,6 +148,7 @@ class RpcRewardApiImpl(RewardApi):
                                 )
                             )
                             missed_baking_income += self.block_reward
+                            
                 offline_losses = missed_baking_income
 
 
