@@ -88,19 +88,16 @@ class RpcRewardApiImpl(RewardApi):
             else:
                 # Using pre-Granada calculation
                 level_of_last_block_in_unfreeze_cycle = (
-                    cycle + self.preserved_cycles + 1
+                    cycle + 1
                 ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA
                 level_of_first_block_in_preserved_cycles = (
                     cycle - self.preserved_cycles
                 ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
 
             logger.debug(
-                "Cycle {:d}, preserved cycles {:d}, blocks per cycle {:d}, last block of cycle {:d}, "
-                "last block unfreeze cycle {:d}".format(
+                "Cycle {:d}, blocks per cycle {:d}, last block of cycle {:d}".format(
                     cycle,
-                    self.preserved_cycles,
                     self.blocks_per_cycle,
-                    level_of_first_block_in_preserved_cycles,
                     level_of_last_block_in_unfreeze_cycle,
                 )
             )
@@ -114,16 +111,10 @@ class RpcRewardApiImpl(RewardApi):
             total_reward_amount = None
             if not rewards_type.isEstimated():
                 # Calculate actual rewards
-                if current_level - level_of_last_block_in_unfreeze_cycle >= 0:
-                    unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(
-                        level_of_last_block_in_unfreeze_cycle, cycle
-                    )
-                    total_reward_amount = unfrozen_fees + unfrozen_rewards
-                else:
-                    frozen_fees, frozen_rewards = self.__get_frozen_rewards(
-                        cycle, current_level
-                    )
-                    total_reward_amount = frozen_fees + frozen_rewards
+                unfrozen_fees, unfrozen_rewards = self.__get_unfrozen_rewards(
+                    level_of_last_block_in_unfreeze_cycle, cycle
+                )
+                total_reward_amount = unfrozen_fees + unfrozen_rewards
 
             # Without an indexer, it is not possible to itemize rewards
             # so setting these values below to "None"
@@ -254,49 +245,17 @@ class RpcRewardApiImpl(RewardApi):
 
         for i in range(len(balance_updates)):
             balance_update = balance_updates[i]
-            if balance_update["kind"] == "freezer":
-                if balance_update["delegate"] == self.baking_address:
-                    # Protocols < Athens (004) mistakenly used 'level'
-                    if (
-                        (
-                            "level" in balance_update
-                            and int(balance_update["level"]) == cycle
-                        )
-                        or (
-                            "cycle" in balance_update
-                            and int(balance_update["cycle"]) == cycle
-                        )
-                    ) and int(balance_update["change"]) < 0:
+            if balance_update["kind"] == "contract" and \
+                balance_update["contract"] == self.baking_address and \
+                balance_updates[i - 1]["kind"] == "minted" and \
+                balance_updates[i - 1]["category"] == "endorsing rewards" and \
+                int(balance_updates[i - 1]["change"]) == - int(balance_update["change"]):
 
-                        if balance_update["category"] == "rewards":
-                            unfrozen_rewards = -int(balance_update["change"])
-                            logger.debug(
-                                "[__get_unfrozen_rewards] Found balance update for reward {}".format(
-                                    balance_update
-                                )
-                            )
-                        elif balance_update["category"] == "fees":
-                            unfrozen_fees = -int(balance_update["change"])
-                            logger.debug(
-                                "[__get_unfrozen_rewards] Found balance update for fee {}".format(
-                                    balance_update
-                                )
-                            )
-                        else:
-                            logger.debug(
-                                "[__get_unfrozen_rewards] Found balance update, not including: {}".format(
-                                    balance_update
-                                )
-                            )
-                    else:
-                        logger.debug(
-                            "[__get_unfrozen_rewards] Found balance update, cycle does not match or "
-                            "change is non-zero, not including: {}".format(
-                                balance_update
-                            )
-                        )
+                endorsing_reward = int(balance_update["change"])
+                logger.info("COINCOIN Found endorsing reward of %s" % endorsing_reward)
 
-        return unfrozen_fees, unfrozen_rewards
+        unfrozen_fees = 0
+        unfrozen_rewards = endorsing_reward
 
         return unfrozen_fees, unfrozen_rewards
 
