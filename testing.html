@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Test structure &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
+  <title>Tests &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -52,7 +52,9 @@
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Test structure</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#test-execution">Test Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#structure">Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#unit-tests">Unit tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#regression-tests">Regression tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#integration-tests">Integration tests</a></li>
@@ -60,6 +62,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#acceptance-test-wip">Acceptance test (WIP)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#non-functional-tests-wip">Non functional tests (WIP)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#verification-wip">Verification (WIP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-format">Test Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visual-studio-code-test-execution-optional">Visual Studio Code Test Execution (optional)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
@@ -80,7 +84,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Test structure</li>
+      <li>Tests</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/testing.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -90,9 +94,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="test-structure">
-<h1>Test structure<a class="headerlink" href="#test-structure" title="Permalink to this headline"></a></h1>
-<p>The tests in TRD are run in the following order:</p>
+  <div class="section" id="tests">
+<h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline"></a></h1>
+<div class="section" id="test-execution">
+<h2>Test Execution<a class="headerlink" href="#test-execution" title="Permalink to this headline"></a></h2>
+<p>To run the tests locally you need to have <a class="reference external" href="https://pypi.org/project/pytest/">pytest</a> installed. It is already part of the <cite>requirements_developers.txt</cite> file. You can run the tests via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="n">tests</span><span class="o">/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="structure">
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline"></a></h2>
+<p>The tests which are executed in TRD are as follows:</p>
 <ol class="arabic simple">
 <li><p>unit tests</p></li>
 <li><p>regression tests</p></li>
@@ -102,6 +115,7 @@
 <li><p>non functional tests. (WIP)</p></li>
 <li><p>formal verification (WIP)</p></li>
 </ol>
+</div>
 <div class="section" id="unit-tests">
 <h2>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline"></a></h2>
 <p>Unit tests test only one specific function or method of a class.
@@ -139,6 +153,30 @@ E.g. the correct and reliable distribution of rewards.</p>
 <h2>Verification (WIP)<a class="headerlink" href="#verification-wip" title="Permalink to this headline"></a></h2>
 <p>Checking the FSM model systematically with exhaustive exploration.
 This consists of exploring all states and transitions in the model (<a class="reference external" href="https://en.wikipedia.org/wiki/Formal_verification">source</a>).</p>
+</div>
+<div class="section" id="test-format">
+<h2>Test Format<a class="headerlink" href="#test-format" title="Permalink to this headline"></a></h2>
+<p>Name the test file according to the feature/function you want to test and the “test_” prefix (e.g. test_sample.py).
+Only use functions to write the actual tests for simplicity.
+If applicable make use of pytest’s fixtures to avoid code duplication.
+Check the <a class="reference external" href="https://docs.pytest.org/en/7.1.x/contents.html">pytest documentation and tutorials</a> for more info on how to write pytest tests.</p>
+</div>
+<div class="section" id="visual-studio-code-test-execution-optional">
+<h2>Visual Studio Code Test Execution (optional)<a class="headerlink" href="#visual-studio-code-test-execution-optional" title="Permalink to this headline"></a></h2>
+<p>If you are using <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a>, you want to use it with the extensions installed in the previous section and check them here:</p>
+<a class="reference internal image-reference" href="_images/extension_vscode.png"><img alt="Click extension tab" src="_images/extension_vscode.png" style="width: 350px;" /></a>
+<p>Then click on the test icon tab</p>
+<a class="reference internal image-reference" href="_images/test_vscode.png"><img alt="Click test tab" src="_images/test_vscode.png" style="width: 350px;" /></a>
+<p>Click on Configure Python Tests</p>
+<a class="reference internal image-reference" href="_images/test_vscode_2.png"><img alt="Click test tab" src="_images/test_vscode_2.png" style="width: 350px;" /></a>
+<p>Select pytest</p>
+<a class="reference internal image-reference" href="_images/test_vscode_3.png"><img alt="Pytest Selection" src="_images/test_vscode_3.png" style="width: 500px;" /></a>
+<p>Select the test folder</p>
+<a class="reference internal image-reference" href="_images/test_vscode_4.png"><img alt="Test folder" src="_images/test_vscode_4.png" style="width: 500px;" /></a>
+<p>Now you can see all the test which are runnable</p>
+<a class="reference internal image-reference" href="_images/test_vscode_5.png"><img alt="Runnable tests" src="_images/test_vscode_5.png" style="width: 350px;" /></a>
+<p>Now run all tests</p>
+<a class="reference internal image-reference" href="_images/test_vscode_6.png"><img alt="Run all tests" src="_images/test_vscode_6.png" style="width: 350px;" /></a>
 </div>
 </div>
 

@@ -17,7 +17,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Test structure" href="testing.html" />
+    <link rel="next" title="Tests" href="testing.html" />
     <link rel="prev" title="TRD State Machines" href="state_machine.html" /> 
 </head>
 
@@ -53,10 +53,12 @@
 <li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">For Developers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#general">General:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setup">Setup:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visual-studio-code-optional">Visual Studio Code (optional):</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principles-on-the-application-evolution">Principles on the application evolution:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#guidelines-for-rewarding-prs-in-the-context-of-the-trd-grant">Guidelines for rewarding PRs in the context of the TRD grant:</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Test structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
 </ul>
@@ -90,25 +92,49 @@
 <div class="section" id="general">
 <h2>General:<a class="headerlink" href="#general" title="Permalink to this headline"></a></h2>
 <p>If you are interested in improving our project, this is just great! Our community looks forward to your contribution. Please follow this process:</p>
-<ol class="arabic simple">
+<ol class="arabic">
 <li><p>Start a bug/feature issue on GitHub about your proposed change. Continue discussion until a solution is decided.</p></li>
-<li><p>Use a suitable code editor like Visual Studio Code or PyCharm. If you want to work on the documentation, please use a suitable plugin for .rst files. Make sure to install recommonmark (pip install recommonmark) and the Sphinx theme (pip install sphinx_rtd_theme) when working on the documentation. Also make sure to that lines will wrap at the viewport width.</p></li>
+<li><p>Use a suitable code editor like <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a> or PyCharm. If you want to work on the documentation, please use a suitable plugin for .rst files. Also make sure to that lines will wrap at the viewport width.</p></li>
+<li><p>Install the requirements and developer/test requirements via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements_developers</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">graphviz</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+</div>
+</li>
 <li><p>Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.</p></li>
 <li><p>Branches MUST have descriptive names that start with either the <cite>fix/</cite> or <cite>feature/</cite> prefixes. Good examples are: <cite>fix/signin-issue</cite> or <cite>feature/issue-templates</cite>.</p></li>
-<li><p>Make your changes on the branch you created in Step 2. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.</p></li>
-<li><p>Be sure your code style adheres to the Python PEP8 standard. Use <cite>pycodestyle</cite> to verify before submitting.</p></li>
-<li><p>Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don’t push it to your master! If you do it will make it harder to submit new changes later.</p></li>
-<li><dl class="simple">
-<dt>Submit a pull request to the TRD repository from your commit page on GitHub.</dt><dd><ol class="loweralpha simple">
-<li><p>Give a descriptive title to your PR and mark it e.g. as <cite>[WIP]</cite> if you want it to be visible but you are not finished yet or need help.</p></li>
-<li><p>Provide a description of your changes according to the PR template.</p></li>
-<li><p>Put <cite>closes #XXXX</cite> in your comment to auto-close the issue that your PR fixes (if such).</p></li>
-</ol>
-</dd>
-</dl>
+<li><p>Make your changes on the branch you created before. Be sure that your code passes existing unit tests. Please add unit tests for your work if appropriate. It usually is.</p></li>
+<li><p>Be sure your code style adheres to the code standards. Use <a class="reference external" href="https://pypi.org/project/black/">Black</a> to verify before submitting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">black</span> <span class="o">.</span>
+</pre></div>
+</div>
 </li>
+<li><p>Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don’t push it to your master! If you do it will make it harder to submit new changes later.</p></li>
+<li><p>Submit a pull request to the TRD repository from your commit page on GitHub.
+a. Give a descriptive title to your PR and mark it e.g. as <cite>[WIP]</cite> if you want it to be visible but you are not finished yet or need help.
+b. Provide a description of your changes according to the PR template.
+c. Put <cite>closes #XXXX</cite> in your comment to auto-close the issue that your PR fixes (if such).</p></li>
 </ol>
-<p>Principles on the application evolution:</p>
+</div>
+<div class="section" id="visual-studio-code-optional">
+<h2>Visual Studio Code (optional):<a class="headerlink" href="#visual-studio-code-optional" title="Permalink to this headline"></a></h2>
+<p>VS Code is a code editor with many useful plugins. The following list of plugins is recommended to develop efficiently and execute the test infrastructure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">lextudio</span><span class="o">.</span><span class="n">restructuredtext</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">lextudio</span><span class="o">.</span><span class="n">restructuredtext</span><span class="o">-</span><span class="n">pack</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">ms</span><span class="o">-</span><span class="n">azuretools</span><span class="o">.</span><span class="n">vscode</span><span class="o">-</span><span class="n">docker</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">MS</span><span class="o">-</span><span class="n">CEINTL</span><span class="o">.</span><span class="n">vscode</span><span class="o">-</span><span class="n">language</span><span class="o">-</span><span class="n">pack</span><span class="o">-</span><span class="n">de</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">ms</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">python</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">ms</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">vscode</span><span class="o">-</span><span class="n">pylance</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">ms</span><span class="o">-</span><span class="n">toolsai</span><span class="o">.</span><span class="n">jupyter</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">ms</span><span class="o">-</span><span class="n">toolsai</span><span class="o">.</span><span class="n">jupyter</span><span class="o">-</span><span class="n">keymap</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">ms</span><span class="o">-</span><span class="n">toolsai</span><span class="o">.</span><span class="n">jupyter</span><span class="o">-</span><span class="n">renderers</span>
+<span class="n">code</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">extension</span> <span class="n">trond</span><span class="o">-</span><span class="n">snekvik</span><span class="o">.</span><span class="n">simple</span><span class="o">-</span><span class="n">rst</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="principles-on-the-application-evolution">
+<h2>Principles on the application evolution:<a class="headerlink" href="#principles-on-the-application-evolution" title="Permalink to this headline"></a></h2>
 <ol class="arabic simple">
 <li><p>Discuss the solution with repository owners and other community members. Start the development after everybody agrees on a solution.</p></li>
 <li><p>Prefer the simpler solution. Try to make as few changes as possible.</p></li>
@@ -117,52 +143,23 @@
 <li><p>Follow existing naming conventions.</p></li>
 <li><p>Avoid code repetition. Make use of Object Oriented design principles when possible.</p></li>
 <li><p>More configuration parameters do not always mean more flexibility. We do not want the application to turn into configuration hell which nobody can use.</p></li>
-<li><p>The idea of community members is very important because this repo is just a sequence of statements if nobody uses and benefit.</p></li>
+<li><p>The idea of community members is very important because this repo is just a sequence of statements if nobody uses it and benefits.</p></li>
 <li><p>A change will be accepted if it will benefit the community. Particular requests which only very few people will take advantage will not be accepted to leave the code as simple as possible.</p></li>
 </ol>
 <p>Disclaimer: This project started in the spirit of free and open source software with voluntary contributions without compensation.
 You can always donate your contribution free of charge!</p>
-<p>Guidelines for rewarding PRs in the context of the TRD grant:</p>
+</div>
+<div class="section" id="guidelines-for-rewarding-prs-in-the-context-of-the-trd-grant">
+<h2>Guidelines for rewarding PRs in the context of the TRD grant:<a class="headerlink" href="#guidelines-for-rewarding-prs-in-the-context-of-the-trd-grant" title="Permalink to this headline"></a></h2>
 <ol class="arabic simple">
 <li><p>Payments are not granted for contributions being paid in the context of another grant or company income.</p></li>
 <li><p>The contributor should respect the process preceding a PR (start an issue and create a branch) and submit a PR in accordance with the PR template.</p></li>
 <li><p>The PR can only be merged if approved by at least one maintainer. Before approving a PR, the issue should be fully solved and the changes should be tested and documented.</p></li>
 <li><p>The PR can only be approved if an agreement about the work effort (in hrs) is made.</p></li>
-<li><p>The PR should be merged using a squash merge, the work effort of the contributor and reviewer should be documented in the squash merge commit message.</p></li>
-<li><p>The work efforts are paid out in a regular basis. The payments are documented in a dedicated file named <cite>contributor_payments.csv</cite>.</p></li>
+<li><p>The PR is merged using a squash merge by the maintainer, the work effort of the contributor and reviewer is documented in the squash merge commit message.</p></li>
+<li><p>The work efforts are paid out for each release of TRD. The payments are documented in a dedicated file named <cite>contributor_payments.csv</cite>.</p></li>
 <li><p>For each payment, the reason for payment should be documented (commit hash, review efforts, etc.). Additionally, the paid amount in USD, the VWAP XTZ-USD on the payment day, the payed amount in XTZ and the transaction hash are documented.</p></li>
 </ol>
-</div>
-<div class="section" id="setup">
-<h2>Setup:<a class="headerlink" href="#setup" title="Permalink to this headline"></a></h2>
-<p>you can contribute to TRD using your the developer tool of your choice. The follwing setup helps with VS Code.</p>
-<ol class="arabic">
-<li><p>Creat a <cite>.env</cite> file in the workspace directory with the following content:</p>
-<blockquote>
-<div><p>Windows: PYTHONPATH=${PYTHONPATH};./src
-Mac/Linux: PYTHONPATH=${PYTHONPATH}:./src</p>
-</div></blockquote>
-</li>
-<li><p>Create a <cite>settings.json</cite> file in the folder <cite>.vscode</cite> with the following content:</p></li>
-</ol>
-<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span>  <span class="p">{</span>
-  <span class="nt">&quot;terminal.integrated.env.osx&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;PYTHONPATH&quot;</span><span class="p">:</span> <span class="s2">&quot;${env:PYTHONPATH}:${workspaceFolder}/src&quot;</span><span class="p">,</span>
-  <span class="p">},</span>
-  <span class="nt">&quot;terminal.integrated.env.linux&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;PYTHONPATH&quot;</span><span class="p">:</span> <span class="s2">&quot;${env:PYTHONPATH}:${workspaceFolder}/src&quot;</span><span class="p">,</span>
-  <span class="p">},</span>
-  <span class="nt">&quot;terminal.integrated.env.windows&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;PYTHONPATH&quot;</span><span class="p">:</span> <span class="s2">&quot;${env:PYTHONPATH};${workspaceFolder}/src&quot;</span><span class="p">,</span>
-  <span class="p">},</span>
-  <span class="nt">&quot;python.testing.pytestArgs&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s2">&quot;tests&quot;</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;python.testing.unittestEnabled&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&quot;python.testing.pytestEnabled&quot;</span><span class="p">:</span> <span class="kc">true</span>
-<span class="p">}</span>
-</pre></div>
-</div>
 </div>
 </div>
 
@@ -171,7 +168,7 @@ Mac/Linux: PYTHONPATH=${PYTHONPATH}:./src</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="state_machine.html" class="btn btn-neutral float-left" title="TRD State Machines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="testing.html" class="btn btn-neutral float-right" title="Test structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="testing.html" class="btn btn-neutral float-right" title="Tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
