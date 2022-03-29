@@ -1,14 +1,32 @@
 import os
+import argparse
 import signal
 import errno
 import time
+from Constants import BASE_DIR, CONFIG_DIR
+
+
+def command_line_arguments():
+    parser = argparse.ArgumentParser(
+        description="Stop the running trd process.", prog="trd_stopper"
+    )
+    default_config_dir = os.path.join(os.path.normpath(BASE_DIR), CONFIG_DIR, "")
+    parser.add_argument(
+        "-f",
+        "--config_dir",
+        help=(
+            "Directory to find configuration files and the lock file. " "Default: {}"
+        ).format(default_config_dir),
+        default=default_config_dir,
+    )
+    return parser.parse_args()
 
 
 def main():
     print("Stopping reward distributor")
-
-    stop()
-
+    args = command_line_arguments()
+    config_dir = os.path.join(os.path.expanduser(os.path.normpath(args.config_dir)), "")
+    stop(config_dir)
     time.sleep(1)
 
 
@@ -24,7 +42,7 @@ def pid_exists(pid):
         # in the process group of the calling process.
         # On certain systems 0 is a valid PID but we have no way
         # to know that in a portable fashion.
-        raise ValueError('invalid PID 0')
+        raise ValueError("invalid PID 0")
     try:
         os.kill(pid, signal.SIGTERM)
     except OSError as err:
@@ -42,18 +60,19 @@ def pid_exists(pid):
         return True
 
 
-def stop():
+def stop(config_path):
     pid = None
+    lock_path = os.path.join(config_path, "lock")
     try:
-        with open("./lock", 'rt') as f:
+        with open(lock_path, "rt") as f:
             pid = f.readline()
             pid = int(pid)
     except FileNotFoundError:
-        print("No lock file. No running process")
+        print("No lock file found at {}. No running process!".format(lock_path))
         return
 
     if not pid_exists(pid):
-        os.remove("./lock")
+        os.remove(lock_path)
         return
 
     os.kill(pid, signal.SIGTERM)
@@ -65,5 +84,5 @@ def stop():
     print("Application with pid {} is stopped!".format(pid))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@ from pprint import pformat
 from os.path import join
 from json import JSONDecodeError
 
-from Constants import VERSION, TZKT_PUBLIC_API_URL
+from Constants import VERSION, TZKT_PUBLIC_API_URL, MAX_SEQUENT_CALLS
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 
@@ -16,10 +16,14 @@ class TzKTApiError(ApiProviderException):
     pass
 
 
+MAX_PAGE_SIZE = 10000
+TZKT_REQUEST_BUFFER_SECONDS = 0.1
+TZKT_RETRY_TIMEOUT_SECONDS = 2.0
+
+
 class TzKTApi:
-    max_page_size = 10000
-    max_sequent_calls = 257  # to prevent possible endless looping
-    delay_between_calls = 0.1  # in seconds
+    max_page_size = MAX_PAGE_SIZE
+    delay_between_calls = TZKT_REQUEST_BUFFER_SECONDS  # in seconds
 
     def __init__(self, base_url, timeout):
         self.base_url = base_url
@@ -33,7 +37,7 @@ class TzKTApi:
         :param timeout: request timeout in seconds (default = 30)
         """
         base_urls = TZKT_PUBLIC_API_URL
-        assert network in base_urls, f'Unsupported network {network}'
+        assert network in base_urls, f"Unsupported network {network}"
         return TzKTApi(base_url=base_urls[network], timeout=timeout)
 
     @staticmethod
@@ -56,28 +60,40 @@ class TzKTApi:
                 url=url,
                 params=data,
                 timeout=self.timeout,
-                headers={'User-Agent': f'trd-{VERSION}'})
+                headers={"User-Agent": f"trd-{VERSION}"},
+            )
         except requests.Timeout:
-            raise TzKTApiError('Request timeout')
+            raise TzKTApiError("Request timeout")
         except requests.ConnectionError:
-            raise TzKTApiError('DNS lookup failed')
+            raise TzKTApiError("DNS lookup failed")
         except requests.HTTPError as e:
-            raise TzKTApiError('HTTP Error occurred: {}'.format(e))
+            raise TzKTApiError("HTTP Error occurred: {}".format(e))
         except requests.RequestException as e:
             raise TzKTApiError(e)
 
-        if response.status_code == HTTPStatus.NO_CONTENT:
-            return None
+        # Raise exception for client side errors (4xx)
+        if (
+            HTTPStatus.BAD_REQUEST
+            <= response.status_code
+            < HTTPStatus.INTERNAL_SERVER_ERROR
+        ):
+            raise TzKTApiError(
+                f"TzKT returned {response.status_code} error:\n{response.text}"
+            )
 
-        if response.status_code != HTTPStatus.OK:
-            raise TzKTApiError(f'TzKT returned {response.status_code} error:\n{response.text}')
+        # Return None if empty content
+        # or we get a server side error (5xx)
+        if (response.status_code == HTTPStatus.NO_CONTENT) or (
+            response.status_code >= HTTPStatus.INTERNAL_SERVER_ERROR
+        ):
+            return None
 
         try:
             res = response.json()
         except JSONDecodeError:
-            raise TzKTApiError(f'Failed to decode JSON:\n{response.text}')
+            raise TzKTApiError(f"Failed to decode JSON:\n{response.text}")
 
-        verbose_logger.debug(f'Response from TzKT is:\n{pformat(res)}')
+        verbose_logger.debug(f"Response from TzKT is:\n{pformat(res)}")
 
         return res
 
@@ -94,7 +110,7 @@ class TzKTApi:
             "synced": true
         }
         """
-        return self._request('head')
+        return self._request("head")
 
     def get_reward_split(self, address, cycle, fetch_delegators=True) -> dict:
         """
@@ -167,23 +183,33 @@ class TzKTApi:
         offset = 0
         limit = self.max_page_size if fetch_delegators else 0
 
-        for i in range(self.max_sequent_calls):
-            page = self._request(f'rewards/split/{address}/{cycle}', offset=offset, limit=limit)
-            assert isinstance(page, dict) and 'delegators' in page
+        for call_count in range(MAX_SEQUENT_CALLS):
+            page = self._request(
+                f"rewards/split/{address}/{cycle}", offset=offset, limit=limit
+            )
+
+            if page is None:
+                verbose_logger.warning(
+                    f"Retry getting rewards/split/{address}/{cycle} ({call_count}) ..."
+                )
+                sleep(TZKT_RETRY_TIMEOUT_SECONDS)
+                continue
+
+            assert isinstance(page, dict) and "delegators" in page
 
             if res is None:
                 res = page
             else:
-                assert isinstance(res, dict) and 'delegators' in res
-                res['delegators'].extend(page['delegators'])
+                assert isinstance(res, dict) and "delegators" in res
+                res["delegators"].extend(page["delegators"])
 
-            if not fetch_delegators or len(res['delegators']) == res['numDelegators']:
+            if not fetch_delegators or len(res["delegators"]) == res["numDelegators"]:
                 return res
             else:
                 offset += limit
                 sleep(self.delay_between_calls)
 
-        raise TzKTApiError(f'Max sequent calls number exceeded ({self.max_sequent_calls})')
+        raise TzKTApiError(f"Max sequent calls number exceeded ({MAX_SEQUENT_CALLS})")
 
     def get_account_by_address(self, address) -> dict:
         """
@@ -243,7 +269,7 @@ class TzKTApi:
             }
         }
         """
-        return self._request(f'accounts/{address}')
+        return self._request(f"accounts/{address}")
 
     def get_protocol_by_cycle(self, cycle: int) -> dict:
         """
@@ -285,7 +311,7 @@ class TzKTApi:
             }
         }
         """
-        return self._request(f'protocols/cycles/{cycle}')
+        return self._request(f"protocols/cycles/{cycle}")
 
     def get_snapshot_level(self, cycle):
-        return self._request(f'cycles/{cycle}')['snapshotLevel']
+        return self._request(f"cycles/{cycle}")["snapshotLevel"]

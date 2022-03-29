@@ -1,7 +1,14 @@
 from unittest import TestCase
 
 from calc.calculate_phase4 import CalculatePhase4
-from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT, TYPE_OWNER, TYPE_OWNERS_PARENT, TYPE_FOUNDER
+from model.reward_log import (
+    RewardLog,
+    TYPE_FOUNDERS_PARENT,
+    TYPE_OWNER,
+    TYPE_OWNERS_PARENT,
+    TYPE_FOUNDER,
+)
+from Constants import ALMOST_ZERO
 
 
 class TestCalculatePhase4(TestCase):
@@ -11,7 +18,12 @@ class TestCalculatePhase4(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratio,
+                current_balance=0,
+            )
             rl0.ratio = ratio
             rl0.ratio3 = ratio
             rewards.append(rl0)
@@ -53,6 +65,6 @@ class TestCalculatePhase4(TestCase):
 
             ratio_sum += rl4.ratio4
 
-        self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.25, owner_ratio, delta=1e-6)
-        self.assertAlmostEqual(0.05, founder_ratio, delta=1e-6)
+        self.assertAlmostEqual(1.0, ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.25, owner_ratio, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.05, founder_ratio, delta=ALMOST_ZERO)

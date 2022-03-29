@@ -10,12 +10,11 @@ REWARDS_TYPE = RewardsType.ACTUAL
 
 
 class TestCalculatePhase0(TestCase):
-
     def test_calculate(self):
 
         nw = DEFAULT_NETWORK_CONFIG_MAP["MAINNET"]
 
-        api = ProviderFactory(provider='tzkt').newRewardApi(nw, BAKING_ADDRESS, '')
+        api = ProviderFactory(provider="tzkt").newRewardApi(nw, BAKING_ADDRESS, "")
 
         model = api.get_rewards_for_cycle_map(CYCLE, REWARDS_TYPE)
 
@@ -31,10 +30,14 @@ class TestCalculatePhase0(TestCase):
         delegators_balances_dict = model.delegator_balance_dict
 
         # check ratios
-        for (address, delegator_info), reward in zip(delegators_balances_dict.items(), reward_data):
+        for (address, delegator_info), reward in zip(
+            delegators_balances_dict.items(), reward_data
+        ):
             # ratio must be equal to stake/total staking balance
             delegator_staking_balance = int(delegator_info["staking_balance"])
-            self.assertEqual(delegator_staking_balance / delegate_staking_balance, reward.ratio0)
+            self.assertEqual(
+                delegator_staking_balance / delegate_staking_balance, reward.ratio0
+            )
 
         # last one is owners record
         self.assertTrue(reward_data[-1].type == TYPE_OWNERS_PARENT)

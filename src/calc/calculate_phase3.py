@@ -1,6 +1,11 @@
-from calc.calculate_phase_base import CalculatePhaseBase, BY_CONFIGURATION, BY_MIN_DELEGATION
+from calc.calculate_phase_base import (
+    CalculatePhaseBase,
+    BY_CONFIGURATION,
+    BY_MIN_DELEGATION,
+)
 from model.baking_conf import MIN_DELEGATION_KEY
 from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
+from Constants import ALMOST_ZERO
 
 
 class CalculatePhase3(CalculatePhaseBase):
@@ -12,7 +17,9 @@ class CalculatePhase3(CalculatePhaseBase):
     Fee rates are set at this stage.
     """
 
-    def __init__(self, service_fee_calculator, excluded_set, min_delegation_amount=None) -> None:
+    def __init__(
+        self, service_fee_calculator, excluded_set, min_delegation_amount=None
+    ) -> None:
         super().__init__()
 
         self.min_delegation_amount = min_delegation_amount
@@ -35,7 +42,10 @@ class CalculatePhase3(CalculatePhaseBase):
                 rl2.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 new_rewards.append(rl2)
                 total_excluded_ratio += rl2.ratio
-            elif MIN_DELEGATION_KEY in self.excluded_set and rl2.staking_balance < self.min_delegation_amount:
+            elif (
+                MIN_DELEGATION_KEY in self.excluded_set
+                and rl2.staking_balance < self.min_delegation_amount
+            ):
                 rl2.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 new_rewards.append(rl2)
                 total_excluded_ratio += rl2.ratio
@@ -54,8 +64,13 @@ class CalculatePhase3(CalculatePhaseBase):
             total_service_fee_ratio += rl.service_fee_ratio
 
         # create founders parent record
-        if total_service_fee_ratio > 1e-6:  # >0
-            rl = RewardLog(address=TYPE_FOUNDERS_PARENT, type=TYPE_FOUNDERS_PARENT, staking_balance=0, current_balance=0)
+        if total_service_fee_ratio > ALMOST_ZERO:
+            rl = RewardLog(
+                address=TYPE_FOUNDERS_PARENT,
+                type=TYPE_FOUNDERS_PARENT,
+                staking_balance=0,
+                current_balance=0,
+            )
             rl.service_fee_rate = 0
             rl.service_fee_ratio = 0
             rl.ratio = total_service_fee_ratio
@@ -63,4 +78,4 @@ class CalculatePhase3(CalculatePhaseBase):
 
             new_rewards.append(rl)
 
-        return new_rewards, total_amount
+        return new_rewards, int(total_amount)

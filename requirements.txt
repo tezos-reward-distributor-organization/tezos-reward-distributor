@@ -1,6 +1,8 @@
-requests>=2.20.0
+# User requirements
+requests>=2.27.0
 base58>=1.0.2
-pyyaml>=4.2b1
-fysom==2.1.5
-parse
-transitions
+pyyaml>=5.3.1
+fysom>=2.1.6
+parse>=1.19.0
+transitions>=0.8.11
+tweepy>=4.6.0

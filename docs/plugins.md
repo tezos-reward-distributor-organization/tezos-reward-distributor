@@ -39,15 +39,19 @@ If that doesn't make sense to you, please read the [YAML format documentation](h
 
 This plugin will send the configured recipients an 'administrative style' email of payouts status with a CSV report attached.
 
+**NOTE**: The file `email.ini` has been deprecated and is no longer used.
+
 ### Parameters
 
-* smtp_user: The username for SMTP authentication
-* smtp_pass: The password or application token for SMTP authentication
-* smtp_host: The host of your SMTP server
-* smtp_port: The port for communication to your SMTP server. TLS uses 587.
-* smtp_tls: true/false. Only TLS is supported as SSL is usually deprecated in email servers.
-* smtp_sender: The address for 'From' in the email
-* smtp_recipients: A YAML list containing email addresses of intended recipients. Must be list format even if 1 recipient.
+* smtp_user: (Required unless no login is used) The username for SMTP authentication
+* smtp_pass: (Required unless no login is used) The password or application token for SMTP authentication
+* smtp_nologin: (Optional) true or false, set to true to send without login, it will work if recipients are local to the server you connect to.
+* smtp_host: (Required) The host of your SMTP server
+* smtp_port: (Required) The port for communication to your SMTP server. TLS uses 587.
+* smtp_tls: (Optional) true/false. Only TLS is supported as SSL is usually deprecated in email servers.
+* smtp_sender: (Required) The address for 'From' in the email
+* smtp_sender_name: (Optional) String - You can specify the display name for the sender, put a name to the sender, instead of just having the email address
+* smtp_recipients: (Required) A YAML list containing email addresses of intended recipients. Must be list format even if 1 recipient.
 
 ### Example Config
 
@@ -64,6 +68,32 @@ plugins:
       - bob@domain.com
       - alice@hotmail.com
 ```
+
+### Example 2 config
+```
+plugins:
+  email:
+    smtp_nologin: true
+    smtp_host: smtp.domain.com
+    smtp_port: 587
+    smtp_tls: true
+    smtp_sender: trdnotice@domain.com
+    smtp_sender_name: "TRD Notification Source X"
+    # when using nologin, you cannot relay externally, all recipients must be 
+    # from a domain local to the server you connect with smtp_host.
+    # in this case dmain.com is the server that is reponsible for domain.com email.
+    smtp_recipients:
+      - bob@domain.com
+      - alice@domain.com
+```
+
+**Note about environment variables**:
+
+To avoid the storage of sensitive values, smtp_user and smtp_pass can be defined as environment values. 
+
+Environment variables will supersede yaml values.
+* smtp_user will become SMTP_USER
+* smtp_pass will become SMTP_PASS
 
 ## Telegram Plugin
 
@@ -95,7 +125,7 @@ plugins:
       - 827384777
     bot_api_key: 988877766:SKDJFLSJDFJLJSKDFJLKSDJFLKJDF
     telegram_text: >
-      &#x2728; Reward for cycle %CYCLE% <b>complete</b>! We had %NDELEGATORS% <i>delegators</i> in the cycle and paid out %TREWARDS% XTZ in rewards!
+      &#x2728; Reward for cycle %CYCLE% <b>complete</b>! We had %NDELEGATORS% <i>delegators</i> in the cycle and paid out %TREWARDS% tez in rewards!
 ```
 
 ### Example Result
@@ -113,18 +143,12 @@ This plugin allows payout notifications to be sent via a Twitter tweet. This plu
 Follow this outline to generate the API tokens and secrets for the plugin:
 
 1. Sign up as a developer at https://developer.twitter.com/
-2. Create a Twitter app
+2. Create a Twitter app. N.B. you will need to apply for [Elevated Access](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level).
 3. Enable Read and Write permissions on the app
 4. Under 'Keys and Tokens' there are two sections: Consumer Keys, and Authentication Tokens
 	* Under 'Consumer Keys', generate 'API Key and Secret'
 	* Under 'Authentication Tokens', generate 'Access Token & Secret'
 	* You can ignore 'Bearer Token'
-
-You must also install an additional Python library, [tweepy](https://github.com/tweepy/tweepy)
-
-```
-pip3 install -u tweepy
-```
 
 ### Example Config
 
@@ -142,14 +166,14 @@ plugins:
     access_token: YYYYYYYY
     access_secret: WWWWWWWW
     tweet_text: >
-      Reward for cycle %CYCLE% complete! We had %NDELEGATORS% delegators in the cycle and paid out %TREWARDS% XTZ in rewards. #ourbakery #rewards #tezos
+      Reward for cycle %CYCLE% complete! We had %NDELEGATORS% delegators in the cycle and paid out %TREWARDS% tez in rewards. #ourbakery #rewards #tezos
 ```
 
 The above example configuration will produce a tweet that looks like this:
 
 ```
 Reward for cycle 290 complete! We had 133 delegators
-in the cycle and paid out 1234.98 XTZ in rewards.
+in the cycle and paid out 1234.98 tez in rewards.
 #ourbakery #rewards #tezos
 ```
 
@@ -176,7 +200,7 @@ plugins:
     send_admin: False
     discord_text: >
       Rewards for cycle %CYCLE% are completed.
-      We paid out %TREWARDS% XTZ in rewards to %NDELEGATORS% delegators.        
+      We paid out %TREWARDS% tez in rewards to %NDELEGATORS% delegators.        
 ```
 
 ### Example Result

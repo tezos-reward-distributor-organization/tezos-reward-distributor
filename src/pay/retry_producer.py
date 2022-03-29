@@ -6,13 +6,26 @@ from Constants import PaymentStatus
 from log_config import main_logger
 from pay.payment_batch import PaymentBatch
 from util.csv_payment_file_parser import CsvPaymentFileParser
-from util.dir_utils import get_failed_payments_dir, PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR, BUSY_FILE
+from util.dir_utils import (
+    get_failed_payments_dir,
+    PAYMENT_FAILED_DIR,
+    PAYMENT_DONE_DIR,
+    BUSY_FILE,
+)
 
 logger = main_logger.getChild("payment_producer")
 
 
 class RetryProducer:
-    def __init__(self, payments_queue, reward_api, payment_producer, payments_dir, initial_payment_cycle, retry_injected=False):
+    def __init__(
+        self,
+        payments_queue,
+        reward_api,
+        payment_producer,
+        payments_dir,
+        initial_payment_cycle,
+        retry_injected=False,
+    ):
         self.payments_queue = payments_queue
         self.reward_api = reward_api
         self.payment_producer = payment_producer
@@ -26,34 +39,64 @@ class RetryProducer:
         # 1 - list csv files under payments/failed directory
         # absolute path of csv files found under payments_root/failed directory
         failed_payments_dir = get_failed_payments_dir(self.payments_root)
-        payment_reports_failed = [join(failed_payments_dir, x) for x in listdir(failed_payments_dir) if x.endswith('.csv')
-                                  and int(x.split(".csv")[0]) >= self.initial_payment_cycle]
+        payment_reports_failed = [
+            join(failed_payments_dir, x)
+            for x in listdir(failed_payments_dir)
+            if x.endswith(".csv")
+            and int(x.split(".csv")[0]) >= self.initial_payment_cycle
+        ]
 
         if payment_reports_failed:
-            payment_reports_failed = sorted(payment_reports_failed, key=self.get_basename)
-            logger.debug("Failed payment files found are: '{}'".format(",".join(payment_reports_failed)))
+            payment_reports_failed = sorted(
+                payment_reports_failed, key=self.get_basename
+            )
+            logger.debug(
+                "Failed payment files found are: '{}'".format(
+                    ",".join(payment_reports_failed)
+                )
+            )
         else:
-            logger.info("No failed payment files found under directory '{}' on or after cycle '{}'".format(failed_payments_dir, self.initial_payment_cycle))
+            logger.info(
+                "No failed payment files found under directory '{}' on or after cycle '{}'".format(
+                    failed_payments_dir, self.initial_payment_cycle
+                )
+            )
 
         # 2- for each csv file with name csv_report.csv
         for payment_failed_report_file in payment_reports_failed:
-            logger.info("Working on failed payment file {}".format(payment_failed_report_file))
+            logger.info(
+                "Working on failed payment file {}".format(payment_failed_report_file)
+            )
 
             # 2.1 - Read csv_report.csv under payments/failed and -if existing- under payments/done
-            cycle = int(os.path.splitext(os.path.basename(payment_failed_report_file))[0])
+            cycle = int(
+                os.path.splitext(os.path.basename(payment_failed_report_file))[0]
+            )
             batch = CsvPaymentFileParser().parse(payment_failed_report_file, cycle)
-            payment_successful_report_file = payment_failed_report_file.replace(PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR)
+            payment_successful_report_file = payment_failed_report_file.replace(
+                PAYMENT_FAILED_DIR, PAYMENT_DONE_DIR
+            )
             if os.path.isfile(payment_successful_report_file):
-                batch += CsvPaymentFileParser().parse(payment_successful_report_file, cycle)
+                batch += CsvPaymentFileParser().parse(
+                    payment_successful_report_file, cycle
+                )
 
             # 2.2 Translate batch into a list of dictionaries
             nb_paid = len(list(filter(lambda f: f.paid == PaymentStatus.PAID, batch)))
             nb_done = len(list(filter(lambda f: f.paid == PaymentStatus.DONE, batch)))
-            nb_injected = len(list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch)))
+            nb_injected = len(
+                list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch))
+            )
             nb_failed = len(list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch)))
-            nb_avoided = len(list(filter(lambda f: f.paid == PaymentStatus.AVOIDED, batch)))
+            nb_avoided = len(
+                list(filter(lambda f: f.paid == PaymentStatus.AVOIDED, batch))
+            )
 
-            logger.info("Summary {} paid, {} done, {} injected, {} fail, {} avoided".format(nb_paid, nb_done, nb_injected, nb_failed, nb_avoided))
+            logger.info(
+                "Summary {} paid, {} done, {} injected, {} fail, {} avoided".format(
+                    nb_paid, nb_done, nb_injected, nb_failed, nb_avoided
+                )
+            )
 
             if self.retry_injected:
                 self.convert_injected_to_fail(batch)
@@ -73,7 +116,9 @@ class RetryProducer:
             # 2.7 - rename payments/failed/csv_report.csv to payments/failed/csv_report.csv.BUSY
             # mark the files as in use. we do not want it to be read again
             # BUSY file will be removed, if successful payment is done
-            os.rename(payment_failed_report_file, payment_failed_report_file + BUSY_FILE)
+            os.rename(
+                payment_failed_report_file, payment_failed_report_file + BUSY_FILE
+            )
 
         return
 
@@ -84,10 +129,19 @@ class RetryProducer:
             if pl.paid == PaymentStatus.INJECTED:
                 pl.paid = PaymentStatus.FAIL
                 nb_converted += 1
-                logger.debug("Reward converted from %s to fail for cycle %s, address %s, amount %f, tz type %s", pl.paid, pl.cycle, pl.address, pl.amount, pl.type)
+                logger.debug(
+                    "Reward converted from %s to fail for cycle %s, address %s, amount %f, tz type %s",
+                    pl.paid,
+                    pl.cycle,
+                    pl.address,
+                    pl.amount,
+                    pl.type,
+                )
 
         if nb_converted:
-            logger.info("{} rewards converted from injected to fail.".format(nb_converted))
+            logger.info(
+                "{} rewards converted from injected to fail.".format(nb_converted)
+            )
 
     @staticmethod
     def get_basename(x):

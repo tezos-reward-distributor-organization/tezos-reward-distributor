@@ -8,15 +8,14 @@ from tzkt.tzkt_api import TzKTApi
 
 
 class TzKTRewardApiImpl(RewardApi):
-
     def __init__(self, nw, baking_address, base_url=None):
         super(TzKTRewardApiImpl, self).__init__()
         if base_url is None:
-            self.api = TzKTApi.from_network(nw['NAME'])
+            self.api = TzKTApi.from_network(nw["NAME"])
         else:
             self.api = TzKTApi.from_url(base_url)
         self.baking_address = baking_address
-        self.name = 'tzkt'
+        self.name = "tzkt"
 
     def get_rewards_for_cycle_map(self, cycle, rewards_type) -> RewardProviderModel:
         """
@@ -35,62 +34,73 @@ class TzKTRewardApiImpl(RewardApi):
 
         )
         """
-        split = self.api.get_reward_split(address=self.baking_address, cycle=cycle, fetch_delegators=True)
+        split = self.api.get_reward_split(
+            address=self.baking_address, cycle=cycle, fetch_delegators=True
+        )
 
-        delegate_staking_balance = split['stakingBalance']
+        delegate_staking_balance = split["stakingBalance"]
 
         # calculate estimated rewards
-        num_blocks = \
-            split['ownBlocks'] \
-            + split['missedOwnBlocks'] \
-            + split['uncoveredOwnBlocks'] \
-            + split['futureBlocks']
+        num_blocks = (
+            split["ownBlocks"]
+            + split["missedOwnBlocks"]
+            + split["uncoveredOwnBlocks"]
+            + split["futureBlocks"]
+        )
 
-        num_endorsements = \
-            split['endorsements'] \
-            + split['missedEndorsements'] \
-            + split['uncoveredEndorsements'] \
-            + split['futureEndorsements']
+        num_endorsements = (
+            split["endorsements"]
+            + split["missedEndorsements"]
+            + split["uncoveredEndorsements"]
+            + split["futureEndorsements"]
+        )
 
         # rewards earned (excluding equivocation losses)
-        rewards_and_fees = \
-            split['ownBlockRewards'] \
-            + split['extraBlockRewards'] \
-            + split['endorsementRewards'] \
-            + split['ownBlockFees'] \
-            + split['extraBlockFees'] \
-            + split['revelationRewards']
-        denunciation_rewards =  \
-            split['doubleBakingRewards'] \
-            + split['doubleEndorsingRewards']
-        equivocation_losses = split['doubleBakingLostDeposits'] \
-            + split['doubleBakingLostRewards'] \
-            + split['doubleBakingLostFees'] \
-            + split['doubleEndorsingLostDeposits'] \
-            + split['doubleEndorsingLostRewards'] \
-            + split['doubleEndorsingLostFees'] \
-            + split['revelationLostRewards'] \
-            + split['revelationLostFees']
-        total_reward_amount = max(0, rewards_and_fees + denunciation_rewards - equivocation_losses)
+        rewards_and_fees = (
+            split["ownBlockRewards"]
+            + split["extraBlockRewards"]
+            + split["endorsementRewards"]
+            + split["ownBlockFees"]
+            + split["extraBlockFees"]
+            + split["revelationRewards"]
+        )
+        denunciation_rewards = (
+            split["doubleBakingRewards"] + split["doubleEndorsingRewards"]
+        )
+        equivocation_losses = (
+            split["doubleBakingLostDeposits"]
+            + split["doubleBakingLostRewards"]
+            + split["doubleBakingLostFees"]
+            + split["doubleEndorsingLostDeposits"]
+            + split["doubleEndorsingLostRewards"]
+            + split["doubleEndorsingLostFees"]
+            + split["revelationLostRewards"]
+            + split["revelationLostFees"]
+        )
+        total_reward_amount = max(
+            0, rewards_and_fees + denunciation_rewards - equivocation_losses
+        )
         # losses due to being offline or not having enough bond
-        offline_losses = split['missedOwnBlockRewards'] \
-            + split['missedExtraBlockRewards'] \
-            + split['uncoveredOwnBlockRewards'] \
-            + split['uncoveredExtraBlockRewards'] \
-            + split['missedEndorsementRewards'] \
-            + split['uncoveredEndorsementRewards'] \
-            + split['missedOwnBlockFees'] \
-            + split['missedExtraBlockFees'] \
-            + split['uncoveredOwnBlockFees'] \
-            + split['uncoveredExtraBlockFees']
+        offline_losses = (
+            split["missedOwnBlockRewards"]
+            + split["missedExtraBlockRewards"]
+            + split["uncoveredOwnBlockRewards"]
+            + split["uncoveredExtraBlockRewards"]
+            + split["missedEndorsementRewards"]
+            + split["uncoveredEndorsementRewards"]
+            + split["missedOwnBlockFees"]
+            + split["missedExtraBlockFees"]
+            + split["uncoveredOwnBlockFees"]
+            + split["uncoveredExtraBlockFees"]
+        )
 
         delegators_balances = {
-            item['address']: {
-                'staking_balance': item['balance'],
-                'current_balance': item['currentBalance']
+            item["address"]: {
+                "staking_balance": item["balance"],
+                "current_balance": item["currentBalance"],
             }
-            for item in split['delegators']
-            if item['balance'] > 0
+            for item in split["delegators"]
+            if item["balance"] > 0
         }
 
         # TODO: support Dexter for TzKt
@@ -98,10 +108,18 @@ class TzKTRewardApiImpl(RewardApi):
         # for delegator in self.dexter_contracts_set:
         #    dxtz.process_original_delegators_map(delegators_balances, delegator, snapshot_level)
 
-        return RewardProviderModel(delegate_staking_balance,
-                                   num_blocks, num_endorsements, total_reward_amount, rewards_and_fees,
-                                   equivocation_losses, denunciation_rewards, offline_losses,
-                                   delegators_balances, None)
+        return RewardProviderModel(
+            delegate_staking_balance,
+            num_blocks,
+            num_endorsements,
+            total_reward_amount,
+            rewards_and_fees,
+            equivocation_losses,
+            denunciation_rewards,
+            offline_losses,
+            delegators_balances,
+            None,
+        )
 
     def update_current_balances(self, reward_logs: List[RewardLog]):
         """
@@ -110,5 +128,5 @@ class TzKTRewardApiImpl(RewardApi):
         """
         for rl in reward_logs:
             account = self.api.get_account_by_address(rl.address)
-            rl.current_balance = account['balance']
+            rl.current_balance = account["balance"]
             sleep(self.api.delay_between_calls)

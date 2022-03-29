@@ -4,7 +4,14 @@ from model.reward_log import cmp_by_type_balance
 
 from pay.batch_payer import BatchPayer
 from cli.client_manager import ClientManager
-from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL, RewardsType, PRIVATE_SIGNER_URL
+from Constants import (
+    CURRENT_TESTNET,
+    PUBLIC_NODE_URL,
+    RewardsType,
+    PRIVATE_SIGNER_URL,
+    MUTEZ_PER_TEZ,
+    PaymentStatus,
+)
 from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from model.baking_conf import BakingConf
@@ -25,14 +32,13 @@ network = {"NAME": CURRENT_TESTNET, "MINIMAL_BLOCK_DELAY": 5}
 baking_config = make_config(
     "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
     "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
-    10,
+    14.99,
     0,
 )
 
 
 PAYOUT_CYCLE = 51
-MUTEZ = 1e6
-PAYMENT_ADDRESS_BALANCE = 1000 * MUTEZ
+PAYMENT_ADDRESS_BALANCE = int(1000 * MUTEZ_PER_TEZ)
 
 
 @patch("rpc.rpc_reward_api.requests.get", MagicMock(side_effect=mock_request_get))
@@ -82,7 +88,7 @@ def test_batch_payer_total_payout_amount():
         baking_cfg.get_founders_map(),
         baking_cfg.get_owners_map(),
         srvc_fee_calc,
-        baking_cfg.get_min_delegation_amount() * MUTEZ,
+        int(baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ),
         rules_model,
     )
 
@@ -99,14 +105,20 @@ def test_batch_payer_total_payout_amount():
 
         # Reward data
         # Fetch cycle 51 of granadanet for tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V
-        reward_model = rewardApi.get_rewards_for_cycle_map(PAYOUT_CYCLE, RewardsType.ACTUAL)
+        reward_model = rewardApi.get_rewards_for_cycle_map(
+            PAYOUT_CYCLE, RewardsType.ACTUAL
+        )
 
         # Calculate rewards - payment_producer.py
         reward_model.computed_reward_amount = reward_model.total_reward_amount
         reward_logs, total_amount = payment_calc.calculate(reward_model)
 
         # Check total reward amount matches sums of records
-        assert total_amount == sum([rl.amount for rl in reward_logs if rl.payable])
+        # diff of 1 expected due to floating point arithmetic
+        assert (
+            total_amount - sum([rl.adjusted_amount for rl in reward_logs if rl.payable])
+            <= 1
+        )
         exiting = True
 
     # Merge payments to same address
@@ -129,7 +141,7 @@ def test_batch_payer_total_payout_amount():
 
     batch_payer = BatchPayer(
         node_url=node_endpoint,
-        pymnt_addr="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+        pymnt_addr="tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ",
         clnt_mngr=ClientManager(node_endpoint, PRIVATE_SIGNER_URL),
         delegator_pays_ra_fee=True,
         delegator_pays_xfer_fee=True,
@@ -144,12 +156,20 @@ def test_batch_payer_total_payout_amount():
 
     # Do the payment
     (
-        payment_logs,
+        _,
         total_attempts,
         total_payout_amount,
         number_future_payable_cycles,
     ) = batch_payer.pay(reward_logs, dry_run=True)
 
+    # Payment does not have status done, paid or injected thus the total payout amount is zero
+    assert total_payout_amount == 0
+    assert number_future_payable_cycles == 2
     assert total_attempts == 3
-    assert total_payout_amount == 238211030
-    assert (PAYMENT_ADDRESS_BALANCE // total_payout_amount) - 1 == number_future_payable_cycles
+
+    # Check the adjusted amount
+    assert reward_logs[0].adjusted_amount == 40418486
+    assert reward_logs[1].adjusted_amount == 10581272
+    assert reward_logs[2].adjusted_amount == 109732835
+    assert reward_logs[3].adjusted_amount == 48362127
+    assert reward_logs[4].adjusted_amount == 29116310

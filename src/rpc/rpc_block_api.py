@@ -34,12 +34,22 @@ class RpcBlockApiImpl(BlockApi):
             response = requests.get(COMM_REVELATION.format(self.node_url, pkh))
             manager_key = response.json()
             logger.debug("Manager key is '{}'".format(manager_key))
-            return manager_key and manager_key != "null" and (
-                (manager_key.startswith("edpk") and len(manager_key) == 54)
-                or (manager_key.startswith(("p2pk", "sppk")) and len(manager_key) == 55))
+            return (
+                manager_key
+                and manager_key != "null"
+                and (
+                    (manager_key.startswith("edpk") and len(manager_key) == 54)
+                    or (
+                        manager_key.startswith(("p2pk", "sppk"))
+                        and len(manager_key) == 55
+                    )
+                )
+            )
 
         except requests.exceptions.RequestException as e:
-            message = "[{}] - Unable to fetch revelation: {:s}".format(__class__.__name__, str(e))
+            message = "[{}] - Unable to fetch revelation: {:s}".format(
+                __class__.__name__, str(e)
+            )
             logger.error(message)
             raise ApiProviderException(message)
 
@@ -47,16 +57,12 @@ class RpcBlockApiImpl(BlockApi):
         try:
             response = requests.get(COMM_DELEGATES.format(self.node_url, pkh))
             delegates = response.json()
-            return "delegated_contracts" in delegates and not bool(delegates["deactivated"])
+            return "delegated_contracts" in delegates and not bool(
+                delegates["deactivated"]
+            )
         except requests.exceptions.RequestException as e:
-            message = "[{}] - Unable to fetch delegate: {:s}".format(__class__.__name__, str(e))
+            message = "[{}] - Unable to fetch delegate: {:s}".format(
+                __class__.__name__, str(e)
+            )
             logger.error(message)
             raise ApiProviderException(message)
-
-
-def test_get_revelation():
-
-    address_api = RpcBlockApiImpl({"NAME": "ALPHANET"}, PRIVATE_NODE_URL)
-    print(address_api.get_revelation("tz1N5cvoGZFNYWBp2NbCWhaRXuLQf6e1gZrv"))
-    print(address_api.get_revelation("KT1FXQjnbdqDdKNpjeM6o8PF1w8Rn2j8BmmG"))
-    print(address_api.get_revelation("tz1YVxe7FFisREKXWNxdrrwqvw3o2jeXzaNb"))

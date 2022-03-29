@@ -3,6 +3,7 @@ from unittest import TestCase
 from calc.calculate_phase3 import CalculatePhase3
 from calc.service_fee_calculator import ServiceFeeCalculator
 from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
+from Constants import ALMOST_ZERO
 
 
 class TestCalculatePhase3(TestCase):
@@ -12,7 +13,12 @@ class TestCalculatePhase3(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratio,
+                current_balance=0,
+            )
             rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
@@ -48,9 +54,9 @@ class TestCalculatePhase3(TestCase):
             ratio_sum += rl3.ratio3
             service_fee_ratio_sum += rl3.service_fee_ratio
 
-        self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.15, service_fee_ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.4, founder_pl.ratio3, delta=1e-6)
+        self.assertAlmostEqual(1.0, ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.15, service_fee_ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.4, founder_pl.ratio3, delta=ALMOST_ZERO)
 
     def test_calculate_sepecials(self):
         rewards = []
@@ -58,7 +64,12 @@ class TestCalculatePhase3(TestCase):
         total_reward = 1000
 
         for i, ratio in enumerate(ratios, start=1):
-            rl0 = RewardLog(address="addr" + str(i), type="D", staking_balance=total_reward * ratio, current_balance=0)
+            rl0 = RewardLog(
+                address="addr" + str(i),
+                type="D",
+                staking_balance=total_reward * ratio,
+                current_balance=0,
+            )
             rl0.ratio = ratio
             rl0.ratio2 = ratio
             rewards.append(rl0)
@@ -69,7 +80,9 @@ class TestCalculatePhase3(TestCase):
         supporters_set = {"addr2"}
         specials_map = {"addr3": 30}
 
-        fee_calculator = ServiceFeeCalculator(supporters_set, specials_map, 20)  # 20% fee
+        fee_calculator = ServiceFeeCalculator(
+            supporters_set, specials_map, 20
+        )  # 20% fee
         phase3 = CalculatePhase3(fee_calculator, excluded_set)
 
         new_rewards, new_total_reward = phase3.calculate(rewards, total_reward)
@@ -96,9 +109,9 @@ class TestCalculatePhase3(TestCase):
             ratio_sum += rl3.ratio3
             service_fee_ratio_sum += rl3.service_fee_ratio
 
-        self.assertAlmostEqual(1.0, ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.17, service_fee_ratio_sum, delta=1e-6)
-        self.assertAlmostEqual(0.42, founder_pl.ratio3, delta=1e-6)
+        self.assertAlmostEqual(1.0, ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.17, service_fee_ratio_sum, delta=ALMOST_ZERO)
+        self.assertAlmostEqual(0.42, founder_pl.ratio3, delta=ALMOST_ZERO)
 
         for rl3 in new_rewards:
             if rl3.skipped:
@@ -110,4 +123,6 @@ class TestCalculatePhase3(TestCase):
 
             if rl3.address == "addr3":
                 self.assertEqual(0.3, rl3.service_fee_rate)
-                self.assertEqual(specials_map["addr3"] / 100 * rl3.ratio2, rl3.service_fee_ratio)
+                self.assertEqual(
+                    specials_map["addr3"] / 100 * rl3.ratio2, rl3.service_fee_ratio
+                )

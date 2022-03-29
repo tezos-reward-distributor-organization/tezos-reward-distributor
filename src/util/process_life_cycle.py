@@ -82,44 +82,121 @@ class ProcessLifeCycle:
 
     def get_fsm_builder(self):
         fsm_builder = TransitionsFsmBuilder()
-        fsm_builder.add_initial_state(TrdState.INITIAL, on_leave=lambda e: logger.debug("TRD is starting..."))
+        fsm_builder.add_initial_state(
+            TrdState.INITIAL, on_leave=lambda e: logger.debug("TRD is starting...")
+        )
         fsm_builder.add_state(TrdState.CMD_ARGS_PARSED, on_enter=self.do_parse_args)
-        fsm_builder.add_state(TrdState.CMD_ARGS_GIVEN, on_enter=self.print_argument_configuration)
+        fsm_builder.add_state(
+            TrdState.CMD_ARGS_GIVEN, on_enter=self.print_argument_configuration
+        )
         fsm_builder.add_state(TrdState.BANNER_PRINTED, on_enter=self.do_print_banner)
-        fsm_builder.add_state(TrdState.LOGGERS_INITIATED, on_enter=self.do_initiate_loggers)
-        fsm_builder.add_state(TrdState.NODE_CLIENT_BUILT, on_enter=self.do_build_node_client)
-        fsm_builder.add_state(TrdState.NW_CONFIG_BUILT, on_enter=self.do_build_nw_config)
+        fsm_builder.add_state(
+            TrdState.LOGGERS_INITIATED, on_enter=self.do_initiate_loggers
+        )
+        fsm_builder.add_state(
+            TrdState.NODE_CLIENT_BUILT, on_enter=self.do_build_node_client
+        )
+        fsm_builder.add_state(
+            TrdState.NW_CONFIG_BUILT, on_enter=self.do_build_nw_config
+        )
         fsm_builder.add_state(TrdState.CONFIG_LOADED, on_enter=self.do_load_config)
         fsm_builder.add_state(TrdState.DIRS_SET_UP, on_enter=self.do_set_up_dirs)
-        fsm_builder.add_state(TrdState.SIGNALS_REGISTERED, on_enter=self.do_register_signals)
+        fsm_builder.add_state(
+            TrdState.SIGNALS_REGISTERED, on_enter=self.do_register_signals
+        )
         fsm_builder.add_state(TrdState.LOCKED, on_enter=self.do_lock)
-        fsm_builder.add_state(TrdState.NOT_LOCKED, on_enter=lambda e: logger.debug("No locking needed!"))
+        fsm_builder.add_state(
+            TrdState.NOT_LOCKED, on_enter=lambda e: logger.debug("No locking needed!")
+        )
         fsm_builder.add_state(TrdState.FEES_INIT, on_enter=self.do_init_service_fees)
         fsm_builder.add_state(TrdState.PLUGINS_LOADED, on_enter=self.do_load_plugins)
-        fsm_builder.add_state(TrdState.PRODUCERS_READY, on_enter=self.do_launch_producers)
-        fsm_builder.add_state(TrdState.CONSUMERS_READY, on_enter=self.do_launch_consumers)
-        fsm_builder.add_state(TrdState.NO_CONSUMERS_READY, on_enter=lambda e: logger.debug("No consumers needed!"))
+        fsm_builder.add_state(
+            TrdState.PRODUCERS_READY, on_enter=self.do_launch_producers
+        )
+        fsm_builder.add_state(
+            TrdState.CONSUMERS_READY, on_enter=self.do_launch_consumers
+        )
+        fsm_builder.add_state(
+            TrdState.NO_CONSUMERS_READY,
+            on_enter=lambda e: logger.debug("No consumers needed!"),
+        )
         fsm_builder.add_state(TrdState.READY, on_enter=self.print_ready)
         fsm_builder.add_final_state(TrdState.SHUTTING, on_enter=self.do_shut_down)
 
-        fsm_builder.add_conditional_transition(TrdEvent.LAUNCH, TrdState.INITIAL, self.is_args_not_set, TrdState.CMD_ARGS_PARSED, TrdState.CMD_ARGS_GIVEN)
-        fsm_builder.add_transition(TrdEvent.PRINT_BANNER, [TrdState.CMD_ARGS_PARSED, TrdState.CMD_ARGS_GIVEN], TrdState.BANNER_PRINTED)
-        fsm_builder.add_transition(TrdEvent.INITIATE_LOGGERS, TrdState.BANNER_PRINTED, TrdState.LOGGERS_INITIATED)
-        fsm_builder.add_transition(TrdEvent.BUILD_NODE_CLIENT, TrdState.LOGGERS_INITIATED, TrdState.NODE_CLIENT_BUILT)
-        fsm_builder.add_transition(TrdEvent.BUILD_NW_CONFIG, TrdState.NODE_CLIENT_BUILT, TrdState.NW_CONFIG_BUILT)
-        fsm_builder.add_transition(TrdEvent.LOAD_CONFIG, TrdState.NW_CONFIG_BUILT, TrdState.CONFIG_LOADED)
-        fsm_builder.add_transition(TrdEvent.SET_UP_DIRS, TrdState.CONFIG_LOADED, TrdState.DIRS_SET_UP)
-        fsm_builder.add_transition(TrdEvent.REGISTER_SIGNALS, TrdState.DIRS_SET_UP, TrdState.SIGNALS_REGISTERED)
+        fsm_builder.add_conditional_transition(
+            TrdEvent.LAUNCH,
+            TrdState.INITIAL,
+            self.is_args_not_set,
+            TrdState.CMD_ARGS_PARSED,
+            TrdState.CMD_ARGS_GIVEN,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.PRINT_BANNER,
+            [TrdState.CMD_ARGS_PARSED, TrdState.CMD_ARGS_GIVEN],
+            TrdState.BANNER_PRINTED,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.INITIATE_LOGGERS,
+            TrdState.BANNER_PRINTED,
+            TrdState.LOGGERS_INITIATED,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.BUILD_NODE_CLIENT,
+            TrdState.LOGGERS_INITIATED,
+            TrdState.NODE_CLIENT_BUILT,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.BUILD_NW_CONFIG,
+            TrdState.NODE_CLIENT_BUILT,
+            TrdState.NW_CONFIG_BUILT,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.LOAD_CONFIG, TrdState.NW_CONFIG_BUILT, TrdState.CONFIG_LOADED
+        )
+        fsm_builder.add_transition(
+            TrdEvent.SET_UP_DIRS, TrdState.CONFIG_LOADED, TrdState.DIRS_SET_UP
+        )
+        fsm_builder.add_transition(
+            TrdEvent.REGISTER_SIGNALS, TrdState.DIRS_SET_UP, TrdState.SIGNALS_REGISTERED
+        )
 
-        fsm_builder.add_conditional_transition(TrdEvent.LOCK, TrdState.SIGNALS_REGISTERED, self.is_dry_run, TrdState.NOT_LOCKED, TrdState.LOCKED)
-        fsm_builder.add_transition(TrdEvent.INIT_FEES, [TrdState.LOCKED, TrdState.NOT_LOCKED], TrdState.FEES_INIT)
-        fsm_builder.add_transition(TrdEvent.LOAD_PLUGINS, TrdState.FEES_INIT, TrdState.PLUGINS_LOADED)
+        fsm_builder.add_conditional_transition(
+            TrdEvent.LOCK,
+            TrdState.SIGNALS_REGISTERED,
+            self.is_dry_run,
+            TrdState.NOT_LOCKED,
+            TrdState.LOCKED,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.INIT_FEES,
+            [TrdState.LOCKED, TrdState.NOT_LOCKED],
+            TrdState.FEES_INIT,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.LOAD_PLUGINS, TrdState.FEES_INIT, TrdState.PLUGINS_LOADED
+        )
 
-        fsm_builder.add_transition(TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY)
-        fsm_builder.add_conditional_transition(TrdEvent.LAUNCH_CONSUMERS, TrdState.PRODUCERS_READY, self.is_dry_run_no_consumers, TrdState.NO_CONSUMERS_READY, TrdState.CONSUMERS_READY)
-        fsm_builder.add_transition(TrdEvent.GO_READY, [TrdState.CONSUMERS_READY, TrdState.NO_CONSUMERS_READY], TrdState.READY)
-        fsm_builder.add_transition(TrdEvent.SHUT_DOWN_ON_DEMAND, TrdState.READY, TrdState.SHUTTING)
-        fsm_builder.add_global_transition(TrdEvent.SHUT_DOWN_ON_ERROR, TrdState.SHUTTING)
+        fsm_builder.add_transition(
+            TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY
+        )
+        fsm_builder.add_conditional_transition(
+            TrdEvent.LAUNCH_CONSUMERS,
+            TrdState.PRODUCERS_READY,
+            self.is_dry_run_no_consumers,
+            TrdState.NO_CONSUMERS_READY,
+            TrdState.CONSUMERS_READY,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.GO_READY,
+            [TrdState.CONSUMERS_READY, TrdState.NO_CONSUMERS_READY],
+            TrdState.READY,
+        )
+        fsm_builder.add_transition(
+            TrdEvent.SHUT_DOWN_ON_DEMAND, TrdState.READY, TrdState.SHUTTING
+        )
+        fsm_builder.add_global_transition(
+            TrdEvent.SHUT_DOWN_ON_ERROR, TrdState.SHUTTING
+        )
 
         return fsm_builder
 
@@ -162,8 +239,17 @@ class ProcessLifeCycle:
             logger.info("Interrupted.")
             self.shut_down_on_error()
         except Exception as e:
-            logger.error("[Process Life Cycle completing With Failure] Error Details: {:s}".format(str(e)))
-            verbose_logger.error("[Process Life Cycle completing With Failure] Stack Trace: {}".format(e), stack_info=True)
+            logger.error(
+                "[Process Life Cycle completing With Failure] Error Details: {:s}".format(
+                    str(e)
+                )
+            )
+            verbose_logger.error(
+                "[Process Life Cycle completing With Failure] Stack Trace: {}".format(
+                    e
+                ),
+                stack_info=True,
+            )
 
             self.shut_down_on_error()
 
@@ -180,28 +266,40 @@ class ProcessLifeCycle:
             logger.info(LINER)
 
         if logger.isEnabledFor(logging.INFO):
-            logger.info("Arguments Configuration = {}".format(json.dumps(self.args.__dict__, indent=1)))
+            logger.info(
+                "Arguments Configuration = {}".format(
+                    json.dumps(self.args.__dict__, indent=1)
+                )
+            )
 
         publish_stats = not self.args.do_not_publish_stats
         msg = "will" if publish_stats else "will not"
-        logger.info("Anonymous statistics {} be collected. See docs/statistics.rst for more information.".format(msg))
+        logger.info(
+            "Anonymous statistics {} be collected. See docs/statistics.rst for more information.".format(
+                msg
+            )
+        )
 
     def do_print_banner(self, e):
         print_banner(self.args, script_name="")
 
     def do_initiate_loggers(self, e):
-        init(self.args.syslog, self.args.log_file, self.args.verbose == 'on')
+        init(self.args.syslog, self.args.log_file, self.args.verbose == "on")
         self.print_argument_configuration()
 
     def do_build_node_client(self, e):
-        self.__node_client = ClientManager(self.args.node_endpoint, self.args.signer_endpoint)
+        self.__node_client = ClientManager(
+            self.args.node_endpoint, self.args.signer_endpoint
+        )
 
     def do_build_nw_config(self, e):
         network_config_map = init_network_config(self.args.network, self.__node_client)
         self.__nw_config = network_config_map[self.args.network]
 
     def do_load_config(self, e):
-        cfg_life_cycle = ConfigLifeCycle(self.args, self.__nw_config, self.__node_client, self.set_cfg)
+        cfg_life_cycle = ConfigLifeCycle(
+            self.args, self.__nw_config, self.__node_client, self.set_cfg
+        )
         cfg_life_cycle.start()
         self.print_baking_config()
 
@@ -216,54 +314,65 @@ class ProcessLifeCycle:
             signal.signal(sig, self.stop_handler)
 
     def do_init_service_fees(self, e):
-        self.__srvc_fee_calc = ServiceFeeCalculator(self.__cfg.get_full_supporters_set(), self.__cfg.get_specials_map(), self.__cfg.get_service_fee())
+        self.__srvc_fee_calc = ServiceFeeCalculator(
+            self.__cfg.get_full_supporters_set(),
+            self.__cfg.get_specials_map(),
+            self.__cfg.get_service_fee(),
+        )
 
     def do_lock(self, e):
-        LockFile().lock()
+        LockFile(self.args).lock()
         self.__lock_taken = True
 
     def do_load_plugins(self, e):
-        self.__plugins_manager = plugins.PluginManager(self.__cfg.get_plugins_conf(), self.args.dry_run)
+        self.__plugins_manager = plugins.PluginManager(
+            self.__cfg.get_plugins_conf(), self.args.dry_run
+        )
 
     def do_launch_producers(self, e):
-        PaymentProducer(name='producer',
-                        network_config=self.__nw_config,
-                        payments_dir=self.__baking_dirs.payments_root,
-                        calculations_dir=self.__baking_dirs.calculations_root,
-                        run_mode=RunMode(self.args.run_mode),
-                        service_fee_calc=self.__srvc_fee_calc,
-                        release_override=self.args.release_override,
-                        payment_offset=self.args.payment_offset,
-                        baking_cfg=self.__cfg,
-                        life_cycle=self,
-                        payments_queue=self.__payments_queue,
-                        dry_run=self.args.dry_run,
-                        client_manager=self.__node_client,
-                        node_url=self.args.node_endpoint,
-                        reward_data_provider=self.args.reward_data_provider,
-                        node_url_public=self.args.node_addr_public,
-                        api_base_url=self.args.api_base_url,
-                        retry_injected=self.args.retry_injected,
-                        initial_payment_cycle=self.args.initial_cycle
-                        ).start()
+        PaymentProducer(
+            name="producer",
+            network_config=self.__nw_config,
+            payments_dir=self.__baking_dirs.payments_root,
+            calculations_dir=self.__baking_dirs.calculations_root,
+            run_mode=RunMode(self.args.run_mode),
+            service_fee_calc=self.__srvc_fee_calc,
+            release_override=self.args.release_override,
+            payment_offset=self.args.payment_offset,
+            baking_cfg=self.__cfg,
+            life_cycle=self,
+            payments_queue=self.__payments_queue,
+            dry_run=self.args.dry_run,
+            client_manager=self.__node_client,
+            node_url=self.args.node_endpoint,
+            reward_data_provider=self.args.reward_data_provider,
+            node_url_public=self.args.node_addr_public,
+            api_base_url=self.args.api_base_url,
+            retry_injected=self.args.retry_injected,
+            initial_payment_cycle=self.args.initial_cycle,
+        ).start()
 
     def do_launch_consumers(self, e):
-        PaymentConsumer(name='consumer0',
-                        payments_dir=self.__baking_dirs.payments_root,
-                        key_name=self.__cfg.get_payment_address(),
-                        payments_queue=self.__payments_queue,
-                        node_addr=self.args.node_endpoint,
-                        client_manager=self.__node_client,
-                        plugins_manager=self.__plugins_manager,
-                        rewards_type=self.__cfg.get_rewards_type(),
-                        args=self.args,
-                        dry_run=self.args.dry_run,
-                        reactivate_zeroed=self.__cfg.get_reactivate_zeroed(),
-                        delegator_pays_ra_fee=self.__cfg.get_delegator_pays_ra_fee(),
-                        delegator_pays_xfer_fee=self.__cfg.get_delegator_pays_xfer_fee(),
-                        dest_map=self.__cfg.get_dest_map(),
-                        network_config=self.__nw_config,
-                        publish_stats=not self.args.do_not_publish_stats).start()
+        PaymentConsumer(
+            name="consumer0",
+            payments_dir=self.__baking_dirs.payments_root,
+            key_name=self.__cfg.get_payment_address(),
+            payments_queue=self.__payments_queue,
+            node_addr=self.args.node_endpoint,
+            client_manager=self.__node_client,
+            plugins_manager=self.__plugins_manager,
+            rewards_type=self.__cfg.get_rewards_type(),
+            args=self.args,
+            dry_run=self.args.dry_run,
+            reactivate_zeroed=self.__cfg.get_reactivate_zeroed(),
+            delegator_pays_ra_fee=self.__cfg.get_delegator_pays_ra_fee(),
+            delegator_pays_xfer_fee=self.__cfg.get_delegator_pays_xfer_fee(),
+            dest_map=self.__cfg.get_dest_map(),
+            network_config=self.__nw_config,
+            publish_stats=not self.args.do_not_publish_stats,
+            calculations_dir=self.__baking_dirs.calculations_root,
+            baking_address=self.__cfg.get_baking_address(),
+        ).start()
 
     def do_shut_down(self, e):
         logger.info("TRD is shutting down...")
@@ -274,7 +383,7 @@ class ProcessLifeCycle:
         logger.info("--------------------------------------------------------")
 
         if self.__lock_taken:
-            LockFile().release()
+            LockFile(self.args).release()
             logger.info("Lock file removed!")
 
     def stop_handler(self, signum, frame):

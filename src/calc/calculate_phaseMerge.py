@@ -35,12 +35,22 @@ class CalculatePhaseMerge(CalculatePhaseBase):
                 total_current_balance = sum([rl.current_balance for rl in rl_list])
                 total_ratio = sum([rl.ratio for rl in rl_list])
                 total_payment_amount = sum([rl.amount for rl in rl_list])
-                total_service_fee_amount = sum([rl.service_fee_amount for rl in rl_list])
+                total_adjusted_payment_amount = sum(
+                    [rl.adjusted_amount for rl in rl_list]
+                )
+                total_adjustment = sum([rl.adjustment for rl in rl_list])
+                total_service_fee_amount = sum(
+                    [rl.service_fee_amount for rl in rl_list]
+                )
                 total_service_fee_ratio = sum([rl.service_fee_ratio for rl in rl_list])
 
-                merged = RewardLog(addr, TYPE_MERGED, total_staking_balance, total_current_balance)
+                merged = RewardLog(
+                    addr, TYPE_MERGED, total_staking_balance, total_current_balance
+                )
                 merged.ratio = total_ratio
                 merged.amount = total_payment_amount
+                merged.adjusted_amount = total_adjusted_payment_amount
+                merged.adjustment = total_adjustment
                 merged.service_fee_amount = total_service_fee_amount
                 merged.service_fee_ratio = total_service_fee_ratio
                 merged.service_fee_rate = 0

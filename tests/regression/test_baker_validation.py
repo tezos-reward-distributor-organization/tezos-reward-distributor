@@ -6,6 +6,7 @@ from Constants import PUBLIC_NODE_URL, PRIVATE_SIGNER_URL
 from rpc.rpc_block_api import RpcBlockApiImpl
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzstats.tzstats_block_api import TzStatsBlockApiImpl
+from tests.utils import Constants
 
 
 node_endpoint = PUBLIC_NODE_URL["MAINNET"]
@@ -23,8 +24,10 @@ network = {"NAME": "MAINNET"}
 def test_address_is_baker_address(block_api):
     data_fine = """
     version: 1.0
-    baking_address: tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
-    """
+    baking_address: {0}
+    """.format(
+        Constants.STAKENOW_ADDRESS
+    )
 
     wallet_client_manager = ClientManager(node_endpoint, PRIVATE_SIGNER_URL)
     cnf_prsr = BakingYamlConfParser(

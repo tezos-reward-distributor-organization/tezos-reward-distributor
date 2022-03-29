@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class TrdFsmModel(ABC):
-
     @abstractmethod
     def current(self):
         pass
