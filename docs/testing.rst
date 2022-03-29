@@ -72,8 +72,7 @@ Test Format
 Name the test file according to the feature/function you want to test and the "test\_" prefix (e.g. test_sample.py).
 Only use functions to write the actual tests for simplicity. 
 If applicable make use of pytest's fixtures to avoid code duplication.
-Check the `pytest documentation and tutorials <https://docs.pytest.org/en/7.1.x/contents.html>`_
- for more info on how to write pytest tests.
+Check the `pytest documentation and tutorials <https://docs.pytest.org/en/7.1.x/contents.html>`_ for more info on how to write pytest tests.
 
 
 Visual Studio Code Test Execution (optional)

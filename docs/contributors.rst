@@ -13,6 +13,7 @@ If you are interested in improving our project, this is just great! Our communit
 
     pip install -r requirements.txt
     pip install -r requirements_developers.txt
+    sudo apt-get install graphviz -y
 
 4. Fork the repo. Create a new branch from your fork for your contribution to make it easier to merge your changes back.
 5. Branches MUST have descriptive names that start with either the `fix/` or `feature/` prefixes. Good examples are: `fix/signin-issue` or `feature/issue-templates`.

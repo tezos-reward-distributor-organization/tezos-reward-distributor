@@ -1,5 +1,4 @@
 import os
-import graphviz
 
 
 def test_draw_process_life_cycle():

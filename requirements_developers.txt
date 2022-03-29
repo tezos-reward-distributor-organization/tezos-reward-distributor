@@ -8,3 +8,5 @@ black==22.1.0
 flake8==4.0.1
 recommonmark==0.7.1
 sphinx_rtd_theme==1.0.0
+sphinxcontrib.spelling>=7.3.2
+recommonmark>=0.7.1
