@@ -299,7 +299,6 @@ class BatchPayer:
 
                 for payment_item in payment_items:
                     payment_item.paid = PaymentStatus.FAIL
-
                     payment_item.desc += "Insufficient funds. "
 
                 subject = "FAILED Payouts - Insufficient Funds"
@@ -761,7 +760,6 @@ class BatchPayer:
 
         if len(content_list) == 0:
             return PaymentStatus.DONE, None, ""
-
         contents_string = ",".join(content_list)
 
         # run the operations for simulation results
