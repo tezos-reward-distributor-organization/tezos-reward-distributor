@@ -23,7 +23,7 @@ def init_network_config(network_name, config_client_manager):
             )
         )
         return network_config_map
-    #except Exception:
+    # except Exception:
     #    logger.debug(
     #        "Failed to get network configuration constants from a local node ({}).".format(
     #            node_addr
@@ -78,8 +78,15 @@ def parse_constants(constants):
         constants["blocks_per_stake_snapshot"]
     )
     network_config_map["BLOCK_REWARD"] = int(
-        int(constants["baking_reward_fixed_portion"]) + (int(constants["baking_reward_bonus_per_slot"]
-        * int(constants["consensus_committee_size"]))
-    ))
-    network_config_map["ENDORSEMENT_REWARD"] = int(constants["endorsing_reward_per_slot"])
+        int(constants["baking_reward_fixed_portion"])
+        + (
+            int(
+                constants["baking_reward_bonus_per_slot"]
+                * int(constants["consensus_committee_size"])
+            )
+        )
+    )
+    network_config_map["ENDORSEMENT_REWARD"] = int(
+        constants["endorsing_reward_per_slot"]
+    )
     return network_config_map

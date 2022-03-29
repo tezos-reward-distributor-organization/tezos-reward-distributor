@@ -9,16 +9,16 @@ idx_income_double_baking_income = 21
 idx_income_double_endorsing_income = 22
 idx_income_seed_income = 24
 idx_income_fees_income = 25
-idx_income_missed_baking_income = 29 # Missing for now?
-idx_income_missed_endorsing_income = 30 # Missing for now?
-idx_income_stolen_baking_income = 31 # Missing for now?
+idx_income_missed_baking_income = 29  # Missing for now?
+idx_income_missed_endorsing_income = 30  # Missing for now?
+idx_income_stolen_baking_income = 31  # Missing for now?
 
 idx_income_total_lost = 26
-idx_income_lost_accusation_fees = 27 # missing?
-idx_income_lost_accusation_rewards = 34 # missing? 
-idx_income_lost_accusation_deposits = 35  #missing?
-idx_income_lost_revelation_fees = 36 #missing?
-idx_income_lost_revelation_rewards = 37 # missing?
+idx_income_lost_accusation_fees = 27  # missing?
+idx_income_lost_accusation_rewards = 34  # missing?
+idx_income_lost_accusation_deposits = 35  # missing?
+idx_income_lost_revelation_fees = 36  # missing?
+idx_income_lost_revelation_rewards = 37  # missing?
 
 # Rights
 idx_n_baking_rights = 8

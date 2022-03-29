@@ -148,9 +148,8 @@ class RpcRewardApiImpl(RewardApi):
                                 )
                             )
                             missed_baking_income += self.block_reward
-                            
-                offline_losses = missed_baking_income
 
+                offline_losses = missed_baking_income
 
             nb_endorsements = 0
             reward_model = RewardProviderModel(
@@ -437,12 +436,8 @@ class RpcRewardApiImpl(RewardApi):
         delegate_staking_balance = int(response["staking_balance"])
         all_delegates = []
         for pkh in response["delegated_contracts"]:
-            get_pk = COMM_MANAGER_KEY.format(
-                    self.node_url, "head", pkh)
-            all_delegates.append(
-                self.do_rpc_request(get_pk)
-            )
-
+            get_pk = COMM_MANAGER_KEY.format(self.node_url, "head", pkh)
+            all_delegates.append(self.do_rpc_request(get_pk))
 
         delegate_staking_balance = 0
         d_a_len = 0
