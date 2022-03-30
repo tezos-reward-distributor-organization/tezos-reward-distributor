@@ -1,11 +1,16 @@
 import json
 import os
-from os.path import dirname, join
+from os.path import dirname, join, normpath
 from urllib.parse import urlparse
 from unittest.mock import MagicMock
 from http import HTTPStatus
 from tzstats.tzstats_reward_api import RewardProviderModel
 from typing import Optional
+from Constants import (
+    CONFIG_DIR,
+    DEFAULT_LOG_FILE,
+    TEMP_TEST_DATA_DIR,
+)
 
 
 def load_reward_model(
@@ -88,8 +93,9 @@ class Args:
         self.signer_endpoint = ""
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = node_addr_public
-        self.base_directory = join(dirname(__file__), reward_data_provider)
-        self.config_dir = dirname(__file__)
+        self.base_directory = join(dirname(__file__), normpath(TEMP_TEST_DATA_DIR), reward_data_provider)
+        self.config_dir = join(self.base_directory, normpath(CONFIG_DIR))
+        self.log_file = join(self.base_directory, normpath(DEFAULT_LOG_FILE))
         self.dry_run = True
         self.dry_run_no_consumers = True
         self.executable_dirs = dirname(__file__)

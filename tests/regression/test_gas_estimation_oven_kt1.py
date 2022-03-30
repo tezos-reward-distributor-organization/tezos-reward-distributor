@@ -150,10 +150,6 @@ def test_batch_payer_total_payout_amount():
         dry_run=True,
     )
 
-    # Fix the endpoint auto port assignment because
-    # https://mainnet-tezos.giganode.io:8732 cannot be reached
-    batch_payer.clnt_mngr.node_endpoint = node_endpoint
-
     # Do the payment
     (
         _,

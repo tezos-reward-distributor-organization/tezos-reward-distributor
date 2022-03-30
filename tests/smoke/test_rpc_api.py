@@ -20,7 +20,6 @@ def args():
     args.dry_run = True
     args.dry_run_no_consumers = True
     args.syslog = False
-    args.log_file = "logs/app.log"
     args.do_not_publish_stats = True
     args.run_mode = 4  # retry fail
     return args
