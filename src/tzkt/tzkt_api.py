@@ -2,7 +2,6 @@ import requests
 from http import HTTPStatus
 from time import sleep
 from pprint import pformat
-from urllib.parse import urljoin
 from json import JSONDecodeError
 
 from Constants import VERSION, TZKT_PUBLIC_API_URL, MAX_SEQUENT_CALLS
@@ -44,14 +43,18 @@ class TzKTApi:
     def from_url(base_url, timeout=30):
         """
         Create new API instance
-        :param base_url: base API url, i.e. http://localhost:5000/v1/
+        :param base_url: base API url, i.e. http://localhost:5000/v1
         :param timeout: request timeout in seconds (default = 30)
         """
         return TzKTApi(base_url=base_url, timeout=timeout)
 
     def _request(self, path, **params):
         data = {key: value for key, value in params.items() if value is not None}
-        url = urljoin(self.base_url, path)
+
+        if path.startswith("/"):
+            url = self.base_url + path
+        else:
+            url = self.base_url + "/" + path
 
         verbose_logger.debug("Requesting {}".format(url))
 

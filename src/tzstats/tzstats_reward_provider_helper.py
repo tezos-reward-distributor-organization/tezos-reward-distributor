@@ -1,6 +1,5 @@
 import requests
 from http import HTTPStatus
-from urllib.parse import urljoin
 from time import sleep
 
 from exception.api_provider import ApiProviderException
@@ -28,19 +27,19 @@ from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 
 logger = main_logger
 
-rewards_split_call = "tables/income?address={}&cycle={}"
-delegators_call = "tables/snapshot?cycle={}&is_selected=1&baker={}&columns=balance,delegated,address&limit=50000"
+rewards_split_call = "/tables/income?address={}&cycle={}"
+delegators_call = "/tables/snapshot?cycle={}&is_selected=1&baker={}&columns=balance,delegated,address&limit=50000"
 
 batch_current_balance_call = (
-    "tables/account?baker={}&columns=row_id,spendable_balance,address&limit=50000"
+    "/tables/account?baker={}&columns=row_id,spendable_balance,address&limit=50000"
 )
 single_current_balance_call = (
-    "tables/account?address.in={}&columns=row_id,spendable_balance,address"
+    "/tables/account?address.in={}&columns=row_id,spendable_balance,address"
 )
-snapshot_cycle = "explorer/cycle/{}"
+snapshot_cycle = "/explorer/cycle/{}"
 
-contract_storage = "explorer/contract/{}/storage"
-balance_LP_call = "explorer/bigmap/{}/values?limit=100&offset={}&block={}"
+contract_storage = "/explorer/contract/{}/storage"
+balance_LP_call = "/explorer/bigmap/{}/values?limit=100&offset={}&block={}"
 
 
 def split(input, n):
@@ -75,7 +74,7 @@ class TzStatsRewardProviderHelper:
         #
         # Get rewards breakdown for cycle
         #
-        uri = urljoin(self.api, rewards_split_call.format(self.baking_address, cycle))
+        uri = self.api + rewards_split_call.format(self.baking_address, cycle)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -132,12 +131,9 @@ class TzStatsRewardProviderHelper:
         #
         # Get staking balances of delegators at snapshot block
         #
-        uri = urljoin(
-            self.api,
-            delegators_call.format(
+        uri = self.api + delegators_call.format(
                 cycle - self.preserved_cycles - 2, self.baking_address
-            ),
-        )
+            )
 
         sleep(0.5)  # be nice to tzstats
 
@@ -188,7 +184,7 @@ class TzStatsRewardProviderHelper:
 
         # Phase 1
         #
-        uri = urljoin(self.api, batch_current_balance_call.format(self.baking_address))
+        uri = self.api + batch_current_balance_call.format(self.baking_address)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -270,7 +266,7 @@ class TzStatsRewardProviderHelper:
 
     def get_snapshot_level(self, cycle):
 
-        uri = urljoin(self.api, snapshot_cycle.format(cycle))
+        uri = self.api + snapshot_cycle.format(cycle)
 
         resp = requests.get(uri, timeout=5)
 
@@ -286,7 +282,7 @@ class TzStatsRewardProviderHelper:
         for address in address_list:
             param_txt += address + ","
         param_txt = param_txt[:-1]
-        uri = urljoin(self.api, single_current_balance_call.format(param_txt))
+        uri = self.api + single_current_balance_call.format(param_txt)
 
         sleep(0.5)  # be nice to tzstats
 
@@ -315,7 +311,7 @@ class TzStatsRewardProviderHelper:
         return ret_list
 
     def get_big_map_id(self, contract_id):
-        uri = urljoin(self.api, contract_storage.format(contract_id))
+        uri = self.api + contract_storage.format(contract_id)
 
         verbose_logger.debug("Requesting contract storage, {}".format(uri))
 
@@ -338,9 +334,8 @@ class TzStatsRewardProviderHelper:
         listLPs = {}
         resp = " "
         while resp != []:
-            uri = urljoin(
-                self.api, balance_LP_call.format(big_map_id, offset, snapshot_block)
-            )
+            uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
+            
             offset += 100
 
             verbose_logger.debug("Requesting LP balances, {}".format(uri))

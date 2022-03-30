@@ -20,18 +20,15 @@ TEZOS_RPC_PORT = 8732
 
 SIGNER_PORT = 6732
 
-# Attention: Usage of from urllib.parse import urljoin to join URLs
-# Behaviour: https://stackoverflow.com/questions/10893374/python-confusions-with-urljoin
-# Base URLs end with "/"
+# Attention: We do not use a lib to join URLs
 # Join them like this:
-# >>> urljoin('http://some/more/', 'thing')
-# 'http://some/more/thing'
+# >>> url = "http://base" + "/append" # look at the "/" of the appending part
 
-# Local URLs: TODO: Use urljoin
+# Local URLs
 PRIVATE_SIGNER_URL = "http://{}:{}".format(LOCAL_HOST, SIGNER_PORT)
 PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
-# Public RPC: TODO: Use urljoin
+# Public RPC
 PUBLIC_NODE_URL = {
     "MAINNET": "https://rpc.tzkt.io/mainnet",
     CURRENT_TESTNET: "https://rpc.ithacanet.teztnets.xyz",
@@ -39,14 +36,14 @@ PUBLIC_NODE_URL = {
 
 # TzStats
 TZSTATS_PUBLIC_API_URL = {
-    "MAINNET": "https://api.tzstats.com/",
-    CURRENT_TESTNET: "https://api.{}.tzstats.com/".format(PROTOCOL_NAME),
+    "MAINNET": "https://api.tzstats.com",
+    CURRENT_TESTNET: "https://api.{}.tzstats.com".format(PROTOCOL_NAME),
 }
 
 # TzKT
 TZKT_PUBLIC_API_URL = {
-    "MAINNET": "https://staging.api.tzkt.io/v1/",
-    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1/".format(CURRENT_TESTNET).lower(),
+    "MAINNET": "https://staging.api.tzkt.io/v1",
+    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET).lower(),
 }
 
 
