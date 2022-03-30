@@ -5,7 +5,7 @@ def test_draw_process_life_cycle():
     directory_path = os.path.dirname(os.path.abspath(__file__))
     file_name = "launch_state_diagram"
     file_extension = ".png"
-    file_path_1 = os.path.join(directory_path, file_name+file_extension)
+    file_path_1 = os.path.join(directory_path, file_name + file_extension)
     file_path_2 = os.path.join(directory_path, file_name)
     try:
         from util.process_life_cycle import ProcessLifeCycle
@@ -24,7 +24,7 @@ def test_draw_config_life_cycle():
     directory_path = os.path.dirname(os.path.abspath(__file__))
     file_name = "config_cycle_state_diagram"
     file_extension = ".png"
-    file_path_1 = os.path.join(directory_path, file_name+file_extension)
+    file_path_1 = os.path.join(directory_path, file_name + file_extension)
     file_path_2 = os.path.join(directory_path, file_name)
     try:
         from util.config_life_cycle import ConfigLifeCycle
