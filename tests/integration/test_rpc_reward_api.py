@@ -2,7 +2,7 @@ import pytest
 from rpc.rpc_reward_api import RpcRewardApiImpl
 from unittest.mock import patch, MagicMock
 from Constants import (
-    RPC_PUBLIC_API_URL,
+    PUBLIC_NODE_URL,
     DEFAULT_NETWORK_CONFIG_MAP,
     RewardsType,
     MAX_SEQUENT_CALLS,
@@ -20,7 +20,7 @@ def address_api():
     return RpcRewardApiImpl(
         nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
         baking_address=STAKENOW_ADDRESS,
-        node_url=RPC_PUBLIC_API_URL["MAINNET"],
+        node_url=PUBLIC_NODE_URL["MAINNET"],
     )
 
 

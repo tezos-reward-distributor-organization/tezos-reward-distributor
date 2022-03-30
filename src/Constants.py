@@ -27,18 +27,14 @@ SIGNER_PORT = 6732
 # >>> urljoin('http://some/more/', 'thing')
 # 'http://some/more/thing'
 
-
+# Local URLs: TODO: Use urljoin
 PRIVATE_SIGNER_URL = "http://{}:{}".format(LOCAL_HOST, SIGNER_PORT)
 PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
-# Public RPC
+# Public RPC: TODO: Use urljoin
 PUBLIC_NODE_URL = {
-    "MAINNET": "https://mainnet-tezos.giganode.io",
-    CURRENT_TESTNET: "https://rpc.ithacanet.teztnets.xyz",
-}
-
-RPC_PUBLIC_API_URL = {
     "MAINNET": "https://rpc.tzkt.io/mainnet",
+    CURRENT_TESTNET: "https://rpc.ithacanet.teztnets.xyz",
 }
 
 # TzStats

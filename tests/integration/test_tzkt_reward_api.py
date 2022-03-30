@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 from Constants import (
     RewardsType,
     DEFAULT_NETWORK_CONFIG_MAP,
-    RPC_PUBLIC_API_URL,
+    PUBLIC_NODE_URL,
     MAX_SEQUENT_CALLS,
 )
 from rpc.rpc_reward_api import RpcRewardApiImpl
@@ -69,7 +69,7 @@ class RewardApiImplTests(unittest.TestCase):
             rpc_impl = RpcRewardApiImpl(
                 nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
                 baking_address=address,
-                node_url=RPC_PUBLIC_API_URL["MAINNET"],
+                node_url=PUBLIC_NODE_URL["MAINNET"],
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
             store_reward_model(
@@ -145,7 +145,7 @@ class RewardApiImplTests(unittest.TestCase):
             rpc_impl = RpcRewardApiImpl(
                 nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
                 baking_address=address,
-                node_url=RPC_PUBLIC_API_URL["MAINNET"],
+                node_url=PUBLIC_NODE_URL["MAINNET"],
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
             store_reward_model(address, cycle, RewardsType.ACTUAL, rpc_rewards)
