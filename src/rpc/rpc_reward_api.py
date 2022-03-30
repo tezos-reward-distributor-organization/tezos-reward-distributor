@@ -131,18 +131,20 @@ class RpcRewardApiImpl(RewardApi):
                     total_block_rewards_and_fees += block_reward_and_fees
                     if r["round"] != 0:
                         logger.info(
-                            "Found stolen baking slot {}.".format(
-                                r
+                            "Found stolen baking slot at level {}, round {}.".format(
+                                r["level"],
+                                r["round"]
                             )
                         )
                     if block_payload_proposer == self.baking_address:
                         total_block_bonus += block_bonus
                     else:
                         logger.warning(
-                            "We are block proposer ({}) but not payload proposer ({}) for block {}.".format(
+                            "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
                                 self.baking_address,
                                 block_payload_proposer,
-                                r,
+                                r["level"],
+                                r["round"]
                             )
                         )
                 else:
