@@ -132,8 +132,8 @@ class TzStatsRewardProviderHelper:
         # Get staking balances of delegators at snapshot block
         #
         uri = self.api + delegators_call.format(
-                cycle - self.preserved_cycles - 2, self.baking_address
-            )
+            cycle - self.preserved_cycles - 2, self.baking_address
+        )
 
         sleep(0.5)  # be nice to tzstats
 
@@ -335,7 +335,7 @@ class TzStatsRewardProviderHelper:
         resp = " "
         while resp != []:
             uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
-            
+
             offset += 100
 
             verbose_logger.debug("Requesting LP balances, {}".format(uri))
