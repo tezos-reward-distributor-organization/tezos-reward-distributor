@@ -12,7 +12,7 @@ class CsvCalculationFileParser:
         super().__init__()
 
     def parse(self, calculation_file, baking_address):
-        with open(calculation_file) as f:
+        with open(calculation_file, newline='') as f:
             # read csv into list of dictionaries
             dict_rows = [
                 {key: value for key, value in row.items()}
@@ -119,7 +119,7 @@ class CsvCalculationFileParser:
         elif rewards_type.isIdeal():
             rt = "I"
 
-        with open(report_file, "w") as f:
+        with open(report_file, "w", newline='') as f:
             csv_writer = csv.writer(
                 f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
