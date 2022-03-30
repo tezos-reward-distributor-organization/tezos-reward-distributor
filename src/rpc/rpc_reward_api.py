@@ -144,7 +144,7 @@ class RpcRewardApiImpl(RewardApi):
                             )
                         )
                     if block_payload_proposer != self.baking_address:
-                        logger.warning(
+                        logger.info(
                             "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
                                 self.baking_address,
                                 block_payload_proposer,
@@ -160,11 +160,11 @@ class RpcRewardApiImpl(RewardApi):
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
                     total_block_rewards_and_fees += block_reward_and_fees
             logger.info(
-                f"Total payload producer's reward for baker: {total_block_rewards_and_fees}."
+                f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez.")
             )
-            logger.info(f"Total block producer's bonus for baker: {total_block_bonus}.")
+            logger.info(f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez.")
 
-            logger.info(f"Total block reward for baker (sum of 2 values above): {total_block_rewards_and_fees + total_block_bonus}.")
+            logger.info(f"Total block reward for baker (sum of 2 values above): {(total_block_rewards_and_fees + total_block_bonus):<,d} mutez.")
 
             rewards_and_fees = (
                 total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
