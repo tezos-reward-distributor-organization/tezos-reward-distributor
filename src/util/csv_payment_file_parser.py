@@ -9,7 +9,7 @@ class CsvPaymentFileParser:
         super().__init__()
 
     def parse(self, payment_report_file, cycle):
-        with open(payment_report_file, newline='') as f:
+        with open(payment_report_file, newline="") as f:
             # read csv into list of dictionaries
             dict_rows = [
                 {key: value for key, value in row.items()}
@@ -34,7 +34,7 @@ class CsvPaymentFileParser:
     @staticmethod
     def write(report_file, payment_logs):
         try:
-            with open(report_file, "w", newline='') as f:
+            with open(report_file, "w", newline="") as f:
                 csv_writer = csv.writer(
                     f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
