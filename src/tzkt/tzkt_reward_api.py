@@ -103,11 +103,6 @@ class TzKTRewardApiImpl(RewardApi):
             if item["balance"] > 0
         }
 
-        # TODO: support Dexter for TzKt
-        # snapshot_level = self.api.get_snapshot_level(cycle)
-        # for delegator in self.dexter_contracts_set:
-        #    dxtz.process_original_delegators_map(delegators_balances, delegator, snapshot_level)
-
         return RewardProviderModel(
             delegate_staking_balance,
             num_blocks,

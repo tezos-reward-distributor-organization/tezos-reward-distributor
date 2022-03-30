@@ -2,7 +2,7 @@ import pytest
 from rpc.rpc_reward_api import RpcRewardApiImpl
 from unittest.mock import patch, MagicMock
 from Constants import (
-    RPC_PUBLIC_API_URL,
+    PUBLIC_NODE_URL,
     DEFAULT_NETWORK_CONFIG_MAP,
     RewardsType,
     MAX_SEQUENT_CALLS,
@@ -20,7 +20,7 @@ def address_api():
     return RpcRewardApiImpl(
         nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
         baking_address=STAKENOW_ADDRESS,
-        node_url=RPC_PUBLIC_API_URL["MAINNET"],
+        node_url=PUBLIC_NODE_URL["MAINNET"],
     )
 
 
@@ -61,7 +61,9 @@ def test_rpc_terminate_404(address_api):
 
     with pytest.raises(
         ApiProviderException,
-        match="RPC URL 'https://rpc.tzkt.io/mainnet/chains/main/blocks/head' not found. Is this node in archive mode?",
+        match="RPC URL '{}/chains/main/blocks/head' not found. Is this node in archive mode?".format(
+            PUBLIC_NODE_URL["MAINNET"]
+        ),
     ):
         _ = address_api.get_rewards_for_cycle_map(
             cycle=CYCLE, rewards_type=RewardsType.ACTUAL
@@ -77,7 +79,9 @@ def test_rpc_terminate_404(address_api):
 def test_rpc_contract_storage_404(address_api):
     with pytest.raises(
         ApiProviderException,
-        match="RPC URL 'https://rpc.tzkt.io/mainnet/chains/main/blocks/head/context/contracts/KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU/storage' not found. Is this node in archive mode?",
+        match="RPC URL '{}/chains/main/blocks/head/context/contracts/KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU/storage' not found. Is this node in archive mode?".format(
+            PUBLIC_NODE_URL["MAINNET"]
+        ),
     ):
         _ = address_api.get_contract_storage(
             contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block="head"

@@ -1,14 +1,11 @@
 # Folders
-logs/
-reports/
 .vscode/
 .idea/
 */*/__pycache__/
 */__pycache__/
 docs/build/
 venv/
-src/tzkt/logs
-src/tzkt/reports
+*/__TEMP_DATA__/
 
 # File extensions
 .env
@@ -19,6 +16,6 @@ fee.ini*
 .python-version
 lock
 
-# State diagram outputs
+# State diagram outputs for sphinx documentation
 config_cycle_state_diagram.png
 launch_state_diagram.png

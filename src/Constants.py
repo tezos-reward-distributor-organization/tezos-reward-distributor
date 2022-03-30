@@ -6,6 +6,7 @@ CONFIG_DIR = "cfg"
 SIMULATIONS_DIR = "simulations"
 REPORTS_DIR = "reports"
 DEFAULT_LOG_FILE = "logs/app.log"
+TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
@@ -20,11 +21,12 @@ TEZOS_RPC_PORT = 8732
 
 SIGNER_PORT = 6732
 
+# Attention: We do not use a lib to join URLs
+# Join them like this:
+# >>> url = "http://base" + "/append" # look at the "/" of the appending part
+
+# Local URLs
 PRIVATE_SIGNER_URL = "http://{}:{}".format(LOCAL_HOST, SIGNER_PORT)
-
-# Providers api prefix
-# Private RPC
-
 PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
 # Public RPC
@@ -33,9 +35,6 @@ PUBLIC_NODE_URL = {
     CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
 }
 
-RPC_PUBLIC_API_URL = {
-    "MAINNET": "https://rpc.tzkt.io/mainnet",
-}
 
 # TzStats
 TZSTATS_PUBLIC_API_URL = {
