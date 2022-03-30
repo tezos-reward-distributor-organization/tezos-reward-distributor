@@ -50,22 +50,29 @@ TZKT_PUBLIC_API_URL = {
 # Network constants
 DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
+        # https://research-development.nomadic-labs.com/announcing-tezos-9th-protocol-upgrade-proposal-ithaca.html
+        # https://tezos.gitlab.io/ithaca/consensus.html#rewards
+        # https://tezos.gitlab.io/ithaca/consensus.html#consensus-related-protocol-parameters
         "NAME": "MAINNET",
         "NB_FREEZE_CYCLE": 5,
         "MINIMAL_BLOCK_DELAY": 30,
         "BLOCKS_PER_CYCLE": 8192,
         "BLOCKS_PER_STAKE_SNAPSHOT": 512,
+        # Fixed baking amount (10)+ bonus (10 in the best case)
         "BLOCK_REWARD": 20000000,
-        "ENDORSEMENT_REWARD": 78125,
+        # endorsing_reward = (1 - baking_reward_ratio) * (1 - bonus_ratio) * total_rewards
+        # = (1-1/4)*(1-1/3)*40
+        "ENDORSEMENT_REWARDS": 20000000,
     },
     CURRENT_TESTNET: {
+        # https://rpc.ithacanet.teztnets.xyz/chains/main/blocks/head/context/constants
         "NAME": CURRENT_TESTNET,
         "NB_FREEZE_CYCLE": 3,
         "MINIMAL_BLOCK_DELAY": 15,
         "BLOCKS_PER_CYCLE": 4096,
         "BLOCKS_PER_STAKE_SNAPSHOT": 256,
-        "BLOCK_REWARD": 20000000,
-        "ENDORSEMENT_REWARD": 78125,
+        "BLOCK_REWARD": 10000000,
+        "ENDORSEMENT_REWARDS": 10000000,
     },
 }
 
