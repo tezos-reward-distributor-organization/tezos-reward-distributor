@@ -136,7 +136,7 @@ class RpcRewardApiImpl(RewardApi):
                     block_bonus,
                 ) = self.__get_block_metadata(r["level"])
                 if block_author == self.baking_address:
-                    total_block_rewards_and_fees += block_reward_and_fees
+                    total_block_bonus += block_bonus
                     if r["round"] != 0:
                         logger.info(
                             "Found stolen baking slot at level {}, round {}.".format(
@@ -158,11 +158,13 @@ class RpcRewardApiImpl(RewardApi):
                     # TODO add to the offline losses in this case
                 if block_payload_proposer == self.baking_address:
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
-                    total_block_bonus += block_bonus
+                    total_block_rewards_and_fees += block_reward_and_fees
             logger.info(
-                f"Total block production reward and fees: {total_block_rewards_and_fees}."
+                f"Total payload producer's reward for baker: {total_block_rewards_and_fees}."
             )
-            logger.info(f"Total block bonus: {total_block_bonus}.")
+            logger.info(f"Total block producer's bonus for baker: {total_block_bonus}.")
+
+            logger.info(f"Total block reward for baker (sum of 2 values above): {total_block_rewards_and_fees + total_block_bonus}.")
 
             rewards_and_fees = (
                 total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
