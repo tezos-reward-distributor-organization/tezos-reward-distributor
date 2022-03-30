@@ -111,11 +111,11 @@ class RpcRewardApiImpl(RewardApi):
                 endorsing_rewards, lost_endorsing_rewards = self.__get_endorsing_rewards(
                     level_of_last_block_in_unfreeze_cycle, cycle
                 )
-                total_reward_amount = endorsing_rewards
 
+            total_block_rewards_and_fees = 0
+            total_block_bonus = 0
             # Without an indexer, it is not possible to itemize rewards
             # so setting these values below to "None"
-            rewards_and_fees = None
             equivocation_losses = None
             denunciation_rewards = None
 
@@ -128,18 +128,21 @@ class RpcRewardApiImpl(RewardApi):
                     )
                 block_author, block_payload_proposer, block_reward_and_fees, block_bonus = self.__get_block_metadata(r['level'])
                 if block_author == self.baking_address:
+                    total_block_rewards_and_fees += block_reward_and_fees
                     if r["round"] != 0:
                         logger.info(
                             "Found stolen baking slot {}.".format(
                                 r
                             )
                         )
-                    if block_payload_proposer != self.baking_address:
+                    if block_payload_proposer == self.baking_address:
+                        total_block_bonus += block_bonus
+                    else:
                         logger.warning(
-                            "We are block proposer ({}) but not payload proposer ({}) for block  {}.".format(
-                                r,
+                            "We are block proposer ({}) but not payload proposer ({}) for block {}.".format(
                                 self.baking_address,
-                                block_payload_proposer
+                                block_payload_proposer,
+                                r,
                             )
                         )
                 else:
@@ -149,8 +152,16 @@ class RpcRewardApiImpl(RewardApi):
                                 r
                             )
                         )
+                    # TODO add to the offline losses in this case
+            logger.info(f"Total block production reward and fees: {total_block_rewards_and_fees}.")
+            logger.info(f"Total block bonus: {total_block_bonus}.")
+
+           
+            rewards_and_fees = total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
+
 
             offline_losses = missed_baking_income
+            total_reward_amount = rewards_and_fees
 
             nb_endorsements = 0
             reward_model = RewardProviderModel(
