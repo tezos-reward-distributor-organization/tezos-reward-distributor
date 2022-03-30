@@ -126,19 +126,26 @@ class RpcRewardApiImpl(RewardApi):
                     logger.info(
                         "Scanning blocks ({}/{}).".format(count, len(baking_rights))
                     )
-                block_author, block_reward, block_bonus, block_fees = self.__get_block_metadata(r['level'])
-                if r["round"] == 0:
-                    if block_author != self.baking_address:
-                        logger.warning(
-                            "Found missed baking slot {}.".format(
+                block_author, block_payload_proposer, block_reward_and_fees, block_bonus = self.__get_block_metadata(r['level'])
+                if block_author == self.baking_address:
+                    if r["round"] != 0:
+                        logger.info(
+                            "Found stolen baking slot {}.".format(
                                 r
                             )
                         )
-                        missed_baking_income += self.block_reward
-                if r["round"] != 0:
-                    if block_author == self.baking_address:
-                        logger.info(
-                            "Found stolen baking slot {}.".format(
+                    if block_payload_proposer != self.baking_address:
+                        logger.warning(
+                            "We are block proposer ({}) but not payload proposer ({}) for block  {}.".format(
+                                r,
+                                self.baking_address,
+                                block_payload_proposer
+                            )
+                        )
+                else:
+                    if r["round"] == 0:
+                        logger.warning(
+                            "Found missed baking slot {}.".format(
                                 r
                             )
                         )
@@ -217,7 +224,19 @@ class RpcRewardApiImpl(RewardApi):
         try:
             block_metadata_rpc = COMM_BLOCK_METADATA.format(self.node_url, level)
             response = self.do_rpc_request(block_metadata_rpc)
-            return response["baker"], 0, 0, 0
+            author = response["baker"]
+            reward_and_fees = bonus = 0
+            balance_updates = response["balance_updates"]
+            for i, bu in enumerate(balance_updates):
+                if bu["kind"] == "contract":
+                    if balance_updates[i - 1]["category"] == "baking rewards":
+                        payload_proposer = bu["contract"] # author of the block payload (not necessarily block producer)
+                        reward_and_fees = int(bu["change"])
+                    if balance_updates[i - 1]["category"] == "baking bonuses":
+                        bonus = int(bu["change"])
+
+            return author, payload_proposer, reward_and_fees, bonus
+
 
         except ApiProviderException as e:
             raise e from e
