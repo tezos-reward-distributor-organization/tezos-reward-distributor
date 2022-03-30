@@ -61,7 +61,7 @@ def test_tzstats_terminate_404(address_api):
 
     with pytest.raises(
         ApiProviderException,
-        match=r"GET https://api.tzstats.com/tables/income\?address=tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194&cycle=100 404",
+        match=r"GET https://api.tzstats.com/tables/income/?address=tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194&cycle=100 404",
     ):
         _ = address_api.get_rewards_for_cycle_map(
             cycle=CYCLE, rewards_type=RewardsType.ACTUAL

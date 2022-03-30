@@ -20,11 +20,15 @@ TEZOS_RPC_PORT = 8732
 
 SIGNER_PORT = 6732
 
+# Attention: Usage of from urllib.parse import urljoin to join URLs
+# Behaviour: https://stackoverflow.com/questions/10893374/python-confusions-with-urljoin
+# Base URLs end with "/"
+# Join them like this:
+# >>> urljoin('http://some/more/', 'thing')
+# 'http://some/more/thing'
+
+
 PRIVATE_SIGNER_URL = "http://{}:{}".format(LOCAL_HOST, SIGNER_PORT)
-
-# Providers api prefix
-# Private RPC
-
 PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
 # Public RPC
@@ -39,14 +43,14 @@ RPC_PUBLIC_API_URL = {
 
 # TzStats
 TZSTATS_PUBLIC_API_URL = {
-    "MAINNET": "https://api.tzstats.com",
-    CURRENT_TESTNET: "https://api.{}.tzstats.com".format(PROTOCOL_NAME),
+    "MAINNET": "https://api.tzstats.com/",
+    CURRENT_TESTNET: "https://api.{}.tzstats.com/".format(PROTOCOL_NAME),
 }
 
 # TzKT
 TZKT_PUBLIC_API_URL = {
-    "MAINNET": "https://staging.api.tzkt.io/v1",
-    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET).lower(),
+    "MAINNET": "https://staging.api.tzkt.io/v1/",
+    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1/".format(CURRENT_TESTNET).lower(),
 }
 
 
@@ -77,7 +81,7 @@ MUTEZ_PER_TEZ = 1e6
 MAXIMUM_ROUNDING_ERROR = 10  # mutez
 ALMOST_ZERO = 1e-6
 
-VERSION = 10.0
+VERSION = 11.0
 
 DISK_LIMIT_PERCENTAGE = 0.1
 
