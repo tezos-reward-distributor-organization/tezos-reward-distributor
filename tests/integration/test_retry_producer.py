@@ -5,7 +5,7 @@ from http import HTTPStatus
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
-from Constants import PaymentStatus, RewardsType
+from Constants import PaymentStatus, RewardsType, TEMP_TEST_DATA_DIR
 from cli.client_manager import ClientManager
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer_abc import PaymentProducerABC
@@ -15,7 +15,9 @@ from util.dir_utils import get_payment_report_file_path
 
 
 TEST_REPORT_DIR = "tests/integration/test_reports"
-TEST_REPORT_TEMP_DIR = "tests/integration/test_reports_temp"
+TEST_REPORT_TEMP_DIR = os.path.join(
+    "tests", os.path.normpath(TEMP_TEST_DATA_DIR), "test_reports_temp"
+)
 
 
 def request_url(url, timeout=None):
@@ -75,15 +77,11 @@ def request_url_post(cmd, json_params, timeout=None):
 class TestRetryProducerBeforeInitialCycle(TestCase):
     def setUp(self):
         try:
-            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "done")):
-                os.makedirs(os.path.join(TEST_REPORT_DIR, "done"))
-
-            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "failed")):
-                os.makedirs(os.path.join(TEST_REPORT_DIR, "failed"))
-
+            copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
+            if not os.path.exists(os.path.join(TEST_REPORT_TEMP_DIR, "done")):
+                os.makedirs(os.path.join(TEST_REPORT_TEMP_DIR, "done"))
         except OSError:
             pass
-        copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
 
     @patch(
         "pay.payment_consumer.BatchPayer.get_payment_address_balance",
@@ -132,15 +130,11 @@ class TestRetryProducerBeforeInitialCycle(TestCase):
 class TestRetryProducer(TestCase):
     def setUp(self):
         try:
-            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "done")):
-                os.makedirs(os.path.join(TEST_REPORT_DIR, "done"))
-
-            if not os.path.exists(os.path.join(TEST_REPORT_DIR, "failed")):
-                os.makedirs(os.path.join(TEST_REPORT_DIR, "failed"))
-
+            copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
+            if not os.path.exists(os.path.join(TEST_REPORT_TEMP_DIR, "done")):
+                os.makedirs(os.path.join(TEST_REPORT_TEMP_DIR, "done"))
         except OSError:
             pass
-        copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
 
     @patch(
         "pay.payment_consumer.BatchPayer.get_payment_address_balance",

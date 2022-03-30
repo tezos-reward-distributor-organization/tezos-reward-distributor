@@ -93,7 +93,9 @@ class Args:
         self.signer_endpoint = ""
         self.reward_data_provider = reward_data_provider
         self.node_addr_public = node_addr_public
-        self.base_directory = join(dirname(__file__), normpath(TEMP_TEST_DATA_DIR), reward_data_provider)
+        self.base_directory = join(
+            dirname(__file__), normpath(TEMP_TEST_DATA_DIR), reward_data_provider
+        )
         self.config_dir = join(self.base_directory, normpath(CONFIG_DIR))
         self.log_file = join(self.base_directory, normpath(DEFAULT_LOG_FILE))
         self.dry_run = True
