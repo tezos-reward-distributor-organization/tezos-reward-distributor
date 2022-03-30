@@ -97,10 +97,7 @@ class TzStatsRewardProviderHelper:
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)
         root["rewards_and_fees"] = int(
-            MUTEZ_PER_TEZ
-            * (
-                float(resp[idx_income_total_income])
-            )
+            MUTEZ_PER_TEZ * (float(resp[idx_income_total_income]))
         )
         # losses due to baker double baking, double endorsing or missing nonce
         root["equivocation_losses"] = int(

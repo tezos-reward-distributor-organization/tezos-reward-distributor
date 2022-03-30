@@ -108,7 +108,10 @@ class RpcRewardApiImpl(RewardApi):
             total_reward_amount = None
             if not rewards_type.isEstimated():
                 # Calculate actual rewards
-                endorsing_rewards, lost_endorsing_rewards = self.__get_endorsing_rewards(
+                (
+                    endorsing_rewards,
+                    lost_endorsing_rewards,
+                ) = self.__get_endorsing_rewards(
                     level_of_last_block_in_unfreeze_cycle, cycle
                 )
 
@@ -126,14 +129,18 @@ class RpcRewardApiImpl(RewardApi):
                     logger.info(
                         "Scanning blocks ({}/{}).".format(count, len(baking_rights))
                     )
-                block_author, block_payload_proposer, block_reward_and_fees, block_bonus = self.__get_block_metadata(r['level'])
+                (
+                    block_author,
+                    block_payload_proposer,
+                    block_reward_and_fees,
+                    block_bonus,
+                ) = self.__get_block_metadata(r["level"])
                 if block_author == self.baking_address:
                     total_block_rewards_and_fees += block_reward_and_fees
                     if r["round"] != 0:
                         logger.info(
                             "Found stolen baking slot at level {}, round {}.".format(
-                                r["level"],
-                                r["round"]
+                                r["level"], r["round"]
                             )
                         )
                     if block_payload_proposer != self.baking_address:
@@ -142,26 +149,24 @@ class RpcRewardApiImpl(RewardApi):
                                 self.baking_address,
                                 block_payload_proposer,
                                 r["level"],
-                                r["round"]
+                                r["round"],
                             )
                         )
                 else:
                     if r["round"] == 0:
-                        logger.warning(
-                            "Found missed baking slot {}.".format(
-                                r
-                            )
-                        )
+                        logger.warning("Found missed baking slot {}.".format(r))
                     # TODO add to the offline losses in this case
                 if block_payload_proposer == self.baking_address:
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
                     total_block_bonus += block_bonus
-            logger.info(f"Total block production reward and fees: {total_block_rewards_and_fees}.")
+            logger.info(
+                f"Total block production reward and fees: {total_block_rewards_and_fees}."
+            )
             logger.info(f"Total block bonus: {total_block_bonus}.")
 
-           
-            rewards_and_fees = total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
-
+            rewards_and_fees = (
+                total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
+            )
 
             offline_losses = missed_baking_income
             total_reward_amount = rewards_and_fees
@@ -244,13 +249,14 @@ class RpcRewardApiImpl(RewardApi):
             for i, bu in enumerate(balance_updates):
                 if bu["kind"] == "contract":
                     if balance_updates[i - 1]["category"] == "baking rewards":
-                        payload_proposer = bu["contract"] # author of the block payload (not necessarily block producer)
+                        payload_proposer = bu[
+                            "contract"
+                        ]  # author of the block payload (not necessarily block producer)
                         reward_and_fees = int(bu["change"])
                     if balance_updates[i - 1]["category"] == "baking bonuses":
                         bonus = int(bu["change"])
 
             return author, payload_proposer, reward_and_fees, bonus
-
 
         except ApiProviderException as e:
             raise e from e
@@ -266,21 +272,25 @@ class RpcRewardApiImpl(RewardApi):
 
         for i in range(len(balance_updates)):
             balance_update = balance_updates[i]
-            if balance_update["kind"] == "contract" and \
-                balance_update["contract"] == self.baking_address and \
-                balance_updates[i - 1]["kind"] == "minted" and \
-                balance_updates[i - 1]["category"] == "endorsing rewards" and \
-                int(balance_updates[i - 1]["change"]) == - int(balance_update["change"]):
+            if (
+                balance_update["kind"] == "contract"
+                and balance_update["contract"] == self.baking_address
+                and balance_updates[i - 1]["kind"] == "minted"
+                and balance_updates[i - 1]["category"] == "endorsing rewards"
+                and int(balance_updates[i - 1]["change"])
+                == -int(balance_update["change"])
+            ):
 
                 endorsing_rewards = int(balance_update["change"])
                 logger.info(f"Found endorsing rewards of {endorsing_rewards}")
-            elif balance_update["kind"] == "burned" and \
-                "contract" in balance_update and \
-                balance_update["contract"] == self.baking_address and \
-                balance_update["category"] == "lost endorsing rewards":
+            elif (
+                balance_update["kind"] == "burned"
+                and "contract" in balance_update
+                and balance_update["contract"] == self.baking_address
+                and balance_update["category"] == "lost endorsing rewards"
+            ):
                 lost_endorsing_rewards = int(balance_update["change"])
                 logger.info(f"Found lost endorsing reward of {lost_endorsing_rewards}")
-
 
         return endorsing_rewards, lost_endorsing_rewards
 

@@ -30,11 +30,7 @@ class TzKTRewardApiImpl(RewardApi):
         delegate_staking_balance = split["stakingBalance"]
 
         # calculate estimated rewards
-        num_blocks = (
-            split["blocks"]
-            + split["missedBlocks"]
-            + split["futureBlocks"]
-        )
+        num_blocks = split["blocks"] + split["missedBlocks"] + split["futureBlocks"]
 
         num_endorsements = (
             split["endorsements"]
