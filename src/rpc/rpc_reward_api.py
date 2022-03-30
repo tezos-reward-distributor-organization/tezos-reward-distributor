@@ -136,9 +136,7 @@ class RpcRewardApiImpl(RewardApi):
                                 r["round"]
                             )
                         )
-                    if block_payload_proposer == self.baking_address:
-                        total_block_bonus += block_bonus
-                    else:
+                    if block_payload_proposer != self.baking_address:
                         logger.warning(
                             "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
                                 self.baking_address,
@@ -155,6 +153,9 @@ class RpcRewardApiImpl(RewardApi):
                             )
                         )
                     # TODO add to the offline losses in this case
+                if block_payload_proposer == self.baking_address:
+                    # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
+                    total_block_bonus += block_bonus
             logger.info(f"Total block production reward and fees: {total_block_rewards_and_fees}.")
             logger.info(f"Total block bonus: {total_block_bonus}.")
 
