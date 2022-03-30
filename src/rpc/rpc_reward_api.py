@@ -18,7 +18,6 @@ COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_MANAGER_KEY = "{}/chains/main/blocks/{}/context/contracts/{}/manager_key"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_BLOCK_METADATA = "{}/chains/main/blocks/{}/metadata"
-COMM_BLOCK_OPERATIONS = "{}/chains/main/blocks/{}/operations"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
@@ -127,9 +126,9 @@ class RpcRewardApiImpl(RewardApi):
                     logger.info(
                         "Scanning blocks ({}/{}).".format(count, len(baking_rights))
                     )
-                block_author = self.__get_block_author(r['level'])
+                block_author, block_reward, block_bonus, block_fees = self.__get_block_metadata(r['level'])
                 if r["round"] == 0:
-                    if self.__get_block_author(r["level"]) != self.baking_address:
+                    if block_author != self.baking_address:
                         logger.warning(
                             "Found missed baking slot {}.".format(
                                 r
@@ -137,7 +136,7 @@ class RpcRewardApiImpl(RewardApi):
                         )
                         missed_baking_income += self.block_reward
                 if r["round"] != 0:
-                    if self.__get_block_author(r["level"]) == self.baking_address:
+                    if block_author == self.baking_address:
                         logger.info(
                             "Found stolen baking slot {}.".format(
                                 r
@@ -210,14 +209,15 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_block_author(self, level):
+    def __get_block_metadata(self, level):
         """
         Returns baker public key hash for a given block level.
         """
 
         try:
             block_metadata_rpc = COMM_BLOCK_METADATA.format(self.node_url, level)
-            return self.do_rpc_request(block_metadata_rpc)["baker"]
+            response = self.do_rpc_request(block_metadata_rpc)
+            return response["baker"], 0, 0, 0
 
         except ApiProviderException as e:
             raise e from e
