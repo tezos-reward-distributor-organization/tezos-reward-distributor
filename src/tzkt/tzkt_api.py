@@ -2,7 +2,6 @@ import requests
 from http import HTTPStatus
 from time import sleep
 from pprint import pformat
-from os.path import join
 from json import JSONDecodeError
 
 from Constants import VERSION, TZKT_PUBLIC_API_URL, MAX_SEQUENT_CALLS
@@ -51,8 +50,10 @@ class TzKTApi:
 
     def _request(self, path, **params):
         data = {key: value for key, value in params.items() if value is not None}
-        url = join(self.base_url, path)
-
+        if path.startswith("/"):
+            url = self.base_url + path
+        else:
+            url = self.base_url + "/" + path
         verbose_logger.debug("Requesting {}".format(url))
 
         try:

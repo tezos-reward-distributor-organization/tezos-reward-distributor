@@ -32,7 +32,6 @@ logger = main_logger
 
 rewards_split_call = "/tables/income?address={}&cycle={}"
 delegators_call = "/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000"
-
 batch_current_balance_call = (
     "/tables/account?delegate={}&columns=row_id,spendable_balance,address&limit=50000"
 )
@@ -140,7 +139,6 @@ class TzStatsRewardProviderHelper:
         uri = self.api + delegators_call.format(
             cycle - self.preserved_cycles - 2, self.baking_address
         )
-
         sleep(0.5)  # be nice to tzstats
 
         verbose_logger.debug(
@@ -342,11 +340,8 @@ class TzStatsRewardProviderHelper:
         while resp != []:
             uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
             offset += 100
-
             verbose_logger.debug("Requesting LP balances, {}".format(uri))
-
             resp = requests.get(uri, timeout=5)
-
             verbose_logger.debug(
                 "Response from tzstats is {}".format(resp.content.decode("utf8"))
             )

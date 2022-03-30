@@ -20,14 +20,15 @@ TEZOS_RPC_PORT = 8732
 
 SIGNER_PORT = 6732
 
-PRIVATE_SIGNER_URL = "http://{}:{}".format(LOCAL_HOST, SIGNER_PORT)
+# Attention: We do not use a lib to join URLs
+# Join them like this:
+# >>> url = "http://base" + "/append" # look at the "/" of the appending part
 
-
-# Local URLs: TODO: Use urljoin
+# Local URLs
 PRIVATE_SIGNER_URL = "http://{}:{}".format(LOCAL_HOST, SIGNER_PORT)
 PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
-# Public RPC: TODO: Use urljoin
+# Public RPC
 PUBLIC_NODE_URL = {
     "MAINNET": "https://mainnet-tezos.giganode.io",
     CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
