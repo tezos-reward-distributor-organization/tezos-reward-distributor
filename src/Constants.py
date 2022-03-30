@@ -54,6 +54,7 @@ DEFAULT_NETWORK_CONFIG_MAP = {
         # https://tezos.gitlab.io/ithaca/consensus.html#rewards
         # https://tezos.gitlab.io/ithaca/consensus.html#consensus-related-protocol-parameters
         "NAME": "MAINNET",
+        # Rewards are no longer frozen. Do we still need this ?
         "NB_FREEZE_CYCLE": 5,
         "MINIMAL_BLOCK_DELAY": 30,
         "BLOCKS_PER_CYCLE": 8192,
@@ -67,6 +68,7 @@ DEFAULT_NETWORK_CONFIG_MAP = {
     CURRENT_TESTNET: {
         # https://rpc.ithacanet.teztnets.xyz/chains/main/blocks/head/context/constants
         "NAME": CURRENT_TESTNET,
+        # Rewards are no longer frozen. Do we still need this ?
         "NB_FREEZE_CYCLE": 3,
         "MINIMAL_BLOCK_DELAY": 15,
         "BLOCKS_PER_CYCLE": 4096,
