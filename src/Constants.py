@@ -1,5 +1,10 @@
 from enum import Enum
 
+# General
+VERSION = 11.0
+PYTHON_MAJOR = 3
+PYTHON_MINOR = 7
+
 # Persistent data directories
 BASE_DIR = "~/pymnt"
 CONFIG_DIR = "cfg"
@@ -72,13 +77,10 @@ DEFAULT_NETWORK_CONFIG_MAP = {
 
 
 MUTEZ_PER_TEZ = 1e6
+
 MAXIMUM_ROUNDING_ERROR = 10  # mutez
 ALMOST_ZERO = 1e-6
-
-VERSION = 11.0
-
 DISK_LIMIT_PERCENTAGE = 0.1
-
 GIGA_BYTE = 1e9
 
 

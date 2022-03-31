@@ -3,10 +3,11 @@ import sys
 import pip
 import pkg_resources
 from datetime import date
+from Constants import PYTHON_MAJOR, PYTHON_MINOR
 
 
 REQUIREMENTS_FILE_PATH = "requirements.txt"
-END_OF_SERVICE = date(2022, 4, 1)
+END_OF_SERVICE = date(2022, 8, 1) # potentially the next upgrade
 
 
 def installed(package):
@@ -92,10 +93,10 @@ def start_application(args=None):
 
 if __name__ == "__main__":
     # Check the python version
-    if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
+    if not sys.version_info.major >= PYTHON_MAJOR and sys.version_info.minor >= PYTHON_MINOR:
         raise Exception(
-            "Must be using Python 3.6 or later but it is {}.{}".format(
-                sys.version_info.major, sys.version_info.minor
+            "Must be using Python {}.{} or later but it is {}.{}".format(
+                PYTHON_MAJOR, PYTHON_MINOR, sys.version_info.major, sys.version_info.minor
             )
         )
 
