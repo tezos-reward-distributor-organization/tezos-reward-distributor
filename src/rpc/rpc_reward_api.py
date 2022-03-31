@@ -571,7 +571,11 @@ class RpcRewardApiImpl(RewardApi):
                 cycle - self.preserved_cycles
             ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
 
-        logger.info("The reward cycle is {}, level used to query context for the snapshot level is {}".format(cycle, snapshot_level))
+        logger.info(
+            "The reward cycle is {}, level used to query context for the snapshot level is {}".format(
+                cycle, snapshot_level
+            )
+        )
 
         if current_level - snapshot_level >= 0:
             request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)

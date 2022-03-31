@@ -286,13 +286,13 @@ def add_argument_base_directory(argparser):
             "2. {} "
             "3. {} "
             "4. {} "
-            "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
+            "Attention: Please make sure you have migrated the data accordingly from v10 onwards."
         ).format(
             default_dir,
             os.path.join(default_dir, CONFIG_DIR, ""),
             os.path.join(default_dir, SIMULATIONS_DIR, ""),
             os.path.join(default_dir, REPORTS_DIR, ""),
-            os.path.join(default_dir, "logs", ""),
+            os.path.dirname(os.path.join(default_dir, DEFAULT_LOG_FILE)),
         ),
         default=BASE_DIR,
     )
