@@ -125,8 +125,7 @@ class RpcRewardApiImpl(RewardApi):
             equivocation_losses = 0
             denunciation_rewards = 0
 
-            offline_losses = None
-            missed_baking_income = 0
+            offline_losses = 0
             for count, r in enumerate(baking_rights):
                 if count % 10 == 0:
                     logger.info(
@@ -139,6 +138,7 @@ class RpcRewardApiImpl(RewardApi):
                     block_bonus,
                 ) = self.__get_block_metadata(r["level"])
                 if block_author == self.baking_address:
+                    # we are block proposer for this block
                     total_block_bonus += block_bonus
                     if r["round"] != 0:
                         logger.info(
@@ -156,9 +156,10 @@ class RpcRewardApiImpl(RewardApi):
                             )
                         )
                 else:
+                    # we are not block proposer for this block
                     if r["round"] == 0:
                         logger.warning("Found missed baking slot {}.".format(r))
-                    # TODO add to the offline losses in this case
+                        offline_losses += block_bonus + block_reward_and_fees
                 if block_payload_proposer == self.baking_address:
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
                     total_block_rewards_and_fees += block_reward_and_fees
@@ -184,7 +185,6 @@ class RpcRewardApiImpl(RewardApi):
                 total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
             )
 
-            offline_losses = missed_baking_income
             total_reward_amount = rewards_and_fees + denunciation_rewards
 
             nb_endorsements = 0
