@@ -20,7 +20,7 @@ COMM_MANAGER_KEY = "{}/chains/main/blocks/{}/context/contracts/{}/manager_key"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_BLOCK_METADATA = "{}/chains/main/blocks/{}/metadata"
 COMM_BLOCK_OPERATIONS = "{}/chains/main/blocks/{}/operations"
-COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot"
+COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
@@ -585,10 +585,10 @@ class RpcRewardApiImpl(RewardApi):
                 cycle - self.preserved_cycles
             ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
 
-        logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
+        logger.info("The reward cycle is {}, level used to query context for the snapshot level is {}".format(cycle, snapshot_level))
 
         if current_level - snapshot_level >= 0:
-            request = COMM_SNAPSHOT.format(self.node_url, "head")
+            request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
             if cycle >= FIRST_CYCLE_SNAPSHOT_GRANADA:
@@ -601,14 +601,14 @@ class RpcRewardApiImpl(RewardApi):
             else:
                 # Using pre-Granada calculation
                 level_snapshot_block = (
-                    cycle - self.preserved_cycles - 2
+                    cycle - self.preserved_cycles - 1
                 ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + (
                     chosen_snapshot + 1
                 ) * BLOCK_PER_ROLL_SNAPSHOT_BEFORE_GRANADA
 
-            logger.debug(
-                "Snapshot index {}, snapshot index level {}".format(
-                    chosen_snapshot, level_snapshot_block
+            logger.info(
+                "The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
+                    chosen_snapshot, cycle, level_snapshot_block
                 )
             )
 
