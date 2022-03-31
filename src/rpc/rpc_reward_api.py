@@ -162,15 +162,23 @@ class RpcRewardApiImpl(RewardApi):
                 if block_payload_proposer == self.baking_address:
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
                     total_block_rewards_and_fees += block_reward_and_fees
-                denunciation_rewards += self.__get_block_double_signing_reward(r["level"])
+                denunciation_rewards += self.__get_block_double_signing_reward(
+                    r["level"]
+                )
 
             logger.info(
                 f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez."
             )
-            logger.info(f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez.")
+            logger.info(
+                f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez."
+            )
 
-            logger.info(f"Total block reward for baker (sum of 2 values above): {(total_block_rewards_and_fees + total_block_bonus):<,d} mutez.")
-            logger.info(f"Total denunciation reward is: {denunciation_rewards:<,d} mutez.")
+            logger.info(
+                f"Total block reward for baker (sum of 2 values above): {(total_block_rewards_and_fees + total_block_bonus):<,d} mutez."
+            )
+            logger.info(
+                f"Total denunciation reward is: {denunciation_rewards:<,d} mutez."
+            )
 
             rewards_and_fees = (
                 total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
@@ -257,10 +265,13 @@ class RpcRewardApiImpl(RewardApi):
                 for content in op["contents"]:
                     balance_updates = content["metadata"]["balance_updates"]
                     for i, bu in enumerate(balance_updates):
-                        if bu["kind"] == "contract" and \
-                                bu["contract"] == self.baking_address and \
-                                balance_updates[i - 1]["category"] == "double signing evidence rewards":
-                                double_signing_reward += int(bu["change"])
+                        if (
+                            bu["kind"] == "contract"
+                            and bu["contract"] == self.baking_address
+                            and balance_updates[i - 1]["category"]
+                            == "double signing evidence rewards"
+                        ):
+                            double_signing_reward += int(bu["change"])
 
             return double_signing_reward
 

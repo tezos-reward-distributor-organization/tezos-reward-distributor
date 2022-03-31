@@ -7,7 +7,7 @@ from Constants import PYTHON_MAJOR, PYTHON_MINOR
 
 
 REQUIREMENTS_FILE_PATH = "requirements.txt"
-END_OF_SERVICE = date(2022, 8, 1) # potentially the next upgrade
+END_OF_SERVICE = date(2022, 8, 1)  # potentially the next upgrade
 
 
 def installed(package):
@@ -34,9 +34,7 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
                     requirement = requirement.replace("\n", "")
                     missing_requirements.append(requirement)
                     print(
-                        "... requirement {} was not found: {}\n".format(
-                            requirement, e
-                        )
+                        "... requirement {} was not found: {}\n".format(requirement, e)
                     )
         if len(missing_requirements) > 0:
             print("Would you like to install missing requirements? (y/n)")
@@ -114,10 +112,16 @@ def start_application(args=None):
 
 if __name__ == "__main__":
     # Check the python version
-    if not sys.version_info.major >= PYTHON_MAJOR and sys.version_info.minor >= PYTHON_MINOR:
+    if (
+        not sys.version_info.major >= PYTHON_MAJOR
+        and sys.version_info.minor >= PYTHON_MINOR
+    ):
         raise Exception(
             "Must be using Python {}.{} or later but it is {}.{}".format(
-                PYTHON_MAJOR, PYTHON_MINOR, sys.version_info.major, sys.version_info.minor
+                PYTHON_MAJOR,
+                PYTHON_MINOR,
+                sys.version_info.major,
+                sys.version_info.minor,
             )
         )
 

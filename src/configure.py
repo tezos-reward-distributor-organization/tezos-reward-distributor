@@ -504,10 +504,16 @@ def main(args):
 
 if __name__ == "__main__":
 
-    if not sys.version_info.major >= PYTHON_MAJOR and sys.version_info.minor >= PYTHON_MINOR:
+    if (
+        not sys.version_info.major >= PYTHON_MAJOR
+        and sys.version_info.minor >= PYTHON_MINOR
+    ):
         raise Exception(
             "Must be using Python {}.{} or later but it is {}.{}".format(
-                PYTHON_MAJOR, PYTHON_MINOR, sys.version_info.major, sys.version_info.minor
+                PYTHON_MAJOR,
+                PYTHON_MINOR,
+                sys.version_info.major,
+                sys.version_info.minor,
             )
         )
 
