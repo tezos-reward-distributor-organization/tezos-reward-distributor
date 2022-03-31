@@ -19,6 +19,7 @@ COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_MANAGER_KEY = "{}/chains/main/blocks/{}/context/contracts/{}/manager_key"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_BLOCK_METADATA = "{}/chains/main/blocks/{}/metadata"
+COMM_BLOCK_OPERATIONS = "{}/chains/main/blocks/{}/operations"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
@@ -118,10 +119,11 @@ class RpcRewardApiImpl(RewardApi):
 
             total_block_rewards_and_fees = 0
             total_block_bonus = 0
-            # Without an indexer, it is not possible to itemize rewards
-            # so setting these values below to "None"
+
+            # scanning for equivocation losses is not supported in RPC
+            # this would require scanning every block
             equivocation_losses = None
-            denunciation_rewards = None
+            denunciation_rewards = 0
 
             offline_losses = None
             missed_baking_income = 0
@@ -160,12 +162,15 @@ class RpcRewardApiImpl(RewardApi):
                 if block_payload_proposer == self.baking_address:
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
                     total_block_rewards_and_fees += block_reward_and_fees
+                denunciation_rewards += self.__get_block_double_signing_reward(r["level"])
+
             logger.info(
                 f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez."
             )
             logger.info(f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez.")
 
             logger.info(f"Total block reward for baker (sum of 2 values above): {(total_block_rewards_and_fees + total_block_bonus):<,d} mutez.")
+            logger.info(f"Total denunciation reward is: {denunciation_rewards:<,d} mutez.")
 
             rewards_and_fees = (
                 total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
@@ -238,9 +243,33 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
+    def __get_block_double_signing_reward(self, level):
+        """
+        If the baker accused double signing, return its reward. Otherwise, return 0.
+        """
+
+        try:
+            block_metadata_rpc = COMM_BLOCK_OPERATIONS.format(self.node_url, level)
+            response = self.do_rpc_request(block_metadata_rpc)
+            operations = response[2]
+            double_signing_reward = 0
+            for op in operations:
+                for content in op["contents"]:
+                    balance_updates = content["metadata"]["balance_updates"]
+                    for i, bu in enumerate(balance_updates):
+                        if bu["kind"] == "contract" and \
+                                bu["contract"] == self.baking_address and \
+                                balance_updates[i - 1]["category"] == "double signing evidence rewards":
+                                double_signing_reward += int(bu["change"])
+
+            return double_signing_reward
+
+        except ApiProviderException as e:
+            raise e from e
+
     def __get_block_metadata(self, level):
         """
-        Returns baker public key hash for a given block level.
+        Returns baker metadata for a given block level.
         """
 
         try:
