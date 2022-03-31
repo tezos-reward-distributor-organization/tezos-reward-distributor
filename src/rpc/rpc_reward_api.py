@@ -454,7 +454,7 @@ class RpcRewardApiImpl(RewardApi):
         # construct RPC for getting list of delegates and staking balance
         # FIXME replace "head" with the block we actually need
         get_delegates_request = COMM_DELEGATES.format(
-            self.node_url, "head", self.baking_address
+            self.node_url, level_snapshot_block, self.baking_address
         )
 
         # get RPC response for delegates and staking balance
@@ -462,7 +462,7 @@ class RpcRewardApiImpl(RewardApi):
         delegate_staking_balance = int(response["staking_balance"])
         all_delegates = []
         for pkh in response["delegated_contracts"]:
-            get_pk = COMM_MANAGER_KEY.format(self.node_url, "head", pkh)
+            get_pk = COMM_MANAGER_KEY.format(self.node_url, level_snapshot_block, pkh)
             all_delegates.append(self.do_rpc_request(get_pk))
 
         delegate_staking_balance = 0
