@@ -59,9 +59,11 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
             return True
     except (OSError, IOError) as e:
         print(
-            "Error opening requirements.txt!\n"
+            "Error opening requirements.txt: {}\n"
             "Please make sure to install all the required packages before using the TRD.\n"
-            "To install the requirements: 'pip3 install -r requirements.txt'\n"
+            "To install the requirements: 'pip3 install -r requirements.txt'\n".format(
+                e
+            )
         )
         return False
 
