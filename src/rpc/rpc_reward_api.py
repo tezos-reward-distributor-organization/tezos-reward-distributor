@@ -177,7 +177,7 @@ class RpcRewardApiImpl(RewardApi):
             )
 
             offline_losses = missed_baking_income
-            total_reward_amount = rewards_and_fees
+            total_reward_amount = rewards_and_fees + denunciation_rewards
 
             nb_endorsements = 0
             reward_model = RewardProviderModel(
