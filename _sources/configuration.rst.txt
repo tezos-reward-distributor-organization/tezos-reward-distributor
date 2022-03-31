@@ -4,7 +4,8 @@ How to configure TRD?
 Fee Setup
 ------------------------
 
-fee.ini file contains details about transaction fees. Currently the fee value specified under DEFAULT domain is used as fee amount. It is in mutez.
+| The file *fee.in* has been deprecated.
+| **Advanced user**: You can change the values at *src/pay/batch_payer.py*
 
 Baker Configuration:
 --------------------
