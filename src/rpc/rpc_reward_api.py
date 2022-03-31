@@ -1,4 +1,5 @@
 from time import sleep
+import json
 
 import requests
 from http import HTTPStatus
@@ -160,7 +161,7 @@ class RpcRewardApiImpl(RewardApi):
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
                     total_block_rewards_and_fees += block_reward_and_fees
             logger.info(
-                f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez.")
+                f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez."
             )
             logger.info(f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez.")
 
