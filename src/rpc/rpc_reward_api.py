@@ -18,8 +18,6 @@ COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_MANAGER_KEY = "{}/chains/main/blocks/{}/context/contracts/{}/manager_key"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
-COMM_BLOCK_METADATA = "{}/chains/main/blocks/{}/metadata"
-COMM_BLOCK_OPERATIONS = "{}/chains/main/blocks/{}/operations"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
@@ -136,7 +134,8 @@ class RpcRewardApiImpl(RewardApi):
                     block_payload_proposer,
                     block_reward_and_fees,
                     block_bonus,
-                ) = self.__get_block_metadata(r["level"])
+                    block_double_signing_reward,
+                ) = self.__get_block_data(r["level"])
                 if block_author == self.baking_address:
                     # we are block proposer for this block
                     total_block_bonus += block_bonus
@@ -163,9 +162,7 @@ class RpcRewardApiImpl(RewardApi):
                 if block_payload_proposer == self.baking_address:
                     # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
                     total_block_rewards_and_fees += block_reward_and_fees
-                denunciation_rewards += self.__get_block_double_signing_reward(
-                    r["level"]
-                )
+                denunciation_rewards += block_double_signing_reward
 
             logger.info(
                 f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez."
@@ -251,15 +248,30 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_block_double_signing_reward(self, level):
+    def __get_block_data(self, level):
         """
-        If the baker accused double signing, return its reward. Otherwise, return 0.
+        Returns baker relevant reward data for a given block level.
         """
 
         try:
-            block_metadata_rpc = COMM_BLOCK_OPERATIONS.format(self.node_url, level)
-            response = self.do_rpc_request(block_metadata_rpc)
-            operations = response[2]
+            block_rpc = COMM_BLOCK.format(self.node_url, level)
+            response = self.do_rpc_request(block_rpc)
+            metadata = response["metadata"]
+            author = metadata["baker"]
+            reward_and_fees = bonus = 0
+            balance_updates = metadata["balance_updates"]
+            for i, bu in enumerate(balance_updates):
+                if bu["kind"] == "contract":
+                    if balance_updates[i - 1]["category"] == "baking rewards":
+                        payload_proposer = bu[
+                            "contract"
+                        ]  # author of the block payload (not necessarily block producer)
+                        reward_and_fees = int(bu["change"])
+                    if balance_updates[i - 1]["category"] == "baking bonuses":
+                        bonus = int(bu["change"])
+
+
+            operations = response["operations"][2]
             double_signing_reward = 0
             for op in operations:
                 for content in op["contents"]:
@@ -273,33 +285,7 @@ class RpcRewardApiImpl(RewardApi):
                         ):
                             double_signing_reward += int(bu["change"])
 
-            return double_signing_reward
-
-        except ApiProviderException as e:
-            raise e from e
-
-    def __get_block_metadata(self, level):
-        """
-        Returns baker metadata for a given block level.
-        """
-
-        try:
-            block_metadata_rpc = COMM_BLOCK_METADATA.format(self.node_url, level)
-            response = self.do_rpc_request(block_metadata_rpc)
-            author = response["baker"]
-            reward_and_fees = bonus = 0
-            balance_updates = response["balance_updates"]
-            for i, bu in enumerate(balance_updates):
-                if bu["kind"] == "contract":
-                    if balance_updates[i - 1]["category"] == "baking rewards":
-                        payload_proposer = bu[
-                            "contract"
-                        ]  # author of the block payload (not necessarily block producer)
-                        reward_and_fees = int(bu["change"])
-                    if balance_updates[i - 1]["category"] == "baking bonuses":
-                        bonus = int(bu["change"])
-
-            return author, payload_proposer, reward_and_fees, bonus
+            return author, payload_proposer, reward_and_fees, bonus, double_signing_reward
 
         except ApiProviderException as e:
             raise e from e
