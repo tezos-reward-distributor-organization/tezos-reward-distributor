@@ -268,17 +268,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     - self.release_override
                 ):
                     if not self.payments_queue.full():
-                        if (
-                            not self.pay_denunciation_rewards
-                        ) and self.reward_api.name == "RPC":
-                            logger.info(
-                                "Error: pay_denunciation_rewards=False requires an indexer since it is not possible to distinguish reward source using RPC"
-                            )
-                            e = "You must set 'pay_denunciation_rewards' to True when using RPC provider."
-                            logger.error(e)
-                            self.exit()
-                            break
-
                         # Paying upcoming cycles (-R set to -11 )
                         if pymnt_cycle >= current_cycle:
                             logger.warn(

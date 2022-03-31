@@ -122,7 +122,7 @@ class RpcRewardApiImpl(RewardApi):
 
             # scanning for equivocation losses is not supported in RPC
             # this would require scanning every block
-            equivocation_losses = None
+            equivocation_losses = 0
             denunciation_rewards = 0
 
             offline_losses = None
