@@ -277,15 +277,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                 "TRD will attempt to adjust the amount after the cycle runs, but it may not work."
                             )
 
-                        # Paying cycles with frozen rewards (-R set to -5 )
-                        elif (
-                            pymnt_cycle
-                            >= current_cycle - self.nw_config["NB_FREEZE_CYCLE"]
-                        ):
-                            logger.warn(
-                                "Please note that you are doing payouts for frozen rewards!!!"
-                            )
-
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
                             wait_offset_blocks = self.payment_offset - level_in_cycle
