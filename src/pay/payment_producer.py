@@ -542,7 +542,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             early_payout = False
             current_cycle_rewards_type = rewards_type
             # 1- adjust past cycle if necessary
-            if self.release_override == - ( 2 * network_config["NB_FREEZE_CYCLE"] + 1) and pymnt_cycle >= current_cycle:
+            if (
+                self.release_override == -(2 * network_config["NB_FREEZE_CYCLE"] + 1)
+                and pymnt_cycle >= current_cycle
+            ):
                 early_payout = True
                 completed_cycle = pymnt_cycle - network_config["NB_FREEZE_CYCLE"] - 1
                 adjustments = self.recompute_rewards(

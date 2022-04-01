@@ -106,9 +106,14 @@ class RpcRewardApiImpl(RewardApi):
             baking_rights = self.__get_baking_rights(
                 cycle, level_of_first_block_in_preserved_cycles
             )
-            nb_endorsements = sum([ int(er["delegates"][0]["endorsing_power"]) for er in self.__get_endorsing_rights(
-                cycle, level_of_first_block_in_preserved_cycles
-            ) ] )
+            nb_endorsements = sum(
+                [
+                    int(er["delegates"][0]["endorsing_power"])
+                    for er in self.__get_endorsing_rights(
+                        cycle, level_of_first_block_in_preserved_cycles
+                    )
+                ]
+            )
             nb_blocks = len([r for r in baking_rights if r["round"] == 0])
             logger.info(
                 f"Baker has rights to perform {nb_blocks:<,d} bakes and {nb_endorsements:<,d} endorsements for this cycle."
@@ -300,7 +305,6 @@ class RpcRewardApiImpl(RewardApi):
                     if balance_updates[i - 1]["category"] == "baking bonuses":
                         bonus = int(bu["change"])
 
-
             operations = response["operations"][2]
             double_signing_reward = 0
             for op in operations:
@@ -315,7 +319,13 @@ class RpcRewardApiImpl(RewardApi):
                         ):
                             double_signing_reward += int(bu["change"])
 
-            return author, payload_proposer, reward_and_fees, bonus, double_signing_reward
+            return (
+                author,
+                payload_proposer,
+                reward_and_fees,
+                bonus,
+                double_signing_reward,
+            )
 
         except ApiProviderException as e:
             raise e from e
