@@ -106,24 +106,13 @@ class RpcRewardApiImpl(RewardApi):
             baking_rights = self.__get_baking_rights(
                 cycle, level_of_first_block_in_preserved_cycles
             )
-            nb_endorsements = sum([ er["delegates"][0]["endorsing_power"] for er in self.__get_endorsing_rights(
+            nb_endorsements = sum([ int(er["delegates"][0]["endorsing_power"]) for er in self.__get_endorsing_rights(
                 cycle, level_of_first_block_in_preserved_cycles
             ) ] )
-            logger.info(
-                f"Total number of endorsements for baker: {nb_endorsements:<,d}."
-            )
-            logger
             nb_blocks = len([r for r in baking_rights if r["round"] == 0])
-
-            total_reward_amount = None
-            if not rewards_type.isEstimated():
-                # Calculate actual rewards
-                (
-                    endorsing_rewards,
-                    lost_endorsing_rewards,
-                ) = self.__get_endorsing_rewards(
-                    level_of_last_block_in_unfreeze_cycle, cycle
-                )
+            logger.info(
+                f"Baker has rights to perform {nb_blocks:<,d} bakes and {nb_endorsements:<,d} endorsements for this cycle."
+            )
 
             total_block_rewards_and_fees = 0
             total_block_bonus = 0
@@ -131,68 +120,86 @@ class RpcRewardApiImpl(RewardApi):
             # scanning for equivocation losses is not supported in RPC
             # this would require scanning every block
             equivocation_losses = 0
-            denunciation_rewards = 0
 
-            offline_losses = 0
-            for count, r in enumerate(baking_rights):
-                if count % 10 == 0:
-                    logger.info(
-                        "Scanning blocks ({}/{}).".format(count, len(baking_rights))
-                    )
+            if rewards_type.isEstimated():
+                # we can't calculate this yet, cycle hasn't run
+                denunciation_rewards = None
+                offline_losses = None
+                endorsing_rewards = None
+                rewards_and_fees = None
+                total_reward_amount = None
+            else:
+                denunciation_rewards = 0
+                offline_losses = 0
+
+                # Calculate actual rewards - cycle must have run
                 (
-                    block_author,
-                    block_payload_proposer,
-                    block_reward_and_fees,
-                    block_bonus,
-                    block_double_signing_reward,
-                ) = self.__get_block_data(r["level"])
-                if block_author == self.baking_address:
-                    # we are block proposer for this block
-                    total_block_bonus += block_bonus
-                    if r["round"] != 0:
+                    endorsing_rewards,
+                    lost_endorsing_rewards,
+                ) = self.__get_endorsing_rewards(
+                    level_of_last_block_in_unfreeze_cycle, cycle
+                )
+                offline_losses += lost_endorsing_rewards
+
+                for count, r in enumerate(baking_rights):
+                    if count % 10 == 0:
                         logger.info(
-                            "Found stolen baking slot at level {}, round {}.".format(
-                                r["level"], r["round"]
-                            )
+                            "Scanning blocks ({}/{}).".format(count, len(baking_rights))
                         )
-                    if block_payload_proposer != self.baking_address:
-                        logger.info(
-                            "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
-                                self.baking_address,
-                                block_payload_proposer,
-                                r["level"],
-                                r["round"],
+                    (
+                        block_author,
+                        block_payload_proposer,
+                        block_reward_and_fees,
+                        block_bonus,
+                        block_double_signing_reward,
+                    ) = self.__get_block_data(r["level"])
+                    if block_author == self.baking_address:
+                        # we are block proposer for this block
+                        total_block_bonus += block_bonus
+                        if r["round"] != 0:
+                            logger.info(
+                                "Found stolen baking slot at level {}, round {}.".format(
+                                    r["level"], r["round"]
+                                )
                             )
-                        )
-                else:
-                    # we are not block proposer for this block
-                    if r["round"] == 0:
-                        logger.warning("Found missed baking slot {}.".format(r))
-                        offline_losses += block_bonus + block_reward_and_fees
-                if block_payload_proposer == self.baking_address:
-                    # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
-                    total_block_rewards_and_fees += block_reward_and_fees
-                denunciation_rewards += block_double_signing_reward
+                        if block_payload_proposer != self.baking_address:
+                            logger.info(
+                                "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
+                                    self.baking_address,
+                                    block_payload_proposer,
+                                    r["level"],
+                                    r["round"],
+                                )
+                            )
+                    else:
+                        # we are not block proposer for this block
+                        if r["round"] == 0:
+                            logger.warning("Found missed baking slot {}.".format(r))
+                            offline_losses += block_bonus + block_reward_and_fees
+                    if block_payload_proposer == self.baking_address:
+                        # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
+                        total_block_rewards_and_fees += block_reward_and_fees
+                    denunciation_rewards += block_double_signing_reward
 
-            logger.info(
-                f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez."
-            )
-            logger.info(
-                f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez."
-            )
+                logger.info(
+                    f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez."
+                )
+                logger.info(
+                    f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez."
+                )
 
-            logger.info(
-                f"Total block reward for baker (sum of 2 values above): {(total_block_rewards_and_fees + total_block_bonus):<,d} mutez."
-            )
-            logger.info(
-                f"Total denunciation reward is: {denunciation_rewards:<,d} mutez."
-            )
+                logger.info(
+                    f"Total block reward for baker (sum of 2 values above): {(total_block_rewards_and_fees + total_block_bonus):<,d} mutez."
+                )
+                logger.info(
+                    f"Total denunciation reward is: {denunciation_rewards:<,d} mutez."
+                )
 
-            rewards_and_fees = (
-                total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
-            )
+                rewards_and_fees = (
+                    total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
+                )
 
-            total_reward_amount = rewards_and_fees + denunciation_rewards
+                total_reward_amount = rewards_and_fees + denunciation_rewards
 
             reward_model = RewardProviderModel(
                 reward_data["delegate_staking_balance"],
