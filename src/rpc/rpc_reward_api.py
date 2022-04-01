@@ -26,6 +26,9 @@ COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 COMM_BAKING_RIGHTS = (
     "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
 )
+COMM_ENDORSING_RIGHTS = (
+    "{}/chains/main/blocks/{}/helpers/endorsing_rights?cycle={}&delegate={}"
+)
 
 # Constants used for calculations related to the cycles before Granada
 CYCLES_BEFORE_GRANADA = 388
@@ -99,10 +102,17 @@ class RpcRewardApiImpl(RewardApi):
                 )
             )
 
-            # Determine how many round 0 baking rights delegate had
+            # Collect baking rights
             baking_rights = self.__get_baking_rights(
                 cycle, level_of_first_block_in_preserved_cycles
             )
+            nb_endorsements = sum([ er["delegates"][0]["endorsing_power"] for er in self.__get_endorsing_rights(
+                cycle, level_of_first_block_in_preserved_cycles
+            ) ] )
+            logger.info(
+                f"Total number of endorsements for baker: {nb_endorsements:<,d}."
+            )
+            logger
             nb_blocks = len([r for r in baking_rights if r["round"] == 0])
 
             total_reward_amount = None
@@ -184,7 +194,6 @@ class RpcRewardApiImpl(RewardApi):
 
             total_reward_amount = rewards_and_fees + denunciation_rewards
 
-            nb_endorsements = 0
             reward_model = RewardProviderModel(
                 reward_data["delegate_staking_balance"],
                 nb_blocks,
@@ -241,6 +250,20 @@ class RpcRewardApiImpl(RewardApi):
 
         try:
             baking_rights_rpc = COMM_BAKING_RIGHTS.format(
+                self.node_url, level, cycle, self.baking_address
+            )
+            return self.do_rpc_request(baking_rights_rpc)
+
+        except ApiProviderException as e:
+            raise e from e
+
+    def __get_endorsing_rights(self, cycle, level):
+        """
+        Returns list of baking rights for a given cycle.
+        """
+
+        try:
+            baking_rights_rpc = COMM_ENDORSING_RIGHTS.format(
                 self.node_url, level, cycle, self.baking_address
             )
             return self.do_rpc_request(baking_rights_rpc)
