@@ -1,11 +1,17 @@
 from enum import Enum
 
+# General
+VERSION = 11.0
+PYTHON_MAJOR = 3
+PYTHON_MINOR = 7
+
 # Persistent data directories
 BASE_DIR = "~/pymnt"
 CONFIG_DIR = "cfg"
 SIMULATIONS_DIR = "simulations"
 REPORTS_DIR = "reports"
 DEFAULT_LOG_FILE = "logs/app.log"
+TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
@@ -80,13 +86,10 @@ DEFAULT_NETWORK_CONFIG_MAP = {
 
 
 MUTEZ_PER_TEZ = 1e6
+
 MAXIMUM_ROUNDING_ERROR = 10  # mutez
 ALMOST_ZERO = 1e-6
-
-VERSION = 11.0
-
 DISK_LIMIT_PERCENTAGE = 0.1
-
 GIGA_BYTE = 1e9
 
 

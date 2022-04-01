@@ -95,8 +95,8 @@ class ClientManager:
     def sign(self, bytes, key_name, timeout=None):
         json_params = json.dumps("03" + bytes)
         signer_url = self.signer_endpoint
-        cmd = f"keys/{key_name}"
-        url = os.path.join(signer_url, cmd)
+        cmd = f"/keys/{key_name}"
+        url = signer_url + cmd
         headers = {"content-type": "application/json"}
         response = self._do_request(
             method="POST",
@@ -123,8 +123,8 @@ class ClientManager:
     def check_pkh_known_by_signer(self, key_name, timeout=None):
 
         signer_url = self.signer_endpoint
-        cmd = f"keys/{key_name}"
-        url = os.path.join(signer_url, cmd)
+        cmd = f"/keys/{key_name}"
+        url = signer_url + cmd
 
         signer_exception = (
             f"Error querying the signer at url {signer_url}. \n"
@@ -150,8 +150,8 @@ class ClientManager:
     def get_authorized_keys(self, timeout=None):
 
         signer_url = self.signer_endpoint
-        cmd = "authorized_keys"
-        url = os.path.join(signer_url, cmd)
+        cmd = "/authorized_keys"
+        url = signer_url + cmd
 
         signer_exception = (
             f"Error querying the signer at url {signer_url}. \n"

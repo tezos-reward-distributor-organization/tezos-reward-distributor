@@ -28,6 +28,7 @@ from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 logger = main_logger
 
 rewards_split_call = "/tables/income?address={}&cycle={}"
+
 delegators_call = "/tables/snapshot?cycle={}&is_selected=1&baker={}&columns=balance,delegated,address&limit=50000"
 
 batch_current_balance_call = (
@@ -39,6 +40,7 @@ single_current_balance_call = (
 snapshot_cycle = "/explorer/cycle/{}"
 
 contract_storage = "/explorer/contract/{}/storage"
+
 balance_LP_call = "/explorer/bigmap/{}/values?limit=100&offset={}&block={}"
 
 
@@ -134,7 +136,6 @@ class TzStatsRewardProviderHelper:
         uri = self.api + delegators_call.format(
             cycle - self.preserved_cycles - 2, self.baking_address
         )
-
         sleep(0.5)  # be nice to tzstats
 
         verbose_logger.debug(
@@ -337,11 +338,8 @@ class TzStatsRewardProviderHelper:
             uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
 
             offset += 100
-
             verbose_logger.debug("Requesting LP balances, {}".format(uri))
-
             resp = requests.get(uri, timeout=5)
-
             verbose_logger.debug(
                 "Response from tzstats is {}".format(resp.content.decode("utf8"))
             )

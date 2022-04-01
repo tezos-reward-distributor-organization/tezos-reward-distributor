@@ -268,17 +268,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     - self.release_override
                 ):
                     if not self.payments_queue.full():
-                        if (
-                            not self.pay_denunciation_rewards
-                        ) and self.reward_api.name == "RPC":
-                            logger.info(
-                                "Error: pay_denunciation_rewards=False requires an indexer since it is not possible to distinguish reward source using RPC"
-                            )
-                            e = "You must set 'pay_denunciation_rewards' to True when using RPC provider."
-                            logger.error(e)
-                            self.exit()
-                            break
-
                         # Paying upcoming cycles (-R set to -11 )
                         if pymnt_cycle >= current_cycle:
                             logger.warn(
@@ -286,15 +275,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                             )
                             logger.warn(
                                 "TRD will attempt to adjust the amount after the cycle runs, but it may not work."
-                            )
-
-                        # Paying cycles with frozen rewards (-R set to -5 )
-                        elif (
-                            pymnt_cycle
-                            >= current_cycle - self.nw_config["NB_FREEZE_CYCLE"]
-                        ):
-                            logger.warn(
-                                "Please note that you are doing payouts for frozen rewards!!!"
                             )
 
                         # If user wants to offset payments within a cycle, check here
@@ -562,9 +542,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             early_payout = False
             current_cycle_rewards_type = rewards_type
             # 1- adjust past cycle if necessary
-            if self.release_override == -11 and pymnt_cycle >= current_cycle:
+            if (
+                self.release_override == -(2 * network_config["NB_FREEZE_CYCLE"] + 1)
+                and pymnt_cycle >= current_cycle
+            ):
                 early_payout = True
-                completed_cycle = pymnt_cycle - 6
+                completed_cycle = pymnt_cycle - network_config["NB_FREEZE_CYCLE"] - 1
                 adjustments = self.recompute_rewards(
                     completed_cycle, rewards_type, network_config
                 )

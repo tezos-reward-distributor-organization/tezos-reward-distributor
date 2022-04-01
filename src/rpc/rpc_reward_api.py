@@ -1,4 +1,5 @@
 from time import sleep
+import json
 
 import requests
 from http import HTTPStatus
@@ -17,14 +18,16 @@ COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_MANAGER_KEY = "{}/chains/main/blocks/{}/context/contracts/{}/manager_key"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
-COMM_BLOCK_METADATA = "{}/chains/main/blocks/{}/metadata"
-COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot"
+COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 COMM_BIGMAP_QUERY = "{}/chains/main/blocks/{}/context/big_maps/{}/{}"
 # max rounds set to 2; will scan for stolen blocks up to this round
 COMM_BAKING_RIGHTS = (
     "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
+)
+COMM_ENDORSING_RIGHTS = (
+    "{}/chains/main/blocks/{}/helpers/endorsing_rights?cycle={}&delegate={}"
 )
 
 # Constants used for calculations related to the cycles before Granada
@@ -99,79 +102,110 @@ class RpcRewardApiImpl(RewardApi):
                 )
             )
 
-            # Determine how many round 0 baking rights delegate had
+            # Collect baking rights
             baking_rights = self.__get_baking_rights(
                 cycle, level_of_first_block_in_preserved_cycles
             )
+            nb_endorsements = sum(
+                [
+                    int(er["delegates"][0]["endorsing_power"])
+                    for er in self.__get_endorsing_rights(
+                        cycle, level_of_first_block_in_preserved_cycles
+                    )
+                ]
+            )
             nb_blocks = len([r for r in baking_rights if r["round"] == 0])
+            logger.info(
+                f"Baker has rights to perform {nb_blocks:<,d} bakes and {nb_endorsements:<,d} endorsements for this cycle."
+            )
 
-            total_reward_amount = None
-            if not rewards_type.isEstimated():
-                # Calculate actual rewards
+            total_block_rewards_and_fees = 0
+            total_block_bonus = 0
+
+            # scanning for equivocation losses is not supported in RPC
+            # this would require scanning every block
+            equivocation_losses = 0
+
+            if rewards_type.isEstimated():
+                # we can't calculate this yet, cycle hasn't run
+                denunciation_rewards = None
+                offline_losses = None
+                endorsing_rewards = None
+                rewards_and_fees = None
+                total_reward_amount = None
+            else:
+                denunciation_rewards = 0
+                offline_losses = 0
+
+                # Calculate actual rewards - cycle must have run
                 (
                     endorsing_rewards,
                     lost_endorsing_rewards,
                 ) = self.__get_endorsing_rewards(
                     level_of_last_block_in_unfreeze_cycle, cycle
                 )
+                offline_losses += lost_endorsing_rewards
 
-            total_block_rewards_and_fees = 0
-            total_block_bonus = 0
-            # Without an indexer, it is not possible to itemize rewards
-            # so setting these values below to "None"
-            equivocation_losses = None
-            denunciation_rewards = None
-
-            offline_losses = None
-            missed_baking_income = 0
-            for count, r in enumerate(baking_rights):
-                if count % 10 == 0:
-                    logger.info(
-                        "Scanning blocks ({}/{}).".format(count, len(baking_rights))
-                    )
-                (
-                    block_author,
-                    block_payload_proposer,
-                    block_reward_and_fees,
-                    block_bonus,
-                ) = self.__get_block_metadata(r["level"])
-                if block_author == self.baking_address:
-                    total_block_rewards_and_fees += block_reward_and_fees
-                    if r["round"] != 0:
+                for count, r in enumerate(baking_rights):
+                    if count % 10 == 0:
                         logger.info(
-                            "Found stolen baking slot at level {}, round {}.".format(
-                                r["level"], r["round"]
-                            )
+                            "Scanning blocks ({}/{}).".format(count, len(baking_rights))
                         )
-                    if block_payload_proposer != self.baking_address:
-                        logger.warning(
-                            "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
-                                self.baking_address,
-                                block_payload_proposer,
-                                r["level"],
-                                r["round"],
+                    (
+                        block_author,
+                        block_payload_proposer,
+                        block_reward_and_fees,
+                        block_bonus,
+                        block_double_signing_reward,
+                    ) = self.__get_block_data(r["level"])
+                    if block_author == self.baking_address:
+                        # we are block proposer for this block
+                        total_block_bonus += block_bonus
+                        if r["round"] != 0:
+                            logger.info(
+                                "Found stolen baking slot at level {}, round {}.".format(
+                                    r["level"], r["round"]
+                                )
                             )
-                        )
-                else:
-                    if r["round"] == 0:
-                        logger.warning("Found missed baking slot {}.".format(r))
-                    # TODO add to the offline losses in this case
-                if block_payload_proposer == self.baking_address:
-                    # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
-                    total_block_bonus += block_bonus
-            logger.info(
-                f"Total block production reward and fees: {total_block_rewards_and_fees}."
-            )
-            logger.info(f"Total block bonus: {total_block_bonus}.")
+                        if block_payload_proposer != self.baking_address:
+                            logger.info(
+                                "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
+                                    self.baking_address,
+                                    block_payload_proposer,
+                                    r["level"],
+                                    r["round"],
+                                )
+                            )
+                    else:
+                        # we are not block proposer for this block
+                        if r["round"] == 0:
+                            logger.warning("Found missed baking slot {}.".format(r))
+                            offline_losses += block_bonus + block_reward_and_fees
+                    if block_payload_proposer == self.baking_address:
+                        # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
+                        total_block_rewards_and_fees += block_reward_and_fees
+                    denunciation_rewards += block_double_signing_reward
 
-            rewards_and_fees = (
-                total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
-            )
+                logger.info(
+                    f"Total payload producer's reward for baker: {total_block_rewards_and_fees:<,d} mutez."
+                )
+                logger.info(
+                    f"Total block producer's bonus for baker: {total_block_bonus:<,d} mutez."
+                )
 
-            offline_losses = missed_baking_income
-            total_reward_amount = rewards_and_fees
+                logger.info(
+                    f"Total block reward for baker (sum of 2 values above): {(total_block_rewards_and_fees + total_block_bonus):<,d} mutez."
+                )
+                logger.info(
+                    f"Total denunciation reward is: {denunciation_rewards:<,d} mutez."
+                )
 
-            nb_endorsements = 0
+                rewards_and_fees = (
+                    total_block_rewards_and_fees + total_block_bonus + endorsing_rewards
+                )
+
+                total_reward_amount = rewards_and_fees + denunciation_rewards
+
             reward_model = RewardProviderModel(
                 reward_data["delegate_staking_balance"],
                 nb_blocks,
@@ -235,17 +269,32 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_block_metadata(self, level):
+    def __get_endorsing_rights(self, cycle, level):
         """
-        Returns baker public key hash for a given block level.
+        Returns list of baking rights for a given cycle.
         """
 
         try:
-            block_metadata_rpc = COMM_BLOCK_METADATA.format(self.node_url, level)
-            response = self.do_rpc_request(block_metadata_rpc)
-            author = response["baker"]
+            baking_rights_rpc = COMM_ENDORSING_RIGHTS.format(
+                self.node_url, level, cycle, self.baking_address
+            )
+            return self.do_rpc_request(baking_rights_rpc)
+
+        except ApiProviderException as e:
+            raise e from e
+
+    def __get_block_data(self, level):
+        """
+        Returns baker relevant reward data for a given block level.
+        """
+
+        try:
+            block_rpc = COMM_BLOCK.format(self.node_url, level)
+            response = self.do_rpc_request(block_rpc)
+            metadata = response["metadata"]
+            author = metadata["baker"]
             reward_and_fees = bonus = 0
-            balance_updates = response["balance_updates"]
+            balance_updates = metadata["balance_updates"]
             for i, bu in enumerate(balance_updates):
                 if bu["kind"] == "contract":
                     if balance_updates[i - 1]["category"] == "baking rewards":
@@ -256,7 +305,27 @@ class RpcRewardApiImpl(RewardApi):
                     if balance_updates[i - 1]["category"] == "baking bonuses":
                         bonus = int(bu["change"])
 
-            return author, payload_proposer, reward_and_fees, bonus
+            operations = response["operations"][2]
+            double_signing_reward = 0
+            for op in operations:
+                for content in op["contents"]:
+                    balance_updates = content["metadata"]["balance_updates"]
+                    for i, bu in enumerate(balance_updates):
+                        if (
+                            bu["kind"] == "contract"
+                            and bu["contract"] == self.baking_address
+                            and balance_updates[i - 1]["category"]
+                            == "double signing evidence rewards"
+                        ):
+                            double_signing_reward += int(bu["change"])
+
+            return (
+                author,
+                payload_proposer,
+                reward_and_fees,
+                bonus,
+                double_signing_reward,
+            )
 
         except ApiProviderException as e:
             raise e from e
@@ -422,7 +491,7 @@ class RpcRewardApiImpl(RewardApi):
         # construct RPC for getting list of delegates and staking balance
         # FIXME replace "head" with the block we actually need
         get_delegates_request = COMM_DELEGATES.format(
-            self.node_url, "head", self.baking_address
+            self.node_url, level_snapshot_block, self.baking_address
         )
 
         # get RPC response for delegates and staking balance
@@ -430,7 +499,7 @@ class RpcRewardApiImpl(RewardApi):
         delegate_staking_balance = int(response["staking_balance"])
         all_delegates = []
         for pkh in response["delegated_contracts"]:
-            get_pk = COMM_MANAGER_KEY.format(self.node_url, "head", pkh)
+            get_pk = COMM_MANAGER_KEY.format(self.node_url, level_snapshot_block, pkh)
             all_delegates.append(self.do_rpc_request(get_pk))
 
         delegate_staking_balance = 0
@@ -542,10 +611,14 @@ class RpcRewardApiImpl(RewardApi):
                 cycle - self.preserved_cycles
             ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
 
-        logger.debug("Reward cycle {}, snapshot level {}".format(cycle, snapshot_level))
+        logger.info(
+            "The reward cycle is {}, level used to query context for the snapshot level is {}".format(
+                cycle, snapshot_level
+            )
+        )
 
         if current_level - snapshot_level >= 0:
-            request = COMM_SNAPSHOT.format(self.node_url, "head")
+            request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
             chosen_snapshot = self.do_rpc_request(request)
 
             if cycle >= FIRST_CYCLE_SNAPSHOT_GRANADA:
@@ -558,14 +631,14 @@ class RpcRewardApiImpl(RewardApi):
             else:
                 # Using pre-Granada calculation
                 level_snapshot_block = (
-                    cycle - self.preserved_cycles - 2
+                    cycle - self.preserved_cycles - 1
                 ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + (
                     chosen_snapshot + 1
                 ) * BLOCK_PER_ROLL_SNAPSHOT_BEFORE_GRANADA
 
-            logger.debug(
-                "Snapshot index {}, snapshot index level {}".format(
-                    chosen_snapshot, level_snapshot_block
+            logger.info(
+                "The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
+                    chosen_snapshot, cycle, level_snapshot_block
                 )
             )
 
