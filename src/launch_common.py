@@ -57,7 +57,7 @@ def args_validation(args, argparser):
     except AttributeError:
         logger.info("args: reward_data_provider argument does not exist.")
     else:
-        if args.reward_data_provider is not "tzkt":
+        if args.reward_data_provider != "tzkt":
             argparser.error(
                 "reward_data_provider {:s} is not functional at the moment. Please use tzkt".format(
                     args.reward_data_provider
