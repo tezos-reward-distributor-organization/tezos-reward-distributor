@@ -53,6 +53,18 @@ def args_validation(args, argparser):
     blocks_per_cycle = 0
 
     try:
+        args.reward_data_provider
+    except AttributeError:
+        logger.info("args: reward_data_provider argument does not exist.")
+    else:
+        if args.reward_data_provider == "tzstats":
+            argparser.error(
+                "reward_data_provider {:s} is not functional at the moment. Please use another option".format(
+                    args.reward_data_provider
+                )
+            )
+
+    try:
         args.network
     except AttributeError:
         logger.info("args: network argument does not exist.")
