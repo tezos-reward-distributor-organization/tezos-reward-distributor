@@ -49,7 +49,7 @@ TX_FEES = {
 KT1_FEE_SAFETY_CHECK = True
 FEE_LIMIT_CONTRACTS = 100000
 ZERO_THRESHOLD = 1  # too less to payout in mutez
-MAX_TX_PER_BLOCK_TZ = 600
+MAX_TX_PER_BLOCK_TZ = 550
 MAX_TX_PER_BLOCK_KT = 25
 
 # For simulation
@@ -758,31 +758,40 @@ class BatchPayer:
                     # burn_fee = COST_PER_BYTE * RA_STORAGE
                     burn_fee = int(TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["BURN_FEE"])
 
+                    payment_item.desc += "Empty account needed reactivation. "
+
+            message = "Payment to {} requires {:<,d} gas * {:.2f} mutez-per-gas + {:<,d} mutez burn fee\n ".format(
+                payment_item.paymentaddress,
+                gas_limit,
+                MUTEZ_PER_GAS_UNIT,
+                burn_fee,
+            )
+
             if burn_fee > 0:
-                # Subtract burn fee from the payment amount
-                orig_pymnt_amnt = pymnt_amnt
                 if self.delegator_pays_ra_fee:
+                    # Subtract burn fee from the payment amount
+                    orig_pymnt_amnt = pymnt_amnt
                     pymnt_amnt = max(pymnt_amnt - burn_fee, 0)
                     payment_item.delegator_transaction_fee += burn_fee
-                else:
-                    payment_item.delegate_transaction_fee += burn_fee
 
-                logger.info(
-                    "Payment to {} requires {:<,d} gas * {:.2f} mutez-per-gas + {:<,d} mutez burn fee; "
-                    "Payment reduced from {:<,d} mutez to {:<,d} mutez".format(
-                        payment_item.paymentaddress,
-                        gas_limit,
-                        MUTEZ_PER_GAS_UNIT,
-                        burn_fee,
+                    message += "Payment reduced from {:<,d} mutez to {:<,d} mutez because Delegator pays burn fees. ".format(
                         orig_pymnt_amnt,
                         pymnt_amnt,
                     )
-                )
+                else:
+                    payment_item.delegate_transaction_fee += burn_fee
 
             # Subtract transaction's fee from the payment amount if delegator has to pay for it
             if self.delegator_pays_xfer_fee:
+                # Subtract tx fee from the payment amount
+                orig_pymnt_amnt = pymnt_amnt
                 pymnt_amnt = max(pymnt_amnt - tx_fee, 0)
                 payment_item.delegator_transaction_fee += tx_fee
+
+                message += "Payment reduced from {:<,d} mutez to {:<,d} mutez because Delegator pays transaction fees. ".format(
+                    orig_pymnt_amnt,
+                    pymnt_amnt,
+                )
             else:
                 payment_item.delegate_transaction_fee += tx_fee
 
@@ -796,18 +805,15 @@ class BatchPayer:
                 payment_item.desc += (
                     "Payment amount < ZERO_THRESHOLD after substracting fees. "
                 )
-                logger.info(
-                    "Payment to {:s} became < {:<,d} mutez after deducting fees. Skipping.".format(
-                        payment_item.paymentaddress, ZERO_THRESHOLD
-                    )
+
+                message += "Payment to {:s} became < {:<,d} mutez after deducting fees. Skipping.".format(
+                    payment_item.paymentaddress, ZERO_THRESHOLD
                 )
+
+                logger.info(message)
                 continue
             else:
-                logger.debug(
-                    "Payment to {:s} became {:<,d} mutez after deducting fees.".format(
-                        payment_item.paymentaddress, pymnt_amnt
-                    )
-                )
+                logger.debug(message)
 
             op_counter.inc()
 
