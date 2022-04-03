@@ -81,7 +81,8 @@ def parse_constants(constants):
         int(constants["baking_reward_fixed_portion"])
         + (
             int(constants["baking_reward_bonus_per_slot"])
-            * int(constants["consensus_committee_size"]) / 3
+            * int(constants["consensus_committee_size"])
+            / 3
         )
     )
     network_config_map["ENDORSEMENT_REWARD"] = int(
