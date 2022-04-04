@@ -296,7 +296,7 @@ class RpcRewardApiImpl(RewardApi):
             reward_and_fees = bonus = 0
             balance_updates = metadata["balance_updates"]
             for i, bu in enumerate(balance_updates):
-                if bu["kind"] == "contract":
+                if bu["kind"] == "contract" and "category" in balance_updates[i - 1]:
                     if balance_updates[i - 1]["category"] == "baking rewards":
                         payload_proposer = bu[
                             "contract"
@@ -314,10 +314,23 @@ class RpcRewardApiImpl(RewardApi):
                         if (
                             bu["kind"] == "contract"
                             and bu["contract"] == self.baking_address
-                            and balance_updates[i - 1]["category"]
-                            == "double signing evidence rewards"
                         ):
-                            double_signing_reward += int(bu["change"])
+                            if (
+                                balance_updates[i - 1]["category"]
+                                == "double signing evidence rewards"
+                            ):
+                                logger.info(
+                                    f"Delegate submitted double signing evidence and earned a reward of {bu['change']}"
+                                )
+                                double_signing_reward += int(bu["change"])
+                            elif (
+                                balance_updates[i - 1]["category"]
+                                == "nonce revelation rewards"
+                            ):
+                                logger.info(
+                                    f"Delegate submitted a nonce revelation and earned a reward of {bu['change']}"
+                                )
+                                reward_and_fees += int(bu["change"])
 
             return (
                 author,
