@@ -16,7 +16,6 @@ logger = main_logger.getChild("rpc_reward_api")
 # RPC constants
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
-COMM_MANAGER_KEY = "{}/chains/main/blocks/{}/context/contracts/{}/manager_key"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
 COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
@@ -239,7 +238,7 @@ class RpcRewardApiImpl(RewardApi):
             retry_count += 1
             sleep(RPC_REQUEST_BUFFER_SECONDS)  # Be nice to public RPC
             try:
-                logger.info("Fetching address {:s} ...".format(address))
+                logger.debug("Fetching address {:s} ...".format(address))
                 response = self.do_rpc_request(request, time_out=5)
             except requests.exceptions.RequestException as e:
                 # Catch HTTP-related errors and retry
@@ -443,41 +442,6 @@ class RpcRewardApiImpl(RewardApi):
                 )
                 raise e from e
 
-    def get_contract_storage(self, contract_id, block):
-        get_contract_storage_request = COMM_CONTRACT_STORAGE.format(
-            self.node_url, block, contract_id
-        )
-        return self.__get_response(contract_id, get_contract_storage_request)
-
-    def get_big_map_id(self, contract_id):
-        storage = self.get_contract_storage(contract_id, "head")
-        parsed_storage = dxtz.parse_dexter_storage(storage)
-        return parsed_storage["big_map_id"]
-
-    def get_address_value_from_big_map(
-        self, big_map_id, address_script_expr, snapshot_block
-    ):
-        get_address_value_request = COMM_BIGMAP_QUERY.format(
-            self.node_url, snapshot_block, big_map_id, address_script_expr
-        )
-        return self.__get_response(address_script_expr, get_address_value_request)
-
-    def get_liquidity_provider_balance(
-        self, big_map_id, address_script_expr, snapshot_block
-    ):
-        big_map_value = self.get_address_value_from_big_map(
-            big_map_id, address_script_expr, snapshot_block
-        )
-        int(big_map_value.json()["args"][0]["int"])
-
-    def get_liquidity_providers_list(self, big_map_id, snapshot_block):
-        pass
-
-    def update_current_balances_dexter(self, balanceMap):
-        for address in balanceMap:
-            curr_balance = self.__get_current_balance_of_delegator(address)
-            balanceMap[address].update({"current_balance": curr_balance})
-
     def __get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level_info"]["level"])
@@ -510,10 +474,6 @@ class RpcRewardApiImpl(RewardApi):
         # get RPC response for delegates and staking balance
         response = self.do_rpc_request(get_delegates_request)
         delegate_staking_balance = int(response["staking_balance"])
-        all_delegates = []
-        for pkh in response["delegated_contracts"]:
-            get_pk = COMM_MANAGER_KEY.format(self.node_url, level_snapshot_block, pkh)
-            all_delegates.append(self.do_rpc_request(get_pk))
 
         delegate_staking_balance = 0
         d_a_len = 0
@@ -614,7 +574,7 @@ class RpcRewardApiImpl(RewardApi):
             # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
             # Cycles start at 0
             snapshot_level = BLOCKS_BEFORE_GRANADA + (
-                (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles)
+                (cycle - CYCLES_BEFORE_GRANADA)
                 * self.blocks_per_cycle
                 + 1
             )
