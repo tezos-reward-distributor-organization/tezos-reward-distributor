@@ -66,7 +66,6 @@ SIGNATURE_BYTES_SIZE = 64
 MAX_NUM_TRIALS_PER_BLOCK = 2
 MAX_BLOCKS_TO_CHECK_AFTER_INJECTION = 5
 MAX_BATCH_PAYMENT_ATTEMPTS = 3
-PAYMENT_ACCOUNT_SAFETY_MARGIN = 1.05  # 105%
 
 COMM_DELEGATE_BALANCE = "/chains/main/blocks/{}/context/contracts/{}/balance"
 COMM_PAYMENT_HEAD = "/chains/main/blocks/head~10"
@@ -344,9 +343,7 @@ class BatchPayer:
             )
 
             number_future_payable_cycles = int(
-                payment_address_balance
-                // (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
-                - 1
+                payment_address_balance // estimated_amount_to_pay - 1
             )
 
             if number_future_payable_cycles < 0:
@@ -358,10 +355,9 @@ class BatchPayer:
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
                     "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:<,d} mutez, is insufficient to pay cycle rewards of {:<,d} mutez. Including a safety margin of {} %.".format(
+                    "The current balance of {:<,d} mutez is insufficient to pay for cycle rewards of {:<,d} mutez.".format(
                         payment_address_balance,
                         estimated_amount_to_pay,
-                        int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
                     )
                 )
 

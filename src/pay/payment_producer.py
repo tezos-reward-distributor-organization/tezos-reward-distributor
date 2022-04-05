@@ -188,7 +188,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 current_level,
             ) = self.block_api.get_current_cycle_and_level()
         except ApiProviderException as a:
-            logger.error("Unable to fetch current cycle from provider {:s}, {:s}. Exiting.".format(str(self.provider_factory.provider), str(a)))
+            logger.error(
+                "Unable to fetch current cycle from provider {:s}, {:s}. Exiting.".format(
+                    str(self.provider_factory.provider), str(a)
+                )
+            )
             self.exit()
             return
 
