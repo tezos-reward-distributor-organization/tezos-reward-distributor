@@ -51,6 +51,7 @@ class RpcRewardApiImpl(RewardApi):
         self.preserved_cycles = nw["NB_FREEZE_CYCLE"]
         self.blocks_per_stake_snapshot = nw["BLOCKS_PER_STAKE_SNAPSHOT"]
         self.block_reward = nw["BLOCK_REWARD"]
+        self.network = nw["NAME"]
 
         self.baking_address = baking_address
         self.node_url = node_url
@@ -72,11 +73,13 @@ class RpcRewardApiImpl(RewardApi):
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Get last block in cycle, where endorsement rewards are distributed by the proto
-            if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+            if self.network == "MAINNET":
+                # Calculating the cycle from level is special on mainnet.
+                # Mainnet's blocks per cycles have changed during granada migration.
                 # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
                 # Cycles start at 0
-                level_of_last_block_in_unfreeze_cycle = BLOCKS_BEFORE_GRANADA + (
-                    (cycle - CYCLES_BEFORE_GRANADA + self.preserved_cycles + 1)
+                level_of_last_block_in_cycle = BLOCKS_BEFORE_GRANADA + (
+                    (cycle - CYCLES_BEFORE_GRANADA + 1)
                     * self.blocks_per_cycle
                 )
                 level_of_first_block_in_preserved_cycles = BLOCKS_BEFORE_GRANADA + (
@@ -85,39 +88,33 @@ class RpcRewardApiImpl(RewardApi):
                     + 1
                 )
             else:
-                # Using pre-Granada calculation
-                level_of_last_block_in_unfreeze_cycle = (
+                # Testnets
+                level_of_last_block_in_cycle = (
                     cycle + 1
-                ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+                ) * self.blocks_per_cycle
                 level_of_first_block_in_preserved_cycles = (
                     cycle - self.preserved_cycles
-                ) * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
+                ) * self.blocks_per_cycle + 1
+            logger.debug(f"We are on {self.network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}.")
+            logger.debug(f"First block in cycle {cycle - self.preserved_cycles - 1} used for snapshotting is {level_of_first_block_in_preserved_cycles}.")
 
             logger.debug(
                 "Cycle {:d}, blocks per cycle {:d}, last block of cycle {:d}".format(
                     cycle,
                     self.blocks_per_cycle,
-                    level_of_last_block_in_unfreeze_cycle,
+                    level_of_last_block_in_cycle,
                 )
             )
 
             # Collect baking rights
             baking_rights = self.__get_baking_rights(
-                cycle, level_of_first_block_in_preserved_cycles
+                cycle, level_of_last_block_in_cycle
             )
-            nb_endorsements = sum(
-                [
-                    int(er["delegates"][0]["endorsing_power"])
-                    for er in self.__get_endorsing_rights(
-                        cycle, level_of_first_block_in_preserved_cycles
-                    )
-                ]
-            )
+            nb_endorsements = 0
             nb_blocks = len([r for r in baking_rights if r["round"] == 0])
             logger.info(
-                f"Baker has rights to perform {nb_blocks:<,d} bakes and {nb_endorsements:<,d} endorsements for this cycle."
+                f"Baker has rights to perform {nb_blocks:<,d} bakes for this cycle."
             )
-
             total_block_rewards_and_fees = 0
             total_block_bonus = 0
 
@@ -141,7 +138,7 @@ class RpcRewardApiImpl(RewardApi):
                     endorsing_rewards,
                     lost_endorsing_rewards,
                 ) = self.__get_endorsing_rewards(
-                    level_of_last_block_in_unfreeze_cycle, cycle
+                    level_of_last_block_in_cycle, cycle
                 )
                 offline_losses += lost_endorsing_rewards
 
@@ -342,9 +339,9 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_endorsing_rewards(self, level_of_last_block_in_unfreeze_cycle, cycle):
+    def __get_endorsing_rewards(self, level_of_last_block_in_cycle, cycle):
         request_metadata = (
-            COMM_BLOCK.format(self.node_url, level_of_last_block_in_unfreeze_cycle)
+            COMM_BLOCK.format(self.node_url, level_of_last_block_in_cycle)
             + "/metadata"
         )
         metadata = self.do_rpc_request(request_metadata)
