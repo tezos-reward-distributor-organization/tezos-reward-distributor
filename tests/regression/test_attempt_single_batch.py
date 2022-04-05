@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from pay.batch_payer import BatchPayer, TZTX_FEE, OpCounter
+from pay.batch_payer import BatchPayer, TX_FEES, OpCounter
 from model.reward_log import RewardLog
 from cli.client_manager import ClientManager
 from http import HTTPStatus
@@ -26,7 +26,7 @@ run_ops_parsed = {
     ]
 }
 
-forge = "0" * (TZTX_FEE + 10)
+forge = "0" * (TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
 
 payment_head = {
     "hash": "BLyUNtn24LzUDyAgfPmvoJ3Lmqfcqw7tKdEX9thmXD62P8kgpyt",
@@ -89,7 +89,7 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
     )
     assert status == PaymentStatus.DONE
     assert operation_hash is None
-    assert reward_log.delegator_transaction_fee == TZTX_FEE
+    assert reward_log.delegator_transaction_fee == int(TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
     assert opt_counter.counter == 3209358
 
 
