@@ -70,8 +70,7 @@ class RpcRewardApiImpl(RewardApi):
                 # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
                 # Cycles start at 0
                 level_of_last_block_in_cycle = BLOCKS_BEFORE_GRANADA + (
-                    (cycle - CYCLES_BEFORE_GRANADA + 1)
-                    * self.blocks_per_cycle
+                    (cycle - CYCLES_BEFORE_GRANADA + 1) * self.blocks_per_cycle
                 )
                 level_of_first_block_in_preserved_cycles = BLOCKS_BEFORE_GRANADA + (
                     (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles)
@@ -80,14 +79,16 @@ class RpcRewardApiImpl(RewardApi):
                 )
             else:
                 # Testnets
-                level_of_last_block_in_cycle = (
-                    cycle + 1
-                ) * self.blocks_per_cycle
+                level_of_last_block_in_cycle = (cycle + 1) * self.blocks_per_cycle
                 level_of_first_block_in_preserved_cycles = (
                     cycle - self.preserved_cycles
                 ) * self.blocks_per_cycle + 1
-            logger.debug(f"We are on {self.network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}.")
-            logger.debug(f"First block in cycle {cycle - self.preserved_cycles - 1} used for snapshotting is {level_of_first_block_in_preserved_cycles}.")
+            logger.debug(
+                f"We are on {self.network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}."
+            )
+            logger.debug(
+                f"First block in cycle {cycle - self.preserved_cycles - 1} used for snapshotting is {level_of_first_block_in_preserved_cycles}."
+            )
 
             logger.debug(
                 "Cycle {:d}, blocks per cycle {:d}, last block of cycle {:d}".format(
@@ -128,9 +129,7 @@ class RpcRewardApiImpl(RewardApi):
                 (
                     endorsing_rewards,
                     lost_endorsing_rewards,
-                ) = self.__get_endorsing_rewards(
-                    level_of_last_block_in_cycle, cycle
-                )
+                ) = self.__get_endorsing_rewards(level_of_last_block_in_cycle, cycle)
                 offline_losses += lost_endorsing_rewards
 
                 for count, r in enumerate(baking_rights):
@@ -318,8 +317,7 @@ class RpcRewardApiImpl(RewardApi):
 
     def __get_endorsing_rewards(self, level_of_last_block_in_cycle, cycle):
         request_metadata = (
-            COMM_BLOCK.format(self.node_url, level_of_last_block_in_cycle)
-            + "/metadata"
+            COMM_BLOCK.format(self.node_url, level_of_last_block_in_cycle) + "/metadata"
         )
         metadata = self.do_rpc_request(request_metadata)
         balance_updates = metadata["balance_updates"]
@@ -539,15 +537,11 @@ class RpcRewardApiImpl(RewardApi):
             # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
             # Cycles start at 0
             snapshot_level = BLOCKS_BEFORE_GRANADA + (
-                (cycle - CYCLES_BEFORE_GRANADA)
-                * self.blocks_per_cycle
-                + 1
+                (cycle - CYCLES_BEFORE_GRANADA) * self.blocks_per_cycle + 1
             )
         else:
             # Testnet has no offset
-            snapshot_level = (
-                cycle - self.preserved_cycles
-            ) * self.blocks_per_cycle + 1
+            snapshot_level = (cycle - self.preserved_cycles) * self.blocks_per_cycle + 1
 
         logger.info(
             "The reward cycle is {}, level used to query context for the snapshot level is {}".format(
@@ -556,7 +550,7 @@ class RpcRewardApiImpl(RewardApi):
         )
 
         if self.network == "MAINNET":
-            if cycle in range(468,474):
+            if cycle in range(468, 474):
                 # cycle 468-473 are special
                 # immediately after ithaca activation, we are using the same snapshot for 5 cycles
                 chosen_snapshot = 0
