@@ -568,6 +568,18 @@ class RpcRewardApiImpl(RewardApi):
                 )
 
                 return chosen_snapshot, level_snapshot_block
+            if cycle == 474:
+                # cycle 474 is special as well
+                # source: baking slack https://tezos-baking.slack.com/archives/CC4FD2HUY/p1649171746418819?thread_ts=1649147045.126789&cid=CC4FD2HUY
+                chosen_snapshot = 15
+                level_snapshot_block = 2252800
+                logger.info(
+                    "ITHACA ACTIVATION SPECIAL: The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
+                        chosen_snapshot, cycle, level_snapshot_block
+                    )
+                )
+
+                return chosen_snapshot, level_snapshot_block
 
         if current_level - snapshot_level >= 0:
             request = COMM_SNAPSHOT.format(self.node_url, snapshot_level, cycle)
