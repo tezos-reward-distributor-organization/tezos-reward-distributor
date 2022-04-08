@@ -279,7 +279,7 @@ class BatchPayer:
                 payment_item.paid = PaymentStatus.DONE
                 payment_item.desc += "Payment amount < ZERO_THRESHOLD. "
                 payment_logs.append(payment_item)
-                logger.info(
+                logger.debug(
                     "Skipping payout to {:s} of {:<,d} mutez, reason: payout below minimum of {:<,d} mutez".format(
                         payment_item.address, payment_item.adjusted_amount, tmp_zt
                     )

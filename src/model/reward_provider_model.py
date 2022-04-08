@@ -3,7 +3,7 @@ class RewardProviderModel:
         self,
         delegate_staking_balance,
         num_baking_rights,
-        num_endorsing_rights,
+        potential_endorsement_rewards,
         total_reward_amount,
         rewards_and_fees,
         equivocation_losses,
@@ -16,7 +16,10 @@ class RewardProviderModel:
         self.delegator_balance_dict = delegator_balance_dict
         self.delegate_staking_balance = delegate_staking_balance
         self.num_baking_rights = num_baking_rights
-        self.num_endorsing_rights = num_endorsing_rights
+
+        # endorsement rewards, if paid, will equal this amount
+        self.potential_endorsement_rewards = potential_endorsement_rewards
+
         # rewards that should have been earned, had the baker been online
         self.offline_losses = offline_losses
 

@@ -417,7 +417,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             endorsement_reward = network_config["ENDORSEMENT_REWARD"]
             total_estimated_block_reward = reward_model.num_baking_rights * block_reward
             total_estimated_endorsement_reward = (
-                reward_model.num_endorsing_rights * endorsement_reward
+                reward_model.potential_endorsement_rewards
             )
             reward_model.computed_reward_amount = (
                 total_estimated_block_reward + total_estimated_endorsement_reward
