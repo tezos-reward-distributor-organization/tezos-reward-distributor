@@ -54,10 +54,10 @@ Available configuration parameters are:
     payment_address: tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889
 
 **rewards_type**
-  There are three options for calculating the total rewards earned by a baker at the end of each cycle. If this parameter is missing, 'actual' rewards take affect.
+  There are two options for calculating the total rewards earned by a baker at the end of each cycle. If this parameter is missing, 'actual' rewards take affect.
   
-  - 'actual': Rewards are calculated based on the actual number of bakes, at any priority, and any endorsements. Transaction fees and other block rewards are included in the rewards. If a bake or endorsement is missed or rewards are lost again due to accusations, rewards are not earned and therefore not included.
-  - 'ideal': Rewards are calculated assuming ideal behaviour of the baker, and actual behaviour of other bakers. If a bake or endorsement is missed, rewards are paid out despite not having been earned. Lost income due to other baker downtime is not included. Transaction fees and other block rewards are included in the rewards. Any lost rewards due to double-baking, double endorsing, or missing nonces are compensated at the expense of the baker. Select this type of rewards to insure against downtime of your baker but still account for real world conditions. This way, you will get optimal ranking in baker evaluation services despite any downtime.
+  - 'actual': Rewards are calculated based on the actual number of bakes, at any round. Transaction fees, bonuses and other block rewards are included in the rewards when earned. If a bake is missed, rewards are not earned and therefore not included. If endorsement rewards are not earned due to a failure to reveal a nonce or excessive unavailability of your baker, is it not included.
+  - 'ideal': Rewards are calculated assuming ideal behaviour of the baker, and actual behaviour of other bakers. If a bake is missed, 20 tez rewards are paid out despite not having been earned. If a round 0 payload has been produced, but another baker baked the block, the missed bonus is **not** paid out, because it is due to other bakers being offline and not endorsing. Transaction fees, bonuses and other block rewards are included in the rewards. The endorsing reward is paid out even in case it has not been earned. Select this type of rewards to insure against downtime of your baker but still account for real world conditions. This way, you will get optimal ranking in baker evaluation services despite any downtime.
 
   Example::
 
