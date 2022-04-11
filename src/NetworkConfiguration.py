@@ -85,9 +85,6 @@ def parse_constants(constants):
             / 3
         )
     )
-    network_config_map["ENDORSEMENT_REWARD"] = int(
-        constants["endorsing_reward_per_slot"]
-    )
     network_config_map["CONSENSUS_COMMITTEE_SIZE"] = int(
         constants["consensus_committee_size"]
     )

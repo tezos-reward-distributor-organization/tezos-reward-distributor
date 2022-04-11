@@ -122,7 +122,6 @@ class RpcRewardApiImpl(RewardApi):
             baking_rights = self.__get_baking_rights(
                 cycle, snapshot_cycle_first_block_level
             )
-            nb_endorsements = 0
             nb_blocks = len([r for r in baking_rights if r["round"] == 0])
             logger.info(
                 f"Baker has rights to perform {nb_blocks:<,d} bakes for this cycle."

@@ -24,7 +24,6 @@ def address_api():
     )
 
 
-
 class Mock_404_Response:
     def json(self):
         return None
@@ -51,8 +50,6 @@ def test_rpc_terminate_404(address_api):
         _ = address_api.get_rewards_for_cycle_map(
             cycle=CYCLE, rewards_type=RewardsType.ACTUAL
         )
-
-
 
 
 ERROR_MESSAGE_500 = "500 INTERNAL SERVER ERROR!"

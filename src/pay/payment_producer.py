@@ -414,7 +414,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         if computation_type.isEstimated():
             logger.info("Using estimated rewards for payouts calculations")
             block_reward = network_config["BLOCK_REWARD"]
-            endorsement_reward = network_config["ENDORSEMENT_REWARD"]
             total_estimated_block_reward = reward_model.num_baking_rights * block_reward
             total_estimated_endorsement_reward = (
                 reward_model.potential_endorsement_rewards
