@@ -114,8 +114,8 @@ def start_application(args=None):
 
 if __name__ == "__main__":
     # Check the python version
-    if (
-        not sys.version_info.major >= PYTHON_MAJOR
+    if not (
+        sys.version_info.major >= PYTHON_MAJOR
         and sys.version_info.minor >= PYTHON_MINOR
     ):
         raise Exception(

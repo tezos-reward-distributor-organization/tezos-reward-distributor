@@ -23,7 +23,7 @@ are released (paid out). Its default value is 0, which is a deprecated choice.
 Possible choices are:
 
 -  ``0``: pay rewards when they are "unfrozen" - 11 to 12 cycles after delegation. Note that the concept of freezing is a holdover from the old "Emmy" consensus algorithm and does not apply anymore with the current Tenderbake consensus algorithm.
--  ``-5``: pay rewards after the cycle runs - 6 to 7 choices after delegation. The recommended default choice.
+-  ``-5``: pay rewards after the cycle runs - 6 to 7 cycles after delegation. The recommended default choice.
 -  ``-11``: pay rewards when baking rights are assigned, referred as “adjusted
    early payouts” (see below) - 1 to 2 cycles after delegation.
 
