@@ -16,7 +16,7 @@ In this example, even though the webhook plugin is properly configured, it is *n
 plugins:
   enabled:
   webhook:
-    endpoint: https://mydomain.com/webhook.php
+    endpoint: https://example.com/webhook.php
     token: Xynl6svphysd3BhjLP6IS
 ```
 
@@ -27,7 +27,7 @@ plugins:
   enabled:
   - webhook
   webhook:
-    endpoint: https://mydomain.com/webhook.php
+    endpoint: https://example.com/webhook.php
     token: Xynl6svphysd3BhjLP6IS
 ```
 
@@ -255,6 +255,6 @@ Your script can return a short message in the response body. This will be displa
 ```
 plugins:
   webhook:
-    endpoint: https://mydomain.com/webhook.php
+    endpoint: https://example.com/webhook.php
     token: Xynl6svphysd3BhjLP6IS
 ```

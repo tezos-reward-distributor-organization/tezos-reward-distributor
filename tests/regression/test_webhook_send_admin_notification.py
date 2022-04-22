@@ -42,7 +42,7 @@ rewardlog3.service_fee_rate = "0.08"
 
 cfg = {
     "webhook": {
-        "endpoint": "https://mydomain.com/webhook.php",
+        "endpoint": "https://example.com/webhook.php",
         "token": "Xynl6svphysd3BhjLP6IS",
     }
 }
