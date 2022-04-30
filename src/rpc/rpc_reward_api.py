@@ -115,7 +115,9 @@ class RpcRewardApiImpl(RewardApi):
             (
                 reward_data["delegate_staking_balance"],
                 reward_data["delegators"],
-            ) = self.__get_delegators_and_delgators_balances(cycle, snapshot_cycle_first_block_level)
+            ) = self.__get_delegators_and_delgators_balances(
+                cycle, snapshot_cycle_first_block_level
+            )
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Collect baking rights
