@@ -32,15 +32,15 @@ plugins:
   - email
   - telegram
   email:
-    smtp_user: user@domain.com
+    smtp_user: user@example.com
     smtp_pass: horsebatterystaple2
-    smtp_host: smtp.domain.com
+    smtp_host: smtp.example.com
     smtp_port: 587
     smtp_tls: true
-    smtp_sender: trdnotice@domain.com
+    smtp_sender: trdnotice@example.com
     smtp_recipients:
-      - bob@domain.com
-      - alice@hotmail.com
+      - bob@example.com
+      - alice@example.org
   telegram:
     admin_chat_ids:
       - 123456789
@@ -60,7 +60,7 @@ plugins:
       - "#tezos"
       - "#rewards"
   webhook:
-    endpoint: https://mydomain.com/webhook.php
+    endpoint: https://myexample.com/webhook.php
     token: Xynl6svphysd3BhjLP6IS
   discord:
     endpoint: https://discord.com/api/webhooks/9876543212345678/OmAfadfasdfasdfasdfasdfasdfasfsdf
