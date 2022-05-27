@@ -187,9 +187,9 @@ def add_argument_cycle(argparser):
     argparser.add_argument(
         "-C",
         "--initial_cycle",
-        help="Cycle to start payment(s) from."
-        "Default value is -1: will pay rewards that were most recently released."
-        "Cycle for which rewards were most recently released is calulated based on the formula: "
+        help="Cycle to start payment(s) from. "
+        "Default value is -1: will pay rewards that were most recently released. "
+        "Cycle for which rewards were most recently released is calculated based on the formula: "
         "current_cycle - (NB_FREEZE_CYCLE+1) - release_override "
         "Valid range is [-1,).",
         default=-1,
