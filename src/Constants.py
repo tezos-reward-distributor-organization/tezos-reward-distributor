@@ -60,10 +60,10 @@ TZKT_PUBLIC_API_URL = {
 # https://tezos.gitlab.io/ithaca/consensus.html#consensus-related-protocol-parameters
 #
 # Mainnet:
-#
+# https://mainnet.smartpy.io/chains/main/blocks/head/context/constants
 #
 # Testnet:
-# https://rpc.ithacanet.teztnets.xyz/chains/main/blocks/head/context/constants
+# https://ithacanet.smartpy.io/chains/main/blocks/head/context/constants
 
 DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
