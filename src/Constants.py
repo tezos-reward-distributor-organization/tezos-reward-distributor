@@ -51,6 +51,7 @@ TZKT_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzkt.io/v1",
     CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET).lower(),
 }
+
 # Ithaca Network Constants
 # ------------------------
 #
@@ -64,7 +65,6 @@ TZKT_PUBLIC_API_URL = {
 #
 # Testnet:
 # https://ithacanet.smartpy.io/chains/main/blocks/head/context/constants
-
 DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
         # General
@@ -79,7 +79,6 @@ DEFAULT_NETWORK_CONFIG_MAP = {
         "BAKING_REWARD_FIXED_PORTION": 10000000,
         "BAKING_REWARD_BONUS_PER_SLOT": 4286,
         "ENDORSING_REWARD_PER_SLOT": 2857,
-        #
         # Fixed baking amount (10)+ bonus (10 in the best case)
         "BLOCK_REWARD": 20000000,
         # endorsing_reward = (1 - baking_reward_ratio) * (1 - bonus_ratio) * total_rewards
