@@ -51,32 +51,59 @@ TZKT_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzkt.io/v1",
     CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET).lower(),
 }
+# Ithaca Network Constants
+# ------------------------
+#
+# General:
+# https://research-development.nomadic-labs.com/announcing-tezos-9th-protocol-upgrade-proposal-ithaca.html
+# https://tezos.gitlab.io/ithaca/consensus.html#rewards
+# https://tezos.gitlab.io/ithaca/consensus.html#consensus-related-protocol-parameters
+#
+# Mainnet:
+# https://mainnet.smartpy.io/chains/main/blocks/head/context/constants
+#
+# Testnet:
+# https://ithacanet.smartpy.io/chains/main/blocks/head/context/constants
 
-
-# Network constants
 DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
+        # General
         "NAME": "MAINNET",
-        "NB_FREEZE_CYCLE": 5,
+        "NB_FREEZE_CYCLE": 5,  # needs deprecation
         "MINIMAL_BLOCK_DELAY": 30,
         "BLOCKS_PER_CYCLE": 8192,
         "BLOCKS_PER_STAKE_SNAPSHOT": 512,
-        "BLOCK_REWARD": 20000000,
+        # Consensus
         "CONSENSUS_COMMITTEE_SIZE": 7000,
+        "CONSENSUS_THRESHOLD": 4667,
+        "BAKING_REWARD_FIXED_PORTION": 10000000,
+        "BAKING_REWARD_BONUS_PER_SLOT": 4286,
         "ENDORSING_REWARD_PER_SLOT": 2857,
+        #
+        # Fixed baking amount (10)+ bonus (10 in the best case)
+        "BLOCK_REWARD": 20000000,
+        # endorsing_reward = (1 - baking_reward_ratio) * (1 - bonus_ratio) * total_rewards
+        # = (1-1/4)*(1-1/3)*40
+        "ENDORSEMENT_REWARDS": 20000000,
     },
     CURRENT_TESTNET: {
+        # General
         "NAME": CURRENT_TESTNET,
-        "NB_FREEZE_CYCLE": 3,
+        "NB_FREEZE_CYCLE": 3,  # needs deprecation
         "MINIMAL_BLOCK_DELAY": 15,
         "BLOCKS_PER_CYCLE": 4096,
         "BLOCKS_PER_STAKE_SNAPSHOT": 256,
-        "BLOCK_REWARD": 20000000,
+        # Consensus
         "CONSENSUS_COMMITTEE_SIZE": 7000,
-        "ENDORSING_REWARD_PER_SLOT": 2857,
+        "CONSENSUS_THRESHOLD": 4667,
+        "BAKING_REWARD_FIXED_PORTION": 5000000,
+        "BAKING_REWARD_BONUS_PER_SLOT": 2143,
+        "ENDORSING_REWARD_PER_SLOT": 1428,
+        #
+        "BLOCK_REWARD": 10000000,
+        "ENDORSEMENT_REWARDS": 10000000,
     },
 }
-
 
 MUTEZ_PER_TEZ = 1e6
 
