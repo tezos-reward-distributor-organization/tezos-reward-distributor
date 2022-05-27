@@ -188,7 +188,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 current_level,
             ) = self.block_api.get_current_cycle_and_level()
         except ApiProviderException as a:
-            logger.error("Unable to fetch current cycle, {:s}. Exiting.".format(str(a)))
+            logger.error(
+                "Unable to fetch current cycle from provider {:s}, {:s}. Exiting.".format(
+                    str(self.provider_factory.provider), str(a)
+                )
+            )
             self.exit()
             return
 
@@ -410,10 +414,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         if computation_type.isEstimated():
             logger.info("Using estimated rewards for payouts calculations")
             block_reward = network_config["BLOCK_REWARD"]
-            endorsement_reward = network_config["ENDORSEMENT_REWARD"]
             total_estimated_block_reward = reward_model.num_baking_rights * block_reward
             total_estimated_endorsement_reward = (
-                reward_model.num_endorsing_rights * endorsement_reward
+                reward_model.potential_endorsement_rewards
             )
             reward_model.computed_reward_amount = (
                 total_estimated_block_reward + total_estimated_endorsement_reward

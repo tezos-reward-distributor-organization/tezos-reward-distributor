@@ -1,4 +1,5 @@
 from api.reward_api import RewardApi
+import math
 
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
@@ -15,13 +16,16 @@ class TzStatsRewardApiImpl(RewardApi):
         self.logger = main_logger
         self.helper = TzStatsRewardProviderHelper(nw, baking_address)
 
+        self.blocks_per_cycle = nw["BLOCKS_PER_CYCLE"]
+        self.consensus_committee_size = nw["CONSENSUS_COMMITTEE_SIZE"]
+        self.endorsing_reward_per_slot = nw["ENDORSING_REWARD_PER_SLOT"]
+
     def get_rewards_for_cycle_map(self, cycle, rewards_type):
 
         root = self.helper.get_rewards_for_cycle(cycle)
 
         delegate_staking_balance = root["delegate_staking_balance"]
         num_baking_rights = root["num_baking_rights"]
-        num_endorsing_rights = root["num_endorsing_rights"]
         delegators_balances_dict = root["delegators_balances"]
         rewards_and_fees = root["rewards_and_fees"]
         equivocation_losses = root["equivocation_losses"]
@@ -30,6 +34,19 @@ class TzStatsRewardApiImpl(RewardApi):
             rewards_and_fees - equivocation_losses + denunciation_rewards
         )
         offline_losses = root["offline_losses"]
+
+        total_active_stake = self.helper.get_cycle_total_stake(cycle)
+        number_of_endorsements_per_cycle = (
+            self.blocks_per_cycle * self.consensus_committee_size
+        )
+        potential_endorsement_rewards = (
+            math.floor(
+                delegate_staking_balance
+                * number_of_endorsements_per_cycle
+                / total_active_stake
+            )
+            * self.endorsing_reward_per_slot
+        )
 
         snapshot_level = self.helper.get_snapshot_level(cycle)
         for delegator in self.dexter_contracts_set:
@@ -46,7 +63,7 @@ class TzStatsRewardApiImpl(RewardApi):
         return RewardProviderModel(
             delegate_staking_balance,
             num_baking_rights,
-            num_endorsing_rights,
+            potential_endorsement_rewards,
             total_reward_amount,
             rewards_and_fees,
             equivocation_losses,

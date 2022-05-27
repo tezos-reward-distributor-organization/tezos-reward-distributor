@@ -12,7 +12,7 @@ CONSTANTS_PATH = "/chains/main/blocks/head/context/constants"
 def init_network_config(network_name, config_client_manager):
     network_config_map = {}
     node_addr = config_client_manager.get_node_url()
-    if True:
+    try:
         network_config_map[network_name] = get_network_config_from_local_node(
             config_client_manager
         )
@@ -23,12 +23,12 @@ def init_network_config(network_name, config_client_manager):
             )
         )
         return network_config_map
-    # except Exception:
-    #    logger.debug(
-    #        "Failed to get network configuration constants from a local node ({}).".format(
-    #            node_addr
-    #        )
-    #    )
+    except Exception:
+        logger.debug(
+            "Failed to get network configuration constants from a local node ({}).".format(
+                node_addr
+            )
+        )
 
     pub_node_url = PUBLIC_NODE_URL[network_name]
     try:
@@ -82,9 +82,13 @@ def parse_constants(constants):
         + (
             int(constants["baking_reward_bonus_per_slot"])
             * int(constants["consensus_committee_size"])
+            / 3
         )
     )
-    network_config_map["ENDORSEMENT_REWARD"] = int(
+    network_config_map["CONSENSUS_COMMITTEE_SIZE"] = int(
+        constants["consensus_committee_size"]
+    )
+    network_config_map["ENDORSING_REWARD_PER_SLOT"] = int(
         constants["endorsing_reward_per_slot"]
     )
     return network_config_map

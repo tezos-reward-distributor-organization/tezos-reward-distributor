@@ -22,7 +22,7 @@ idx_income_lost_revelation_rewards = 37  # missing?
 
 # Rights
 idx_n_baking_rights = 9
-idx_n_endorsing_rights = 10
+idx_n_active_stake = 7
 
 # Cycle Snapshot
 idx_balance = 0

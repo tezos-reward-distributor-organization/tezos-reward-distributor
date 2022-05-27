@@ -32,11 +32,9 @@ class TzKTRewardApiImpl(RewardApi):
         # calculate estimated rewards
         num_blocks = split["blocks"] + split["missedBlocks"] + split["futureBlocks"]
 
-        num_endorsements = (
-            split["endorsements"]
-            + split["missedEndorsements"]
-            + split["futureEndorsements"]
-        )
+        # warning: this value will be 0 after the cycle ran.
+        # But after cycle ran, we never pay estimates, so this value will not be used.
+        potential_endorsement_rewards = split["futureEndorsementRewards"]
 
         # rewards earned (excluding equivocation losses)
         rewards_and_fees = (
@@ -78,7 +76,7 @@ class TzKTRewardApiImpl(RewardApi):
         return RewardProviderModel(
             delegate_staking_balance,
             num_blocks,
-            num_endorsements,
+            potential_endorsement_rewards,
             total_reward_amount,
             rewards_and_fees,
             equivocation_losses,
