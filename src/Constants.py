@@ -105,25 +105,6 @@ DEFAULT_NETWORK_CONFIG_MAP = {
     },
 }
 
-
-class NetworkConstants(None):
-    def __init__(
-        self,
-    ):
-        self.default_network_config_map = DEFAULT_NETWORK_CONFIG_MAP
-
-    @staticmethod
-    def GetBakingRewardBonus(self, block_endorsements, network="Mainnet"):
-        return max(
-            (
-                block_endorsements
-                - self.default_network_config_map[network]["CONSENSUS_THRESHOLD"]
-            )
-            * self.default_network_config_map[network]["BAKING_REWARD_BONUS_PER_SLOT"],
-            0,
-        )
-
-
 MUTEZ_PER_TEZ = 1e6
 
 MAXIMUM_ROUNDING_ERROR = 10  # mutez
