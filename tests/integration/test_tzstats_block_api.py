@@ -46,29 +46,3 @@ class MockCycleLevelResponse(MockResponse):
 )
 def test_get_current_cycle_and_level(address_api):
     assert address_api.get_current_cycle_and_level() == (434, 1972459)
-
-
-class MockDelegatableResponse(MockResponse):
-    def json(self):
-        return {"is_delegate": True, "is_active_delegate": True}
-
-
-@patch(
-    "src.tzstats.tzstats_block_api.requests.get",
-    MagicMock(return_value=MockDelegatableResponse()),
-)
-def test_get_delegatable_baker(address_api):
-    assert address_api.get_delegatable(STAKENOW_ADDRESS)
-
-
-class MockNonDelegatableResponse(MockResponse):
-    def json(self):
-        return {"is_delegate": False, "is_active_delegate": False}
-
-
-@patch(
-    "src.tzstats.tzstats_block_api.requests.get",
-    MagicMock(return_value=MockNonDelegatableResponse()),
-)
-def test_get_delegatable_non_baker(address_api):
-    assert not address_api.get_delegatable(NORMAL_TEZOS_ADDRESS)

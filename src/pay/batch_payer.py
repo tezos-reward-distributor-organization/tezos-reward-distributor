@@ -11,16 +11,56 @@ from log_config import main_logger, verbose_logger
 
 logger = main_logger
 
-# These values may change with protocol upgrades
-TZTX_FEE = 395
-TZTX_GAS_LIMIT = 1420
-TZTX_STORAGE_LIMIT = 65
-RA_BURN_FEE = 257000  # 0.257 tez
-RA_STORAGE = 300
-PAYMENT_ACCOUNT_SAFETY_MARGIN = 1.05  # 105%
 
-MAX_TX_PER_BLOCK_TZ = 400
-MAX_TX_PER_BLOCK_KT = 10
+# Ithaca
+# Non-allocated:
+#   The contract does not exist and needs some more gas (and fees) to pay up for the used storage.
+#   If a delegate empties its account it gets removed from the storage. However, if it is expected
+#   to receive a reward then you would need to pay up again for the storage to re-allocated its
+#   account which is costlier than a simple transfer.
+# Not revealed:
+#   A state of a contract that did not yet publish its public key but in order to enact a delegation you need to be revealed.
+
+# These values may change with protocol upgrades
+TX_FEES = {
+    "TZ1_TO_ALLOCATED_TZ1": {
+        "FEE": 298,
+        "GAS_LIMIT": 1451,
+        "STORAGE_LIMIT": 0,  # 65 mutez before
+    },
+    "TZ1_TO_NON_ALLOCATED_TZ1": {
+        "FEE": 397,
+        "GAS_LIMIT": 1421,
+        "STORAGE_LIMIT": 277,
+        "BURN_FEE": None,  # 0.257 tez before
+    },
+    "TZ1_REVEAL": {
+        "FEE": 357,
+        "GAS_LIMIT": 1000,
+        "STORAGE_LIMIT": 0,
+    },
+}
+
+# General transaction parameters:
+#
+# This fee limit is set to allow payouts to ovens
+# Other KT accounts with higher fee requirements will be skipped
+# TODO: define set of known contract formats and make this fee for unknown contracts configurable
+KT1_FEE_SAFETY_CHECK = True
+FEE_LIMIT_CONTRACTS = 100000
+ZERO_THRESHOLD = 1  # too less to payout in mutez
+MAX_TX_PER_BLOCK_TZ = 550
+MAX_TX_PER_BLOCK_KT = 25
+
+# For simulation
+# https://rpc.tzkt.io/mainnet/chains/main/blocks/head/context/constants
+HARD_GAS_LIMIT_PER_OPERATION = 1040000
+HARD_STORAGE_LIMIT_PER_OPERATION = 60000
+COST_PER_BYTE = 250
+MINIMUM_FEE_MUTEZ = 100
+MUTEZ_PER_GAS_UNIT = 0.1
+MUTEZ_PER_BYTE = 1
+
 PKH_LENGTH = 36
 SIGNATURE_BYTES_SIZE = 64
 MAX_NUM_TRIALS_PER_BLOCK = 2
@@ -42,21 +82,6 @@ COMM_FORGE = "/chains/main/blocks/head/helpers/forge/operations"
 COMM_PREAPPLY = "/chains/main/blocks/head/helpers/preapply/operations"
 COMM_INJECT = "/injection/operation"
 COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
-
-# This fee limit is set to allow payouts to ovens
-# Other KT accounts with higher fee requirements will be skipped
-# TODO: define set of known contract formats and make this fee for unknown contracts configurable
-FEE_LIMIT_CONTRACTS = 100000
-KT1_FEE_SAFETY_CHECK = True
-
-# For simulation
-HARD_GAS_LIMIT_PER_OPERATION = 1040000
-HARD_STORAGE_LIMIT_PER_OPERATION = 60000
-COST_PER_BYTE = 250
-MINIMUM_FEE_MUTEZ = 100
-MUTEZ_PER_GAS_UNIT = 0.1
-MUTEZ_PER_BYTE = 1
-ZERO_THRESHOLD = 1  # too less to payout in mutez
 
 # TODO: We need to refactor the whole class and all its functions.
 # Procedure needs to be transitioned to:
@@ -83,13 +108,19 @@ class BatchPayer:
         self.node_url = node_url
         self.clnt_mngr = clnt_mngr
         self.network_config = network_config
-        self.zero_threshold = int(ZERO_THRESHOLD)
+        self.default_zero_threshold = int(ZERO_THRESHOLD)
         self.plugins_manager = plugins_manager
         self.dry_run = dry_run
 
-        self.gas_limit = int(TZTX_GAS_LIMIT)
-        self.storage_limit = int(TZTX_STORAGE_LIMIT)
-        self.default_fee = int(TZTX_FEE)
+        # Default tz1 to tz1 transaction fees
+        self.default_gas_limit = int(TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["GAS_LIMIT"])
+        self.default_storage_limit = int(
+            TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["STORAGE_LIMIT"]
+        )
+        self.default_fee = int(TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
+        TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["BURN_FEE"] = int(
+            TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["STORAGE_LIMIT"] * COST_PER_BYTE
+        )
 
         self.delegator_pays_ra_fee = delegator_pays_ra_fee
         self.delegator_pays_xfer_fee = delegator_pays_xfer_fee
@@ -99,7 +130,7 @@ class BatchPayer:
         # Ex: Delegator reward is 1800 mutez, txn fee is 1792 mutez, reward - txn fee = 8 mutez payable reward
         #     If delegate pays fee, then cutoff is 1 mutez payable reward
         if self.delegator_pays_xfer_fee:
-            self.zero_threshold += self.default_fee
+            self.default_zero_threshold += self.default_fee
 
         logger.info(
             "Default transfer fee is {:<,d} mutez for tz addresses and is paid by {}.".format(
@@ -109,13 +140,13 @@ class BatchPayer:
         )
         logger.info(
             "Reactivation fee (burn fee) for tz addresses is {:<,d} mutez and is paid by {}.".format(
-                int(RA_BURN_FEE),
+                int(TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["BURN_FEE"]),
                 "Delegator" if self.delegator_pays_ra_fee else "Delegate",
             )
         )
         logger.info(
             "Minimum payment amount is {:<,d} mutez for tz addresses.".format(
-                self.zero_threshold
+                self.default_zero_threshold
             )
         )
         logger.info(
@@ -191,6 +222,7 @@ class BatchPayer:
         # zero_threshold is either 1 mutez or the txn fee if delegator is not paying it, and burn fee
         payment_items = []
         estimated_sum_burn_fees = 0
+        estimated_sum_xfer_fees = 0
         for payment_item in unprocessed_payment_items:
 
             # Reinitialize status for items fetched from failed payment files
@@ -210,26 +242,46 @@ class BatchPayer:
                 payment_logs.append(payment_item)
                 continue
 
-            zt = self.zero_threshold
-            if payment_item.needs_activation and self.delegator_pays_ra_fee:
+            tmp_zt = self.default_zero_threshold
+            tmp_xfer = self.default_fee
+            tmp_burn = 0
+            # Treat kt accounts like normal tz1 addresses and sort them out later on
+            if payment_item.needs_activation:
                 # Need to apply this fee to only those which need reactivation
-                zt += RA_BURN_FEE
+                tmp_xfer += max(
+                    int(
+                        TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["FEE"]
+                        - TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"]
+                    ),
+                    0,
+                )
+                tmp_burn += TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["BURN_FEE"]
+                if self.delegator_pays_xfer_fee:
+                    tmp_zt += max(
+                        int(
+                            TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["FEE"]
+                            - TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"]
+                        ),
+                        0,
+                    )
 
-                # Check here if payout amount is greater than, or equal to new zero threshold with reactivation fee added.
-                # If so, add burn fee to global total. If not, payout will not get appended to list and therefor burn fee should not be added to global total.
-                if payment_item.adjusted_amount >= zt:
-                    estimated_sum_burn_fees += RA_BURN_FEE
+                if self.delegator_pays_ra_fee:
+                    tmp_zt += int(TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["BURN_FEE"])
 
             # If payout total greater than, or equal to zero threshold, append payout record to master array
-            if payment_item.adjusted_amount >= zt:
+            if payment_item.adjusted_amount >= tmp_zt:
+                # Check here if payout amount is greater than, or equal to new zero threshold with reactivation fee added.
+                # If so, add burn fee to global total. If not, payout will not get appended to list and therefor burn fee should not be added to global total.
+                estimated_sum_burn_fees += tmp_burn
+                estimated_sum_xfer_fees += tmp_xfer
                 payment_items.append(payment_item)
             else:
                 payment_item.paid = PaymentStatus.DONE
                 payment_item.desc += "Payment amount < ZERO_THRESHOLD. "
                 payment_logs.append(payment_item)
-                logger.info(
+                logger.debug(
                     "Skipping payout to {:s} of {:<,d} mutez, reason: payout below minimum of {:<,d} mutez".format(
-                        payment_item.address, payment_item.adjusted_amount, zt
+                        payment_item.address, payment_item.adjusted_amount, tmp_zt
                     )
                 )
 
@@ -238,13 +290,14 @@ class BatchPayer:
             return payment_logs, 0, 0, 0
 
         # This is an estimate to predict if the payment account holds enough funds to payout this cycle and the number of future cycles
-        # It neglects the correct fees of kt accounts
         estimated_amount_to_pay = sum(
             [payment_item.adjusted_amount for payment_item in payment_items]
         )
-        estimated_amount_to_pay += estimated_sum_burn_fees
+
         if not self.delegator_pays_xfer_fee:
-            estimated_amount_to_pay += self.default_fee * len(payment_items)
+            estimated_amount_to_pay += estimated_sum_xfer_fees
+        if not self.delegator_pays_ra_fee:
+            estimated_amount_to_pay += estimated_sum_burn_fees
 
         # split payments into lists of MAX_TX_PER_BLOCK or less size
         # [list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,list_of_size_MAX_TX_PER_BLOCK,...]
@@ -290,9 +343,7 @@ class BatchPayer:
             )
 
             number_future_payable_cycles = int(
-                payment_address_balance
-                // (estimated_amount_to_pay * PAYMENT_ACCOUNT_SAFETY_MARGIN)
-                - 1
+                payment_address_balance // estimated_amount_to_pay - 1
             )
 
             if number_future_payable_cycles < 0:
@@ -304,10 +355,9 @@ class BatchPayer:
                 subject = "FAILED Payouts - Insufficient Funds"
                 message = (
                     "Payment attempt failed because of insufficient funds in the payout address. "
-                    "The current balance, {:<,d} mutez, is insufficient to pay cycle rewards of {:<,d} mutez. Including a safety margin of {} %.".format(
+                    "The current balance of {:<,d} mutez is insufficient to pay for cycle rewards of {:<,d} mutez.".format(
                         payment_address_balance,
                         estimated_amount_to_pay,
-                        int((PAYMENT_ACCOUNT_SAFETY_MARGIN - 1) * 100),
                     )
                 )
 
@@ -464,7 +514,7 @@ class BatchPayer:
         # Initial gas, storage and transaction limits
         gas_limit = HARD_GAS_LIMIT_PER_OPERATION
         storage_limit = HARD_STORAGE_LIMIT_PER_OPERATION
-        tx_fee = self.default_fee
+        tx_fee = int(10 * (self.default_fee))
 
         content = (
             CONTENT.replace("%SOURCE%", str(self.source))
@@ -625,8 +675,8 @@ class BatchPayer:
             # Get initial default values for storage, gas and fees
             # These default values are used for non-empty tz1 accounts transactions
             storage_limit, gas_limit, tx_fee, burn_fee = (
-                self.storage_limit,
-                self.gas_limit,
+                self.default_storage_limit,
+                self.default_gas_limit,
                 self.default_fee,
                 0,
             )
@@ -682,36 +732,62 @@ class BatchPayer:
             else:
                 # An implicit tz1 account
                 if payment_item.needs_activation:
-                    storage_limit += RA_STORAGE
-                    # TODO: Check what value is actually correct here
+                    tx_fee += max(
+                        int(
+                            TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["FEE"]
+                            - TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"]
+                        ),
+                        0,
+                    )
+                    # same in Ithaca for allocated and non-allocated
+                    gas_limit += max(
+                        int(
+                            TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["GAS_LIMIT"]
+                            - TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["GAS_LIMIT"]
+                        ),
+                        0,
+                    )
+
+                    storage_limit += int(
+                        TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["STORAGE_LIMIT"]
+                    )
                     # burn_fee = COST_PER_BYTE * RA_STORAGE
-                    burn_fee = RA_BURN_FEE
+                    burn_fee = int(TX_FEES["TZ1_TO_NON_ALLOCATED_TZ1"]["BURN_FEE"])
+
+                    payment_item.desc += "Empty account needed reactivation. "
+
+            message = "Payment to {} requires {:<,d} gas * {:.2f} mutez-per-gas + {:<,d} mutez burn fee\n ".format(
+                payment_item.paymentaddress,
+                gas_limit,
+                MUTEZ_PER_GAS_UNIT,
+                burn_fee,
+            )
 
             if burn_fee > 0:
-                # Subtract burn fee from the payment amount
-                orig_pymnt_amnt = pymnt_amnt
                 if self.delegator_pays_ra_fee:
+                    # Subtract burn fee from the payment amount
+                    orig_pymnt_amnt = pymnt_amnt
                     pymnt_amnt = max(pymnt_amnt - burn_fee, 0)
                     payment_item.delegator_transaction_fee += burn_fee
-                else:
-                    payment_item.delegate_transaction_fee += burn_fee
 
-                logger.info(
-                    "Payment to {} requires {:<,d} gas * {:.2f} mutez-per-gas + {:<,d} mutez burn fee; "
-                    "Payment reduced from {:<,d} mutez to {:<,d} mutez".format(
-                        payment_item.paymentaddress,
-                        gas_limit,
-                        MUTEZ_PER_GAS_UNIT,
-                        burn_fee,
+                    message += "Payment reduced from {:<,d} mutez to {:<,d} mutez because Delegator pays burn fees. ".format(
                         orig_pymnt_amnt,
                         pymnt_amnt,
                     )
-                )
+                else:
+                    payment_item.delegate_transaction_fee += burn_fee
 
             # Subtract transaction's fee from the payment amount if delegator has to pay for it
             if self.delegator_pays_xfer_fee:
+                # Subtract tx fee from the payment amount
+                orig_pymnt_amnt = pymnt_amnt
                 pymnt_amnt = max(pymnt_amnt - tx_fee, 0)
                 payment_item.delegator_transaction_fee += tx_fee
+
+                message += "Payment reduced from {:<,d} mutez to {:<,d} mutez because Delegator pays transaction fees. ".format(
+                    orig_pymnt_amnt,
+                    pymnt_amnt,
+                )
             else:
                 payment_item.delegate_transaction_fee += tx_fee
 
@@ -725,18 +801,15 @@ class BatchPayer:
                 payment_item.desc += (
                     "Payment amount < ZERO_THRESHOLD after substracting fees. "
                 )
-                logger.info(
-                    "Payment to {:s} became < {:<,d} mutez after deducting fees. Skipping.".format(
-                        payment_item.paymentaddress, ZERO_THRESHOLD
-                    )
+
+                message += "Payment to {:s} became < {:<,d} mutez after deducting fees. Skipping.".format(
+                    payment_item.paymentaddress, ZERO_THRESHOLD
                 )
+
+                logger.info(message)
                 continue
             else:
-                logger.debug(
-                    "Payment to {:s} became {:<,d} mutez after deducting fees.".format(
-                        payment_item.paymentaddress, pymnt_amnt
-                    )
-                )
+                logger.debug(message)
 
             op_counter.inc()
 

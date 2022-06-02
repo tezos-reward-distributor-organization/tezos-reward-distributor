@@ -50,10 +50,12 @@ class TzKTApi:
 
     def _request(self, path, **params):
         data = {key: value for key, value in params.items() if value is not None}
+
         if path.startswith("/"):
             url = self.base_url + path
         else:
             url = self.base_url + "/" + path
+
         verbose_logger.debug("Requesting {}".format(url))
 
         try:

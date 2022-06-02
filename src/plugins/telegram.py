@@ -63,7 +63,7 @@ class TelegramPlugin(plugins.Plugin):
         if not respJ["ok"]:
             logger.error(
                 "[TelegramPlugin] Error sending {:s} message: {:s}".format(
-                    msgType, respJ.description
+                    msgType, respJ["description"]
                 )
             )
 

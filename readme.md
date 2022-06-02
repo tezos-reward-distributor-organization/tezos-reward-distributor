@@ -16,7 +16,7 @@ The documentation can be found [here](https://tezos-reward-distributor-organizat
 
 You can also ask for support on the TRD channel of the Tezos-Baking Slack group, if you are a member of this group you can view the channel [here](https://tezos-baking.slack.com/messages/CQ35AM8KE), if you are not a member you can [join the group](https://join.slack.com/t/tezos-baking/shared_invite/zt-yqxeszcy-rpvYmBtXr5oewh6M0DFkyQ) and find the trd channel from the channel list or simply [file an issue](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues).
 
-TRD supports complex payments, pays in batches, and supports three backends for calculations: Tezos RPC, [TzStats API](https://tzstats.com/docs/api) and [TzKT API](https://api.tzkt.io/). TRD is developed and tested extensively by the community.
+TRD supports complex payments, pays in batches, and supports three backends for calculations: Tezos RPC, [TzStats API](https://tzstats.com/docs/api/) and [TzKT API](https://api.tzkt.io/). TRD is developed and tested extensively by the community.
 
 **Provider notes:**
 

@@ -3,35 +3,29 @@
 Payout timing
 =============
 
-Tezos rewards are paid out by the protocol at the end of a given cycle,
-and are unfrozen 5 cycles later.
+Tezos rewards are paid out by the protocol at the end of a given cycle.
 
-Should the baker decide to pay out rewards after they are unfrozen,
-their delegators will have to wait 12 cycles to get their first payout.
-
-This is TRD default behavior, however many bakers elect to pay out
-rewards before they are unfrozen.
+By default, TRD then distributes these rewards at the beginning of the next cycle.
 
 Bakers may elect to pay their delegators early to appear more
 competitive or trustworthy. But bakers paying early effectively give an “advance” to their delegators.
 This means that they have a lower balance at any given point in time.
 
-
 TRD behavior is to pay out the last released payment cycle. Last
 released payment cycle will be calculated based on the formula:
-``current_cycle - (NB_FREEZE_CYCLE+1) - release_override``.
+``current_cycle + 6 - release_override``.
 
-``NB_FREEZE_CYCLE`` is 5 on mainnet. A cycle on mainnet lasts 3 days.
+A cycle on mainnet lasts 3 days.
 
 The ``--release_override`` ``-R`` parameter lets the baker override when rewards
-are released (paid out). Its default value is 0.
+are released (paid out). Its default value is 0, which is a deprecated choice.
 
 Possible choices are:
 
--  ``0``: pay rewards when they are unfrozen - 11 to 12 cycles after delegation.
--  ``-5``: pay rewards after the cycle runs (a popular choice amongst bakers) - 7 to 8 cycles after delegation.
+-  ``0``: pay rewards when they are "unfrozen" - 11 to 12 cycles after delegation. Note that the concept of freezing is a holdover from the old "Emmy" consensus algorithm and does not apply anymore with the current Tenderbake consensus algorithm.
+-  ``-5``: pay rewards after the cycle runs - 6 to 7 cycles after delegation. The recommended default choice.
 -  ``-11``: pay rewards when baking rights are assigned, referred as “adjusted
-   early payouts” (see below) - 2 to 3 cycles after delegation.
+   early payouts” (see below) - 1 to 2 cycles after delegation.
 
 Adjusted early payouts
 ----------------------
@@ -66,27 +60,27 @@ simplicity, Jane’s bakery has no fee and no other delegators. Her bakery is
 configured with a ``release_override`` of ``-11`` and ``rewards_type`` ``actual``.
 
 **Cycle 103**: Since ``release_override`` is set to ``-11``, payout for cycle 108 happens during cycle 103. Frank and Cindy’s delegation is taken into account to compute
-cylce 108’s rights. Jane’s bakery is expected to earn 25 tez rewards for
+cylce 108’s rights. Jane’s bakery is expected to earn 80 tez rewards for
 cycle 108 from baking and endorsing rewards. Frank and Cindy contribute 10% each to Jane’s staking
-balance. They each receive 2.5 tez as part of the payout for cycle 108.
+balance. They each receive 8 tez as part of the payout for cycle 108.
 
 A ``calculations/108.csv`` file is generated which shows ``Overestimate:
 pending`` as cycle 108 has not run yet.
 
-**Cycle 104-108**: same as cycle 103: Frank and Cindy receive 10% each of the estimated reward..
+**Cycle 104-108**: same as cycle 103: Frank and Cindy receive 10% each of the estimated reward.
 
-**Cycle 109**: Jane’s bakery is expected to earn 15 tez from baking and endorsing rewards for cycle 114, so
-each delegator should be paid 1.5 tez. TRD runs the calculations for
+**Cycle 109**: Jane’s bakery is expected to earn 60 tez from baking and endorsing rewards for cycle 114, so
+each delegator should be paid 6 tez. TRD runs the calculations for
 cycle 108 again and finds that Jane earned 0.5 tez fee for baking a
-block. She also missed some endorsements and did not earn 0.75 tez.
-Overall, Jane’s bakery overestimated its earnings by 0.25 tez, or 1%.
-It therefore substracts 1% of cycle 108 payout to cycle 114 payout (which happens at cycle 109).
-Frank and Cindy receive 1.475 tez as adjusted amount for cycle 114.
+block, and failed to bake the other block, a loss of 20 tez.
+Overall, Jane’s bakery overestimated its earnings by 19.5 tez.
+It therefore substracts 1.95 tez of cycle 108 payout to cycle 114 payout (which happens at cycle 109).
+Frank and Cindy receive 4.05 tez as adjusted amount for cycle 114.
 
-``calculations/108.csv`` file is updated with a total overestimate of 0.25
-and their distribution across delegates: 0.025 tez for Frank and for
-Cindy. ``calculations/114.csv`` file mentions an adjustment of 0.025 tez for
+``calculations/108.csv`` file is updated with a total overestimate of 19.5
+and their distribution across delegates: 1.95 tez for Frank and for
+Cindy. ``calculations/114.csv`` file mentions an adjustment of 1.95 tez for
 Frank and Cindy.
 
 Had Frank left the bakery at cycle 104, Jane’s bakery would have been
-unable to recover his overpaid 0.025 tez.
+unable to recover his overpaid 1.95 tez.

@@ -1,5 +1,10 @@
 from enum import Enum
 
+# General
+VERSION = 11.0
+PYTHON_MAJOR = 3
+PYTHON_MINOR = 7
+
 # Persistent data directories
 BASE_DIR = "~/pymnt"
 CONFIG_DIR = "cfg"
@@ -10,8 +15,8 @@ TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
-PROTOCOL_NAME = "hangzhou"
-CURRENT_TESTNET = ("{}2net".format(PROTOCOL_NAME)).upper()
+PROTOCOL_NAME = "ithaca"
+CURRENT_TESTNET = ("{}net".format(PROTOCOL_NAME)).upper()
 
 MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
@@ -31,10 +36,9 @@ PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
 # Public RPC
 PUBLIC_NODE_URL = {
-    "MAINNET": "https://mainnet-tezos.giganode.io",
-    CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
+    "MAINNET": "https://rpc.tzkt.io/mainnet",
+    CURRENT_TESTNET: "https://rpc.ithacanet.teztnets.xyz",
 }
-
 
 # TzStats
 TZSTATS_PUBLIC_API_URL = {
@@ -48,40 +52,63 @@ TZKT_PUBLIC_API_URL = {
     CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET).lower(),
 }
 
-
-# Network constants
+# Ithaca Network Constants
+# ------------------------
+#
+# General:
+# https://research-development.nomadic-labs.com/announcing-tezos-9th-protocol-upgrade-proposal-ithaca.html
+# https://tezos.gitlab.io/ithaca/consensus.html#rewards
+# https://tezos.gitlab.io/ithaca/consensus.html#consensus-related-protocol-parameters
+#
+# Mainnet:
+# https://mainnet.smartpy.io/chains/main/blocks/head/context/constants
+#
+# Testnet:
+# https://ithacanet.smartpy.io/chains/main/blocks/head/context/constants
 DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
+        # General
         "NAME": "MAINNET",
-        "NB_FREEZE_CYCLE": 5,
-        "BLOCK_TIME_IN_SEC": 60,
+        "NB_FREEZE_CYCLE": 5,  # needs deprecation
         "MINIMAL_BLOCK_DELAY": 30,
         "BLOCKS_PER_CYCLE": 8192,
-        "BLOCKS_PER_ROLL_SNAPSHOT": 512,
+        "BLOCKS_PER_STAKE_SNAPSHOT": 512,
+        # Consensus
+        "CONSENSUS_COMMITTEE_SIZE": 7000,
+        "CONSENSUS_THRESHOLD": 4667,
+        "BAKING_REWARD_FIXED_PORTION": 10000000,
+        "BAKING_REWARD_BONUS_PER_SLOT": 4286,
+        "ENDORSING_REWARD_PER_SLOT": 2857,
+        # Fixed baking amount (10)+ bonus (10 in the best case)
         "BLOCK_REWARD": 20000000,
-        "ENDORSEMENT_REWARD": 78125,
+        # endorsing_reward = (1 - baking_reward_ratio) * (1 - bonus_ratio) * total_rewards
+        # = (1-1/4)*(1-1/3)*40
+        "ENDORSEMENT_REWARDS": 20000000,
     },
     CURRENT_TESTNET: {
+        # General
         "NAME": CURRENT_TESTNET,
-        "NB_FREEZE_CYCLE": 3,
-        "BLOCK_TIME_IN_SEC": 15,
+        "NB_FREEZE_CYCLE": 3,  # needs deprecation
         "MINIMAL_BLOCK_DELAY": 15,
         "BLOCKS_PER_CYCLE": 4096,
-        "BLOCKS_PER_ROLL_SNAPSHOT": 256,
-        "BLOCK_REWARD": 20000000,
-        "ENDORSEMENT_REWARD": 78125,
+        "BLOCKS_PER_STAKE_SNAPSHOT": 256,
+        # Consensus
+        "CONSENSUS_COMMITTEE_SIZE": 7000,
+        "CONSENSUS_THRESHOLD": 4667,
+        "BAKING_REWARD_FIXED_PORTION": 5000000,
+        "BAKING_REWARD_BONUS_PER_SLOT": 2143,
+        "ENDORSING_REWARD_PER_SLOT": 1428,
+        #
+        "BLOCK_REWARD": 10000000,
+        "ENDORSEMENT_REWARDS": 10000000,
     },
 }
 
-
 MUTEZ_PER_TEZ = 1e6
+
 MAXIMUM_ROUNDING_ERROR = 10  # mutez
 ALMOST_ZERO = 1e-6
-
-VERSION = 10.0
-
 DISK_LIMIT_PERCENTAGE = 0.1
-
 GIGA_BYTE = 1e9
 
 

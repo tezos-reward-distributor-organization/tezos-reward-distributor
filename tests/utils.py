@@ -29,7 +29,7 @@ def load_reward_model(
             equivocation_losses=data["equivocation_losses"],
             offline_losses=data["offline_losses"],
             num_baking_rights=data["num_baking_rights"],
-            num_endorsing_rights=data["num_endorsing_rights"],
+            potential_endorsement_rewards=data["potential_endorsement_rewards"],
             denunciation_rewards=data["denunciation_rewards"],
             delegator_balance_dict=data["delegator_balance_dict"],
             computed_reward_amount=None,

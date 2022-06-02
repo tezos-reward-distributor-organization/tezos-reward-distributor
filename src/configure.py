@@ -12,7 +12,7 @@ from fysom import Fysom
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from cli.client_manager import ClientManager
-from Constants import RewardsType, CONFIG_DIR
+from Constants import RewardsType, CONFIG_DIR, PYTHON_MAJOR, PYTHON_MINOR
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from launch_common import (
     print_banner,
@@ -504,10 +504,16 @@ def main(args):
 
 if __name__ == "__main__":
 
-    if not sys.version_info.major >= 3 and sys.version_info.minor >= 6:
+    if not (
+        sys.version_info.major >= PYTHON_MAJOR
+        and sys.version_info.minor >= PYTHON_MINOR
+    ):
         raise Exception(
-            "Must be using Python 3.6 or later but it is {}.{}".format(
-                sys.version_info.major, sys.version_info.minor
+            "Must be using Python {}.{} or later but it is {}.{}".format(
+                PYTHON_MAJOR,
+                PYTHON_MINOR,
+                sys.version_info.major,
+                sys.version_info.minor,
             )
         )
 
