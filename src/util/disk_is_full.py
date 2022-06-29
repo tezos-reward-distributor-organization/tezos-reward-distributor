@@ -1,6 +1,6 @@
 import shutil
 from log_config import main_logger
-from Constants import DISK_LIMIT_PERCENTAGE, GIGA_BYTE
+from Constants import DISK_LIMIT_PERCENTAGE, GIGA_BYTE, DISK_LIMIT_SIZE
 
 logger = main_logger
 
