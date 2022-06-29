@@ -8,7 +8,7 @@ logger = main_logger
 def disk_is_full(path="/"):
     total, _, free = shutil.disk_usage(path)
     free_percentage = free / total
-    if free_percentage < DISK_LIMIT_PERCENTAGE:
+    if free_percentage < DISK_LIMIT_PERCENTAGE and free < DISK_LIMIT_SIZE:
         # Return true if the system has less then 10% free disk space
         logger.critical(
             "Disk is becoming full. Only {0:.2f} Gb left from {1:.2f} Gb. Please clean up disk to continue saving logs and reports.".format(
