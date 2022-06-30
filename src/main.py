@@ -7,7 +7,7 @@ from Constants import PYTHON_MAJOR, PYTHON_MINOR
 
 
 REQUIREMENTS_FILE_PATH = "requirements.txt"
-END_OF_SERVICE = date(2022, 8, 1)  # potentially the next upgrade
+END_OF_SERVICE = date(2022, 11, 1)  # potentially the next upgrade
 
 
 def installed(package):
@@ -89,7 +89,7 @@ def check_ithaca_live(args=None):
     today = date.today()
     if today >= END_OF_SERVICE:
         print(
-            "Ithaca protocol is live: Please switch branch to test and join Baking Slack for more information."
+            "New protocol is live: Please switch branch to test and join Baking Slack for more information."
         )
         return True
     else:

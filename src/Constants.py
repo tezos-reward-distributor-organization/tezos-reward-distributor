@@ -15,8 +15,10 @@ TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
-PROTOCOL_NAME = "ithaca"
-CURRENT_TESTNET = ("{}net".format(PROTOCOL_NAME)).upper()
+# https://forum.tezosagora.org/t/turning-ithacanet-into-a-permanent-testnet-ghostnet/4614
+TESTNET_PREFIX = "ghost"
+TESTNET_SUFFIX = "net"
+CURRENT_TESTNET = (TESTNET_PREFIX + TESTNET_SUFFIX).upper()
 
 MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
@@ -37,25 +39,26 @@ PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 # Public RPC
 PUBLIC_NODE_URL = {
     "MAINNET": "https://rpc.tzkt.io/mainnet",
-    CURRENT_TESTNET: "https://rpc.ithacanet.teztnets.xyz",
+    CURRENT_TESTNET: "https://rpc.tzkt.io/{}".format(CURRENT_TESTNET.lower()),
 }
 
 # TzStats
 TZSTATS_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzstats.com",
-    CURRENT_TESTNET: "https://api.{}.tzstats.com".format(PROTOCOL_NAME),
+    CURRENT_TESTNET: "https://api.{}.tzstats.com".format(TESTNET_PREFIX.lower()),
 }
 
 # TzKT
 TZKT_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzkt.io/v1",
-    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET).lower(),
+    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET.lower()),
 }
 
-# Ithaca Network Constants
+# Network Constants
 # ------------------------
 #
 # General:
+# Last change with Ithaca protocol
 # https://research-development.nomadic-labs.com/announcing-tezos-9th-protocol-upgrade-proposal-ithaca.html
 # https://tezos.gitlab.io/ithaca/consensus.html#rewards
 # https://tezos.gitlab.io/ithaca/consensus.html#consensus-related-protocol-parameters
@@ -64,7 +67,7 @@ TZKT_PUBLIC_API_URL = {
 # https://mainnet.smartpy.io/chains/main/blocks/head/context/constants
 #
 # Testnet:
-# https://ithacanet.smartpy.io/chains/main/blocks/head/context/constants
+# https://ghostnet.smartpy.io/chains/main/blocks/head/context/constants
 DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
         # General
