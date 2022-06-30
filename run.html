@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How to run TRD &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>How to run TRD &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -39,7 +38,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
@@ -87,9 +86,9 @@
            <div itemprop="articleBody">
              
   <div class="section" id="how-to-run-trd">
-<h1>How to run TRD<a class="headerlink" href="#how-to-run-trd" title="Permalink to this headline"></a></h1>
+<h1>How to run TRD<a class="headerlink" href="#how-to-run-trd" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="command-line-usage">
-<h2>Command Line Usage<a class="headerlink" href="#command-line-usage" title="Permalink to this headline"></a></h2>
+<h2>Command Line Usage<a class="headerlink" href="#command-line-usage" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">(</span><span class="k">for</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">options</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -98,7 +97,7 @@
 </div>
 </div>
 <div class="section" id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline"></a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">-h</span></code></dt><dd><p>Show help message and exit.</p>
 </dd>
@@ -112,11 +111,11 @@
 <li><p>Retry failed payments and exit.</p></li>
 </ol>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">-R</span> <span class="pre">--release_override</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Override <code class="docutils literal notranslate"><span class="pre">NB_FREEZE_CYCLE</span></code> value, which is 5 by default. Valid values are <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">-5</span></code>, <code class="docutils literal notranslate"><span class="pre">-11</span></code>. Default value: <code class="docutils literal notranslate"><span class="pre">0</span></code> (with no effect). See <a class="reference internal" href="payouttiming.html#payout-timing"><span class="std std-ref">Payout timing</span></a>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">-R</span> <span class="pre">--release_override</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Pays cycles earlier than the default by the specified amount of cycles. Valid values are <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">-5</span></code>, <code class="docutils literal notranslate"><span class="pre">-11</span></code>. Default value: <code class="docutils literal notranslate"><span class="pre">0</span></code> (which is deprecated). See <a class="reference internal" href="payouttiming.html#payout-timing"><span class="std std-ref">Payout timing</span></a>.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--payment_offset</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">--network</span> <span class="pre">&lt;MAINNET|HANGZHOU2NET&gt;</span></code></dt><dd><p>Network name. Default value: <code class="docutils literal notranslate"><span class="pre">MAINNET</span></code>. The current test network of Tezos is <code class="docutils literal notranslate"><span class="pre">HANGZHOU2NET</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">-N</span> <span class="pre">--network</span> <span class="pre">&lt;MAINNET|ITHACANET&gt;</span></code></dt><dd><p>Network name. Default value: <code class="docutils literal notranslate"><span class="pre">MAINNET</span></code>. The current test network of Tezos is <code class="docutils literal notranslate"><span class="pre">ITHACANET</span></code>.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-A</span> <span class="pre">--node_endpoint</span> <span class="pre">&lt;node_url:port&gt;</span></code></dt><dd><p>Node potentially with protocol prefix especially if TLS encryption is used. Default value: <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8732</span></code>. This is the main Tezos node used by the client for RPC queries and operation injections.</p>
 </dd>
@@ -158,7 +157,7 @@ The directory contains the following folders:</p>
 </dl>
 </div>
 <div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>It is adviseable to use the verbose argument <code class="docutils literal notranslate"><span class="pre">-V</span></code> on every run because it makes debugging easier.</p>
 <p>The most common use case is to run on <code class="docutils literal notranslate"><span class="pre">MAINNET</span></code> and start to make payouts from last released rewards or continue making payouts from the cycle last payment is done:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">V</span>

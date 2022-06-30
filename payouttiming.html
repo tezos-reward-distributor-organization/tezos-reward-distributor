@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Payout timing &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Payout timing &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -39,7 +38,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
@@ -85,31 +84,27 @@
            <div itemprop="articleBody">
              
   <div class="section" id="payout-timing">
-<span id="id1"></span><h1>Payout timing<a class="headerlink" href="#payout-timing" title="Permalink to this headline"></a></h1>
-<p>Tezos rewards are paid out by the protocol at the end of a given cycle,
-and are unfrozen 5 cycles later.</p>
-<p>Should the baker decide to pay out rewards after they are unfrozen,
-their delegators will have to wait 12 cycles to get their first payout.</p>
-<p>This is TRD default behavior, however many bakers elect to pay out
-rewards before they are unfrozen.</p>
+<span id="id1"></span><h1>Payout timing<a class="headerlink" href="#payout-timing" title="Permalink to this headline">¶</a></h1>
+<p>Tezos rewards are paid out by the protocol at the end of a given cycle.</p>
+<p>By default, TRD then distributes these rewards at the beginning of the next cycle.</p>
 <p>Bakers may elect to pay their delegators early to appear more
 competitive or trustworthy. But bakers paying early effectively give an “advance” to their delegators.
 This means that they have a lower balance at any given point in time.</p>
 <p>TRD behavior is to pay out the last released payment cycle. Last
 released payment cycle will be calculated based on the formula:
-<code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">-</span> <span class="pre">(NB_FREEZE_CYCLE+1)</span> <span class="pre">-</span> <span class="pre">release_override</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">NB_FREEZE_CYCLE</span></code> is 5 on mainnet. A cycle on mainnet lasts 3 days.</p>
+<code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">+</span> <span class="pre">6</span> <span class="pre">-</span> <span class="pre">release_override</span></code>.</p>
+<p>A cycle on mainnet lasts 3 days.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">--release_override</span></code> <code class="docutils literal notranslate"><span class="pre">-R</span></code> parameter lets the baker override when rewards
-are released (paid out). Its default value is 0.</p>
+are released (paid out). Its default value is 0, which is a deprecated choice.</p>
 <p>Possible choices are:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: pay rewards when they are unfrozen - 11 to 12 cycles after delegation.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-5</span></code>: pay rewards after the cycle runs (a popular choice amongst bakers) - 7 to 8 cycles after delegation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: pay rewards when they are “unfrozen” - 11 to 12 cycles after delegation. Note that the concept of freezing is a holdover from the old “Emmy” consensus algorithm and does not apply anymore with the current Tenderbake consensus algorithm.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-5</span></code>: pay rewards after the cycle runs - 6 to 7 cycles after delegation. The recommended default choice.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-11</span></code>: pay rewards when baking rights are assigned, referred as “adjusted
-early payouts” (see below) - 2 to 3 cycles after delegation.</p></li>
+early payouts” (see below) - 1 to 2 cycles after delegation.</p></li>
 </ul>
 <div class="section" id="adjusted-early-payouts">
-<h2>Adjusted early payouts<a class="headerlink" href="#adjusted-early-payouts" title="Permalink to this headline"></a></h2>
+<h2>Adjusted early payouts<a class="headerlink" href="#adjusted-early-payouts" title="Permalink to this headline">¶</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">release_override</span></code> of <code class="docutils literal notranslate"><span class="pre">-11</span></code> will trigger adjusted early payouts.</p>
 <p>When selected, this option calculates and pays out the expected rewards based on baking and
 endorsing rights only. It does not takes into account fee income,
@@ -132,25 +127,25 @@ calculations CSV file.</p>
 simplicity, Jane’s bakery has no fee and no other delegators. Her bakery is
 configured with a <code class="docutils literal notranslate"><span class="pre">release_override</span></code> of <code class="docutils literal notranslate"><span class="pre">-11</span></code> and <code class="docutils literal notranslate"><span class="pre">rewards_type</span></code> <code class="docutils literal notranslate"><span class="pre">actual</span></code>.</p>
 <p><strong>Cycle 103</strong>: Since <code class="docutils literal notranslate"><span class="pre">release_override</span></code> is set to <code class="docutils literal notranslate"><span class="pre">-11</span></code>, payout for cycle 108 happens during cycle 103. Frank and Cindy’s delegation is taken into account to compute
-cylce 108’s rights. Jane’s bakery is expected to earn 25 tez rewards for
+cylce 108’s rights. Jane’s bakery is expected to earn 80 tez rewards for
 cycle 108 from baking and endorsing rewards. Frank and Cindy contribute 10% each to Jane’s staking
-balance. They each receive 2.5 tez as part of the payout for cycle 108.</p>
+balance. They each receive 8 tez as part of the payout for cycle 108.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">calculations/108.csv</span></code> file is generated which shows <code class="docutils literal notranslate"><span class="pre">Overestimate:</span>
 <span class="pre">pending</span></code> as cycle 108 has not run yet.</p>
-<p><strong>Cycle 104-108</strong>: same as cycle 103: Frank and Cindy receive 10% each of the estimated reward..</p>
-<p><strong>Cycle 109</strong>: Jane’s bakery is expected to earn 15 tez from baking and endorsing rewards for cycle 114, so
-each delegator should be paid 1.5 tez. TRD runs the calculations for
+<p><strong>Cycle 104-108</strong>: same as cycle 103: Frank and Cindy receive 10% each of the estimated reward.</p>
+<p><strong>Cycle 109</strong>: Jane’s bakery is expected to earn 60 tez from baking and endorsing rewards for cycle 114, so
+each delegator should be paid 6 tez. TRD runs the calculations for
 cycle 108 again and finds that Jane earned 0.5 tez fee for baking a
-block. She also missed some endorsements and did not earn 0.75 tez.
-Overall, Jane’s bakery overestimated its earnings by 0.25 tez, or 1%.
-It therefore substracts 1% of cycle 108 payout to cycle 114 payout (which happens at cycle 109).
-Frank and Cindy receive 1.475 tez as adjusted amount for cycle 114.</p>
-<p><code class="docutils literal notranslate"><span class="pre">calculations/108.csv</span></code> file is updated with a total overestimate of 0.25
-and their distribution across delegates: 0.025 tez for Frank and for
-Cindy. <code class="docutils literal notranslate"><span class="pre">calculations/114.csv</span></code> file mentions an adjustment of 0.025 tez for
+block, and failed to bake the other block, a loss of 20 tez.
+Overall, Jane’s bakery overestimated its earnings by 19.5 tez.
+It therefore substracts 1.95 tez of cycle 108 payout to cycle 114 payout (which happens at cycle 109).
+Frank and Cindy receive 4.05 tez as adjusted amount for cycle 114.</p>
+<p><code class="docutils literal notranslate"><span class="pre">calculations/108.csv</span></code> file is updated with a total overestimate of 19.5
+and their distribution across delegates: 1.95 tez for Frank and for
+Cindy. <code class="docutils literal notranslate"><span class="pre">calculations/114.csv</span></code> file mentions an adjustment of 1.95 tez for
 Frank and Cindy.</p>
 <p>Had Frank left the bakery at cycle 104, Jane’s bakery would have been
-unable to recover his overpaid 0.025 tez.</p>
+unable to recover his overpaid 1.95 tez.</p>
 </div>
 </div>
 

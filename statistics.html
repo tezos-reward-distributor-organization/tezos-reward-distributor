@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anonymous Statistics &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Anonymous Statistics &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -39,7 +38,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
@@ -87,7 +86,7 @@
            <div itemprop="articleBody">
              
   <div class="section" id="anonymous-statistics">
-<h1>Anonymous Statistics<a class="headerlink" href="#anonymous-statistics" title="Permalink to this headline"></a></h1>
+<h1>Anonymous Statistics<a class="headerlink" href="#anonymous-statistics" title="Permalink to this headline">¶</a></h1>
 <p>The Tezos Reward Distributor collects anonymous statistics after each payout. These statistics are purely for analytical purposes e.g. to evaluate the prioritization of feature requests or to communicate the usage data for marketing purposes.</p>
 <p>Nothing that TRD collects can be traced back to a specific delegate or delegator. The goal of the statistics is not to correlate nor discover specific bakeries that are using TRD.</p>
 <ul class="simple">
@@ -98,7 +97,7 @@
 <p>If you wish to opt-out of this anonymous data collection, start TRD using the <cite>–do_not_publish_stats</cite> option.</p>
 <p>If you have any questions about this topic or if you want to have access to the statistical data feel free to open an issue.</p>
 <div class="section" id="collected-data">
-<h2>Collected Data<a class="headerlink" href="#collected-data" title="Permalink to this headline"></a></h2>
+<h2>Collected Data<a class="headerlink" href="#collected-data" title="Permalink to this headline">¶</a></h2>
 <p>TRD collects the following statistics after each payout:</p>
 <ul class="simple">
 <li><p>Anonymous identifier</p></li>
@@ -125,7 +124,7 @@
 </ul>
 </div>
 <div class="section" id="transfer">
-<h2>Transfer<a class="headerlink" href="#transfer" title="Permalink to this headline"></a></h2>
+<h2>Transfer<a class="headerlink" href="#transfer" title="Permalink to this headline">¶</a></h2>
 <p>A POST request is sent to the following AWS Lambda endpoint:</p>
 <blockquote>
 <div><p><a class="reference external" href="https://jptpfltc1k.execute-api.us-west-2.amazonaws.com/trdstats">https://jptpfltc1k.execute-api.us-west-2.amazonaws.com/trdstats</a></p>
@@ -133,7 +132,7 @@
 <p>This endpoint does not collect any information about the source of the POST. No cookies are used.</p>
 </div>
 <div class="section" id="gdpr">
-<h2>GDPR<a class="headerlink" href="#gdpr" title="Permalink to this headline"></a></h2>
+<h2>GDPR<a class="headerlink" href="#gdpr" title="Permalink to this headline">¶</a></h2>
 <p>The General Data Protection Regulation, Recital 26 provides exception to anonymous and pseudonymous information.</p>
 <p>Due to the anonymous nature of the collected data, TRD is within compliance of the GDPR.</p>
 </div>

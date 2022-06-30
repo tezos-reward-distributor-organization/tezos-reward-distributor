@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tests &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Tests &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -39,7 +38,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
@@ -95,16 +94,16 @@
            <div itemprop="articleBody">
              
   <div class="section" id="tests">
-<h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline"></a></h1>
+<h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="test-execution">
-<h2>Test Execution<a class="headerlink" href="#test-execution" title="Permalink to this headline"></a></h2>
+<h2>Test Execution<a class="headerlink" href="#test-execution" title="Permalink to this headline">¶</a></h2>
 <p>To run the tests locally you need to have <a class="reference external" href="https://pypi.org/project/pytest/">pytest</a> installed. It is already part of the <cite>requirements_developers.txt</cite> file. You can run the tests via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="n">tests</span><span class="o">/</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="structure">
-<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline"></a></h2>
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h2>
 <p>The tests which are executed in TRD are as follows:</p>
 <ol class="arabic simple">
 <li><p>unit tests</p></li>
@@ -117,12 +116,12 @@
 </ol>
 </div>
 <div class="section" id="unit-tests">
-<h2>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline"></a></h2>
+<h2>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
 <p>Unit tests test only one specific function or method of a class.
 The smaller the function and the more specialized it is the better the unit test.</p>
 </div>
 <div class="section" id="regression-tests">
-<h2>Regression tests<a class="headerlink" href="#regression-tests" title="Permalink to this headline"></a></h2>
+<h2>Regression tests<a class="headerlink" href="#regression-tests" title="Permalink to this headline">¶</a></h2>
 <p>Regression tests are tests which document fixed bugs.
 To implement a regression test you need to do the following:</p>
 <ol class="arabic simple">
@@ -133,36 +132,36 @@ To implement a regression test you need to do the following:</p>
 </ol>
 </div>
 <div class="section" id="integration-tests">
-<h2>Integration tests<a class="headerlink" href="#integration-tests" title="Permalink to this headline"></a></h2>
+<h2>Integration tests<a class="headerlink" href="#integration-tests" title="Permalink to this headline">¶</a></h2>
 <p>Integration tests test the behaviour of trd. Meaning it tests the interaction between multiple functions or classes.</p>
 </div>
 <div class="section" id="smoke-tests">
-<h2>Smoke tests<a class="headerlink" href="#smoke-tests" title="Permalink to this headline"></a></h2>
+<h2>Smoke tests<a class="headerlink" href="#smoke-tests" title="Permalink to this headline">¶</a></h2>
 <p>Smoke tests test if trd starts, runs and ends under different cirumstances.</p>
 </div>
 <div class="section" id="acceptance-test-wip">
-<h2>Acceptance test (WIP)<a class="headerlink" href="#acceptance-test-wip" title="Permalink to this headline"></a></h2>
+<h2>Acceptance test (WIP)<a class="headerlink" href="#acceptance-test-wip" title="Permalink to this headline">¶</a></h2>
 <p>Acceptance tests test the functionality which users are expecting to work.
 E.g. the correct and reliable distribution of rewards.</p>
 </div>
 <div class="section" id="non-functional-tests-wip">
-<h2>Non functional tests (WIP)<a class="headerlink" href="#non-functional-tests-wip" title="Permalink to this headline"></a></h2>
+<h2>Non functional tests (WIP)<a class="headerlink" href="#non-functional-tests-wip" title="Permalink to this headline">¶</a></h2>
 <p>Non functional tests test the performance, load time, transaction speed etc. of trd.</p>
 </div>
 <div class="section" id="verification-wip">
-<h2>Verification (WIP)<a class="headerlink" href="#verification-wip" title="Permalink to this headline"></a></h2>
+<h2>Verification (WIP)<a class="headerlink" href="#verification-wip" title="Permalink to this headline">¶</a></h2>
 <p>Checking the FSM model systematically with exhaustive exploration.
 This consists of exploring all states and transitions in the model (<a class="reference external" href="https://en.wikipedia.org/wiki/Formal_verification">source</a>).</p>
 </div>
 <div class="section" id="test-format">
-<h2>Test Format<a class="headerlink" href="#test-format" title="Permalink to this headline"></a></h2>
+<h2>Test Format<a class="headerlink" href="#test-format" title="Permalink to this headline">¶</a></h2>
 <p>Name the test file according to the feature/function you want to test and the “test_” prefix (e.g. test_sample.py).
 Only use functions to write the actual tests for simplicity.
 If applicable make use of pytest’s fixtures to avoid code duplication.
 Check the <a class="reference external" href="https://docs.pytest.org/en/7.1.x/contents.html">pytest documentation and tutorials</a> for more info on how to write pytest tests.</p>
 </div>
 <div class="section" id="visual-studio-code-test-execution-optional">
-<h2>Visual Studio Code Test Execution (optional)<a class="headerlink" href="#visual-studio-code-test-execution-optional" title="Permalink to this headline"></a></h2>
+<h2>Visual Studio Code Test Execution (optional)<a class="headerlink" href="#visual-studio-code-test-execution-optional" title="Permalink to this headline">¶</a></h2>
 <p>If you are using <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a>, you want to use it with the extensions installed in the previous section and check them here:</p>
 <a class="reference internal image-reference" href="_images/extension_vscode.png"><img alt="Click extension tab" src="_images/extension_vscode.png" style="width: 350px;" /></a>
 <p>Then click on the test icon tab</p>

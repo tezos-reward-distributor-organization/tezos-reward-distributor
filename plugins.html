@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plugins &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Plugins &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -39,7 +38,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
+              <p class="caption"><span class="caption-text">Content:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">How to get and install TRD?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">How to configure TRD?</a></li>
@@ -110,7 +109,7 @@
            <div itemprop="articleBody">
              
   <div class="section" id="plugins">
-<h1>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline"></a></h1>
+<h1>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h1>
 <p>The Tezos Reward Distributor uses a plugin style subsystem for sending out payment notifications. If a message is labeled ‘administrative style’ it will contain information which are in general not meant for the end user of e.g. a staking service but for the adminstrators who monitor the quality of the service.</p>
 <p>Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.</p>
 <p>The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml">the example config</a>.</p>
@@ -136,11 +135,11 @@
 <p>If that doesn’t make sense to you, please read the <a class="reference external" href="https://yaml.org/spec/history/2001-05-26.html">YAML format documentation</a>.</p>
 <hr class="docutils" />
 <div class="section" id="email-plugin">
-<h2>Email Plugin<a class="headerlink" href="#email-plugin" title="Permalink to this headline"></a></h2>
+<h2>Email Plugin<a class="headerlink" href="#email-plugin" title="Permalink to this headline">¶</a></h2>
 <p>This plugin will send the configured recipients an ‘administrative style’ email of payouts status with a CSV report attached.</p>
 <p><strong>NOTE</strong>: The file <code class="docutils literal notranslate"><span class="pre">email.ini</span></code> has been deprecated and is no longer used.</p>
 <div class="section" id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline"></a></h3>
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>smtp_user: (Required unless no login is used) The username for SMTP authentication</p></li>
 <li><p>smtp_pass: (Required unless no login is used) The password or application token for SMTP authentication</p></li>
@@ -154,7 +153,7 @@
 </ul>
 </div>
 <div class="section" id="example-config">
-<h3>Example Config<a class="headerlink" href="#example-config" title="Permalink to this headline"></a></h3>
+<h3>Example Config<a class="headerlink" href="#example-config" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
   <span class="n">email</span><span class="p">:</span>
     <span class="n">smtp_user</span><span class="p">:</span> <span class="n">user</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
@@ -170,7 +169,7 @@
 </div>
 </div>
 <div class="section" id="example-2-config">
-<h3>Example 2 config<a class="headerlink" href="#example-2-config" title="Permalink to this headline"></a></h3>
+<h3>Example 2 config<a class="headerlink" href="#example-2-config" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
   <span class="n">email</span><span class="p">:</span>
     <span class="n">smtp_nologin</span><span class="p">:</span> <span class="n">true</span>
@@ -197,13 +196,13 @@
 </div>
 </div>
 <div class="section" id="telegram-plugin">
-<h2>Telegram Plugin<a class="headerlink" href="#telegram-plugin" title="Permalink to this headline"></a></h2>
+<h2>Telegram Plugin<a class="headerlink" href="#telegram-plugin" title="Permalink to this headline">¶</a></h2>
 <p>This plugin allows payouts notifications to be sent via Telegram bot to specific chatIds, including groups.</p>
 <p>You must first create a Telegram bot to generate the <em>bot_api_key</em> and you must discover your, or your groups’, <em>chat_id</em>. There are many guides/tutorials on the internet for how to do this.</p>
 <p>The Telegram plugin does not need read access to any messages and the bot will not respond to any commands. This is a “send only” style of bot.</p>
 <p>This plugin supports two notification styles: admin notifications, and payouts notifications</p>
 <div class="section" id="id1">
-<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>admin_chat_ids: A required YAML list containing chat IDs of users and/or groups to receive administrative-related messages. This might include failed payouts, or lack of funds messages.  Must be list format even if only 1 ID.</p></li>
 <li><p>public_chat_ids: An, optional, YAML list containing chat IDs of users and/or groups to receive completed payouts message as defined by <code class="docutils literal notranslate"><span class="pre">telegram_text</span></code>. Must be list format even if only 1 ID.</p></li>
@@ -212,7 +211,7 @@
 </ul>
 </div>
 <div class="section" id="id2">
-<h3>Example Config<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
+<h3>Example Config<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
   <span class="n">telegram</span><span class="p">:</span>
     <span class="n">admin_chat_ids</span><span class="p">:</span>
@@ -228,7 +227,7 @@
 </div>
 </div>
 <div class="section" id="example-result">
-<h3>Example Result<a class="headerlink" href="#example-result" title="Permalink to this headline"></a></h3>
+<h3>Example Result<a class="headerlink" href="#example-result" title="Permalink to this headline">¶</a></h3>
 <p>Admin Message:
 <img alt="Admin Image" src="https://i.imgur.com/57Lim8s.png" /></p>
 <p>Payouts Message (using above example config text):
@@ -236,7 +235,7 @@
 </div>
 </div>
 <div class="section" id="twitter-plugin">
-<h2>Twitter Plugin<a class="headerlink" href="#twitter-plugin" title="Permalink to this headline"></a></h2>
+<h2>Twitter Plugin<a class="headerlink" href="#twitter-plugin" title="Permalink to this headline">¶</a></h2>
 <p>This plugin allows payout notifications to be sent via a Twitter tweet. This plugin does not read existing tweets, or read any DMs. The plugin supports adding hashtags to your tweet. The plugin posts tweets “as you”, meaning your &#64;-handle will be the author of the post. No other information is submitted to the tweet.</p>
 <p>Follow this outline to generate the API tokens and secrets for the plugin:</p>
 <ol class="simple">
@@ -252,7 +251,7 @@
 </li>
 </ol>
 <div class="section" id="id3">
-<h3>Example Config<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
+<h3>Example Config<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p><strong>NOTE</strong>: All 4 pieces of keys and tokens are required.</p>
 <p><strong>NOTE</strong>: <code class="docutils literal notranslate"><span class="pre">tweet_text</span></code> will be passed through a filter to replace the following placeholders: <code class="docutils literal notranslate"><span class="pre">%CYCLE%</span></code>, <code class="docutils literal notranslate"><span class="pre">%NDELEGATORS%</span></code>, <code class="docutils literal notranslate"><span class="pre">%TREWARDS%</span></code></p>
 <p><strong>NOTE</strong>: The twitter plugin only supports payouts notifications; administrative notifications will not be sent via twitter plugin</p>
@@ -275,12 +274,12 @@ in the cycle and paid out 1234.98 tez in rewards.
 </div>
 </div>
 <div class="section" id="discord-plugin">
-<h2>Discord Plugin<a class="headerlink" href="#discord-plugin" title="Permalink to this headline"></a></h2>
+<h2>Discord Plugin<a class="headerlink" href="#discord-plugin" title="Permalink to this headline">¶</a></h2>
 <p>This plugin makes an HTTP POST request to a Discord Webhook URL.</p>
 <p>You must be an admin of a discord server to generate a webhook URL. Do so by going to ‘Server Settings’ -&gt; ‘Integrations’ -&gt; ‘New Webhook’. Select the name, upload an avatar icon (if desired), and select which channel the messages will appear.</p>
 <p>Paste the generated URL into the appropriate field in the plugin section. You can customize the message for ‘payouts’ notifications. This is handled exactly as in the Twitter plugin.</p>
 <div class="section" id="id4">
-<h3>Example Config<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
+<h3>Example Config<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>endpoint: The webhook URL generated by your discord server</p></li>
 <li><p>send_admin: [True|False] - Whether or not to send administrative-style messages using the bot. These messages will appear alongside general user-style messages.</p></li>
@@ -299,18 +298,18 @@ in the cycle and paid out 1234.98 tez in rewards.
 </div>
 </div>
 <div class="section" id="id5">
-<h3>Example Result<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
+<h3>Example Result<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <p><img alt="PayoutsDiscordImage" src="https://i.imgur.com/kjuiHSm.png" /></p>
 </div>
 </div>
 <div class="section" id="webhook-plugin">
-<h2>Webhook Plugin<a class="headerlink" href="#webhook-plugin" title="Permalink to this headline"></a></h2>
+<h2>Webhook Plugin<a class="headerlink" href="#webhook-plugin" title="Permalink to this headline">¶</a></h2>
 <p>This plugin makes an HTTP POST request to an endpoint. This endpoint will receive a JSON object containing the reward data.</p>
 <p>For simple security, configure a random token (alphanumeric string) to be included in the root JSON object. Your receiver script should verify this token before accepting data.</p>
 <p>Your script can return a short message in the response body. This will be displayed on the TRD console and written to the TRD logs.</p>
 <p><strong>NOTE</strong>: The webhook plugin supports administrative notifications which includes ‘subject’, ‘message’, and payouts records.</p>
 <div class="section" id="example-json-object">
-<h3>Example JSON Object<a class="headerlink" href="#example-json-object" title="Permalink to this headline"></a></h3>
+<h3>Example JSON Object<a class="headerlink" href="#example-json-object" title="Permalink to this headline">¶</a></h3>
 <p>“payouts” is a JSON array of objects, each object representing the status of a payout. All Tez amounts are in mutez.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="mi">1604982374</span><span class="p">,</span>
@@ -342,7 +341,7 @@ in the cycle and paid out 1234.98 tez in rewards.
 </div>
 </div>
 <div class="section" id="id6">
-<h3>Example Config<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
+<h3>Example Config<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="p">:</span>
   <span class="n">webhook</span><span class="p">:</span>
     <span class="n">endpoint</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">webhook</span><span class="o">.</span><span class="n">php</span>
