@@ -105,32 +105,28 @@ class TzStatsRewardProviderHelper:
         root["equivocation_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                0
-                # float(resp[idx_income_lost_accusation_fees])
-                # + float(resp[idx_income_lost_accusation_rewards])
-                # + float(resp[idx_income_lost_revelation_fees])
-                # + float(resp[idx_income_lost_revelation_rewards])
+                float(resp[idx_income_lost_accusation_fees])
+                + float(resp[idx_income_lost_accusation_rewards])
+                + float(resp[idx_income_lost_revelation_fees])
+                + float(resp[idx_income_lost_revelation_rewards])
             )
         )
         root["denunciation_rewards"] = int(
             MUTEZ_PER_TEZ
             * (
-                0
-                # float(resp[idx_income_double_baking_income])
-                # + float(resp[idx_income_double_endorsing_income])
+                float(resp[idx_income_double_baking_income])
+                + float(resp[idx_income_double_endorsing_income])
             )
         )
         # losses due to being offline or not having enough bond
         root["offline_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                0
-                # float(resp[idx_income_missed_baking_income])
-                # + float(resp[idx_income_missed_endorsing_income])
+                float(resp[idx_income_missed_baking_income])
+                + float(resp[idx_income_missed_endorsing_income])
             )
         )
 
-        #
         # Get staking balances of delegators at snapshot block
         #
         uri = self.api + delegators_call.format(
