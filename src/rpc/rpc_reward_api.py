@@ -13,21 +13,19 @@ from Constants import MAX_SEQUENT_CALLS
 logger = main_logger.getChild("rpc_reward_api")
 
 # RPC constants
-COMM_HEAD = "{}/chains/main/blocks/head"
-COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
+COMM_HEAD = "{}/chains/main/blocks/head"
+COMM_DELEGATES = COMM_BLOCK + "/context/delegates/{}"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
-COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
+COMM_DELEGATE_BALANCE = COMM_BLOCK + "/context/contracts/{}/balance"
 # max rounds set to 2; will scan for stolen blocks up to this round
 COMM_BAKING_RIGHTS = (
-    "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
+    COMM_BLOCK + "/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
 )
 COMM_SELECTED_STAKE_DISTRIBUTION = (
-    "{}/chains/main/blocks/{}/context/raw/json/cycle/{}/selected_stake_distribution"
+    COMM_BLOCK + "/context/raw/json/cycle/{}/selected_stake_distribution"
 )
-COMM_TOTAL_ACTIVE_STAKE = (
-    "{}/chains/main/blocks/{}/context/raw/json/cycle/{}/total_active_stake"
-)
+COMM_TOTAL_ACTIVE_STAKE = COMM_BLOCK + "/context/raw/json/cycle/{}/total_active_stake"
 
 # Constants used for mainnet calculations related to the cycles before Granada
 CYCLES_BEFORE_GRANADA = 388
@@ -56,7 +54,7 @@ class RpcRewardApiImpl(RewardApi):
 
     def get_rewards_for_cycle_map(self, cycle, rewards_type):
         try:
-            current_level, current_cycle = self.__get_current_level()
+            current_level, current_cycle = self.get_current_level()
             logger.debug(
                 "Current level {:d}, current cycle {:d}".format(
                     current_level, current_cycle
@@ -105,7 +103,7 @@ class RpcRewardApiImpl(RewardApi):
                 )
             )
 
-            potential_endorsement_rewards = self.__get_potential_endorsement_rewards(
+            potential_endorsement_rewards = self.get_potential_endorsement_rewards(
                 cycle, snapshot_cycle_first_block_level
             )
 
@@ -113,13 +111,13 @@ class RpcRewardApiImpl(RewardApi):
             (
                 reward_data["delegate_staking_balance"],
                 reward_data["delegators"],
-            ) = self.__get_delegators_and_delgators_balances(
+            ) = self.get_delegators_and_delgators_balances(
                 cycle, snapshot_cycle_first_block_level
             )
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Collect baking rights
-            baking_rights = self.__get_baking_rights(
+            baking_rights = self.get_baking_rights(
                 cycle, snapshot_cycle_first_block_level
             )
             nb_blocks = len([r for r in baking_rights if r["round"] == 0])
@@ -149,7 +147,7 @@ class RpcRewardApiImpl(RewardApi):
                 (
                     endorsing_rewards,
                     lost_endorsing_rewards,
-                ) = self.__get_endorsing_rewards(level_of_last_block_in_cycle, cycle)
+                ) = self.get_endorsing_rewards(level_of_last_block_in_cycle)
                 offline_losses += lost_endorsing_rewards
 
                 for count, r in enumerate(baking_rights):
@@ -163,7 +161,7 @@ class RpcRewardApiImpl(RewardApi):
                         block_reward_and_fees,
                         block_bonus,
                         block_double_signing_reward,
-                    ) = self.__get_block_data(r["level"])
+                    ) = self.get_block_data(r["level"])
                     if block_author == self.baking_address:
                         # we are block proposer for this block
                         total_block_bonus += block_bonus
@@ -239,7 +237,7 @@ class RpcRewardApiImpl(RewardApi):
             # necessary data to properly compute rewards
             raise e from e
 
-    def __get_response(self, address, request, response=None):
+    def get_response(self, address, request, response=None):
         retry_count = 0
         while (not response) and (retry_count < MAX_SEQUENT_CALLS):
             retry_count += 1
@@ -261,21 +259,20 @@ class RpcRewardApiImpl(RewardApi):
 
         return response
 
-    def __get_baking_rights(self, cycle, level):
+    def get_baking_rights(self, cycle, level):
         """
         Returns list of baking rights for a given cycle.
         """
-
+        baking_rights_rpc = COMM_BAKING_RIGHTS.format(
+            self.node_url, level, cycle, self.baking_address
+        )
         try:
-            baking_rights_rpc = COMM_BAKING_RIGHTS.format(
-                self.node_url, level, cycle, self.baking_address
-            )
-            return self.do_rpc_request(baking_rights_rpc)
-
+            backing_rights = self.do_rpc_request(baking_rights_rpc)
         except ApiProviderException as e:
             raise e from e
+        return backing_rights
 
-    def __get_potential_endorsement_rewards(self, cycle, level):
+    def get_potential_endorsement_rewards(self, cycle, level):
         """
         In tenderbake, endorsement rewards are calculated based on stake for a cycle.
         Then there are either fully paid, or not at all.
@@ -313,7 +310,7 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_block_data(self, level):
+    def get_block_data(self, level):
         """
         Returns baker relevant reward data for a given block level.
         """
@@ -373,13 +370,19 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_endorsing_rewards(self, level_of_last_block_in_cycle, cycle):
+    def get_endorsing_rewards(self, level_of_last_block_in_cycle):
+        endorsing_rewards = lost_endorsing_rewards = 0
         request_metadata = (
             COMM_BLOCK.format(self.node_url, level_of_last_block_in_cycle) + "/metadata"
         )
-        metadata = self.do_rpc_request(request_metadata)
+
+        try:
+            metadata = self.do_rpc_request(request_metadata)
+        except ApiProviderException:
+            # If metadata is not available return zeros
+            return endorsing_rewards, lost_endorsing_rewards
+
         balance_updates = metadata["balance_updates"]
-        endorsing_rewards = lost_endorsing_rewards = 0
 
         for i in range(len(balance_updates)):
             balance_update = balance_updates[i]
@@ -464,7 +467,7 @@ class RpcRewardApiImpl(RewardApi):
 
         for rl in reward_logs:
             try:
-                rl.current_balance = self.__get_current_balance_of_delegator(rl.address)
+                rl.current_balance = self.get_current_balance_of_delegator(rl.address)
             except Exception as e:
                 logger.warning(
                     "update_current_balances - unexpected error: {}".format(str(e)),
@@ -472,19 +475,19 @@ class RpcRewardApiImpl(RewardApi):
                 )
                 raise e from e
 
-    def __get_current_level(self):
+    def get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level_info"]["level"])
         current_cycle = int(head["metadata"]["level_info"]["cycle"])
 
         return current_level, current_cycle
 
-    def __get_delegators_and_delgators_balances(
+    def get_delegators_and_delgators_balances(
         self, cycle, snapshot_cycle_first_block_level
     ):
 
         # calculate the hash of the block for the chosen snapshot of the rewards cycle
-        stake_snapshot, level_snapshot_block = self.__get_stake_snapshot_block_level(
+        stake_snapshot, level_snapshot_block = self.get_stake_snapshot_block_level(
             cycle, snapshot_cycle_first_block_level
         )
         if level_snapshot_block == "":
@@ -535,14 +538,14 @@ class RpcRewardApiImpl(RewardApi):
                     self.node_url, level_snapshot_block, delegator
                 )
                 d_info["staking_balance"] = int(
-                    self.__get_response(delegator, get_staking_balance_request)
+                    self.get_response(delegator, get_staking_balance_request)
                 )
 
                 sleep(
                     0.5
                 )  # Be nice to public RPC since we are now making 2x the amount of RPC calls
 
-                d_info["current_balance"] = self.__get_current_balance_of_delegator(
+                d_info["current_balance"] = self.get_current_balance_of_delegator(
                     delegator
                 )
 
@@ -583,16 +586,16 @@ class RpcRewardApiImpl(RewardApi):
 
         return delegate_staking_balance, delegators
 
-    def __get_current_balance_of_delegator(self, address):
+    def get_current_balance_of_delegator(self, address):
 
         """Helper function to get current balance of delegator"""
 
         get_current_balance_request = COMM_DELEGATE_BALANCE.format(
             self.node_url, "head", address
         )
-        return int(self.__get_response(address, get_current_balance_request))
+        return int(self.get_response(address, get_current_balance_request))
 
-    def __get_stake_snapshot_block_level(self, cycle, query_level):
+    def get_stake_snapshot_block_level(self, cycle, query_level):
         logger.info(
             "The reward cycle is {}, level used to query context for the snapshot level is {}".format(
                 cycle, query_level

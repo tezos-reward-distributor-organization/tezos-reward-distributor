@@ -51,13 +51,14 @@ def store_reward_model(
         equivocation_losses=model.equivocation_losses,
         offline_losses=model.offline_losses,
         num_baking_rights=model.num_baking_rights,
-        num_endorsing_rights=model.num_endorsing_rights,
+        potential_endorsement_rewards=model.potential_endorsement_rewards,
         denunciation_rewards=model.denunciation_rewards,
         delegator_balance_dict={
             k: {i: v[i] for i in v if i != "current_balance"}
             for k, v in model.delegator_balance_dict.items()
             if v["staking_balance"] > 0
         },
+        computed_reward_amount=model.computed_reward_amount,
     )
     try:
         with open(path, "w+") as f:
@@ -295,3 +296,4 @@ def mock_request_get(url, timeout):
 class Constants:
     NORMAL_TEZOS_ADDRESS = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"
     STAKENOW_ADDRESS = "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"
+    BAKEXTZ4ME_ADDRESS = "tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN"
