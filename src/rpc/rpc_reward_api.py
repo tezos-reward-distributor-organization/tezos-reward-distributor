@@ -18,6 +18,7 @@ COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = COMM_BLOCK + "/context/delegates/{}"
 COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
 COMM_DELEGATE_BALANCE = COMM_BLOCK + "/context/contracts/{}/balance"
+COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 # max rounds set to 2; will scan for stolen blocks up to this round
 COMM_BAKING_RIGHTS = (
     COMM_BLOCK + "/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
@@ -320,44 +321,46 @@ class RpcRewardApiImpl(RewardApi):
             response = self.do_rpc_request(block_rpc)
             metadata = response["metadata"]
             author = metadata["baker"]
-            reward_and_fees = bonus = 0
+            reward_and_fees = bonus = double_signing_reward = 0
             balance_updates = metadata["balance_updates"]
-            for i, bu in enumerate(balance_updates):
-                if bu["kind"] == "contract" and "category" in balance_updates[i - 1]:
+            for i, balance_update in enumerate(balance_updates):
+                if (
+                    balance_update["kind"] == "contract"
+                    and "category" in balance_updates[i - 1]
+                ):
                     if balance_updates[i - 1]["category"] == "baking rewards":
-                        payload_proposer = bu[
+                        payload_proposer = balance_update[
                             "contract"
                         ]  # author of the block payload (not necessarily block producer)
-                        reward_and_fees = int(bu["change"])
+                        reward_and_fees = int(balance_update["change"])
                     if balance_updates[i - 1]["category"] == "baking bonuses":
-                        bonus = int(bu["change"])
+                        bonus = int(balance_update["change"])
 
             operations = response["operations"][2]
-            double_signing_reward = 0
-            for op in operations:
-                for content in op["contents"]:
+            for operation in operations:
+                for content in operation["contents"]:
                     balance_updates = content["metadata"]["balance_updates"]
-                    for i, bu in enumerate(balance_updates):
+                    for i, balance_update in enumerate(balance_updates):
                         if (
-                            bu["kind"] == "contract"
-                            and bu["contract"] == self.baking_address
+                            balance_update["kind"] == "contract"
+                            and balance_update["contract"] == self.baking_address
                         ):
                             if (
                                 balance_updates[i - 1]["category"]
                                 == "double signing evidence rewards"
                             ):
                                 logger.info(
-                                    f"Delegate submitted double signing evidence and earned a reward of {bu['change']}"
+                                    f"Delegate submitted double signing evidence and earned a reward of {balance_update['change']}"
                                 )
-                                double_signing_reward += int(bu["change"])
+                                double_signing_reward += int(balance_update["change"])
                             elif (
                                 balance_updates[i - 1]["category"]
                                 == "nonce revelation rewards"
                             ):
                                 logger.info(
-                                    f"Delegate submitted a nonce revelation and earned a reward of {bu['change']}"
+                                    f"Delegate submitted a nonce revelation and earned a reward of {balance_update['change']}"
                                 )
-                                reward_and_fees += int(bu["change"])
+                                reward_and_fees += int(balance_update["change"])
 
             return (
                 author,
@@ -382,10 +385,13 @@ class RpcRewardApiImpl(RewardApi):
             # If metadata is not available return zeros
             return endorsing_rewards, lost_endorsing_rewards
 
+        if type(metadata) == list and "block_metadata_not_found" in metadata[0]:
+            logger.warning("Block metadata not found!")
+            return endorsing_rewards, lost_endorsing_rewards
+
         balance_updates = metadata["balance_updates"]
 
-        for i in range(len(balance_updates)):
-            balance_update = balance_updates[i]
+        for i, balance_update in enumerate(balance_updates):
             if (
                 balance_update["kind"] == "contract"
                 and balance_update["contract"] == self.baking_address
@@ -394,7 +400,6 @@ class RpcRewardApiImpl(RewardApi):
                 and int(balance_updates[i - 1]["change"])
                 == -int(balance_update["change"])
             ):
-
                 endorsing_rewards = int(balance_update["change"])
                 logger.info(f"Found endorsing rewards of {endorsing_rewards}")
             elif (
@@ -405,6 +410,8 @@ class RpcRewardApiImpl(RewardApi):
             ):
                 lost_endorsing_rewards = int(balance_update["change"])
                 logger.info(f"Found lost endorsing reward of {lost_endorsing_rewards}")
+            else:
+                logger.info("No endorsing rewards found ...")
 
         return endorsing_rewards, lost_endorsing_rewards
 
@@ -475,6 +482,18 @@ class RpcRewardApiImpl(RewardApi):
                 )
                 raise e from e
 
+    def get_contract_storage(self, contract_id, block):
+        get_contract_storage_request = COMM_CONTRACT_STORAGE.format(
+            self.node_url, block, contract_id
+        )
+        return self.get_response(contract_id, get_contract_storage_request)
+
+    def get_contract_balance(self, contract_id, block):
+        get_contract_balance_request = COMM_DELEGATE_BALANCE.format(
+            self.node_url, block, contract_id
+        )
+        return int(self.get_response(contract_id, get_contract_balance_request))
+
     def get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level_info"]["level"])
@@ -533,12 +552,8 @@ class RpcRewardApiImpl(RewardApi):
             for idx, delegator in enumerate(delegators_addresses):
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
-
-                get_staking_balance_request = COMM_DELEGATE_BALANCE.format(
-                    self.node_url, level_snapshot_block, delegator
-                )
-                d_info["staking_balance"] = int(
-                    self.get_response(delegator, get_staking_balance_request)
+                d_info["staking_balance"] = self.get_contract_balance(
+                    delegator, level_snapshot_block
                 )
 
                 sleep(
@@ -589,11 +604,7 @@ class RpcRewardApiImpl(RewardApi):
     def get_current_balance_of_delegator(self, address):
 
         """Helper function to get current balance of delegator"""
-
-        get_current_balance_request = COMM_DELEGATE_BALANCE.format(
-            self.node_url, "head", address
-        )
-        return int(self.get_response(address, get_current_balance_request))
+        return self.get_contract_balance(address, "head")
 
     def get_stake_snapshot_block_level(self, cycle, query_level):
         logger.info(
