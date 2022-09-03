@@ -45,7 +45,7 @@ class MockCycleLevelResponse(MockResponse):
     MagicMock(return_value=MockCycleLevelResponse()),
 )
 def test_get_current_cycle_and_level(address_api):
-    assert address_api.get_current_cycle_and_level() == (434, 1972459)
+    assert address_api.get_current_cycle_and_level() == (434, 1972460)
 
 
 class MockDelegatableResponse(MockResponse):

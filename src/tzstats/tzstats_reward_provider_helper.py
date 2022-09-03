@@ -6,28 +6,25 @@ from exception.api_provider import ApiProviderException
 
 from log_config import main_logger, verbose_logger
 from tzstats.tzstats_api_constants import (
-    idx_n_baking_rights,
+    idx_n_blocks_baked,
+    idx_n_blocks_not_baked,
     idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
-    idx_income_lost_revelation_fees,
-    idx_income_lost_revelation_rewards,
-    idx_delegator_address,
-    idx_balance,
-    idx_baker_delegated,
     idx_cb_delegator_address,
     idx_cb_current_balance,
-    idx_income_missed_baking_income,
-    idx_income_missed_endorsing_income,
-    idx_income_double_baking_income,
-    idx_income_double_endorsing_income,
     idx_n_active_stake,
+    idx_income_lost_accusation_deposits,
+    idx_income_lost_seed_fees,
+    idx_income_lost_seed_rewards,
 )
 from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 
 logger = main_logger
 
 rewards_split_call = "/tables/income?address={}&cycle={}"
+
+reward_snapshot = "/explorer/bakers/{}/snapshot/{}"
 
 delegators_call = "/tables/snapshot?cycle={}&is_selected=1&baker={}&columns=balance,delegated,address&limit=50000"
 
@@ -94,7 +91,9 @@ class TzStatsRewardProviderHelper:
 
         resp = resp.json()[0]
 
-        root["num_baking_rights"] = resp[idx_n_baking_rights]
+        root["num_baking_rights"] = (
+            resp[idx_n_blocks_baked] + resp[idx_n_blocks_not_baked]
+        )
         root["active_stake"] = resp[idx_n_active_stake]
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)
@@ -107,31 +106,32 @@ class TzStatsRewardProviderHelper:
             * (
                 float(resp[idx_income_lost_accusation_fees])
                 + float(resp[idx_income_lost_accusation_rewards])
-                + float(resp[idx_income_lost_revelation_fees])
-                + float(resp[idx_income_lost_revelation_rewards])
+                + float(resp[idx_income_lost_accusation_deposits])
+                + float(resp[idx_income_lost_seed_fees])
+                + float(resp[idx_income_lost_seed_rewards])
             )
         )
         root["denunciation_rewards"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_double_baking_income])
-                + float(resp[idx_income_double_endorsing_income])
+                0
+                # float(resp[idx_income_double_baking_income])
+                # + float(resp[idx_income_double_endorsing_income])
             )
         )
         # losses due to being offline or not having enough bond
         root["offline_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_missed_baking_income])
-                + float(resp[idx_income_missed_endorsing_income])
+                0
+                # float(resp[idx_income_missed_baking_income])
+                # + float(resp[idx_income_missed_endorsing_income])
             )
         )
 
         # Get staking balances of delegators at snapshot block
         #
-        uri = self.api + delegators_call.format(
-            cycle - self.preserved_cycles - 1, self.baking_address
-        )
+        uri = self.api + reward_snapshot.format(self.baking_address, cycle)
         sleep(0.5)  # be nice to tzstats
 
         verbose_logger.debug(
@@ -150,24 +150,12 @@ class TzStatsRewardProviderHelper:
 
         resp = resp.json()
 
-        for delegator in resp:
-
-            if delegator[idx_delegator_address] == self.baking_address:
-                root["delegate_staking_balance"] = int(
-                    MUTEZ_PER_TEZ
-                    * (
-                        float(delegator[idx_balance])
-                        + float(delegator[idx_baker_delegated])
-                    )
-                )
-            else:
-                delegator_info = {"staking_balance": 0, "current_balance": 0}
-                delegator_info["staking_balance"] = int(
-                    MUTEZ_PER_TEZ * float(delegator[idx_balance])
-                )
-                root["delegators_balances"][
-                    delegator[idx_delegator_address]
-                ] = delegator_info
+        root["delegate_staking_balance"] = int(resp["staking_balance"])
+        for delegator in resp["delegators"]:
+            delegator_info = {"staking_balance": 0, "current_balance": 0}
+            delegator_info["staking_balance"] = int(delegator["balance"])
+            if delegator_info["staking_balance"] > 0:
+                root["delegators_balances"][delegator["address"]] = delegator_info
 
         #
         # Get current balance of delegates

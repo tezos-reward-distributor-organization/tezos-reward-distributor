@@ -62,7 +62,7 @@ class RewardApiImplTests(unittest.TestCase):
         It also compares the balances per delegator.
         """
         rpc_rewards = load_reward_model(
-            address, cycle, RewardsType.ACTUAL, dir_name="tzkt_data"
+            address, cycle, RewardsType.ACTUAL, dir_name="rpc_data"
         )
         if rpc_rewards is None:
             rpc_impl = RpcRewardApiImpl(
@@ -72,7 +72,7 @@ class RewardApiImplTests(unittest.TestCase):
             )
             rpc_rewards = rpc_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
             store_reward_model(
-                address, cycle, RewardsType.ACTUAL, rpc_rewards, dir_name="tzkt_data"
+                address, cycle, RewardsType.ACTUAL, rpc_rewards, dir_name="rpc_data"
             )
 
         tzkt_impl = TzKTRewardApiImpl(
@@ -104,35 +104,44 @@ class RewardApiImplTests(unittest.TestCase):
         ]
     )
     def test_expected_rewards(self, address, cycle):
-        tzstats_rewards = load_reward_model(address, cycle, "expected")
+        tzstats_rewards = load_reward_model(
+            address, cycle, "actual", dir_name="tzstats_data"
+        )
         if tzstats_rewards is None:
             tzstats_impl = TzStatsRewardApiImpl(
                 nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
             )
             tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(
-                cycle, RewardsType.ESTIMATED
+                cycle, RewardsType.ACTUAL
             )
-            store_reward_model(address, cycle, "expected", tzstats_rewards)
+            store_reward_model(
+                address, cycle, "actual", tzstats_rewards, dir_name="tzstats_data"
+            )
 
         tzkt_impl = TzKTRewardApiImpl(
             nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
         )
-        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ESTIMATED)
+        tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
         self.assertAlmostEqual(
             tzstats_rewards.delegate_staking_balance,
             tzkt_rewards.delegate_staking_balance,
-            delta=1,
+            delta=0,
         )
         self.assertAlmostEqual(
             tzstats_rewards.total_reward_amount,
             tzkt_rewards.total_reward_amount,
-            delta=1,
+            delta=0,
+        )
+        self.assertAlmostEqual(
+            tzstats_rewards.num_baking_rights,
+            tzkt_rewards.num_baking_rights,
+            delta=0,
         )
         self.assertBalancesAlmostEqual(
             tzstats_rewards.delegator_balance_dict,
             tzkt_rewards.delegator_balance_dict,
-            delta=1,
+            delta=0,
         )
 
     def test_staking_balance_issue(self):
