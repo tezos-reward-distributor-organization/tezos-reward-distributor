@@ -41,8 +41,8 @@ PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
 # Public RPC
 PUBLIC_NODE_URL = {
-    "MAINNET": "https://rpc.tzkt.io/mainnet",
-    CURRENT_TESTNET: "https://rpc.tzkt.io/{}".format(CURRENT_TESTNET.lower()),
+    "MAINNET": "https://mainnet-tezos.giganode.io",
+    CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
 }
 
 # TzStats

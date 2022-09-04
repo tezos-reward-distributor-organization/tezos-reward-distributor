@@ -16,21 +16,27 @@ logger = main_logger.getChild("rpc_reward_api")
 COMM_BLOCK = "{}/chains/main/blocks/{}"
 COMM_HEAD = "{}/chains/main/blocks/head"
 COMM_DELEGATES = COMM_BLOCK + "/context/delegates/{}"
-COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
+COMM_SNAPSHOT_TENDERBAKE = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
+COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = COMM_BLOCK + "/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 # max rounds set to 2; will scan for stolen blocks up to this round
-COMM_BAKING_RIGHTS = (
-    COMM_BLOCK + "/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
-)
+COMM_BAKING_RIGHTS = COMM_BLOCK + "/helpers/baking_rights?delegate={}&max_round=2"
 COMM_SELECTED_STAKE_DISTRIBUTION = (
     COMM_BLOCK + "/context/raw/json/cycle/{}/selected_stake_distribution"
 )
-COMM_TOTAL_ACTIVE_STAKE = COMM_BLOCK + "/context/raw/json/cycle/{}/total_active_stake"
+COMM_TOTAL_ACTIVE_STAKE = (
+    COMM_BLOCK + "/context/raw/json/cycle/{}/total_active_stake"
+)  # available since cycle 467 block 2244608
 
 # Constants used for mainnet calculations related to the cycles before Granada
 CYCLES_BEFORE_GRANADA = 388
+FIRST_CYCLE_REWARDS_GRANADA = CYCLES_BEFORE_GRANADA + 6
+FIRST_CYCLE_SNAPSHOT_GRANADA = FIRST_CYCLE_REWARDS_GRANADA + 2
+BLOCKS_PER_CYCLE_BEFORE_GRANADA = 4096
 BLOCKS_BEFORE_GRANADA = 1589248
+CYCLES_BEFORE_TENDERBAKE = 467
+BLOCKS_BEFORE_TENDERBAKE = 2244608
 
 RPC_REQUEST_BUFFER_SECONDS = 0.4
 RPC_RETRY_TIMEOUT_SECONDS = 2.0
@@ -54,6 +60,7 @@ class RpcRewardApiImpl(RewardApi):
         self.node_url = node_url
 
     def get_rewards_for_cycle_map(self, cycle, rewards_type):
+        rights_name = "priority" if cycle < CYCLES_BEFORE_TENDERBAKE else "round"
         try:
             current_level, current_cycle = self.get_current_level()
             logger.debug(
@@ -68,21 +75,23 @@ class RpcRewardApiImpl(RewardApi):
                 # Mainnet's blocks per cycles have changed during granada migration.
                 # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
                 # Cycles start at 0
-                level_of_last_block_in_cycle = BLOCKS_BEFORE_GRANADA + (
-                    (cycle - CYCLES_BEFORE_GRANADA + 1) * self.blocks_per_cycle
-                )
-                snapshot_cycle_first_block_level = BLOCKS_BEFORE_GRANADA + (
-                    (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles)
-                    * self.blocks_per_cycle
-                    + 1
-                )
-                # FIXME special case for tenderbake activation: we normally query rights at the first block right after they were calculated
-                # technically PRESERVED_CYCLES before the cycle.
-                # But for tenderbake activation, we calculated 6 cycles in one go
-                # It's safe to remove the statment below once we are past this inital phase.
-                if cycle < 474:
-                    snapshot_cycle_first_block_level = 2264608
-                # end ithaca special
+                if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+                    level_of_last_block_in_cycle = BLOCKS_BEFORE_GRANADA + (
+                        (cycle - CYCLES_BEFORE_GRANADA + 1) * self.blocks_per_cycle
+                    )
+                    snapshot_cycle_first_block_level = BLOCKS_BEFORE_GRANADA + (
+                        (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles)
+                        * self.blocks_per_cycle
+                        + 1
+                    )
+                else:
+                    # Using pre-Granada calculation
+                    snapshot_cycle_first_block_level = (
+                        cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
+                    )
+                    level_of_last_block_in_cycle = (
+                        cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+                    )
             else:
                 # Testnets
                 level_of_last_block_in_cycle = (cycle + 1) * self.blocks_per_cycle
@@ -121,7 +130,7 @@ class RpcRewardApiImpl(RewardApi):
             baking_rights = self.get_baking_rights(
                 cycle, snapshot_cycle_first_block_level
             )
-            nb_blocks = len([r for r in baking_rights if r["round"] == 0])
+            nb_blocks = len([r for r in baking_rights if r[rights_name] == 0])
             logger.info(
                 f"Baker has rights to perform {nb_blocks:<,d} bakes for this cycle."
             )
@@ -166,10 +175,10 @@ class RpcRewardApiImpl(RewardApi):
                     if block_author == self.baking_address:
                         # we are block proposer for this block
                         total_block_bonus += block_bonus
-                        if r["round"] != 0:
+                        if r[rights_name] != 0:
                             logger.info(
                                 "Found stolen baking slot at level {}, round {}.".format(
-                                    r["level"], r["round"]
+                                    r["level"], r[rights_name]
                                 )
                             )
                         if block_payload_proposer != self.baking_address:
@@ -178,12 +187,12 @@ class RpcRewardApiImpl(RewardApi):
                                     self.baking_address,
                                     block_payload_proposer,
                                     r["level"],
-                                    r["round"],
+                                    r[rights_name],
                                 )
                             )
                     else:
                         # we are not block proposer for this block
-                        if r["round"] == 0:
+                        if r[rights_name] == 0:
                             logger.warning("Found missed baking slot {}.".format(r))
                             offline_losses += block_bonus + block_reward_and_fees
                     if block_payload_proposer == self.baking_address:
@@ -265,7 +274,7 @@ class RpcRewardApiImpl(RewardApi):
         Returns list of baking rights for a given cycle.
         """
         baking_rights_rpc = COMM_BAKING_RIGHTS.format(
-            self.node_url, level, cycle, self.baking_address
+            self.node_url, level, self.baking_address
         )
         try:
             backing_rights = self.do_rpc_request(baking_rights_rpc)
@@ -279,6 +288,13 @@ class RpcRewardApiImpl(RewardApi):
         Then there are either fully paid, or not at all.
         We calculate this potential amount. It is possible to calculate it for future cycles.
         """
+
+        # NOTE: The tenderbake specific RPC query cannot query below the block level 2244608 and below cycle 467
+        if level < BLOCKS_BEFORE_TENDERBAKE or cycle < CYCLES_BEFORE_TENDERBAKE:
+            logger.warning(
+                "ITHACA SPECIAL: RPC cannot query total_active_stake below the block level 2244608 and below cycle 467. Setting potential_endorsement_rewards to 0."
+            )
+            return 0
 
         try:
             number_of_endorsements_per_cycle = (
@@ -523,11 +539,6 @@ class RpcRewardApiImpl(RewardApi):
         get_delegates_request = COMM_DELEGATES.format(
             self.node_url, level_snapshot_block, self.baking_address
         )
-
-        # get RPC response for delegates and staking balance
-        response = self.do_rpc_request(get_delegates_request)
-        delegate_staking_balance = int(response["staking_balance"])
-
         delegate_staking_balance = 0
         d_a_len = 0
         delegators = {}
@@ -618,7 +629,7 @@ class RpcRewardApiImpl(RewardApi):
                 # cycle 468-473 are special
                 # immediately after ithaca activation, we are using the same snapshot for 5 cycles
                 chosen_snapshot = 0
-                level_snapshot_block = 2244608
+                level_snapshot_block = BLOCKS_BEFORE_TENDERBAKE
                 logger.info(
                     "ITHACA ACTIVATION SPECIAL: The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
                         chosen_snapshot, cycle, level_snapshot_block
@@ -639,16 +650,24 @@ class RpcRewardApiImpl(RewardApi):
 
                 return chosen_snapshot, level_snapshot_block
 
-        request = COMM_SNAPSHOT.format(self.node_url, query_level, cycle)
+        snapshot_query = (
+            COMM_SNAPSHOT
+            if query_level < BLOCKS_BEFORE_TENDERBAKE
+            else COMM_SNAPSHOT_TENDERBAKE
+        )
+        request = snapshot_query.format(self.node_url, query_level, cycle)
         chosen_snapshot = self.do_rpc_request(request)
 
         if self.network == "MAINNET":
-            # Using an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
-            level_snapshot_block = BLOCKS_BEFORE_GRANADA + (
-                (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles - 1)
-                * self.blocks_per_cycle
-                + (chosen_snapshot + 1) * self.blocks_per_stake_snapshot
-            )
+            if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+                # Using an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
+                level_snapshot_block = BLOCKS_BEFORE_GRANADA + (
+                    (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles - 1)
+                    * self.blocks_per_cycle
+                    + (chosen_snapshot + 1) * self.blocks_per_stake_snapshot
+                )
+            else:
+                level_snapshot_block = cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
         else:
             # testnet has no offset
             level_snapshot_block = (
