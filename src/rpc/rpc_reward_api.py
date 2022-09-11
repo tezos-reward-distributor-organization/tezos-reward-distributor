@@ -102,7 +102,7 @@ class RpcRewardApiImpl(RewardApi):
                 f"We are on {self.network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}."
             )
             logger.debug(
-                f"First block in snapshotting cycle {cycle - self.preserved_cycles - 1} is {snapshot_cycle_first_block_level}."
+                f"First block in snapshotting cycle {cycle - self.preserved_cycles} is {snapshot_cycle_first_block_level}."
             )
 
             logger.debug(
@@ -344,7 +344,10 @@ class RpcRewardApiImpl(RewardApi):
                     balance_update["kind"] == "contract"
                     and "category" in balance_updates[i - 1]
                 ):
-                    if balance_updates[i - 1]["category"] == "baking rewards":
+                    if balance_updates[i - 1]["category"] in [
+                        "baking rewards",
+                        "rewards",
+                    ]:
                         payload_proposer = balance_update[
                             "contract"
                         ]  # author of the block payload (not necessarily block producer)
@@ -560,12 +563,24 @@ class RpcRewardApiImpl(RewardApi):
                 raise ApiProviderException("[get_d_d_b] No delegators found")
 
             # Loop over delegators; get snapshot balance, and current balance
-            for idx, delegator in enumerate(delegators_addresses):
+            idx = 1
+            for delegator in delegators_addresses:
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
                 d_info["staking_balance"] = self.get_contract_balance(
                     delegator, level_snapshot_block
                 )
+
+                # Ignore delegators who have zero staking balance
+                # since they are not relevant for reward calculations
+                if not d_info["staking_balance"] > 0:
+                    d_a_len -= 1  # decrement the sanity check count
+                    logger.debug(
+                        "Ignoring delegator {} with zero staking balance!".format(
+                            delegator
+                        )
+                    )
+                    continue
 
                 sleep(
                     0.5
@@ -577,7 +592,7 @@ class RpcRewardApiImpl(RewardApi):
 
                 logger.debug(
                     "Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} ".format(
-                        idx + 1,
+                        idx,
                         d_a_len,
                         delegator,
                         d_info["staking_balance"],
@@ -591,6 +606,7 @@ class RpcRewardApiImpl(RewardApi):
 
                 # "append" to master dict
                 delegators[delegator] = d_info
+                idx += 1
 
         except ApiProviderException as r:
             logger.error("[get_d_d_b] RPC API Error: {}".format(str(r)))
