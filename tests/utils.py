@@ -157,7 +157,7 @@ def make_config(
     )
 
 
-def mock_request_get(url, timeout):
+def mock_request_get(url, timeout, **kwargs):
 
     path = urlparse(url).path
     # print("Mock URL: {}".format(path))
@@ -175,12 +175,13 @@ def mock_request_get(url, timeout):
                 }
             },
         )
-    if path == "/chains/main/blocks/196609/context/raw/json/cycle/51/roll_snapshot":
+    if path == "/chains/main/blocks/2035713/context/raw/json/cycle/500/roll_snapshot":
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: 10)
-    if (
-        path
-        == "/chains/main/blocks/191232/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V"
-    ):
+    if path in [
+        "/chains/main/blocks/191232/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+        "/chains/main/blocks/195328/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+        "/chains/main/blocks/2034432/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+    ]:
         return MagicMock(
             status_code=HTTPStatus.OK,
             json=lambda: {
@@ -198,56 +199,60 @@ def mock_request_get(url, timeout):
                 "delegated_balance": "176617802134",
             },
         )
-    if (
-        path
-        == "/chains/main/blocks/191232/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance"
-        or path
-        == "/chains/main/blocks/head/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance"
-    ):
+    if path in [
+        "/chains/main/blocks/195328/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
+        "/chains/main/blocks/191232/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
+        "/chains/main/blocks/head/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
+    ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "25689884573")
-    if (
-        path
-        == "/chains/main/blocks/191232/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance"
-        or path
-        == "/chains/main/blocks/head/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance"
-    ):
+    if path in [
+        "/chains/main/blocks/191232/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
+        "/chains/main/blocks/head/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
+        "/chains/main/blocks/195328/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
+    ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "62657825729")
-    if (
-        path
-        == "/chains/main/blocks/191232/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance"
-        or path
-        == "/chains/main/blocks/head/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance"
-    ):
+    if path in [
+        "/chains/main/blocks/191232/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
+        "/chains/main/blocks/head/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
+        "/chains/main/blocks/195328/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
+    ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "24916325758")
-    if (
-        path
-        == "/chains/main/blocks/191232/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance"
-        or path
-        == "/chains/main/blocks/head/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance"
-    ):
+    if path in [
+        "/chains/main/blocks/191232/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
+        "/chains/main/blocks/head/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
+        "/chains/main/blocks/195328/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
+    ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "55646701807")
-    if (
-        path
-        == "/chains/main/blocks/191232/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance"
-        or path
-        == "/chains/main/blocks/head/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance"
-    ):
+    if path in [
+        "/chains/main/blocks/191232/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
+        "/chains/main/blocks/195328/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
+        "/chains/main/blocks/head/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
+    ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "981635036")
-    if (
-        path
-        == "/chains/main/blocks/191232/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance"
-        or path
-        == "/chains/main/blocks/head/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance"
-    ):
+    if path in [
+        "/chains/main/blocks/191232/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
+        "/chains/main/blocks/195328/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
+        "/chains/main/blocks/head/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
+    ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "30527208")
-    if (
-        path
-        == "/chains/main/blocks/191232/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance"
-        or path
-        == "/chains/main/blocks/head/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance"
-    ):
+    if path in [
+        "/chains/main/blocks/191232/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
+        "/chains/main/blocks/195328/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
+        "/chains/main/blocks/head/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
+    ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "6725429231")
-    if path == "/chains/main/blocks/225280/metadata":
+    if path in [
+        "/chains/main/blocks/225280/metadata",
+        "/chains/main/blocks/212992/metadata",
+        "/chains/main/blocks/2052096/metadata",
+    ]:
         return MagicMock(
             status_code=HTTPStatus.OK,
             json=lambda: {
@@ -281,7 +286,10 @@ def mock_request_get(url, timeout):
                 ]
             },
         )
-    if path == "/chains/main/blocks/196609/helpers/baking_rights":
+    if path in [
+        "/chains/main/blocks/196609/helpers/baking_rights",
+        "/chains/main/blocks/2035713/helpers/baking_rights",
+    ]:
         # return empty list - not accurate for estimated reward calculation.
         # However, we do not test for this. We just have to return something
         # so the model gets filled with data.

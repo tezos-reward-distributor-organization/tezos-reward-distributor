@@ -1,12 +1,9 @@
 #  FIXME redo mockups for this test
 from unittest.mock import patch, MagicMock
-from functools import cmp_to_key
-from model.reward_log import cmp_by_type_balance
 
 from pay.batch_payer import BatchPayer
 from cli.client_manager import ClientManager
 from Constants import (
-    CURRENT_TESTNET,
     PUBLIC_NODE_URL,
     RewardsType,
     PRIVATE_SIGNER_URL,
@@ -17,7 +14,7 @@ from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from model.baking_conf import BakingConf
 from calc.service_fee_calculator import ServiceFeeCalculator
-from tests.utils import mock_request_get, make_config
+from tests.utils import make_config
 from model.rules_model import RulesModel
 from NetworkConfiguration import default_network_config_map
 from plugins.plugins import PluginManager
@@ -27,22 +24,21 @@ from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 
-node_endpoint = PUBLIC_NODE_URL[CURRENT_TESTNET]
-network = {"NAME": CURRENT_TESTNET, "MINIMAL_BLOCK_DELAY": 5}
+node_endpoint = PUBLIC_NODE_URL["MAINNET"]
+network = {"NAME": "MAINNET", "MINIMAL_BLOCK_DELAY": 5}
 
 baking_config = make_config(
-    "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
-    "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+    "tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
+    "tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
     14.99,
     0,
 )
 
 
-PAYOUT_CYCLE = 51
+PAYOUT_CYCLE = 500
 PAYMENT_ADDRESS_BALANCE = int(1000 * MUTEZ_PER_TEZ)
 
 
-@patch("rpc.rpc_reward_api.requests.get", MagicMock(side_effect=mock_request_get))
 @patch(
     "rpc.rpc_reward_api.logger",
     MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)),
@@ -64,7 +60,8 @@ PAYMENT_ADDRESS_BALANCE = int(1000 * MUTEZ_PER_TEZ)
     MagicMock(return_value=PAYMENT_ADDRESS_BALANCE),
 )
 def test_batch_payer_total_payout_amount():
-    factory = ProviderFactory(provider="prpc")
+    # NOTE: For better payment tests we are doing actual tzkz api calls for reward calculation
+    factory = ProviderFactory(provider="tzkt")
     parser = BakingYamlConfParser(
         baking_config, None, None, None, None, block_api=factory, api_base_url=None
     )
@@ -94,7 +91,7 @@ def test_batch_payer_total_payout_amount():
     )
 
     rewardApi = factory.newRewardApi(
-        default_network_config_map[CURRENT_TESTNET], baking_cfg.get_baking_address(), ""
+        default_network_config_map["MAINNET"], baking_cfg.get_baking_address(), ""
     )
 
     # Simulate logic in payment_producer
@@ -138,7 +135,7 @@ def test_batch_payer_total_payout_amount():
 
     # Filter out non-payable items
     reward_logs = [payment_item for payment_item in reward_logs if payment_item.payable]
-    reward_logs.sort(key=cmp_to_key(cmp_by_type_balance))
+    reward_logs.sort(key=lambda rl: (rl.type, -rl.staking_balance))
 
     batch_payer = BatchPayer(
         node_url=node_endpoint,
@@ -154,19 +151,57 @@ def test_batch_payer_total_payout_amount():
     # Do the payment
     (
         _,
-        total_attempts,
+        _,
         total_payout_amount,
         number_future_payable_cycles,
     ) = batch_payer.pay(reward_logs, dry_run=True)
 
     # Payment does not have status done, paid or injected thus the total payout amount is zero
-    assert total_payout_amount == 0
-    assert number_future_payable_cycles == 2
-    assert total_attempts == 3
+    assert total_payout_amount == 0, f"total_payout_amount is {total_payout_amount}"
+    assert (
+        number_future_payable_cycles == 51
+    ), f"number_future_payable_cycles is {number_future_payable_cycles}"
 
-    # Check the adjusted amount
-    assert reward_logs[0].adjusted_amount == 40418486
-    assert reward_logs[1].adjusted_amount == 10581272
-    assert reward_logs[2].adjusted_amount == 109732835
-    assert reward_logs[3].adjusted_amount == 48362127
-    assert reward_logs[4].adjusted_amount == 29116310
+    # Check the adjusted amount which is sorted from highest to lowest
+    expected_amounts = [
+        11452867,  # type: D
+        1291622,
+        739251,
+        330375,
+        81254,
+        42527,
+        42087,
+        40583,
+        22541,
+        7220,
+        4695,
+        3384,
+        1443,
+        1079,
+        1015,
+        780,
+        501,
+        398,
+        286,
+        213,
+        203,
+        203,
+        203,
+        95,
+        70,
+        59,
+        43,
+        17,
+        7,
+        3,
+        2,
+        1,
+        0,
+        0,  # type: D
+        1860088,  # type: F
+        620029,  # type: F
+        2656753,  # type: O
+    ]
+
+    for idx, expected_amount in enumerate(expected_amounts):
+        assert reward_logs[idx].adjusted_amount == expected_amount

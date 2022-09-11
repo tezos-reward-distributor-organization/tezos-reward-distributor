@@ -12,14 +12,12 @@ from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 from calc.service_fee_calculator import ServiceFeeCalculator
 from config.yaml_baking_conf_parser import BakingYamlConfParser
 from exception.api_provider import ApiProviderException
-from functools import cmp_to_key
 from model.rules_model import RulesModel
 from model.baking_conf import BakingConf
-from model.reward_log import cmp_by_type_balance
 from NetworkConfiguration import default_network_config_map
 from tests.utils import mock_request_get
 
-PAYOUT_CYCLE = 51
+PAYOUT_CYCLE = 500
 
 logger = logging.getLogger("unittesting")
 logger.setLevel(logging.DEBUG)
@@ -133,7 +131,7 @@ class TestCalculatePhases(TestCase):
                 reward_logs, total_amount = payment_calc.calculate(reward_model)
 
                 # Check total reward amount matches sums of records
-                self.assertTrue(
+                self.assertEqual(
                     total_amount, sum([rl.amount for rl in reward_logs if rl.payable])
                 )
 
@@ -167,7 +165,7 @@ class TestCalculatePhases(TestCase):
 
         # Filter out non-payable items
         reward_logs = [pi for pi in reward_logs if pi.payable]
-        reward_logs.sort(key=cmp_to_key(cmp_by_type_balance))
+        reward_logs.sort(key=lambda rl: (rl.type, -rl.staking_balance))
 
         # TRD Calculated Results
         # tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT type: D, stake bal:   62657.83, cur bal:   62657.83, ratio: 0.327420, fee_ratio: 0.000000, amount:   0.000000, fee_amount: 0.000000, fee_rate: 0.00, payable: N, skipped: Y, at-phase: 1, desc: Excluded by configuration, pay_addr: tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT

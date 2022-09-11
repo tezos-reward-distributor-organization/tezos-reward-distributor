@@ -146,7 +146,7 @@ class PaymentConsumer(threading.Thread):
                 payment_items, self.reactivate_zeroed
             )
 
-            payment_items.sort(key=functools.cmp_to_key(cmp_by_type_balance))
+            payment_items.sort(key=lambda rl: (rl.type, -rl.staking_balance))
 
             batch_payer = BatchPayer(
                 self.node_addr,
