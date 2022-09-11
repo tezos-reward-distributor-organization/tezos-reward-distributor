@@ -8,7 +8,6 @@ from Constants import (
     RewardsType,
     PRIVATE_SIGNER_URL,
     MUTEZ_PER_TEZ,
-    PaymentStatus,
 )
 from api.provider_factory import ProviderFactory
 from config.yaml_baking_conf_parser import BakingYamlConfParser
@@ -23,6 +22,7 @@ from calc.phased_payment_calculator import PhasedPaymentCalculator
 from calc.calculate_phaseMapping import CalculatePhaseMapping
 from calc.calculate_phaseMerge import CalculatePhaseMerge
 from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
+from src.model.reward_log import TYPE_DELEGATOR
 
 node_endpoint = PUBLIC_NODE_URL["MAINNET"]
 network = {"NAME": "MAINNET", "MINIMAL_BLOCK_DELAY": 5}
@@ -164,7 +164,7 @@ def test_batch_payer_total_payout_amount():
 
     # Check the adjusted amount which is sorted by type and from highest to lowest amount
     expected_amounts_delegates = [
-        11452867,  # type: D
+        11452867,
         1291622,
         739251,
         330375,
@@ -201,5 +201,5 @@ def test_batch_payer_total_payout_amount():
     ]
 
     for idx, expected_amount in enumerate(expected_amounts_delegates):
-        assert reward_logs[idx].type == "D"
+        assert reward_logs[idx].type == TYPE_DELEGATOR
         assert reward_logs[idx].adjusted_amount == expected_amount
