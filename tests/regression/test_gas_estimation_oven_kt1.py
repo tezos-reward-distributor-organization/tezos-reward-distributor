@@ -162,8 +162,8 @@ def test_batch_payer_total_payout_amount():
         number_future_payable_cycles == 51
     ), f"number_future_payable_cycles is {number_future_payable_cycles}"
 
-    # Check the adjusted amount which is sorted from highest to lowest
-    expected_amounts = [
+    # Check the adjusted amount which is sorted by type and from highest to lowest amount
+    expected_amounts_delegates = [
         11452867,  # type: D
         1291622,
         739251,
@@ -197,11 +197,9 @@ def test_batch_payer_total_payout_amount():
         2,
         1,
         0,
-        0,  # type: D
-        1860088,  # type: F
-        620029,  # type: F
-        2656753,  # type: O
+        0,
     ]
 
-    for idx, expected_amount in enumerate(expected_amounts):
+    for idx, expected_amount in enumerate(expected_amounts_delegates):
+        assert reward_logs[idx].type == "D"
         assert reward_logs[idx].adjusted_amount == expected_amount
