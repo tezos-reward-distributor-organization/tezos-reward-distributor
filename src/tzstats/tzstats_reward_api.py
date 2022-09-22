@@ -4,7 +4,7 @@ import math
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from tzstats.tzstats_reward_provider_helper import TzStatsRewardProviderHelper
-from src.Constants import MUTEZ_PER_TEZ
+from Constants import MUTEZ_PER_TEZ
 from Dexter import dexter_utils as dxtz
 
 logger = main_logger
