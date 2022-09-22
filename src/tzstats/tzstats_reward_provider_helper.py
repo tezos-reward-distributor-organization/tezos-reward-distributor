@@ -17,6 +17,8 @@ from tzstats.tzstats_api_constants import (
     idx_income_lost_accusation_deposits,
     idx_income_lost_seed_fees,
     idx_income_lost_seed_rewards,
+    idx_income_missed_baking_income,
+    idx_income_missed_endorsing_income,
 )
 from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 
@@ -39,6 +41,8 @@ snapshot_cycle = "/explorer/cycle/{}"
 contract_storage = "/explorer/contract/{}/storage"
 
 balance_LP_call = "/explorer/bigmap/{}/values?limit=100&offset={}&block={}"
+
+tip = "/explorer/tip"
 
 
 def split(input, n):
@@ -111,6 +115,7 @@ class TzStatsRewardProviderHelper:
                 + float(resp[idx_income_lost_seed_rewards])
             )
         )
+        # TODO: Find out how to calculate denuciation rewards via tzstats
         root["denunciation_rewards"] = int(
             MUTEZ_PER_TEZ
             * (
@@ -123,9 +128,8 @@ class TzStatsRewardProviderHelper:
         root["offline_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                0
-                # float(resp[idx_income_missed_baking_income])
-                # + float(resp[idx_income_missed_endorsing_income])
+                float(resp[idx_income_missed_baking_income])
+                + float(resp[idx_income_missed_endorsing_income])
             )
         )
 
@@ -219,7 +223,7 @@ class TzStatsRewardProviderHelper:
         if len(need_curr_balance_fetch) > 0:
             split_addresses = split(need_curr_balance_fetch, 50)
             for list_address in split_addresses:
-                list_curr_balances = self.__fetch_current_balance(list_address)
+                list_curr_balances = self.fetch_current_balance(list_address)
                 for d in list_address:
                     root["delegators_balances"][d][
                         "current_balance"
@@ -245,7 +249,7 @@ class TzStatsRewardProviderHelper:
         split_addresses = split(reward_logs, 50)
         for list_address in split_addresses:
             addresses = [x.address for x in list_address]
-            list_curr_balances = self.__fetch_current_balance(addresses)
+            list_curr_balances = self.fetch_current_balance(addresses)
             for d in list_address:
                 d.current_balance = list_curr_balances[d.address]
 
@@ -272,10 +276,24 @@ class TzStatsRewardProviderHelper:
             # This means something went wrong.
             raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
-        staking_supply = resp.json()["staking_supply"]
+        resp_json = resp.json()
+        staking_supply = resp_json["staking_supply"]
+        if staking_supply == 0 and cycle > self.get_current_cycle():
+            verbose_logger.info(
+                "Using total stake of snapshot cycle {}".format(
+                    resp_json["snapshot_cycle"]["cycle"]
+                )
+            )
+            staking_supply = resp_json["snapshot_cycle"]["staking_supply"]
         return staking_supply
 
-    def __fetch_current_balance(self, address_list):
+    def get_current_cycle(self):
+        uri = self.api + tip
+        resp = requests.get(uri, timeout=5)
+        root = resp.json()
+        return root["cycle"]
+
+    def fetch_current_balance(self, address_list):
         param_txt = ""
         for address in address_list:
             param_txt += address + ","
@@ -354,6 +372,6 @@ class TzStatsRewardProviderHelper:
     def update_current_balances_dexter(self, balanceMap):
         split_addresses = split(list(balanceMap.keys()), 50)
         for list_address in split_addresses:
-            list_curr_balances = self.__fetch_current_balance(list_address)
+            list_curr_balances = self.fetch_current_balance(list_address)
             for d in list_address:
                 balanceMap[d].update({"current_balance": list_curr_balances[d]})

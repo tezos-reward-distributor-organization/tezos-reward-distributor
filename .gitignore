@@ -15,6 +15,7 @@ fee.ini*
 .pytest_cache
 .python-version
 lock
+.coverage
 
 # State diagram outputs for sphinx documentation
 config_cycle_state_diagram.png

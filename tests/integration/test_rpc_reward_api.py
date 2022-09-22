@@ -40,7 +40,7 @@ def test_get_rewards_for_cycle_map(address_api):
             BAKEXTZ4ME_ADDRESS, CYCLE, RewardsType.ACTUAL, rewards, dir_name="rpc_data"
         )
     assert rewards.delegate_staking_balance == 80573814172
-    assert rewards.total_reward_amount == 59192613
+    assert rewards.total_reward_amount == 19364746
     assert len(rewards.delegator_balance_dict) == 34
 
 

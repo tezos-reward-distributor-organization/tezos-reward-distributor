@@ -4,6 +4,7 @@ import math
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from tzstats.tzstats_reward_provider_helper import TzStatsRewardProviderHelper
+from src.Constants import MUTEZ_PER_TEZ
 from Dexter import dexter_utils as dxtz
 
 logger = main_logger
@@ -40,12 +41,17 @@ class TzStatsRewardApiImpl(RewardApi):
             self.blocks_per_cycle * self.consensus_committee_size
         )
         potential_endorsement_rewards = (
-            math.floor(
-                delegate_staking_balance
-                * number_of_endorsements_per_cycle
-                / total_active_stake
+            int(
+                math.floor(
+                    delegate_staking_balance
+                    * number_of_endorsements_per_cycle
+                    / total_active_stake
+                )
+                * self.endorsing_reward_per_slot
+                / MUTEZ_PER_TEZ
             )
-            * self.endorsing_reward_per_slot
+            if self.helper.get_current_cycle() <= cycle
+            else 0
         )
 
         snapshot_level = self.helper.get_snapshot_level(cycle)
