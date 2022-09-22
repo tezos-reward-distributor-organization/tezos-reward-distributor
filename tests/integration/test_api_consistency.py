@@ -2,18 +2,22 @@ import pytest
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, PUBLIC_NODE_URL, RewardsType
 from tests.utils import Constants
 
+# Block APIs
+from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
+from src.tzstats.tzstats_block_api import TzStatsBlockApiImpl
+from src.rpc.rpc_block_api import RpcBlockApiImpl
+
+# Reward APIs
+from src.tzkt.tzkt_reward_api import TzKTRewardApiImpl
+from src.tzstats.tzstats_reward_api import TzStatsRewardApiImpl
+from src.rpc.rpc_reward_api import RpcRewardApiImpl
+
 NORMAL_TEZOS_ADDRESS = Constants.NORMAL_TEZOS_ADDRESS
 STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
 BAKEXTZ4ME_ADDRESS = Constants.BAKEXTZ4ME_ADDRESS
 
 # These tests should not be mocked but test the overall consistency
 # accross all tezos APIs which are available in TRD
-
-
-# Block APIs
-from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
-from src.tzstats.tzstats_block_api import TzStatsBlockApiImpl
-from src.rpc.rpc_block_api import RpcBlockApiImpl
 
 
 @pytest.fixture
@@ -81,15 +85,7 @@ def test_get_delegatable(
     ) == address_block_api_rpc.get_delegatable(STAKENOW_ADDRESS)
 
 
-# ======================================================================
-# Reward APIs
-from src.tzkt.tzkt_reward_api import TzKTRewardApiImpl
-from src.tzstats.tzstats_reward_api import TzStatsRewardApiImpl
-from src.rpc.rpc_reward_api import RpcRewardApiImpl
-
 # NOTE: We are using BAKEXTZ4ME since this baker has a managable amount of delegates
-
-
 @pytest.fixture
 def address_reward_api_tzkt():
     return TzKTRewardApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], BAKEXTZ4ME_ADDRESS)
