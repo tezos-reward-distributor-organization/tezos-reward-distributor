@@ -17,10 +17,12 @@ run_ops_parsed = {
             "metadata": {
                 "operation_result": {
                     "status": "applied",
-                    "consumed_gas": "100",
+                    "consumed_milligas": "100000",
                     "paid_storage_size_diff": "24",
                 },
-                "internal_operation_results": [{"result": {"consumed_gas": "40"}}],
+                "internal_operation_results": [
+                    {"result": {"consumed_milligas": "40000"}}
+                ],
             }
         }
     ]
