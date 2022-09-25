@@ -547,13 +547,17 @@ class BatchPayer:
         if status == "applied":
 
             # Calculate actual consumed gas amount
-            consumed_gas = int(op["metadata"]["operation_result"]["consumed_gas"])
+            consumed_gas = math.ceil(
+                int(op["metadata"]["operation_result"]["consumed_milligas"]) / 1000
+            )
             if "internal_operation_results" in op["metadata"]:
                 internal_operation_results = op["metadata"][
                     "internal_operation_results"
                 ]
                 for internal_op in internal_operation_results:
-                    consumed_gas += int(internal_op["result"]["consumed_gas"])
+                    consumed_gas += math.ceil(
+                        int(internal_op["result"]["consumed_milligas"]) / 1000
+                    )
 
             # Calculate actual used storage
             if "paid_storage_size_diff" in op["metadata"]["operation_result"]:
