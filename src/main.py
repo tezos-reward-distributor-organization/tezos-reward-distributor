@@ -63,20 +63,7 @@ def check_fee_ini(args=None):
     return 1
 
 
-def check_ithaca_live(args=None):
-    today = date.today()
-    if today >= END_OF_SERVICE:
-        print(
-            "Ithaca protocol is live: Please switch branch to test and join Baking Slack for more information."
-        )
-        return True
-    else:
-        return False
-
-
 def start_application(args=None):
-    if check_ithaca_live():
-        return 1
     check_fee_ini()
 
     # Requirements need to be checked outside of the state machine

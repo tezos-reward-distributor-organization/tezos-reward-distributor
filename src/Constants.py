@@ -11,7 +11,7 @@ TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
 PROTOCOL_NAME = "hangzhou"
-CURRENT_TESTNET = ("{}2net".format(PROTOCOL_NAME)).upper()
+CURRENT_TESTNET = "GHOSTNET"
 
 MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
@@ -31,21 +31,21 @@ PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
 # Public RPC
 PUBLIC_NODE_URL = {
-    "MAINNET": "https://mainnet-tezos.giganode.io",
-    CURRENT_TESTNET: "https://testnet-tezos.giganode.io",
+    "MAINNET": "https://rpc.tzstats.com",
+    CURRENT_TESTNET: "https://rpc.ghost.tzstats.com",
 }
 
 
 # TzStats
 TZSTATS_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzstats.com",
-    CURRENT_TESTNET: "https://api.{}.tzstats.com".format(PROTOCOL_NAME),
+    CURRENT_TESTNET: " https://api.ghost.tzstats.com",
 }
 
 # TzKT
 TZKT_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzkt.io/v1",
-    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET).lower(),
+    CURRENT_TESTNET: 'https://api.ghostnet.tzkt.io/v1',
 }
 
 
