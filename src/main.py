@@ -8,7 +8,7 @@ from Constants import PYTHON_MAJOR, PYTHON_MINOR
 
 REQUIREMENTS_FILE_PATH = "requirements.txt"
 NEW_PROTOCOL_DATE = date(2022, 11, 1)  # potentially the next upgrade
-NEW_PROTOCOL_NAME = 'Lima'
+NEW_PROTOCOL_NAME = "Lima"
 
 
 def installed(package):
@@ -91,15 +91,18 @@ def new_protocol_live(args=None):
     print(today)
     print(NEW_PROTOCOL_DATE)
     if today >= NEW_PROTOCOL_DATE:
-        print("Protocol {} is now live. Either switch to the new test branch or be aware of the risks of using this branch.".format(
-              NEW_PROTOCOL_NAME))
-        print('Do you want to continue using this branch? (y/n) Default is n')
+        print(
+            "Protocol {} is now live. Either switch to the new test branch or be aware of the risks of using this branch.".format(
+                NEW_PROTOCOL_NAME
+            )
+        )
+        print("Do you want to continue using this branch? (y/n) Default is n")
         value = input().lower()
         if not value:
-            value = 'n'
-        if value == 'y' or value == 'Yes':
+            value = "n"
+        if value == "y" or value == "Yes":
             return False
-        if value == 'n' or value == 'No':
+        if value == "n" or value == "No":
             return True
     return False
 
