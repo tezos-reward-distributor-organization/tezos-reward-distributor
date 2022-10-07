@@ -58,27 +58,27 @@ LINER = "--------------------------------------------"
 logger = main_logger
 
 messages = {
-    "hello": "This application will help you configure TRD to manage payouts for your bakery. Type enter to continue",
+    "hello": "This application will help you configure TRD to manage payouts for your bakery. Press enter to continue",
     "bakingaddress": "Specify your baking address public key hash (Processing may take a few seconds)",
     "paymentaddress": "Specify your payouts public key hash. It can be the same as your baking address, or a different one.",
     "servicefee": "Specify bakery fee [0:100]",
-    "rewardstype": "Specify if baker pays 'ideal' or 'actual' rewards (Be sure to read the documentation to understand the difference). Type enter for 'actual'",
-    "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Type enter to leave empty",
-    "ownersmap": "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Type enter to leave empty",
-    "mindelegation": "Specify minimum delegation amount in tez. Type enter for 0",
+    "rewardstype": "Specify if baker pays 'ideal' or 'actual' rewards (Be sure to read the documentation to understand the difference). Press enter for 'actual'",
+    "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Press enter to leave empty",
+    "ownersmap": "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Press enter to leave empty",
+    "mindelegation": "Specify minimum delegation amount in tez. Press enter for 0",
     "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. {}: leave at balance, {}: to founders, {}: to everybody, default is {}".format(
         TOB, TOF, TOE, TOB
     ),
     "exclude": "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are = {}: leave at balance, {}: to founders, {}: to everybody. Type enter to skip".format(
         TOB, TOF, TOE
     ),
-    "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Type enter to skip",
-    "reactivatezeroed": "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Type enter for Yes",
-    "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Type enter for delegator",
-    "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation or burn fees for kt accounts in general: 0 for delegator, 1 for delegate. Type enter for delegator",
+    "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Press enter to skip",
+    "reactivatezeroed": "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Press enter for Yes",
+    "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Press enter for delegator",
+    "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation or burn fees for kt accounts in general: 0 for delegator, 1 for delegate. Press enter for delegator",
     "paydenunciationrewards": "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Type enter for No",
-    "supporters": "Add supporter address. Supporters do not pay bakery fee. Type enter to skip",
-    "specials": "Add any addresses with a special fee in form of 'PKH,fee'. Type enter to skip",
+    "supporters": "Add supporter address. Supporters do not pay bakery fee. Press enter to skip",
+    "specials": "Add any addresses with a special fee in form of 'PKH,fee'. Press enter to skip",
     "noplugins": "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually.",
 }
 
@@ -150,10 +150,9 @@ def onservicefee(input):
 
 
 def onrewardstype(input):
-    if not input:
-        input = RewardsType.ACTUAL
-
     try:
+        if not input:
+            input = RewardsType.ACTUAL
         global parser
         rt = RewardsType(input.lower())
         parser.set(REWARDS_TYPE, str(rt))
