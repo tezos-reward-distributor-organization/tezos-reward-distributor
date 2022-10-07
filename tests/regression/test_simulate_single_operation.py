@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from pay.batch_payer import BatchPayer, TZTX_FEE, MUTEZ_PER_GAS_UNIT
+from pay.batch_payer import BatchPayer, TX_FEES, MUTEZ_PER_GAS_UNIT
 from model.reward_log import RewardLog
 from cli.client_manager import ClientManager
 from http import HTTPStatus
@@ -16,10 +16,12 @@ run_ops_parsed = {
             "metadata": {
                 "operation_result": {
                     "status": "applied",
-                    "consumed_gas": "100",
+                    "consumed_milligas": "100000",
                     "paid_storage_size_diff": "24",
                 },
-                "internal_operation_results": [{"result": {"consumed_gas": "50"}}],
+                "internal_operation_results": [
+                    {"result": {"consumed_milligas": "50000"}}
+                ],
             }
         }
     ]
@@ -31,7 +33,7 @@ run_ops_parsed = {
     MagicMock(return_value=(HTTPStatus.OK, run_ops_parsed)),
 )
 def test_simulate_single_operation():
-    default_fee = TZTX_FEE
+    default_fee = int(TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
     network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
     batch_payer = BatchPayer(
         node_url="node_addr",
@@ -61,6 +63,6 @@ def test_simulate_single_operation():
     assert PaymentStatus.DONE == simulation_status
     consumed_gas, tx_fee, storage = simulation_results
     assert 150 == consumed_gas
-    assert 410 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
+    assert 313.0 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
     assert int == type(storage)  # type of storage should be int
     assert 24 == storage

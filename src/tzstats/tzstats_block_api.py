@@ -50,7 +50,7 @@ class TzStatsBlockApiImpl(BlockApi):
             verbose_logger.debug("Requesting {}".format(uri))
             response = requests.get(uri)
             account = response.json()
-            return bool(account["is_delegate"]) and bool(account["is_active_delegate"])
+            return bool(account["is_baker"])
         except requests.exceptions.RequestException as e:
             message = "[{}] - Unable to fetch delegate: {:s}".format(
                 __class__.__name__, str(e)

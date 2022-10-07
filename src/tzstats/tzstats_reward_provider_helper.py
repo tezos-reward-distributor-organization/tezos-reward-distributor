@@ -7,11 +7,7 @@ from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 from tzstats.tzstats_api_constants import (
     idx_n_baking_rights,
-    idx_n_endorsing_rights,
-    idx_income_baking_income,
-    idx_income_endorsing_income,
-    idx_income_seed_income,
-    idx_income_fees_income,
+    idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
     idx_income_lost_revelation_fees,
@@ -25,15 +21,18 @@ from tzstats.tzstats_api_constants import (
     idx_income_missed_endorsing_income,
     idx_income_double_baking_income,
     idx_income_double_endorsing_income,
+    idx_n_active_stake,
 )
 from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 
 logger = main_logger
 
 rewards_split_call = "/tables/income?address={}&cycle={}"
-delegators_call = "/tables/snapshot?cycle={}&is_selected=1&delegate={}&columns=balance,delegated,address&limit=50000"
+
+delegators_call = "/tables/snapshot?cycle={}&is_selected=1&baker={}&columns=balance,delegated,address&limit=50000"
+
 batch_current_balance_call = (
-    "/tables/account?delegate={}&columns=row_id,spendable_balance,address&limit=50000"
+    "/tables/account?baker={}&columns=row_id,spendable_balance,address&limit=50000"
 )
 single_current_balance_call = (
     "/tables/account?address.in={}&columns=row_id,spendable_balance,address"
@@ -41,6 +40,7 @@ single_current_balance_call = (
 snapshot_cycle = "/explorer/cycle/{}"
 
 contract_storage = "/explorer/contract/{}/storage"
+
 balance_LP_call = "/explorer/bigmap/{}/values?limit=100&offset={}&block={}"
 
 
@@ -66,7 +66,7 @@ class TzStatsRewardProviderHelper:
         root = {
             "delegate_staking_balance": 0,
             "num_baking_rights": 0,
-            "num_endorsing_rights": 0,
+            "potential_endorsement_rewards": 0,
             "rewards_and_fees": 0,
             "equivocation_losses": 0,
             "offline_losses": 0,
@@ -95,41 +95,38 @@ class TzStatsRewardProviderHelper:
         resp = resp.json()[0]
 
         root["num_baking_rights"] = resp[idx_n_baking_rights]
-        root["num_endorsing_rights"] = resp[idx_n_endorsing_rights]
+        root["active_stake"] = resp[idx_n_active_stake]
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)
         root["rewards_and_fees"] = int(
-            MUTEZ_PER_TEZ
-            * (
-                float(resp[idx_income_baking_income])
-                + float(resp[idx_income_endorsing_income])
-                + float(resp[idx_income_seed_income])
-                + float(resp[idx_income_fees_income])
-            )
+            MUTEZ_PER_TEZ * (float(resp[idx_income_total_income]))
         )
         # losses due to baker double baking, double endorsing or missing nonce
         root["equivocation_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_lost_accusation_fees])
-                + float(resp[idx_income_lost_accusation_rewards])
-                + float(resp[idx_income_lost_revelation_fees])
-                + float(resp[idx_income_lost_revelation_rewards])
+                0
+                # float(resp[idx_income_lost_accusation_fees])
+                # + float(resp[idx_income_lost_accusation_rewards])
+                # + float(resp[idx_income_lost_revelation_fees])
+                # + float(resp[idx_income_lost_revelation_rewards])
             )
         )
         root["denunciation_rewards"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_double_baking_income])
-                + float(resp[idx_income_double_endorsing_income])
+                0
+                # float(resp[idx_income_double_baking_income])
+                # + float(resp[idx_income_double_endorsing_income])
             )
         )
         # losses due to being offline or not having enough bond
         root["offline_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_missed_baking_income])
-                + float(resp[idx_income_missed_endorsing_income])
+                0
+                # float(resp[idx_income_missed_baking_income])
+                # + float(resp[idx_income_missed_endorsing_income])
             )
         )
 
@@ -137,7 +134,7 @@ class TzStatsRewardProviderHelper:
         # Get staking balances of delegators at snapshot block
         #
         uri = self.api + delegators_call.format(
-            cycle - self.preserved_cycles - 2, self.baking_address
+            cycle - self.preserved_cycles - 1, self.baking_address
         )
         sleep(0.5)  # be nice to tzstats
 
@@ -281,6 +278,19 @@ class TzStatsRewardProviderHelper:
         snapshot_height = resp.json()["snapshot_cycle"]["snapshot_height"]
         return snapshot_height
 
+    def get_cycle_total_stake(self, cycle):
+
+        uri = self.api + snapshot_cycle.format(cycle)
+
+        resp = requests.get(uri, timeout=5)
+
+        if resp.status_code != HTTPStatus.OK:
+            # This means something went wrong.
+            raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
+
+        staking_supply = resp.json()["staking_supply"]
+        return staking_supply
+
     def __fetch_current_balance(self, address_list):
         param_txt = ""
         for address in address_list:
@@ -339,6 +349,7 @@ class TzStatsRewardProviderHelper:
         resp = " "
         while resp != []:
             uri = self.api + balance_LP_call.format(big_map_id, offset, snapshot_block)
+
             offset += 100
             verbose_logger.debug("Requesting LP balances, {}".format(uri))
             resp = requests.get(uri, timeout=5)

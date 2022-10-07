@@ -53,6 +53,18 @@ def args_validation(args, argparser):
     blocks_per_cycle = 0
 
     try:
+        args.reward_data_provider
+    except AttributeError:
+        logger.info("args: reward_data_provider argument does not exist.")
+    else:
+        if args.reward_data_provider not in ["tzkt", "rpc"]:
+            argparser.error(
+                "reward_data_provider {:s} is not functional at the moment. Please use tzkt or rpc".format(
+                    args.reward_data_provider
+                )
+            )
+
+    try:
         args.network
     except AttributeError:
         logger.info("args: network argument does not exist.")
@@ -91,8 +103,17 @@ def args_validation(args, argparser):
         logger.info("args: release_override argument does not exist.")
     else:
         release_override = args.release_override
-        if release_override not in [-11, -5, 0]:
-            argparser.error("release-override must be -11, -5 or 0. Default is 0.")
+        preserved_cycles = default_network_config_map[network]["NB_FREEZE_CYCLE"]
+        estimated_reward_override = -preserved_cycles * 2 - 1
+        frozen_reward_override = -preserved_cycles
+        if release_override not in [
+            estimated_reward_override,
+            frozen_reward_override,
+            0,
+        ]:
+            argparser.error(
+                f"For {network}, release-override must be {estimated_reward_override} (to pay estimated rewards), {frozen_reward_override} (to pay frozen rewards) or 0. Default is 0."
+            )
 
     default_base_dir = os.path.normpath(BASE_DIR)
     default_log_file = os.path.join(
@@ -277,13 +298,13 @@ def add_argument_base_directory(argparser):
             "2. {} "
             "3. {} "
             "4. {} "
-            "Attention: Please make sure you have migrated the data accordingly from v11 onwards."
+            "Attention: Please make sure you have migrated the data accordingly from v10 onwards."
         ).format(
             default_dir,
             os.path.join(default_dir, CONFIG_DIR, ""),
             os.path.join(default_dir, SIMULATIONS_DIR, ""),
             os.path.join(default_dir, REPORTS_DIR, ""),
-            os.path.join(default_dir, "logs", ""),
+            os.path.dirname(os.path.join(default_dir, DEFAULT_LOG_FILE)),
         ),
         default=BASE_DIR,
     )

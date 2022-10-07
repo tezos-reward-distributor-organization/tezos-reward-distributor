@@ -116,6 +116,7 @@ class ConfigLifeCycle:
             network_config=self.__nw_cfg,
             node_url=self.args.node_endpoint,
             api_base_url=self.args.api_base_url,
+            dry_run=self.args.dry_run,
         )
 
     def do_parse_cfg(self, e):
