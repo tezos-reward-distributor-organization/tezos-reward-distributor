@@ -85,13 +85,14 @@ def check_fee_ini(args=None):
             print("File fee.ini needs to be manually deleted or renamed")
     return 1
 
+
 def new_protocol_live(args=None):
     today = date.today()
     print(today)
     print(NEW_PROTOCOL_DATE)
     if today >= NEW_PROTOCOL_DATE:
         print("Protocol {} is now live. Either switch to the new test branch or be aware of the risks of using this branch.".format(
-                NEW_PROTOCOL_NAME))
+              NEW_PROTOCOL_NAME))
         print('Do you want to continue using this branch? (y/n) Default is n')
         value = input().lower()
         if not value:
@@ -101,6 +102,7 @@ def new_protocol_live(args=None):
         if value == 'n' or value == 'No':
             return True
     return False
+
 
 def start_application(args=None):
     if new_protocol_live():
