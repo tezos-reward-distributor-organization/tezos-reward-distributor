@@ -92,8 +92,9 @@ def new_protocol_live(args=None):
     print(NEW_PROTOCOL_DATE)
     if today >= NEW_PROTOCOL_DATE:
         print(
-            "Protocol {} is now live. Either switch to the new test branch or be aware of the risks of using this branch.".format(
-                NEW_PROTOCOL_NAME
+            ("Protocol {} could be live now. If it is live there are risks using this branch.\n"
+             "It is suggested to reach out to the community to confirm, and switch to the new test branch \n"
+             "or be accept of the risks of using this branch".format(NEW_PROTOCOL_NAME)
             )
         )
         print("Do you want to continue using this branch? (y/n) Default is n")
@@ -104,6 +105,8 @@ def new_protocol_live(args=None):
             return False
         if value == "n" or value == "No":
             return True
+        else:
+            new_protocol_live()
     return False
 
 
