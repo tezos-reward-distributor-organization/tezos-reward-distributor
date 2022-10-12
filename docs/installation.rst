@@ -39,13 +39,14 @@ TRD
 -----------
 
 ::
-    
-    git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 
-To install required modules, use pip with requirements.txt provided.
+    git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor.git
+
+To install required modules, use pip with requirements.txt provided:
 
 ::
 
+    cd tezos-reward-distributor
     pip3 install -r requirements.txt
 
 Regulary check and upgrade to the latest available version:

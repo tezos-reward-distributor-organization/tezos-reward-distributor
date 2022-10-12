@@ -7,7 +7,7 @@ from Constants import PYTHON_MAJOR, PYTHON_MINOR
 
 
 REQUIREMENTS_FILE_PATH = "requirements.txt"
-NEW_PROTOCOL_DATE = date(2022, 11, 1)  # potentially the next upgrade
+NEW_PROTOCOL_DATE = date(2022, 12, 20)  # potentially the next upgrade
 NEW_PROTOCOL_NAME = "Lima"
 
 
