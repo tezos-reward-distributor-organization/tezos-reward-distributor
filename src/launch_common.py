@@ -148,6 +148,12 @@ def args_validation(args, argparser):
             args.dry_run = args.dry_run_no_consumers
     else:
         try:
+            args.dry_run_no_signer
+        except AttributeError:
+            logger.info("args: dry_run_no_signer argument does not exist.")
+        else:
+            args.dry_run = args.dry_run_no_signer
+        try:
             args.dry_run_no_consumers
         except AttributeError:
             logger.info("args: dry_run_no_consumers argument does not exist.")
@@ -171,6 +177,7 @@ def build_parser():
     add_argument_base_directory(argparser)
     add_argument_dry(argparser)
     add_argument_dry_no_consumer(argparser)
+    add_argument_dry_no_signer(argparser)
     add_argument_signer_endpoint(argparser)
     add_argument_docker(argparser)
     add_argument_background_service(argparser)
@@ -324,6 +331,14 @@ def add_argument_dry_no_consumer(argparser):
         "-Dc",
         "--dry_run_no_consumers",
         help="Run without any consumers. Suitable for testing. Does not require locking.",
+        action="store_true",
+    )
+
+def add_argument_dry_no_signer(argparser):
+    argparser.add_argument(
+        "-Ds",
+        "--dry_run_no_signer",
+        help="Run without any signer. Suitable for testing. Does not require locking.",
         action="store_true",
     )
 

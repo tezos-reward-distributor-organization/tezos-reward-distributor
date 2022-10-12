@@ -59,6 +59,9 @@ Options
 ``-D --dry_run``
     Run without injecting payments. Suitable for testing. Does not require locking.
 
+``-Ds --dry_run_no_signing``
+    Run without signing. Suitable for testing. Does not require locking.
+
 ``-Dc --dry_run_no_consumers``
     Run without any consumers. Suitable for testing. Does not require locking.
 

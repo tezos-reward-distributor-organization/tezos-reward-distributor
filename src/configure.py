@@ -114,7 +114,7 @@ def onbakingaddress(input):
         network_config,
         args.node_endpoint,
         api_base_url=args.api_base_url,
-        dry_run=args.dry_run,
+        dry_run_no_signer=args.dry_run_no_signer,
     )
     parser.set(BAKING_ADDRESS, input)
     fsm.go()

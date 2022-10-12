@@ -50,7 +50,7 @@ class BakingYamlConfParser(YamlConfParser):
         node_url,
         block_api=None,
         api_base_url=None,
-        dry_run=False,
+        dry_run_no_signer=False,
     ) -> None:
         super().__init__(yaml_text)
         self.clnt_mngr = clnt_mngr
@@ -60,7 +60,7 @@ class BakingYamlConfParser(YamlConfParser):
                 network_config, node_url, api_base_url=api_base_url
             )
         self.block_api = block_api
-        self.dry_run = dry_run
+        self.dry_run_no_signer = dry_run_no_signer
 
     def parse(self):
         yaml_conf_dict = super().parse()
@@ -193,7 +193,7 @@ class BakingYamlConfParser(YamlConfParser):
             )
 
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
-            if not self.dry_run:
+            if not self.dry_run_no_signer:
                 self.clnt_mngr.check_pkh_known_by_signer(pymnt_addr)
 
             conf_obj[("__%s_type" % PAYMENT_ADDRESS)] = AddrType.TZ
