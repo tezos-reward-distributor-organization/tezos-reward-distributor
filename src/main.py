@@ -7,7 +7,8 @@ from Constants import PYTHON_MAJOR, PYTHON_MINOR
 
 
 REQUIREMENTS_FILE_PATH = "requirements.txt"
-END_OF_SERVICE = date(2022, 11, 1)  # potentially the next upgrade
+NEW_PROTOCOL_DATE = date(2022, 12, 20)  # potentially the next upgrade
+NEW_PROTOCOL_NAME = "Lima"
 
 
 def installed(package):
@@ -85,19 +86,35 @@ def check_fee_ini(args=None):
     return 1
 
 
-def check_ithaca_live(args=None):
+def new_protocol_live(args=None):
     today = date.today()
-    if today >= END_OF_SERVICE:
+    print(today)
+    print(NEW_PROTOCOL_DATE)
+    if today >= NEW_PROTOCOL_DATE:
         print(
-            "New protocol is live: Please switch branch to test and join Baking Slack for more information."
+            (
+                "Protocol {} could be live now. If it is live there are risks using this branch.\n"
+                "It is suggested to reach out to the community to confirm, and switch to the new test branch \n"
+                "or be accept of the risks of using this branch".format(
+                    NEW_PROTOCOL_NAME
+                )
+            )
         )
-        return True
-    else:
-        return False
+        print("Do you want to continue using this branch? (y/n) Default is n")
+        value = input().lower()
+        if not value:
+            value = "n"
+        if value == "y" or value == "Yes":
+            return False
+        if value == "n" or value == "No":
+            return True
+        else:
+            new_protocol_live()
+    return False
 
 
 def start_application(args=None):
-    if check_ithaca_live():
+    if new_protocol_live():
         return 1
     check_fee_ini()
 
@@ -126,5 +143,4 @@ if __name__ == "__main__":
                 sys.version_info.minor,
             )
         )
-
     start_application()
