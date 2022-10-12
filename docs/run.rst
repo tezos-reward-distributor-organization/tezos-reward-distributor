@@ -35,8 +35,8 @@ Options
 ``-O --payment_offset <int>``
     Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
 
-``-N --network <MAINNET|ITHACANET>``
-    Network name. Default value: ``MAINNET``. The current test network of Tezos is ``ITHACANET``.
+``-N --network <MAINNET|GHOSTNET>``
+    Network name. Default value: ``MAINNET``. The current test network of Tezos is ``GHOSTNET``.
 
 ``-A --node_endpoint <node_url:port>``
     Node potentially with protocol prefix especially if TLS encryption is used. Default value: ``http://127.0.0.1:8732``. This is the main Tezos node used by the client for RPC queries and operation injections.
@@ -45,7 +45,7 @@ Options
     Source that provides all needed data for reward calculations. Default value: ``tzkt`` (TzKT API). Set to ``rpc`` to use your own local node defined with the ``-A`` flag, (it must be an ARCHIVE node in this case). Set to ``prpc`` to use a public RPC node defined with the ``-Ap`` flag. An alternative for providing reward data is ``tzstats``, but pay attention for license in case of commercial use!
 
 ``-Ap --node_addr_public <url>``
-    Public node base URL. Default is ``https://mainnet-tezos.giganode.io``. This argument will only be used in case the reward provider is set to ``prpc``. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.
+    Public node base URL. Default is ``https://rpc.tzstats.com``. This argument will only be used in case the reward provider is set to ``prpc``. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.
 
 ``-b --base_directory <path>``
     Directory for reports, configuration and logs. Default value: ``~/pymnt``.
@@ -134,7 +134,7 @@ Run in dry-run mode on MAINNET, make payouts only for cycle 300, for calculation
 
 ::
 
-    python3 src/main.py -C 300 -P prpc -Ap https://mainnet-tezos.giganode.io -M 3 -V -D
+    python3 src/main.py -C 300 -P prpc -Ap https://rpc.tzstats.com -M 3 -V -D
 
 Run in dry-run mode on MAINNET, retry failed payouts only for cycle 300, for calculations use data provided by the TzStats API:
 
