@@ -22,7 +22,7 @@ Linux:
     sudo apt-get update
     sudo apt-get -y install python3-pip
 
-Tezos:
+Tezos
 -----------
 
 Mac: 
@@ -33,14 +33,14 @@ Mac:
 
 Mac & Linux:
 
-::
-
-    Follow instructions found here: https://tezos.gitlab.io/introduction/howtoget.html
+Follow instructions found here: https://tezos.gitlab.io/introduction/howtoget.html
 
 TRD
 -----------
 
-git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
+::
+    
+    git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
 
 To install required modules, use pip with requirements.txt provided.
 
@@ -51,5 +51,5 @@ To install required modules, use pip with requirements.txt provided.
 Regulary check and upgrade to the latest available version:
 
 ::
-    
+
     git pull
