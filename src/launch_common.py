@@ -334,6 +334,7 @@ def add_argument_dry_no_consumer(argparser):
         action="store_true",
     )
 
+
 def add_argument_dry_no_signer(argparser):
     argparser.add_argument(
         "-Ds",
