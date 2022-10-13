@@ -143,7 +143,7 @@ def test_wrong_api_base_url(args):
     MagicMock(return_value=""),
 )
 def test_wrong_node_end_point(args):
-    args.node_endpoint = "https://testnet-tezos.giganode.io:4433"
+    args.node_endpoint = "https://api.tzkt.io/v1:4433"
     assert start_application(args) == 0
 
 

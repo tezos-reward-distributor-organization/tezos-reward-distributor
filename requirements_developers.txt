@@ -1,5 +1,6 @@
 # developer requirements
 pytest>=7.0.1
+pytest-watch>=4.2.0
 parameterized>=0.8.1
 Pygments>=2.11.2
 graphviz>=0.19.1
