@@ -5,20 +5,44 @@ Requirements and Setup
 ------------------------
 
 
-Python 3 is required. You can use following commands to install.
+Python 3
+-----------
+
+Mac: 
+
+::
+
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    brew install python3
+
+Linux:
 
 ::
 
     sudo apt-get update
     sudo apt-get -y install python3-pip
 
-Download the application repository using git clone:
+Tezos
+-----------
+
+Mac: 
 
 ::
 
-    git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor
+    brew install hidapi libev wget
 
-To install required modules, use pip with requirements.txt provided.
+Mac & Linux:
+
+Follow instructions found here: https://tezos.gitlab.io/introduction/howtoget.html
+
+TRD
+-----------
+
+::
+
+    git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor.git
+
+To install required modules, use pip with requirements.txt provided:
 
 ::
 
@@ -30,7 +54,3 @@ Regulary check and upgrade to the latest available version:
 ::
 
     git pull
-
-The Tezos signer is also needed to run TRD. Please check out the offical documentation_ and install the Tezos signer.
-
-.. _documentation : https://tezos.gitlab.io/introduction/howtoget.html

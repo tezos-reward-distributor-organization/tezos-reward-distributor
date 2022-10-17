@@ -59,6 +59,14 @@ cd tezos-reward-distributor
 pip install -r requirements.txt
 ```
 
+To install the required modules for developers, use pip with `requirements_developer.txt` provided.
+
+```bash
+cd tezos-reward-distributor
+pip install -r requirements_developer.txt
+```
+
+
 Regularly check and upgrade to the latest available version:
 
 ```bash
@@ -98,4 +106,4 @@ TRD necessitates of an interface to get provided with income and delegator data 
 The default provider is the TzKT API. However, it is possible to change the data provider to a local node with the flag `-P rpc`.
 In this case, the default node would be `127.0.0.1:8732`. In order to change the node URL for the provider, you can pass it in the form `node_url:port` using the flag `-A` (e.g. `-P rpc -A 127.0.0.1:8733`). Please note that the node should be an [archive node](https://tezos.gitlab.io/user/history_modes.html#setting-up-a-node-in-archive-mode), and that the port should be the RPC port specified while launching the node.
 
-It is also possible to use a public RPC node with flag `-P prpc`, which defaults to `https://mainnet-tezos.giganode.io`.
+It is also possible to use a public RPC node with flag `-P prpc`, which defaults to `https://rpc.tzstats.com`.
