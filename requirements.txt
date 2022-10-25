@@ -6,3 +6,4 @@ fysom>=2.1.6
 parse>=1.19.0
 transitions>=0.8.11
 tweepy>=4.6.0
+pip>=22.0.4
