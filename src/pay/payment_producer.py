@@ -1,5 +1,4 @@
 import _thread
-import csv
 import os
 import threading
 from datetime import datetime, timedelta
@@ -66,6 +65,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.delegator_pays_xfer_fee = baking_cfg.get_delegator_pays_xfer_fee()
         self.provider_factory = ProviderFactory(reward_data_provider)
         self.name = name
+        self.min_payment_amt_in_mutez = int(
+            baking_cfg.get_min_payment_amount() * MUTEZ_PER_TEZ
+        )
 
         self.node_url = node_url
         self.client_manager = client_manager
@@ -113,6 +115,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.owners_map,
             self.fee_calc,
             self.min_delegation_amt_in_mutez,
+            self.min_payment_amt_in_mutez,
             self.rules_model,
         )
 

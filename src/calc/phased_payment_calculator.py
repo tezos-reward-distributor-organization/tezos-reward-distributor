@@ -35,6 +35,7 @@ class PhasedPaymentCalculator:
         owners_map,
         service_fee_calculator,
         min_delegation_amount,
+        min_payment_amount,
         rules_model,
     ):
         self.rules_model = rules_model
@@ -42,6 +43,7 @@ class PhasedPaymentCalculator:
         self.founders_map = founders_map
         self.fee_calc = service_fee_calculator
         self.min_delegation_amnt = min_delegation_amount
+        self.min_payment_amnt = min_payment_amount
 
     #
     # calculation details
@@ -51,15 +53,18 @@ class PhasedPaymentCalculator:
     # owners reward = owners payment = total reward - delegators reward
     # founders reward = delegators fee = total reward - delegators reward
     ####
-    def calculate(self, reward_provider_model, adjustments=None):
+    def calculate(self, reward_provider_model, adjustments=None, rerun=False):
 
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs = phase0.calculate()
 
         total_rwrd_amnt = int(reward_provider_model.computed_reward_amount)
-        logger.info(
-            "Total rewards before processing is {:<,d} mutez.".format(total_rwrd_amnt)
-        )
+        if not rerun:
+            logger.info(
+                "Total rewards before processing is {:<,d} mutez.".format(
+                    total_rwrd_amnt
+                )
+            )
         if total_rwrd_amnt == 0:
             logger.debug("NO REWARDS to process!")
             return [], 0
@@ -126,6 +131,32 @@ class PhasedPaymentCalculator:
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(
             rwrd_logs, total_rwrd_amnt, adjustments
         )
+
+        # run phases again if calculated minimal payment amount is greater than configured
+        if self.min_payment_amnt and self.min_payment_amnt > int(
+            min([rl.adjusted_amount for rl in rwrd_logs if not rl.skipped])
+        ):
+            self.min_delegation_amnt = int(
+                min(
+                    [
+                        rl.staking_balance
+                        for rl in rwrd_logs
+                        if not rl.skipped
+                        and rl.adjusted_amount > self.min_payment_amnt
+                        and rl.staking_balance
+                    ]
+                )
+            )
+            logger.info(
+                "Setting min_delegation_amt to {:<,d} mutez due to min_payment_amt set to {:<,d}. Running calculations again.".format(
+                    self.min_delegation_amnt, self.min_payment_amnt
+                )
+            )
+            rwrd_logs, total_rwrd_amnt = self.calculate(
+                reward_provider_model, adjustments, True
+            )
+        elif rerun:
+            return rwrd_logs, total_rwrd_amnt
 
         # sort rewards according to type and balance
         rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
