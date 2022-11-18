@@ -109,7 +109,9 @@ class Args:
         self.api_base_url = api_base_url
 
 
-def make_config(baking_address, payment_address, service_fee, min_delegation_amt):
+def make_config(
+    baking_address, payment_address, service_fee, min_delegation_amt, min_payment_amt
+):
     """This helper function creates a YAML bakers config
 
     Args:
@@ -117,6 +119,7 @@ def make_config(baking_address, payment_address, service_fee, min_delegation_amt
         payment_address (str): The payment address.
         service_fee (float): The service fee.
         min_delegation_amt (int): The minimum amount of deligations.
+        min_payment_amt (int): The minimum amount of payments.
 
     Returns:
         str: Yaml file configuration string.
@@ -129,6 +132,7 @@ def make_config(baking_address, payment_address, service_fee, min_delegation_amt
         tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7: 0.25
         tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace: 0.75
     min_delegation_amt: {:d}
+    min_payment_amt: {:d}
     owners_map:
         tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk: 1.0
     payment_address: {:s}
@@ -145,7 +149,11 @@ def make_config(baking_address, payment_address, service_fee, min_delegation_amt
     plugins:
         enabled:
     """.format(
-        baking_address, min_delegation_amt, payment_address, service_fee
+        baking_address,
+        min_delegation_amt,
+        min_payment_amt,
+        payment_address,
+        service_fee,
     )
 
 

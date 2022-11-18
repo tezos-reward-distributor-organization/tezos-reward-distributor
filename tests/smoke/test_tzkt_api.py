@@ -47,6 +47,7 @@ def test_dry_run(ConfigParser, args):
             payment_address="tz1Zrqm4TkJwqTxm5TiyVFh6taXG4Wrq7tko",
             service_fee=9,
             min_delegation_amt=10,
+            min_payment_amt=10,
         )
     )
     assert start_application(args) == 0
@@ -73,6 +74,7 @@ def test_base_url(ConfigParser, args):
             payment_address="tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             service_fee=0,
             min_delegation_amt=0,
+            min_payment_amt=0,
         )
     )
     args.initial_cycle = 100

@@ -16,6 +16,7 @@ DELEGATOR_PAYS_RA_FEE = "delegator_pays_ra_fee"
 PLUGINS_CONF = "plugins"
 REWARDS_TYPE = "rewards_type"
 PAY_DENUNCIATION_REWARDS = "pay_denunciation_rewards"
+MIN_PAYMENT_AMT = "min_payment_amt"
 
 # extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
@@ -111,3 +112,6 @@ class BakingConf:
 
     def __repr__(self) -> str:
         return json.dumps(self.__dict__, cls=CustomJsonEncoder, indent=1)
+
+    def get_min_payment_amount(self):
+        return self.get_attribute(MIN_PAYMENT_AMT)

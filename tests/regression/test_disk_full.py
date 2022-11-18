@@ -22,10 +22,11 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
 baking_config = make_config(
-    "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
-    "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
-    10,
-    0,
+    baking_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+    payment_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+    service_fee=10,
+    min_delegation_amt=0,
+    min_payment_amt=0,
 )
 
 

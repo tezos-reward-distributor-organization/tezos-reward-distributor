@@ -73,6 +73,7 @@ class TestYamlAppConfParser(TestCase):
         )
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr("min_delegation_amt"), 0)
+        self.assertEqual(cnf_prsr.get_conf_obj_attr("min_payment_amt"), 0)
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr("reactivate_zeroed"), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr("delegator_pays_ra_fee"), True)
@@ -139,6 +140,7 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr("supporters_set"), set())
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr("min_delegation_amt"), 0)
+        self.assertEqual(cnf_prsr.get_conf_obj_attr("min_payment_amt"), 0)
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr("reactivate_zeroed"), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr("delegator_pays_ra_fee"), True)
