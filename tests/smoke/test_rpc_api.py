@@ -31,6 +31,7 @@ parsed_config = make_config(
     payment_address="tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs",
     service_fee=10,
     min_delegation_amt=0,
+    min_payment_amt=0,
 )
 
 # This overrides all logging within TRD to output everything during tests
