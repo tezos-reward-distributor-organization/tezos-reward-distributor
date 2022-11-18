@@ -16,6 +16,7 @@ supporters_set:
   {'KT1SenDhs9rL9fpZV3cLRXFovEBafmGqkki8',
    'KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS'}
 min_delegation_amt: 1000
+min_payment_amt: 1
 reactivate_zeroed: True
 delegator_pays_xfer_fee: True
 delegator_pays_ra_fee: True
