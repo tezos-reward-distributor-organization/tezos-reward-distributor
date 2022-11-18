@@ -1,5 +1,4 @@
 from time import sleep
-import json
 import math
 
 import requests
@@ -9,7 +8,6 @@ from api.reward_api import RewardApi
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 from model.reward_provider_model import RewardProviderModel
-from Dexter import dexter_utils as dxtz
 from Constants import MAX_SEQUENT_CALLS
 
 logger = main_logger.getChild("rpc_reward_api")

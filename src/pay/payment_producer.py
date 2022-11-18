@@ -1,5 +1,4 @@
 import _thread
-import csv
 import os
 import threading
 from datetime import datetime, timedelta
