@@ -200,6 +200,12 @@ The baker address is technically a delegator to itself. Its share of rewards are
 </pre></div>
 </div>
 </dd>
+<dt><strong>min_payment_amt</strong></dt><dd><p>A minimum payment amount can be set here. If this value is set to 10, 10 tez are required as minimum. Inherits behavior of excluded delegates set for <em>min_delegation_amt</em>.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">min_payment_amt</span> <span class="p">:</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</dd>
 <dt><strong>reactivate_zeroed</strong></dt><dd><p>True/False - If True, an account to be paid found with a 0 balance will be reactivated, incurring the necessary burn fee and storage, and rewards will be sent. If False, any account with a 0 balance will be skipped payment. This will be noted in the CSV report.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reactivate_zeroed</span> <span class="p">:</span> <span class="kc">True</span>
