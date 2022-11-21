@@ -126,6 +126,13 @@ Available configuration parameters are:
 
     min_delegation_amt : 10
   
+**min_payment_amt**
+  A minimum payment amount can be set here. If this value is set to 10, 10 tez are required as minimum. Inherits behavior of excluded delegates set for *min_delegation_amt*.
+
+  Example::
+
+    min_payment_amt : 10
+
 **reactivate_zeroed**
   True/False - If True, an account to be paid found with a 0 balance will be reactivated, incurring the necessary burn fee and storage, and rewards will be sent. If False, any account with a 0 balance will be skipped payment. This will be noted in the CSV report.
 

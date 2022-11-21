@@ -31,6 +31,7 @@ from model.baking_conf import (
     DEXTER,
     CONTRACTS_SET,
     REWARDS_TYPE,
+    MIN_PAYMENT_AMT,
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
@@ -74,6 +75,7 @@ class BakingYamlConfParser(YamlConfParser):
         self.validate_share_map(conf_obj, OWNERS_MAP)
         self.validate_service_fee(conf_obj)
         self.validate_min_delegation_amt(conf_obj)
+        self.validate_min_payment_amt(conf_obj)
         self.validate_address_set(conf_obj, SUPPORTERS_SET)
         self.validate_specials_map(conf_obj)
         self.validate_dest_map(conf_obj)
@@ -175,6 +177,18 @@ class BakingYamlConfParser(YamlConfParser):
             raise ConfigurationException(
                 "Invalid value:'{}'. {} parameter value must be an non negative integer".format(
                     conf_obj[MIN_DELEGATION_AMT], MIN_DELEGATION_AMT
+                )
+            )
+
+    def validate_min_payment_amt(self, conf_obj):
+        if MIN_PAYMENT_AMT not in conf_obj:
+            conf_obj[MIN_PAYMENT_AMT] = 0
+            return
+
+        if not self.validate_non_negative_int(conf_obj[MIN_PAYMENT_AMT]):
+            raise ConfigurationException(
+                "Invalid value:'{}'. {} parameter value must be an non negative integer".format(
+                    conf_obj[MIN_PAYMENT_AMT], MIN_PAYMENT_AMT
                 )
             )
 

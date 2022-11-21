@@ -1,5 +1,4 @@
 import requests
-from Constants import PRIVATE_NODE_URL
 from api.block_api import BlockApi
 from exception.api_provider import ApiProviderException
 from log_config import main_logger

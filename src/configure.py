@@ -37,6 +37,7 @@ from model.baking_conf import (
     FOUNDERS_MAP,
     OWNERS_MAP,
     MIN_DELEGATION_AMT,
+    MIN_PAYMENT_AMT,
     RULES_MAP,
     MIN_DELEGATION_KEY,
     DELEGATOR_PAYS_XFER_FEE,
@@ -79,6 +80,7 @@ messages = {
     "supporters": "Add supporter address. Supporters do not pay bakery fee. Press enter to skip",
     "specials": "Add any addresses with a special fee in form of 'PKH,fee'. Press enter to skip",
     "noplugins": "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually.",
+    "minpayment": "Specify minimum payment amount in tez. Type enter for 0",
 }
 
 parser = None
@@ -194,9 +196,22 @@ def onmindelegation(input):
             input = "0"
         global parser
         parser.set(MIN_DELEGATION_AMT, float(input))
-        parser.validate_service_fee(parser.get_conf_obj())
+        parser.validate_min_delegation_amt(parser.get_conf_obj())
     except Exception:
-        printe("Invalid service fee: " + traceback.format_exc())
+        printe("Invalid minimum delegation amount: " + traceback.format_exc())
+        return
+    fsm.go()
+
+
+def onminpayment(input):
+    try:
+        if not input:
+            input = "0"
+        global parser
+        parser.set(MIN_PAYMENT_AMT, float(input))
+        parser.validate_min_payment_amt(parser.get_conf_obj())
+    except Exception:
+        printe("Invalid minimum payment amount: " + traceback.format_exc())
         return
     fsm.go()
 
@@ -394,6 +409,7 @@ callbacks = {
     "ownersmap": onownersmap,
     "mindelegation": onmindelegation,
     "mindelegationtarget": onmindelegationtarget,
+    "minpayment": onminpayment,
     "exclude": onexclude,
     "redirect": onredirect,
     "reactivatezeroed": onreactivatezeroed,
@@ -418,7 +434,8 @@ fsm = Fysom(
             {"name": "go", "src": "foundersmap", "dst": "ownersmap"},
             {"name": "go", "src": "ownersmap", "dst": "mindelegation"},
             {"name": "go", "src": "mindelegation", "dst": "mindelegationtarget"},
-            {"name": "go", "src": "mindelegationtarget", "dst": "exclude"},
+            {"name": "go", "src": "mindelegationtarget", "dst": "minpayment"},
+            {"name": "go", "src": "minpayment", "dst": "exclude"},
             {"name": "go", "src": "exclude", "dst": "redirect"},
             {"name": "go", "src": "redirect", "dst": "reactivatezeroed"},
             {"name": "go", "src": "reactivatezeroed", "dst": "delegatorpaysrafee"},
