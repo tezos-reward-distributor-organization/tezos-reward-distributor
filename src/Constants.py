@@ -4,6 +4,7 @@ from enum import Enum
 VERSION = 11.0
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 7
+LINER = "--------------------------------------------"
 
 # Persistent data directories
 BASE_DIR = "~/pymnt"
@@ -12,6 +13,7 @@ SIMULATIONS_DIR = "simulations"
 REPORTS_DIR = "reports"
 DEFAULT_LOG_FILE = "logs/app.log"
 TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
+REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
@@ -114,6 +116,8 @@ ALMOST_ZERO = 1e-6
 DISK_LIMIT_PERCENTAGE = 0.1
 GIGA_BYTE = 1e9
 DISK_LIMIT_SIZE = 5 * GIGA_BYTE
+
+BUF_SIZE = 50
 
 
 class RunMode(Enum):

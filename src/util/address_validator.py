@@ -1,6 +1,18 @@
 PKH_LENGHT = 36
 
 
+class BaseError(Exception):
+    pass
+
+
+class IncorrectAddressError(BaseError):
+    pass
+
+
+class IncorrectLengthError(BaseError):
+    pass
+
+
 class AddressValidator:
     def __init__(self, context) -> None:
         super().__init__()
@@ -8,14 +20,14 @@ class AddressValidator:
 
     def validate(self, address):
         if not address.startswith("tz") and not address.startswith("KT"):
-            raise Exception(
+            raise IncorrectAddressError(
                 "Incorrect input in {}, '{}' is not a tz or KT address".format(
                     self.context, address
                 )
             )
 
         if len(address) != PKH_LENGHT:
-            raise Exception(
+            raise IncorrectLengthError(
                 "Incorrect input in {}, '{}' length must be {}".format(
                     self.context, address, PKH_LENGHT
                 )
