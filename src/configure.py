@@ -12,10 +12,10 @@ from fysom import Fysom
 from NetworkConfiguration import init_network_config
 from api.provider_factory import ProviderFactory
 from cli.client_manager import ClientManager
-from Constants import RewardsType, CONFIG_DIR, PYTHON_MAJOR, PYTHON_MINOR
+from Constants import RewardsType, CONFIG_DIR, PYTHON_MAJOR, PYTHON_MINOR, LINER
 from config.yaml_baking_conf_parser import BakingYamlConfParser
-from launch_common import (
-    print_banner,
+from launch_common import print_banner
+from util.parser import (
     add_argument_network,
     add_argument_base_directory,
     add_argument_node_endpoint,
@@ -54,7 +54,6 @@ from model.baking_conf import (
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
 
-LINER = "--------------------------------------------"
 
 logger = main_logger
 
