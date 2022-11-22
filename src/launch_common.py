@@ -1,7 +1,6 @@
 import os
 import argparse
 from time import sleep
-import sys
 
 from log_config import main_logger
 from NetworkConfiguration import default_network_config_map
@@ -12,7 +11,7 @@ from Constants import (
     PUBLIC_NODE_URL,
     PRIVATE_SIGNER_URL,
     REQUIREMENTS_FILE_PATH,
-    LINER
+    LINER,
 )
 from util.parser import build_parser
 

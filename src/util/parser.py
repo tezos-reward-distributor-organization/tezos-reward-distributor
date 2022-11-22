@@ -10,7 +10,7 @@ from Constants import (
     CURRENT_TESTNET,
     PRIVATE_NODE_URL,
     PUBLIC_NODE_URL,
-    PRIVATE_SIGNER_URL
+    PRIVATE_SIGNER_URL,
 )
 
 
