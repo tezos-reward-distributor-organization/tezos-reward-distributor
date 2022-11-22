@@ -7,10 +7,6 @@ from NetworkConfiguration import default_network_config_map
 from Constants import (
     BASE_DIR,
     DEFAULT_LOG_FILE,
-    PRIVATE_NODE_URL,
-    PUBLIC_NODE_URL,
-    PRIVATE_SIGNER_URL,
-    REQUIREMENTS_FILE_PATH,
     LINER,
 )
 from util.parser import build_parser
