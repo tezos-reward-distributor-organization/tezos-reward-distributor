@@ -6,7 +6,7 @@ from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 from enum import Enum, auto
 from time import sleep
 
-from Constants import VERSION, RunMode, LINER. BUF_SIZE
+from Constants import VERSION, RunMode, LINER, BUF_SIZE
 from NetworkConfiguration import init_network_config
 from calc.service_fee_calculator import ServiceFeeCalculator
 from cli.client_manager import ClientManager

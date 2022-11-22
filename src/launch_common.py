@@ -152,6 +152,3 @@ def args_validation(args, argparser):
             args.dry_run = args.dry_run or args.dry_run_no_consumers
 
     return args
-
-if __name__ == '__main__':
-    main()

@@ -39,6 +39,7 @@ def build_parser():
     add_argument_log_file(argparser)
     return argparser
 
+
 def add_argument_cycle(argparser):
     argparser.add_argument(
         "-C",
