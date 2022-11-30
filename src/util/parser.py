@@ -11,6 +11,7 @@ from Constants import (
     PRIVATE_NODE_URL,
     PUBLIC_NODE_URL,
     PRIVATE_SIGNER_URL,
+    DRY_RUN
 )
 
 
@@ -27,7 +28,6 @@ def build_parser():
     add_argument_node_addr_public(argparser)
     add_argument_base_directory(argparser)
     add_argument_dry(argparser)
-    add_argument_dry_no_consumer(argparser)
     add_argument_signer_endpoint(argparser)
     add_argument_docker(argparser)
     add_argument_background_service(argparser)
@@ -146,7 +146,7 @@ def add_argument_node_addr_public(argparser):
 def add_argument_base_directory(argparser):
     default_dir = os.path.normpath(BASE_DIR)
     argparser.add_argument(
-        "-b",
+        "-B",
         "--base_directory",
         help=(
             "The base path for all TRD data. Default: {} "
@@ -171,17 +171,17 @@ def add_argument_dry(argparser):
     argparser.add_argument(
         "-D",
         "--dry_run",
-        help="Run without injecting payments. Suitable for testing. Does not require locking.",
-        action="store_true",
-    )
-
-
-def add_argument_dry_no_consumer(argparser):
-    argparser.add_argument(
-        "-Dc",
-        "--dry_run_no_consumers",
-        help="Run without any consumers. Suitable for testing. Does not require locking.",
-        action="store_true",
+        help="Run without injecting payments. Suitable for testing. Does not require locking. Options are:"
+        "1. signer(default): Use signer and consumers"
+        "2. no_signer: Do not use signer in dry run but use consumers"
+        "3. no_conumers: Use a signer but no consumer"
+        "4. no_signer_no_conumers: Do not use signer or consumers",
+        action="store",
+        choices=[DRY_RUN['SIGNER'], DRY_RUN['NO_SIGNER'],
+                 DRY_RUN['NO_CONSUMER'], DRY_RUN['NO_SIGNER_NO_CONSUMER']],
+        default=DRY_RUN['SIGNER'],
+        const=DRY_RUN['SIGNER'],
+        nargs='?'
     )
 
 

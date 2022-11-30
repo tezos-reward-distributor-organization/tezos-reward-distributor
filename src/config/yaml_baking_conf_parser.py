@@ -2,7 +2,7 @@ import yaml
 
 from config.addr_type import AddrType
 from config.yaml_conf_parser import YamlConfParser
-from Constants import RewardsType, ALMOST_ZERO
+from Constants import RewardsType, ALMOST_ZERO, DRY_RUN
 from exception.configuration import ConfigurationException
 from log_config import main_logger
 from model.baking_conf import (
@@ -207,7 +207,7 @@ class BakingYamlConfParser(YamlConfParser):
             )
 
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
-            if not self.dry_run:
+            if not self.dry_run == DRY_RUN['NO_SIGNER'] or DRY_RUN['NO_SIGNER_NO_CONSUMER']:
                 self.clnt_mngr.check_pkh_known_by_signer(pymnt_addr)
 
             conf_obj[("__%s_type" % PAYMENT_ADDRESS)] = AddrType.TZ

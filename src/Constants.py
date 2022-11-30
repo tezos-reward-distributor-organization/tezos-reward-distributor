@@ -22,6 +22,7 @@ TESTNET_PREFIX = "ghost"
 TESTNET_SUFFIX = "net"
 CURRENT_TESTNET = (TESTNET_PREFIX + TESTNET_SUFFIX).upper()
 
+
 MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
 FIRST_GRANADA_LEVEL = 1589249
@@ -118,6 +119,13 @@ GIGA_BYTE = 1e9
 DISK_LIMIT_SIZE = 5 * GIGA_BYTE
 
 BUF_SIZE = 50
+
+DRY_RUN = {
+    'SIGNER': 'signer',
+    'NO_SIGNER': 'no_signer',
+    'NO_CONSUMER': 'no_consumer',
+    'NO_SIGNER_NO_CONSUMER': 'no_signer_no_consumer'
+}
 
 
 class RunMode(Enum):
