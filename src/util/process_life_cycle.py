@@ -216,33 +216,19 @@ class ProcessLifeCycle:
 
         try:
             self.fsm.trigger_event(TrdEvent.LAUNCH)
-            print('WAS ABLE TO LAUNCH')
             self.fsm.trigger_event(TrdEvent.PRINT_BANNER)
-            print('WAS ABLE TO PRINT_BANNER')
             self.fsm.trigger_event(TrdEvent.INITIATE_LOGGERS)
-            print('WAS ABLE TO INITIATE_LOGGERS')
             self.fsm.trigger_event(TrdEvent.BUILD_NODE_CLIENT)
-            print('WAS ABLE TO BUILD_NODE_CLIENT')
             self.fsm.trigger_event(TrdEvent.BUILD_NW_CONFIG)
-            print('WAS ABLE TO BUILD_NW_CONFIG')
             self.fsm.trigger_event(TrdEvent.LOAD_CONFIG)
-            print('WAS ABLE TO LOAD_CONFIG')
             self.fsm.trigger_event(TrdEvent.SET_UP_DIRS)
-            print('WAS ABLE TO SET_UP_DIRS')
             self.fsm.trigger_event(TrdEvent.REGISTER_SIGNALS)
-            print('WAS ABLE TO REGISTER_SIGNALS')
             self.fsm.trigger_event(TrdEvent.LOCK)
-            print('WAS ABLE TO LOCK')
             self.fsm.trigger_event(TrdEvent.INIT_FEES)
-            print('WAS ABLE TO INIT_FEES')
             self.fsm.trigger_event(TrdEvent.LOAD_PLUGINS)
-            print('WAS ABLE TO LOAD_PLUGINS')
             self.fsm.trigger_event(TrdEvent.LAUNCH_PRODUCERS)
-            print('WAS ABLE TO LAUNCH_PRODUCERS')
             self.fsm.trigger_event(TrdEvent.LAUNCH_CONSUMERS)
-            print('WAS ABLE TO LAUNCH_CONSUMERS')
             self.fsm.trigger_event(TrdEvent.GO_READY)
-            print('WAS ABLE TO GO READY')
 
             while self.is_running:
                 sleep(10)
@@ -271,7 +257,7 @@ class ProcessLifeCycle:
     def print_argument_configuration(self, e=None):
         mode = "daemon" if self.args.background_service else "interactive"
         logger.info("TRD version {} is running in {} mode.".format(VERSION, mode))
-        print('we get to the print arg configuration')
+
         if self.args.dry_run:
             logger.info(LINER)
             logger.info("DRY RUN MODE")
@@ -296,9 +282,6 @@ class ProcessLifeCycle:
         print_banner(self.args, script_name="")
 
     def do_initiate_loggers(self, e):
-        print('here we have our things')
-        print(self.args)
-        print(self.args.log_file)
         init(self.args.syslog, self.args.log_file, self.args.verbose == "on")
         self.print_argument_configuration()
 
@@ -419,7 +402,6 @@ class ProcessLifeCycle:
         return self.__args
 
     def is_dry_run(self, e):
-        print(bool(self.args.dry_run))
         return bool(self.args.dry_run)
 
     def is_dry_run_no_consumers(self, e):

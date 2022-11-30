@@ -48,7 +48,6 @@ def base_directory_validator(args):
     try:
         args.log_file
     except AttributeError:
-        print('WE ARE IN AN ERROR STATE FOR NO LOG_FILE')
         args.log_file = default_log_file
 
     if args.base_directory != default_base_dir and args.log_file == default_log_file:
