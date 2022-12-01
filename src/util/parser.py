@@ -183,7 +183,7 @@ def add_argument_dry(argparser):
             DRY_RUN["NO_CONSUMER"],
             DRY_RUN["NO_SIGNER_NO_CONSUMER"],
         ],
-        default=DRY_RUN["SIGNER"],
+        default=False,
         const=DRY_RUN["SIGNER"],
         nargs="?",
     )
