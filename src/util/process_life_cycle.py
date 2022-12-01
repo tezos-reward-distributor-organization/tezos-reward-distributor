@@ -19,7 +19,6 @@ from util.config_life_cycle import ConfigLifeCycle
 from util.lock_file import LockFile
 from log_config import main_logger, init, verbose_logger
 from plugins import plugins
-import ipdb
 
 logger = main_logger
 
