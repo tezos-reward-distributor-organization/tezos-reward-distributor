@@ -14,6 +14,8 @@ class ArgsValidator:
         self._parser = parser
         self._logger = main_logger
         self._args = parser.parse_known_args()[0]
+        self._blocks_per_cycle = 0
+        self._nb_freeze_cycle = 0
 
     def _reward_data_provider_validator(self):
         try:

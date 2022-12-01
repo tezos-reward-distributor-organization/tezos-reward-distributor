@@ -47,7 +47,7 @@ def test_reward_data_provider_validator():
     add_argument_provider(argparser)
     mock_validator = ArgsValidator(argparser)
     SUT = mock_validator._reward_data_provider_validator()
-    assert SUT == True
+    assert SUT is True
 
 
 def test_reward_data_provider_validator_throws(caplog):
@@ -131,7 +131,7 @@ def test_base_directory_validator():
     )
     mock_validator = ArgsValidator(argparser)
     SUT = mock_validator._base_directory_validator()
-    assert SUT == True
+    assert SUT is True
 
 
 def test_base_directory_validator_with_log_file():
@@ -146,7 +146,7 @@ def test_base_directory_validator_with_log_file():
     )
     mock_validator = ArgsValidator(argparser)
     SUT = mock_validator._base_directory_validator()
-    assert SUT == True
+    assert SUT is True
 
 
 def test_validate():
