@@ -9,7 +9,6 @@ from Constants import (
 
 
 class ArgsValidator:
-
     def __init__(self, parser):
         self._parser = parser
         self._logger = main_logger
@@ -37,10 +36,12 @@ class ArgsValidator:
             self._logger.info("args: network argument does not exist.")
         else:
             if self._args.network in default_network_config_map:
-                self._blocks_per_cycle = default_network_config_map[
-                    self._args.network]['BLOCKS_PER_CYCLE']
-                self._nb_freeze_cycle = default_network_config_map[
-                    self._args.network]['NB_FREEZE_CYCLE']
+                self._blocks_per_cycle = default_network_config_map[self._args.network][
+                    "BLOCKS_PER_CYCLE"
+                ]
+                self._nb_freeze_cycle = default_network_config_map[self._args.network][
+                    "NB_FREEZE_CYCLE"
+                ]
             return True
 
     def _base_directory_validator(self):
@@ -57,10 +58,13 @@ class ArgsValidator:
         except AttributeError:
             self._args.log_file = default_log_file
 
-        if self._args.base_directory != default_base_dir and self._args.log_file == default_log_file:
+        if (
+            self._args.base_directory != default_base_dir
+            and self._args.log_file == default_log_file
+        ):
             self._args.log_file = os.path.join(
-                os.path.normpath(self._args.base_directory), os.path.normpath(
-                    DEFAULT_LOG_FILE)
+                os.path.normpath(self._args.base_directory),
+                os.path.normpath(DEFAULT_LOG_FILE),
             )
         return True
 
@@ -77,7 +81,10 @@ class ArgsValidator:
         except AttributeError:
             self._logger.info("args: payment_offset argument does not exist.")
         else:
-            if not (self._args.payment_offset >= 0 and self._args.payment_offset < self._blocks_per_cycle):
+            if not (
+                self._args.payment_offset >= 0
+                and self._args.payment_offset < self._blocks_per_cycle
+            ):
                 self._parser.error(
                     "Valid range for payment offset on {:s} is between 0 and {:d}.".format(
                         self._args.network, self._blocks_per_cycle

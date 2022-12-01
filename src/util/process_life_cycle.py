@@ -404,7 +404,10 @@ class ProcessLifeCycle:
         return bool(self.args.dry_run)
 
     def is_dry_run_no_consumers(self, e):
-        return self.args.dry_run == DRY_RUN['NO_CONSUMER'] or DRY_RUN['NO_SIGNER_NO_CONSUMER']
+        return (
+            self.args.dry_run == DRY_RUN["NO_CONSUMER"]
+            or DRY_RUN["NO_SIGNER_NO_CONSUMER"]
+        )
 
     def is_args_not_set(self, e):
         return self.args is None
