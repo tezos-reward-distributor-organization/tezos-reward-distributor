@@ -1,16 +1,11 @@
-import os
-import argparse
 from time import sleep
 
 from log_config import main_logger
-from NetworkConfiguration import default_network_config_map
 from Constants import (
-    BASE_DIR,
-    DEFAULT_LOG_FILE,
     LINER,
 )
 from util.parser import build_parser
-from util.args_validator import args_validator
+from util.args_validator import validate
 
 
 logger = main_logger
@@ -33,7 +28,5 @@ def print_banner(args, script_name):
 def parse_arguments(args=None):
     parser = build_parser()
     # Basic validations
-    # You only have access to the parsed values after you parse_args()
-    args = args_validator(parser)
-    # All passed
+    args = validate(parser)
     return args

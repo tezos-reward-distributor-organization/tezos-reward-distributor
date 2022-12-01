@@ -1,17 +1,8 @@
-from util.parser import build_parser
-from util.args_validator import (
-    reward_data_provider_validator,
-    network_validator,
-    payment_offset_validator,
-    initial_cycle_validator,
-    release_override_validator,
-    base_directory_validator,
-    dry_run_validator,
-)
+from util.parser import build_parser, add_argument_provider, add_argument_payment_offset, add_argument_network
+from util.args_validator import ArgsValidator, validate
 import argparse
 import pytest
 import logging
-from Constants import BASE_DIR
 
 
 LOGGER = logging.getLogger(__name__)
@@ -34,23 +25,32 @@ def remove_argument(parser, arg):
 @pytest.mark.parametrize(
     "argument, validator, err_message",
     [
-        ('-P', reward_data_provider_validator,
+        ('-P', ArgsValidator(argparse.ArgumentParser())._reward_data_provider_validator,
          'args: reward_data_provider argument does not exist'),
-        ('-N', network_validator, 'args: network argument does not exist.'),
-        ('-D', dry_run_validator, 'args: dry_run argument does not exist.')
+        ('-N', ArgsValidator(argparse.ArgumentParser())._network_validator,
+         'args: network argument does not exist.'),
+        ('-D', ArgsValidator(argparse.ArgumentParser())._dry_run_validator,
+         'args: dry_run argument does not exist.')
     ],
 )
-def test_reward_data_provider_throws(argument, validator, err_message, caplog):
+def validator_throws_if_not_existing(argument, validator, err_message, caplog):
     caplog.set_level(logging.INFO)
     parser = build_parser()
     parser.set_defaults()
     remove_argument(parser, argument)
-    known_args = parser.parse_known_args()[0]
-    validator(known_args)
+    validator()
     assert err_message in caplog.text
 
 
-def test_reward_data_provider_validator(caplog):
+def test_reward_data_provider_validator():
+    argparser = argparse.ArgumentParser()
+    add_argument_provider(argparser)
+    mock_validator = ArgsValidator(argparser)
+    SUT = mock_validator._reward_data_provider_validator()
+    assert SUT == True
+
+
+def test_reward_data_provider_validator_throws(caplog):
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
         "-P",
@@ -58,14 +58,17 @@ def test_reward_data_provider_validator(caplog):
         default="BROKEN",
     )
     caplog.set_level(logging.INFO)
-    LOGGER = logging.getLogger('info')
-    args = argparser.parse_known_args()[0]
-    reward_data_provider_validator(args)
+    mock_validator = ArgsValidator(argparser)
+    mock_validator._reward_data_provider_validator()
     assert 'reward_data_provider BROKEN is not functional at the moment. Please use tzkt or rpc' in caplog.text
 
 
-def test_network_validator(caplog):
+def test_payment_offset_validator_throws(caplog, capsys):
     argparser = argparse.ArgumentParser()
+    argparser.add_argument(
+        "--payment_offset",
+        default=-1,
+    )
     argparser.add_argument(
         "-N",
         "--network",
@@ -73,59 +76,51 @@ def test_network_validator(caplog):
         default="GHOSTNET",
     )
     caplog.set_level(logging.INFO)
-    args = argparser.parse_known_args()[0]
-    validator = network_validator(args)
-    assert dict(BLOCKS_PER_CYCLE=4096, NAME='GHOSTNET') == validator
-
-
-def test_payment_offset_validator(caplog, capsys):
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument(
-        "--payment_offset",
-        default=-1,
-    )
-    caplog.set_level(logging.INFO)
-    args = argparser.parse_known_args()[0]
+    mock_validator = ArgsValidator(argparser)
     with pytest.raises(SystemExit) as pytest_wrapped_e:
-        payment_offset_validator(argparser, args, 400, 'GHOSTNET')
+        mock_validator._payment_offset_validator()
     out, err = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 2
-    assert 'error: Valid range for payment offset on GHOSTNET is between 0 and 400' in err
+    assert 'error: Valid range for payment offset on GHOSTNET is' in err
 
 
-def test_initial_cycle_validator(caplog, capsys):
+def test_initial_cycle_validator_throws(caplog, capsys):
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
         "--initial_cycle",
         default=-2,
         type=int,
     )
-    args = argparser.parse_known_args()[0]
+    mock_validator = ArgsValidator(argparser)
     with pytest.raises(SystemExit) as pytest_wrapped_e:
-        initial_cycle_validator(argparser, args)
+        mock_validator._initial_cycle_validator()
     out, err = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 2
     assert 'initial_cycle must be in the range of [-1,), default is -1 to start at last released cycle.' in err
 
 
-def test_release_override_validator(capsys):
+def test_release_override_validator_throws(capsys):
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
         "--release_override",
         default=1,
         type=int,
     )
-    args = argparser.parse_known_args()[0]
-    nb_freeze_cycle = 10
-    network = 'GHOSTNET'
+    argparser.add_argument(
+        "-N",
+        "--network",
+        choices=["MAINNET", "GHOSTNET"],
+        default="GHOSTNET",
+    )
+    mock_validator = ArgsValidator(argparser)
     with pytest.raises(SystemExit) as pytest_wrapped_e:
-        release_override_validator(argparser, args, nb_freeze_cycle, network)
+        mock_validator._release_override_validator()
     out, err = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 2
-    assert 'For GHOSTNET, release-override must be -21 (to pay estimated rewards), -10 (to pay frozen rewards) or 0. Default is 0.' in err
+    assert 'For GHOSTNET, release-override must be' in err
 
 
 def test_base_directory_validator():
@@ -134,10 +129,9 @@ def test_base_directory_validator():
         "--base_directory",
         default='~/TEST_DIR'
     )
-    args = argparser.parse_known_args()[0]
-    SUT = base_directory_validator(args)
-    assert SUT == argparse.Namespace(
-        base_directory='~/TEST_DIR', log_file='~/TEST_DIR/logs/app.log')
+    mock_validator = ArgsValidator(argparser)
+    SUT = mock_validator._base_directory_validator()
+    assert SUT == True
 
 
 def test_base_directory_validator_with_log_file():
@@ -150,7 +144,31 @@ def test_base_directory_validator_with_log_file():
         "--log_file",
         default='~/TEST_LOG_FILE',
     )
-    args = argparser.parse_known_args()[0]
-    SUT = base_directory_validator(args)
+    mock_validator = ArgsValidator(argparser)
+    SUT = mock_validator._base_directory_validator()
+    assert SUT == True
+
+
+def test_validate():
+    SUT = validate(build_parser())
     assert SUT == argparse.Namespace(
-        base_directory='~/TEST_BASE_DIR', log_file='~/TEST_LOG_FILE')
+        initial_cycle=-1,
+        run_mode=1,
+        release_override=0,
+        payment_offset=0,
+        network="MAINNET",
+        node_endpoint="http://127.0.0.1:8732",
+        reward_data_provider="tzkt",
+        node_addr_public="https://rpc.tzkt.io/mainnet",
+        base_directory="~/pymnt",
+        dry_run='signer',
+        signer_endpoint="http://127.0.0.1:6732",
+        docker=False,
+        background_service=False,
+        do_not_publish_stats=False,
+        verbose="on",
+        api_base_url=None,
+        retry_injected=False,
+        syslog=False,
+        log_file="~/pymnt/logs/app.log",
+    )
