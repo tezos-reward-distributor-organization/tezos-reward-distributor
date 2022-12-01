@@ -173,7 +173,7 @@ def test_validate():
         reward_data_provider="tzkt",
         node_addr_public="https://rpc.tzkt.io/mainnet",
         base_directory="~/pymnt",
-        dry_run="signer",
+        dry_run=False,
         signer_endpoint="http://127.0.0.1:6732",
         docker=False,
         background_service=False,
