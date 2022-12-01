@@ -41,7 +41,7 @@ from util.parser import (
             argparse.Namespace(node_addr_public="https://rpc.tzkt.io/mainnet"),
         ),
         (add_argument_base_directory, argparse.Namespace(base_directory="~/pymnt")),
-        (add_argument_dry, argparse.Namespace(dry_run="signer")),
+        (add_argument_dry, argparse.Namespace(dry_run=False)),
         (
             add_argument_signer_endpoint,
             argparse.Namespace(signer_endpoint="http://127.0.0.1:6732"),
@@ -74,7 +74,7 @@ def test_build_parser():
         reward_data_provider="tzkt",
         node_addr_public="https://rpc.tzkt.io/mainnet",
         base_directory="~/pymnt",
-        dry_run="signer",
+        dry_run=False,
         signer_endpoint="http://127.0.0.1:6732",
         docker=False,
         background_service=False,
