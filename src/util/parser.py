@@ -146,7 +146,7 @@ def add_argument_node_addr_public(argparser):
 def add_argument_base_directory(argparser):
     default_dir = os.path.normpath(BASE_DIR)
     argparser.add_argument(
-        "-B",
+        "-b",
         "--base_directory",
         help=(
             "The base path for all TRD data. Default: {} "
