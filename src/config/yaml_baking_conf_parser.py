@@ -207,10 +207,12 @@ class BakingYamlConfParser(YamlConfParser):
             )
 
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
-            if (
-                not self.dry_run == DRY_RUN["NO_SIGNER"]
+            dry_run_no_signer = (
+                self.dry_run
+                and self.dry_run == DRY_RUN["NO_SIGNER"]
                 or DRY_RUN["NO_SIGNER_NO_CONSUMER"]
-            ):
+            )
+            if not dry_run_no_signer:
                 self.clnt_mngr.check_pkh_known_by_signer(pymnt_addr)
 
             conf_obj[("__%s_type" % PAYMENT_ADDRESS)] = AddrType.TZ
