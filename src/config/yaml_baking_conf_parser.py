@@ -203,7 +203,7 @@ class BakingYamlConfParser(YamlConfParser):
 
         if pymnt_addr.startswith("KT"):
             raise ConfigurationException(
-                "KT addresses cannot be used for payments. Only tz addresses are allowed"
+                "KTs addresses cannot be used for payments. Only tz addresses are allowed"
             )
 
         if len(pymnt_addr) == PKH_LENGHT and pymnt_addr.startswith("tz"):
