@@ -174,14 +174,10 @@ def add_argument_dry(argparser):
         help="Run without injecting payments. Suitable for testing. Does not require locking. Options are:"
         "1. signer(default): Use signer and consumers"
         "2. no_signer: Do not use signer in dry run but use consumers"
-        "3. no_conumers: Use a signer but no consumer"
-        "4. no_signer_no_conumers: Do not use signer or consumers",
         action="store",
         choices=[
             DRY_RUN["SIGNER"],
             DRY_RUN["NO_SIGNER"],
-            DRY_RUN["NO_CONSUMER"],
-            DRY_RUN["NO_SIGNER_NO_CONSUMER"],
         ],
         default=False,
         const=DRY_RUN["SIGNER"],

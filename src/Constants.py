@@ -123,8 +123,6 @@ BUF_SIZE = 50
 DRY_RUN = {
     "SIGNER": "signer",
     "NO_SIGNER": "no_signer",
-    "NO_CONSUMER": "no_consumer",
-    "NO_SIGNER_NO_CONSUMER": "no_signer_no_consumer",
 }
 
 

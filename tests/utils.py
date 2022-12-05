@@ -99,7 +99,6 @@ class Args:
         self.config_dir = join(self.base_directory, normpath(CONFIG_DIR))
         self.log_file = join(self.base_directory, normpath(DEFAULT_LOG_FILE))
         self.dry_run = True
-        self.dry_run_no_consumers = True
         self.executable_dirs = dirname(__file__)
         self.docker = False
         self.background_service = False

@@ -210,7 +210,6 @@ class BakingYamlConfParser(YamlConfParser):
             dry_run_no_signer = (
                 self.dry_run
                 and self.dry_run == DRY_RUN["NO_SIGNER"]
-                or DRY_RUN["NO_SIGNER_NO_CONSUMER"]
             )
             if not dry_run_no_signer:
                 self.clnt_mngr.check_pkh_known_by_signer(pymnt_addr)

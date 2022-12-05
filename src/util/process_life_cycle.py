@@ -40,7 +40,6 @@ class TrdState(Enum):
     PLUGINS_LOADED = auto()
     PRODUCERS_READY = auto()
     CONSUMERS_READY = auto()
-    NO_CONSUMERS_READY = auto()
     READY = auto()
     SHUTTING = auto()
 
@@ -114,10 +113,6 @@ class ProcessLifeCycle:
         fsm_builder.add_state(
             TrdState.CONSUMERS_READY, on_enter=self.do_launch_consumers
         )
-        fsm_builder.add_state(
-            TrdState.NO_CONSUMERS_READY,
-            on_enter=lambda e: logger.debug("No consumers needed!"),
-        )
         fsm_builder.add_state(TrdState.READY, on_enter=self.print_ready)
         fsm_builder.add_final_state(TrdState.SHUTTING, on_enter=self.do_shut_down)
 
@@ -177,16 +172,14 @@ class ProcessLifeCycle:
         fsm_builder.add_transition(
             TrdEvent.LAUNCH_PRODUCERS, TrdState.PLUGINS_LOADED, TrdState.PRODUCERS_READY
         )
-        fsm_builder.add_conditional_transition(
+        fsm_builder.add_transition(
             TrdEvent.LAUNCH_CONSUMERS,
             TrdState.PRODUCERS_READY,
-            self.is_dry_run_no_consumers,
-            TrdState.NO_CONSUMERS_READY,
             TrdState.CONSUMERS_READY,
         )
         fsm_builder.add_transition(
             TrdEvent.GO_READY,
-            [TrdState.CONSUMERS_READY, TrdState.NO_CONSUMERS_READY],
+            TrdState.CONSUMERS_READY,
             TrdState.READY,
         )
         fsm_builder.add_transition(
@@ -402,12 +395,6 @@ class ProcessLifeCycle:
 
     def is_dry_run(self, e):
         return bool(self.args.dry_run)
-
-    def is_dry_run_no_consumers(self, e):
-        return (
-            self.args.dry_run == DRY_RUN["NO_CONSUMER"]
-            or DRY_RUN["NO_SIGNER_NO_CONSUMER"]
-        )
 
     def is_args_not_set(self, e):
         return self.args is None

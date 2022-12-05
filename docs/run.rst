@@ -59,9 +59,6 @@ Options
 ``-D --dry_run``
     Run without injecting payments. Suitable for testing. Does not require locking.
 
-``-Dc --dry_run_no_consumers``
-    Run without any consumers. Suitable for testing. Does not require locking.
-
 ``-E --signer_endpoint <url>``
     URL used by the Tezos signer to accept HTTP(S) requests. Default value: ``http://127.0.0.1:6732``.
 
