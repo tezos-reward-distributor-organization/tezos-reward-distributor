@@ -121,9 +121,9 @@ DISK_LIMIT_SIZE = 5 * GIGA_BYTE
 BUF_SIZE = 50
 
 
-class DryRun(Enum):
-    SIGNER = 1
-    NO_SIGNER = 2
+class DryRun(str, Enum):
+    SIGNER = 'SIGNER'
+    NO_SIGNER = 'NO_SIGNER'
 
 
 class RunMode(Enum):
