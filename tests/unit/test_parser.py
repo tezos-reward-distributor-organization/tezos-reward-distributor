@@ -11,7 +11,6 @@ from util.parser import (
     add_argument_stats,
     add_argument_docker,
     add_argument_signer_endpoint,
-    add_argument_dry_no_consumer,
     add_argument_dry,
     add_argument_mode,
     add_argument_base_directory,
@@ -43,7 +42,6 @@ from util.parser import (
         ),
         (add_argument_base_directory, argparse.Namespace(base_directory="~/pymnt")),
         (add_argument_dry, argparse.Namespace(dry_run=False)),
-        (add_argument_dry_no_consumer, argparse.Namespace(dry_run_no_consumers=False)),
         (
             add_argument_signer_endpoint,
             argparse.Namespace(signer_endpoint="http://127.0.0.1:6732"),
@@ -77,7 +75,6 @@ def test_build_parser():
         node_addr_public="https://rpc.tzkt.io/mainnet",
         base_directory="~/pymnt",
         dry_run=False,
-        dry_run_no_consumers=False,
         signer_endpoint="http://127.0.0.1:6732",
         docker=False,
         background_service=False,

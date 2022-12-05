@@ -26,8 +26,8 @@ from util.parser import (
     add_argument_provider,
     add_argument_api_base_url,
     add_argument_log_file,
-    args_validation,
 )
+from util.args_validator import validate
 from log_config import main_logger, init
 from model.baking_conf import (
     BakingConf,
@@ -546,10 +546,9 @@ if __name__ == "__main__":
     add_argument_api_base_url(argparser)
     add_argument_log_file(argparser)
 
-    args = argparser.parse_args()
     # Basic validations
     # You only have access to the parsed values after you parse_args()
-    args = args_validation(args, argparser)
+    args = validate(argparser)
 
     init(False, args.log_file, args.verbose == "on", mode="configure")
 
