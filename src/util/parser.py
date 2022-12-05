@@ -11,7 +11,7 @@ from Constants import (
     PRIVATE_NODE_URL,
     PUBLIC_NODE_URL,
     PRIVATE_SIGNER_URL,
-    DRY_RUN,
+    DryRun,
 )
 
 
@@ -176,11 +176,11 @@ def add_argument_dry(argparser):
         "2. no_signer: Do not use signer",
         action="store",
         choices=[
-            DRY_RUN["SIGNER"],
-            DRY_RUN["NO_SIGNER"],
+            DryRun.SIGNER,
+            DryRun.NO_SIGNER,
         ],
         default=False,
-        const=DRY_RUN["SIGNER"],
+        const=DryRun.SIGNER,
         nargs="?",
     )
 

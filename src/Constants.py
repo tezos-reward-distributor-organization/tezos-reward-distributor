@@ -120,10 +120,10 @@ DISK_LIMIT_SIZE = 5 * GIGA_BYTE
 
 BUF_SIZE = 50
 
-DRY_RUN = {
-    "SIGNER": "signer",
-    "NO_SIGNER": "no_signer",
-}
+
+class DryRun(Enum):
+    SIGNER = 1
+    NO_SIGNER = 2
 
 
 class RunMode(Enum):
