@@ -10,3 +10,4 @@ flake8==4.0.1
 recommonmark==0.7.1
 sphinx_rtd_theme==1.0.0
 sphinxcontrib.spelling>=7.3.2
+pre-commit>=2.20.0
