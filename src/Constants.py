@@ -122,8 +122,8 @@ BUF_SIZE = 50
 
 
 class DryRun(str, Enum):
-    SIGNER = 'SIGNER'
-    NO_SIGNER = 'NO_SIGNER'
+    SIGNER = "SIGNER"
+    NO_SIGNER = "NO_SIGNER"
 
 
 class RunMode(Enum):
