@@ -11,6 +11,7 @@ from Constants import (
     PRIVATE_NODE_URL,
     PUBLIC_NODE_URL,
     PRIVATE_SIGNER_URL,
+    DryRun,
 )
 
 
@@ -27,7 +28,6 @@ def build_parser():
     add_argument_node_addr_public(argparser)
     add_argument_base_directory(argparser)
     add_argument_dry(argparser)
-    add_argument_dry_no_consumer(argparser)
     add_argument_signer_endpoint(argparser)
     add_argument_docker(argparser)
     add_argument_background_service(argparser)
@@ -171,17 +171,17 @@ def add_argument_dry(argparser):
     argparser.add_argument(
         "-D",
         "--dry_run",
-        help="Run without injecting payments. Suitable for testing. Does not require locking.",
-        action="store_true",
-    )
-
-
-def add_argument_dry_no_consumer(argparser):
-    argparser.add_argument(
-        "-Dc",
-        "--dry_run_no_consumers",
-        help="Run without any consumers. Suitable for testing. Does not require locking.",
-        action="store_true",
+        help="Run without injecting payments. Suitable for testing. Does not require locking. Options are:"
+        "1. signer(default): Use signer"
+        "2. no_signer: Do not use signer",
+        action="store",
+        choices=[
+            DryRun.SIGNER,
+            DryRun.NO_SIGNER,
+        ],
+        default=False,
+        const=DryRun.SIGNER,
+        nargs="?",
     )
 
 
