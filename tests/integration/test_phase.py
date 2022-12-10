@@ -100,11 +100,14 @@ class TestCalculatePhases(TestCase):
             baking_cfg.get_dest_map(),
         )
         payment_calc = PhasedPaymentCalculator(
-            baking_cfg.get_founders_map(),
-            baking_cfg.get_owners_map(),
-            srvc_fee_calc,
-            int(baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ),
-            rules_model,
+            founders_map=baking_cfg.get_founders_map(),
+            owners_map=baking_cfg.get_owners_map(),
+            service_fee_calculator=srvc_fee_calc,
+            min_delegation_amount=int(
+                baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ
+            ),
+            min_payment_amount=0,
+            rules_model=rules_model,
         )
 
         rewardApi = factory.newRewardApi(

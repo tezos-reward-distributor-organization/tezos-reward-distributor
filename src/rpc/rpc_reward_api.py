@@ -21,7 +21,8 @@ COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
 COMM_DELEGATE_BALANCE = COMM_BLOCK + "/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 # max rounds set to 2; will scan for stolen blocks up to this round
-COMM_BAKING_RIGHTS = COMM_BLOCK + "/helpers/baking_rights?delegate={}&max_round=2"
+COMM_ALL_BAKING_RIGHTS_HEAD = COMM_BLOCK + "/helpers/baking_rights"
+COMM_BAKING_RIGHTS = COMM_ALL_BAKING_RIGHTS_HEAD + "?delegate={}"
 COMM_SELECTED_STAKE_DISTRIBUTION = (
     COMM_BLOCK + "/context/raw/json/cycle/{}/selected_stake_distribution"
 )
@@ -59,6 +60,50 @@ class RpcRewardApiImpl(RewardApi):
         self.baking_address = baking_address
         self.node_url = node_url
 
+    def get_levels(self, cycle, network="MAINNET"):
+        # Get last block in cycle, where endorsement rewards are distributed by the proto
+        if network == "MAINNET":
+            # Calculating the cycle from level is special on mainnet.
+            # Mainnet's blocks per cycles have changed during granada migration.
+            # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
+            # Cycles start at 0
+            if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
+                level_of_last_block_in_cycle = BLOCKS_BEFORE_GRANADA + (
+                    (cycle - CYCLES_BEFORE_GRANADA + 1) * self.blocks_per_cycle
+                )
+                snapshot_cycle_first_block_level = BLOCKS_BEFORE_GRANADA + (
+                    (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles)
+                    * self.blocks_per_cycle
+                    + 1
+                )
+            else:
+                # Using pre-Granada calculation
+                snapshot_cycle_first_block_level = (
+                    cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
+                )
+                level_of_last_block_in_cycle = cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+        else:
+            # Testnets
+            level_of_last_block_in_cycle = (cycle + 1) * self.blocks_per_cycle
+            snapshot_cycle_first_block_level = (
+                cycle - self.preserved_cycles
+            ) * self.blocks_per_cycle + 1
+        logger.debug(
+            f"We are on {network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}."
+        )
+        logger.debug(
+            f"First block in snapshotting cycle {cycle - self.preserved_cycles} is {snapshot_cycle_first_block_level}."
+        )
+
+        logger.debug(
+            "Cycle {:d}, blocks per cycle {:d}, last block of cycle {:d}".format(
+                cycle,
+                self.blocks_per_cycle,
+                level_of_last_block_in_cycle,
+            )
+        )
+        return level_of_last_block_in_cycle, snapshot_cycle_first_block_level
+
     def get_rewards_for_cycle_map(self, cycle, rewards_type):
         rights_name = "priority" if cycle < CYCLES_BEFORE_TENDERBAKE else "round"
         try:
@@ -69,49 +114,10 @@ class RpcRewardApiImpl(RewardApi):
                 )
             )
 
-            # Get last block in cycle, where endorsement rewards are distributed by the proto
-            if self.network == "MAINNET":
-                # Calculating the cycle from level is special on mainnet.
-                # Mainnet's blocks per cycles have changed during granada migration.
-                # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
-                # Cycles start at 0
-                if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
-                    level_of_last_block_in_cycle = BLOCKS_BEFORE_GRANADA + (
-                        (cycle - CYCLES_BEFORE_GRANADA + 1) * self.blocks_per_cycle
-                    )
-                    snapshot_cycle_first_block_level = BLOCKS_BEFORE_GRANADA + (
-                        (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles)
-                        * self.blocks_per_cycle
-                        + 1
-                    )
-                else:
-                    # Using pre-Granada calculation
-                    snapshot_cycle_first_block_level = (
-                        cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
-                    )
-                    level_of_last_block_in_cycle = (
-                        cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA
-                    )
-            else:
-                # Testnets
-                level_of_last_block_in_cycle = (cycle + 1) * self.blocks_per_cycle
-                snapshot_cycle_first_block_level = (
-                    cycle - self.preserved_cycles
-                ) * self.blocks_per_cycle + 1
-            logger.debug(
-                f"We are on {self.network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}."
-            )
-            logger.debug(
-                f"First block in snapshotting cycle {cycle - self.preserved_cycles} is {snapshot_cycle_first_block_level}."
-            )
-
-            logger.debug(
-                "Cycle {:d}, blocks per cycle {:d}, last block of cycle {:d}".format(
-                    cycle,
-                    self.blocks_per_cycle,
-                    level_of_last_block_in_cycle,
-                )
-            )
+            (
+                level_of_last_block_in_cycle,
+                snapshot_cycle_first_block_level,
+            ) = self.get_levels(cycle, self.network)
 
             potential_endorsement_rewards = self.get_potential_endorsement_rewards(
                 cycle, snapshot_cycle_first_block_level
@@ -128,7 +134,7 @@ class RpcRewardApiImpl(RewardApi):
 
             # Collect baking rights
             baking_rights = self.get_baking_rights(
-                cycle, snapshot_cycle_first_block_level
+                snapshot_cycle_first_block_level, self.baking_address
             )
             nb_blocks = len([r for r in baking_rights if r[rights_name] == 0])
             logger.info(
@@ -269,18 +275,26 @@ class RpcRewardApiImpl(RewardApi):
 
         return response
 
-    def get_baking_rights(self, cycle, level):
+    def get_baking_rights(self, level, baking_address):
         """
         Returns list of baking rights for a given cycle.
         """
         baking_rights_rpc = COMM_BAKING_RIGHTS.format(
-            self.node_url, level, self.baking_address
+            self.node_url, level, baking_address
         )
         try:
             backing_rights = self.do_rpc_request(baking_rights_rpc)
         except ApiProviderException as e:
             raise e from e
         return backing_rights
+
+    def get_all_baking_rights(self, level):
+        all_baking_rights_rpc = COMM_ALL_BAKING_RIGHTS_HEAD.format(self.node_url, level)
+        try:
+            all_backing_rights = self.do_rpc_request(all_baking_rights_rpc)
+        except ApiProviderException as e:
+            raise e from e
+        return all_backing_rights
 
     def get_potential_endorsement_rewards(self, cycle, level):
         """
@@ -290,7 +304,11 @@ class RpcRewardApiImpl(RewardApi):
         """
 
         # NOTE: The tenderbake specific RPC query cannot query below the block level 2244608 and below cycle 467
-        if level < BLOCKS_BEFORE_TENDERBAKE or cycle < CYCLES_BEFORE_TENDERBAKE:
+        if (
+            level != "head"
+            and level < BLOCKS_BEFORE_TENDERBAKE
+            or cycle < CYCLES_BEFORE_TENDERBAKE
+        ):
             logger.warning(
                 "ITHACA SPECIAL: RPC cannot query total_active_stake below the block level 2244608 and below cycle 467. Setting potential_endorsement_rewards to 0."
             )
@@ -520,27 +538,10 @@ class RpcRewardApiImpl(RewardApi):
 
         return current_level, current_cycle
 
-    def get_delegators_and_delgators_balances(
-        self, cycle, snapshot_cycle_first_block_level
-    ):
-
-        # calculate the hash of the block for the chosen snapshot of the rewards cycle
-        stake_snapshot, level_snapshot_block = self.get_stake_snapshot_block_level(
-            cycle, snapshot_cycle_first_block_level
-        )
-        if level_snapshot_block == "":
-            raise ApiProviderException(
-                "[get_d_d_b] level_snapshot_block is empty. Unable to proceed."
-            )
-        if stake_snapshot < 0 or stake_snapshot > 15:
-            raise ApiProviderException(
-                "[get_d_d_b] stake_snapshot is outside allowable range: {} Unable to proceed.".format(
-                    stake_snapshot
-                )
-            )
+    def get_delegators_and_delgators_balances(self, snapshot_cycle_first_block_level):
         # construct RPC for getting list of delegates and staking balance
         get_delegates_request = COMM_DELEGATES.format(
-            self.node_url, level_snapshot_block, self.baking_address
+            self.node_url, snapshot_cycle_first_block_level, self.baking_address
         )
         delegate_staking_balance = 0
         d_a_len = 0
@@ -568,7 +569,7 @@ class RpcRewardApiImpl(RewardApi):
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
                 d_info["staking_balance"] = self.get_contract_balance(
-                    delegator, level_snapshot_block
+                    delegator, snapshot_cycle_first_block_level
                 )
 
                 # Ignore delegators who have zero staking balance
@@ -632,70 +633,3 @@ class RpcRewardApiImpl(RewardApi):
 
         """Helper function to get current balance of delegator"""
         return self.get_contract_balance(address, "head")
-
-    def get_stake_snapshot_block_level(self, cycle, query_level):
-        logger.info(
-            "The reward cycle is {}, level used to query context for the snapshot level is {}".format(
-                cycle, query_level
-            )
-        )
-
-        if self.network == "MAINNET":
-            if cycle in range(468, 474):
-                # cycle 468-473 are special
-                # immediately after ithaca activation, we are using the same snapshot for 5 cycles
-                chosen_snapshot = 0
-                level_snapshot_block = BLOCKS_BEFORE_TENDERBAKE
-                logger.info(
-                    "ITHACA ACTIVATION SPECIAL: The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
-                        chosen_snapshot, cycle, level_snapshot_block
-                    )
-                )
-
-                return chosen_snapshot, level_snapshot_block
-            if cycle == 474:
-                # cycle 474 is special as well
-                # source: baking slack https://tezos-baking.slack.com/archives/CC4FD2HUY/p1649171746418819?thread_ts=1649147045.126789&cid=CC4FD2HUY
-                chosen_snapshot = 15
-                level_snapshot_block = 2252800
-                logger.info(
-                    "ITHACA ACTIVATION SPECIAL: The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
-                        chosen_snapshot, cycle, level_snapshot_block
-                    )
-                )
-
-                return chosen_snapshot, level_snapshot_block
-
-        snapshot_query = (
-            COMM_SNAPSHOT
-            if query_level < BLOCKS_BEFORE_TENDERBAKE
-            else COMM_SNAPSHOT_TENDERBAKE
-        )
-        request = snapshot_query.format(self.node_url, query_level, cycle)
-        chosen_snapshot = self.do_rpc_request(request)
-
-        if self.network == "MAINNET":
-            if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
-                # Using an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
-                level_snapshot_block = BLOCKS_BEFORE_GRANADA + (
-                    (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles - 1)
-                    * self.blocks_per_cycle
-                    + (chosen_snapshot + 1) * self.blocks_per_stake_snapshot
-                )
-            else:
-                level_snapshot_block = cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
-        else:
-            # testnet has no offset
-            level_snapshot_block = (
-                cycle - self.preserved_cycles - 1
-            ) * self.blocks_per_cycle + (
-                chosen_snapshot + 1
-            ) * self.blocks_per_stake_snapshot
-
-        logger.info(
-            "The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
-                chosen_snapshot, cycle, level_snapshot_block
-            )
-        )
-
-        return chosen_snapshot, level_snapshot_block

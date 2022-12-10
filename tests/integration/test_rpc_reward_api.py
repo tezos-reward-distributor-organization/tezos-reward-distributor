@@ -111,53 +111,37 @@ def test_rpc_contract_storage_500(address_api, caplog):
 def test_rpc_contract_storage(address_api):
     # API call to test the storage account
     contract_storage = address_api.get_contract_storage(
-        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block=2500000
+        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block=2957700
     )
     assert contract_storage["string"] == "tz1SvJLCJ1kKP5zVNnoSwVUAuW7dP9HEExE3"
 
 
 def test_rpc_contract_balance(address_api):
     contract_balance = address_api.get_contract_balance(
-        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block=2500000
+        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block=2957700
     )
-    assert contract_balance == 9087234
+    assert contract_balance == 9202886
 
 
-def test_get_stake_snapshot_block_level(address_api):
-    stake_snapshot, level_snapshot_block = address_api.get_stake_snapshot_block_level(
-        500, 2500000
-    )
-    assert stake_snapshot == 6
-    assert level_snapshot_block == 2461184
-
-    stake_snapshot, level_snapshot_block = address_api.get_stake_snapshot_block_level(
-        474, 2300000
-    )
-    assert stake_snapshot == 15
-    assert level_snapshot_block == 2252800
-
-    stake_snapshot, level_snapshot_block = address_api.get_stake_snapshot_block_level(
-        470, 2300000
-    )
-    assert stake_snapshot == 0
-    assert level_snapshot_block == 2244608
-
-
-# TODO: If a test needs to be diabled because of an unsolvable API issue
+# TODO: If a test needs to be disabled because of an unsolvable API issue
 # please use pytest.mark.skip and give an understandable reason for that
 # @pytest.mark.skip(reason="no way of currently testing this")
 def test_get_baking_rights(address_api):
-    backing_rights = address_api.get_baking_rights(518, 2661200)
-    for backing_right in backing_rights:
-        backing_right["delegate"] == BAKEXTZ4ME_ADDRESS
-        backing_right["level"] in [2659190, 2659240, 2660797, 2662063]
+    all_baking_rights = address_api.get_all_baking_rights("head")
+    first_baking_right = all_baking_rights[0]
+    backing_rights = address_api.get_baking_rights(
+        "head", first_baking_right["delegate"]
+    )
+
+    assert backing_rights[0]["delegate"] == first_baking_right["delegate"]
+    assert backing_rights[0]["level"] == first_baking_right["level"]
 
 
 def test_get_potential_endorsement_rewards(address_api):
     potential_endorsement_rewards = address_api.get_potential_endorsement_rewards(
-        518, 2661200
+        555, "head"
     )
-    assert potential_endorsement_rewards == 19336176
+    assert int(potential_endorsement_rewards) == 19161899
 
 
 def test_get_block_data(address_api):
@@ -167,12 +151,12 @@ def test_get_block_data(address_api):
         reward_and_fees,
         bonus,
         double_signing_reward,
-    ) = address_api.get_block_data(2661200)
+    ) = address_api.get_block_data(2958176)
 
-    assert author == "tz1gfArv665EUkSg2ojMBzcbfwuPxAvqPvjo"
-    assert payload_proposer == "tz1gfArv665EUkSg2ojMBzcbfwuPxAvqPvjo"
-    assert reward_and_fees == 10024764
-    assert bonus == 9956378
+    assert author == "tz1irJKkXS2DBWkU1NnmFQx1c1L7pbGg4yhk"
+    assert payload_proposer == "tz1irJKkXS2DBWkU1NnmFQx1c1L7pbGg4yhk"
+    assert reward_and_fees == 10076686
+    assert bonus == 9793510
     assert double_signing_reward == 0
 
 
@@ -255,13 +239,13 @@ def test_get_delegators_and_delgators_balances(address_api):
     (
         delegate_staking_balance,
         delegators,
-    ) = address_api.get_delegators_and_delgators_balances(518, 2661200)
-    assert 80605630975 == delegate_staking_balance
+    ) = address_api.get_delegators_and_delgators_balances(2958176)
+    assert 83170514748 == delegate_staking_balance
 
     sum_delegators_stake = 0
     for delegator, delegator_balance in delegators.items():
         sum_delegators_stake += delegator_balance["staking_balance"]
-    assert 69507505710 == sum_delegators_stake
+    assert 71781483372 == sum_delegators_stake
 
 
 class Mock_Current_Level_Response:
