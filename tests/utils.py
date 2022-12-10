@@ -181,6 +181,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/191232/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
         "/chains/main/blocks/195328/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
         "/chains/main/blocks/2034432/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+        "/chains/main/blocks/2035713/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
     ]:
         return MagicMock(
             status_code=HTTPStatus.OK,
@@ -204,6 +205,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/191232/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
         "/chains/main/blocks/head/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
         "/chains/main/blocks/2034432/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "25689884573")
     if path in [
@@ -211,6 +213,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/head/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
         "/chains/main/blocks/2034432/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
         "/chains/main/blocks/195328/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "62657825729")
     if path in [
@@ -218,6 +221,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/head/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
         "/chains/main/blocks/2034432/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
         "/chains/main/blocks/195328/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "24916325758")
     if path in [
@@ -225,6 +229,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/head/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
         "/chains/main/blocks/2034432/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
         "/chains/main/blocks/195328/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "55646701807")
     if path in [
@@ -232,6 +237,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/195328/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
         "/chains/main/blocks/head/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
         "/chains/main/blocks/2034432/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "981635036")
     if path in [
@@ -239,6 +245,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/195328/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
         "/chains/main/blocks/head/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
         "/chains/main/blocks/2034432/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "30527208")
     if path in [
@@ -246,6 +253,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/195328/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
         "/chains/main/blocks/head/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
         "/chains/main/blocks/2034432/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "6725429231")
     if path in [
@@ -298,7 +306,7 @@ def mock_request_get(url, timeout, **kwargs):
         # return emtpy list - same comment as above
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
 
-    raise Exception("Mocked URL not found")
+    raise Exception(f"Mocked URL not found for path: {path}")
 
 
 class Constants:
