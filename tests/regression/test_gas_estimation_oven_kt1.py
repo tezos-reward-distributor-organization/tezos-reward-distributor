@@ -28,10 +28,11 @@ node_endpoint = PUBLIC_NODE_URL["MAINNET"]
 network = {"NAME": "MAINNET", "MINIMAL_BLOCK_DELAY": 5}
 
 baking_config = make_config(
-    "tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
-    "tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
-    14.99,
-    0,
+    baking_address="tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
+    payment_address="tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
+    service_fee=14.99,
+    min_delegation_amt=0,
+    min_payment_amt=0,
 )
 
 
@@ -83,11 +84,14 @@ def test_batch_payer_total_payout_amount():
         baking_cfg.get_dest_map(),
     )
     payment_calc = PhasedPaymentCalculator(
-        baking_cfg.get_founders_map(),
-        baking_cfg.get_owners_map(),
-        srvc_fee_calc,
-        int(baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ),
-        rules_model,
+        founders_map=baking_cfg.get_founders_map(),
+        owners_map=baking_cfg.get_owners_map(),
+        service_fee_calculator=srvc_fee_calc,
+        min_delegation_amount=int(
+            baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ
+        ),
+        min_payment_amount=0,
+        rules_model=rules_model,
     )
 
     rewardApi = factory.newRewardApi(
