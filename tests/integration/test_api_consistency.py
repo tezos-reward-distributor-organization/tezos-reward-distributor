@@ -1,4 +1,5 @@
 import pytest
+import requests
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, PUBLIC_NODE_URL, RewardsType
 from tests.utils import Constants
 
@@ -35,6 +36,13 @@ def address_block_api_rpc():
     return RpcBlockApiImpl(
         DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], PUBLIC_NODE_URL["MAINNET"]
     )
+
+
+@pytest.fixture
+def current_cycle():
+    tip = "https://api.tzstats.com/explorer/tip"
+    resp = requests.get(tip, timeout=5)
+    return int(resp.json()["cycle"])
 
 
 def test_get_revelation(
@@ -108,22 +116,25 @@ def address_reward_api_rpc():
 
 
 def test_get_rewards_for_cycle_map(
-    address_reward_api_tzkt, address_reward_api_tzstats, address_reward_api_rpc
+    address_reward_api_tzkt,
+    address_reward_api_tzstats,
+    address_reward_api_rpc,
+    current_cycle,
 ):
     rewards_tzkt = address_reward_api_tzkt.get_rewards_for_cycle_map(
-        cycle=526, rewards_type=RewardsType.ACTUAL
+        cycle=current_cycle, rewards_type=RewardsType.ACTUAL
     )
     rewards_tzstats = address_reward_api_tzstats.get_rewards_for_cycle_map(
-        cycle=526, rewards_type=RewardsType.ACTUAL
+        cycle=current_cycle, rewards_type=RewardsType.ACTUAL
     )
-    # rewards_rpc = address_reward_api_rpc.get_rewards_for_cycle_map(
-    #     cycle=526, rewards_type=RewardsType.ACTUAL
-    # )
+    rewards_rpc = address_reward_api_rpc.get_rewards_for_cycle_map(
+        cycle=current_cycle, rewards_type=RewardsType.ACTUAL
+    )
 
     # Check total_reward_amount
     assert rewards_tzkt.total_reward_amount == rewards_tzstats.total_reward_amount
-    # assert rewards_rpc.total_reward_amount == rewards_tzstats.total_reward_amount
-    # assert rewards_rpc.total_reward_amount == rewards_tzkt.total_reward_amount
+    assert rewards_rpc.total_reward_amount == rewards_tzstats.total_reward_amount
+    assert rewards_rpc.total_reward_amount == rewards_tzkt.total_reward_amount
 
     # Check delegate_staking_balance
     assert (
@@ -135,43 +146,48 @@ def test_get_rewards_for_cycle_map(
 
     # Check delegator_balance_dict
     assert rewards_tzkt.delegator_balance_dict == rewards_tzstats.delegator_balance_dict
-    # assert rewards_rpc.delegator_balance_dict == rewards_tzstats.delegator_balance_dict
-    # assert rewards_rpc.delegator_balance_dict == rewards_tzkt.delegator_balance_dict
+    assert rewards_rpc.delegator_balance_dict == rewards_tzstats.delegator_balance_dict
+    assert rewards_rpc.delegator_balance_dict == rewards_tzkt.delegator_balance_dict
 
     # Check num_baking_rights
     assert rewards_tzkt.num_baking_rights == rewards_tzstats.num_baking_rights
-    # assert rewards_rpc.num_baking_rights == rewards_tzstats.num_baking_rights
-    # assert rewards_rpc.num_baking_rights == rewards_tzkt.num_baking_rights
+    assert rewards_rpc.num_baking_rights == rewards_tzstats.num_baking_rights
+    assert rewards_rpc.num_baking_rights == rewards_tzkt.num_baking_rights
 
     # Check denunciation_rewards
     assert rewards_tzkt.denunciation_rewards == rewards_tzstats.denunciation_rewards
-    # assert rewards_rpc.denunciation_rewards == rewards_tzstats.denunciation_rewards
-    # assert rewards_rpc.denunciation_rewards == rewards_tzkt.denunciation_rewards
+    assert rewards_rpc.denunciation_rewards == rewards_tzstats.denunciation_rewards
+    assert rewards_rpc.denunciation_rewards == rewards_tzkt.denunciation_rewards
 
     # Check equivocation_losses
     assert rewards_tzkt.equivocation_losses == rewards_tzstats.equivocation_losses
-    # assert rewards_rpc.equivocation_losses == rewards_tzstats.equivocation_losses
-    # assert rewards_rpc.equivocation_losses == rewards_tzkt.equivocation_losses
+    assert rewards_rpc.equivocation_losses == rewards_tzstats.equivocation_losses
+    assert rewards_rpc.equivocation_losses == rewards_tzkt.equivocation_losses
 
     # Check offline_losses
     assert rewards_tzkt.offline_losses == rewards_tzstats.offline_losses
-    # assert rewards_rpc.offline_losses == rewards_tzstats.offline_losses
-    # assert rewards_rpc.offline_losses == rewards_tzkt.offline_losses
+    assert rewards_rpc.offline_losses == rewards_tzstats.offline_losses
+    assert rewards_rpc.offline_losses == rewards_tzkt.offline_losses
 
     # Check potential_endorsement_rewards
-    assert (
-        rewards_tzkt.potential_endorsement_rewards
-        == rewards_tzstats.potential_endorsement_rewards
+    # TODO: tzstats total_active_stake does not match rpc and tzkt exactly thus the approximation
+    assert rewards_tzkt.potential_endorsement_rewards == pytest.approx(
+        rewards_tzstats.potential_endorsement_rewards, 60000
     )
-    # assert rewards_rpc.potential_endorsement_rewards == rewards_tzstats.potential_endorsement_rewards
-    # assert rewards_rpc.potential_endorsement_rewards == rewards_tzkt.potential_endorsement_rewards
+    assert rewards_rpc.potential_endorsement_rewards == pytest.approx(
+        rewards_tzstats.potential_endorsement_rewards, 60000
+    )
+    assert (
+        rewards_rpc.potential_endorsement_rewards
+        == rewards_tzkt.potential_endorsement_rewards
+    )
 
     # Check rewards_and_fees
     assert rewards_tzkt.rewards_and_fees == rewards_tzstats.rewards_and_fees
-    # assert rewards_rpc.rewards_and_fees == rewards_tzstats.rewards_and_fees
-    # assert rewards_rpc.rewards_and_fees == rewards_tzkt.rewards_and_fees
+    assert rewards_rpc.rewards_and_fees == rewards_tzstats.rewards_and_fees
+    assert rewards_rpc.rewards_and_fees == rewards_tzkt.rewards_and_fees
 
     # Check computed_reward_amount
     assert rewards_tzkt.computed_reward_amount == rewards_tzstats.computed_reward_amount
-    # assert rewards_rpc.computed_reward_amount == rewards_tzstats.computed_reward_amount
-    # assert rewards_rpc.computed_reward_amount == rewards_tzkt.computed_reward_amount
+    assert rewards_rpc.computed_reward_amount == rewards_tzstats.computed_reward_amount
+    assert rewards_rpc.computed_reward_amount == rewards_tzkt.computed_reward_amount

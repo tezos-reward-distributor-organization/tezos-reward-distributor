@@ -277,14 +277,7 @@ class TzStatsRewardProviderHelper:
             raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
         resp_json = resp.json()
-        staking_supply = resp_json["staking_supply"]
-        if staking_supply == 0 and cycle > self.get_current_cycle():
-            verbose_logger.info(
-                "Using total stake of snapshot cycle {}".format(
-                    resp_json["snapshot_cycle"]["cycle"]
-                )
-            )
-            staking_supply = resp_json["snapshot_cycle"]["staking_supply"]
+        staking_supply = resp_json["snapshot_cycle"]["staking_supply"]
         return staking_supply
 
     def get_current_cycle(self):

@@ -333,7 +333,9 @@ class RpcRewardApiImpl(RewardApi):
                 for ssd in selected_stake_distribution
                 if ssd["baker"] == self.baking_address
             ][0]
-            return (
+
+            # https://tezos-dev.slack.com/archives/CV5NX7F2L/p1649433246273169?thread_ts=1648854391.875409&cid=CV5NX7F2L
+            potential_endorsement_rewards = (
                 math.floor(
                     delegate_stake
                     * number_of_endorsements_per_cycle
@@ -341,6 +343,7 @@ class RpcRewardApiImpl(RewardApi):
                 )
                 * self.endorsing_reward_per_slot
             )
+            return potential_endorsement_rewards
 
         except ApiProviderException as e:
             raise e from e

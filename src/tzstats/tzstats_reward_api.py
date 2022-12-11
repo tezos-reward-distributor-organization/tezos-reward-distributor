@@ -40,6 +40,8 @@ class TzStatsRewardApiImpl(RewardApi):
         number_of_endorsements_per_cycle = (
             self.blocks_per_cycle * self.consensus_committee_size
         )
+
+        # https://tezos-dev.slack.com/archives/CV5NX7F2L/p1649433246273169?thread_ts=1648854391.875409&cid=CV5NX7F2L
         potential_endorsement_rewards = (
             int(
                 math.floor(
