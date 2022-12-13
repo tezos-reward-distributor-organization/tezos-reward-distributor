@@ -35,6 +35,7 @@ from model.baking_conf import (
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
+import ipdb
 
 logger = main_logger.getChild("config_parser")
 
@@ -240,16 +241,23 @@ class BakingYamlConfParser(YamlConfParser):
                     "Baking address must be a valid tz address."
                 )
             else:
-                if not self.block_api.get_revelation(baking_address):
-                    raise ConfigurationException(
-                        "Baking address {} did not reveal key.".format(baking_address)
-                    )
-
-                if not self.block_api.get_delegatable(baking_address):
-                    raise ConfigurationException(
-                        "Baking address {} is not enabled for delegation".format(
-                            baking_address
+                try:
+                    if not self.block_api.get_revelation(baking_address):
+                        raise ConfigurationException(
+                            "Baking address {} did not reveal key.".format(
+                                baking_address
+                            )
                         )
+
+                    if not self.block_api.get_delegatable(baking_address):
+                        raise ConfigurationException(
+                            "Baking address {} is not enabled for delegation".format(
+                                baking_address
+                            )
+                        )
+                except KeyError:
+                    raise ConfigurationException(
+                        "unable to use signer, do you have it running?"
                     )
         else:
             raise ConfigurationException(

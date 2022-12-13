@@ -35,6 +35,31 @@ def test_address_validator_passes(type, input, expected):
 @pytest.mark.parametrize(
     "type, input, expected",
     [
+        ("baking address", "1234567", Exception),
+        ("baking address", "tz1234567", Exception),
+    ],
+)
+def test_address_tz_validator_throws(type, input, expected):
+    with pytest.raises(expected):
+        validator = AddressValidator(type)
+        validator.tz_validate(input)
+
+
+@pytest.mark.parametrize(
+    "type, input, expected",
+    [
+        ("baking address", "tz1234567891011121314151617181920212", None),
+    ],
+)
+def test_address_tz_validator_passes(type, input, expected):
+    validator = AddressValidator(type)
+    validation = validator.tz_validate(input)
+    assert validation is expected
+
+
+@pytest.mark.parametrize(
+    "type, input, expected",
+    [
         ("baking address", "tz1234567891011121314151617181920212", True),
         ("baking address", "KT1234567891011121314151617181920212", True),
         ("baking address", "KT12345678910111213141516171819202", False),

@@ -39,67 +39,124 @@ payment_head = {
 TEST_TZ_ADDRESS = "tz2JrnsSXPkN3QHKsYm1bGijwVHc1vFaR5kU"
 
 
-@patch(
-    "cli.client_manager.ClientManager.request_url_post",
-    side_effect=[
-        (HTTPStatus.OK, run_ops_parsed),
-        (HTTPStatus.OK, forge),
-        (HTTPStatus.OK, forge),
-        (HTTPStatus.OK, None),
-    ],
-)
-@patch(
-    "cli.client_manager.ClientManager.request_url",
-    side_effect=[
-        (HTTPStatus.OK, 3209357),
-        (HTTPStatus.OK, payment_head),
-    ],
-)
-@patch(
-    "cli.client_manager.ClientManager.sign",
-    return_value=forge,
-)
-def test_attempt_single_batch_tz(sign, request_url, request_url_post):
-    network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
-    batch_payer = BatchPayer(
-        node_url="node_addr",
-        pymnt_addr=TEST_TZ_ADDRESS,
-        clnt_mngr=ClientManager(
-            node_endpoint=PUBLIC_NODE_URL[CURRENT_TESTNET],
-            signer_endpoint=PRIVATE_SIGNER_URL,
-        ),
-        delegator_pays_ra_fee=True,
-        delegator_pays_xfer_fee=True,
-        network_config=network_config,
-        plugins_manager=MagicMock(),
-        dry_run=False,
-    )
-    batch_payer.base_counter = 0
-    reward_log = RewardLog(
-        address=TEST_TZ_ADDRESS,
-        type="D",
-        staking_balance=80,
-        current_balance=100,
-    )
+# @patch(
+#     "cli.client_manager.ClientManager.request_url_post",
+#     side_effect=[
+#         (HTTPStatus.OK, run_ops_parsed),
+#         (HTTPStatus.OK, forge),
+#         (HTTPStatus.OK, forge),
+#         (HTTPStatus.OK, None),
+#     ],
+# )
+# @patch(
+#     "cli.client_manager.ClientManager.request_url",
+#     side_effect=[
+#         (HTTPStatus.OK, 3209357),
+#         (HTTPStatus.OK, payment_head),
+#     ],
+# )
+# @patch(
+#     "cli.client_manager.ClientManager.sign",
+#     return_value=forge,
+# )
+# def test_attempt_single_batch_tz(sign, request_url, request_url_post):
+#     network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
+#     batch_payer = BatchPayer(
+#         node_url="node_addr",
+#         pymnt_addr=TEST_TZ_ADDRESS,
+#         clnt_mngr=ClientManager(
+#             node_endpoint=PUBLIC_NODE_URL[CURRENT_TESTNET],
+#             signer_endpoint=PRIVATE_SIGNER_URL,
+#         ),
+#         delegator_pays_ra_fee=True,
+#         delegator_pays_xfer_fee=True,
+#         network_config=network_config,
+#         plugins_manager=MagicMock(),
+#         dry_run=False,
+#     )
+#     batch_payer.base_counter = 0
+#     reward_log = RewardLog(
+#         address=TEST_TZ_ADDRESS,
+#         type="D",
+#         staking_balance=80,
+#         current_balance=100,
+#     )
 
-    reward_log.adjusted_amount = 15577803
-    reward_log.skipped = False
+#     reward_log.adjusted_amount = 15577803
+#     reward_log.skipped = False
 
-    opt_counter = OpCounter()
-    status, operation_hash, _ = batch_payer.attempt_single_batch(
-        [reward_log], opt_counter, dry_run=True
-    )
-    assert status == PaymentStatus.DONE
-    assert operation_hash is None
-    assert reward_log.delegator_transaction_fee == int(
-        TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"]
-    )
-    assert opt_counter.counter == 3209358
+#     opt_counter = OpCounter()
+#     status, operation_hash, _ = batch_payer.attempt_single_batch(
+#         [reward_log], opt_counter, dry_run=True
+#     )
+#     assert status == PaymentStatus.DONE
+#     assert operation_hash is None
+#     assert reward_log.delegator_transaction_fee == int(
+#         TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"]
+#     )
+#     assert opt_counter.counter == 3209358
 
 
 TEST_KT_ADDRESS = "KT1SZrurTqTBWsWsZUVR27GZ8bHK3EhFV62g"
 
 
+# @patch(
+#     "cli.client_manager.ClientManager.request_url_post",
+#     side_effect=[
+#         (HTTPStatus.OK, run_ops_parsed),
+#         (HTTPStatus.OK, forge),
+#         (HTTPStatus.OK, run_ops_parsed),
+#         (HTTPStatus.OK, forge),
+#         (HTTPStatus.OK, forge),
+#     ],
+# )
+# @patch(
+#     "cli.client_manager.ClientManager.request_url",
+#     side_effect=[
+#         (HTTPStatus.OK, 3),
+#         (HTTPStatus.OK, payment_head),
+#     ],
+# )
+# @patch(
+#     "cli.client_manager.ClientManager.sign",
+#     return_value=forge,
+# )
+# def test_attempt_single_batch_KT(sign, request_url, request_url_post):
+#     network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
+#     batch_payer = BatchPayer(
+#         node_url="node_addr",
+#         pymnt_addr=TEST_TZ_ADDRESS,
+#         clnt_mngr=ClientManager(
+#             node_endpoint=PUBLIC_NODE_URL[CURRENT_TESTNET],
+#             signer_endpoint=PRIVATE_SIGNER_URL,
+#         ),
+#         delegator_pays_ra_fee=True,
+#         delegator_pays_xfer_fee=True,
+#         network_config=network_config,
+#         plugins_manager=MagicMock(),
+#         dry_run=False,
+#     )
+#     batch_payer.base_counter = 0
+#     reward_log = RewardLog(
+#         address=TEST_KT_ADDRESS,
+#         type="D",
+#         staking_balance=50,
+#         current_balance=100,
+#     )
+
+#     reward_log.adjusted_amount = 15577803
+#     reward_log.skipped = False
+
+#     opt_counter = OpCounter()
+#     status, operation_hash, _ = batch_payer.attempt_single_batch(
+#         [reward_log], opt_counter, dry_run=True
+#     )
+#     assert status == PaymentStatus.DONE
+#     assert operation_hash is None
+#     assert reward_log.delegator_transaction_fee == 8994
+#     assert opt_counter.counter == 4
+
+
 @patch(
     "cli.client_manager.ClientManager.request_url_post",
     side_effect=[
@@ -113,15 +170,16 @@ TEST_KT_ADDRESS = "KT1SZrurTqTBWsWsZUVR27GZ8bHK3EhFV62g"
 @patch(
     "cli.client_manager.ClientManager.request_url",
     side_effect=[
-        (HTTPStatus.OK, 3),
-        (HTTPStatus.OK, payment_head),
+        (HTTPStatus.FAILED_DEPENDENCY, 3),
+        (HTTPStatus.FAILED_DEPENDENCY, payment_head),
     ],
+    return_value=forge,
 )
 @patch(
     "cli.client_manager.ClientManager.sign",
     return_value=forge,
 )
-def test_attempt_single_batch_KT(sign, request_url, request_url_post):
+def test_attempt_single_batch_failed(sign, request_url, request_url_post):
     network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
     batch_payer = BatchPayer(
         node_url="node_addr",
@@ -148,10 +206,19 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
     reward_log.skipped = False
 
     opt_counter = OpCounter()
+    opt_counter.get = MagicMock()
+    opt_counter.get.return_value = 0
     status, operation_hash, _ = batch_payer.attempt_single_batch(
         [reward_log], opt_counter, dry_run=True
     )
+
+    # a = batch_payer.attempt_single_batch(
+    #     [reward_log], opt_counter, dry_run=False
+    # )
+    print("^^^^^^^whoip^^^^^^^^^^^")
+    # print(batch_payer.attempt_single_batch(
+    #     [reward_log], opt_counter, dry_run=False
+    # ))
+    print("^^^^^^^whoip end^^^^^^^^^^^")
     assert status == PaymentStatus.DONE
     assert operation_hash is None
-    assert reward_log.delegator_transaction_fee == 8994
-    assert opt_counter.counter == 4

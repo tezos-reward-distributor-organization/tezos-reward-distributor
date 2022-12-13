@@ -53,6 +53,7 @@ from model.baking_conf import (
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
+import ipdb
 
 
 logger = main_logger
@@ -247,6 +248,7 @@ def onexclude(input):
 
     try:
         address_target = input.split(",")
+
         address = address_target[0].strip()
         target = address_target[1].strip()
         AddressValidator("excluded address").validate(address)

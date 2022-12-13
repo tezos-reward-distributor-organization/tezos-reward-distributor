@@ -2,6 +2,7 @@ from tzkt.tzkt_api import TzKTApi, TzKTApiError
 from api.block_api import BlockApi
 from log_config import main_logger
 from typing import Tuple
+import ipdb
 
 logger = main_logger.getChild("tzkt_block_api")
 
@@ -28,9 +29,16 @@ class TzKTBlockApiImpl(BlockApi):
 
         return (current_cycle, current_level)
 
-    def get_revelation(self, pkh, verbose=False):
+    def get_revelation(self, pkh):
         account = self.api.get_account_by_address(pkh)
-        return bool(account["revealed"])
+        sut = account.get("revealed")
+        if sut:
+            print("hello")
+            bool(sut)
+        else:
+            print("yor")
+            bool(sut)
+        return bool(sut)
 
     def get_delegatable(self, pkh):
         account = self.api.get_account_by_address(pkh)
