@@ -111,7 +111,7 @@ class ClientManager:
             )
         if response.status_code != HTTPStatus.OK:
             raise ClientException(
-                "Error at signing. Make sure tezos-signer is up and running 'tezos-signer launch http signer': '{}'".format(
+                "Error at signing. Make sure octez-signer is up and running 'octez-signer launch http signer': '{}'".format(
                     response.text
                 )
             )
@@ -127,7 +127,7 @@ class ClientManager:
 
         signer_exception = (
             f"Error querying the signer at url {signer_url}. \n"
-            f'Please make sure you have started the signer using "./tezos-signer launch http signer", \n'
+            f'Please make sure you have started the signer using "./octez-signer launch http signer", \n'
             f"imported the secret key of the payout address {key_name}, \n"
             f"and specified the URL of signer using the flag -E http://<signer_addr>:<port> (default {PRIVATE_SIGNER_URL})"
         )
@@ -154,7 +154,7 @@ class ClientManager:
 
         signer_exception = (
             f"Error querying the signer at url {signer_url}. \n"
-            f'Please make sure to start the signer using "./tezos-signer launch http signer", \n'
+            f'Please make sure to start the signer using "./octez-signer launch http signer", \n'
             f"import the secret key of the payout address \n"
             f"and specify the url using the flag -E http://<signer_addr>:<port> (default {PRIVATE_SIGNER_URL})"
         )
