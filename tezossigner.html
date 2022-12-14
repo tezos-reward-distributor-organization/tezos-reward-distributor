@@ -88,7 +88,7 @@
 <li><p>Get the secret key of the payment address. If the payment address was created using a wallet, please refer to the GUI/documentation of the used wallet to get the secret key of your payment address. If the payment address was created using the Tezos client, or if the secret key was previously imported to the Tezos Client, it can be obtained using the following command (Replace “<cite>&lt;myaddressalias&gt;</cite>” with your alias):</p></li>
 </ol>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">client</span> <span class="n">show</span> <span class="n">address</span> <span class="o">&lt;</span><span class="n">myaddressalias</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">S</span>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">octez</span><span class="o">-</span><span class="n">client</span> <span class="n">show</span> <span class="n">address</span> <span class="o">&lt;</span><span class="n">myaddressalias</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">S</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -96,7 +96,7 @@
 <li><p>Import the obtained secret key to the Tezos Signer. For that, you can replace “edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX” with your encryped private key in the following command line:</p></li>
 </ol>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">signer</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="o">&lt;</span><span class="n">myaddressalias</span><span class="o">&gt;</span> <span class="n">encrypted</span><span class="p">:</span><span class="n">edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">octez</span><span class="o">-</span><span class="n">signer</span> <span class="kn">import</span> <span class="nn">secret</span> <span class="n">key</span> <span class="o">&lt;</span><span class="n">myaddressalias</span><span class="o">&gt;</span> <span class="n">encrypted</span><span class="p">:</span><span class="n">edesk1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -104,7 +104,7 @@
 <li><p>Launch the Tezos Signer. The following command will use the default IP address (127.0.0.1) and port (6732) of the Tezos signer, but these can be configured differently if desired by the user:</p></li>
 </ol>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tezos</span><span class="o">-</span><span class="n">signer</span> <span class="n">launch</span> <span class="n">http</span> <span class="n">signer</span>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">octez</span><span class="o">-</span><span class="n">signer</span> <span class="n">launch</span> <span class="n">http</span> <span class="n">signer</span>
 </pre></div>
 </div>
 </div></blockquote>
