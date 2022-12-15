@@ -176,8 +176,8 @@ def add_argument_dry(argparser):
         "2. no_signer: Do not use signer",
         action="store",
         choices=[
-            DryRun.SIGNER,
-            DryRun.NO_SIGNER,
+            'SIGNER',
+            'NO_SIGNER',
         ],
         default=False,
         const=DryRun.SIGNER,
