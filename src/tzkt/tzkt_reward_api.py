@@ -32,9 +32,15 @@ class TzKTRewardApiImpl(RewardApi):
         # calculate estimated rewards
         num_blocks = split["blocks"] + split["missedBlocks"] + split["futureBlocks"]
 
-        # warning: this value will be 0 after the cycle ran.
+        # warning: futureEndorsementRewards will be 0 after the cycle ran.
+        # if we query a past cycle then we set the potential_endorsement_rewards with the
+        # actual endorsement reward for consistency with other reward apis
         # But after cycle ran, we never pay estimates, so this value will not be used.
-        potential_endorsement_rewards = split["futureEndorsementRewards"]
+        potential_endorsement_rewards = (
+            split["futureEndorsementRewards"]
+            if self.api.get_current_cycle() <= cycle
+            else split["endorsementRewards"]
+        )
 
         # rewards earned (excluding equivocation losses)
         rewards_and_fees = (
