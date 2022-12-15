@@ -10,24 +10,22 @@ from tzstats.tzstats_api_constants import (
     idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
-    idx_income_lost_revelation_fees,
-    idx_income_lost_revelation_rewards,
-    idx_delegator_address,
-    idx_balance,
-    idx_baker_delegated,
     idx_cb_delegator_address,
     idx_cb_current_balance,
+    idx_n_active_stake,
+    idx_income_lost_accusation_deposits,
+    idx_income_lost_seed_fees,
+    idx_income_lost_seed_rewards,
     idx_income_missed_baking_income,
     idx_income_missed_endorsing_income,
-    idx_income_double_baking_income,
-    idx_income_double_endorsing_income,
-    idx_n_active_stake,
 )
 from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
 
 logger = main_logger
 
 rewards_split_call = "/tables/income?address={}&cycle={}"
+
+reward_snapshot = "/explorer/bakers/{}/snapshot/{}"
 
 delegators_call = "/tables/snapshot?cycle={}&is_selected=1&baker={}&columns=balance,delegated,address&limit=50000"
 
@@ -42,6 +40,8 @@ snapshot_cycle = "/explorer/cycle/{}"
 contract_storage = "/explorer/contract/{}/storage"
 
 balance_LP_call = "/explorer/bigmap/{}/values?limit=100&offset={}&block={}"
+
+tip = "/explorer/tip"
 
 
 def split(input, n):
@@ -105,13 +105,14 @@ class TzStatsRewardProviderHelper:
         root["equivocation_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                0
-                # float(resp[idx_income_lost_accusation_fees])
-                # + float(resp[idx_income_lost_accusation_rewards])
-                # + float(resp[idx_income_lost_revelation_fees])
-                # + float(resp[idx_income_lost_revelation_rewards])
+                float(resp[idx_income_lost_accusation_fees])
+                + float(resp[idx_income_lost_accusation_rewards])
+                + float(resp[idx_income_lost_accusation_deposits])
+                + float(resp[idx_income_lost_seed_fees])
+                + float(resp[idx_income_lost_seed_rewards])
             )
         )
+        # TODO: Find out how to calculate denuciation rewards via tzstats
         root["denunciation_rewards"] = int(
             MUTEZ_PER_TEZ
             * (
@@ -124,18 +125,14 @@ class TzStatsRewardProviderHelper:
         root["offline_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                0
-                # float(resp[idx_income_missed_baking_income])
-                # + float(resp[idx_income_missed_endorsing_income])
+                float(resp[idx_income_missed_baking_income])
+                + float(resp[idx_income_missed_endorsing_income])
             )
         )
 
-        #
         # Get staking balances of delegators at snapshot block
         #
-        uri = self.api + delegators_call.format(
-            cycle - self.preserved_cycles - 1, self.baking_address
-        )
+        uri = self.api + reward_snapshot.format(self.baking_address, cycle)
         sleep(0.5)  # be nice to tzstats
 
         verbose_logger.debug(
@@ -154,24 +151,12 @@ class TzStatsRewardProviderHelper:
 
         resp = resp.json()
 
-        for delegator in resp:
-
-            if delegator[idx_delegator_address] == self.baking_address:
-                root["delegate_staking_balance"] = int(
-                    MUTEZ_PER_TEZ
-                    * (
-                        float(delegator[idx_balance])
-                        + float(delegator[idx_baker_delegated])
-                    )
-                )
-            else:
-                delegator_info = {"staking_balance": 0, "current_balance": 0}
-                delegator_info["staking_balance"] = int(
-                    MUTEZ_PER_TEZ * float(delegator[idx_balance])
-                )
-                root["delegators_balances"][
-                    delegator[idx_delegator_address]
-                ] = delegator_info
+        root["delegate_staking_balance"] = int(resp["staking_balance"])
+        for delegator in resp["delegators"]:
+            delegator_info = {"staking_balance": 0, "current_balance": 0}
+            delegator_info["staking_balance"] = int(delegator["balance"])
+            if delegator_info["staking_balance"] > 0:
+                root["delegators_balances"][delegator["address"]] = delegator_info
 
         #
         # Get current balance of delegates
@@ -235,7 +220,7 @@ class TzStatsRewardProviderHelper:
         if len(need_curr_balance_fetch) > 0:
             split_addresses = split(need_curr_balance_fetch, 50)
             for list_address in split_addresses:
-                list_curr_balances = self.__fetch_current_balance(list_address)
+                list_curr_balances = self.fetch_current_balance(list_address)
                 for d in list_address:
                     root["delegators_balances"][d][
                         "current_balance"
@@ -261,7 +246,7 @@ class TzStatsRewardProviderHelper:
         split_addresses = split(reward_logs, 50)
         for list_address in split_addresses:
             addresses = [x.address for x in list_address]
-            list_curr_balances = self.__fetch_current_balance(addresses)
+            list_curr_balances = self.fetch_current_balance(addresses)
             for d in list_address:
                 d.current_balance = list_curr_balances[d.address]
 
@@ -288,10 +273,17 @@ class TzStatsRewardProviderHelper:
             # This means something went wrong.
             raise ApiProviderException("GET {} {}".format(uri, resp.status_code))
 
-        staking_supply = resp.json()["staking_supply"]
+        resp_json = resp.json()
+        staking_supply = resp_json["snapshot_cycle"]["staking_supply"]
         return staking_supply
 
-    def __fetch_current_balance(self, address_list):
+    def get_current_cycle(self):
+        uri = self.api + tip
+        resp = requests.get(uri, timeout=5)
+        root = resp.json()
+        return root["cycle"]
+
+    def fetch_current_balance(self, address_list):
         param_txt = ""
         for address in address_list:
             param_txt += address + ","
@@ -370,6 +362,6 @@ class TzStatsRewardProviderHelper:
     def update_current_balances_dexter(self, balanceMap):
         split_addresses = split(list(balanceMap.keys()), 50)
         for list_address in split_addresses:
-            list_curr_balances = self.__fetch_current_balance(list_address)
+            list_curr_balances = self.fetch_current_balance(list_address)
             for d in list_address:
                 balanceMap[d].update({"current_balance": list_curr_balances[d]})
