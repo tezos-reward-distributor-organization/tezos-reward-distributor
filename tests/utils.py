@@ -297,6 +297,7 @@ def mock_request_get(url, timeout, **kwargs):
     if path in [
         "/chains/main/blocks/196609/helpers/baking_rights",
         "/chains/main/blocks/2035713/helpers/baking_rights",
+        "/chains/main/blocks/head/helpers/baking_rights",
     ]:
         # return empty list - not accurate for estimated reward calculation.
         # However, we do not test for this. We just have to return something

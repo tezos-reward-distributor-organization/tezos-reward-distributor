@@ -22,6 +22,7 @@ COMM_DELEGATE_BALANCE = COMM_BLOCK + "/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 # max rounds set to 2; will scan for stolen blocks up to this round
 COMM_ALL_BAKING_RIGHTS_HEAD = COMM_BLOCK + "/helpers/baking_rights"
+COMM_ALL_BAKING_RIGHTS_CYCLE = COMM_ALL_BAKING_RIGHTS_HEAD + "?cycle={}"
 COMM_BAKING_RIGHTS = COMM_ALL_BAKING_RIGHTS_HEAD + "?delegate={}&cycle={}&max_round=2"
 COMM_SELECTED_STAKE_DISTRIBUTION = (
     COMM_BLOCK + "/context/raw/json/cycle/{}/selected_stake_distribution"
@@ -293,6 +294,16 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
         return all_backing_rights
+
+    def get_all_baking_rights_cycle(self, cycle):
+        all_baking_rights_cycle_rpc = COMM_ALL_BAKING_RIGHTS_CYCLE.format(
+            self.node_url, "head", cycle
+        )
+        try:
+            all_backing_rights_cycle = self.do_rpc_request(all_baking_rights_cycle_rpc)
+        except ApiProviderException as e:
+            raise e from e
+        return all_backing_rights_cycle
 
     def get_potential_endorsement_rewards(self, cycle, level):
         """

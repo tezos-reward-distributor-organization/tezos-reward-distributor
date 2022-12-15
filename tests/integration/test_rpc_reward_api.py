@@ -14,7 +14,6 @@ from requests.exceptions import RequestException
 
 # Use this baker because he has < 40 delegates which can be fetched fast
 BAKEXTZ4ME_ADDRESS = Constants.BAKEXTZ4ME_ADDRESS
-CYCLE = 515
 
 
 @pytest.fixture
@@ -29,15 +28,16 @@ def address_api():
 @patch("rpc.rpc_reward_api.sleep", MagicMock())
 @patch("rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_get_rewards_for_cycle_map(address_api):
+    cycle = 515
     rewards = load_reward_model(
-        BAKEXTZ4ME_ADDRESS, CYCLE, RewardsType.ACTUAL, dir_name="rpc_data"
+        BAKEXTZ4ME_ADDRESS, cycle, RewardsType.ACTUAL, dir_name="rpc_data"
     )
     if rewards is None:
         rewards = address_api.get_rewards_for_cycle_map(
-            cycle=CYCLE, rewards_type=RewardsType.ACTUAL
+            cycle=cycle, rewards_type=RewardsType.ACTUAL
         )
         store_reward_model(
-            BAKEXTZ4ME_ADDRESS, CYCLE, RewardsType.ACTUAL, rewards, dir_name="rpc_data"
+            BAKEXTZ4ME_ADDRESS, cycle, RewardsType.ACTUAL, rewards, dir_name="rpc_data"
         )
     assert rewards.delegate_staking_balance == 80573814172
     assert rewards.total_reward_amount == 19364746
@@ -60,6 +60,7 @@ class Mock_404_Response:
 @patch("rpc.rpc_reward_api.sleep", MagicMock())
 @patch("rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_rpc_terminate_404(address_api):
+    current_cycle = 200
 
     with pytest.raises(
         ApiProviderException,
@@ -68,7 +69,7 @@ def test_rpc_terminate_404(address_api):
         ),
     ):
         _ = address_api.get_rewards_for_cycle_map(
-            cycle=CYCLE, rewards_type=RewardsType.ACTUAL
+            cycle=current_cycle, rewards_type=RewardsType.ACTUAL
         )
 
 
@@ -127,9 +128,12 @@ def test_rpc_contract_balance(address_api):
 # please use pytest.mark.skip and give an understandable reason for that
 # @pytest.mark.skip(reason="no way of currently testing this")
 def test_get_baking_rights(address_api):
-    all_baking_rights = address_api.get_all_baking_rights("head")
+    _, current_cycle = address_api.get_current_level()
+    all_baking_rights = address_api.get_all_baking_rights_cycle(current_cycle)
     first_baking_right = all_baking_rights[0]
-    baking_rights = address_api.get_baking_rights(CYCLE, first_baking_right["delegate"])
+    baking_rights = address_api.get_baking_rights(
+        current_cycle, first_baking_right["delegate"]
+    )
 
     assert baking_rights[0]["delegate"] == first_baking_right["delegate"]
     assert baking_rights[0]["level"] == first_baking_right["level"]
