@@ -51,8 +51,6 @@ class TzStatsRewardApiImpl(RewardApi):
             * self.endorsing_reward_per_slot
             / MUTEZ_PER_TEZ
         )
-        # if self.helper.get_current_cycle() <= cycle
-        # else 0
 
         snapshot_level = self.helper.get_snapshot_level(cycle)
         for delegator in self.dexter_contracts_set:
