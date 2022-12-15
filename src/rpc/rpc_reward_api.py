@@ -22,7 +22,7 @@ COMM_DELEGATE_BALANCE = COMM_BLOCK + "/context/contracts/{}/balance"
 COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 # max rounds set to 2; will scan for stolen blocks up to this round
 COMM_ALL_BAKING_RIGHTS_HEAD = COMM_BLOCK + "/helpers/baking_rights"
-COMM_BAKING_RIGHTS = COMM_ALL_BAKING_RIGHTS_HEAD + "?delegate={}"
+COMM_BAKING_RIGHTS = COMM_ALL_BAKING_RIGHTS_HEAD + "?delegate={}&cycle={}&max_round=2"
 COMM_SELECTED_STAKE_DISTRIBUTION = (
     COMM_BLOCK + "/context/raw/json/cycle/{}/selected_stake_distribution"
 )
@@ -133,9 +133,7 @@ class RpcRewardApiImpl(RewardApi):
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Collect baking rights
-            baking_rights = self.get_baking_rights(
-                snapshot_cycle_first_block_level, self.baking_address
-            )
+            baking_rights = self.get_baking_rights(cycle, self.baking_address)
             nb_blocks = len([r for r in baking_rights if r[rights_name] == 0])
             logger.info(
                 f"Baker has rights to perform {nb_blocks:<,d} bakes for this cycle."
@@ -275,12 +273,12 @@ class RpcRewardApiImpl(RewardApi):
 
         return response
 
-    def get_baking_rights(self, level, baking_address):
+    def get_baking_rights(self, cycle, baking_address):
         """
         Returns list of baking rights for a given cycle.
         """
         baking_rights_rpc = COMM_BAKING_RIGHTS.format(
-            self.node_url, level, baking_address
+            self.node_url, "head", baking_address, cycle
         )
         try:
             backing_rights = self.do_rpc_request(baking_rights_rpc)

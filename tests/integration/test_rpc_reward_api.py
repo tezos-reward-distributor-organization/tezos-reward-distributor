@@ -129,12 +129,10 @@ def test_rpc_contract_balance(address_api):
 def test_get_baking_rights(address_api):
     all_baking_rights = address_api.get_all_baking_rights("head")
     first_baking_right = all_baking_rights[0]
-    backing_rights = address_api.get_baking_rights(
-        "head", first_baking_right["delegate"]
-    )
+    baking_rights = address_api.get_baking_rights(CYCLE, first_baking_right["delegate"])
 
-    assert backing_rights[0]["delegate"] == first_baking_right["delegate"]
-    assert backing_rights[0]["level"] == first_baking_right["level"]
+    assert baking_rights[0]["delegate"] == first_baking_right["delegate"]
+    assert baking_rights[0]["level"] == first_baking_right["level"]
 
 
 def test_get_potential_endorsement_rewards(address_api):

@@ -6,8 +6,7 @@ from exception.api_provider import ApiProviderException
 
 from log_config import main_logger, verbose_logger
 from tzstats.tzstats_api_constants import (
-    idx_n_blocks_baked,
-    idx_n_blocks_not_baked,
+    idx_n_baking_rights,
     idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
@@ -95,9 +94,7 @@ class TzStatsRewardProviderHelper:
 
         resp = resp.json()[0]
 
-        root["num_baking_rights"] = (
-            resp[idx_n_blocks_baked] + resp[idx_n_blocks_not_baked]
-        )
+        root["num_baking_rights"] = resp[idx_n_baking_rights]
         root["active_stake"] = resp[idx_n_active_stake]
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)

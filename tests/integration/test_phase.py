@@ -15,7 +15,7 @@ from exception.api_provider import ApiProviderException
 from model.rules_model import RulesModel
 from model.baking_conf import BakingConf
 from NetworkConfiguration import default_network_config_map
-from tests.utils import mock_request_get
+from tests.utils import mock_request_get, make_config
 
 PAYOUT_CYCLE = 500
 
@@ -26,28 +26,12 @@ logger.addHandler(logging.StreamHandler())
 
 class TestCalculatePhases(TestCase):
 
-    baking_config = (
-        ""
-        "baking_address: tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V\n"
-        "delegator_pays_ra_fee: true\n"
-        "delegator_pays_xfer_fee: true\n"
-        "founders_map:\n"
-        "  tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7: 0.25\n"
-        "  tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace: 0.75\n"
-        "min_delegation_amt: 0.0\n"
-        "owners_map:\n"
-        "  tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk: 1.0\n"
-        "payment_address: tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs\n"
-        "reactivate_zeroed: true\n"
-        "rules_map:\n"
-        "  tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP: tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs\n"
-        "  tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: TOB\n"
-        "  mindelegation: TOB\n"
-        "service_fee: 10.0\n"
-        "specials_map: {}\n"
-        "supporters_set: !!set {}\n"
-        "plugins:\n"
-        "  enabled:\n"
+    baking_config = make_config(
+        baking_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+        payment_address="tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs",
+        service_fee=10.0,
+        min_delegation_amt=0,
+        min_payment_amt=0,
     )
 
     @patch("rpc.rpc_reward_api.requests.get", MagicMock(side_effect=mock_request_get))

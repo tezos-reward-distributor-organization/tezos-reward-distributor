@@ -62,6 +62,7 @@ idx_income_lost_seed_fees = 36
 idx_income_lost_seed_rewards = 37
 
 # Rights
+idx_n_baking_rights = 8
 idx_n_blocks_baked = 14
 idx_n_blocks_not_baked = 16
 idx_n_active_stake = 6

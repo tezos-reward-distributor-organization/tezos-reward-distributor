@@ -357,6 +357,7 @@ class PaymentConsumer(threading.Thread):
             logger.info("Simulated transaction_fees added to calculations file.")
         else:
             logger.info("Calculations file not modified.")
+            return
 
         return report_file
 

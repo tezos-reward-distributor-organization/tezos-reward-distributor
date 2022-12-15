@@ -100,6 +100,12 @@ class TzKTApi:
 
         return res
 
+    def get_current_cycle(self):
+        return self.get_head()["cycle"]
+
+    def get_current_level(self):
+        return self.get_head()["level"]
+
     def get_head(self) -> dict:
         """
         Returns indexer head and synchronization status.

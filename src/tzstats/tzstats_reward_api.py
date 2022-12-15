@@ -42,19 +42,17 @@ class TzStatsRewardApiImpl(RewardApi):
         )
 
         # https://tezos-dev.slack.com/archives/CV5NX7F2L/p1649433246273169?thread_ts=1648854391.875409&cid=CV5NX7F2L
-        potential_endorsement_rewards = (
-            int(
-                math.floor(
-                    delegate_staking_balance
-                    * number_of_endorsements_per_cycle
-                    / total_active_stake
-                )
-                * self.endorsing_reward_per_slot
-                / MUTEZ_PER_TEZ
+        potential_endorsement_rewards = int(
+            math.floor(
+                delegate_staking_balance
+                * number_of_endorsements_per_cycle
+                / total_active_stake
             )
-            if self.helper.get_current_cycle() <= cycle
-            else 0
+            * self.endorsing_reward_per_slot
+            / MUTEZ_PER_TEZ
         )
+        # if self.helper.get_current_cycle() <= cycle
+        # else 0
 
         snapshot_level = self.helper.get_snapshot_level(cycle)
         for delegator in self.dexter_contracts_set:
