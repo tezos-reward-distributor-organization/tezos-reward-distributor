@@ -16,6 +16,7 @@ fee.ini*
 .python-version
 lock
 .coverage
+.DS_Store
 
 # State diagram outputs for sphinx documentation
 config_cycle_state_diagram.png

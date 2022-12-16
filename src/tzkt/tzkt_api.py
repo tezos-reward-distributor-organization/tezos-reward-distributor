@@ -7,7 +7,6 @@ from json import JSONDecodeError
 from Constants import VERSION, TZKT_PUBLIC_API_URL, MAX_SEQUENT_CALLS
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
-import ipdb
 
 logger = main_logger
 

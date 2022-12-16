@@ -11,9 +11,7 @@ from Constants import (
     JSON_WRAP,
     MAX_TX_PER_BLOCK_TZ,
     MAX_TX_PER_BLOCK_KT,
-    PaymentStatus,
 )
-import ipdb
 
 
 def calculate_required_fee(consumed_gas, size):
@@ -122,11 +120,6 @@ def calculate_estimated_amount_to_pay(
     delegator_pays_xfer_fee,
     delegator_pays_ra_fee,
 ):
-    print("*******start**************")
-    for payment_item in payment_items:
-        print(payment_item)
-        print(payment_item.adjusted_amount)
-    print("*******end**************")
     estimated_amount_to_pay = sum(
         [payment_item.adjusted_amount for payment_item in payment_items]
     )

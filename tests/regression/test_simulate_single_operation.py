@@ -61,8 +61,6 @@ def test_simulate_single_operation():
     simulation_status, simulation_results = batch_payer.simulate_single_operation(
         reward_log, reward_log.amount, "hash", "unittest"
     )
-    print("YO WHAT IS THIS EXACTLY")
-    print(simulation_status)
     assert PaymentStatus.DONE == simulation_status
     consumed_gas, tx_fee, storage = simulation_results
     assert 150 == consumed_gas
@@ -76,7 +74,6 @@ def test_simulate_single_operation():
     MagicMock(return_value=(HTTPStatus.FORBIDDEN, run_ops_parsed)),
 )
 def test_failed_simulate_single_operation():
-    default_fee = int(TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
     network_config = {"BLOCK_TIME_IN_SEC": 60, "MINIMAL_BLOCK_DELAY": 30}
     batch_payer = BatchPayer(
         node_url="node_addr",

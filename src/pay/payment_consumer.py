@@ -158,7 +158,6 @@ class PaymentConsumer(threading.Thread):
                 self.plugins_manager,
                 self.dry_run,
             )
-            print("WE GOT ALL THE WAY TO HERE WHICH IS AWESOME")
             # 3- do the payment
             (
                 payment_logs,
