@@ -53,7 +53,6 @@ from model.baking_conf import (
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
-import ipdb
 
 
 logger = main_logger

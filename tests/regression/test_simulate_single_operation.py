@@ -9,7 +9,6 @@ from Constants import (
     PRIVATE_SIGNER_URL,
     PaymentStatus,
 )
-import ipdb
 
 run_ops_parsed = {
     "contents": [

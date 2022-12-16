@@ -55,7 +55,6 @@ from pay.utils import (
 from util.wait_random import wait_random
 
 from util.address_validator import AddressValidator
-import ipdb
 
 logger = main_logger
 
