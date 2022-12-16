@@ -26,7 +26,9 @@ class TzStatsBlockApiImpl(BlockApi):
         verbose_logger.debug("Response from tzstats is: {}".format(root))
 
         current_cycle = int(root["cycle"])
-        current_level = int(root["height"])
+        current_level = (
+            int(root["height"]) + 1
+        )  # Adding one to be in synch with the tzkt API
 
         return (current_cycle, current_level)
 

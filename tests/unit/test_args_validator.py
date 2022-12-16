@@ -6,6 +6,7 @@ from util.args_validator import ArgsValidator, validate
 import argparse
 import pytest
 import logging
+from Constants import PUBLIC_NODE_URL
 
 
 LOGGER = logging.getLogger(__name__)
@@ -171,7 +172,7 @@ def test_validate():
         network="MAINNET",
         node_endpoint="http://127.0.0.1:8732",
         reward_data_provider="tzkt",
-        node_addr_public="https://rpc.tzkt.io/mainnet",
+        node_addr_public=PUBLIC_NODE_URL["MAINNET"],
         base_directory="~/pymnt",
         dry_run=False,
         signer_endpoint="http://127.0.0.1:6732",

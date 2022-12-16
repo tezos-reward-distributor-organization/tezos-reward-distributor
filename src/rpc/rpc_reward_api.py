@@ -13,25 +13,32 @@ from Constants import MAX_SEQUENT_CALLS
 logger = main_logger.getChild("rpc_reward_api")
 
 # RPC constants
-COMM_HEAD = "{}/chains/main/blocks/head"
-COMM_DELEGATES = "{}/chains/main/blocks/{}/context/delegates/{}"
 COMM_BLOCK = "{}/chains/main/blocks/{}"
-COMM_SNAPSHOT = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
-COMM_DELEGATE_BALANCE = "{}/chains/main/blocks/{}/context/contracts/{}/balance"
+COMM_HEAD = "{}/chains/main/blocks/head"
+COMM_DELEGATES = COMM_BLOCK + "/context/delegates/{}"
+COMM_SNAPSHOT_TENDERBAKE = COMM_BLOCK + "/context/selected_snapshot?cycle={}"
+COMM_SNAPSHOT = COMM_BLOCK + "/context/raw/json/cycle/{}/roll_snapshot"
+COMM_DELEGATE_BALANCE = COMM_BLOCK + "/context/contracts/{}/balance"
+COMM_CONTRACT_STORAGE = "{}/chains/main/blocks/{}/context/contracts/{}/storage"
 # max rounds set to 2; will scan for stolen blocks up to this round
-COMM_BAKING_RIGHTS = (
-    "{}/chains/main/blocks/{}/helpers/baking_rights?cycle={}&delegate={}&max_round=2"
-)
+COMM_ALL_BAKING_RIGHTS_HEAD = COMM_BLOCK + "/helpers/baking_rights"
+COMM_ALL_BAKING_RIGHTS_CYCLE = COMM_ALL_BAKING_RIGHTS_HEAD + "?cycle={}"
+COMM_BAKING_RIGHTS = COMM_ALL_BAKING_RIGHTS_HEAD + "?delegate={}&cycle={}&max_round=2"
 COMM_SELECTED_STAKE_DISTRIBUTION = (
-    "{}/chains/main/blocks/{}/context/raw/json/cycle/{}/selected_stake_distribution"
+    COMM_BLOCK + "/context/raw/json/cycle/{}/selected_stake_distribution"
 )
 COMM_TOTAL_ACTIVE_STAKE = (
-    "{}/chains/main/blocks/{}/context/raw/json/cycle/{}/total_active_stake"
-)
+    COMM_BLOCK + "/context/raw/json/cycle/{}/total_active_stake"
+)  # available since cycle 467 block 2244608
 
 # Constants used for mainnet calculations related to the cycles before Granada
 CYCLES_BEFORE_GRANADA = 388
+FIRST_CYCLE_REWARDS_GRANADA = CYCLES_BEFORE_GRANADA + 6
+FIRST_CYCLE_SNAPSHOT_GRANADA = FIRST_CYCLE_REWARDS_GRANADA + 2
+BLOCKS_PER_CYCLE_BEFORE_GRANADA = 4096
 BLOCKS_BEFORE_GRANADA = 1589248
+CYCLES_BEFORE_TENDERBAKE = 467
+BLOCKS_BEFORE_TENDERBAKE = 2244608
 
 RPC_REQUEST_BUFFER_SECONDS = 0.4
 RPC_RETRY_TIMEOUT_SECONDS = 2.0
@@ -54,21 +61,14 @@ class RpcRewardApiImpl(RewardApi):
         self.baking_address = baking_address
         self.node_url = node_url
 
-    def get_rewards_for_cycle_map(self, cycle, rewards_type):
-        try:
-            current_level, current_cycle = self.__get_current_level()
-            logger.debug(
-                "Current level {:d}, current cycle {:d}".format(
-                    current_level, current_cycle
-                )
-            )
-
-            # Get last block in cycle, where endorsement rewards are distributed by the proto
-            if self.network == "MAINNET":
-                # Calculating the cycle from level is special on mainnet.
-                # Mainnet's blocks per cycles have changed during granada migration.
-                # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
-                # Cycles start at 0
+    def get_levels(self, cycle, network="MAINNET"):
+        # Get last block in cycle, where endorsement rewards are distributed by the proto
+        if network == "MAINNET":
+            # Calculating the cycle from level is special on mainnet.
+            # Mainnet's blocks per cycles have changed during granada migration.
+            # Since cycle 394, we use an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
+            # Cycles start at 0
+            if cycle >= FIRST_CYCLE_REWARDS_GRANADA:
                 level_of_last_block_in_cycle = BLOCKS_BEFORE_GRANADA + (
                     (cycle - CYCLES_BEFORE_GRANADA + 1) * self.blocks_per_cycle
                 )
@@ -77,35 +77,50 @@ class RpcRewardApiImpl(RewardApi):
                     * self.blocks_per_cycle
                     + 1
                 )
-                # FIXME special case for tenderbake activation: we normally query rights at the first block right after they were calculated
-                # technically PRESERVED_CYCLES before the cycle.
-                # But for tenderbake activation, we calculated 6 cycles in one go
-                # It's safe to remove the statment below once we are past this inital phase.
-                if cycle < 474:
-                    snapshot_cycle_first_block_level = 2264608
-                # end ithaca special
             else:
-                # Testnets
-                level_of_last_block_in_cycle = (cycle + 1) * self.blocks_per_cycle
+                # Using pre-Granada calculation
                 snapshot_cycle_first_block_level = (
-                    cycle - self.preserved_cycles
-                ) * self.blocks_per_cycle + 1
-            logger.debug(
-                f"We are on {self.network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}."
-            )
-            logger.debug(
-                f"First block in snapshotting cycle {cycle - self.preserved_cycles - 1} is {snapshot_cycle_first_block_level}."
-            )
+                    cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA + 1
+                )
+                level_of_last_block_in_cycle = cycle * BLOCKS_PER_CYCLE_BEFORE_GRANADA
+        else:
+            # Testnets
+            level_of_last_block_in_cycle = (cycle + 1) * self.blocks_per_cycle
+            snapshot_cycle_first_block_level = (
+                cycle - self.preserved_cycles
+            ) * self.blocks_per_cycle + 1
+        logger.debug(
+            f"We are on {network}, last block in cycle {cycle} is {level_of_last_block_in_cycle}."
+        )
+        logger.debug(
+            f"First block in snapshotting cycle {cycle - self.preserved_cycles} is {snapshot_cycle_first_block_level}."
+        )
 
+        logger.debug(
+            "Cycle {:d}, blocks per cycle {:d}, last block of cycle {:d}".format(
+                cycle,
+                self.blocks_per_cycle,
+                level_of_last_block_in_cycle,
+            )
+        )
+        return level_of_last_block_in_cycle, snapshot_cycle_first_block_level
+
+    def get_rewards_for_cycle_map(self, cycle, rewards_type):
+        rights_name = "priority" if cycle < CYCLES_BEFORE_TENDERBAKE else "round"
+        try:
+            current_level, current_cycle = self.get_current_level()
             logger.debug(
-                "Cycle {:d}, blocks per cycle {:d}, last block of cycle {:d}".format(
-                    cycle,
-                    self.blocks_per_cycle,
-                    level_of_last_block_in_cycle,
+                "Current level {:d}, current cycle {:d}".format(
+                    current_level, current_cycle
                 )
             )
 
-            potential_endorsement_rewards = self.__get_potential_endorsement_rewards(
+            (
+                level_of_last_block_in_cycle,
+                snapshot_cycle_first_block_level,
+            ) = self.get_levels(cycle, self.network)
+
+            potential_endorsement_rewards = self.get_potential_endorsement_rewards(
                 cycle, snapshot_cycle_first_block_level
             )
 
@@ -113,16 +128,14 @@ class RpcRewardApiImpl(RewardApi):
             (
                 reward_data["delegate_staking_balance"],
                 reward_data["delegators"],
-            ) = self.__get_delegators_and_delgators_balances(
-                cycle, snapshot_cycle_first_block_level
+            ) = self.get_delegators_and_delgators_balances(
+                snapshot_cycle_first_block_level
             )
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Collect baking rights
-            baking_rights = self.__get_baking_rights(
-                cycle, snapshot_cycle_first_block_level
-            )
-            nb_blocks = len([r for r in baking_rights if r["round"] == 0])
+            baking_rights = self.get_baking_rights(cycle, self.baking_address)
+            nb_blocks = len([r for r in baking_rights if r[rights_name] == 0])
             logger.info(
                 f"Baker has rights to perform {nb_blocks:<,d} bakes for this cycle."
             )
@@ -149,7 +162,7 @@ class RpcRewardApiImpl(RewardApi):
                 (
                     endorsing_rewards,
                     lost_endorsing_rewards,
-                ) = self.__get_endorsing_rewards(level_of_last_block_in_cycle, cycle)
+                ) = self.get_endorsing_rewards(level_of_last_block_in_cycle)
                 offline_losses += lost_endorsing_rewards
 
                 for count, r in enumerate(baking_rights):
@@ -163,14 +176,14 @@ class RpcRewardApiImpl(RewardApi):
                         block_reward_and_fees,
                         block_bonus,
                         block_double_signing_reward,
-                    ) = self.__get_block_data(r["level"])
+                    ) = self.get_block_data(r["level"])
                     if block_author == self.baking_address:
                         # we are block proposer for this block
                         total_block_bonus += block_bonus
-                        if r["round"] != 0:
+                        if r[rights_name] != 0:
                             logger.info(
                                 "Found stolen baking slot at level {}, round {}.".format(
-                                    r["level"], r["round"]
+                                    r["level"], r[rights_name]
                                 )
                             )
                         if block_payload_proposer != self.baking_address:
@@ -179,12 +192,12 @@ class RpcRewardApiImpl(RewardApi):
                                     self.baking_address,
                                     block_payload_proposer,
                                     r["level"],
-                                    r["round"],
+                                    r[rights_name],
                                 )
                             )
                     else:
                         # we are not block proposer for this block
-                        if r["round"] == 0:
+                        if r[rights_name] == 0:
                             logger.warning("Found missed baking slot {}.".format(r))
                             offline_losses += block_bonus + block_reward_and_fees
                     if block_payload_proposer == self.baking_address:
@@ -239,7 +252,7 @@ class RpcRewardApiImpl(RewardApi):
             # necessary data to properly compute rewards
             raise e from e
 
-    def __get_response(self, address, request, response=None):
+    def get_response(self, address, request, response=None):
         retry_count = 0
         while (not response) and (retry_count < MAX_SEQUENT_CALLS):
             retry_count += 1
@@ -261,26 +274,54 @@ class RpcRewardApiImpl(RewardApi):
 
         return response
 
-    def __get_baking_rights(self, cycle, level):
+    def get_baking_rights(self, cycle, baking_address):
         """
         Returns list of baking rights for a given cycle.
         """
-
+        baking_rights_rpc = COMM_BAKING_RIGHTS.format(
+            self.node_url, "head", baking_address, cycle
+        )
         try:
-            baking_rights_rpc = COMM_BAKING_RIGHTS.format(
-                self.node_url, level, cycle, self.baking_address
-            )
-            return self.do_rpc_request(baking_rights_rpc)
-
+            backing_rights = self.do_rpc_request(baking_rights_rpc)
         except ApiProviderException as e:
             raise e from e
+        return backing_rights
 
-    def __get_potential_endorsement_rewards(self, cycle, level):
+    def get_all_baking_rights(self, level):
+        all_baking_rights_rpc = COMM_ALL_BAKING_RIGHTS_HEAD.format(self.node_url, level)
+        try:
+            all_backing_rights = self.do_rpc_request(all_baking_rights_rpc)
+        except ApiProviderException as e:
+            raise e from e
+        return all_backing_rights
+
+    def get_all_baking_rights_cycle(self, cycle):
+        all_baking_rights_cycle_rpc = COMM_ALL_BAKING_RIGHTS_CYCLE.format(
+            self.node_url, "head", cycle
+        )
+        try:
+            all_backing_rights_cycle = self.do_rpc_request(all_baking_rights_cycle_rpc)
+        except ApiProviderException as e:
+            raise e from e
+        return all_backing_rights_cycle
+
+    def get_potential_endorsement_rewards(self, cycle, level):
         """
         In tenderbake, endorsement rewards are calculated based on stake for a cycle.
         Then there are either fully paid, or not at all.
         We calculate this potential amount. It is possible to calculate it for future cycles.
         """
+
+        # NOTE: The tenderbake specific RPC query cannot query below the block level 2244608 and below cycle 467
+        if (
+            level != "head"
+            and level < BLOCKS_BEFORE_TENDERBAKE
+            or cycle < CYCLES_BEFORE_TENDERBAKE
+        ):
+            logger.warning(
+                "ITHACA SPECIAL: RPC cannot query total_active_stake below the block level 2244608 and below cycle 467. Setting potential_endorsement_rewards to 0."
+            )
+            return 0
 
         try:
             number_of_endorsements_per_cycle = (
@@ -301,7 +342,9 @@ class RpcRewardApiImpl(RewardApi):
                 for ssd in selected_stake_distribution
                 if ssd["baker"] == self.baking_address
             ][0]
-            return (
+
+            # https://tezos-dev.slack.com/archives/CV5NX7F2L/p1649433246273169?thread_ts=1648854391.875409&cid=CV5NX7F2L
+            potential_endorsement_rewards = (
                 math.floor(
                     delegate_stake
                     * number_of_endorsements_per_cycle
@@ -309,11 +352,12 @@ class RpcRewardApiImpl(RewardApi):
                 )
                 * self.endorsing_reward_per_slot
             )
+            return potential_endorsement_rewards
 
         except ApiProviderException as e:
             raise e from e
 
-    def __get_block_data(self, level):
+    def get_block_data(self, level):
         """
         Returns baker relevant reward data for a given block level.
         """
@@ -323,44 +367,49 @@ class RpcRewardApiImpl(RewardApi):
             response = self.do_rpc_request(block_rpc)
             metadata = response["metadata"]
             author = metadata["baker"]
-            reward_and_fees = bonus = 0
+            reward_and_fees = bonus = double_signing_reward = 0
             balance_updates = metadata["balance_updates"]
-            for i, bu in enumerate(balance_updates):
-                if bu["kind"] == "contract" and "category" in balance_updates[i - 1]:
-                    if balance_updates[i - 1]["category"] == "baking rewards":
-                        payload_proposer = bu[
+            for i, balance_update in enumerate(balance_updates):
+                if (
+                    balance_update["kind"] == "contract"
+                    and "category" in balance_updates[i - 1]
+                ):
+                    if balance_updates[i - 1]["category"] in [
+                        "baking rewards",
+                        "rewards",
+                    ]:
+                        payload_proposer = balance_update[
                             "contract"
                         ]  # author of the block payload (not necessarily block producer)
-                        reward_and_fees = int(bu["change"])
+                        reward_and_fees = int(balance_update["change"])
                     if balance_updates[i - 1]["category"] == "baking bonuses":
-                        bonus = int(bu["change"])
+                        bonus = int(balance_update["change"])
 
             operations = response["operations"][2]
-            double_signing_reward = 0
-            for op in operations:
-                for content in op["contents"]:
+            for operation in operations:
+                for content in operation["contents"]:
                     balance_updates = content["metadata"]["balance_updates"]
-                    for i, bu in enumerate(balance_updates):
+                    for i, balance_update in enumerate(balance_updates):
                         if (
-                            bu["kind"] == "contract"
-                            and bu["contract"] == self.baking_address
+                            balance_update["kind"] == "contract"
+                            and balance_update["contract"] == self.baking_address
                         ):
                             if (
                                 balance_updates[i - 1]["category"]
                                 == "double signing evidence rewards"
                             ):
                                 logger.info(
-                                    f"Delegate submitted double signing evidence and earned a reward of {bu['change']}"
+                                    f"Delegate submitted double signing evidence and earned a reward of {balance_update['change']}"
                                 )
-                                double_signing_reward += int(bu["change"])
+                                double_signing_reward += int(balance_update["change"])
                             elif (
                                 balance_updates[i - 1]["category"]
                                 == "nonce revelation rewards"
                             ):
                                 logger.info(
-                                    f"Delegate submitted a nonce revelation and earned a reward of {bu['change']}"
+                                    f"Delegate submitted a nonce revelation and earned a reward of {balance_update['change']}"
                                 )
-                                reward_and_fees += int(bu["change"])
+                                reward_and_fees += int(balance_update["change"])
 
             return (
                 author,
@@ -373,16 +422,25 @@ class RpcRewardApiImpl(RewardApi):
         except ApiProviderException as e:
             raise e from e
 
-    def __get_endorsing_rewards(self, level_of_last_block_in_cycle, cycle):
+    def get_endorsing_rewards(self, level_of_last_block_in_cycle):
+        endorsing_rewards = lost_endorsing_rewards = 0
         request_metadata = (
             COMM_BLOCK.format(self.node_url, level_of_last_block_in_cycle) + "/metadata"
         )
-        metadata = self.do_rpc_request(request_metadata)
-        balance_updates = metadata["balance_updates"]
-        endorsing_rewards = lost_endorsing_rewards = 0
 
-        for i in range(len(balance_updates)):
-            balance_update = balance_updates[i]
+        try:
+            metadata = self.do_rpc_request(request_metadata)
+        except ApiProviderException:
+            # If metadata is not available return zeros
+            return endorsing_rewards, lost_endorsing_rewards
+
+        if type(metadata) == list and "block_metadata_not_found" in metadata[0]:
+            logger.warning("Block metadata not found!")
+            return endorsing_rewards, lost_endorsing_rewards
+
+        balance_updates = metadata["balance_updates"]
+
+        for i, balance_update in enumerate(balance_updates):
             if (
                 balance_update["kind"] == "contract"
                 and balance_update["contract"] == self.baking_address
@@ -391,7 +449,6 @@ class RpcRewardApiImpl(RewardApi):
                 and int(balance_updates[i - 1]["change"])
                 == -int(balance_update["change"])
             ):
-
                 endorsing_rewards = int(balance_update["change"])
                 logger.info(f"Found endorsing rewards of {endorsing_rewards}")
             elif (
@@ -402,6 +459,8 @@ class RpcRewardApiImpl(RewardApi):
             ):
                 lost_endorsing_rewards = int(balance_update["change"])
                 logger.info(f"Found lost endorsing reward of {lost_endorsing_rewards}")
+            else:
+                logger.info("No endorsing rewards found ...")
 
         return endorsing_rewards, lost_endorsing_rewards
 
@@ -464,7 +523,7 @@ class RpcRewardApiImpl(RewardApi):
 
         for rl in reward_logs:
             try:
-                rl.current_balance = self.__get_current_balance_of_delegator(rl.address)
+                rl.current_balance = self.get_current_balance_of_delegator(rl.address)
             except Exception as e:
                 logger.warning(
                     "update_current_balances - unexpected error: {}".format(str(e)),
@@ -472,40 +531,30 @@ class RpcRewardApiImpl(RewardApi):
                 )
                 raise e from e
 
-    def __get_current_level(self):
+    def get_contract_storage(self, contract_id, block):
+        get_contract_storage_request = COMM_CONTRACT_STORAGE.format(
+            self.node_url, block, contract_id
+        )
+        return self.get_response(contract_id, get_contract_storage_request)
+
+    def get_contract_balance(self, contract_id, block):
+        get_contract_balance_request = COMM_DELEGATE_BALANCE.format(
+            self.node_url, block, contract_id
+        )
+        return int(self.get_response(contract_id, get_contract_balance_request))
+
+    def get_current_level(self):
         head = self.do_rpc_request(COMM_HEAD.format(self.node_url))
         current_level = int(head["metadata"]["level_info"]["level"])
         current_cycle = int(head["metadata"]["level_info"]["cycle"])
 
         return current_level, current_cycle
 
-    def __get_delegators_and_delgators_balances(
-        self, cycle, snapshot_cycle_first_block_level
-    ):
-
-        # calculate the hash of the block for the chosen snapshot of the rewards cycle
-        stake_snapshot, level_snapshot_block = self.__get_stake_snapshot_block_level(
-            cycle, snapshot_cycle_first_block_level
-        )
-        if level_snapshot_block == "":
-            raise ApiProviderException(
-                "[get_d_d_b] level_snapshot_block is empty. Unable to proceed."
-            )
-        if stake_snapshot < 0 or stake_snapshot > 15:
-            raise ApiProviderException(
-                "[get_d_d_b] stake_snapshot is outside allowable range: {} Unable to proceed.".format(
-                    stake_snapshot
-                )
-            )
+    def get_delegators_and_delgators_balances(self, snapshot_cycle_first_block_level):
         # construct RPC for getting list of delegates and staking balance
         get_delegates_request = COMM_DELEGATES.format(
-            self.node_url, level_snapshot_block, self.baking_address
+            self.node_url, snapshot_cycle_first_block_level, self.baking_address
         )
-
-        # get RPC response for delegates and staking balance
-        response = self.do_rpc_request(get_delegates_request)
-        delegate_staking_balance = int(response["staking_balance"])
-
         delegate_staking_balance = 0
         d_a_len = 0
         delegators = {}
@@ -527,28 +576,36 @@ class RpcRewardApiImpl(RewardApi):
                 raise ApiProviderException("[get_d_d_b] No delegators found")
 
             # Loop over delegators; get snapshot balance, and current balance
-            for idx, delegator in enumerate(delegators_addresses):
+            idx = 1
+            for delegator in delegators_addresses:
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
+                d_info["staking_balance"] = self.get_contract_balance(
+                    delegator, snapshot_cycle_first_block_level
+                )
 
-                get_staking_balance_request = COMM_DELEGATE_BALANCE.format(
-                    self.node_url, level_snapshot_block, delegator
-                )
-                d_info["staking_balance"] = int(
-                    self.__get_response(delegator, get_staking_balance_request)
-                )
+                # Ignore delegators who have zero staking balance
+                # since they are not relevant for reward calculations
+                if not d_info["staking_balance"] > 0:
+                    d_a_len -= 1  # decrement the sanity check count
+                    logger.debug(
+                        "Ignoring delegator {} with zero staking balance!".format(
+                            delegator
+                        )
+                    )
+                    continue
 
                 sleep(
                     0.5
                 )  # Be nice to public RPC since we are now making 2x the amount of RPC calls
 
-                d_info["current_balance"] = self.__get_current_balance_of_delegator(
+                d_info["current_balance"] = self.get_current_balance_of_delegator(
                     delegator
                 )
 
                 logger.debug(
                     "Delegator info ({}/{}) fetched: address {}, staked balance {}, current balance {} ".format(
-                        idx + 1,
+                        idx,
                         d_a_len,
                         delegator,
                         d_info["staking_balance"],
@@ -562,6 +619,7 @@ class RpcRewardApiImpl(RewardApi):
 
                 # "append" to master dict
                 delegators[delegator] = d_info
+                idx += 1
 
         except ApiProviderException as r:
             logger.error("[get_d_d_b] RPC API Error: {}".format(str(r)))
@@ -583,70 +641,7 @@ class RpcRewardApiImpl(RewardApi):
 
         return delegate_staking_balance, delegators
 
-    def __get_current_balance_of_delegator(self, address):
+    def get_current_balance_of_delegator(self, address):
 
         """Helper function to get current balance of delegator"""
-
-        get_current_balance_request = COMM_DELEGATE_BALANCE.format(
-            self.node_url, "head", address
-        )
-        return int(self.__get_response(address, get_current_balance_request))
-
-    def __get_stake_snapshot_block_level(self, cycle, query_level):
-        logger.info(
-            "The reward cycle is {}, level used to query context for the snapshot level is {}".format(
-                cycle, query_level
-            )
-        )
-
-        if self.network == "MAINNET":
-            if cycle in range(468, 474):
-                # cycle 468-473 are special
-                # immediately after ithaca activation, we are using the same snapshot for 5 cycles
-                chosen_snapshot = 0
-                level_snapshot_block = 2244608
-                logger.info(
-                    "ITHACA ACTIVATION SPECIAL: The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
-                        chosen_snapshot, cycle, level_snapshot_block
-                    )
-                )
-
-                return chosen_snapshot, level_snapshot_block
-            if cycle == 474:
-                # cycle 474 is special as well
-                # source: baking slack https://tezos-baking.slack.com/archives/CC4FD2HUY/p1649171746418819?thread_ts=1649147045.126789&cid=CC4FD2HUY
-                chosen_snapshot = 15
-                level_snapshot_block = 2252800
-                logger.info(
-                    "ITHACA ACTIVATION SPECIAL: The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
-                        chosen_snapshot, cycle, level_snapshot_block
-                    )
-                )
-
-                return chosen_snapshot, level_snapshot_block
-
-        request = COMM_SNAPSHOT.format(self.node_url, query_level, cycle)
-        chosen_snapshot = self.do_rpc_request(request)
-
-        if self.network == "MAINNET":
-            # Using an offset of 1589248 blocks (388 cycles pre-Granada of 4096 blocks each)
-            level_snapshot_block = BLOCKS_BEFORE_GRANADA + (
-                (cycle - CYCLES_BEFORE_GRANADA - self.preserved_cycles - 1)
-                * self.blocks_per_cycle
-                + (chosen_snapshot + 1) * self.blocks_per_stake_snapshot
-            )
-        else:
-            # testnet has no offset
-            level_snapshot_block = (
-                cycle - self.preserved_cycles - 1
-            ) * self.blocks_per_cycle + (
-                chosen_snapshot + 1
-            ) * self.blocks_per_stake_snapshot
-
-        logger.info(
-            "The snapshot index {} was used to calculate rewards for cycle {}, so we will be querying balances for level {}".format(
-                chosen_snapshot, cycle, level_snapshot_block
-            )
-        )
-
-        return chosen_snapshot, level_snapshot_block
+        return self.get_contract_balance(address, "head")

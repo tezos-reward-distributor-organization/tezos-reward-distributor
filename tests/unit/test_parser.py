@@ -1,5 +1,6 @@
 import argparse
 import pytest
+from Constants import PUBLIC_NODE_URL
 from util.parser import (
     build_parser,
     add_argument_verbose,
@@ -38,7 +39,7 @@ from util.parser import (
         (add_argument_provider, argparse.Namespace(reward_data_provider="tzkt")),
         (
             add_argument_node_addr_public,
-            argparse.Namespace(node_addr_public="https://rpc.tzkt.io/mainnet"),
+            argparse.Namespace(node_addr_public=PUBLIC_NODE_URL["MAINNET"]),
         ),
         (add_argument_base_directory, argparse.Namespace(base_directory="~/pymnt")),
         (add_argument_dry, argparse.Namespace(dry_run=False)),
@@ -72,7 +73,7 @@ def test_build_parser():
         network="MAINNET",
         node_endpoint="http://127.0.0.1:8732",
         reward_data_provider="tzkt",
-        node_addr_public="https://rpc.tzkt.io/mainnet",
+        node_addr_public=PUBLIC_NODE_URL["MAINNET"],
         base_directory="~/pymnt",
         dry_run=False,
         signer_endpoint="http://127.0.0.1:6732",
