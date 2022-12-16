@@ -160,6 +160,7 @@ def test_get_block_data(address_api):
     assert reward_and_fees == 10076686
     assert bonus == 9793510
     assert double_signing_reward == 0
+    assert 1 == 1
 
 
 def test_get_endorsing_rewards(address_api):
