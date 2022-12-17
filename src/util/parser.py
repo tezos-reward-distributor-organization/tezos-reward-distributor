@@ -180,7 +180,7 @@ def add_argument_dry(argparser):
             DryRun.NO_SIGNER.value,
         ],
         default=False,
-        const=DryRun.SIGNER,
+        const=DryRun.SIGNER.value,
         nargs="?",
     )
 
