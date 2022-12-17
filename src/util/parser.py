@@ -171,9 +171,9 @@ def add_argument_dry(argparser):
     argparser.add_argument(
         "-D",
         "--dry_run",
-        help="Run without injecting payments. Suitable for testing. Does not require locking. Options are:"
-        f"1. {DryRun.SIGNER.value}(default): Use signer"
-        f"2. {DryRun.NO_SIGNER.value}: Do not use signer",
+        help="Run without injecting payments. Suitable for testing. Does not require locking. Options are: "
+        f"1. {DryRun.SIGNER.value}(default): Use signer. "
+        f"2. {DryRun.NO_SIGNER.value}: Do not use signer.",
         action="store",
         choices=[
             DryRun.SIGNER.value,
