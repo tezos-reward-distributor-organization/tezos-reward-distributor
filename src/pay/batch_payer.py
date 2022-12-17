@@ -687,9 +687,22 @@ class BatchPayer:
 
             # TRD extension for non scriptless contract accounts
             if payment_item.paymentaddress.startswith("KT"):
-                simulation_status, simulation_results = self.simulate_single_operation(
-                    payment_item, pymnt_amnt, branch, chain_id
-                )
+                try:
+                    (
+                        simulation_status,
+                        simulation_results,
+                    ) = self.simulate_single_operation(
+                        payment_item, pymnt_amnt, branch, chain_id
+                    )
+                except Exception as e:
+                    logger.info(
+                        "Payment to {} script could not be processed. Payment simulation failed with error: {}: {} ".format(
+                            payment_item.paymentaddress, type(e).__name__, str(e)
+                        )
+                    )
+                    payment_item.paid = PaymentStatus.FAIL
+                    payment_item.desc += "Payment simulation encountered an error while executing. Marking payment as failed. "
+                    continue
 
                 if simulation_status == PaymentStatus.FAIL:
                     logger.info(
