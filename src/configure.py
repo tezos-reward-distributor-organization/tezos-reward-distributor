@@ -247,7 +247,6 @@ def onexclude(input):
 
     try:
         address_target = input.split(",")
-
         address = address_target[0].strip()
         target = address_target[1].strip()
         AddressValidator("excluded address").validate(address)
