@@ -49,6 +49,12 @@ To install required modules, use pip with requirements.txt provided:
     cd tezos-reward-distributor
     pip3 install -r requirements.txt
 
+To install required pre-commit hooks into .git folder:
+
+::
+
+    pre-commit install
+
 Regulary check and upgrade to the latest available version:
 
 ::

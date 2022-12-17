@@ -9,6 +9,6 @@ An address can only be used for payments if it satisfies the following criteria:
 
   ::
 
-      ./tezos-client reveal key for <alias>
+      ./octez-client reveal key for <alias>
 
 - The payment address must be an implicit address (tz). The secret key of the address must be known and imported to the signer before running the TRD. Please refer to the Tezos signer section for detailed instructions. 

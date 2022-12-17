@@ -159,7 +159,7 @@ class PhasedPaymentCalculator:
             return rwrd_logs, total_rwrd_amnt
 
         # sort rewards according to type and balance
-        rwrd_logs.sort(key=functools.cmp_to_key(cmp_by_type_balance))
+        rwrd_logs.sort(key=lambda rl: (rl.type, -rl.staking_balance))
 
         # check if there is difference between sum of calculated amounts and total_rewards
         total_delegator_amounts = int(

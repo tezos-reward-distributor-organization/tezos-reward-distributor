@@ -18,7 +18,6 @@ def args():
     args.node_endpoint = PUBLIC_NODE_URL["MAINNET"]
     args.docker = True
     args.dry_run = True
-    args.dry_run_no_consumers = True
     args.syslog = False
     args.verbose = "on"
     args.do_not_publish_stats = True

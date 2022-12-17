@@ -4,6 +4,7 @@ from enum import Enum
 VERSION = 11.0
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 7
+LINER = "--------------------------------------------"
 
 # Persistent data directories
 BASE_DIR = "~/pymnt"
@@ -12,6 +13,7 @@ SIMULATIONS_DIR = "simulations"
 REPORTS_DIR = "reports"
 DEFAULT_LOG_FILE = "logs/app.log"
 TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
+REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
@@ -19,6 +21,7 @@ EXIT_PAYMENT_TYPE = "exit"
 TESTNET_PREFIX = "ghost"
 TESTNET_SUFFIX = "net"
 CURRENT_TESTNET = (TESTNET_PREFIX + TESTNET_SUFFIX).upper()
+
 
 MAX_SEQUENT_CALLS = 256  # to prevent possible endless looping
 
@@ -36,10 +39,10 @@ SIGNER_PORT = 6732
 PRIVATE_SIGNER_URL = "http://{}:{}".format(LOCAL_HOST, SIGNER_PORT)
 PRIVATE_NODE_URL = "http://{}:{}".format(LOCAL_HOST, TEZOS_RPC_PORT)
 
-# Public RPC
+# Public RPC https://midl-dev.medium.com/alternatives-to-tezos-giganode-bb67b43945ba
 PUBLIC_NODE_URL = {
-    "MAINNET": "https://rpc.tzkt.io/mainnet",
-    CURRENT_TESTNET: "https://rpc.tzkt.io/{}".format(CURRENT_TESTNET.lower()),
+    "MAINNET": "https://mainnet.smartpy.io",
+    CURRENT_TESTNET: "https://testnet.smartpy.io",
 }
 
 # TzStats
@@ -114,6 +117,13 @@ ALMOST_ZERO = 1e-6
 DISK_LIMIT_PERCENTAGE = 0.1
 GIGA_BYTE = 1e9
 DISK_LIMIT_SIZE = 5 * GIGA_BYTE
+
+BUF_SIZE = 50
+
+
+class DryRun(str, Enum):
+    SIGNER = "SIGNER"
+    NO_SIGNER = "NO_SIGNER"
 
 
 class RunMode(Enum):

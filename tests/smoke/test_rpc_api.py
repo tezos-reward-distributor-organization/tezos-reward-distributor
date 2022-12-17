@@ -18,7 +18,6 @@ def args():
     args.node_endpoint = PUBLIC_NODE_URL[CURRENT_TESTNET]
     args.docker = False
     args.dry_run = True
-    args.dry_run_no_consumers = True
     args.syslog = False
     args.do_not_publish_stats = True
     args.run_mode = 4  # retry fail
