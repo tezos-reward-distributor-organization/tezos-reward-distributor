@@ -158,6 +158,7 @@ class PaymentConsumer(threading.Thread):
                 self.plugins_manager,
                 self.dry_run,
             )
+            
             # 3- do the payment
             (
                 payment_logs,
