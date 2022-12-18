@@ -139,13 +139,6 @@ def test_get_baking_rights(address_api):
     assert baking_rights[0]["level"] == first_baking_right["level"]
 
 
-def test_get_potential_endorsement_rewards(address_api):
-    potential_endorsement_rewards = address_api.get_potential_endorsement_rewards(
-        555, "head"
-    )
-    assert int(potential_endorsement_rewards) == 19161899
-
-
 def test_get_block_data(address_api):
     (
         author,
