@@ -218,7 +218,7 @@ def test_get_block_data(address_api):
         reward_and_fees,
         bonus,
         double_signing_reward,
-    ) = address_api.get_block_data("head")
+    ) = address_api.get_block_data(2984089)
 
     assert author == "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2"
     assert payload_proposer == "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2"
