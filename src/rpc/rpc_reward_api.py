@@ -344,7 +344,11 @@ class RpcRewardApiImpl(RewardApi):
                 int(ssd["active_stake"])
                 for ssd in selected_stake_distribution
                 if ssd["baker"] == self.baking_address
-            ][0]
+            ]
+
+            if len(delegate_stake) == 0:
+                return 0
+            delegate_stake = delegate_stake[0]  # unlist
 
             # https://tezos-dev.slack.com/archives/CV5NX7F2L/p1649433246273169?thread_ts=1648854391.875409&cid=CV5NX7F2L
             potential_endorsement_rewards = (

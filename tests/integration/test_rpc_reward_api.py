@@ -81,7 +81,7 @@ class MockBlockData:
 
     @property
     def status_code(self):
-        return 200
+        return HTTPStatus.OK
 
 
 @pytest.fixture
@@ -185,6 +185,19 @@ def test_rpc_contract_storage(address_api):
     assert contract_storage["string"] == "tz1SvJLCJ1kKP5zVNnoSwVUAuW7dP9HEExE3"
 
 
+class MockContractBalance:
+    def json(self):
+        return "9202886"
+
+    @property
+    def status_code(self):
+        return HTTPStatus.OK
+
+
+@patch(
+    "src.rpc.rpc_reward_api.requests.get",
+    MagicMock(return_value=MockContractBalance()),
+)
 def test_rpc_contract_balance(address_api):
     contract_balance = address_api.get_contract_balance(
         contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block="head"
@@ -269,7 +282,7 @@ class Mock_Endorsing_Reward_Response:
 
     @property
     def status_code(self):
-        return 200
+        return HTTPStatus.OK
 
 
 @patch(
@@ -290,7 +303,7 @@ class Mock_Current_Balance_Response:
 
     @property
     def status_code(self):
-        return 200
+        return HTTPStatus.OK
 
 
 @patch(
@@ -301,18 +314,20 @@ def test_get_current_balance_of_delegator(address_api):
     assert 1234567 == address_api.get_current_balance_of_delegator(BAKEXTZ4ME_ADDRESS)
 
 
+# Check if delegator balance can be queried correctly
+# Please do not mock up to detect any rpc api endpoint changes
 @patch("rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_get_delegators_and_delgators_balances(address_api):
     (
         delegate_staking_balance,
         delegators,
     ) = address_api.get_delegators_and_delgators_balances("head")
-    assert isinstance(delegate_staking_balance, int)
+    assert isinstance(delegate_staking_balance, int)  # balance is an int
 
     sum_delegators_stake = 0
     for delegator, delegator_balance in delegators.items():
         sum_delegators_stake += delegator_balance["staking_balance"]
-    assert isinstance(sum_delegators_stake, int)
+    assert isinstance(sum_delegators_stake, int)  # balance is an int
 
 
 class Mock_Current_Level_Response:
@@ -321,7 +336,7 @@ class Mock_Current_Level_Response:
 
     @property
     def status_code(self):
-        return 200
+        return HTTPStatus.OK
 
 
 @patch(

@@ -307,6 +307,94 @@ def mock_request_get(url, timeout, **kwargs):
         # return emtpy list - same comment as above
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: [])
 
+    if path in [
+        "/chains/main/blocks/head/context/raw/json/cycle/557/total_active_stake"
+    ]:
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "714705251070165")
+
+    if path in [
+        "/chains/main/blocks/head/context/raw/json/cycle/557/selected_stake_distribution"
+    ]:
+        return MagicMock(
+            status_code=HTTPStatus.OK,
+            json=lambda: [
+                {
+                    "baker": "tz1irJKkXS2DBWkU1NnmFQx1c1L7pbGg4yhk",
+                    "active_stake": "113536492278227",
+                },
+                {
+                    "baker": "tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
+                    "active_stake": "46585432313415",
+                },
+            ],
+        )
+
+    if path in [
+        "/chains/main/blocks/head/context/delegates/tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V"
+    ]:
+        return MagicMock(
+            status_code=HTTPStatus.OK,
+            json=lambda: {
+                "full_balance": "1474309958894",
+                "current_frozen_deposits": "1469667294622",
+                "frozen_deposits": "1469667294622",
+                "staking_balance": "14813298160131",
+                "delegated_contracts": [
+                    "tz2XZdnto54v6riWaJEw4ZzCJpVn9SQuxY88",
+                    "tz2Eepwyt8UobaWZAKkbnMDgjUq8Nsc8NFiH",
+                ],
+                "delegated_balance": "13338988201237",
+                "deactivated": False,
+                "grace_period": 564,
+                "voting_power": "14811963201894",
+                "remaining_proposals": 20,
+                "active_consensus_key": "tz1fPKAtsYydh4f1wfWNfeNxWYu72TmM48fu",
+            },
+        )
+
+    if path in [
+        "/chains/main/blocks/head/context/contracts/tz2XZdnto54v6riWaJEw4ZzCJpVn9SQuxY88/balance",
+        "/chains/main/blocks/head/context/contracts/tz2Eepwyt8UobaWZAKkbnMDgjUq8Nsc8NFiH/balance",
+    ]:
+        return MagicMock(status_code=HTTPStatus.OK, json=lambda: "9108283")
+
+    if path in [
+        "/chains/main/blocks/2981888/metadata",
+    ]:
+        return MagicMock(
+            status_code=HTTPStatus.OK,
+            json=lambda: {
+                "balance_updates": [
+                    {
+                        "kind": "freezer",
+                        "category": "deposits",
+                        "delegate": "tz2XZdnto54v6riWaJEw4ZzCJpVn9SQuxY88",
+                        "cycle": 51,
+                        "change": "-14272000000",
+                    },
+                    {
+                        "kind": "freezer",
+                        "category": "fees",
+                        "delegate": "tz2XZdnto54v6riWaJEw4ZzCJpVn9SQuxY88",
+                        "cycle": 51,
+                        "change": "-8374",
+                    },
+                    {
+                        "kind": "freezer",
+                        "category": "rewards",
+                        "delegate": "tz2XZdnto54v6riWaJEw4ZzCJpVn9SQuxY88",
+                        "cycle": 51,
+                        "change": "-354166658",
+                    },
+                    {
+                        "kind": "contract",
+                        "contract": "tz2XZdnto54v6riWaJEw4ZzCJpVn9SQuxY88",
+                        "change": "14626175032",
+                    },
+                ]
+            },
+        )
+
     raise Exception(f"Mocked URL not found for path: {path}")
 
 

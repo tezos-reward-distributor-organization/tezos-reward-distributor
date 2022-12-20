@@ -17,7 +17,7 @@ from model.baking_conf import BakingConf
 from NetworkConfiguration import default_network_config_map
 from tests.utils import mock_request_get, make_config
 
-PAYOUT_CYCLE = 500
+PAYOUT_CYCLE = 557
 
 logger = logging.getLogger("unittesting")
 logger.setLevel(logging.DEBUG)
@@ -95,7 +95,7 @@ class TestCalculatePhases(TestCase):
         )
 
         rewardApi = factory.newRewardApi(
-            default_network_config_map[CURRENT_TESTNET],
+            default_network_config_map["MAINNET"],
             baking_cfg.get_baking_address(),
             "",
         )
