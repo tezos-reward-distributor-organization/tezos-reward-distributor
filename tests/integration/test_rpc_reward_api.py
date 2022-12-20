@@ -16,6 +16,74 @@ from requests.exceptions import RequestException
 BAKEXTZ4ME_ADDRESS = Constants.BAKEXTZ4ME_ADDRESS
 
 
+class MockBlockData:
+    def json(self):
+        return {
+            "protocol": "PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW",
+            "chain_id": "NetXdQprcVkpaWU",
+            "hash": "BMAtbi8QyyUKxqgmwevqXG27AHxz3WmiQgSpHVajnuL8osBmn6A",
+            "header": {
+                "level": 2984089,
+                "proto": 15,
+                "predecessor": "BKmonHxpafq9QyBBdVpipy1DWx3thHetxCDq7gGNiK7Uy7tdhRW",
+                "timestamp": "2022-12-20T01:06:44Z",
+                "validation_pass": 4,
+                "operations_hash": "LLoZuteCN5WBeHBbFEM8qzoHBh8zxURP596KPPkw474HvEkhU372b",
+                "fitness": [],
+                "context": "CoVKmtZ8risGC68EFq8ATgwKeFaN8vSAnfcS8Uu5nq3i64wL6Cqo",
+                "payload_hash": "vh2JpApDHYrGAJxFjoz5jW7iZdaUxeF7ApvJXAXyy7T386r2mpro",
+            },
+            "metadata": {
+                "protocol": "PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW",
+                "next_protocol": "PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW",
+                "test_chain_status": {...},
+                "max_operations_ttl": 120,
+                "max_operation_data_length": 32768,
+                "max_block_header_length": 289,
+                "max_operation_list_length": [],
+                "proposer": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
+                "baker": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
+                "balance_updates": [
+                    {
+                        "kind": "accumulator",
+                        "category": "block fees",
+                        "change": "-15710",
+                        "origin": "block",
+                    },
+                    {
+                        "kind": "minted",
+                        "category": "baking rewards",
+                        "change": "-10000000",
+                        "origin": "block",
+                    },
+                    {
+                        "kind": "contract",
+                        "contract": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
+                        "change": "10015710",
+                        "origin": "block",
+                    },
+                    {
+                        "kind": "minted",
+                        "category": "baking bonuses",
+                        "change": "-9617784",
+                        "origin": "block",
+                    },
+                    {
+                        "kind": "contract",
+                        "contract": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
+                        "change": "9617784",
+                        "origin": "block",
+                    },
+                ],
+            },
+            "operations": [[], [], [], []],
+        }
+
+    @property
+    def status_code(self):
+        return 200
+
+
 @pytest.fixture
 def address_api():
     return RpcRewardApiImpl(
@@ -112,14 +180,14 @@ def test_rpc_contract_storage_500(address_api, caplog):
 def test_rpc_contract_storage(address_api):
     # API call to test the storage account
     contract_storage = address_api.get_contract_storage(
-        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block=2957700
+        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block="head"
     )
     assert contract_storage["string"] == "tz1SvJLCJ1kKP5zVNnoSwVUAuW7dP9HEExE3"
 
 
 def test_rpc_contract_balance(address_api):
     contract_balance = address_api.get_contract_balance(
-        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block=2957700
+        contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block="head"
     )
     assert contract_balance == 9202886
 
@@ -139,6 +207,10 @@ def test_get_baking_rights(address_api):
     assert baking_rights[0]["level"] == first_baking_right["level"]
 
 
+@patch(
+    "src.rpc.rpc_reward_api.requests.get",
+    MagicMock(return_value=MockBlockData()),
+)
 def test_get_block_data(address_api):
     (
         author,
@@ -146,12 +218,12 @@ def test_get_block_data(address_api):
         reward_and_fees,
         bonus,
         double_signing_reward,
-    ) = address_api.get_block_data(2958176)
+    ) = address_api.get_block_data("head")
 
-    assert author == "tz1irJKkXS2DBWkU1NnmFQx1c1L7pbGg4yhk"
-    assert payload_proposer == "tz1irJKkXS2DBWkU1NnmFQx1c1L7pbGg4yhk"
-    assert reward_and_fees == 10076686
-    assert bonus == 9793510
+    assert author == "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2"
+    assert payload_proposer == "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2"
+    assert reward_and_fees == 10015710
+    assert bonus == 9617784
     assert double_signing_reward == 0
 
 
@@ -234,13 +306,13 @@ def test_get_delegators_and_delgators_balances(address_api):
     (
         delegate_staking_balance,
         delegators,
-    ) = address_api.get_delegators_and_delgators_balances(2958176)
-    assert 83170514748 == delegate_staking_balance
+    ) = address_api.get_delegators_and_delgators_balances("head")
+    assert isinstance(delegate_staking_balance, int)
 
     sum_delegators_stake = 0
     for delegator, delegator_balance in delegators.items():
         sum_delegators_stake += delegator_balance["staking_balance"]
-    assert 71781483372 == sum_delegators_stake
+    assert isinstance(sum_delegators_stake, int)
 
 
 class Mock_Current_Level_Response:
