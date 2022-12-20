@@ -121,14 +121,14 @@ class RpcRewardApiImpl(RewardApi):
             ) = self.get_levels(cycle, self.network)
 
             potential_endorsement_rewards = self.get_potential_endorsement_rewards(
-                cycle, "head"
+                cycle, current_level
             )
 
             reward_data = {}
             (
                 reward_data["delegate_staking_balance"],
                 reward_data["delegators"],
-            ) = self.get_delegators_and_delgators_balances("head")
+            ) = self.get_delegators_and_delgators_balances(current_level)
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Collect baking rights
