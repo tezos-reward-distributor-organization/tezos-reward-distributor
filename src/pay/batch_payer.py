@@ -25,7 +25,7 @@ logger = main_logger
 TX_FEES = {
     "TZ1_TO_ALLOCATED_TZ1": {
         "FEE": 298,
-        "GAS_LIMIT": 1451,
+        "GAS_LIMIT": 1001,
         "STORAGE_LIMIT": 0,  # 65 mutez before
     },
     "TZ1_TO_NON_ALLOCATED_TZ1": {
