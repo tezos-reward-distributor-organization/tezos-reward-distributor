@@ -121,21 +121,22 @@ class RpcRewardApiImpl(RewardApi):
             ) = self.get_levels(cycle, self.network)
 
             potential_endorsement_rewards = self.get_potential_endorsement_rewards(
-                cycle, snapshot_cycle_first_block_level
+                cycle, current_level
             )
 
             reward_data = {}
             (
                 reward_data["delegate_staking_balance"],
                 reward_data["delegators"],
-            ) = self.get_delegators_and_delgators_balances(
-                snapshot_cycle_first_block_level
-            )
+            ) = self.get_delegators_and_delgators_balances(current_level)
             reward_data["delegators_nb"] = len(reward_data["delegators"])
 
             # Collect baking rights
             baking_rights = self.get_baking_rights(cycle, self.baking_address)
-            nb_blocks = len([r for r in baking_rights if r[rights_name] == 0])
+            ensured_baking_rights = [
+                right for right in baking_rights if right[rights_name] == 0
+            ]
+            nb_blocks = len(ensured_baking_rights)
             logger.info(
                 f"Baker has rights to perform {nb_blocks:<,d} bakes for this cycle."
             )
@@ -165,10 +166,12 @@ class RpcRewardApiImpl(RewardApi):
                 ) = self.get_endorsing_rewards(level_of_last_block_in_cycle)
                 offline_losses += lost_endorsing_rewards
 
-                for count, r in enumerate(baking_rights):
+                for count, r in enumerate(ensured_baking_rights):
                     if count % 10 == 0:
                         logger.info(
-                            "Scanning blocks ({}/{}).".format(count, len(baking_rights))
+                            "Scanning blocks ({}/{}).".format(
+                                count, len(ensured_baking_rights)
+                            )
                         )
                     (
                         block_author,
@@ -341,7 +344,11 @@ class RpcRewardApiImpl(RewardApi):
                 int(ssd["active_stake"])
                 for ssd in selected_stake_distribution
                 if ssd["baker"] == self.baking_address
-            ][0]
+            ]
+
+            if len(delegate_stake) == 0:
+                return 0
+            delegate_stake = delegate_stake[0]  # unlist
 
             # https://tezos-dev.slack.com/archives/CV5NX7F2L/p1649433246273169?thread_ts=1648854391.875409&cid=CV5NX7F2L
             potential_endorsement_rewards = (
