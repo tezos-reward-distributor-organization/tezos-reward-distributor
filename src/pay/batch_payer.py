@@ -68,7 +68,6 @@ logger = main_logger
 # Not revealed:
 #   A state of a contract that did not yet publish its public key but in order to enact a delegation you need to be revealed.
 
-
 # TODO: We need to refactor the whole class and all its functions.
 # Procedure needs to be transitioned to:
 # 1) Calculate all payments
@@ -335,10 +334,6 @@ class BatchPayer:
                 )
             )
 
-            print("WE ARE JUST ABOUT TO GO HERE")
-            print(payment_items_chunk)
-            print("********end***************")
-
             for payment_item in payment_items_chunk:
                 if (
                     payment_item.paid == PaymentStatus.PAID
@@ -378,15 +373,10 @@ class BatchPayer:
 
         # for failed operations, trying after some time should be OK
         for attempt in range(max_try):
-            print("we h ave first attempt")
-            print(attempt)
             try:
                 status, operation_hash, error_message = self.attempt_single_batch(
                     payment_items, op_counter, dry_run=dry_run
                 )
-                print("yooooo")
-                print(status)
-                print("^^^^^^^^^^^^^")
             except Exception:
                 logger.error(
                     "Batch payment attempt {}/{} for current batch failed with error".format(
@@ -430,8 +420,6 @@ class BatchPayer:
         gas_limit = HARD_GAS_LIMIT_PER_OPERATION
         storage_limit = HARD_STORAGE_LIMIT_PER_OPERATION
         tx_fee = calculate_tx_fee(self.default_fee)
-        print("$$$$$$$$$WHHHHIIIIIIIIII$$$$$")
-        print(1)
         content = (
             CONTENT.replace("%SOURCE%", str(self.source))
             .replace("%DESTINATION%", str(payment_item.paymentaddress))
@@ -447,10 +435,8 @@ class BatchPayer:
             cmd=self.comm_runops, json_params=runops_json
         )
         if status != HTTPStatus.OK:
-            print(2)
             logger.error("Error in run_operation")
             return PaymentStatus.FAIL, []
-        print(3)
         op = run_ops_parsed["contents"][0]
         status = op["metadata"]["operation_result"]["status"]
         if status == "applied":
@@ -467,7 +453,6 @@ class BatchPayer:
             return log_and_fail(op["metadata"]["operation_result"])
 
         # Calculate needed fee for the transaction, for that we need the size of the forged transaction in bytes
-        print(4)
         tx_fee += math.ceil(consumed_gas * MUTEZ_PER_GAS_UNIT)
         content = (
             CONTENT.replace("%SOURCE%", str(self.source))
@@ -481,10 +466,8 @@ class BatchPayer:
         forge_json = FORGE_JSON.replace("%BRANCH%", branch).replace(
             "%CONTENT%", content
         )
-        print(5)
         status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
         if status != HTTPStatus.OK:
-            print(6)
             logger.error("Error in forge operation")
             return PaymentStatus.FAIL, []
         # Now that we have the size of the transaction, compute the required fee
@@ -502,7 +485,6 @@ class BatchPayer:
             )
             status, bytes = self.clnt_mngr.request_url_post(self.comm_forge, forge_json)
             if status != HTTPStatus.OK:
-                print(7)
                 logger.error("Error in forge operation")
                 return PaymentStatus.FAIL, []
 
@@ -510,19 +492,12 @@ class BatchPayer:
             # because of the increase in the fee of the first transaction
             size = SIGNATURE_BYTES_SIZE + len(bytes) / 2
             required_fee = calculate_required_fee(consumed_gas, size)
-        print(8)
         simulation_results = consumed_gas, tx_fee, consumed_storage
-        print("^^^^^ARE WE HERE^^^^^")
-        print(simulation_results)
-        print("^^^^^^^^^^")
         return PaymentStatus.DONE, simulation_results
 
     def attempt_single_batch(self, payment_items, op_counter, dry_run=None):
         if not op_counter.get():
             status, counter = self.clnt_mngr.request_url(self.comm_counter)
-            print("we got in this section2222")
-            print(status)
-            print("----------------")
             if status != HTTPStatus.OK:
                 raise Exception(
                     "Received response code {} for request '{}'".format(
@@ -532,9 +507,6 @@ class BatchPayer:
             counter = int(counter)
             self.base_counter = int(counter)
             op_counter.set(self.base_counter)
-        print("GOOOOOOOOOOOOOD LORD")
-        print(op_counter.get())
-        print("^^^^^^^^^")
         _, head = self.clnt_mngr.request_url(self.comm_payment_head)
         branch = head["hash"]
         chain_id = head["chain_id"]
@@ -563,9 +535,6 @@ class BatchPayer:
                 0,
             )
 
-            print("$$$$$$payment item start$$$$$$$$$$$$$")
-            print(payment_item)
-            print("$$$$$$payment item end$$$$$$$$$$$$$")
             # TRD extension for non scriptless contract accounts
             if payment_item.paymentaddress.startswith("KT"):
                 try:
@@ -575,9 +544,7 @@ class BatchPayer:
                     ) = self.simulate_single_operation(
                         payment_item, pymnt_amnt, branch, chain_id
                     )
-                    print("^^^^start the simulation^^^^^^^^^^")
-                    print(simulation_status)
-                    print("^^^^^^^end the simulation^^^^^^^")
+
                 except Exception as e:
                     logger.info(
                         "Payment to {} script could not be processed. Payment simulation failed with error: {}: {} ".format(
@@ -594,17 +561,14 @@ class BatchPayer:
                             payment_item.paymentaddress
                         )
                     )
-                    print("WE ARE IN THIS FAIL THING SO IT SHOULD BE WORKING")
                     payment_item.paid = PaymentStatus.AVOIDED
                     payment_item.desc += "Investigate on https://tzkt.io - Liquidated oven or no default entry point. Use rules map for payment redirect. "
-                    print(payment_item)
                     continue
 
                 gas_limit, tx_fee, storage_limit = simulation_results
                 burn_fee = COST_PER_BYTE * storage_limit
 
                 if KT1_FEE_SAFETY_CHECK:
-                    print("IS THIS IN THE SAFETY CHECK")
                     total_fee = tx_fee + burn_fee
                     if total_fee > FEE_LIMIT_CONTRACTS:
                         logger.info(
@@ -634,7 +598,6 @@ class BatchPayer:
                         continue
 
             else:
-                print("there is no way we are in here")
                 # An implicit tz1 account
                 if payment_item.needs_activation:
                     tx_fee += max(
@@ -667,7 +630,6 @@ class BatchPayer:
                 MUTEZ_PER_GAS_UNIT,
                 burn_fee,
             )
-            print("WE DIDNT GET HERE DID WE")
             if burn_fee > 0:
                 if self.delegator_pays_ra_fee:
                     # Subtract burn fee from the payment amount
@@ -700,11 +662,7 @@ class BatchPayer:
 
             # if pymnt_amnt becomes < ZERO_THRESHOLD, don't pay
 
-            print("ARE WE IN HERE WITH PAYMENT AMOUNT")
-            print(pymnt_amnt < ZERO_THRESHOLD)
-
             if pymnt_amnt < ZERO_THRESHOLD:
-                print("WE ARE IN THE ZERO THRESHOLD")
                 payment_item.paid = PaymentStatus.DONE
                 payment_item.delegator_transaction_fee = 0
                 payment_item.delegate_transaction_fee = 0
@@ -740,14 +698,7 @@ class BatchPayer:
             content_list.append(content)
 
             verbose_logger.info("Payment content: {}".format(content))
-            print("HERE I HAVE CONTENT LIST")
-            print(content_list)
-            print("complete")
-        print("********start*********")
-        print(content_list)
-        print("********end*********")
         if len(content_list) == 0:
-            print("this is why we are getting done")
             return PaymentStatus.DONE, None, ""
         contents_string = ",".join(content_list)
 
@@ -760,14 +711,9 @@ class BatchPayer:
             "%chain_id%", chain_id
         )
 
-        print("3333333")
-
         status, run_ops_parsed = self.clnt_mngr.request_url_post(
             self.comm_runops, runops_json
         )
-        print("4444444")
-        print(status)
-        print("55555555")
         if status != HTTPStatus.OK:
             error_message = "Error in run_operation"
             logger.error(error_message)
@@ -873,7 +819,6 @@ class BatchPayer:
 
         # if dry_run, skip injection
         if dry_run:
-            print("we are dry running ffs")
             return PaymentStatus.DONE, None, ""
 
         # inject the operations
