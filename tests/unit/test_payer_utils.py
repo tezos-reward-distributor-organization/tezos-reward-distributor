@@ -12,21 +12,17 @@ from Constants import PaymentStatus
 import pytest
 
 
-def fake_test():
-    assert 1 == 1
-
-
-# @pytest.mark.parametrize(
-#     "consumed_gas, size, expected",
-#     [
-#         (1, 2, 103),
-#         (1.4, 1.4444444, 102),
-#         (2, 3, 104),
-#     ],
-# )
-# def test_calculate_required_fee(consumed_gas, size, expected):
-#     SUT = calculate_required_fee(consumed_gas, size)
-#     assert SUT is expected
+@pytest.mark.parametrize(
+    "consumed_gas, size, expected",
+    [
+        (1, 2, 103),
+        (1.4, 1.4444444, 102),
+        (2, 3, 104),
+    ],
+)
+def test_calculate_required_fee(consumed_gas, size, expected):
+    SUT = calculate_required_fee(consumed_gas, size)
+    assert SUT is expected
 
 
 # @pytest.mark.parametrize(
