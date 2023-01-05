@@ -38,31 +38,31 @@ def test_calculate_tx_fee(fee, expected):
     assert SUT is expected
 
 
-# @pytest.mark.parametrize(
-#     "consumed_gas, size, expected",
-#     [
-#         (1, {}, 1),
-#         (123456, {}, 124),
-#         (
-#             123456,
-#             {"internal_operation_results": [{"result": {"consumed_milligas": 1000}}]},
-#             125,
-#         ),
-#         (
-#             123456,
-#             {
-#                 "internal_operation_results": [
-#                     {"result": {"consumed_milligas": 1000}},
-#                     {"result": {"consumed_milligas": 1234}},
-#                 ]
-#             },
-#             127,
-#         ),
-#     ],
-# )
-# def test_calculate_consumed_gas(consumed_gas, size, expected):
-#     SUT = calculate_consumed_gas(consumed_gas, size)
-#     assert SUT is expected
+@pytest.mark.parametrize(
+    "consumed_gas, size, expected",
+    [
+        (1, {}, 1),
+        (123456, {}, 124),
+        (
+            123456,
+            {"internal_operation_results": [{"result": {"consumed_milligas": 1000}}]},
+            125,
+        ),
+        (
+            123456,
+            {
+                "internal_operation_results": [
+                    {"result": {"consumed_milligas": 1000}},
+                    {"result": {"consumed_milligas": 1234}},
+                ]
+            },
+            127,
+        ),
+    ],
+)
+def test_calculate_consumed_gas(consumed_gas, size, expected):
+    SUT = calculate_consumed_gas(consumed_gas, size)
+    assert SUT is expected
 
 
 # @pytest.mark.parametrize(
