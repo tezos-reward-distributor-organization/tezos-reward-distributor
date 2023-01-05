@@ -12,30 +12,30 @@ from Constants import PaymentStatus
 import pytest
 
 
-@pytest.mark.parametrize(
-    "consumed_gas, size, expected",
-    [
-        (1, 2, 103),
-        (1.4, 1.4444444, 102),
-        (2, 3, 104),
-    ],
-)
-def test_calculate_required_fee(consumed_gas, size, expected):
-    SUT = calculate_required_fee(consumed_gas, size)
-    assert SUT is expected
-
-
 # @pytest.mark.parametrize(
-#     "fee, expected",
+#     "consumed_gas, size, expected",
 #     [
-#         (1, 10),
-#         (2.44, 24),
-#         (3, 30),
+#         (1, 2, 103),
+#         (1.4, 1.4444444, 102),
+#         (2, 3, 104),
 #     ],
 # )
-# def test_calculate_tx_fee(fee, expected):
-#     SUT = calculate_tx_fee(fee)
+# def test_calculate_required_fee(consumed_gas, size, expected):
+#     SUT = calculate_required_fee(consumed_gas, size)
 #     assert SUT is expected
+
+
+@pytest.mark.parametrize(
+    "fee, expected",
+    [
+        (1, 10),
+        (2.44, 24),
+        (3, 30),
+    ],
+)
+def test_calculate_tx_fee(fee, expected):
+    SUT = calculate_tx_fee(fee)
+    assert SUT is expected
 
 
 # @pytest.mark.parametrize(
