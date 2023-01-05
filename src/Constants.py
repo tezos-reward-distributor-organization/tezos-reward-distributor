@@ -53,8 +53,8 @@ TZSTATS_PUBLIC_API_URL = {
 
 # TzKT
 TZKT_PUBLIC_API_URL = {
-    "MAINNET": "https://api.tzkt.io",
-    CURRENT_TESTNET: "https://api.{}.tzkt.io".format(CURRENT_TESTNET.lower()),
+    "MAINNET": "https://api.tzkt.io/v1",
+    CURRENT_TESTNET: "https://api.{}.tzkt.io/v1".format(CURRENT_TESTNET.lower()),
 }
 
 # Network Constants
