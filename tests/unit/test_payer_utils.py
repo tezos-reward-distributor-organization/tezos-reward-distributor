@@ -10,7 +10,6 @@ from pay.utils import (
 )
 from Constants import PaymentStatus
 import pytest
-import ipdb
 
 
 @pytest.mark.parametrize(
@@ -63,7 +62,6 @@ def test_calculate_tx_fee(fee, expected):
 )
 def test_calculate_consumed_gas(consumed_gas, size, expected):
     SUT = calculate_consumed_gas(consumed_gas, size)
-    # ipdb.set_trace()
     assert SUT == expected
 
 
