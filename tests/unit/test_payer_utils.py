@@ -10,19 +10,20 @@ from pay.utils import (
 )
 from Constants import PaymentStatus
 import pytest
+import ipdb
 
 
-# @pytest.mark.parametrize(
-#     "consumed_gas, size, expected",
-#     [
-#         (1, 2, 103),
-#         (1.4, 1.4444444, 102),
-#         (2, 3, 104),
-#     ],
-# )
-# def test_calculate_required_fee(consumed_gas, size, expected):
-#     SUT = calculate_required_fee(consumed_gas, size)
-#     assert SUT is expected
+@pytest.mark.parametrize(
+    "consumed_gas, size, expected",
+    [
+        (1, 2, 103),
+        (1.4, 1.4444444, 102),
+        (2, 3, 104),
+    ],
+)
+def test_calculate_required_fee(consumed_gas, size, expected):
+    SUT = calculate_required_fee(consumed_gas, size)
+    assert SUT == expected
 
 
 @pytest.mark.parametrize(
@@ -42,6 +43,7 @@ def test_calculate_tx_fee(fee, expected):
     "consumed_gas, size, expected",
     [
         (1, {}, 1),
+        (123456, {}, 124),
         (
             123456,
             {"internal_operation_results": [{"result": {"consumed_milligas": 1000}}]},
@@ -61,7 +63,8 @@ def test_calculate_tx_fee(fee, expected):
 )
 def test_calculate_consumed_gas(consumed_gas, size, expected):
     SUT = calculate_consumed_gas(consumed_gas, size)
-    assert SUT is expected
+    # ipdb.set_trace()
+    assert SUT == expected
 
 
 @pytest.mark.parametrize(
@@ -84,7 +87,7 @@ def test_calculate_consumed_gas(consumed_gas, size, expected):
 )
 def test_calculate_consumed_storage(metadata, expected):
     SUT = calculate_consumed_storage(metadata)
-    assert SUT is expected
+    assert SUT == expected
 
 
 # @pytest.mark.parametrize(
