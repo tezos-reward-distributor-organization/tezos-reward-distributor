@@ -3,10 +3,6 @@ from pay.utils import (
     calculate_tx_fee,
     calculate_consumed_gas,
     calculate_consumed_storage,
-    init_payment_logs,
-    calculate_estimated_amount_to_pay,
-    sort_and_chunk_payment_items,
-    caluculate_future_payable_cycles,
 )
 from Constants import PaymentStatus
 import pytest
@@ -86,14 +82,3 @@ def test_calculate_consumed_gas(consumed_gas, size, expected):
 def test_calculate_consumed_storage(metadata, expected):
     SUT = calculate_consumed_storage(metadata)
     assert SUT == expected
-
-
-# @pytest.mark.parametrize(
-#     "payment_items, expected",
-#     [
-#         ([{"paid2": PaymentStatus.PAID}], []),
-#     ],
-# )
-# def test_init_payment_logs(payment_items, expected):
-#     SUT = init_payment_logs(payment_items)
-#     assert SUT is expected
