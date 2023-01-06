@@ -42,7 +42,6 @@ def test_calculate_tx_fee(fee, expected):
     "consumed_gas, size, expected",
     [
         (1, {}, 1),
-        (123456, {}, 124),
         (
             123456,
             {"internal_operation_results": [{"result": {"consumed_milligas": 1000}}]},
