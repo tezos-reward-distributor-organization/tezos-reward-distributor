@@ -4,40 +4,8 @@ import base58
 import json
 import math
 
-from Constants import PaymentStatus
 from log_config import main_logger, verbose_logger
-from Constants import (
-    KT1_FEE_SAFETY_CHECK,
-    FEE_LIMIT_CONTRACTS,
-    ZERO_THRESHOLD,
-    MAX_TX_PER_BLOCK_TZ,
-    MAX_TX_PER_BLOCK_KT,
-    HARD_GAS_LIMIT_PER_OPERATION,
-    HARD_STORAGE_LIMIT_PER_OPERATION,
-    COST_PER_BYTE,
-    MINIMUM_FEE_MUTEZ,
-    MUTEZ_PER_GAS_UNIT,
-    MUTEZ_PER_BYTE,
-    SIGNATURE_BYTES_SIZE,
-    MAX_NUM_TRIALS_PER_BLOCK,
-    MAX_BLOCKS_TO_CHECK_AFTER_INJECTION,
-    MAX_BATCH_PAYMENT_ATTEMPTS,
-    COMM_DELEGATE_BALANCE,
-    COMM_PAYMENT_HEAD,
-    COMM_HEAD,
-    COMM_COUNTER,
-    CONTENT,
-    FORGE_JSON,
-    RUNOPS_JSON,
-    PREAPPLY_JSON,
-    JSON_WRAP,
-    COMM_RUNOPS,
-    COMM_FORGE,
-    COMM_PREAPPLY,
-    COMM_INJECT,
-    COMM_WAIT,
-    TX_FEES,
-)
+from Constants import PaymentStatus
 
 from pay.utils import (
     calculate_required_fee,
@@ -56,6 +24,8 @@ from util.wait_random import wait_random
 
 from util.address_validator import AddressValidator
 
+import ipdb
+
 logger = main_logger
 
 
@@ -67,6 +37,69 @@ logger = main_logger
 #   account which is costlier than a simple transfer.
 # Not revealed:
 #   A state of a contract that did not yet publish its public key but in order to enact a delegation you need to be revealed.
+
+
+# General transaction parameters:
+#
+# This fee limit is set to allow payouts to ovens
+# Other KT accounts with higher fee requirements will be skipped
+# TODO: define set of known contract formats and make this fee for unknown contracts configurable
+KT1_FEE_SAFETY_CHECK = False
+FEE_LIMIT_CONTRACTS = 100000
+ZERO_THRESHOLD = 1  # too less to payout in mutez
+MAX_TX_PER_BLOCK_TZ = 550
+MAX_TX_PER_BLOCK_KT = 25
+
+# For simulation
+# https://rpc.tzkt.io/mainnet/chains/main/blocks/head/context/constants
+HARD_GAS_LIMIT_PER_OPERATION = 1040000
+HARD_STORAGE_LIMIT_PER_OPERATION = 60000
+COST_PER_BYTE = 250
+MINIMUM_FEE_MUTEZ = 100
+MUTEZ_PER_GAS_UNIT = 0.1
+MUTEZ_PER_BYTE = 1
+
+PKH_LENGTH = 36
+SIGNATURE_BYTES_SIZE = 64
+MAX_NUM_TRIALS_PER_BLOCK = 2
+MAX_BLOCKS_TO_CHECK_AFTER_INJECTION = 5
+MAX_BATCH_PAYMENT_ATTEMPTS = 3
+
+COMM_DELEGATE_BALANCE = "/chains/main/blocks/{}/context/contracts/{}/balance"
+COMM_PAYMENT_HEAD = "/chains/main/blocks/head~10"
+COMM_HEAD = "/chains/main/blocks/head"
+COMM_COUNTER = "/chains/main/blocks/head/context/contracts/{}/counter"
+CONTENT = '{"kind":"transaction","source":"%SOURCE%","destination":"%DESTINATION%","fee":"%fee%","counter":"%COUNTER%","gas_limit":"%gas_limit%","storage_limit":"%storage_limit%","amount":"%AMOUNT%"}'
+FORGE_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%]}'
+RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
+PREAPPLY_JSON = '[{"protocol":"%PROTOCOL%","branch":"%BRANCH%","contents":[%CONTENT%],"signature":"%SIGNATURE%"}]'
+JSON_WRAP = '{"operation": %JSON%,"chain_id":"%chain_id%"}'
+
+COMM_RUNOPS = "/chains/main/blocks/head/helpers/scripts/run_operation"
+COMM_FORGE = "/chains/main/blocks/head/helpers/forge/operations"
+COMM_PREAPPLY = "/chains/main/blocks/head/helpers/preapply/operations"
+COMM_INJECT = "/injection/operation"
+COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
+
+# These values may change with protocol upgrades
+TX_FEES = {
+    "TZ1_TO_ALLOCATED_TZ1": {
+        "FEE": 298,
+        "GAS_LIMIT": 1451,
+        "STORAGE_LIMIT": 0,  # 65 mutez before
+    },
+    "TZ1_TO_NON_ALLOCATED_TZ1": {
+        "FEE": 397,
+        "GAS_LIMIT": 1421,
+        "STORAGE_LIMIT": 277,
+        "BURN_FEE": None,  # 0.257 tez before
+    },
+    "TZ1_REVEAL": {
+        "FEE": 357,
+        "GAS_LIMIT": 1000,
+        "STORAGE_LIMIT": 0,
+    },
+}
 
 # TODO: We need to refactor the whole class and all its functions.
 # Procedure needs to be transitioned to:
@@ -417,6 +450,7 @@ class BatchPayer:
 
     def simulate_single_operation(self, payment_item, pymnt_amnt, branch, chain_id):
         # Initial gas, storage and transaction limits
+        ipdb.set_trace()
         gas_limit = HARD_GAS_LIMIT_PER_OPERATION
         storage_limit = HARD_STORAGE_LIMIT_PER_OPERATION
         tx_fee = calculate_tx_fee(self.default_fee)
@@ -438,6 +472,7 @@ class BatchPayer:
             logger.error("Error in run_operation")
             return PaymentStatus.FAIL, []
         op = run_ops_parsed["contents"][0]
+
         status = op["metadata"]["operation_result"]["status"]
         if status == "applied":
             # Calculate actual consumed gas amount
@@ -448,6 +483,7 @@ class BatchPayer:
                 metadata=op["metadata"],
             )
             # Calculate actual used storage
+            ipdb.set_trace()
             consumed_storage = calculate_consumed_storage(op["metadata"])
         else:
             return log_and_fail(op["metadata"]["operation_result"])
@@ -536,6 +572,7 @@ class BatchPayer:
             )
 
             # TRD extension for non scriptless contract accounts
+            ipdb.set_trace()
             if payment_item.paymentaddress.startswith("KT"):
                 try:
                     (

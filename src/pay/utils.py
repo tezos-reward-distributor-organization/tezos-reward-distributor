@@ -13,6 +13,8 @@ from Constants import (
     MAX_TX_PER_BLOCK_KT,
 )
 
+import ipdb
+
 
 def calculate_required_fee(consumed_gas, size):
     return math.ceil(
@@ -77,6 +79,7 @@ def log_and_fail(operation_result):
 
 def init_payment_logs(payment_items):
     main_logger.info("{} payment items to process".format(len(payment_items)))
+    ipdb.set_trace()
     payment_logs_paid = [pi for pi in payment_items if pi.paid == PaymentStatus.PAID]
     if payment_logs_paid:
         main_logger.info(
