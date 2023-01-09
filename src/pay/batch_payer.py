@@ -24,7 +24,6 @@ from util.wait_random import wait_random
 
 from util.address_validator import AddressValidator
 
-import ipdb
 
 logger = main_logger
 
@@ -44,11 +43,9 @@ logger = main_logger
 # This fee limit is set to allow payouts to ovens
 # Other KT accounts with higher fee requirements will be skipped
 # TODO: define set of known contract formats and make this fee for unknown contracts configurable
-KT1_FEE_SAFETY_CHECK = False
+KT1_FEE_SAFETY_CHECK = True
 FEE_LIMIT_CONTRACTS = 100000
 ZERO_THRESHOLD = 1  # too less to payout in mutez
-MAX_TX_PER_BLOCK_TZ = 550
-MAX_TX_PER_BLOCK_KT = 25
 
 # For simulation
 # https://rpc.tzkt.io/mainnet/chains/main/blocks/head/context/constants
@@ -450,7 +447,6 @@ class BatchPayer:
 
     def simulate_single_operation(self, payment_item, pymnt_amnt, branch, chain_id):
         # Initial gas, storage and transaction limits
-        ipdb.set_trace()
         gas_limit = HARD_GAS_LIMIT_PER_OPERATION
         storage_limit = HARD_STORAGE_LIMIT_PER_OPERATION
         tx_fee = calculate_tx_fee(self.default_fee)
@@ -483,7 +479,6 @@ class BatchPayer:
                 metadata=op["metadata"],
             )
             # Calculate actual used storage
-            ipdb.set_trace()
             consumed_storage = calculate_consumed_storage(op["metadata"])
         else:
             return log_and_fail(op["metadata"]["operation_result"])
@@ -572,7 +567,6 @@ class BatchPayer:
             )
 
             # TRD extension for non scriptless contract accounts
-            ipdb.set_trace()
             if payment_item.paymentaddress.startswith("KT"):
                 try:
                     (

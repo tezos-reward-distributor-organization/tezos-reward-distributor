@@ -2,18 +2,16 @@ from random import randint
 from time import sleep
 from log_config import main_logger
 import math
-from Constants import (
-    MINIMUM_FEE_MUTEZ,
-    MUTEZ_PER_GAS_UNIT,
-    PaymentStatus,
-    MUTEZ_PER_BYTE,
-    RUNOPS_JSON,
-    JSON_WRAP,
-    MAX_TX_PER_BLOCK_TZ,
-    MAX_TX_PER_BLOCK_KT,
-)
+from Constants import PaymentStatus
 
-import ipdb
+
+MINIMUM_FEE_MUTEZ = 100
+MUTEZ_PER_GAS_UNIT = 0.1
+MUTEZ_PER_BYTE = 1
+RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
+JSON_WRAP = '{"operation": %JSON%,"chain_id":"%chain_id%"}'
+MAX_TX_PER_BLOCK_TZ = 550
+MAX_TX_PER_BLOCK_KT = 25
 
 
 def calculate_required_fee(consumed_gas, size):
@@ -79,7 +77,6 @@ def log_and_fail(operation_result):
 
 def init_payment_logs(payment_items):
     main_logger.info("{} payment items to process".format(len(payment_items)))
-    ipdb.set_trace()
     payment_logs_paid = [pi for pi in payment_items if pi.paid == PaymentStatus.PAID]
     if payment_logs_paid:
         main_logger.info(
