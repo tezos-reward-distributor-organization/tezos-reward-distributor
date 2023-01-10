@@ -36,6 +36,7 @@ from model.baking_conf import (
     SERVICE_FEE,
     FOUNDERS_MAP,
     OWNERS_MAP,
+    EXCLUDED_MAP,
     MIN_DELEGATION_AMT,
     MIN_PAYMENT_AMT,
     RULES_MAP,
@@ -61,15 +62,15 @@ messages = {
     "hello": "This application will help you configure TRD to manage payouts for your bakery. Press enter to continue",
     "bakingaddress": "Specify your baking address public key hash (Processing may take a few seconds)",
     "paymentaddress": "Specify your payouts public key hash. It can be the same as your baking address, or a different one.",
-    "servicefee": "Specify bakery fee [0:100]",
-    "rewardstype": "Specify if baker pays 'ideal' or 'actual' rewards (Be sure to read the documentation to understand the difference).",
-    "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... Share sum must equal 1. mind the quotes. e.g 'tz1xxxx':0.6, 'tz1yyyyy': 0,4. Press enter to leave empty",
-    "ownersmap": "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... Share sum must equal 1. mind the quotes. e.g 'tz1xxxx':0.6, 'tz1yyyyy': 0,4. Press enter to leave empty",
+    "servicefee": "Specify bakery fee, valid range is between 0 and 100",
+    "rewardstype": "Specify if baker pays 'ideal' or 'actual' rewards (Be sure to read the documentation to understand the difference). Press enter for 'actual'",
+    "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes, sum must equal 1, e.g: 'tz1a...':0.3, 'tz1b..':0.7) Press enter to leave empty",
+    "ownersmap": "Specify OWNERS in form 'phk1':share1,'pkh2':share2,... (Mind quotes, sum must equal 1, e.g: 'tz1a...':0.3, 'tz1b..':0.7) Press enter to leave empty",
     "mindelegation": "Specify minimum delegation amount in tez. Press enter for 0",
     "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. {}: leave at balance, {}: to founders, {}: to everybody, press enter for {}".format(
         TOB, TOF, TOE, TOB
     ),
-    "exclude": "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are {}: leave at balance, {}: to founders, {}: to everybody. Press enter to skip".format(
+    "exclude": "Add excluded address in form  'pkh1':target, 'pkh2':target. Share of the exluded address will go to target. Possbile targets are = {}: leave at balance, {}: to founders, {}: to everybody. Type enter to skip".format(
         TOB, TOF, TOE
     ),
     "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Press enter to skip",
@@ -151,16 +152,15 @@ def onservicefee(input):
 
 
 def onrewardstype(input):
+    if not input:
+        input = RewardsType.ACTUAL.value
     try:
-        if not input:
-            input = RewardsType.ACTUAL
         global parser
         rt = RewardsType(input.lower())
         parser.set(REWARDS_TYPE, str(rt))
     except Exception:
         printe("Invalid option for rewards type. Please type 'actual' or 'ideal'.")
         return
-
     fsm.go()
 
 
@@ -246,26 +246,24 @@ def onexclude(input):
         return
 
     try:
-        address_target = input.split(",")
-        address = address_target[0].strip()
-        target = address_target[1].strip()
-        AddressValidator("excluded address").validate(address)
-        options = [TOB, TOE, TOF]
-        if target not in options:
-            printe("Invalid target, available options are {}".format(options))
-            return
-
         global parser
-        conf_obj = parser.get_conf_obj()
-        if RULES_MAP not in conf_obj:
-            conf_obj[RULES_MAP] = dict()
 
-        conf_obj[RULES_MAP][address] = target
+        dict = ast.literal_eval("{" + input + "}")
+        parser.set(RULES_MAP, dict)
+        parser.validate_excluded_map(parser.get_conf_obj(), RULES_MAP)
 
-        parser.validate_dest_map(parser.get_conf_obj())
+        # address_target = input.split(":")
+        # address = address_target[0].strip()
+        # target = address_target[1].strip()
+        # AddressValidator("excluded address").validate(address)
+        # options = [TOB, TOE, TOF]
+        # if target not in options:
+        #     printe("Invalid target, available options are {}".format(options))
+        #     return
     except Exception:
         printe("Invalid exclusion entry: " + traceback.format_exc())
         return
+    fsm.go()
 
 
 def onspecials(input):
@@ -534,7 +532,6 @@ if __name__ == "__main__":
         )
 
     argparser = argparse.ArgumentParser()
-
     add_argument_provider(argparser)
     add_argument_network(argparser)
     add_argument_base_directory(argparser)

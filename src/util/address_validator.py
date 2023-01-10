@@ -1,4 +1,4 @@
-PKH_LENGHT = 36
+PKH_LENGTH = 36
 
 
 class BaseError(Exception):
@@ -26,16 +26,16 @@ class AddressValidator:
                 )
             )
 
-        if len(address) != PKH_LENGHT:
+        if len(address) != PKH_LENGTH:
             raise IncorrectLengthError(
                 "Incorrect input in {}, '{}' length must be {}".format(
-                    self.context, address, PKH_LENGHT
+                    self.context, address, PKH_LENGTH
                 )
             )
 
     @staticmethod
     def isaddress(address):
-        if len(address) == PKH_LENGHT:
+        if len(address) == PKH_LENGTH:
             if address.startswith("tz") or address.startswith("KT"):
                 return True
 

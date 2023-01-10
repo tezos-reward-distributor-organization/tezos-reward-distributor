@@ -120,6 +120,32 @@ class BakingYamlConfParser(YamlConfParser):
         if MIN_DELEGATION_KEY not in conf_obj[RULES_MAP]:
             conf_obj[EXCLUDED_DELEGATORS_SET_TOB].add(MIN_DELEGATION_KEY)
 
+    def validate_excluded_map(self, conf_obj, map_name):
+
+        if map_name not in conf_obj:
+            conf_obj[map_name] = dict()
+            return
+
+        if not conf_obj[map_name]:
+            conf_obj[map_name] = dict()
+            return
+
+        if isinstance(conf_obj[map_name], str) and conf_obj[map_name].lower() == "none":
+            conf_obj[map_name] = dict()
+            return
+
+        if not conf_obj[map_name]:
+            return
+
+        share_map = conf_obj[map_name]
+        validator = AddressValidator(map_name)
+        for key, value in share_map.items():
+            validator.validate(key)
+            if value not in [TOF, TOB, TOE]:
+                raise ConfigurationException(
+                    "Map '{}' needs to be one of TOF, TOB or TOE".format(value)
+                )
+
     def validate_share_map(self, conf_obj, map_name):
         """
         all shares in the map must sum up to 1
@@ -240,7 +266,21 @@ class BakingYamlConfParser(YamlConfParser):
                     "Baking address must be a valid tz address."
                 )
             else:
-                if not self.block_api.get_revelation(baking_address):
+                try:
+                    if not self.block_api.get_revelation(baking_address):
+                        raise ConfigurationException(
+                            "Baking address {} did not reveal key.".format(
+                                baking_address
+                            )
+                        )
+
+                    if not self.block_api.get_delegatable(baking_address):
+                        raise ConfigurationException(
+                            "Baking address {} is not enabled for delegation".format(
+                                baking_address
+                            )
+                        )
+                except KeyError:
                     raise ConfigurationException(
                         "Baking address {} did not reveal key.".format(baking_address)
                     )
