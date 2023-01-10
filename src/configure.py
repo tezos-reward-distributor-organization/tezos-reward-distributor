@@ -70,10 +70,10 @@ messages = {
     "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. {}: leave at balance, {}: to founders, {}: to everybody, press enter for {}".format(
         TOB, TOF, TOE, TOB
     ),
-    "exclude": "Add excluded address in form  'pkh1':target, 'pkh2':target. Share of the exluded address will go to target. Possbile targets are = {}: leave at balance, {}: to founders, {}: to everybody. Type enter to skip".format(
+    "exclude": "Add excluded address in form of 'pkh1':'target', 'pkh2':'target'. (e.g: 'tz1a..:'TOF','tz1b..:'TOB') Share of the exluded address will go to target. Possbile targets are = {}: leave at balance, {}: to founders, {}: to everybody. Type enter to skip".format(
         TOB, TOF, TOE
     ),
-    "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Press enter to skip",
+    "redirect": "Add redirected address in form of 'pkh1':'pkh2', 'pkh3':'pkh4'. (e.g: 'tz1a..:'tz1b..','tz1c..:'tz1d..'). Press enter to skip",
     "reactivatezeroed": "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Press enter for Yes",
     "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Press enter for delegator",
     "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation or burn fees for kt accounts in general: 0 for delegator, 1 for delegate. Press enter for delegator",
@@ -252,14 +252,6 @@ def onexclude(input):
         parser.set(RULES_MAP, dict)
         parser.validate_excluded_map(parser.get_conf_obj(), RULES_MAP)
 
-        # address_target = input.split(":")
-        # address = address_target[0].strip()
-        # target = address_target[1].strip()
-        # AddressValidator("excluded address").validate(address)
-        # options = [TOB, TOE, TOF]
-        # if target not in options:
-        #     printe("Invalid target, available options are {}".format(options))
-        #     return
     except Exception:
         printe("Invalid exclusion entry: " + traceback.format_exc())
         return
@@ -318,24 +310,16 @@ def onredirect(input):
         return
 
     try:
-        address1_address2 = input.split(",")
-        address1 = address1_address2[0].strip()
-        address2 = address1_address2[1].strip()
-
-        AddressValidator("redirected source address").validate(address1)
-        AddressValidator("redirected target address").validate(address2)
-
         global parser
-        conf_obj = parser.get_conf_obj()
-        if RULES_MAP not in conf_obj:
-            conf_obj[RULES_MAP] = dict()
 
-        conf_obj[RULES_MAP][address1] = address2
-
+        dict = ast.literal_eval("{" + input + "}")
+        parser.set(RULES_MAP, dict)
         parser.validate_dest_map(parser.get_conf_obj())
+
     except Exception:
         printe("Invalid redirection entry: " + traceback.format_exc())
         return
+    fsm.go()
 
 
 def ondelegatorpaysxfrfee(input):
