@@ -36,7 +36,6 @@ from model.baking_conf import (
     SERVICE_FEE,
     FOUNDERS_MAP,
     OWNERS_MAP,
-    EXCLUDED_MAP,
     MIN_DELEGATION_AMT,
     MIN_PAYMENT_AMT,
     RULES_MAP,
