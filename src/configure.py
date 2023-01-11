@@ -78,7 +78,7 @@ messages = {
     "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Press enter for delegator",
     "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation or burn fees for kt accounts in general: 0 for delegator, 1 for delegate. Press enter for delegator",
     "paydenunciationrewards": "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Press enter for No",
-    "supporters": "Add supporter address. Supporters do not pay bakery fee. Press enter to skip",
+    "supporters": "Add supporter addresses in form of 'pkh1', 'pkh2'. Supporters do not pay bakery fee. Press enter to skip",
     "specials": "Add any addresses with a special fee in form of 'PKH1':fee, 'PHK2':fee. Press enter to skip",
     "noplugins": "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually.",
     "minpayment": "Specify minimum payment amount in tez. Press enter for 0",
@@ -281,19 +281,15 @@ def onsupporters(input):
         return
 
     try:
-        AddressValidator("supporter address").validate(input)
-
         global parser
-        conf_obj = parser.get_conf_obj()
-        if SUPPORTERS_SET not in conf_obj:
-            conf_obj[SUPPORTERS_SET] = set()
-
-        conf_obj[SUPPORTERS_SET].add(input)
-
+        dict = ast.literal_eval("{" + input + "}")
+        parser.set(SUPPORTERS_SET, dict)
         parser.validate_address_set(parser.get_conf_obj(), SUPPORTERS_SET)
+
     except Exception:
         printe("Invalid supporter entry: " + traceback.format_exc())
         return
+    fsm.go()
 
 
 def onredirect(input):
@@ -375,7 +371,6 @@ def onprefinal(input):
 
 
 callbacks = {
-    "specials": onspecials,
     "bakingaddress": onbakingaddress,
     "paymentaddress": onpaymentaddress,
     "servicefee": onservicefee,
@@ -392,6 +387,7 @@ callbacks = {
     "delegatorpaysrafee": ondelegatorpaysrafee,
     "paydenunciationrewards": onpaydenunciationrewards,
     "supporters": onsupporters,
+    "specials": onspecials,
     "prefinal": onprefinal,
 }
 
@@ -400,7 +396,6 @@ fsm = Fysom(
         "initial": "hello",
         "final": "final",
         "events": [
-            {"name": "go", "src": "specials", "dst": "supporters"},
             {"name": "go", "src": "hello", "dst": "bakingaddress"},
             {"name": "go", "src": "bakingaddress", "dst": "paymentaddress"},
             {"name": "go", "src": "paymentaddress", "dst": "servicefee"},
@@ -421,6 +416,7 @@ fsm = Fysom(
                 "dst": "paydenunciationrewards",
             },
             {"name": "go", "src": "paydenunciationrewards", "dst": "specials"},
+            {"name": "go", "src": "specials", "dst": "supporters"},
             {"name": "go", "src": "supporters", "dst": "final"},
         ],
         "callbacks": {"bakingaddress": onbakingaddress},
