@@ -100,4 +100,3 @@ def test_failed_simulate_single_operation():
         reward_log, reward_log.amount, "hash", "unittest"
     )
     assert PaymentStatus.FAIL == simulation_status
-    # assert 1 == simulation_status
