@@ -24,19 +24,7 @@ from util.wait_random import wait_random
 
 from util.address_validator import AddressValidator
 
-
 logger = main_logger
-
-
-# Ithaca
-# Non-allocated:
-#   The contract does not exist and needs some more gas (and fees) to pay up for the used storage.
-#   If a delegate empties its account it gets removed from the storage. However, if it is expected
-#   to receive a reward then you would need to pay up again for the storage to re-allocated its
-#   account which is costlier than a simple transfer.
-# Not revealed:
-#   A state of a contract that did not yet publish its public key but in order to enact a delegation you need to be revealed.
-
 
 # General transaction parameters:
 #
@@ -78,11 +66,20 @@ COMM_PREAPPLY = "/chains/main/blocks/head/helpers/preapply/operations"
 COMM_INJECT = "/injection/operation"
 COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 
+# Lima
+# Non-allocated:
+#   The contract does not exist and needs some more gas (and fees) to pay up for the used storage.
+#   If a delegate empties its account it gets removed from the storage. However, if it is expected
+#   to receive a reward then you would need to pay up again for the storage to re-allocated its
+#   account which is costlier than a simple transfer.
+# Not revealed:
+#   A state of a contract that did not yet publish its public key but in order to enact a delegation you need to be revealed.
+#
 # These values may change with protocol upgrades
 TX_FEES = {
     "TZ1_TO_ALLOCATED_TZ1": {
         "FEE": 298,
-        "GAS_LIMIT": 1451,
+        "GAS_LIMIT": 1001,
         "STORAGE_LIMIT": 0,  # 65 mutez before
     },
     "TZ1_TO_NON_ALLOCATED_TZ1": {
