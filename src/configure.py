@@ -483,7 +483,7 @@ def main(args):
                     raise Exception("Please enter 'overwrite' or 'new'")
                 if user_input == "new":
                     print(
-                        "please enter new filename without extention, e.g: updated-baker"
+                        "please enter new filename without extention, e.g: updated-configuration"
                     )
                     config_file_path = os.path.join(
                         os.path.abspath(config_dir), input() + ".yaml"
