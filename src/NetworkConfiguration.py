@@ -24,7 +24,7 @@ def init_network_config(network_name, config_client_manager):
         )
         return network_config_map
     except Exception:
-        logger.debug(
+        logger.info(
             "Failed to get network configuration constants from a local node ({}).".format(
                 node_addr
             )
