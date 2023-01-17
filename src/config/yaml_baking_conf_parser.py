@@ -243,7 +243,7 @@ class BakingYamlConfParser(YamlConfParser):
                 try:
                     if not self.block_api.get_revelation(baking_address):
                         raise ConfigurationException(
-                            "Baking address {} did not reveal key.".format(
+                            "Baking address {} did not reveal its public key.".format(
                                 baking_address
                             )
                         )
