@@ -163,7 +163,7 @@ def add_argument_base_directory(argparser):
             os.path.join(default_dir, REPORTS_DIR, ""),
             os.path.dirname(os.path.join(default_dir, DEFAULT_LOG_FILE)),
         ),
-        default=BASE_DIR,
+        default=default_dir,
     )
 
 

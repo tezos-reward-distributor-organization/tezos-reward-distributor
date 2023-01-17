@@ -53,6 +53,7 @@ from model.baking_conf import (
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
+import ipdb
 
 
 logger = main_logger
@@ -470,6 +471,29 @@ def main(args):
     config_file_path = os.path.join(
         os.path.abspath(config_dir), cfg.get_baking_address() + ".yaml"
     )
+
+    if os.path.exists:
+        while True:
+            try:
+                print(
+                    "Configuration file already exists, would you like to overwrite it or choose a new file name? type either overwrite or new."
+                )
+                user_input = input()
+                if user_input != "overwrite" and user_input != "new":
+                    raise Exception("Please enter 'overwrite' or 'new'")
+                if user_input == "new":
+                    print(
+                        "please enter new filename without extention, e.g: updated-baker"
+                    )
+                    config_file_path = os.path.join(
+                        os.path.abspath(config_dir), input() + ".yaml"
+                    )
+                    break
+                if user_input == "overwrite":
+                    break
+            except Exception as e:
+                printe("Invalid input: {}".format(str(e)))
+
     cfg_dict_plain = {k: v for k, v in cfg_dict.items() if not k.startswith("__")}
 
     try:
