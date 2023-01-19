@@ -585,7 +585,7 @@ class BatchPayer:
 
                 if simulation_status == PaymentStatus.FAIL:
                     logger.info(
-                        "Payment to {} script could not be processed. Possible reason: liquidated contract. Skipping. Think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers.".format(
+                        "Payment to {} script could not be processed. Possible reason: liquidated contract. Avoiding. Think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers.".format(
                             payment_item.paymentaddress
                         )
                     )
