@@ -26,7 +26,7 @@ def calculate_tx_fee(default_fee):
 
 def build_runops_json_params(branch, content, chain_id):
     runops_json = RUNOPS_JSON.replace("%BRANCH%", branch).replace("%CONTENT%", content)
-    JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
+    return JSON_WRAP.replace("%JSON%", runops_json).replace("%chain_id%", chain_id)
 
 
 def calculate_consumed_gas(consumed_milligas, metadata):
