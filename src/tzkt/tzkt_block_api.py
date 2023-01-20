@@ -28,9 +28,10 @@ class TzKTBlockApiImpl(BlockApi):
 
         return (current_cycle, current_level)
 
-    def get_revelation(self, pkh, verbose=False):
+    def get_revelation(self, pkh):
         account = self.api.get_account_by_address(pkh)
-        return bool(account["revealed"])
+        revealed = account.get("revealed")
+        return bool(revealed)
 
     def get_delegatable(self, pkh):
         account = self.api.get_account_by_address(pkh)

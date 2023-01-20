@@ -240,16 +240,23 @@ class BakingYamlConfParser(YamlConfParser):
                     "Baking address must be a valid tz address."
                 )
             else:
-                if not self.block_api.get_revelation(baking_address):
-                    raise ConfigurationException(
-                        "Baking address {} did not reveal key.".format(baking_address)
-                    )
-
-                if not self.block_api.get_delegatable(baking_address):
-                    raise ConfigurationException(
-                        "Baking address {} is not enabled for delegation".format(
-                            baking_address
+                try:
+                    if not self.block_api.get_revelation(baking_address):
+                        raise ConfigurationException(
+                            "Baking address {} did not reveal its public key.".format(
+                                baking_address
+                            )
                         )
+
+                    if not self.block_api.get_delegatable(baking_address):
+                        raise ConfigurationException(
+                            "Baking address {} is not enabled for delegation".format(
+                                baking_address
+                            )
+                        )
+                except KeyError:
+                    raise ConfigurationException(
+                        "unable to use signer, do you have it running?"
                     )
         else:
             raise ConfigurationException(

@@ -1,4 +1,4 @@
-PKH_LENGHT = 36
+from Constants import PKH_LENGTH
 
 
 class BaseError(Exception):
@@ -14,7 +14,7 @@ class IncorrectLengthError(BaseError):
 
 
 class AddressValidator:
-    def __init__(self, context) -> None:
+    def __init__(self, context=None) -> None:
         super().__init__()
         self.context = context
 
@@ -26,16 +26,24 @@ class AddressValidator:
                 )
             )
 
-        if len(address) != PKH_LENGHT:
+        if len(address) != PKH_LENGTH:
             raise IncorrectLengthError(
                 "Incorrect input in {}, '{}' length must be {}".format(
-                    self.context, address, PKH_LENGHT
+                    self.context, address, PKH_LENGTH
+                )
+            )
+
+    def tz_validate(self, address):
+        if len(address) != PKH_LENGTH or not address.startswith("tz"):
+            raise Exception(
+                "Payment address cannot be translated into a PKH or is kt script: {}".format(
+                    address
                 )
             )
 
     @staticmethod
     def isaddress(address):
-        if len(address) == PKH_LENGHT:
+        if len(address) == PKH_LENGTH:
             if address.startswith("tz") or address.startswith("KT"):
                 return True
 
