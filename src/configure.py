@@ -20,9 +20,7 @@ from util.parser import (
     add_argument_base_directory,
     add_argument_node_endpoint,
     add_argument_signer_endpoint,
-    add_argument_docker,
     add_argument_verbose,
-    add_argument_dry,
     add_argument_provider,
     add_argument_api_base_url,
     add_argument_log_file,
@@ -116,7 +114,6 @@ def onbakingaddress(input):
         network_config,
         args.node_endpoint,
         api_base_url=args.api_base_url,
-        dry_run=args.dry_run,
     )
     parser.set(BAKING_ADDRESS, input)
     fsm.go()
@@ -532,9 +529,7 @@ if __name__ == "__main__":
     add_argument_base_directory(argparser)
     add_argument_node_endpoint(argparser)
     add_argument_signer_endpoint(argparser)
-    add_argument_docker(argparser)
     add_argument_verbose(argparser)
-    add_argument_dry(argparser)
     add_argument_api_base_url(argparser)
     add_argument_log_file(argparser)
 
@@ -545,7 +540,6 @@ if __name__ == "__main__":
     init(False, args.log_file, args.verbose == "on", mode="configure")
 
     script_name = " Baker Configuration Tool"
-    args.dry_run = False
     print_banner(args, script_name)
 
     main(args)
