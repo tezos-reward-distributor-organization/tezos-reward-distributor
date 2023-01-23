@@ -62,6 +62,7 @@ class BakingYamlConfParser(YamlConfParser):
             )
         self.block_api = block_api
         self.dry_run = dry_run
+        self.address_validator = AddressValidator()
 
     def parse(self):
         yaml_conf_dict = super().parse()
@@ -107,9 +108,10 @@ class BakingYamlConfParser(YamlConfParser):
             [k for k, v in conf_obj[RULES_MAP].items() if v == TOB]
         )
 
-        addr_validator = AddressValidator("dest_map")
         conf_obj[DEST_MAP] = {
-            k: v for k, v in conf_obj[RULES_MAP].items() if addr_validator.isaddress(v)
+            k: v
+            for k, v in conf_obj[RULES_MAP].items()
+            if self.address_validator.isaddress(v)
         }
 
         conf_obj[CONTRACTS_SET] = set(
@@ -138,9 +140,8 @@ class BakingYamlConfParser(YamlConfParser):
             return
 
         share_map = conf_obj[map_name]
-        validator = AddressValidator(map_name)
         for key, value in share_map.items():
-            validator.validate(key)
+            self.address_validator.validate(key)
             if value not in [TOF, TOB, TOE]:
                 raise ConfigurationException(
                     "Map '{}' needs to be one of TOF, TOB or TOE".format(value)
@@ -171,9 +172,8 @@ class BakingYamlConfParser(YamlConfParser):
 
         share_map = conf_obj[map_name]
 
-        validator = AddressValidator(map_name)
         for key, value in share_map.items():
-            validator.validate(key)
+            self.address_validator.validate(key)
 
         if len(share_map) > 0:
             try:
@@ -249,44 +249,19 @@ class BakingYamlConfParser(YamlConfParser):
             )
 
     def validate_baking_address(self, conf_obj):
-        if BAKING_ADDRESS not in conf_obj or not conf_obj[BAKING_ADDRESS]:
+        baking_address = conf_obj.get("BAKING_ADDRESS")
+        if not baking_address:
             raise ConfigurationException("Baking address must be set")
-
-        baking_address = conf_obj[BAKING_ADDRESS]
-
-        if baking_address.startswith("KT"):
+        self.address_validator.validate_baking_address(baking_address)
+        if not self.block_api.get_revelation(baking_address):
             raise ConfigurationException(
-                "KT addresses cannot act as bakers. Only tz addresses can be registered to bake."
-            )
-
-        # key_name must has a length of 36 and starts with tz an alias is not expected
-        if len(baking_address) == PKH_LENGHT:
-            if not baking_address.startswith("tz"):
-                raise ConfigurationException(
-                    "Baking address must be a valid tz address."
+                "Baking address {} did not reveal its public key.".format(
+                    baking_address
                 )
-            else:
-                try:
-                    if not self.block_api.get_revelation(baking_address):
-                        raise ConfigurationException(
-                            "Baking address {} did not reveal its public key.".format(
-                                baking_address
-                            )
-                        )
-
-                    if not self.block_api.get_delegatable(baking_address):
-                        raise ConfigurationException(
-                            "Baking address {} is not enabled for delegation".format(
-                                baking_address
-                            )
-                        )
-                except KeyError:
-                    raise ConfigurationException(
-                        "Baking address {} did not reveal key.".format(baking_address)
-                    )
-        else:
+            )
+        if not self.block_api.get_delegatable(baking_address):
             raise ConfigurationException(
-                "Baking address length must be {}".format(PKH_LENGHT)
+                "Baking address {} is not enabled for delegation".format(baking_address)
             )
 
     def validate_specials_map(self, conf_obj):
@@ -304,9 +279,8 @@ class BakingYamlConfParser(YamlConfParser):
         if not conf_obj[SPECIALS_MAP]:
             return
 
-        addr_validator = AddressValidator(SPECIALS_MAP)
         for key, value in conf_obj[SPECIALS_MAP].items():
-            addr_validator.validate(key)
+            self.address_validator.validate(key)
             FeeValidator("specials_map:" + key).validate(value)
 
     def validate_address_set(self, conf_obj, set_name):
@@ -336,9 +310,8 @@ class BakingYamlConfParser(YamlConfParser):
         ) == {None}:
             conf_obj[set_name] = set(conf_obj[set_name].keys())
 
-        validator = AddressValidator(set_name)
         for addr in conf_obj[set_name]:
-            validator.validate(addr)
+            self.address_validator.validate(addr)
 
     def validate_non_negative_int(self, param_value):
         try:
@@ -433,14 +406,13 @@ class BakingYamlConfParser(YamlConfParser):
         if not conf_obj[RULES_MAP]:
             return
 
-        addr_validator = AddressValidator(RULES_MAP)
         for key, value in conf_obj[RULES_MAP].items():
             # validate key (and address or MINDELEGATION)
             if key != MIN_DELEGATION_KEY:
-                addr_validator.validate(key)
+                self.address_validator.validate(key)
             # validate destination value (An address OR TOF OR TOB OR TOE)
             if value not in [TOF, TOB, TOE]:
-                addr_validator.validate(key)
+                self.address_validator.validate(key)
 
 
 def rewardstype_representer(dumper, data):

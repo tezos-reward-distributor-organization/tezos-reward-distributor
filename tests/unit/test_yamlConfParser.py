@@ -1,4 +1,5 @@
 from unittest import TestCase
+from exception.configuration import ConfigurationException
 
 from config.yaml_conf_parser import YamlConfParser
 
