@@ -106,7 +106,7 @@ def onbakingaddress(input):
             args.node_endpoint,
             api_base_url=args.api_base_url,
         )
-        parser.set("BAKING_ADDRESS", input)
+        parser.set(BAKING_ADDRESS, input)
         parser.validate_baking_address(parser.get_conf_obj())
         fsm.go()
     except Exception as e:

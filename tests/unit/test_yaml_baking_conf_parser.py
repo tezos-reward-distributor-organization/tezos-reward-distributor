@@ -2,7 +2,9 @@ import unittest
 from config.yaml_baking_conf_parser import BakingYamlConfParser, ConfigurationException
 from api.provider_factory import ProviderFactory
 from tests.utils import make_config
+from Constants import DryRun
 from util.address_validator import AddressValidator
+from model.baking_conf import BAKING_ADDRESS
 
 
 class TestYamlBakingConfigParser(unittest.TestCase):
@@ -25,6 +27,7 @@ class TestYamlBakingConfigParser(unittest.TestCase):
             None,
             block_api=self.factory,
             api_base_url=None,
+            dry_run=DryRun.NO_SIGNER,
         )
         self.block_api = unittest.mock.MagicMock()
         self.address_validator = AddressValidator()
@@ -32,7 +35,7 @@ class TestYamlBakingConfigParser(unittest.TestCase):
         self.baking_conf_parser.address_validator = self.address_validator
 
     def test_valid_address(self):
-        conf_obj = {"BAKING_ADDRESS": "tz1qwertyuiopasdfghjklzxcvbnm1234567"}
+        conf_obj = {BAKING_ADDRESS: "tz1qwertyuiopasdfghjklzxcvbnm1234567"}
         self.block_api.get_revelation.return_value = True
         self.block_api.get_delegatable.return_value = True
         self.baking_conf_parser.validate_baking_address(conf_obj)
@@ -44,7 +47,7 @@ class TestYamlBakingConfigParser(unittest.TestCase):
         self.assertEqual(str(exception.exception), "Baking address must be set")
 
     def test_invalid_address(self):
-        conf_obj = {"BAKING_ADDRESS": "INVALID_ADDRESS"}
+        conf_obj = {BAKING_ADDRESS: "INVALID_ADDRESS"}
         with self.assertRaises(ConfigurationException) as exception:
             self.baking_conf_parser.validate_baking_address(conf_obj)
         self.assertEqual(

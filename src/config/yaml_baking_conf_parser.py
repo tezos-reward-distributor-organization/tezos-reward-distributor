@@ -249,7 +249,7 @@ class BakingYamlConfParser(YamlConfParser):
             )
 
     def validate_baking_address(self, conf_obj):
-        baking_address = conf_obj.get("BAKING_ADDRESS")
+        baking_address = conf_obj.get(BAKING_ADDRESS)
         if not baking_address:
             raise ConfigurationException("Baking address must be set")
         self.address_validator.validate_baking_address(baking_address)
