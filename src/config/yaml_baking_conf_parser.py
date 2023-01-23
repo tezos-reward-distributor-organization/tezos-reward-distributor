@@ -263,6 +263,9 @@ class BakingYamlConfParser(YamlConfParser):
             raise ConfigurationException(
                 "Baking address {} is not enabled for delegation".format(baking_address)
             )
+        dry_run_no_signer = self.dry_run and self.dry_run == DryRun.NO_SIGNER
+        if not dry_run_no_signer:
+            self.clnt_mngr.check_pkh_known_by_signer(baking_address)
 
     def validate_specials_map(self, conf_obj):
         if SPECIALS_MAP not in conf_obj:

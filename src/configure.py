@@ -96,26 +96,22 @@ def start():
 
 def onbakingaddress(input):
     try:
-        AddressValidator("baking address").validate(input)
+        AddressValidator().validate(input)
+        global parser
+        parser = BakingYamlConfParser(
+            None,
+            client_manager,
+            ProviderFactory(args.reward_data_provider),
+            network_config,
+            args.node_endpoint,
+            api_base_url=args.api_base_url,
+        )
+        parser.set("BAKING_ADDRESS", input)
+        parser.validate_baking_address(parser.get_conf_obj())
+        fsm.go()
     except Exception as e:
         printe(f"Invalid baking address: {str(e)}")
         return
-
-    if not input.startswith("tz"):
-        printe("Only tz addresses are allowed")
-        return
-    provider_factory = ProviderFactory(args.reward_data_provider)
-    global parser
-    parser = BakingYamlConfParser(
-        None,
-        client_manager,
-        provider_factory,
-        network_config,
-        args.node_endpoint,
-        api_base_url=args.api_base_url,
-    )
-    parser.set(BAKING_ADDRESS, input)
-    fsm.go()
 
 
 def onpaymentaddress(input):
