@@ -20,6 +20,7 @@ from util.parser import (
     add_argument_base_directory,
     add_argument_node_endpoint,
     add_argument_signer_endpoint,
+    add_argument_docker,
     add_argument_verbose,
     add_argument_provider,
     add_argument_api_base_url,
@@ -524,6 +525,7 @@ if __name__ == "__main__":
     add_argument_base_directory(argparser)
     add_argument_node_endpoint(argparser)
     add_argument_signer_endpoint(argparser)
+    add_argument_docker(argparser)
     add_argument_verbose(argparser)
     add_argument_api_base_url(argparser)
     add_argument_log_file(argparser)
