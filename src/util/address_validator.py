@@ -1,4 +1,5 @@
 from Constants import PKH_LENGTH
+from exception.configuration import ConfigurationException
 
 
 class BaseError(Exception):
@@ -43,8 +44,18 @@ class AddressValidator:
 
     @staticmethod
     def isaddress(address):
-        if len(address) == PKH_LENGTH:
-            if address.startswith("tz") or address.startswith("KT"):
-                return True
+        return len(address) == PKH_LENGTH and (
+            address.startswith("tz") or address.startswith("KT")
+        )
 
-        return False
+    def validate_baking_address(self, baking_address):
+        if not self.isaddress(baking_address):
+            raise ConfigurationException(
+                "Baking address must be a valid tz address of length {}".format(
+                    PKH_LENGTH
+                )
+            )
+        if baking_address.startswith("KT"):
+            raise ConfigurationException(
+                "KT addresses cannot act as bakers. Only tz addresses can be registered to bake."
+            )
