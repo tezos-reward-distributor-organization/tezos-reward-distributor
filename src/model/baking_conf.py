@@ -4,8 +4,11 @@ from model.custom_json_encoder import CustomJsonEncoder
 SERVICE_FEE = "service_fee"
 OWNERS_MAP = "owners_map"
 FOUNDERS_MAP = "founders_map"
+
 BAKING_ADDRESS = "baking_address"
 SPECIALS_MAP = "specials_map"
+EXCLUDED_MAP = "excluded_map"
+
 RULES_MAP = "rules_map"
 SUPPORTERS_SET = "supporters_set"
 PAYMENT_ADDRESS = "payment_address"

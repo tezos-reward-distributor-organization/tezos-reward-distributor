@@ -22,7 +22,6 @@ from util.parser import (
     add_argument_signer_endpoint,
     add_argument_docker,
     add_argument_verbose,
-    add_argument_dry,
     add_argument_provider,
     add_argument_api_base_url,
     add_argument_log_file,
@@ -61,26 +60,26 @@ messages = {
     "hello": "This application will help you configure TRD to manage payouts for your bakery. Press enter to continue",
     "bakingaddress": "Specify your baking address public key hash (Processing may take a few seconds)",
     "paymentaddress": "Specify your payouts public key hash. It can be the same as your baking address, or a different one.",
-    "servicefee": "Specify bakery fee [0:100]",
+    "servicefee": "Specify bakery fee, valid range is between 0 and 100",
     "rewardstype": "Specify if baker pays 'ideal' or 'actual' rewards (Be sure to read the documentation to understand the difference). Press enter for 'actual'",
-    "foundersmap": "Specify FOUNDERS in form 'PKH1':share1,'PKH2':share2,... (Mind quotes) Press enter to leave empty",
-    "ownersmap": "Specify OWNERS in form 'pk1':share1,'pkh2':share2,... (Mind quotes) Press enter to leave empty",
+    "foundersmap": "Specify FOUNDERS in form 'tz-address':share1,'tz-address':share2,... (Mind quotes, sum must equal 1, e.g: 'tz1a...':0.3, 'tz1b..':0.7) Press enter to leave empty",
+    "ownersmap": "Specify OWNERS in form 'tz-address':share1,'tz-address':share2,... (Mind quotes, sum must equal 1, e.g: 'tz1a...':0.3, 'tz1b..':0.7) Press enter to leave empty",
     "mindelegation": "Specify minimum delegation amount in tez. Press enter for 0",
-    "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. {}: leave at balance, {}: to founders, {}: to everybody, default is {}".format(
+    "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. {}: leave at balance, {}: to founders, {}: to everybody, press enter for {}".format(
         TOB, TOF, TOE, TOB
     ),
-    "exclude": "Add excluded address in form of PKH,target. Share of the exluded address will go to target. Possbile targets are = {}: leave at balance, {}: to founders, {}: to everybody. Type enter to skip".format(
+    "exclude": "Add excluded address in form of 'tz-address1':'target', 'tz-address2':'target'. (e.g: 'tz1a..:'TOF','tz1b..:'TOB') Share of the exluded address will go to target. Possbile targets are = {}: leave at balance, {}: to founders, {}: to everybody. Type enter to skip".format(
         TOB, TOF, TOE
     ),
-    "redirect": "Add redirected address in form of PKH1,PKH2. Payments for PKH1 will go to PKH2. Press enter to skip",
+    "redirect": "Add redirected address in form of 'tz-address1':'tz-address2', 'tz-address3':'tz-address4'. (e.g: 'tz1a..:'tz1b..','tz1c..:'tz1d..'). Press enter to skip",
     "reactivatezeroed": "If a destination address has 0 balance, should burn fee be paid to reactivate? 1 for Yes, 0 for No. Press enter for Yes",
     "delegatorpaysxfrfee": "Who is going to pay for transfer fees: 0 for delegator, 1 for delegate. Press enter for delegator",
     "delegatorpaysrafee": "Who is going to pay for 0 balance reactivation or burn fees for kt accounts in general: 0 for delegator, 1 for delegate. Press enter for delegator",
-    "paydenunciationrewards": "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Type enter for No",
-    "supporters": "Add supporter address. Supporters do not pay bakery fee. Press enter to skip",
-    "specials": "Add any addresses with a special fee in form of 'PKH,fee'. Press enter to skip",
+    "paydenunciationrewards": "If you denounce another baker for baking or endorsing, you will get rewarded. Distribute denunciation rewards to your delegators? 1 for Yes, 0 for No. Press enter for No",
+    "supporters": "Add supporter addresses in form of 'tz-address1', 'tz-address2'. Supporters do not pay bakery fee. Press enter to skip",
+    "specials": "Add any addresses with a special fee in form of 'tz-address1':fee, 'tz-address2':fee. Press enter to skip",
     "noplugins": "No plugins are enabled by default. If you wish to use the email, twitter, or telegram plugins, please read the documentation and edit the configuration file manually.",
-    "minpayment": "Specify minimum payment amount in tez. Type enter for 0",
+    "minpayment": "Specify minimum payment amount in tez. Press enter for 0",
 }
 
 parser = None
@@ -98,27 +97,22 @@ def start():
 
 def onbakingaddress(input):
     try:
-        AddressValidator("baking address").validate(input)
+        AddressValidator().validate(input)
+        global parser
+        parser = BakingYamlConfParser(
+            None,
+            client_manager,
+            ProviderFactory(args.reward_data_provider),
+            network_config,
+            args.node_endpoint,
+            api_base_url=args.api_base_url,
+        )
+        parser.set(BAKING_ADDRESS, input)
+        parser.validate_baking_address(parser.get_conf_obj())
+        fsm.go()
     except Exception as e:
         printe(f"Invalid baking address: {str(e)}")
         return
-
-    if not input.startswith("tz"):
-        printe("Only tz addresses are allowed")
-        return
-    provider_factory = ProviderFactory(args.reward_data_provider)
-    global parser
-    parser = BakingYamlConfParser(
-        None,
-        client_manager,
-        provider_factory,
-        network_config,
-        args.node_endpoint,
-        api_base_url=args.api_base_url,
-        dry_run=args.dry_run,
-    )
-    parser.set(BAKING_ADDRESS, input)
-    fsm.go()
 
 
 def onpaymentaddress(input):
@@ -151,16 +145,15 @@ def onservicefee(input):
 
 
 def onrewardstype(input):
+    if not input:
+        input = RewardsType.ACTUAL.value
     try:
-        if not input:
-            input = RewardsType.ACTUAL
         global parser
         rt = RewardsType(input.lower())
         parser.set(REWARDS_TYPE, str(rt))
     except Exception:
-        printe("Invalid option for rewards type. Please enter 'actual' or 'ideal'.")
+        printe("Invalid option for rewards type. Please type 'actual' or 'ideal'.")
         return
-
     fsm.go()
 
 
@@ -246,26 +239,16 @@ def onexclude(input):
         return
 
     try:
-        address_target = input.split(",")
-        address = address_target[0].strip()
-        target = address_target[1].strip()
-        AddressValidator("excluded address").validate(address)
-        options = [TOB, TOE, TOF]
-        if target not in options:
-            printe("Invalid target, available options are {}".format(options))
-            return
-
         global parser
-        conf_obj = parser.get_conf_obj()
-        if RULES_MAP not in conf_obj:
-            conf_obj[RULES_MAP] = dict()
 
-        conf_obj[RULES_MAP][address] = target
+        dict = ast.literal_eval("{" + input + "}")
+        parser.set(RULES_MAP, dict)
+        parser.validate_excluded_map(parser.get_conf_obj(), RULES_MAP)
 
-        parser.validate_dest_map(parser.get_conf_obj())
     except Exception:
         printe("Invalid exclusion entry: " + traceback.format_exc())
         return
+    fsm.go()
 
 
 def onspecials(input):
@@ -274,23 +257,15 @@ def onspecials(input):
         return
 
     try:
-        address_target = input.split(",")
-        address = address_target[0].strip()
-        fee = float(address_target[1].strip())
-        AddressValidator("special address").validate(address)
-        FeeValidator("special_fee").validate(fee)
-
         global parser
-        conf_obj = parser.get_conf_obj()
-        if SPECIALS_MAP not in conf_obj:
-            conf_obj[SPECIALS_MAP] = dict()
-
-        conf_obj[SPECIALS_MAP][address] = fee
+        dict = ast.literal_eval("{" + input + "}")
+        parser.set(SPECIALS_MAP, dict)
 
         parser.validate_specials_map(parser.get_conf_obj())
     except Exception:
         printe("Invalid specials entry: " + traceback.format_exc())
         return
+    fsm.go()
 
 
 def onsupporters(input):
@@ -299,19 +274,15 @@ def onsupporters(input):
         return
 
     try:
-        AddressValidator("supporter address").validate(input)
-
         global parser
-        conf_obj = parser.get_conf_obj()
-        if SUPPORTERS_SET not in conf_obj:
-            conf_obj[SUPPORTERS_SET] = set()
-
-        conf_obj[SUPPORTERS_SET].add(input)
-
+        dict = ast.literal_eval("{" + input + "}")
+        parser.set(SUPPORTERS_SET, dict)
         parser.validate_address_set(parser.get_conf_obj(), SUPPORTERS_SET)
+
     except Exception:
         printe("Invalid supporter entry: " + traceback.format_exc())
         return
+    fsm.go()
 
 
 def onredirect(input):
@@ -320,24 +291,16 @@ def onredirect(input):
         return
 
     try:
-        address1_address2 = input.split(",")
-        address1 = address1_address2[0].strip()
-        address2 = address1_address2[1].strip()
-
-        AddressValidator("redirected source address").validate(address1)
-        AddressValidator("redirected target address").validate(address2)
-
         global parser
-        conf_obj = parser.get_conf_obj()
-        if RULES_MAP not in conf_obj:
-            conf_obj[RULES_MAP] = dict()
 
-        conf_obj[RULES_MAP][address1] = address2
-
+        dict = ast.literal_eval("{" + input + "}")
+        parser.set(RULES_MAP, dict)
         parser.validate_dest_map(parser.get_conf_obj())
+
     except Exception:
         printe("Invalid redirection entry: " + traceback.format_exc())
         return
+    fsm.go()
 
 
 def ondelegatorpaysxfrfee(input):
@@ -501,6 +464,29 @@ def main(args):
     config_file_path = os.path.join(
         os.path.abspath(config_dir), cfg.get_baking_address() + ".yaml"
     )
+
+    if os.path.exists:
+        while True:
+            try:
+                print(
+                    "Configuration file already exists, would you like to overwrite it or choose a new file name? type either overwrite or new."
+                )
+                user_input = input()
+                if user_input != "overwrite" and user_input != "new":
+                    raise Exception("Please enter 'overwrite' or 'new'")
+                if user_input == "new":
+                    print(
+                        "please enter new filename without extention, e.g: updated-configuration"
+                    )
+                    config_file_path = os.path.join(
+                        os.path.abspath(config_dir), input() + ".yaml"
+                    )
+                    break
+                if user_input == "overwrite":
+                    break
+            except Exception as e:
+                printe("Invalid input: {}".format(str(e)))
+
     cfg_dict_plain = {k: v for k, v in cfg_dict.items() if not k.startswith("__")}
 
     try:
@@ -534,7 +520,6 @@ if __name__ == "__main__":
         )
 
     argparser = argparse.ArgumentParser()
-
     add_argument_provider(argparser)
     add_argument_network(argparser)
     add_argument_base_directory(argparser)
@@ -542,7 +527,6 @@ if __name__ == "__main__":
     add_argument_signer_endpoint(argparser)
     add_argument_docker(argparser)
     add_argument_verbose(argparser)
-    add_argument_dry(argparser)
     add_argument_api_base_url(argparser)
     add_argument_log_file(argparser)
 
@@ -553,7 +537,6 @@ if __name__ == "__main__":
     init(False, args.log_file, args.verbose == "on", mode="configure")
 
     script_name = " Baker Configuration Tool"
-    args.dry_run = False
     print_banner(args, script_name)
 
     main(args)
