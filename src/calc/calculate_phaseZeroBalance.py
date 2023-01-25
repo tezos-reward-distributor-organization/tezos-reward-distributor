@@ -1,5 +1,4 @@
 from log_config import main_logger
-from model import reward_log
 from calc.calculate_phase_base import CalculatePhaseBase, BY_ZERO_BALANCE
 
 logger = main_logger
@@ -20,7 +19,6 @@ class CalculatePhaseZeroBalance(CalculatePhaseBase):
     def calculate(self, reward_logs, reactivate_zeroed):
 
         reward_data7 = []
-
         for delegate in reward_logs:
 
             # If delegate's current balance is 0, and we are NOT reactivating it,
