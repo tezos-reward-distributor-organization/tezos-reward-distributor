@@ -1,6 +1,6 @@
 import os
-import sys
 from Constants import CONFIG_DIR
+from util.exit_program import exit_program, ExitCode
 
 
 class LockFile:
@@ -42,7 +42,11 @@ class LockFile:
                     self.release()
                     break
                 elif user_input.lower() == "n" or i == 2:
-                    sys.exit()
+                    code = ExitCode.GENERAL_ERROR
+                    print("==========")
+                    print(code)
+                    print("==========")
+                    exit_program(code)
 
     def release(self):
         os.remove(self.lock_file_path)
