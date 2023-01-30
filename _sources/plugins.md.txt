@@ -4,7 +4,7 @@ The Tezos Reward Distributor uses a plugin style subsystem for sending out payme
 
 Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.
 
-The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at [the example config](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).
+The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at [the example config](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/main/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml).
 
 Individual plugins will not load if not properly configured.
 

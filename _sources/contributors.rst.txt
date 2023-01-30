@@ -23,7 +23,7 @@ If you are interested in improving our project, this is just great! Our communit
 
     black .
 
-8. Push your changes to your fork/branch in GitHub. Rebase from the origin master before you create the PR. Don't push it to your master! If you do it will make it harder to submit new changes later.
+8. Push your changes to your fork/branch in GitHub. Rebase from the origin main before you create the PR. Don't push it to your main branch! If you do it will make it harder to submit new changes later.
 9.  Submit a pull request to the TRD repository from your commit page on GitHub.
     a. Give a descriptive title to your PR and mark it e.g. as `[WIP]` if you want it to be visible but you are not finished yet or need help.
     b. Provide a description of your changes according to the PR template.
