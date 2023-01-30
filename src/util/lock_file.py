@@ -42,11 +42,7 @@ class LockFile:
                     self.release()
                     break
                 elif user_input.lower() == "n" or i == 2:
-                    code = ExitCode.GENERAL_ERROR
-                    print("==========")
-                    print(code)
-                    print("==========")
-                    exit_program(code)
+                    exit_program(ExitCode.USER_ABORT)
 
     def release(self):
         os.remove(self.lock_file_path)
