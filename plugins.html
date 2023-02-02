@@ -79,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multisig_payouts.html">Managing Contribution Payouts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
@@ -112,7 +113,7 @@
 <h1>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h1>
 <p>The Tezos Reward Distributor uses a plugin style subsystem for sending out payment notifications. If a message is labeled ‘administrative style’ it will contain information which are in general not meant for the end user of e.g. a staking service but for the adminstrators who monitor the quality of the service.</p>
 <p>Each plugin and its configuration are detailed out below. Some plugins may require additional libraries that are not installed with TRD.</p>
-<p>The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/main/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml">the example config</a>.</p>
+<p>The configuration parameters for all plugins are located in the bakers .yaml config file. Please take a look at <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/blob/master/examples/tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889.yaml">the example config</a>.</p>
 <p>Individual plugins will not load if not properly configured.</p>
 <p>You must specify which plugins to enable by adding their name to the “enabled” list. No plugins are enabled by default.</p>
 <p>In this example, even though the webhook plugin is properly configured, it is <em>not</em> listed in the ‘enabled’ section, and therefor will not activate.</p>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TRD State Machines &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Managing Contribution Payouts &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -16,8 +16,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="For Developers" href="contributors.html" />
-    <link rel="prev" title="Run as Linux Service (WIP)" href="linuxservice.html" /> 
+    <link rel="next" title="Tests" href="testing.html" />
+    <link rel="prev" title="For Developers" href="contributors.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,13 +49,14 @@
 <li class="toctree-l1"><a class="reference internal" href="payouttiming.html">Payout timing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">TRD State Machines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#launch-state-machine-diagram">Launch state machine diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#configuration-state-machine-diagram">Configuration state machine diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Managing Contribution Payouts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#metadata">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#signing-request">Signing Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#executing-the-payout">Executing the Payout</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributors.html">For Developers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multisig_payouts.html">Managing Contribution Payouts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Anonymous Statistics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
@@ -75,9 +76,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>TRD State Machines</li>
+      <li>Managing Contribution Payouts</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/state_machine.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/multisig_payouts.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -85,17 +86,50 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="trd-state-machines">
-<h1>TRD State Machines<a class="headerlink" href="#trd-state-machines" title="Permalink to this headline">¶</a></h1>
-<p>TRD is designed as a state machine to make sure it’s reliable.</p>
-<p>In the future TRD will be <a class="reference external" href="https://en.wikipedia.org/wiki/Formal_verification">formally verified</a> to avoid undetected bugs.</p>
-<div class="section" id="launch-state-machine-diagram">
-<h2>Launch state machine diagram<a class="headerlink" href="#launch-state-machine-diagram" title="Permalink to this headline">¶</a></h2>
-<a class="reference internal image-reference" href="_images/launch_state_diagram.png"><img alt="Launch State Diagram" src="_images/launch_state_diagram.png" style="width: 800px;" /></a>
+  <div class="section" id="managing-contribution-payouts">
+<h1>Managing Contribution Payouts<a class="headerlink" href="#managing-contribution-payouts" title="Permalink to this headline">¶</a></h1>
+<p>This document serves to instruct how to manage contribution payouts from the TRD multisig address.</p>
+<div class="section" id="metadata">
+<h2>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Multisig Address: KT1Hir1o22RGE1Hyrrzpp3rXjhTcoUurSYKu</p></li>
+<li><p>Multisig Manager:</p></li>
+<li><p>Authorized Members:</p>
+<ul>
+<li><p>edpkvHzFCaC33D8md4UaeX1phuYx3JKLuaTN7ffpQbMHJRAzJr9Mwy</p></li>
+<li><p>edpkuCFk3sw9besfKP9WKB7Nxrj6Di3dgBrKwf74QzTVpDbNWYu911</p></li>
+<li><p>edpkuB12NBMqeyYdT4WDouYZ7EbD7JyJtJ7taP2KYQf68nkkB3ApEf (Krixt)</p></li>
+</ul>
+</li>
+</ul>
 </div>
-<div class="section" id="configuration-state-machine-diagram">
-<h2>Configuration state machine diagram<a class="headerlink" href="#configuration-state-machine-diagram" title="Permalink to this headline">¶</a></h2>
-<a class="reference internal image-reference" href="_images/config_cycle_state_diagram.png"><img alt="Configuration State Diagram" src="_images/config_cycle_state_diagram.png" style="width: 800px;" /></a>
+<div class="section" id="signing-request">
+<h2>Signing Request<a class="headerlink" href="#signing-request" title="Permalink to this headline">¶</a></h2>
+<p>Payouts must be signed by 2 of the 3 multisig members before it can be executed on the blockchain.</p>
+<p>A multisig member must sign the same transaction using his/her own private key which is authorized on the multisig contract.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>XXX.XX - The amount, in XTZ to transfer
+YYYYYY - The receiver of the funds (ie: tz1...)
+ZZZZZZ - The PKH of the multisig member
+
+$ octez-client sign multisig transaction on KT1Hir1o22RGE1Hyrrzpp3rXjhTcoUurSYKu transferring XXX.XX to YYYYYY using secret key ZZZZZZ
+</pre></div>
+</div>
+<p>The output of the above command will be a single signature: <code class="docutils literal notranslate"><span class="pre">edsigu3WqyPEEYBce5.....</span></code></p>
+<p>2 signatures are required to execute the transaction.</p>
+</div>
+<div class="section" id="executing-the-payout">
+<h2>Executing the Payout<a class="headerlink" href="#executing-the-payout" title="Permalink to this headline">¶</a></h2>
+<p>With 2, or more, signatures, execute the transaction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>XXX.XX - The amount, in XTZ to transfer
+YYYYYY - The receiver of the funds (ie: tz1...)
+ZZZZZZ - The PKH of the multisig member
+AAAAAA - Signature from above command
+BBBBBB - Signature from another member
+
+$ octez-client from multisig contract KT1Hir1o22RGE1Hyrrzpp3rXjhTcoUurSYKu transfer XXX.XX to YYYYYY on behalf of ZZZZZZ with signatures AAAAAA BBBBBB
+</pre></div>
+</div>
+<p>The transaction will be verified by checking all signatures, and executed on the blockchain.</p>
 </div>
 </div>
 
@@ -103,8 +137,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="linuxservice.html" class="btn btn-neutral float-left" title="Run as Linux Service (WIP)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="contributors.html" class="btn btn-neutral float-right" title="For Developers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="contributors.html" class="btn btn-neutral float-left" title="For Developers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="testing.html" class="btn btn-neutral float-right" title="Tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
