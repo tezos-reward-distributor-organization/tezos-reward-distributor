@@ -649,6 +649,5 @@ class RpcRewardApiImpl(RewardApi):
         return delegate_staking_balance, delegators
 
     def get_current_balance_of_delegator(self, address):
-
         """Helper function to get current balance of delegator"""
         return self.get_contract_balance(address, "head")

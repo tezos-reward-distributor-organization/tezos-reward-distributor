@@ -11,6 +11,7 @@ from Constants import (
     DEFAULT_LOG_FILE,
     TEMP_TEST_DATA_DIR,
 )
+from util.exit_program import exit_program, ExitCode
 
 
 def load_reward_model(
@@ -68,8 +69,12 @@ def store_reward_model(
 
         print("Exception during write operation invoked: {}".format(e))
         if e.errno == errno.ENOSPC:
-            print("Not enough space on device!")
-        exit()
+            error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
+                e
+            )
+        else:
+            error_msg = "Exception during write operation invoked: {}".format(e)
+        exit_program(ExitCode.NO_SPACE, error_msg)
 
 
 class Args:

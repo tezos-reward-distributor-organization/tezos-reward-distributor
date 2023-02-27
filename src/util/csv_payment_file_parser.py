@@ -2,6 +2,7 @@ import csv
 
 from Constants import PaymentStatus
 from model.reward_log import RewardLog
+from util.exit_program import exit_program, ExitCode
 
 
 class CsvPaymentFileParser:
@@ -64,7 +65,10 @@ class CsvPaymentFileParser:
         except Exception as e:
             import errno
 
-            print("Exception during write operation invoked: {}".format(e))
             if e.errno == errno.ENOSPC:
-                print("Not enough space on device!")
-            exit()
+                error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
+                    e
+                )
+            else:
+                error_msg = "Exception during write operation invoked: {}".format(e)
+            exit_program(ExitCode.NO_SPACE, error_msg)

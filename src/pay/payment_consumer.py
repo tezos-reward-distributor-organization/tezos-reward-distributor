@@ -24,6 +24,7 @@ from util.dir_utils import (
     get_calculation_report_file_path,
     get_busy_file,
 )
+from util.exit_program import exit_program, ExitCode
 
 logger = main_logger.getChild("payment_consumer")
 
@@ -94,11 +95,9 @@ class PaymentConsumer(threading.Thread):
     def run(self):
         running = True
         while running:
-            # Exit if disk is full
-            # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
             if disk_is_full():
                 running = False
-                break
+                exit_program(ExitCode.NO_SPACE)
 
             # Wait until a reward is present
             payment_batch = self.payments_queue.get(True)
@@ -165,6 +164,7 @@ class PaymentConsumer(threading.Thread):
                 total_attempts,
                 total_payout_amount,
                 number_future_payable_cycles,
+                error,
             ) = batch_payer.pay(payment_items, dry_run=self.dry_run)
 
             # override batch data
@@ -248,9 +248,11 @@ class PaymentConsumer(threading.Thread):
                     )
                 )
 
+            # - if caught error we can exit
+            if error:
+                exit_program(exit_code=error)
         except Exception:
             logger.error("Error at reward payment", exc_info=True)
-
         return True
 
     def clean_failed_payment_reports(self, payment_cycle, success):

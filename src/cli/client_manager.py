@@ -13,6 +13,7 @@ from Constants import (
 )
 from exception.client import ClientException
 from log_config import main_logger, verbose_logger
+from util.exit_program import exit_program, ExitCode, ExitMessage
 
 logger = main_logger
 
@@ -106,15 +107,13 @@ class ClientManager:
         )
 
         if response is None:
-            raise ClientException(
-                "Unknown Error at signing. Please consult the verbose logs!"
+            exit_program(
+                ExitCode.SIGNER_ERROR_NOT_RUNNING, ExitMessage.SIGNER_ERROR_NOT_RUNNING
             )
+
         if response.status_code != HTTPStatus.OK:
-            raise ClientException(
-                "Error at signing. Make sure octez-signer is up and running 'octez-signer launch http signer': '{}'".format(
-                    response.text
-                )
-            )
+            exit_program(ExitCode.SIGNER_ERROR, ExitMessage.SIGNER_ERROR)
+
         else:
             response = response.json()
             return response["signature"]
@@ -135,15 +134,16 @@ class ClientManager:
         try:
             response = self._do_request(method="GET", url=url, timeout=timeout)
         except Exception as e:
-            raise ClientException(f"Exception: {e}\n{signer_exception}")
+            exit_program(ExitCode.SIGNER_ERROR, f"{e}\n{signer_exception}")
+
         if response.status_code != HTTPStatus.OK:
-            raise ClientException(f"{response.text}\n{signer_exception}")
+            exit_program(ExitCode.SIGNER_ERROR, f"{response.text}\n{signer_exception}")
         else:
             response = response.json()
             if "public_key" not in response:
-                raise ClientException(
-                    f"The secret key of the payout address {key_name} was not imported to the signer!\n"
-                    f"{signer_exception}"
+                exit_program(
+                    ExitCode.SIGNER_ERROR,
+                    f"The secret key of the payout address {key_name} was not imported to the signer!",
                 )
 
     def get_authorized_keys(self, timeout=None):
@@ -162,9 +162,9 @@ class ClientManager:
         try:
             response = self._do_request(method="GET", url=url, timeout=timeout)
         except Exception as e:
-            raise ClientException(f"Exception: {e}\n{signer_exception}")
+            exit_program(ExitCode.SIGNER_ERROR, f"Exception: {e}\n{signer_exception}")
         if response.status_code != HTTPStatus.OK:
-            raise ClientException(f"{response.text}\n{signer_exception}")
+            exit_program(ExitCode.SIGNER_ERROR, f"{response.text}\n{signer_exception}")
         else:
             response = response.json()
             return response
@@ -221,7 +221,7 @@ class ClientManager:
                 )
                 # If all MAX_NB_TRIES tries were not successful
                 if try_i == MAX_NB_TRIES - 1:
-                    raise Exception(e)
+                    exit_program(ExitCode.SIGNER_ERROR, e)
         if response is None:
             return
         # If request returns failed code

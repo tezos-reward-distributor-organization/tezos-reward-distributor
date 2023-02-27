@@ -24,6 +24,8 @@ from util.wait_random import wait_random
 
 from util.address_validator import AddressValidator
 
+from util.exit_program import ExitCode
+
 logger = main_logger
 
 # General transaction parameters:
@@ -318,9 +320,8 @@ class BatchPayer:
                 self.plugins_manager.send_admin_notification(subject, message)
 
                 payment_logs.extend(payment_items)
-
                 # Exit early since nothing can be paid
-                return payment_logs, 0, 0, 0
+                return payment_logs, 0, 0, 0, ExitCode.INSUFFICIENT_FUNDS
 
             elif number_future_payable_cycles < 1:
 

@@ -25,8 +25,12 @@ class LockFile:
 
             print("Exception during write operation invoked: {}".format(e))
             if e.errno == errno.ENOSPC:
-                print("Not enough space on device!")
-            exit()
+                error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
+                    e
+                )
+            else:
+                error_msg = "Exception during write operation invoked: {}".format(e)
+            exit_program(ExitCode.NO_SPACE, error_msg)
 
         self.lock_acquired = True
 

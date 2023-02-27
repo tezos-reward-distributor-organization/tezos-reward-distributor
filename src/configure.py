@@ -51,6 +51,7 @@ from model.baking_conf import (
 )
 from util.address_validator import AddressValidator
 from util.fee_validator import FeeValidator
+from util.exit_program import exit_program, ExitCode
 
 
 logger = main_logger
@@ -494,10 +495,13 @@ def main(args):
     except Exception as e:
         import errno
 
-        print("Exception during write operation invoked: {}".format(e))
         if e.errno == errno.ENOSPC:
-            print("Not enough space on device!")
-        exit()
+            error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
+                e
+            )
+        else:
+            error_msg = "Exception during write operation invoked: {}".format(e)
+        exit_program(ExitCode.NO_SPACE, error_msg)
 
     print(messages["noplugins"])
     print("Configuration file is created at '{}'".format(config_file_path))
