@@ -29,11 +29,11 @@ class CalculatePhaseZeroBalance(CalculatePhaseBase):
             # KT1 accounts do not require reactivation on 0 balance
             #
             # Note: This only applies for delegators and merged types
-            if delegate.current_balance == 0 and not delegate.address.startswith("KT1"):
-                temp = reactivate_zeroed or not (
+            if delegate.current_balance == 0 and not delegate.paymentaddress.startswith("KT1"):
+                qualified_activation = reactivate_zeroed or not (
                     delegate.type == TYPE_DELEGATOR or delegate.type == TYPE_MERGED
                 )
-                if temp:
+                if qualified_activation:
                     delegate.needs_activation = True
                     logger.info(
                         "{:s} has a 0 balance and will be reactivated".format(
