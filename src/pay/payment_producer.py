@@ -117,6 +117,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.min_delegation_amt_in_mutez,
             self.min_payment_amt_in_mutez,
             self.rules_model,
+            self.reward_api,
         )
 
         self.retry_fail_thread = threading.Thread(

@@ -37,6 +37,7 @@ class PhasedPaymentCalculator:
         min_delegation_amount,
         min_payment_amount,
         rules_model,
+        reward_api,
     ):
         self.rules_model = rules_model
         self.owners_map = owners_map
@@ -44,6 +45,7 @@ class PhasedPaymentCalculator:
         self.fee_calc = service_fee_calculator
         self.min_delegation_amnt = min_delegation_amount
         self.min_payment_amnt = min_payment_amount
+        self.reward_api = reward_api
 
     #
     # calculation details
@@ -55,6 +57,9 @@ class PhasedPaymentCalculator:
     ####
     def calculate(self, reward_provider_model, adjustments=None, rerun=False):
 
+        # *************
+        # ** phase 0 **
+        # *************
         phase0 = CalculatePhase0(reward_provider_model)
         rwrd_logs = phase0.calculate()
 
@@ -74,7 +79,9 @@ class PhasedPaymentCalculator:
         )
         assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs]))
 
-        # calculate phase 1
+        # *************
+        # ** phase 1 **
+        # *************
         phase1 = CalculatePhase1(
             self.rules_model.exclusion_set1, self.min_delegation_amnt
         )
@@ -84,7 +91,9 @@ class PhasedPaymentCalculator:
             1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped])
         )
 
-        # calculate phase 2
+        # *************
+        # ** phase 2 **
+        # *************
         phase2 = CalculatePhase2(
             self.rules_model.exclusion_set2, self.min_delegation_amnt
         )
@@ -94,7 +103,9 @@ class PhasedPaymentCalculator:
             1, sum([rl.ratio for rl in rwrd_logs if not rl.skipped])
         )
 
-        # calculate phase 3
+        # *************
+        # ** phase 3 **
+        # *************
         phase3 = CalculatePhase3(
             self.fee_calc, self.rules_model.exclusion_set3, self.min_delegation_amnt
         )
@@ -123,10 +134,15 @@ class PhasedPaymentCalculator:
         if owners_parent:
             assert owners_parent.service_fee_rate == 0
 
-        phase4 = CalculatePhase4(self.founders_map, self.owners_map)
+        # *************
+        # ** phase 4 **
+        # *************
+        phase4 = CalculatePhase4(self.founders_map, self.owners_map, self.reward_api)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
 
-        # calculate amounts
+        # *****************
+        # ** phase final **
+        # *****************
         phase_last = CalculatePhaseFinal()
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(
             rwrd_logs, total_rwrd_amnt, adjustments
