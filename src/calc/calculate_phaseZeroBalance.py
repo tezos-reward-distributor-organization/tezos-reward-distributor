@@ -1,5 +1,6 @@
 from log_config import main_logger
 from calc.calculate_phase_base import CalculatePhaseBase, BY_ZERO_BALANCE
+from model.reward_log import TYPE_DELEGATOR, TYPE_MERGED
 
 logger = main_logger
 
@@ -26,11 +27,16 @@ class CalculatePhaseZeroBalance(CalculatePhaseBase):
             # in the CSV payment report
 
             # KT1 accounts do not require reactivation on 0 balance
+            #
+            # Note: This only applies for delegators and merged types
             if (
                 delegate.current_balance == 0
                 and not delegate.paymentaddress.startswith("KT1")
             ):
-                if reactivate_zeroed:
+                qualified_activation = reactivate_zeroed or not (
+                    delegate.type == TYPE_DELEGATOR or delegate.type == TYPE_MERGED
+                )
+                if qualified_activation:
                     delegate.needs_activation = True
                     logger.info(
                         "{:s} has a 0 balance and will be reactivated".format(
