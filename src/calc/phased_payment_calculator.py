@@ -37,7 +37,7 @@ class PhasedPaymentCalculator:
         min_delegation_amount,
         min_payment_amount,
         rules_model,
-        reward_api
+        reward_api,
     ):
         self.rules_model = rules_model
         self.owners_map = owners_map
@@ -140,7 +140,9 @@ class PhasedPaymentCalculator:
         phase4 = CalculatePhase4(self.founders_map, self.owners_map, self.reward_api)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
 
-        # calculate amounts
+        # *****************
+        # ** phase final **
+        # *****************
         phase_last = CalculatePhaseFinal()
         rwrd_logs, total_rwrd_amnt = phase_last.calculate(
             rwrd_logs, total_rwrd_amnt, adjustments
