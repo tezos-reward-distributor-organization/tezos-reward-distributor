@@ -11,6 +11,8 @@ class ExitCode(Enum):
     SIGNER_ERROR_NOT_RUNNING = 4
     NO_SPACE = 5
     INSUFFICIENT_FUNDS = 6
+    RETRY_FAILED = 7
+    PROVIDER_ERROR = 8
 
 
 class ExitMessage(Enum):

@@ -19,6 +19,7 @@ from util.config_life_cycle import ConfigLifeCycle
 from util.lock_file import LockFile
 from log_config import main_logger, init, verbose_logger
 from plugins import plugins
+from util.exit_program import exit_program, ExitCode
 
 logger = main_logger
 
@@ -382,6 +383,7 @@ class ProcessLifeCycle:
 
     def shut_down_on_error(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_ERROR)
+        exit_program(ExitCode.GENERAL_ERROR)
 
     def shut_down_on_demand(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_DEMAND)
