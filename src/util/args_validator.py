@@ -116,9 +116,9 @@ class ArgsValidator:
                     "adjusted_early_payouts must be True or False, default is True."
                 )
             if tmp == True:
-                self._args.release_override = -11
+                self._args.release_override = -(self._preserved_cycle + 1)
             else:
-                self._args.release_override = -5
+                self._args.release_override = 0
             return True
 
     def run_validation(self):

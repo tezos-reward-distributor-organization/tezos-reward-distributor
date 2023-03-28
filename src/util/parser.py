@@ -47,7 +47,7 @@ def add_argument_cycle(argparser):
         help="Cycle to start payment(s) from. "
         "Default value is -1: will pay rewards that were most recently released. "
         "Cycle for which rewards were most recently released is calculated based on the formula: "
-        "current_cycle - 1 (+ 5 if adjusted_early_payouts == True) "
+        "current_cycle - 1 (+ 6 if adjusted_early_payouts == True) "
         "Valid range is [-1,).",
         default=-1,
         type=int,
@@ -72,7 +72,7 @@ def add_argument_adjusted_early_payouts(argparser):
     argparser.add_argument(
         "--adjusted_early_payouts",
         help="Overrides last released cycle (current_cycle - 1). Payment cycle will be "
-        "(current_cycle - 1 + 5). Suitable for future payments later adjusted to reward_types actual or ideal. "
+        "(current_cycle - 1 + 6). Suitable for future payments later adjusted to reward_types actual or ideal. "
         "Add argument to trigger future payments.",
         default=False,
         const=True,

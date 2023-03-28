@@ -53,8 +53,6 @@ class TzStatsRewardProviderHelper:
     def __init__(self, nw, baking_address):
         super(TzStatsRewardProviderHelper, self).__init__()
 
-        self.preserved_cycles = nw["PRESERVED_CYCLES"]
-
         self.api = TZSTATS_PUBLIC_API_URL[nw["NAME"]]
         if self.api is None:
             raise ApiProviderException("Unknown network {}".format(nw))

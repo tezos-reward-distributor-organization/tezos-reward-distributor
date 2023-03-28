@@ -68,7 +68,7 @@ def test_build_parser():
     assert value.parse_known_args()[0] == argparse.Namespace(
         initial_cycle=-1,
         run_mode=1,
-        release_override=-5,
+        release_override=0,
         payment_offset=0,
         network="MAINNET",
         node_endpoint="http://127.0.0.1:8732",

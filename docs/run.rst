@@ -30,7 +30,7 @@ Options
     4. Retry failed payments and exit.
 
 ``--adjusted_early_payouts <bool>``
-    Allows for early, later on adjusted payouts for cycle = current_cycle - 1 + 5. Valid values are ``True``, ``False``. Default value: ``False``. See :ref:`payout_timing`.
+    Allows for early, later on adjusted payouts for cycle = current_cycle - 1 + 6. Valid values are ``True``, ``False``. Default value: ``False``. See :ref:`payout_timing`.
 
 ``-O --payment_offset <int>``
     Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
