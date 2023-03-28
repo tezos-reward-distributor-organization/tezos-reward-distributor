@@ -105,7 +105,11 @@ def test_get_rewards_for_cycle_map(address_api):
             cycle=cycle, rewards_type=RewardsType.ACTUAL
         )
         store_reward_model(
-            MAINNET_ADDRESS_BAKEXTZ4ME_BAKER, cycle, RewardsType.ACTUAL, rewards, dir_name="rpc_data"
+            MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
+            cycle,
+            RewardsType.ACTUAL,
+            rewards,
+            dir_name="rpc_data",
         )
     assert rewards.delegate_staking_balance == 80573814172
     assert rewards.total_reward_amount == 19364746
@@ -311,7 +315,9 @@ class Mock_Current_Balance_Response:
     MagicMock(return_value=Mock_Current_Balance_Response()),
 )
 def test_get_current_balance_of_delegator(address_api):
-    assert 1234567 == address_api.get_current_balance_of_delegator(MAINNET_ADDRESS_BAKEXTZ4ME_BAKER)
+    assert 1234567 == address_api.get_current_balance_of_delegator(
+        MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
+    )
 
 
 # Check if delegator balance can be queried correctly

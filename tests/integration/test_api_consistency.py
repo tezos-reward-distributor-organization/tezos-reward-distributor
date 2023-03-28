@@ -98,12 +98,16 @@ def test_get_delegatable(
 # NOTE: We are using a testnet balker where we can manage the amount of delegates
 @pytest.fixture
 def address_reward_api_tzkt():
-    return TzKTRewardApiImpl(DEFAULT_NETWORK_CONFIG_MAP["GHOSTNET"], GHOSTNET_ADDRESS_STAKENOW_BAKER)
+    return TzKTRewardApiImpl(
+        DEFAULT_NETWORK_CONFIG_MAP["GHOSTNET"], GHOSTNET_ADDRESS_STAKENOW_BAKER
+    )
 
 
 @pytest.fixture
 def address_reward_api_tzstats():
-    return TzStatsRewardApiImpl(DEFAULT_NETWORK_CONFIG_MAP["GHOSTNET"], GHOSTNET_ADDRESS_STAKENOW_BAKER)
+    return TzStatsRewardApiImpl(
+        DEFAULT_NETWORK_CONFIG_MAP["GHOSTNET"], GHOSTNET_ADDRESS_STAKENOW_BAKER
+    )
 
 
 @pytest.fixture

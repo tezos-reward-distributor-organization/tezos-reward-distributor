@@ -180,7 +180,8 @@ class RewardApiImplTests(unittest.TestCase):
 @pytest.fixture
 def address_api():
     return TzKTRewardApiImpl(
-        nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=MAINNET_ADDRESS_STAKENOW_BAKER
+        nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
+        baking_address=MAINNET_ADDRESS_STAKENOW_BAKER,
     )
 
 

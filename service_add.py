@@ -72,7 +72,9 @@ def main():
         content = content.replace("<CONFIGDIR>", config_dir)
         content = content.replace("<STOPARGS>", " --config_dir " + str(config_dir))
 
-        print("Content is :")
+        print("-------------")
+        print(content)
+        print("-------------")
 
         try:
             with open(path_service, "w") as service_file:

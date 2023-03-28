@@ -22,7 +22,10 @@ def address_api():
 )
 def test_get_rewards_for_cycle_map(address_api):
     rewards = load_reward_model(
-        MAINNET_ADDRESS_STAKENOW_BAKER, CYCLE, RewardsType.ACTUAL, dir_name="tzstats_data"
+        MAINNET_ADDRESS_STAKENOW_BAKER,
+        CYCLE,
+        RewardsType.ACTUAL,
+        dir_name="tzstats_data",
     )
     if rewards is None:
         rewards = address_api.get_rewards_for_cycle_map(
