@@ -19,7 +19,7 @@ Options
     Show help message and exit.
 
 ``-C --initial_cycle <int>``
-    Cycle to start payment(s) from. Valid range: ``[-1,)``. Default value: ``-1`` (pay rewards that were most recently released). Cycle for which rewards were most recently released is calculated based on the formula: ``current_cycle - 1``.
+    Cycle to start payment(s) from. Valid range: ``[-1,)``. Default value: ``-1`` (pay rewards that were most recently released). Cycle for which rewards were most recently released is calculated based on the formula: ``current_cycle - 1 + [if --adjusted_payout_timing == True: (preserved_cycles + 1)]``.
 
 ``-M --run_mode <int>``
     Waiting decision after making pending payments. Valid range: ``[1,4]``. Default value: ``1``. Values description:
@@ -30,7 +30,7 @@ Options
     4. Retry failed payments and exit.
 
 ``--adjusted_early_payouts <bool>``
-    Allows for early, later on adjusted payouts for cycle = current_cycle - 1 + 6. Valid values are ``True``, ``False``. Default value: ``False``. See :ref:`payout_timing`.
+    Allows for early, later on adjusted payouts for cycle = current_cycle - 1 + (preserved_cycles + 1). Valid values are ``True``, ``False``. Default value: ``False``. See :ref:`payout_timing`.
 
 ``-O --payment_offset <int>``
     Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.
