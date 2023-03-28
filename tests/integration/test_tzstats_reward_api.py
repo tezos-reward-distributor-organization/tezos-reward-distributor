@@ -5,7 +5,7 @@ from Constants import DEFAULT_NETWORK_CONFIG_MAP, RewardsType
 from tests.utils import load_reward_model, store_reward_model, Constants
 from exception.api_provider import ApiProviderException
 
-STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
+MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
 CYCLE = 100
 
 
@@ -13,7 +13,7 @@ CYCLE = 100
 def address_api():
     return TzStatsRewardApiImpl(
         nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
-        baking_address=STAKENOW_ADDRESS,
+        baking_address=MAINNET_ADDRESS_STAKENOW_BAKER,
     )
 
 
@@ -22,14 +22,14 @@ def address_api():
 )
 def test_get_rewards_for_cycle_map(address_api):
     rewards = load_reward_model(
-        STAKENOW_ADDRESS, CYCLE, RewardsType.ACTUAL, dir_name="tzstats_data"
+        MAINNET_ADDRESS_STAKENOW_BAKER, CYCLE, RewardsType.ACTUAL, dir_name="tzstats_data"
     )
     if rewards is None:
         rewards = address_api.get_rewards_for_cycle_map(
             cycle=CYCLE, rewards_type=RewardsType.ACTUAL
         )
         store_reward_model(
-            STAKENOW_ADDRESS,
+            MAINNET_ADDRESS_STAKENOW_BAKER,
             CYCLE,
             RewardsType.ACTUAL,
             rewards,

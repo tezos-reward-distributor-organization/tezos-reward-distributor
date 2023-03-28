@@ -13,7 +13,7 @@ from exception.api_provider import ApiProviderException
 from requests.exceptions import RequestException
 
 # Use this baker because he has < 40 delegates which can be fetched fast
-BAKEXTZ4ME_ADDRESS = Constants.BAKEXTZ4ME_ADDRESS
+MAINNET_ADDRESS_BAKEXTZ4ME_BAKER = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
 
 
 class MockBlockData:
@@ -88,7 +88,7 @@ class MockBlockData:
 def address_api():
     return RpcRewardApiImpl(
         nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
-        baking_address=BAKEXTZ4ME_ADDRESS,
+        baking_address=MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
         node_url=PUBLIC_NODE_URL["MAINNET"],
     )
 
@@ -98,14 +98,14 @@ def address_api():
 def test_get_rewards_for_cycle_map(address_api):
     cycle = 515
     rewards = load_reward_model(
-        BAKEXTZ4ME_ADDRESS, cycle, RewardsType.ACTUAL, dir_name="rpc_data"
+        MAINNET_ADDRESS_BAKEXTZ4ME_BAKER, cycle, RewardsType.ACTUAL, dir_name="rpc_data"
     )
     if rewards is None:
         rewards = address_api.get_rewards_for_cycle_map(
             cycle=cycle, rewards_type=RewardsType.ACTUAL
         )
         store_reward_model(
-            BAKEXTZ4ME_ADDRESS, cycle, RewardsType.ACTUAL, rewards, dir_name="rpc_data"
+            MAINNET_ADDRESS_BAKEXTZ4ME_BAKER, cycle, RewardsType.ACTUAL, rewards, dir_name="rpc_data"
         )
     assert rewards.delegate_staking_balance == 80573814172
     assert rewards.total_reward_amount == 19364746
@@ -266,14 +266,14 @@ class Mock_Endorsing_Reward_Response:
                 },
                 {
                     "kind": "contract",
-                    "contract": BAKEXTZ4ME_ADDRESS,
+                    "contract": MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
                     "change": "500",
                     "origin": "block",
                 },
                 {
                     "kind": "burned",
                     "category": "lost endorsing rewards",
-                    "contract": BAKEXTZ4ME_ADDRESS,
+                    "contract": MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
                     "change": "-9956378",
                     "origin": "block",
                 },
@@ -311,7 +311,7 @@ class Mock_Current_Balance_Response:
     MagicMock(return_value=Mock_Current_Balance_Response()),
 )
 def test_get_current_balance_of_delegator(address_api):
-    assert 1234567 == address_api.get_current_balance_of_delegator(BAKEXTZ4ME_ADDRESS)
+    assert 1234567 == address_api.get_current_balance_of_delegator(MAINNET_ADDRESS_BAKEXTZ4ME_BAKER)
 
 
 # Check if delegator balance can be queried correctly
