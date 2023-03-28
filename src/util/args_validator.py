@@ -113,7 +113,7 @@ class ArgsValidator:
             tmp = self._args.adjusted_early_payouts
             if not (isinstance(tmp, bool) or tmp == "True" or tmp == "False"):
                 self._parser.error(
-                    "adjusted_early_payouts must be True or False, default is True."
+                    "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument."
                 )
             if tmp == True:
                 self._args.release_override = -(self._preserved_cycle + 1)

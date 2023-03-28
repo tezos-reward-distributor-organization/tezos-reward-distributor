@@ -18,7 +18,7 @@ released payment cycle will be calculated based on the formula:
 A cycle on mainnet lasts 3 days.
 
 The ``--adjusted_early_payouts`` parameter lets the baker override when rewards
-are released (paid out). Its default value is False.
+are released (paid out). Its default value is False if not provided as argument.
 
 Possible choices are:
 
