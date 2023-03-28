@@ -148,9 +148,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 and threading.current_thread() is not threading.main_thread()
             ):
                 _thread.interrupt_main()
-
                 logger.info("Sending KeyboardInterrupt signal.")
-                exit_program(exit_code)
+                exit_program(
+                    exit_code,
+                    "Error at payment producer. Please consult the verbose logs!",
+                )
             if self.retry_fail_event:
                 self.retry_fail_event.set()
 
@@ -393,10 +395,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.exit(ExitCode.SUCCESS)
 
         return
-
-    def stop(self):
-        self.exit()
-        self.event.set()
 
     def compute_rewards(
         self, pymnt_cycle, computation_type, network_config, adjustments={}

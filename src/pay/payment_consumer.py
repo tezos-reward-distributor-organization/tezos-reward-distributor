@@ -97,7 +97,7 @@ class PaymentConsumer(threading.Thread):
         while running:
             if disk_is_full():
                 running = False
-                exit_program(ExitCode.NO_SPACE)
+                break
 
             # Wait until a reward is present
             payment_batch = self.payments_queue.get(True)
@@ -250,7 +250,8 @@ class PaymentConsumer(threading.Thread):
 
             # - if caught error we can exit
             if error:
-                exit_program(exit_code=error)
+                error_msg = "Unknown Error at payment consumer. Please consult the verbose logs!"
+                exit_program(ExitCode.GENERAL_ERROR, error_msg)
         except Exception:
             logger.error("Error at reward payment", exc_info=True)
         return True
