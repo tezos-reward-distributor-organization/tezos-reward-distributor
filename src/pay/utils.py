@@ -152,5 +152,5 @@ def sort_and_chunk_payment_items(payment_items):
     return payment_items_chunks_tz + payment_items_chunks_KT
 
 
-def caluculate_future_payable_cycles(payment_address_balance, estimated_amount_to_pay):
+def calculate_future_payable_cycles(payment_address_balance, estimated_amount_to_pay):
     return int(payment_address_balance // estimated_amount_to_pay - 1)

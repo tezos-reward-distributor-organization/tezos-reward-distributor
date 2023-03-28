@@ -164,7 +164,7 @@ class PaymentConsumer(threading.Thread):
                 total_attempts,
                 total_payout_amount,
                 number_future_payable_cycles,
-                error,
+                exit_code,
             ) = batch_payer.pay(payment_items, dry_run=self.dry_run)
 
             # override batch data
@@ -249,9 +249,9 @@ class PaymentConsumer(threading.Thread):
                 )
 
             # - if caught error we can exit
-            if error:
+            if exit_code is not None:
                 error_msg = "Unknown Error at payment consumer. Please consult the verbose logs!"
-                exit_program(ExitCode.GENERAL_ERROR, error_msg)
+                exit_program(exit_code, error_msg)
         except Exception:
             logger.error("Error at reward payment", exc_info=True)
         return True
