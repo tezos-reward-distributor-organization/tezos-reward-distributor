@@ -120,28 +120,6 @@ def test_initial_cycle_validator_throws(caplog, capsys):
     )
 
 
-def test_release_override_validator_throws(capsys):
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument(
-        "--release_override",
-        default=1,
-        type=int,
-    )
-    argparser.add_argument(
-        "-N",
-        "--network",
-        choices=["MAINNET", "GHOSTNET"],
-        default="GHOSTNET",
-    )
-    mock_validator = ArgsValidator(argparser)
-    with pytest.raises(SystemExit) as pytest_wrapped_e:
-        mock_validator._release_override_validator()
-    out, err = capsys.readouterr()
-    assert pytest_wrapped_e.type == SystemExit
-    assert pytest_wrapped_e.value.code == 2
-    assert "For GHOSTNET, release-override must be" in err
-
-
 def test_base_directory_validator():
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--base_directory", default="~/TEST_DIR")
@@ -167,7 +145,7 @@ def test_validate():
     assert SUT == argparse.Namespace(
         initial_cycle=-1,
         run_mode=1,
-        release_override=0,
+        release_override=-5,
         payment_offset=0,
         network="MAINNET",
         node_endpoint="http://127.0.0.1:8732",

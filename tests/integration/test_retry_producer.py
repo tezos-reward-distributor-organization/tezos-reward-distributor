@@ -109,7 +109,7 @@ class TestRetryProducerBeforeInitialCycle(TestCase):
     def test_retry_failed_payments_before_initial_cycle(self):
         """This is a test about retrying failed operations in a cycle
         before initial_cycle passed at parameter.
-        Input is a past payment report with failues at cycle 10.
+        Input is a past payment report with failures at cycle 10.
         Initial cycle is set to 11.
         It should NOT trigger any payment.
         """

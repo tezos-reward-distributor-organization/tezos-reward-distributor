@@ -204,7 +204,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         if self.initial_payment_cycle == -1:
             pymnt_cycle = (
                 current_cycle
-                - (self.nw_config["NB_FREEZE_CYCLE"] + 1)
+                - (self.nw_config["PRESERVED_CYCLES"] + 1)
                 - self.release_override
             )
             if pymnt_cycle < 0:
@@ -257,13 +257,13 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     os.makedirs(self.calculations_dir)
 
                 logger.debug(
-                    "Checking for pending payments: payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override"
+                    "Checking for pending payments: payment_cycle <= current_cycle - (self.nw_config['PRESERVED_CYCLES'] + 1) - self.release_override"
                 )
                 logger.info(
                     "Checking for pending payments: checking {} <= {} - ({} + 1) - {}".format(
                         pymnt_cycle,
                         current_cycle,
-                        self.nw_config["NB_FREEZE_CYCLE"],
+                        self.nw_config["PRESERVED_CYCLES"],
                         self.release_override,
                     )
                 )
@@ -272,7 +272,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 if (
                     pymnt_cycle
                     <= current_cycle
-                    - (self.nw_config["NB_FREEZE_CYCLE"] + 1)
+                    - (self.nw_config["PRESERVED_CYCLES"] + 1)
                     - self.release_override
                 ):
                     if not self.payments_queue.full():
@@ -550,11 +550,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             current_cycle_rewards_type = rewards_type
             # 1- adjust past cycle if necessary
             if (
-                self.release_override == -(2 * network_config["NB_FREEZE_CYCLE"] + 1)
+                self.release_override == -(2 * network_config["PRESERVED_CYCLES"] + 1)
                 and pymnt_cycle >= current_cycle
             ):
                 early_payout = True
-                completed_cycle = pymnt_cycle - network_config["NB_FREEZE_CYCLE"] - 1
+                completed_cycle = pymnt_cycle - network_config["PRESERVED_CYCLES"] - 1
                 adjustments = self.recompute_rewards(
                     completed_cycle, rewards_type, network_config
                 )

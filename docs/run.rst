@@ -19,7 +19,7 @@ Options
     Show help message and exit.
 
 ``-C --initial_cycle <int>``
-    Cycle to start payment(s) from. Valid range: ``[-1,)``. Default value: ``-1`` (pay rewards that were most recently released). Cycle for which rewards were most recently released is calulated based on the formula: ``current_cycle - (NB_FREEZE_CYCLE+1) - release_override``.
+    Cycle to start payment(s) from. Valid range: ``[-1,)``. Default value: ``-1`` (pay rewards that were most recently released). Cycle for which rewards were most recently released is calculated based on the formula: ``current_cycle - 1``.
 
 ``-M --run_mode <int>``
     Waiting decision after making pending payments. Valid range: ``[1,4]``. Default value: ``1``. Values description:
@@ -29,8 +29,8 @@ Options
     3. Run for one cycle and exit. Suitable to use with ``-C`` option.
     4. Retry failed payments and exit.
 
-``-R --release_override <int>``
-    Pays cycles earlier than the default by the specified amount of cycles. Valid values are ``0``, ``-5``, ``-11``. Default value: ``0`` (which is deprecated). See :ref:`payout_timing`.
+``--adjusted_early_payouts <bool>``
+    Allows for early, later on adjusted payouts for cycle = current_cycle - 1 + 5. Valid values are ``True``, ``False``. Default value: ``False``. See :ref:`payout_timing`.
 
 ``-O --payment_offset <int>``
     Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.

@@ -87,7 +87,7 @@ class Args:
     ):
         self.initial_cycle = initial_cycle
         self.run_mode = 3
-        self.release_override = 0
+        self.release_override = -5
         self.payment_offset = 0
         self.network = None
         self.node_endpoint = ""

@@ -53,7 +53,7 @@ class TzStatsRewardProviderHelper:
     def __init__(self, nw, baking_address):
         super(TzStatsRewardProviderHelper, self).__init__()
 
-        self.preserved_cycles = nw["NB_FREEZE_CYCLE"]
+        self.preserved_cycles = nw["PRESERVED_CYCLES"]
 
         self.api = TZSTATS_PUBLIC_API_URL[nw["NAME"]]
         if self.api is None:

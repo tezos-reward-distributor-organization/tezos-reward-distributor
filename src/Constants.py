@@ -75,7 +75,7 @@ DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
         # General
         "NAME": "MAINNET",
-        "NB_FREEZE_CYCLE": 5,  # needs deprecation
+        "PRESERVED_CYCLES": 5,
         "MINIMAL_BLOCK_DELAY": 30,
         "BLOCKS_PER_CYCLE": 8192,
         "BLOCKS_PER_STAKE_SNAPSHOT": 512,
@@ -94,7 +94,7 @@ DEFAULT_NETWORK_CONFIG_MAP = {
     CURRENT_TESTNET: {
         # General
         "NAME": CURRENT_TESTNET,
-        "NB_FREEZE_CYCLE": 3,  # needs deprecation
+        "PRESERVED_CYCLES": 3,
         "MINIMAL_BLOCK_DELAY": 8,
         "BLOCKS_PER_CYCLE": 8192,
         "BLOCKS_PER_STAKE_SNAPSHOT": 512,
