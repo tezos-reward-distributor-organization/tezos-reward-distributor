@@ -108,7 +108,8 @@ class ClientManager:
 
         if response is None:
             exit_program(
-                ExitCode.SIGNER_ERROR_NOT_RUNNING, ExitMessage.SIGNER_ERROR_NOT_RUNNING
+                ExitCode.GENERAL_ERROR,
+                "Unknown Error at signing. Please consult the verbose logs!",
             )
 
         if response.status_code != HTTPStatus.OK:

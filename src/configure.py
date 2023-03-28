@@ -501,7 +501,7 @@ def main(args):
             )
         else:
             error_msg = "Exception during write operation invoked: {}".format(e)
-        exit_program(ExitCode.NO_SPACE, error_msg)
+        exit_program(ExitCode.GENERAL_ERROR, error_msg)
 
     print(messages["noplugins"])
     print("Configuration file is created at '{}'".format(config_file_path))
