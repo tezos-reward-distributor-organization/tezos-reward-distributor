@@ -13,7 +13,7 @@ This means that they have a lower balance at any given point in time.
 
 TRD behavior is to pay out the last released payment cycle. Last
 released payment cycle will be calculated based on the formula:
-``current_cycle -1 + (preserved_cycles + 1) if adjusted_early_payouts == True)``.
+``current_cycle - 1 + [if --adjusted_payout_timing == True: (preserved_cycles + 1)]``.
 
 A cycle on mainnet lasts 3 days.
 
