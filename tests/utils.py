@@ -72,9 +72,10 @@ def store_reward_model(
             error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
                 e
             )
+            exit_program(ExitCode.NO_SPACE, error_msg)
         else:
             error_msg = "Exception during write operation invoked: {}".format(e)
-        exit_program(ExitCode.NO_SPACE, error_msg)
+            exit_program(ExitCode.GENERAL_ERROR, error_msg)
 
 
 class Args:
