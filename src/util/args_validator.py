@@ -22,8 +22,8 @@ class ArgsValidator:
         except AttributeError:
             self._logger.info("args: reward_data_provider argument does not exist.")
         else:
-            if self._args.reward_data_provider not in ["tzkt", "rpc"]:
-                error_message = "reward_data_provider {:s} is not functional at the moment. Please use tzkt or rpc".format(
+            if self._args.reward_data_provider not in ["tzkt"]:
+                error_message = "reward_data_provider {:s} is not functional at the moment. Please use tzkt".format(
                     self._args.reward_data_provider
                 )
                 self._logger.info(error_message)
