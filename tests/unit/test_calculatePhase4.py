@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from calc.calculate_phase4 import CalculatePhase4
-from tests.utils import make_config
 from model.reward_log import (
     RewardLog,
     TYPE_FOUNDERS_PARENT,
@@ -9,18 +8,7 @@ from model.reward_log import (
     TYPE_OWNERS_PARENT,
     TYPE_FOUNDER,
 )
-from NetworkConfiguration import default_network_config_map
-from model.baking_conf import BakingConf
-from api.provider_factory import ProviderFactory
 from Constants import ALMOST_ZERO
-
-baking_config = make_config(
-    baking_address="tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
-    payment_address="tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN",
-    service_fee=14.99,
-    min_delegation_amt=0,
-    min_payment_amt=0,
-)
 
 
 class TestCalculatePhase4(TestCase):
@@ -48,13 +36,7 @@ class TestCalculatePhase4(TestCase):
         founders_map = {"addr1": 0.4, "addr2": 0.6}
         owners_map = {"addr1": 0.6, "addr2": 0.4}
 
-        factory = ProviderFactory(provider="tzkt")
-        baking_cfg = BakingConf(baking_config)
-        rewardApi = factory.newRewardApi(
-            default_network_config_map["MAINNET"], baking_cfg.get_baking_address(), ""
-        )
-
-        phase4 = CalculatePhase4(founders_map, owners_map, rewardApi)
+        phase4 = CalculatePhase4(founders_map, owners_map)
         new_rewards, new_total_reward = phase4.calculate(rewards, total_reward)
 
         # new_total_reward = total_reward

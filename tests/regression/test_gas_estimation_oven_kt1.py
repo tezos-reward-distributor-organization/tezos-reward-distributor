@@ -83,9 +83,6 @@ def test_batch_payer_total_payout_amount():
         baking_cfg.get_excluded_set_tof(),
         baking_cfg.get_dest_map(),
     )
-    rewardApi = factory.newRewardApi(
-        default_network_config_map["MAINNET"], baking_cfg.get_baking_address(), ""
-    )
     payment_calc = PhasedPaymentCalculator(
         founders_map=baking_cfg.get_founders_map(),
         owners_map=baking_cfg.get_owners_map(),
@@ -95,7 +92,11 @@ def test_batch_payer_total_payout_amount():
         ),
         min_payment_amount=0,
         rules_model=rules_model,
-        reward_api=rewardApi,
+        reward_api=None,
+    )
+
+    rewardApi = factory.newRewardApi(
+        default_network_config_map["MAINNET"], baking_cfg.get_baking_address(), ""
     )
 
     # Simulate logic in payment_producer
