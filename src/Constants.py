@@ -1,4 +1,5 @@
 from enum import Enum
+from datetime import date
 
 # General
 VERSION = 11.0
@@ -17,6 +18,10 @@ REPORTS_DIR = "reports"
 DEFAULT_LOG_FILE = "logs/app.log"
 TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 REQUIREMENTS_FILE_PATH = "requirements.txt"
+
+# potentially the next upgrade
+NEW_PROTOCOL_DATE = date(2023, 3, 29)
+NEW_PROTOCOL_NAME = "Mumbai"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"

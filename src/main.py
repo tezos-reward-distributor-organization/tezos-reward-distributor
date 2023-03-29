@@ -3,12 +3,13 @@ import sys
 import pip
 import pkg_resources
 from datetime import date
-from Constants import PYTHON_MAJOR, PYTHON_MINOR
-
-
-REQUIREMENTS_FILE_PATH = "requirements.txt"
-NEW_PROTOCOL_DATE = date(2023, 3, 29)  # potentially the next upgrade
-NEW_PROTOCOL_NAME = "Mumbai"
+from Constants import (
+    PYTHON_MAJOR,
+    PYTHON_MINOR,
+    REQUIREMENTS_FILE_PATH,
+    NEW_PROTOCOL_DATE,
+    NEW_PROTOCOL_NAME,
+)
 
 
 def installed(package):
