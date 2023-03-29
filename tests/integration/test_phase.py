@@ -83,6 +83,11 @@ class TestCalculatePhases(TestCase):
             baking_cfg.get_excluded_set_tof(),
             baking_cfg.get_dest_map(),
         )
+        rewardApi = factory.newRewardApi(
+            default_network_config_map["MAINNET"],
+            baking_cfg.get_baking_address(),
+            "",
+        )
         payment_calc = PhasedPaymentCalculator(
             founders_map=baking_cfg.get_founders_map(),
             owners_map=baking_cfg.get_owners_map(),
@@ -92,12 +97,7 @@ class TestCalculatePhases(TestCase):
             ),
             min_payment_amount=0,
             rules_model=rules_model,
-        )
-
-        rewardApi = factory.newRewardApi(
-            default_network_config_map["MAINNET"],
-            baking_cfg.get_baking_address(),
-            "",
+            reward_api=rewardApi,
         )
 
         # Simulate logic in payment_producer
