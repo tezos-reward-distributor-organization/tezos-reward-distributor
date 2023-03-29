@@ -5,6 +5,7 @@ import os
 from Constants import (
     BASE_DIR,
     DEFAULT_LOG_FILE,
+    ALLOWED_REWARD_DATA_PROVIDER_CHOICES,
 )
 
 logger = main_logger
@@ -23,9 +24,10 @@ class ArgsValidator:
         except AttributeError:
             self._parser.error("args: reward_data_provider argument does not exist.")
         else:
-            if self._args.reward_data_provider not in ["tzkt", "tzstats"]:
-                error_message = "reward_data_provider {:s} is not functional at the moment. Please use tzkt or rpc".format(
-                    self._args.reward_data_provider
+            if self._args.reward_data_provider not in ALLOWED_REWARD_DATA_PROVIDER_CHOICES:
+                error_message = "Argument `--reward_data_provider {:s}`  is not functional at the moment. Please use: {}".format(
+                    self._args.reward_data_provider,
+                    ", ".join(ALLOWED_REWARD_DATA_PROVIDER_CHOICES),
                 )
                 self._parser.error(error_message)
             return True

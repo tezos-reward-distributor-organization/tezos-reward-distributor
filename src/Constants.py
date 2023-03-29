@@ -6,6 +6,9 @@ PYTHON_MAJOR = 3
 PYTHON_MINOR = 7
 LINER = "--------------------------------------------"
 
+# Disabled or enabled options by developers
+ALLOWED_REWARD_DATA_PROVIDER_CHOICES = ["tzkt", "tzstats"]
+
 # Persistent data directories
 BASE_DIR = "~/pymnt"
 CONFIG_DIR = "cfg"
