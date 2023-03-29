@@ -18,7 +18,7 @@ class CalculatePhase4(CalculatePhaseBase):
     Sum of owner ratios equals to ratio of owners_parent record.
     """
 
-    def __init__(self, founders_map, owners_map, reward_api) -> None:
+    def __init__(self, founders_map, owners_map, reward_api=None) -> None:
         super().__init__()
 
         self.founders_map = founders_map
@@ -43,7 +43,8 @@ class CalculatePhase4(CalculatePhaseBase):
                     rl4.service_fee_ratio = 0
                     rl4.service_fee_rate = 0
                     rl4.parent = rl3
-                    self.reward_api.update_current_balances([rl4])
+                    if self.reward_api is not None:
+                        self.reward_api.update_current_balances([rl4])
                     new_rewards.append(rl4)
 
                 # if no founders, add parent object to rewards list
@@ -59,7 +60,8 @@ class CalculatePhase4(CalculatePhaseBase):
                     rl4.service_fee_ratio = 0
                     rl4.service_fee_rate = 0
                     rl4.parent = rl3
-                    self.reward_api.update_current_balances([rl4])
+                    if self.reward_api is not None:
+                        self.reward_api.update_current_balances([rl4])
                     new_rewards.append(rl4)
 
                 # if no owners, add parent object to rewards list

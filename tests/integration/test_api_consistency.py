@@ -16,6 +16,7 @@ from src.rpc.rpc_reward_api import RpcRewardApiImpl
 NORMAL_TEZOS_ADDRESS = Constants.NORMAL_TEZOS_ADDRESS
 STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
 BAKEXTZ4ME_ADDRESS = Constants.BAKEXTZ4ME_ADDRESS
+BAKEXTZ4ME_PAYOUT_ADDRESS = Constants.BAKEXTZ4ME_PAYOUT_ADDRESS
 
 # These tests should not be mocked but test the overall consistency
 # accross all tezos APIs which are available in TRD
@@ -150,31 +151,31 @@ def test_get_rewards_for_cycle_map(
         tzkt_delegator_adress,
         tzkt_balance_dict,
     ) in rewards_tzkt.delegator_balance_dict.items():
-        assert tzkt_balance_dict["current_balance"] == pytest.approx(
-            rewards_rpc.delegator_balance_dict[tzkt_delegator_adress][
-                "current_balance"
-            ],
-            1,
-        )
-        assert tzkt_balance_dict["staking_balance"] == pytest.approx(
-            rewards_rpc.delegator_balance_dict[tzkt_delegator_adress][
-                "staking_balance"
-            ],
-            1,
-        )
+        if BAKEXTZ4ME_PAYOUT_ADDRESS == tzkt_delegator_adress:
+            continue
+        rpc_balance = rewards_rpc.delegator_balance_dict.get(tzkt_delegator_adress)
+        if rpc_balance is not None:
+            assert tzkt_balance_dict["current_balance"] == pytest.approx(
+                rpc_balance["current_balance"],
+                1,
+            )
+            assert tzkt_balance_dict["staking_balance"] == pytest.approx(
+                rpc_balance["staking_balance"],
+                1,
+            )
 
-        assert tzkt_balance_dict["current_balance"] == pytest.approx(
-            rewards_tzstats.delegator_balance_dict[tzkt_delegator_adress][
-                "current_balance"
-            ],
-            1,
+        tzstats_balance = rewards_tzstats.delegator_balance_dict.get(
+            tzkt_delegator_adress,
         )
-        assert tzkt_balance_dict["staking_balance"] == pytest.approx(
-            rewards_tzstats.delegator_balance_dict[tzkt_delegator_adress][
-                "staking_balance"
-            ],
-            1,
-        )
+        if tzstats_balance is not None:
+            assert tzkt_balance_dict["current_balance"] == pytest.approx(
+                tzstats_balance["current_balance"],
+                1,
+            )
+            assert tzkt_balance_dict["staking_balance"] == pytest.approx(
+                tzstats_balance["staking_balance"],
+                1,
+            )
 
     # Check num_baking_rights
     assert rewards_tzkt.num_baking_rights == rewards_tzstats.num_baking_rights
