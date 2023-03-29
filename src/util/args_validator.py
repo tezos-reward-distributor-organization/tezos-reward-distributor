@@ -9,6 +9,7 @@ from Constants import (
 
 logger = main_logger
 
+
 class ArgsValidator:
     def __init__(self, parser):
         self._parser = parser
