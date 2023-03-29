@@ -92,6 +92,7 @@ def test_batch_payer_total_payout_amount():
         ),
         min_payment_amount=0,
         rules_model=rules_model,
+        reward_api=None,
     )
 
     rewardApi = factory.newRewardApi(
