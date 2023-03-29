@@ -122,26 +122,23 @@ def test_initial_cycle_validator_throws(caplog, capsys):
     )
 
 
-def test_release_override_validator_throws(capsys):
+def test_adjusted_early_payouts_validator_throws(capsys):
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
-        "--release_override",
+        "--adjusted_early_payouts",
         default=1,
         type=int,
     )
-    argparser.add_argument(
-        "-N",
-        "--network",
-        choices=["MAINNET", "GHOSTNET"],
-        default="GHOSTNET",
-    )
     mock_validator = ArgsValidator(argparser)
     with pytest.raises(SystemExit) as pytest_wrapped_e:
-        mock_validator._release_override_validator()
+        mock_validator._adjusted_early_payouts_validator()
     out, err = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 2
-    assert "For GHOSTNET, release-override must be" in err
+    assert (
+        "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument."
+        in err
+    )
 
 
 def test_base_directory_validator():
@@ -170,6 +167,7 @@ def test_validate():
         initial_cycle=-1,
         run_mode=1,
         release_override=0,
+        adjusted_early_payouts=False,
         payment_offset=0,
         network="MAINNET",
         node_endpoint="http://127.0.0.1:8732",

@@ -93,6 +93,7 @@ class Args:
     ):
         self.initial_cycle = initial_cycle
         self.run_mode = 3
+        self.adjusted_early_payouts = False
         self.release_override = 0
         self.payment_offset = 0
         self.network = None
@@ -274,6 +275,7 @@ def mock_request_get(url, timeout, **kwargs):
         "/chains/main/blocks/225280/metadata",
         "/chains/main/blocks/212992/metadata",
         "/chains/main/blocks/2052096/metadata",
+        "/chains/main/blocks/4374528/metadata",
     ]:
         return MagicMock(
             status_code=HTTPStatus.OK,

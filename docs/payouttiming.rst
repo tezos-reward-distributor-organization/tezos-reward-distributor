@@ -13,24 +13,22 @@ This means that they have a lower balance at any given point in time.
 
 TRD behavior is to pay out the last released payment cycle. Last
 released payment cycle will be calculated based on the formula:
-``current_cycle + 6 - release_override``.
+``current_cycle - 1 + [if --adjusted_payout_timing == True: (preserved_cycles + 1)]``.
 
 A cycle on mainnet lasts 3 days.
 
-The ``--release_override`` ``-R`` parameter lets the baker override when rewards
-are released (paid out). Its default value is 0, which is a deprecated choice.
+The ``--adjusted_early_payouts`` parameter lets the baker override when rewards
+are released (paid out). Its default value is False if not provided as argument.
 
 Possible choices are:
 
--  ``0``: pay rewards when they are "unfrozen" - 11 to 12 cycles after delegation. Note that the concept of freezing is a holdover from the old "Emmy" consensus algorithm and does not apply anymore with the current Tenderbake consensus algorithm.
--  ``-5``: pay rewards after the cycle runs - 6 to 7 cycles after delegation. The recommended default choice.
--  ``-11``: pay rewards when baking rights are assigned, referred as “adjusted
-   early payouts” (see below) - 1 to 2 cycles after delegation.
+-  ``False``: pay rewards after the cycle runs - 6 to 7 cycles after delegation. The recommended default choice.
+-  ``True``: pay rewards when baking rights are assigned, referred as “adjusted early payouts” (see below) - 1 to 2 cycles after delegation.
 
 Adjusted early payouts
 ----------------------
 
-A ``release_override`` of ``-11`` will trigger adjusted early payouts.
+A ``adjusted_early_payouts`` of ``True`` will trigger adjusted early payouts.
 
 When selected, this option calculates and pays out the expected rewards based on baking and
 endorsing rights only. It does not takes into account fee income,
@@ -57,9 +55,9 @@ calculations CSV file.
 
 **Cycle 100**: Frank and Cindy both delegate 1000 tez to Jane’s bakery. For
 simplicity, Jane’s bakery has no fee and no other delegators. Her bakery is
-configured with a ``release_override`` of ``-11`` and ``rewards_type`` ``actual``.
+configured with a ``adjusted_early_payouts`` of ``True`` and ``rewards_type`` ``actual``.
 
-**Cycle 103**: Since ``release_override`` is set to ``-11``, payout for cycle 108 happens during cycle 103. Frank and Cindy’s delegation is taken into account to compute
+**Cycle 103**: Since ``adjusted_early_payouts`` is set to ``True``, payout for cycle 108 happens during cycle 103. Frank and Cindy’s delegation is taken into account to compute
 cylce 108’s rights. Jane’s bakery is expected to earn 80 tez rewards for
 cycle 108 from baking and endorsing rewards. Frank and Cindy contribute 10% each to Jane’s staking
 balance. They each receive 8 tez as part of the payout for cycle 108.

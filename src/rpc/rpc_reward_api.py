@@ -51,7 +51,7 @@ class RpcRewardApiImpl(RewardApi):
         self.name = "RPC"
 
         self.blocks_per_cycle = nw["BLOCKS_PER_CYCLE"]
-        self.preserved_cycles = nw["NB_FREEZE_CYCLE"]
+        self.preserved_cycles = nw["PRESERVED_CYCLES"]
         self.blocks_per_stake_snapshot = nw["BLOCKS_PER_STAKE_SNAPSHOT"]
         self.block_reward = nw["BLOCK_REWARD"]
         self.network = nw["NAME"]

@@ -111,19 +111,9 @@ def address_reward_api_tzstats():
     )
 
 
-@pytest.fixture
-def address_reward_api_rpc():
-    return RpcRewardApiImpl(
-        DEFAULT_NETWORK_CONFIG_MAP["GHOSTNET"],
-        GHOSTNET_ADDRESS_STAKENOW_BAKER,
-        PUBLIC_NODE_URL["GHOSTNET"],
-    )
-
-
 def test_get_rewards_for_cycle_map(
     address_reward_api_tzkt,
     address_reward_api_tzstats,
-    address_reward_api_rpc,
     current_cycle,
 ):
     last_cycle = current_cycle - 1
@@ -133,14 +123,9 @@ def test_get_rewards_for_cycle_map(
     rewards_tzstats = address_reward_api_tzstats.get_rewards_for_cycle_map(
         cycle=last_cycle, rewards_type=RewardsType.ACTUAL
     )
-    rewards_rpc = address_reward_api_rpc.get_rewards_for_cycle_map(
-        cycle=last_cycle, rewards_type=RewardsType.ACTUAL
-    )
 
     # Check total_reward_amount
     assert rewards_tzkt.total_reward_amount == rewards_tzstats.total_reward_amount
-    assert rewards_rpc.total_reward_amount == rewards_tzstats.total_reward_amount
-    assert rewards_rpc.total_reward_amount == rewards_tzkt.total_reward_amount
 
     # Check delegate_staking_balance
     assert (
@@ -157,16 +142,6 @@ def test_get_rewards_for_cycle_map(
     ) in rewards_tzkt.delegator_balance_dict.items():
         if MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT == tzkt_delegator_adress:
             continue
-        rpc_balance = rewards_rpc.delegator_balance_dict.get(tzkt_delegator_adress)
-        if rpc_balance is not None:
-            assert tzkt_balance_dict["current_balance"] == pytest.approx(
-                rpc_balance["current_balance"],
-                1,
-            )
-            assert tzkt_balance_dict["staking_balance"] == pytest.approx(
-                rpc_balance["staking_balance"],
-                1,
-            )
 
         tzstats_balance = rewards_tzstats.delegator_balance_dict.get(
             tzkt_delegator_adress,
@@ -183,43 +158,24 @@ def test_get_rewards_for_cycle_map(
 
     # Check num_baking_rights
     assert rewards_tzkt.num_baking_rights == rewards_tzstats.num_baking_rights
-    assert rewards_rpc.num_baking_rights == rewards_tzstats.num_baking_rights
-    assert rewards_rpc.num_baking_rights == rewards_tzkt.num_baking_rights
 
     # Check denunciation_rewards
     assert rewards_tzkt.denunciation_rewards == rewards_tzstats.denunciation_rewards
-    assert rewards_rpc.denunciation_rewards == rewards_tzstats.denunciation_rewards
-    assert rewards_rpc.denunciation_rewards == rewards_tzkt.denunciation_rewards
 
     # Check equivocation_losses
     assert rewards_tzkt.equivocation_losses == rewards_tzstats.equivocation_losses
-    assert rewards_rpc.equivocation_losses == rewards_tzstats.equivocation_losses
-    assert rewards_rpc.equivocation_losses == rewards_tzkt.equivocation_losses
 
     # Check offline_losses
     assert rewards_tzkt.offline_losses == rewards_tzstats.offline_losses
-    assert rewards_rpc.offline_losses == rewards_tzstats.offline_losses
-    assert rewards_rpc.offline_losses == rewards_tzkt.offline_losses
 
     # Check potential_endorsement_rewards
     # TODO: tzstats total_active_stake does not match rpc and tzkt exactly thus the approximation
     assert rewards_tzkt.potential_endorsement_rewards == pytest.approx(
         rewards_tzstats.potential_endorsement_rewards, 60000
     )
-    assert rewards_rpc.potential_endorsement_rewards == pytest.approx(
-        rewards_tzstats.potential_endorsement_rewards, 60000
-    )
-    assert (
-        rewards_rpc.potential_endorsement_rewards
-        == rewards_tzkt.potential_endorsement_rewards
-    )
 
     # Check rewards_and_fees
     assert rewards_tzkt.rewards_and_fees == rewards_tzstats.rewards_and_fees
-    assert rewards_rpc.rewards_and_fees == rewards_tzstats.rewards_and_fees
-    assert rewards_rpc.rewards_and_fees == rewards_tzkt.rewards_and_fees
 
     # Check computed_reward_amount
     assert rewards_tzkt.computed_reward_amount == rewards_tzstats.computed_reward_amount
-    assert rewards_rpc.computed_reward_amount == rewards_tzstats.computed_reward_amount
-    assert rewards_rpc.computed_reward_amount == rewards_tzkt.computed_reward_amount

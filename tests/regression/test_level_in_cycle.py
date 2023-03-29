@@ -17,7 +17,7 @@ def test_levels_in_cycle():
 
     level_positions = [
         [1589249, 0],  # Granada activation level
-        [1665240, 2263],
+        [3000000, 1727],
     ]
 
     block = DummyApiImpl()
