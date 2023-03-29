@@ -7,11 +7,11 @@ from Constants import (
     DEFAULT_LOG_FILE,
 )
 
+logger = main_logger
 
 class ArgsValidator:
     def __init__(self, parser):
         self._parser = parser
-        self._logger = main_logger
         self._args = parser.parse_known_args()[0]
         self._blocks_per_cycle = 0
         self._nb_freeze_cycle = 0
@@ -20,20 +20,20 @@ class ArgsValidator:
         try:
             self._args.reward_data_provider
         except AttributeError:
-            self._logger.info("args: reward_data_provider argument does not exist.")
+            self._parser.error("args: reward_data_provider argument does not exist.")
         else:
-            if self._args.reward_data_provider not in ["tzkt"]:
-                error_message = "reward_data_provider {:s} is not functional at the moment. Please use tzkt".format(
+            if self._args.reward_data_provider not in ["tzkt", "tzstats"]:
+                error_message = "reward_data_provider {:s} is not functional at the moment. Please use tzkt or rpc".format(
                     self._args.reward_data_provider
                 )
-                self._logger.info(error_message)
+                self._parser.error(error_message)
             return True
 
     def _network_validator(self):
         try:
             self._args.network
         except AttributeError:
-            self._logger.info("args: network argument does not exist.")
+            self._parser.error("args: network argument does not exist.")
         else:
             if self._args.network in default_network_config_map:
                 self._blocks_per_cycle = default_network_config_map[self._args.network][
@@ -72,14 +72,14 @@ class ArgsValidator:
         try:
             self._args.dry_run
         except AttributeError:
-            self._logger.info("args: dry_run argument does not exist.")
+            self._parser.error("args: dry_run argument does not exist.")
         return True
 
     def _payment_offset_validator(self):
         try:
             self._args.payment_offset
         except AttributeError:
-            self._logger.info("args: payment_offset argument does not exist.")
+            self._parser.error("args: payment_offset argument does not exist.")
         else:
             if not (
                 self._args.payment_offset >= 0
@@ -96,7 +96,7 @@ class ArgsValidator:
         try:
             self._args.initial_cycle
         except AttributeError:
-            self._logger.info("args: initial_cycle argument does not exist.")
+            self._parser.error("args: initial_cycle argument does not exist.")
         else:
             if self._args.initial_cycle < -1:
                 self._parser.error(
@@ -108,7 +108,7 @@ class ArgsValidator:
         try:
             self._args.release_override
         except AttributeError:
-            self._logger.info("args: release_override argument does not exist.")
+            self._parser.error("args: release_override argument does not exist.")
         else:
             release_override = self._args.release_override
             preserved_cycles = self._nb_freeze_cycle
