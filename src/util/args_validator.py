@@ -24,7 +24,10 @@ class ArgsValidator:
         except AttributeError:
             self._parser.error("args: reward_data_provider argument does not exist.")
         else:
-            if self._args.reward_data_provider not in ALLOWED_REWARD_DATA_PROVIDER_CHOICES:
+            if (
+                self._args.reward_data_provider
+                not in ALLOWED_REWARD_DATA_PROVIDER_CHOICES
+            ):
                 error_message = "Argument `--reward_data_provider {:s}`  is not functional at the moment. Please use: {}".format(
                     self._args.reward_data_provider,
                     ", ".join(ALLOWED_REWARD_DATA_PROVIDER_CHOICES),

@@ -63,7 +63,7 @@ def test_reward_data_provider_validator():
     assert SUT is True
 
 
-def test_reward_data_provider_validator_throws(caplog):
+def test_reward_data_provider_validator_throws(caplog, capsys):
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
         "-P",
@@ -71,14 +71,14 @@ def test_reward_data_provider_validator_throws(caplog):
         default="BROKEN",
     )
     caplog.set_level(logging.INFO)
-    mock_validator = ArgsValidator(argparser)
-    mock_validator._reward_data_provider_validator()
+    with pytest.raises(SystemExit) as excinfo:
+        mock_validator = ArgsValidator(argparser)
+        mock_validator._reward_data_provider_validator()
 
-    # TODO: Viktor
-    #assert (
-    #    "reward_data_provider BROKEN is not functional at the moment. Please use tzkt or rpc"
-    #    in caplog.text
-    #)
+    out, err = capsys.readouterr()
+    assert excinfo.value.code == 2
+    assert excinfo.type == SystemExit
+    assert "is not functional at the moment. Please use: tzkt, tzstats" in err
 
 
 def test_payment_offset_validator_throws(caplog, capsys):
