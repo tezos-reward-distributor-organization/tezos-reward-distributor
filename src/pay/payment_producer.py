@@ -395,6 +395,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.exit(ExitCode.SUCCESS)
 
         return
+    
+    def stop(self):
+        self.exit(ExitCode.SUCCESS)
+        self.event.set()
 
     def compute_rewards(
         self, pymnt_cycle, computation_type, network_config, adjustments={}
