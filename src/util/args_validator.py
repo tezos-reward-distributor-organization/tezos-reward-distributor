@@ -5,13 +5,15 @@ import os
 from Constants import (
     BASE_DIR,
     DEFAULT_LOG_FILE,
+    ALLOWED_REWARD_DATA_PROVIDER_CHOICES,
 )
+
+logger = main_logger
 
 
 class ArgsValidator:
     def __init__(self, parser):
         self._parser = parser
-        self._logger = main_logger
         self._args = parser.parse_args()
         self._blocks_per_cycle = 0
         self._preserved_cycles = 0
@@ -20,20 +22,24 @@ class ArgsValidator:
         try:
             self._args.reward_data_provider
         except AttributeError:
-            self._logger.info("args: reward_data_provider argument does not exist.")
+            self._parser.error("args: reward_data_provider argument does not exist.")
         else:
-            if self._args.reward_data_provider not in ["tzkt", "rpc"]:
-                error_message = "reward_data_provider {:s} is not functional at the moment. Please use tzkt or rpc".format(
-                    self._args.reward_data_provider
+            if (
+                self._args.reward_data_provider
+                not in ALLOWED_REWARD_DATA_PROVIDER_CHOICES
+            ):
+                error_message = "Argument `--reward_data_provider {:s}`  is not functional at the moment. Please use: {}".format(
+                    self._args.reward_data_provider,
+                    ", ".join(ALLOWED_REWARD_DATA_PROVIDER_CHOICES),
                 )
-                self._logger.info(error_message)
+                self._parser.error(error_message)
             return True
 
     def _network_validator(self):
         try:
             self._args.network
         except AttributeError:
-            self._logger.info("args: network argument does not exist.")
+            self._parser.error("args: network argument does not exist.")
         else:
             if self._args.network in default_network_config_map:
                 self._blocks_per_cycle = default_network_config_map[self._args.network][
@@ -72,14 +78,14 @@ class ArgsValidator:
         try:
             self._args.dry_run
         except AttributeError:
-            self._logger.info("args: dry_run argument does not exist.")
+            self._parser.error("args: dry_run argument does not exist.")
         return True
 
     def _payment_offset_validator(self):
         try:
             self._args.payment_offset
         except AttributeError:
-            self._logger.info("args: payment_offset argument does not exist.")
+            self._parser.error("args: payment_offset argument does not exist.")
         else:
             if not (
                 self._args.payment_offset >= 0
@@ -96,7 +102,7 @@ class ArgsValidator:
         try:
             self._args.initial_cycle
         except AttributeError:
-            self._logger.info("args: initial_cycle argument does not exist.")
+            self._parser.error("args: initial_cycle argument does not exist.")
         else:
             if self._args.initial_cycle < -1:
                 self._parser.error(
@@ -108,7 +114,7 @@ class ArgsValidator:
         try:
             self._args.adjusted_early_payouts
         except AttributeError:
-            self._logger.info("args: adjusted_early_payouts argument does not exist.")
+            self._parser.error("args: adjusted_early_payouts argument does not exist.")
         else:
             tmp = self._args.adjusted_early_payouts
             if not (isinstance(tmp, bool) or tmp == "True" or tmp == "False"):
