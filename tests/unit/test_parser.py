@@ -29,7 +29,10 @@ from util.parser import (
     [
         (add_argument_cycle, argparse.Namespace(initial_cycle=-1)),
         (add_argument_mode, argparse.Namespace(run_mode=1)),
-        (add_argument_adjusted_early_payouts, argparse.Namespace(adjusted_early_payouts=False)),
+        (
+            add_argument_adjusted_early_payouts,
+            argparse.Namespace(adjusted_early_payouts=False),
+        ),
         (add_argument_payment_offset, argparse.Namespace(payment_offset=0)),
         (add_argument_network, argparse.Namespace(network="MAINNET")),
         (

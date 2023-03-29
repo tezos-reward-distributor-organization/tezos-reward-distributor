@@ -135,8 +135,10 @@ def test_adjusted_early_payouts_validator_throws(capsys):
     out, err = capsys.readouterr()
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 2
-    assert "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument." in err
-
+    assert (
+        "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument."
+        in err
+    )
 
 
 def test_base_directory_validator():
@@ -164,6 +166,7 @@ def test_validate():
     assert SUT == argparse.Namespace(
         initial_cycle=-1,
         run_mode=1,
+        release_override=0,
         adjusted_early_payouts=False,
         payment_offset=0,
         network="MAINNET",
