@@ -88,8 +88,8 @@ def check_fee_ini(args=None):
 
 def new_protocol_live(args=None):
     today = date.today()
-    print(today)
-    print(NEW_PROTOCOL_DATE)
+    print(("Current date: {}").format(today))
+    print(("TRD sunset date: {}").format(NEW_PROTOCOL_DATE))
     if today >= NEW_PROTOCOL_DATE:
         print(
             (
