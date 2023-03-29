@@ -122,6 +122,23 @@ def test_initial_cycle_validator_throws(caplog, capsys):
     )
 
 
+def test_adjusted_early_payouts_validator_throws(capsys):
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument(
+        "--adjusted_early_payouts",
+        default=1,
+        type=int,
+    )
+    mock_validator = ArgsValidator(argparser)
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        mock_validator._adjusted_early_payouts_validator()
+    out, err = capsys.readouterr()
+    assert pytest_wrapped_e.type == SystemExit
+    assert pytest_wrapped_e.value.code == 2
+    assert "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument." in err
+
+
+
 def test_base_directory_validator():
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--base_directory", default="~/TEST_DIR")
@@ -147,7 +164,7 @@ def test_validate():
     assert SUT == argparse.Namespace(
         initial_cycle=-1,
         run_mode=1,
-        release_override=0,
+        adjusted_early_payouts=False,
         payment_offset=0,
         network="MAINNET",
         node_endpoint="http://127.0.0.1:8732",

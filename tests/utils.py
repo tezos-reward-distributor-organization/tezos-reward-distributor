@@ -87,6 +87,7 @@ class Args:
     ):
         self.initial_cycle = initial_cycle
         self.run_mode = 3
+        self.adjusted_early_payouts = False
         self.release_override = 0
         self.payment_offset = 0
         self.network = None
