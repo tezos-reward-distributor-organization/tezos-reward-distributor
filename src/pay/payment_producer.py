@@ -202,11 +202,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         # if initial_payment_cycle has the default value of -1 resulting in the last released cycle
         if self.initial_payment_cycle == -1:
-            pymnt_cycle = (
-                current_cycle
-                - (self.nw_config["NB_FREEZE_CYCLE"] + 1)
-                - self.release_override
-            )
+            pymnt_cycle = current_cycle - 1 - self.release_override
             if pymnt_cycle < 0:
                 logger.error(
                     "Payment cycle cannot be < 0 but configuration results to {}".format(
@@ -257,26 +253,20 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     os.makedirs(self.calculations_dir)
 
                 logger.debug(
-                    "Checking for pending payments: payment_cycle <= current_cycle - (self.nw_config['NB_FREEZE_CYCLE'] + 1) - self.release_override"
+                    "Checking for pending payments: payment_cycle <= current_cycle - 1 - self.release_override"
                 )
                 logger.info(
-                    "Checking for pending payments: checking {} <= {} - ({} + 1) - {}".format(
+                    "Checking for pending payments: checking {} <= {} - 1 - {}".format(
                         pymnt_cycle,
                         current_cycle,
-                        self.nw_config["NB_FREEZE_CYCLE"],
                         self.release_override,
                     )
                 )
 
                 # payments should not pass beyond last released reward cycle
-                if (
-                    pymnt_cycle
-                    <= current_cycle
-                    - (self.nw_config["NB_FREEZE_CYCLE"] + 1)
-                    - self.release_override
-                ):
+                if pymnt_cycle <= current_cycle - 1 - self.release_override:
                     if not self.payments_queue.full():
-                        # Paying upcoming cycles (-R set to -11 )
+                        # Paying upcoming cycles (--adjusted_early_payouts set to True )
                         if pymnt_cycle >= current_cycle:
                             logger.warn(
                                 "Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation."
@@ -550,11 +540,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             current_cycle_rewards_type = rewards_type
             # 1- adjust past cycle if necessary
             if (
-                self.release_override == -(2 * network_config["NB_FREEZE_CYCLE"] + 1)
+                self.release_override == -(network_config["PRESERVED_CYCLES"] + 1)
                 and pymnt_cycle >= current_cycle
             ):
                 early_payout = True
-                completed_cycle = pymnt_cycle - network_config["NB_FREEZE_CYCLE"] - 1
+                completed_cycle = pymnt_cycle - network_config["PRESERVED_CYCLES"] - 1
                 adjustments = self.recompute_rewards(
                     completed_cycle, rewards_type, network_config
                 )

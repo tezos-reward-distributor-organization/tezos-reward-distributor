@@ -71,7 +71,7 @@ def get_network_config_from_public_node(network_name):
 
 def parse_constants(constants):
     network_config_map = {}
-    network_config_map["NB_FREEZE_CYCLE"] = int(constants["preserved_cycles"])
+    network_config_map["PRESERVED_CYCLES"] = int(constants["preserved_cycles"])
     network_config_map["MINIMAL_BLOCK_DELAY"] = int(constants["minimal_block_delay"])
     network_config_map["BLOCKS_PER_CYCLE"] = int(constants["blocks_per_cycle"])
     network_config_map["BLOCKS_PER_STAKE_SNAPSHOT"] = int(

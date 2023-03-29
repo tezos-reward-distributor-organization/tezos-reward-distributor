@@ -20,7 +20,7 @@ def build_parser():
     argparser = argparse.ArgumentParser(prog="TRD")
     add_argument_cycle(argparser)
     add_argument_mode(argparser)
-    add_argument_release_override(argparser)
+    add_argument_adjusted_early_payouts(argparser)
     add_argument_payment_offset(argparser)
     add_argument_network(argparser)
     add_argument_node_endpoint(argparser)
@@ -47,7 +47,7 @@ def add_argument_cycle(argparser):
         help="Cycle to start payment(s) from. "
         "Default value is -1: will pay rewards that were most recently released. "
         "Cycle for which rewards were most recently released is calculated based on the formula: "
-        "current_cycle - (NB_FREEZE_CYCLE+1) - release_override "
+        "current_cycle - 1 + [if --adjusted_payout_timing == True: (preserved_cycles + 1)] "
         "Valid range is [-1,).",
         default=-1,
         type=int,
@@ -68,15 +68,15 @@ def add_argument_mode(argparser):
     )
 
 
-def add_argument_release_override(argparser):
+def add_argument_adjusted_early_payouts(argparser):
     argparser.add_argument(
-        "-R",
-        "--release_override",
-        help="Override NB_FREEZE_CYCLE value. last released payment cycle will be "
-        "(current_cycle-(NB_FREEZE_CYCLE+1)-release_override). Suitable for future payments. "
-        "For future payments give negative values. Valid values are -11, -5 and 0. Default is 0 with no effect",
-        default=0,
-        type=int,
+        "--adjusted_early_payouts",
+        help="Overrides last released cycle (current_cycle - 1). Payment cycle will be "
+        "(current_cycle - 1 + (preserved_cycles + 1). Suitable for future payments later adjusted to reward_types actual or ideal. "
+        "Add argument to trigger future payments. Its default value is False if not provided as argument.",
+        default=False,
+        const=True,
+        nargs="?",
     )
 
 

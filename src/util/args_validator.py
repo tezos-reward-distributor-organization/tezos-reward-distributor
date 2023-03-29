@@ -16,7 +16,7 @@ class ArgsValidator:
         self._parser = parser
         self._args = parser.parse_known_args()[0]
         self._blocks_per_cycle = 0
-        self._nb_freeze_cycle = 0
+        self._preserved_cycles = 0
 
     def _reward_data_provider_validator(self):
         try:
@@ -45,8 +45,8 @@ class ArgsValidator:
                 self._blocks_per_cycle = default_network_config_map[self._args.network][
                     "BLOCKS_PER_CYCLE"
                 ]
-                self._nb_freeze_cycle = default_network_config_map[self._args.network][
-                    "NB_FREEZE_CYCLE"
+                self._preserved_cycle = default_network_config_map[self._args.network][
+                    "PRESERVED_CYCLES"
                 ]
             return True
 
@@ -110,24 +110,21 @@ class ArgsValidator:
                 )
             return True
 
-    def _release_override_validator(self):
+    def _adjusted_early_payouts_validator(self):
         try:
-            self._args.release_override
+            self._args.adjusted_early_payouts
         except AttributeError:
-            self._parser.error("args: release_override argument does not exist.")
+            self._parser.error("args: adjusted_early_payouts argument does not exist.")
         else:
-            release_override = self._args.release_override
-            preserved_cycles = self._nb_freeze_cycle
-            estimated_reward_override = -preserved_cycles * 2 - 1
-            frozen_reward_override = -preserved_cycles
-            if release_override not in [
-                estimated_reward_override,
-                frozen_reward_override,
-                0,
-            ]:
+            tmp = self._args.adjusted_early_payouts
+            if not (isinstance(tmp, bool) or tmp == "True" or tmp == "False"):
                 self._parser.error(
-                    f"For {self._args.network}, release-override must be {estimated_reward_override} (to pay estimated rewards), {frozen_reward_override} (to pay frozen rewards) or 0. Default is 0."
+                    "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument."
                 )
+            if tmp is True:
+                self._args.release_override = -(self._preserved_cycle + 1)
+            else:
+                self._args.release_override = 0
             return True
 
     def run_validation(self):
@@ -136,7 +133,7 @@ class ArgsValidator:
         self._base_directory_validator()
         self._payment_offset_validator()
         self._initial_cycle_validator()
-        self._release_override_validator()
+        self._adjusted_early_payouts_validator()
         return self._args
 
 

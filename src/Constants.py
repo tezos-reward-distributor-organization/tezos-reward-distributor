@@ -1,4 +1,5 @@
 from enum import Enum
+from datetime import date
 
 # General
 VERSION = 11.0
@@ -17,6 +18,10 @@ REPORTS_DIR = "reports"
 DEFAULT_LOG_FILE = "logs/app.log"
 TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 REQUIREMENTS_FILE_PATH = "requirements.txt"
+
+# potentially the next upgrade
+NEW_PROTOCOL_DATE = date(2023, 3, 29)
+NEW_PROTOCOL_NAME = "Mumbai"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
@@ -78,38 +83,38 @@ DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
         # General
         "NAME": "MAINNET",
-        "NB_FREEZE_CYCLE": 5,  # needs deprecation
-        "MINIMAL_BLOCK_DELAY": 30,
-        "BLOCKS_PER_CYCLE": 8192,
-        "BLOCKS_PER_STAKE_SNAPSHOT": 512,
-        # Consensus
-        "CONSENSUS_COMMITTEE_SIZE": 7000,
-        "CONSENSUS_THRESHOLD": 4667,
-        "BAKING_REWARD_FIXED_PORTION": 10000000,
-        "BAKING_REWARD_BONUS_PER_SLOT": 4286,
-        "ENDORSING_REWARD_PER_SLOT": 2857,
-        # Fixed baking amount (10)+ bonus (10 in the best case)
-        "BLOCK_REWARD": 20000000,
-        # endorsing_reward = (1 - baking_reward_ratio) * (1 - bonus_ratio) * total_rewards
-        # = (1-1/4)*(1-1/3)*40
-        "ENDORSEMENT_REWARDS": 20000000,
-    },
-    CURRENT_TESTNET: {
-        # General
-        "NAME": CURRENT_TESTNET,
-        "NB_FREEZE_CYCLE": 3,  # needs deprecation
+        "PRESERVED_CYCLES": 5,
         "MINIMAL_BLOCK_DELAY": 15,
-        "BLOCKS_PER_CYCLE": 4096,
-        "BLOCKS_PER_STAKE_SNAPSHOT": 256,
+        "BLOCKS_PER_CYCLE": 16384,
+        "BLOCKS_PER_STAKE_SNAPSHOT": 1024,
         # Consensus
         "CONSENSUS_COMMITTEE_SIZE": 7000,
         "CONSENSUS_THRESHOLD": 4667,
         "BAKING_REWARD_FIXED_PORTION": 5000000,
         "BAKING_REWARD_BONUS_PER_SLOT": 2143,
         "ENDORSING_REWARD_PER_SLOT": 1428,
-        #
+        # Fixed baking amount (5)+ bonus (5 in the best case)
         "BLOCK_REWARD": 10000000,
+        # endorsing_reward = (1 - baking_reward_ratio) * (1 - bonus_ratio) * total_rewards
+        # = (1-1/4)*(1-1/3)*40
         "ENDORSEMENT_REWARDS": 10000000,
+    },
+    CURRENT_TESTNET: {
+        # General
+        "NAME": CURRENT_TESTNET,
+        "PRESERVED_CYCLES": 3,
+        "MINIMAL_BLOCK_DELAY": 8,
+        "BLOCKS_PER_CYCLE": 8192,
+        "BLOCKS_PER_STAKE_SNAPSHOT": 512,
+        # Consensus
+        "CONSENSUS_COMMITTEE_SIZE": 7000,
+        "CONSENSUS_THRESHOLD": 4667,
+        "BAKING_REWARD_FIXED_PORTION": 2666666,
+        "BAKING_REWARD_BONUS_PER_SLOT": 1143,
+        "ENDORSING_REWARD_PER_SLOT": 761,
+        "BLOCK_REWARD": 5333332,
+        # endorsing_reward_per_slot * CONSENSUS_COMMITTEE_SIZE
+        "ENDORSEMENT_REWARDS": 5327000,
     },
 }
 
