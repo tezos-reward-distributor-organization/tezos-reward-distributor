@@ -93,18 +93,18 @@ competitive or trustworthy. But bakers paying early effectively give an “advan
 This means that they have a lower balance at any given point in time.</p>
 <p>TRD behavior is to pay out the last released payment cycle. Last
 released payment cycle will be calculated based on the formula:
-<code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">+</span> <span class="pre">[if</span> <span class="pre">--adjusted_payout_timing</span> <span class="pre">==</span> <span class="pre">True:</span> <span class="pre">(preserved_cycles</span> <span class="pre">+</span> <span class="pre">1)]</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">+</span> <span class="pre">[if</span> <span class="pre">--adjusted_payout_timing</span> <span class="pre">is</span> <span class="pre">provided:</span> <span class="pre">(preserved_cycles</span> <span class="pre">+</span> <span class="pre">1)]</span></code>.</p>
 <p>A cycle on mainnet lasts 3 days.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span></code> parameter lets the baker override when rewards
-are released (paid out). Its default value is False if not provided as argument.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span></code> argument lets the baker override when rewards
+are released (paid out). Its default value is <code class="docutils literal notranslate"><span class="pre">False</span></code> if not provided as argument.</p>
 <p>Possible choices are:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: pay rewards after the cycle runs - 6 to 7 cycles after delegation. The recommended default choice.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: pay rewards when baking rights are assigned, referred as “adjusted early payouts” (see below) - 1 to 2 cycles after delegation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">provided</span></code>: pay rewards after the cycle runs - 6 to 7 cycles after delegation. The recommended default choice.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span></code>: pay rewards when baking rights are assigned, referred as “adjusted early payouts” (see below) - 1 to 2 cycles after delegation.</p></li>
 </ul>
 <div class="section" id="adjusted-early-payouts">
 <h2>Adjusted early payouts<a class="headerlink" href="#adjusted-early-payouts" title="Permalink to this headline">¶</a></h2>
-<p>A <code class="docutils literal notranslate"><span class="pre">adjusted_early_payouts</span></code> of <code class="docutils literal notranslate"><span class="pre">True</span></code> will trigger adjusted early payouts.</p>
+<p>Providing <code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span></code> as additional argument will trigger adjusted early payouts.</p>
 <p>When selected, this option calculates and pays out the expected rewards based on baking and
 endorsing rights only. It does not takes into account fee income,
 denunciation income or rescued block income. It also assumes perfect
@@ -124,8 +124,8 @@ calculations CSV file.</p>
 <p><strong>Example:</strong></p>
 <p><strong>Cycle 100</strong>: Frank and Cindy both delegate 1000 tez to Jane’s bakery. For
 simplicity, Jane’s bakery has no fee and no other delegators. Her bakery is
-configured with a <code class="docutils literal notranslate"><span class="pre">adjusted_early_payouts</span></code> of <code class="docutils literal notranslate"><span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">rewards_type</span></code> <code class="docutils literal notranslate"><span class="pre">actual</span></code>.</p>
-<p><strong>Cycle 103</strong>: Since <code class="docutils literal notranslate"><span class="pre">adjusted_early_payouts</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, payout for cycle 108 happens during cycle 103. Frank and Cindy’s delegation is taken into account to compute
+configured with a <code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span></code> and <code class="docutils literal notranslate"><span class="pre">rewards_type</span></code> <code class="docutils literal notranslate"><span class="pre">actual</span></code>.</p>
+<p><strong>Cycle 103</strong>: Since <code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span></code> is provided as argument, payout for cycle 108 happens during cycle 103. Frank and Cindy’s delegation is taken into account to compute
 cylce 108’s rights. Jane’s bakery is expected to earn 80 tez rewards for
 cycle 108 from baking and endorsing rewards. Frank and Cindy contribute 10% each to Jane’s staking
 balance. They each receive 8 tez as part of the payout for cycle 108.</p>
@@ -137,7 +137,7 @@ each delegator should be paid 6 tez. TRD runs the calculations for
 cycle 108 again and finds that Jane earned 0.5 tez fee for baking a
 block, and failed to bake the other block, a loss of 20 tez.
 Overall, Jane’s bakery overestimated its earnings by 19.5 tez.
-It therefore substracts 1.95 tez of cycle 108 payout to cycle 114 payout (which happens at cycle 109).
+It therefore subtracts 1.95 tez of cycle 108 payout to cycle 114 payout (which happens at cycle 109).
 Frank and Cindy receive 4.05 tez as adjusted amount for cycle 114.</p>
 <p><code class="docutils literal notranslate"><span class="pre">calculations/108.csv</span></code> file is updated with a total overestimate of 19.5
 and their distribution across delegates: 1.95 tez for Frank and for

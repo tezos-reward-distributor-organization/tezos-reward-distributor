@@ -112,7 +112,7 @@
 <li><p>Retry failed payments and exit.</p></li>
 </ol>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span> <span class="pre">&lt;bool&gt;</span></code></dt><dd><p>Allows for early, later on adjusted payouts for cycle = current_cycle - 1 + (preserved_cycles + 1). Valid values are <code class="docutils literal notranslate"><span class="pre">True</span></code>, <code class="docutils literal notranslate"><span class="pre">False</span></code>. Its default value is <code class="docutils literal notranslate"><span class="pre">False</span></code> if not provided as argument. See <a class="reference internal" href="payouttiming.html#payout-timing"><span class="std std-ref">Payout timing</span></a>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">--adjusted_early_payouts</span></code></dt><dd><p>If provided allows for early, later on adjusted payouts for cycle = current_cycle - 1 + (preserved_cycles + 1). Its default value is <code class="docutils literal notranslate"><span class="pre">False</span></code> if not provided as argument. See <a class="reference internal" href="payouttiming.html#payout-timing"><span class="std std-ref">Payout timing</span></a>.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">--payment_offset</span> <span class="pre">&lt;int&gt;</span></code></dt><dd><p>Number of blocks to wait after a cycle starts before starting payments. This can be useful because cycle beginnings may be busy.</p>
 </dd>
