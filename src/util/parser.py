@@ -72,11 +72,9 @@ def add_argument_adjusted_early_payouts(argparser):
     argparser.add_argument(
         "--adjusted_early_payouts",
         help="Overrides last released cycle (current_cycle - 1). Payment cycle will be "
-        "(current_cycle - 1 + (preserved_cycles + 1). Suitable for future payments later adjusted to reward_types actual or ideal. "
+        "(current_cycle - 1 + (preserved_cycles + 1)). Suitable for future payments later adjusted to reward_types actual or ideal. "
         "Add argument to trigger future payments. Its default value is False if not provided as argument.",
-        default=False,
-        const=True,
-        nargs="?",
+        action="store_true",
     )
 
 
