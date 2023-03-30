@@ -14,7 +14,7 @@ logger = main_logger
 class ArgsValidator:
     def __init__(self, parser):
         self._parser = parser
-        self._args = parser.parse_known_args()[0]
+        self._args = parser.parse_args()
         self._blocks_per_cycle = 0
         self._preserved_cycles = 0
 
@@ -114,18 +114,19 @@ class ArgsValidator:
         try:
             self._args.adjusted_early_payouts
         except AttributeError:
-            self._parser.error("args: adjusted_early_payouts argument does not exist.")
+            logger.warn("args: adjusted_early_payouts argument does not exist. Default setting to False.")
+            self._args.adjusted_early_payouts = False
         else:
             tmp = self._args.adjusted_early_payouts
             if not (isinstance(tmp, bool) or tmp == "True" or tmp == "False"):
                 self._parser.error(
                     "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument."
                 )
-            if tmp is True:
-                self._args.release_override = -(self._preserved_cycle + 1)
-            else:
-                self._args.release_override = 0
-            return True
+        if tmp is True:
+            self._args.release_override = -(self._preserved_cycle + 1)
+        else:
+            self._args.release_override = 0
+        return True
 
     def run_validation(self):
         self._reward_data_provider_validator()

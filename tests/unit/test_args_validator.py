@@ -6,6 +6,7 @@ from util.args_validator import ArgsValidator, validate
 import argparse
 import pytest
 import logging
+import os
 from Constants import PUBLIC_NODE_URL
 
 
@@ -173,7 +174,7 @@ def test_validate():
         node_endpoint="http://127.0.0.1:8732",
         reward_data_provider="tzkt",
         node_addr_public=PUBLIC_NODE_URL["MAINNET"],
-        base_directory="~/pymnt",
+        base_directory=os.path.normpath("~/pymnt"),
         dry_run=False,
         signer_endpoint="http://127.0.0.1:6732",
         docker=False,
@@ -183,5 +184,5 @@ def test_validate():
         api_base_url=None,
         retry_injected=False,
         syslog=False,
-        log_file="~/pymnt/logs/app.log",
+        log_file=os.path.normpath("~/pymnt/logs/app.log"),
     )
