@@ -45,7 +45,10 @@ from util.parser import (
             add_argument_node_addr_public,
             argparse.Namespace(node_addr_public=PUBLIC_NODE_URL["MAINNET"]),
         ),
-        (add_argument_base_directory, argparse.Namespace(base_directory=os.path.normpath("~/pymnt"))),
+        (
+            add_argument_base_directory,
+            argparse.Namespace(base_directory=os.path.normpath("~/pymnt")),
+        ),
         (add_argument_dry, argparse.Namespace(dry_run=False)),
         (
             add_argument_signer_endpoint,
@@ -57,7 +60,10 @@ from util.parser import (
         (add_argument_api_base_url, argparse.Namespace(api_base_url=None)),
         (add_argument_retry_injected, argparse.Namespace(retry_injected=False)),
         (add_argument_syslog, argparse.Namespace(syslog=False)),
-        (add_argument_log_file, argparse.Namespace(log_file=os.path.normpath("~/pymnt/logs/app.log"))),
+        (
+            add_argument_log_file,
+            argparse.Namespace(log_file=os.path.normpath("~/pymnt/logs/app.log")),
+        ),
     ],
 )
 def test_add_argument_to_argparser_with_default(argument, expected):

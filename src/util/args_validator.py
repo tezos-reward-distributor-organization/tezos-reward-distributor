@@ -114,7 +114,9 @@ class ArgsValidator:
         try:
             self._args.adjusted_early_payouts
         except AttributeError:
-            logger.warn("args: adjusted_early_payouts argument does not exist. Default setting to False.")
+            logger.warn(
+                "args: adjusted_early_payouts argument does not exist. Default setting to False."
+            )
             self._args.adjusted_early_payouts = False
         else:
             tmp = self._args.adjusted_early_payouts
