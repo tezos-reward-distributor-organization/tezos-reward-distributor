@@ -13,7 +13,7 @@ from Constants import (
 )
 from exception.client import ClientException
 from log_config import main_logger, verbose_logger
-from util.exit_program import exit_program, ExitCode, ExitMessage
+from util.exit_program import exit_program, ExitCode
 
 logger = main_logger
 
@@ -113,7 +113,7 @@ class ClientManager:
             )
 
         if response.status_code != HTTPStatus.OK:
-            exit_program(ExitCode.SIGNER_ERROR, ExitMessage.SIGNER_ERROR)
+            exit_program(ExitCode.SIGNER_ERROR)
 
         else:
             response = response.json()

@@ -15,13 +15,6 @@ class ExitCode(Enum):
     PROVIDER_ERROR = 8
 
 
-class ExitMessage(Enum):
-    SIGNER_ERROR = "Unknown Error at signing. Please consult the verbose logs!"
-    SIGNER_ERROR_NOT_RUNNING = "Error at signing. Make sure octez-signer is up and running 'octez-signer launch http signer'"
-
-
-def exit_program(exit_code: ExitCode, exit_message: ExitMessage):
-    main_logger.info("exit code: {}".format(exit_code.value))
-    if exit_message(exit_code):
-        main_logger.info("exit message: {}".format(exit_message.value))
+def exit_program(exit_code: ExitCode = ExitCode.SUCCESS, exit_message="Success!"):
+    main_logger.info(exit_message + " Exit code: {}".format(exit_code.value))
     sys.exit(exit_code.value)

@@ -383,7 +383,7 @@ class ProcessLifeCycle:
 
     def shut_down_on_error(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_ERROR)
-        exit_program(ExitCode.GENERAL_ERROR)
+        exit_program(ExitCode.GENERAL_ERROR, "Shutdown due to error!")
 
     def shut_down_on_demand(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_DEMAND)

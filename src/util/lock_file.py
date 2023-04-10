@@ -47,7 +47,7 @@ class LockFile:
                     self.release()
                     break
                 elif user_input.lower() == "n" or i == 2:
-                    exit_program(ExitCode.USER_ABORT)
+                    exit_program(ExitCode.USER_ABORT, "User aborted program!")
 
     def release(self):
         os.remove(self.lock_file_path)

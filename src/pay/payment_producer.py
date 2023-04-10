@@ -385,7 +385,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.exit(ExitCode.SUCCESS)
 
         return
-    
+
     def stop(self):
         self.exit(ExitCode.SUCCESS)
         self.event.set()

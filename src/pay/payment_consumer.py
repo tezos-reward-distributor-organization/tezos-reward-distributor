@@ -24,7 +24,7 @@ from util.dir_utils import (
     get_calculation_report_file_path,
     get_busy_file,
 )
-from util.exit_program import exit_program, ExitCode
+from util.exit_program import exit_program
 
 logger = main_logger.getChild("payment_consumer")
 
