@@ -1,5 +1,6 @@
 import argparse
 import pytest
+import os
 from Constants import PUBLIC_NODE_URL
 from util.parser import (
     build_parser,
@@ -44,7 +45,10 @@ from util.parser import (
             add_argument_node_addr_public,
             argparse.Namespace(node_addr_public=PUBLIC_NODE_URL["MAINNET"]),
         ),
-        (add_argument_base_directory, argparse.Namespace(base_directory="~/pymnt")),
+        (
+            add_argument_base_directory,
+            argparse.Namespace(base_directory=os.path.normpath("~/pymnt")),
+        ),
         (add_argument_dry, argparse.Namespace(dry_run=False)),
         (
             add_argument_signer_endpoint,
@@ -56,7 +60,10 @@ from util.parser import (
         (add_argument_api_base_url, argparse.Namespace(api_base_url=None)),
         (add_argument_retry_injected, argparse.Namespace(retry_injected=False)),
         (add_argument_syslog, argparse.Namespace(syslog=False)),
-        (add_argument_log_file, argparse.Namespace(log_file="~/pymnt/logs/app.log")),
+        (
+            add_argument_log_file,
+            argparse.Namespace(log_file=os.path.normpath("~/pymnt/logs/app.log")),
+        ),
     ],
 )
 def test_add_argument_to_argparser_with_default(argument, expected):
@@ -77,7 +84,7 @@ def test_build_parser():
         node_endpoint="http://127.0.0.1:8732",
         reward_data_provider="tzkt",
         node_addr_public=PUBLIC_NODE_URL["MAINNET"],
-        base_directory="~/pymnt",
+        base_directory=os.path.normpath("~/pymnt"),
         dry_run=False,
         signer_endpoint="http://127.0.0.1:6732",
         docker=False,
@@ -87,5 +94,5 @@ def test_build_parser():
         api_base_url=None,
         retry_injected=False,
         syslog=False,
-        log_file="~/pymnt/logs/app.log",
+        log_file=os.path.normpath("~/pymnt/logs/app.log"),
     )

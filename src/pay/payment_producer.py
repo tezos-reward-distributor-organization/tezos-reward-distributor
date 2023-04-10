@@ -270,7 +270,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 # payments should not pass beyond last released reward cycle
                 if pymnt_cycle <= current_cycle - 1 - self.release_override:
                     if not self.payments_queue.full():
-                        # Paying upcoming cycles (--adjusted_early_payouts set to True )
+                        # Paying upcoming cycles (--adjusted_early_payouts is provided )
                         if pymnt_cycle >= current_cycle:
                             logger.warn(
                                 "Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation."
