@@ -113,7 +113,7 @@ class ClientManager:
             )
 
         if response.status_code != HTTPStatus.OK:
-            exit_program(ExitCode.SIGNER_ERROR)
+            exit_program(ExitCode.SIGNER_ERROR "Unknown Error at signing. Please consult the verbose logs!")
 
         else:
             response = response.json()
