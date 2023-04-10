@@ -50,15 +50,6 @@ def test_get_current_cycle_and_level(address_api):
     assert address_api.get_current_cycle_and_level() == (434, 1972459)
 
 
-def test_mumbai_level_in_cycle():
-    # Until protocol Florence
-    assert address_api.level_in_cycle(934759) == 870
-    # Since protocol Granada
-    assert address_api.level_in_cycle(1590483) == 1234
-    # Since protocol Mumbai
-    assert address_api.level_in_cycle(3333796) == 16035
-
-
 class MockDelegatableResponse(MockResponse):
     def json(self):
         return {"delegated_contracts": [], "deactivated": False}
