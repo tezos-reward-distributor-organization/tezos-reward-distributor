@@ -100,15 +100,22 @@ def test_get_delegatable(
 @pytest.fixture
 def address_reward_api_tzkt():
     return TzKTRewardApiImpl(
-        DEFAULT_NETWORK_CONFIG_MAP["GHOSTNET"], GHOSTNET_ADDRESS_STAKENOW_BAKER
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
     )
 
 
 @pytest.fixture
 def address_reward_api_tzstats():
     return TzStatsRewardApiImpl(
-        DEFAULT_NETWORK_CONFIG_MAP["GHOSTNET"], GHOSTNET_ADDRESS_STAKENOW_BAKER
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
     )
+
+
+@pytest.fixture
+def current_cycle_ghostnet():
+    tip = "https://api.ghostnet.tzkt.io/v1/head"
+    resp = requests.get(tip, timeout=5)
+    return int(resp.json()["cycle"])
 
 
 def test_get_rewards_for_cycle_map(
