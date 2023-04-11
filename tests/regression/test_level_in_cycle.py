@@ -11,16 +11,17 @@ class DummyApiImpl(BlockApi):
 
 
 def test_levels_in_cycle():
-
     # This test only works for blocks after granada because the network config
     # map is based on current mainnet values
 
     level_positions = [
         [1589249, 0],  # Granada activation level
         [3000000, 1727],
+        [3268609, 0],  # Mumbai activation level
+        [3333796, 16035],
     ]
 
     block = DummyApiImpl()
 
-    for (level, pos) in level_positions:
+    for level, pos in level_positions:
         assert block.level_in_cycle(level) == pos
