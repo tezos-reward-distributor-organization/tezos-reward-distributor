@@ -27,8 +27,8 @@ class TwitterPlugin(plugins.Plugin):
         super().__init__("Twitter", cfg["twitter"])
 
         # Must auth against Twitter API to get Token
-        auth = tweepy.OAuth1UserHandler(self.api_key, self.api_secret,self.access_token,self.access_secret)
-        #auth.set_access_token(self.access_token, self.access_secret)
+        auth = tweepy.OAuth1UserHandler(self.api_key, self.api_secret, self.access_token, self.access_secret)
+        # auth.set_access_token(self.access_token, self.access_secret)
 
         self.twitter = tweepy.API(auth)
 
@@ -38,12 +38,14 @@ class TwitterPlugin(plugins.Plugin):
         # If the authentication was successful, you should
         # see the name of the account print out
         # older than v4 we use old function
-        #if majorversion < 4:
-        #    logger.info(
+        if majorversion < 4:
+            logger.info(
+                "Older version of tweetpy please update]"
+            )
         #        "[TwitterPlugin] Authenticated '{:s}'".format(self.twitter.me().name)
-        #    )
+        
         # this is the call for version 4 and above
-        #else:
+        # else:
         logger.info(
             "[TwitterPlugin] Authenticated '{:s}'".format(
                 self.twitter.verify_credentials().name
