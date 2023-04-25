@@ -28,10 +28,14 @@ class TwitterPlugin(plugins.Plugin):
 
         # Must auth against Twitter API to get Token
         auth = tweepy.OAuth1UserHandler(self.api_key, self.api_secret, self.access_token, self.access_secret)
+
         self.twitter = tweepy.API(auth)
+
         version = tweepy.__version__.split(".")
+
         # tweepy version 4 broke lots of compatibilty, we need to separate from v3
         majorversion = int(version[0])
+
         # warn on older version than v4
         if majorversion < 4:
             logger.info(
