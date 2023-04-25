@@ -43,7 +43,7 @@ class TwitterPlugin(plugins.Plugin):
                 "Older version of tweetpy please update]"
             )
         #        "[TwitterPlugin] Authenticated '{:s}'".format(self.twitter.me().name)
-        
+
         # this is the call for version 4 and above
         # else:
         logger.info(
