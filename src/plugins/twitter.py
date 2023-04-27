@@ -35,12 +35,14 @@ class TwitterPlugin(plugins.Plugin):
 
         # tweepy version 4 broke lots of compatibilty, we need to separate from v3
         majorversion = int(version[0])
+        minorversion = int(version[1])
 
         # warn on older version than v4
         if majorversion < 4:
             logger.info(
-                "Older version of tweetpy please update]"
+                "[TwitterPlugin]  Version of tweepy is too old, update before running TRD, running version '{:s}.{:s}']".format(majorversion, minorversion)
             )
+
         logger.info(
             "[TwitterPlugin] Authenticated '{:s}'".format(
                 self.twitter.verify_credentials().name
