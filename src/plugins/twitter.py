@@ -42,7 +42,9 @@ class TwitterPlugin(plugins.Plugin):
         # warn on older version than v4
         if majorversion < 4:
             logger.info(
-                "[TwitterPlugin]  Version of tweepy is too old, update before running TRD, running version '{:s}.{:s}']".format(majorversion, minorversion)
+                "[TwitterPlugin]  Version of tweepy is too old, update before running TRD, running version '{:s}.{:s}']".format(
+                    majorversion, minorversion
+                )
             )
 
         logger.info(
