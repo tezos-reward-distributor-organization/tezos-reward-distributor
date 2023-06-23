@@ -474,7 +474,7 @@ class BatchPayer:
                     "consumed_milligas"
                 ],
                 metadata=op["metadata"],
-            )
+            ) + 100
             # Calculate actual used storage
             consumed_storage = calculate_consumed_storage(op["metadata"])
         else:
