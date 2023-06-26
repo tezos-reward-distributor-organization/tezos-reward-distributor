@@ -21,7 +21,7 @@ REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 # potentially the next upgrade
 NEW_PROTOCOL_DATE = date(2023, 7, 31)
-NEW_PROTOCOL_NAME = "N********"
+NEW_PROTOCOL_NAME = "Nairobi"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
