@@ -159,7 +159,10 @@ def test_batch_payer_total_payout_amount():
         _,
         total_payout_amount,
         number_future_payable_cycles,
+        exit_code,
     ) = batch_payer.pay(reward_logs, dry_run=True)
+
+    assert exit_code is None
 
     # Payment does not have status done, paid or injected thus the total payout amount is zero
     assert total_payout_amount == 0, f"total_payout_amount is {total_payout_amount}"

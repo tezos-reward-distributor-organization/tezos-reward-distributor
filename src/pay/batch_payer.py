@@ -17,12 +17,14 @@ from pay.utils import (
     init_payment_logs,
     calculate_estimated_amount_to_pay,
     sort_and_chunk_payment_items,
-    caluculate_future_payable_cycles,
+    calculate_future_payable_cycles,
 )
 
 from util.wait_random import wait_random
 
 from util.address_validator import AddressValidator
+
+from util.exit_program import ExitCode
 
 logger = main_logger
 
@@ -257,7 +259,7 @@ class BatchPayer:
 
         if len(payment_items) == 0:
             logger.info("No payment items found, returning...")
-            return payment_logs, 0, 0, 0
+            return payment_logs, 0, 0, 0, None
 
         # This is an estimate to predict if the payment account holds enough funds to payout this cycle and the number of future cycles
         estimated_amount_to_pay = calculate_estimated_amount_to_pay(
@@ -294,7 +296,7 @@ class BatchPayer:
                 )
             )
 
-            number_future_payable_cycles = caluculate_future_payable_cycles(
+            number_future_payable_cycles = calculate_future_payable_cycles(
                 payment_address_balance, estimated_amount_to_pay
             )
 
@@ -318,9 +320,8 @@ class BatchPayer:
                 self.plugins_manager.send_admin_notification(subject, message)
 
                 payment_logs.extend(payment_items)
-
                 # Exit early since nothing can be paid
-                return payment_logs, 0, 0, 0
+                return payment_logs, 0, 0, 0, ExitCode.INSUFFICIENT_FUNDS
 
             elif number_future_payable_cycles < 1:
 
@@ -389,6 +390,7 @@ class BatchPayer:
             total_attempts,
             amount_to_pay,
             number_future_payable_cycles,
+            None,
         )
 
     def pay_single_batch(self, payment_items, op_counter, dry_run=None):

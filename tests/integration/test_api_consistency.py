@@ -13,10 +13,12 @@ from src.tzkt.tzkt_reward_api import TzKTRewardApiImpl
 from src.tzstats.tzstats_reward_api import TzStatsRewardApiImpl
 from src.rpc.rpc_reward_api import RpcRewardApiImpl
 
-NORMAL_TEZOS_ADDRESS = Constants.NORMAL_TEZOS_ADDRESS
-STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
-BAKEXTZ4ME_ADDRESS = Constants.BAKEXTZ4ME_ADDRESS
-BAKEXTZ4ME_PAYOUT_ADDRESS = Constants.BAKEXTZ4ME_PAYOUT_ADDRESS
+MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR
+MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
+MAINNET_ADDRESS_BAKEXTZ4ME_BAKER = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
+GHOSTNET_ADDRESS_STAKENOW_BAKER = Constants.GHOSTNET_ADDRESS_STAKENOW_BAKER
+MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT
+
 
 # These tests should not be mocked but test the overall consistency
 # accross all tezos APIs which are available in TRD
@@ -50,14 +52,14 @@ def test_get_revelation(
     address_block_api_tzkt, address_block_api_tzstats, address_block_api_rpc
 ):
     assert address_block_api_tzkt.get_revelation(
-        NORMAL_TEZOS_ADDRESS
-    ) == address_block_api_tzstats.get_revelation(NORMAL_TEZOS_ADDRESS)
+        MAINNET_ADDRESS_DELEGATOR
+    ) == address_block_api_tzstats.get_revelation(MAINNET_ADDRESS_DELEGATOR)
     assert address_block_api_tzkt.get_revelation(
-        NORMAL_TEZOS_ADDRESS
-    ) == address_block_api_rpc.get_revelation(NORMAL_TEZOS_ADDRESS)
+        MAINNET_ADDRESS_DELEGATOR
+    ) == address_block_api_rpc.get_revelation(MAINNET_ADDRESS_DELEGATOR)
     assert address_block_api_tzstats.get_revelation(
-        NORMAL_TEZOS_ADDRESS
-    ) == address_block_api_rpc.get_revelation(NORMAL_TEZOS_ADDRESS)
+        MAINNET_ADDRESS_DELEGATOR
+    ) == address_block_api_rpc.get_revelation(MAINNET_ADDRESS_DELEGATOR)
 
 
 def test_get_current_cycle_and_level(
@@ -84,27 +86,36 @@ def test_get_delegatable(
     address_block_api_tzkt, address_block_api_tzstats, address_block_api_rpc
 ):
     assert address_block_api_tzkt.get_delegatable(
-        STAKENOW_ADDRESS
-    ) == address_block_api_tzstats.get_delegatable(STAKENOW_ADDRESS)
+        MAINNET_ADDRESS_STAKENOW_BAKER
+    ) == address_block_api_tzstats.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
     assert address_block_api_tzkt.get_delegatable(
-        STAKENOW_ADDRESS
-    ) == address_block_api_rpc.get_delegatable(STAKENOW_ADDRESS)
+        MAINNET_ADDRESS_STAKENOW_BAKER
+    ) == address_block_api_rpc.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
     assert address_block_api_tzstats.get_delegatable(
-        STAKENOW_ADDRESS
-    ) == address_block_api_rpc.get_delegatable(STAKENOW_ADDRESS)
+        MAINNET_ADDRESS_STAKENOW_BAKER
+    ) == address_block_api_rpc.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
 
 
-# NOTE: We are using BAKEXTZ4ME since this baker has a managable amount of delegates
+# NOTE: We are using a testnet balker where we can manage the amount of delegates
 @pytest.fixture
 def address_reward_api_tzkt():
-    return TzKTRewardApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], BAKEXTZ4ME_ADDRESS)
+    return TzKTRewardApiImpl(
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
+    )
 
 
 @pytest.fixture
 def address_reward_api_tzstats():
     return TzStatsRewardApiImpl(
-        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], BAKEXTZ4ME_ADDRESS
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
     )
+
+
+@pytest.fixture
+def current_cycle_ghostnet():
+    tip = "https://api.ghostnet.tzkt.io/v1/head"
+    resp = requests.get(tip, timeout=5)
+    return int(resp.json()["cycle"])
 
 
 def test_get_rewards_for_cycle_map(
@@ -136,7 +147,7 @@ def test_get_rewards_for_cycle_map(
         tzkt_delegator_adress,
         tzkt_balance_dict,
     ) in rewards_tzkt.delegator_balance_dict.items():
-        if BAKEXTZ4ME_PAYOUT_ADDRESS == tzkt_delegator_adress:
+        if MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT == tzkt_delegator_adress:
             continue
 
         tzstats_balance = rewards_tzstats.delegator_balance_dict.get(

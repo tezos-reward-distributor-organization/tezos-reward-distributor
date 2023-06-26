@@ -11,6 +11,7 @@ from Constants import (
     DEFAULT_LOG_FILE,
     TEMP_TEST_DATA_DIR,
 )
+from util.exit_program import exit_program, ExitCode
 
 
 def load_reward_model(
@@ -68,8 +69,13 @@ def store_reward_model(
 
         print("Exception during write operation invoked: {}".format(e))
         if e.errno == errno.ENOSPC:
-            print("Not enough space on device!")
-        exit()
+            error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
+                e
+            )
+            exit_program(ExitCode.NO_SPACE, error_msg)
+        else:
+            error_msg = "Exception during write operation invoked: {}".format(e)
+            exit_program(ExitCode.GENERAL_ERROR, error_msg)
 
 
 class Args:
@@ -409,7 +415,8 @@ def mock_request_get(url, timeout, **kwargs):
 
 
 class Constants:
-    NORMAL_TEZOS_ADDRESS = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"
-    STAKENOW_ADDRESS = "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"
-    BAKEXTZ4ME_ADDRESS = "tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN"
-    BAKEXTZ4ME_PAYOUT_ADDRESS = "tz1PayTZoKjNyofxFQxkzhcv9RCdyW7Q64Wc"
+    MAINNET_ADDRESS_DELEGATOR = "tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"
+    MAINNET_ADDRESS_STAKENOW_BAKER = "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"
+    MAINNET_ADDRESS_BAKEXTZ4ME_BAKER = "tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN"
+    GHOSTNET_ADDRESS_STAKENOW_BAKER = "tz1iZ9LkpAhN8X1L6RpBtfy3wxpEWzFrXz8j"
+    MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT = "tz1PayTZoKjNyofxFQxkzhcv9RCdyW7Q64Wc"
