@@ -4,8 +4,8 @@ from src.Constants import DEFAULT_NETWORK_CONFIG_MAP
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tests.utils import Constants
 
-NORMAL_TEZOS_ADDRESS = Constants.NORMAL_TEZOS_ADDRESS
-STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
+MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR
+MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
 
 
 class MockResponse:
@@ -32,7 +32,7 @@ class MockRelevationResponse(MockResponse):
     MagicMock(return_value=MockRelevationResponse()),
 )
 def test_get_revelation(address_api):
-    assert address_api.get_revelation(NORMAL_TEZOS_ADDRESS)
+    assert address_api.get_revelation(MAINNET_ADDRESS_DELEGATOR)
 
 
 class MockCycleLevelResponse(MockResponse):
@@ -58,7 +58,7 @@ class MockDelegatableResponse(MockResponse):
     MagicMock(return_value=MockDelegatableResponse()),
 )
 def test_get_delegatable_baker(address_api):
-    assert address_api.get_delegatable(STAKENOW_ADDRESS)
+    assert address_api.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
 
 
 class MockNonDelegatableResponse(MockResponse):
@@ -71,4 +71,4 @@ class MockNonDelegatableResponse(MockResponse):
     MagicMock(return_value=MockNonDelegatableResponse()),
 )
 def test_get_delegatable_non_baker(address_api):
-    assert not address_api.get_delegatable(NORMAL_TEZOS_ADDRESS)
+    assert not address_api.get_delegatable(MAINNET_ADDRESS_DELEGATOR)

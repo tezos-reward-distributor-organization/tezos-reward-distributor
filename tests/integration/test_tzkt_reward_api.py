@@ -14,7 +14,7 @@ from tzkt.tzkt_api import TzKTApiError
 from parameterized import parameterized
 from tests.utils import load_reward_model, store_reward_model, Constants
 
-STAKENOW_ADDRESS = Constants.STAKENOW_ADDRESS
+MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
 CYCLE = 100
 
 """
@@ -180,7 +180,8 @@ class RewardApiImplTests(unittest.TestCase):
 @pytest.fixture
 def address_api():
     return TzKTRewardApiImpl(
-        nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=STAKENOW_ADDRESS
+        nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
+        baking_address=MAINNET_ADDRESS_STAKENOW_BAKER,
     )
 
 

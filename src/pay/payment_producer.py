@@ -19,6 +19,7 @@ from pay.retry_producer import RetryProducer
 from util.csv_calculation_file_parser import CsvCalculationFileParser
 from util.dir_utils import get_calculation_report_file_path
 from util.disk_is_full import disk_is_full
+from util.exit_program import exit_program, ExitCode
 
 logger = main_logger.getChild("payment_producer")
 
@@ -137,7 +138,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         logger.debug('Producer "{}" started'.format(self.name))
 
-    def exit(self):
+    def exit(self, exit_code):
         if not self.exiting:
             self.payments_queue.put(PaymentBatch(self, 0, [self.create_exit_payment()]))
             self.exiting = True
@@ -148,7 +149,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             ):
                 _thread.interrupt_main()
                 logger.info("Sending KeyboardInterrupt signal.")
-
+                exit_program(
+                    exit_code,
+                    "Error at payment producer. Please consult the verbose logs!",
+                )
             if self.retry_fail_event:
                 self.retry_fail_event.set()
 
@@ -179,7 +183,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             if self.run_mode == RunMode.RETRY_FAILED:
                 sleep(5)
-                self.exit()
+                self.exit(ExitCode.RETRY_FAILED)
                 return
 
         # first retry is done by producer thread, start retry thread for further retries
@@ -197,7 +201,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     str(self.provider_factory.provider), str(a)
                 )
             )
-            self.exit()
+            self.exit(ExitCode.PROVIDER_ERROR)
             return
 
         # if initial_payment_cycle has the default value of -1 resulting in the last released cycle
@@ -228,7 +232,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 # Exit if disk is full
                 # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
                 if disk_is_full():
-                    self.exit()
+                    self.exit(ExitCode.NO_SPACE)
                     break
 
                 # Check if local node is bootstrapped; sleep if needed; restart loop
@@ -307,7 +311,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                                 logger.info(
                                     "Run mode ONETIME satisfied. Terminating..."
                                 )
-                                self.exit()
+                                self.exit(ExitCode.SUCCESS)
                                 break
                             else:
                                 pymnt_cycle = pymnt_cycle + 1
@@ -330,7 +334,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # pending payments done. Do not wait any more.
                     if self.run_mode == RunMode.PENDING:
                         logger.info("Run mode PENDING satisfied. Terminating...")
-                        self.exit()
+                        self.exit(ExitCode.SUCCESS)
                         break
 
                     sleep(10)
@@ -378,12 +382,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         logger.debug("Producer returning...")
 
         # ensure consumer exits
-        self.exit()
+        self.exit(ExitCode.SUCCESS)
 
         return
 
     def stop(self):
-        self.exit()
+        self.exit(ExitCode.SUCCESS)
         self.event.set()
 
     def compute_rewards(
@@ -632,7 +636,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # if shutting down, exit
             if not self.life_cycle.is_running():
-                self.exit()
+                self.exit(ExitCode.SUCCESS)
                 break
 
     def node_is_bootstrapped(self):

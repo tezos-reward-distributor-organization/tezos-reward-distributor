@@ -1,6 +1,6 @@
 import os
-import sys
 from Constants import CONFIG_DIR
+from util.exit_program import exit_program, ExitCode
 
 
 class LockFile:
@@ -25,8 +25,13 @@ class LockFile:
 
             print("Exception during write operation invoked: {}".format(e))
             if e.errno == errno.ENOSPC:
-                print("Not enough space on device!")
-            exit()
+                error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
+                    e
+                )
+                exit_program(ExitCode.NO_SPACE, error_msg)
+            else:
+                error_msg = "Exception during write operation invoked: {}".format(e)
+                exit_program(ExitCode.GENERAL_ERROR, error_msg)
 
         self.lock_acquired = True
 
@@ -42,7 +47,7 @@ class LockFile:
                     self.release()
                     break
                 elif user_input.lower() == "n" or i == 2:
-                    sys.exit()
+                    exit_program(ExitCode.USER_ABORT, "User aborted program!")
 
     def release(self):
         os.remove(self.lock_file_path)

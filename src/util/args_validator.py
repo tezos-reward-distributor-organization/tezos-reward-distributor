@@ -14,7 +14,7 @@ logger = main_logger
 class ArgsValidator:
     def __init__(self, parser):
         self._parser = parser
-        self._args = parser.parse_args()
+        self._args = parser.parse_known_args()[0]
         self._blocks_per_cycle = 0
         self._preserved_cycles = 0
 

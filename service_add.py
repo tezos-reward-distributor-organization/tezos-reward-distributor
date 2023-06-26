@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from src.Constants import BASE_DIR, CONFIG_DIR
+from util.exit_program import exit_program, ExitCode
 
 
 def command_line_arguments():
@@ -84,8 +85,13 @@ def main():
 
             print("Exception during write operation invoked: {}".format(e))
             if e.errno == errno.ENOSPC:
-                print("Not enough space on device!")
-            exit()
+                error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
+                    e
+                )
+                exit_program(ExitCode.NO_SPACE, error_msg)
+            else:
+                error_msg = "Exception during write operation invoked: {}".format(e)
+                exit_program(ExitCode.GENERAL_ERROR, error_msg)
 
     cmd = "systemctl enable " + path_service
     print("Running command:'{}'".format("systemctl enable " + path_service))

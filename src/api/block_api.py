@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from Constants import FIRST_GRANADA_LEVEL, FIRST_MUMBAI_LEVEL
 
 # TODO: we should check if we are on mainnet, or a testnet
-# We could add a get_current_protocol() method and check against it
+# we could add a get_current_protocol() method and check against it
 
 
 class BlockApi(ABC):
