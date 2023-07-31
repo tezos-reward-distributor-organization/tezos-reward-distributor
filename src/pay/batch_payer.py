@@ -81,7 +81,7 @@ COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 TX_FEES = {
     "TZ1_TO_ALLOCATED_TZ1": {
         "FEE": 298,
-        "GAS_LIMIT": 1001,
+        "GAS_LIMIT": 1400,
         "STORAGE_LIMIT": 0,  # 65 mutez before
     },
     "TZ1_TO_NON_ALLOCATED_TZ1": {
@@ -92,7 +92,7 @@ TX_FEES = {
     },
     "TZ1_REVEAL": {
         "FEE": 357,
-        "GAS_LIMIT": 1000,
+        "GAS_LIMIT": 1400,
         "STORAGE_LIMIT": 0,
     },
 }
@@ -476,7 +476,7 @@ class BatchPayer:
                     "consumed_milligas"
                 ],
                 metadata=op["metadata"],
-            )
+            ) + 100
             # Calculate actual used storage
             consumed_storage = calculate_consumed_storage(op["metadata"])
         else:
