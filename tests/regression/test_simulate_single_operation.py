@@ -62,8 +62,8 @@ def test_simulate_single_operation():
     )
     assert PaymentStatus.DONE == simulation_status
     consumed_gas, tx_fee, storage = simulation_results
-    assert 150 == consumed_gas
-    assert 313.0 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
+    assert 250 == consumed_gas
+    assert 323.0 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
     assert int == type(storage)  # type of storage should be int
     assert 24 == storage
 

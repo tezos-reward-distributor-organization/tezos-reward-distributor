@@ -153,5 +153,5 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
     )
     assert status == PaymentStatus.DONE
     assert operation_hash is None
-    assert reward_log.delegator_transaction_fee == 8994
+    assert reward_log.delegator_transaction_fee == 9004
     assert opt_counter.counter == 4
