@@ -441,7 +441,10 @@ class RpcRewardApiImpl(RewardApi):
             # If metadata is not available return zeros
             return endorsing_rewards, lost_endorsing_rewards
 
-        if isinstance(list, type(metadata)) and "block_metadata_not_found" in metadata[0]:
+        if (
+            isinstance(list, type(metadata))
+            and "block_metadata_not_found" in metadata[0]
+        ):
             logger.warning("Block metadata not found!")
             return endorsing_rewards, lost_endorsing_rewards
 
