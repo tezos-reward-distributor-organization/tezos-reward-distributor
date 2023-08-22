@@ -1,5 +1,6 @@
 import _thread
 import os
+import signal
 import threading
 from datetime import datetime, timedelta
 from _decimal import ROUND_HALF_DOWN, Decimal
@@ -147,11 +148,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.life_cycle.is_running()
                 and threading.current_thread() is not threading.main_thread()
             ):
-                _thread.interrupt_main()
-                logger.info("Sending KeyboardInterrupt signal.")
+                os.kill(os.getpid(), signal.SIGUSR1)
+                logger.debug("Sending sigusr1 signal.")
                 exit_program(
                     exit_code,
-                    "Error at payment producer. Please consult the verbose logs!",
+                    "TRD Exit triggered by producer",
                 )
             if self.retry_fail_event:
                 self.retry_fail_event.set()
