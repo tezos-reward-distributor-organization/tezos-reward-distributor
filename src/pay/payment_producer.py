@@ -111,6 +111,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.payments_queue = payments_queue
         self.life_cycle = life_cycle
         self.dry_run = dry_run
+        self.consumer_failure = False
 
         self.payment_calc = PhasedPaymentCalculator(
             self.founders_map,
@@ -148,8 +149,12 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.life_cycle.is_running()
                 and threading.current_thread() is not threading.main_thread()
             ):
-                os.kill(os.getpid(), signal.SIGUSR1)
-                logger.debug("Sending sigusr1 signal.")
+                if self.consumer_failure:
+                    os.kill(os.getpid(), signal.SIGUSR2)
+                    logger.debug("Payment failure, sending sigusr2 signal to main thread.")
+                else:
+                    os.kill(os.getpid(), signal.SIGUSR1)
+                    logger.debug("Sending sigusr1 signal.")
                 exit_program(
                     exit_code,
                     "TRD Exit triggered by producer",
@@ -676,4 +681,5 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.notify_retry_fail_thread()
 
     def on_fail(self, pymnt_batch):
+        self.consumer_failure = True
         pass

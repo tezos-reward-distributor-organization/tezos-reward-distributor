@@ -2,7 +2,7 @@ import json
 import logging
 import queue
 import signal
-from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM, SIGUSR1
+from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM, SIGUSR1, SIGUSR2
 from enum import Enum, auto
 from time import sleep
 
@@ -301,7 +301,7 @@ class ProcessLifeCycle:
         self.__baking_dirs = BakingDirs(self.args, self.__cfg.get_baking_address())
 
     def do_register_signals(self, e):
-        for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM):
+        for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM, SIGUSR2):
             signal.signal(sig, self.stop_handler)
         signal.signal(SIGUSR1, self.producer_exit_handler)
 
