@@ -151,7 +151,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             ):
                 if self.consumer_failure:
                     os.kill(os.getpid(), signal.SIGUSR2)
-                    logger.debug("Payment failure, sending sigusr2 signal to main thread.")
+                    logger.debug(
+                        "Payment failure, sending sigusr2 signal to main thread."
+                    )
                 else:
                     os.kill(os.getpid(), signal.SIGUSR1)
                     logger.debug("Sending sigusr1 signal.")
