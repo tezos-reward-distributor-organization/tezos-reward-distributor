@@ -80,8 +80,8 @@ COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 # These values may change with protocol upgrades
 TX_FEES = {
     "TZ1_TO_ALLOCATED_TZ1": {
-        "FEE": 298,
-        "GAS_LIMIT": 1400,
+        "FEE": 270,
+        "GAS_LIMIT": 302,
         "STORAGE_LIMIT": 0,  # 65 mutez before
     },
     "TZ1_TO_NON_ALLOCATED_TZ1": {
