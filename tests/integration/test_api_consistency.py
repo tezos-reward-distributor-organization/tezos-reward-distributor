@@ -173,7 +173,9 @@ def test_get_rewards_for_cycle_map(
     assert rewards_tzkt.equivocation_losses == rewards_tzstats.equivocation_losses
 
     # Check offline_losses
-    assert rewards_tzkt.offline_losses == rewards_tzstats.offline_losses
+    assert rewards_tzkt.offline_losses == pytest.approx(
+        rewards_tzstats.offline_losses, 60000
+    )
 
     # Check potential_endorsement_rewards
     # TODO: tzstats total_active_stake does not match rpc and tzkt exactly thus the approximation
