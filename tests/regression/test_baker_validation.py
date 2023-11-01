@@ -1,11 +1,11 @@
 import pytest
-from cli.client_manager import ClientManager
-from config.yaml_baking_conf_parser import BakingYamlConfParser
-from exception.configuration import ConfigurationException
-from Constants import PUBLIC_NODE_URL, PRIVATE_SIGNER_URL, DryRun
-from rpc.rpc_block_api import RpcBlockApiImpl
-from tzkt.tzkt_block_api import TzKTBlockApiImpl
-from tzstats.tzstats_block_api import TzStatsBlockApiImpl
+from src.cli.client_manager import ClientManager
+from src.config.yaml_baking_conf_parser import BakingYamlConfParser
+from src.exception.configuration import ConfigurationException
+from src.Constants import PUBLIC_NODE_URL, PRIVATE_SIGNER_URL, DryRun
+from src.rpc.rpc_block_api import RpcBlockApiImpl
+from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
+from src.blockwatch.tzpro_block_api import TzProBlockApiImpl
 from tests.utils import Constants
 
 
@@ -18,7 +18,7 @@ network = {"NAME": "MAINNET"}
     [
         pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
         pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
-        pytest.param(TzStatsBlockApiImpl(network), id="TzStatsBlockApiImpl"),
+        pytest.param(TzProBlockApiImpl(network), id="TzProBlockApiImpl"),
     ],
 )
 def test_address_is_baker_address(block_api):
@@ -48,7 +48,7 @@ def test_address_is_baker_address(block_api):
     [
         pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
         pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
-        pytest.param(TzStatsBlockApiImpl(network), id="TzStatsBlockApiImpl"),
+        pytest.param(TzProBlockApiImpl(network), id="TzProBlockApiImpl"),
     ],
 )
 def test_address_is_not_baker_address(block_api):
@@ -80,7 +80,7 @@ def test_address_is_not_baker_address(block_api):
     [
         pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
         pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
-        pytest.param(TzStatsBlockApiImpl(network), id="TzStatsBlockApiImpl"),
+        pytest.param(TzProBlockApiImpl(network), id="TzProBlockApiImpl"),
     ],
 )
 def test_invalid_baking_address(block_api):

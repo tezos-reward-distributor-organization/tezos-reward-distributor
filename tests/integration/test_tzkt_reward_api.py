@@ -1,16 +1,16 @@
 import unittest
 import pytest
 from unittest.mock import patch, MagicMock
-from Constants import (
+from src.Constants import (
     RewardsType,
     DEFAULT_NETWORK_CONFIG_MAP,
     PUBLIC_NODE_URL,
     MAX_SEQUENT_CALLS,
 )
-from rpc.rpc_reward_api import RpcRewardApiImpl
-from tzstats.tzstats_reward_api import TzStatsRewardApiImpl
-from tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
-from tzkt.tzkt_api import TzKTApiError
+from src.rpc.rpc_reward_api import RpcRewardApiImpl
+from src.blockwatch.tzpro_reward_api import TzProRewardApiImpl
+from src.tzkt.tzkt_reward_api import TzKTRewardApiImpl, RewardLog
+from src.tzkt.tzkt_api import TzKTApiError
 from parameterized import parameterized
 from tests.utils import load_reward_model, store_reward_model, Constants
 
@@ -85,7 +85,7 @@ class RewardApiImplTests(unittest.TestCase):
         )
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
-        # TODO: Investigate why rpc staking balance is not equal to tzstats or tzkt below the tenderbake protocol
+        # TODO: Investigate why rpc staking balance is not equal to tzpro or tzkt below the tenderbake protocol
         staking_balance_delta = 8605284 if cycle < 475 else 0
         self.assertAlmostEqual(
             rpc_rewards.delegate_staking_balance + staking_balance_delta,
@@ -120,18 +120,18 @@ class RewardApiImplTests(unittest.TestCase):
         ]
     )
     def test_expected_rewards(self, address, cycle):
-        tzstats_rewards = load_reward_model(
-            address, cycle, "actual", dir_name="tzstats_data"
+        tzpro_rewards = load_reward_model(
+            address, cycle, "actual", dir_name="tzpro_data"
         )
-        if tzstats_rewards is None:
-            tzstats_impl = TzStatsRewardApiImpl(
+        if tzpro_rewards is None:
+            tzpro_impl = TzProRewardApiImpl(
                 nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
             )
-            tzstats_rewards = tzstats_impl.get_rewards_for_cycle_map(
+            tzpro_rewards = tzpro_impl.get_rewards_for_cycle_map(
                 cycle, RewardsType.ACTUAL
             )
             store_reward_model(
-                address, cycle, "actual", tzstats_rewards, dir_name="tzstats_data"
+                address, cycle, "actual", tzpro_rewards, dir_name="tzpro_data"
             )
 
         tzkt_impl = TzKTRewardApiImpl(
@@ -140,22 +140,22 @@ class RewardApiImplTests(unittest.TestCase):
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
         self.assertAlmostEqual(
-            tzstats_rewards.delegate_staking_balance,
+            tzpro_rewards.delegate_staking_balance,
             tzkt_rewards.delegate_staking_balance,
             delta=0,
         )
         self.assertAlmostEqual(
-            tzstats_rewards.total_reward_amount,
+            tzpro_rewards.total_reward_amount,
             tzkt_rewards.total_reward_amount,
             delta=0,
         )
         self.assertAlmostEqual(
-            tzstats_rewards.num_baking_rights,
+            tzpro_rewards.num_baking_rights,
             tzkt_rewards.num_baking_rights,
             delta=0,
         )
         self.assertBalancesAlmostEqual(
-            tzstats_rewards.delegator_balance_dict,
+            tzpro_rewards.delegator_balance_dict,
             tzkt_rewards.delegator_balance_dict,
             delta=0,
         )

@@ -84,9 +84,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         )
 
         dexter_contracts_set = baking_cfg.get_contracts_set()
-        if len(dexter_contracts_set) > 0 and not (self.reward_api.name == "tzstats"):
+        if len(dexter_contracts_set) > 0 and not (self.reward_api.name == "tzpro"):
             logger.warning(
-                "The Dexter functionality is currently only supported using tzstats."
+                "The Dexter functionality is currently only supported using tzpro."
                 "The contract address will be treated as a normal delegator."
             )
         else:

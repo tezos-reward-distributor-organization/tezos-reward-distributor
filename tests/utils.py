@@ -4,14 +4,14 @@ from os.path import dirname, join, normpath
 from urllib.parse import urlparse
 from unittest.mock import MagicMock
 from http import HTTPStatus
-from tzstats.tzstats_reward_api import RewardProviderModel
+from src.blockwatch.tzpro_reward_api import RewardProviderModel
 from typing import Optional
-from Constants import (
+from src.Constants import (
     CONFIG_DIR,
     DEFAULT_LOG_FILE,
     TEMP_TEST_DATA_DIR,
 )
-from util.exit_program import exit_program, ExitCode
+from src.util.exit_program import exit_program, ExitCode
 
 
 def load_reward_model(

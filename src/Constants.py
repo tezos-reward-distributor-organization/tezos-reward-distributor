@@ -8,7 +8,7 @@ PYTHON_MINOR = 7
 LINER = "--------------------------------------------"
 
 # Disabled or enabled options by developers
-ALLOWED_REWARD_DATA_PROVIDER_CHOICES = ["tzkt", "tzstats"]
+ALLOWED_REWARD_DATA_PROVIDER_CHOICES = ["tzkt", "tzpro"]
 
 # Persistent data directories
 BASE_DIR = "~/pymnt"
@@ -55,10 +55,10 @@ PUBLIC_NODE_URL = {
     CURRENT_TESTNET: "https://testnet.smartpy.io",
 }
 
-# TzStats
-TZSTATS_PUBLIC_API_URL = {
-    "MAINNET": "https://api.tzstats.com",
-    CURRENT_TESTNET: "https://api.{}.tzstats.com".format(TESTNET_PREFIX.lower()),
+# TzPro
+TZPRO_API_URL = {
+    "MAINNET": "https://api.tzpro.io",
+    CURRENT_TESTNET: "https://api.{}.tzpro.io".format(TESTNET_PREFIX.lower()),
 }
 
 # TzKT
