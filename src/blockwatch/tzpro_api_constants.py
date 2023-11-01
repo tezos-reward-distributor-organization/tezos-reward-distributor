@@ -41,6 +41,7 @@ idx_cb_delegator_id = 0
 idx_cb_current_balance = 1
 idx_cb_delegator_address = 2
 
+
 def load_key_from_env_variables():
     load_dotenv()
     try:
