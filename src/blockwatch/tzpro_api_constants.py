@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+from log_config import verbose_logger
+
 # TODO: Check if there are changes to the indicies!
 # https://docs.tzpro.io/api/index/tables/income-table
 
@@ -36,3 +40,11 @@ idx_delegator_address = 2
 idx_cb_delegator_id = 0
 idx_cb_current_balance = 1
 idx_cb_delegator_address = 2
+
+def load_key_from_env_variables():
+    load_dotenv()
+    try:
+        key = os.getenv("TZPRO_API_KEY")
+    except:
+        verbose_logger.exception("Unable to load TZPRO_API_KEY from .env file!")
+    return key

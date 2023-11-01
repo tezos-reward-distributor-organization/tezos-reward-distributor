@@ -1,25 +1,14 @@
-import os
-from dotenv import load_dotenv
-
 from api.reward_api import RewardApi
 import math
 
-from log_config import main_logger, verbose_logger
+from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from src.blockwatch.tzpro_reward_provider_helper import TzProRewardProviderHelper
+from src.blockwatch.tzpro_api_constants import load_key_from_env_variables
 from Constants import MUTEZ_PER_TEZ
 from Dexter import dexter_utils as dxtz
 
 logger = main_logger
-
-
-def load_key_from_env_variables():
-    load_dotenv()
-    try:
-        key = os.getenv("TZPRO_API_KEY")
-    except:
-        verbose_logger.exception("Unable to load TZPRO_API_KEY from .env file!")
-    return key
 
 
 class TzProRewardApiImpl(RewardApi):

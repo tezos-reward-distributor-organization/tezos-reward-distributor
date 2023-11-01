@@ -3,8 +3,6 @@ import requests
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, PUBLIC_NODE_URL, RewardsType
 from tests.utils import Constants
 
-from src.blockwatch.tzpro_reward_api import load_key_from_env_variables
-
 # Block APIs
 from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
 from src.blockwatch.tzpro_block_api import TzProBlockApiImpl
@@ -13,7 +11,7 @@ from src.rpc.rpc_block_api import RpcBlockApiImpl
 # Reward APIs
 from src.tzkt.tzkt_reward_api import TzKTRewardApiImpl
 from src.blockwatch.tzpro_reward_api import TzProRewardApiImpl
-from src.rpc.rpc_reward_api import RpcRewardApiImpl
+from src.blockwatch.tzpro_api_constants import load_key_from_env_variables
 
 MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR
 MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
