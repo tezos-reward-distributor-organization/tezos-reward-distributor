@@ -7,6 +7,7 @@ from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 from tzstats.tzstats_api_constants import (
     idx_n_baking_rights,
+    idx_income_expected_income,
     idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
@@ -123,8 +124,8 @@ class TzStatsRewardProviderHelper:
         root["offline_losses"] = int(
             MUTEZ_PER_TEZ
             * (
-                float(resp[idx_income_missed_baking_income])
-                + float(resp[idx_income_missed_endorsing_income])
+                float(resp[idx_income_expected_income])
+                - float(resp[idx_income_total_income])
             )
         )
 
