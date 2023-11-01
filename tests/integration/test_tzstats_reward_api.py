@@ -61,7 +61,6 @@ class Mock_404_Response:
     MagicMock(return_value=Mock_404_Response()),
 )
 def test_tzpro_terminate_404(address_api):
-
     with pytest.raises(
         ApiProviderException,
         match=r"GET https://api.tzpro.io/tables/income\?address=tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194&cycle=100 404",

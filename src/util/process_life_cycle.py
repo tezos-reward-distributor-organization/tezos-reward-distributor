@@ -206,7 +206,6 @@ class ProcessLifeCycle:
         logger.info(LINER)
 
     def start(self):
-
         try:
             self.fsm.trigger_event(TrdEvent.LAUNCH)
             self.fsm.trigger_event(TrdEvent.PRINT_BANNER)

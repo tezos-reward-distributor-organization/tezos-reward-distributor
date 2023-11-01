@@ -6,7 +6,6 @@ from model.reward_log import RewardLog, TYPE_MERGED, TYPE_DELEGATOR
 
 class TestCalculatePhaseMerge(TestCase):
     def test_merge(self):
-
         rewards = []
 
         #

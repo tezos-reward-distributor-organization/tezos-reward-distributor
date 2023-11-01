@@ -63,7 +63,6 @@ class TzProRewardProviderHelper:
         self.baking_address = baking_address
 
     def get_rewards_for_cycle(self, cycle):
-
         root = {
             "delegate_staking_balance": 0,
             "num_baking_rights": 0,
@@ -252,7 +251,6 @@ class TzProRewardProviderHelper:
                 d.current_balance = list_curr_balances[d.address]
 
     def get_snapshot_level(self, cycle):
-
         uri = self.api + snapshot_cycle.format(cycle)
 
         resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
@@ -265,10 +263,9 @@ class TzProRewardProviderHelper:
         return snapshot_height
 
     def get_cycle_total_stake(self, cycle):
-
         uri = self.api + snapshot_cycle.format(cycle)
 
-        resp = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -280,7 +277,7 @@ class TzProRewardProviderHelper:
 
     def get_current_cycle(self):
         uri = self.api + tip
-        resp = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
         root = resp.json()
         return root["cycle"]
 
@@ -297,7 +294,7 @@ class TzProRewardProviderHelper:
             "Requesting current balance of delegator, phase 2, {}".format(uri)
         )
 
-        resp = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         verbose_logger.debug(
             "Response from tzpro is {}".format(resp.content.decode("utf8"))
@@ -322,7 +319,7 @@ class TzProRewardProviderHelper:
 
         verbose_logger.debug("Requesting contract storage, {}".format(uri))
 
-        resp = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         verbose_logger.debug(
             "Response from tzpro is {}".format(resp.content.decode("utf8"))
@@ -345,7 +342,7 @@ class TzProRewardProviderHelper:
 
             offset += 100
             verbose_logger.debug("Requesting LP balances, {}".format(uri))
-            resp = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+            resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
             verbose_logger.debug(
                 "Response from tzpro is {}".format(resp.content.decode("utf8"))
             )

@@ -39,7 +39,6 @@ class CalculatePhase0(CalculatePhaseBase):
         # total of ratios must be 1
 
         for address, delegator_info in delegators_balance_dict.items():
-
             staking_balance = delegator_info["staking_balance"]
             current_balance = delegator_info["current_balance"]
             originaladdress = (

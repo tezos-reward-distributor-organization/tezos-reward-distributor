@@ -51,7 +51,6 @@ class ClientManager:
         return self.node_endpoint
 
     def request_url(self, cmd, timeout=None):
-
         verbose_logger.debug("--> Verbose : Command is |{}|".format(cmd))
 
         url = self.get_node_url() + cmd
@@ -67,7 +66,6 @@ class ClientManager:
         return response.status_code, output
 
     def request_url_post(self, cmd, json_params, timeout=None):
-
         verbose_logger.debug(
             "--> Verbose : Command is |{}|, Params are |{}|".format(cmd, json_params)
         )
@@ -123,7 +121,6 @@ class ClientManager:
             return response["signature"]
 
     def check_pkh_known_by_signer(self, key_name, timeout=None):
-
         signer_url = self.signer_endpoint
         cmd = f"/keys/{key_name}"
         url = signer_url + cmd
@@ -151,7 +148,6 @@ class ClientManager:
                 )
 
     def get_authorized_keys(self, timeout=None):
-
         signer_url = self.signer_endpoint
         cmd = "/authorized_keys"
         url = signer_url + cmd
@@ -205,7 +201,6 @@ class ClientManager:
         return datetime.min
 
     def _do_request(self, method, url, json_params=None, headers=None, timeout=None):
-
         try_i = 0
         response = None
         while response is None and try_i < MAX_NB_TRIES:

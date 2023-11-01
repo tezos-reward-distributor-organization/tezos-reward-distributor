@@ -11,7 +11,6 @@ REWARDS_TYPE = RewardsType.ACTUAL
 
 class TestCalculatePhase0(TestCase):
     def test_calculate(self):
-
         nw = DEFAULT_NETWORK_CONFIG_MAP["MAINNET"]
 
         api = ProviderFactory(provider="tzkt").newRewardApi(nw, BAKING_ADDRESS, "")

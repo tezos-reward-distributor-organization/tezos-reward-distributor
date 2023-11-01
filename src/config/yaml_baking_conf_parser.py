@@ -123,7 +123,6 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[EXCLUDED_DELEGATORS_SET_TOB].add(MIN_DELEGATION_KEY)
 
     def validate_excluded_map(self, conf_obj, map_name):
-
         if map_name not in conf_obj:
             conf_obj[map_name] = dict()
             return
@@ -327,7 +326,6 @@ class BakingYamlConfParser(YamlConfParser):
         return True
 
     def validate_plugins(self, conf_obj):
-
         # if plugins config missing, then no plugins
         if PLUGINS_CONF not in conf_obj:
             conf_obj[PLUGINS_CONF] = {}
@@ -336,7 +334,6 @@ class BakingYamlConfParser(YamlConfParser):
             conf_obj[PLUGINS_CONF] = {"enabled": None}
 
     def validate_rewards_type(self, conf_obj):
-
         if REWARDS_TYPE not in conf_obj or conf_obj[REWARDS_TYPE] is None:
             conf_obj[REWARDS_TYPE] = RewardsType.ACTUAL
             logger.warning(
@@ -365,9 +362,7 @@ class BakingYamlConfParser(YamlConfParser):
         conf_obj[REWARDS_TYPE] = r_type
 
     def parse_bool(self, conf_obj, param_name, default):
-
         if param_name not in conf_obj:
-
             # If required param (ie: no default), raise exception if not defined
             if default is None:
                 raise ConfigurationException(

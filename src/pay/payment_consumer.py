@@ -30,7 +30,6 @@ logger = main_logger.getChild("payment_consumer")
 
 
 def count_and_log_failed(payment_logs):
-
     nb_paid = nb_failed = nb_injected = 0
 
     for pymnt_itm in payment_logs:
@@ -197,7 +196,6 @@ class PaymentConsumer(threading.Thread):
 
             # 8- send notification via plugins
             if total_attempts > 0:
-
                 subject = "Reward Payouts for Cycle {:d}".format(pymnt_cycle)
 
                 status = ""
@@ -278,7 +276,6 @@ class PaymentConsumer(threading.Thread):
     def create_payment_report(
         self, nb_failed, payment_logs, payment_cycle, already_paid_items
     ):
-
         logger.info(
             "Processing completed for {} payment items{}.".format(
                 len(payment_logs),
@@ -373,7 +370,6 @@ class PaymentConsumer(threading.Thread):
         payment_logs,
         total_attempts,
     ):
-
         from uuid import NAMESPACE_URL, uuid3
 
         n_f_type = len([pl for pl in payment_logs if pl.type == TYPE_FOUNDER])

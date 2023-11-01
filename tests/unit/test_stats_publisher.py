@@ -18,7 +18,6 @@ class TestStatsPublish(TestCase):
         ),
     )
     def test_publish(self):
-
         stats_dict = {
             "uuid": str(uuid1()),
             "cycle": 1,

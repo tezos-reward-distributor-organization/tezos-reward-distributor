@@ -197,7 +197,6 @@ class BatchPayer:
         estimated_sum_burn_fees = 0
         estimated_sum_xfer_fees = 0
         for payment_item in unprocessed_payment_items:
-
             # Reinitialize status for items fetched from failed payment files
             if payment_item.paid == PaymentStatus.FAIL:
                 payment_item.paid = PaymentStatus.UNDEFINED
@@ -289,7 +288,6 @@ class BatchPayer:
         )
 
         if payment_address_balance is not None:
-
             logger.info(
                 "Current balance in payout address is {:<,d} mutez.".format(
                     payment_address_balance
@@ -301,7 +299,6 @@ class BatchPayer:
             )
 
             if number_future_payable_cycles < 0:
-
                 for payment_item in payment_items:
                     payment_item.paid = PaymentStatus.FAIL
                     payment_item.desc += "Insufficient funds. "
@@ -324,7 +321,6 @@ class BatchPayer:
                 return payment_logs, 0, 0, 0, ExitCode.INSUFFICIENT_FUNDS
 
             elif number_future_payable_cycles < 1:
-
                 subject = "WARNING Payouts - Low Payment Address Funds"
                 message = (
                     "The payout address will soon run out of funds. The current balance, {:<,d} mutez, "
@@ -556,7 +552,6 @@ class BatchPayer:
         total_gas = total_tx_fees = total_burn_fees = 0
 
         for payment_item in payment_items:
-
             pymnt_amnt = payment_item.adjusted_amount  # expected in micro tez
 
             # Get initial default values for storage, gas and fees

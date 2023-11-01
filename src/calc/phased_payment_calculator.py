@@ -56,7 +56,6 @@ class PhasedPaymentCalculator:
     # founders reward = delegators fee = total reward - delegators reward
     ####
     def calculate(self, reward_provider_model, adjustments=None, rerun=False):
-
         # *************
         # ** phase 0 **
         # *************

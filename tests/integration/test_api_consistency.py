@@ -47,7 +47,7 @@ def address_block_api_rpc():
 @pytest.fixture
 def current_cycle():
     tip = "https://api.tzpro.io/explorer/tip"
-    resp = requests.get(tip, timeout = 5, headers={"X-API-Key": TZ_PRO_API_KEY})
+    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZ_PRO_API_KEY})
     return int(resp.json()["cycle"])
 
 
@@ -117,7 +117,7 @@ def address_reward_api_tzpro():
 @pytest.fixture
 def current_cycle_ghostnet():
     tip = "https://api.ghost.tzpro.io/explorer/tip"
-    resp = requests.get(tip, timeout = 5, headers={"X-API-Key": TZ_PRO_API_KEY})
+    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZ_PRO_API_KEY})
     return int(resp.json()["cycle"])
 
 
@@ -139,8 +139,7 @@ def test_get_rewards_for_cycle_map(
 
     # Check delegate_staking_balance
     assert (
-        rewards_tzkt.delegate_staking_balance
-        == rewards_tzpro.delegate_staking_balance
+        rewards_tzkt.delegate_staking_balance == rewards_tzpro.delegate_staking_balance
     )
 
     # Check delegator_balance_dict

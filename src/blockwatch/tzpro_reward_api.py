@@ -12,14 +12,13 @@ from Dexter import dexter_utils as dxtz
 
 logger = main_logger
 
+
 def load_key_from_env_variables():
     load_dotenv()
     try:
         key = os.getenv("TZPRO_API_KEY")
     except:
-        verbose_logger.exception(
-            "Unable to load TZPRO_API_KEY from .env file!"
-        )
+        verbose_logger.exception("Unable to load TZPRO_API_KEY from .env file!")
     return key
 
 
@@ -36,7 +35,6 @@ class TzProRewardApiImpl(RewardApi):
         self.endorsing_reward_per_slot = nw["ENDORSING_REWARD_PER_SLOT"]
 
     def get_rewards_for_cycle_map(self, cycle, rewards_type):
-
         root = self.helper.get_rewards_for_cycle(cycle)
 
         delegate_staking_balance = root["delegate_staking_balance"]

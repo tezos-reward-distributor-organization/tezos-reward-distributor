@@ -223,12 +223,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         get_verbose_log_helper().reset(pymnt_cycle)
 
         while not self.exiting and self.life_cycle.is_running():
-
             # take a breath
             sleep(5)
 
             try:
-
                 # Exit if disk is full
                 # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
                 if disk_is_full():
@@ -605,7 +603,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # 5- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
-
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
 
                 sleep(5.0)

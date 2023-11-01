@@ -18,7 +18,6 @@ plugin_name = "EmailPlugin"
 
 
 class EmailPlugin(plugins.Plugin):
-
     _req_cfg_keys = [
         "smtp_user",
         "smtp_pass",
@@ -45,7 +44,6 @@ class EmailPlugin(plugins.Plugin):
     def send_admin_notification(
         self, subject, message, attachments=None, reward_data=None
     ):
-
         self.send_email(subject, message, attachments)
 
         logger.info("[EmailPlugin] Notification '{:s}' sent".format(subject))
@@ -55,7 +53,6 @@ class EmailPlugin(plugins.Plugin):
         return
 
     def send_email(self, subject, message, attachments):
-
         # Create email and basic headers
         msg = MIMEMultipart()
 

@@ -20,7 +20,6 @@ def get_dexter_balance_map(contract_id, snapshot_block, api_provider):
 def process_original_delegators_map(
     delegator_map, contract_id, snapshot_block, api_provider
 ):
-
     contract_balance = delegator_map[contract_id]["staking_balance"]
     dexter_liquidity_provider_map, totalLiquidity = get_dexter_balance_map(
         contract_id, snapshot_block, api_provider

@@ -30,7 +30,6 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
     def add_state(
         self, state, initial=False, final=False, on_enter=None, on_leave=None
     ):
-
         state = to_name(state)
 
         if initial:
@@ -95,7 +94,6 @@ class TransitionsFsmBuilder(TrdFsmBuilder):
     def add_conditional_transition(
         self, event, src, condition, pass_dst, not_pass_dst=None
     ):
-
         self.add_transition(event, src, pass_dst, conditions=[condition])
 
         if not_pass_dst:

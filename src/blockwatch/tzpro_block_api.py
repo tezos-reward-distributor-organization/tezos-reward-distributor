@@ -22,7 +22,7 @@ class TzProBlockApiImpl(BlockApi):
 
         verbose_logger.debug("Requesting {}".format(uri))
 
-        resp = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
         root = resp.json()
 
         verbose_logger.debug("Response from tzpro is: {}".format(root))
@@ -38,7 +38,7 @@ class TzProBlockApiImpl(BlockApi):
         try:
             uri = self.head_api + "/explorer/account/{}".format(pkh)
             verbose_logger.debug("Requesting {}".format(uri))
-            response = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+            response = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
             account = response.json()
             return bool(account["is_revealed"])
         except requests.exceptions.RequestException as e:
@@ -52,7 +52,7 @@ class TzProBlockApiImpl(BlockApi):
         try:
             uri = self.head_api + "/explorer/account/{}".format(pkh)
             verbose_logger.debug("Requesting {}".format(uri))
-            response = requests.get(uri, timeout = 5, headers={"X-API-Key": self.key})
+            response = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
             account = response.json()
             return bool(account.get("is_baker", False))
         except requests.exceptions.RequestException as e:

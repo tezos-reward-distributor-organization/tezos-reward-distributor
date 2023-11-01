@@ -165,7 +165,6 @@ def make_config(
 
 
 def mock_request_get(url, timeout, **kwargs):
-
     path = urlparse(url).path
     # print("Mock URL: {}".format(path))
 

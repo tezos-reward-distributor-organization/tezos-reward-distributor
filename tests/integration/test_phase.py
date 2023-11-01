@@ -25,7 +25,6 @@ logger.addHandler(logging.StreamHandler())
 
 
 class TestCalculatePhases(TestCase):
-
     baking_config = make_config(
         baking_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
         payment_address="tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs",
@@ -54,7 +53,6 @@ class TestCalculatePhases(TestCase):
         ),
     )
     def test_process_payouts(self):
-
         logger.debug("")  # Console formatting
         factory = ProviderFactory(provider="prpc")
         parser = BakingYamlConfParser(
@@ -196,7 +194,6 @@ class TestCalculatePhases(TestCase):
 
         # Verify that TRD calculated matches known values
         for r in reward_logs:
-
             # We know this address should be skipped
             if r.address == "tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT":
                 self.assertEqual(r.skipped, 1)
