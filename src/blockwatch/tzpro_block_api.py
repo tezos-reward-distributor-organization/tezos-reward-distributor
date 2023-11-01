@@ -3,7 +3,7 @@ from api.block_api import BlockApi
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 from Constants import TZPRO_API_URL
-from src.blockwatch.tzpro_api_constants import load_key_from_env_variables
+from blockwatch.tzpro_api_constants import load_key_from_env_variables
 
 logger = main_logger
 

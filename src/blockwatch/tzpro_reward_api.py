@@ -3,8 +3,8 @@ import math
 
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
-from src.blockwatch.tzpro_reward_provider_helper import TzProRewardProviderHelper
-from src.blockwatch.tzpro_api_constants import load_key_from_env_variables
+from blockwatch.tzpro_reward_provider_helper import TzProRewardProviderHelper
+from blockwatch.tzpro_api_constants import load_key_from_env_variables
 from Constants import MUTEZ_PER_TEZ
 from Dexter import dexter_utils as dxtz
 

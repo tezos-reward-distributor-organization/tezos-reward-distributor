@@ -5,7 +5,7 @@ from time import sleep
 from exception.api_provider import ApiProviderException
 
 from log_config import main_logger, verbose_logger
-from src.blockwatch.tzpro_api_constants import (
+from blockwatch.tzpro_api_constants import (
     idx_n_baking_rights,
     idx_income_expected_income,
     idx_income_total_income,
