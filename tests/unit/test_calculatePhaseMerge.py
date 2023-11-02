@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from calc.calculate_phaseMerge import CalculatePhaseMerge
-from model.reward_log import RewardLog, TYPE_MERGED, TYPE_DELEGATOR
+from src.calc.calculate_phaseMerge import CalculatePhaseMerge
+from src.model.reward_log import RewardLog, TYPE_MERGED, TYPE_DELEGATOR
 
 
 class TestCalculatePhaseMerge(TestCase):

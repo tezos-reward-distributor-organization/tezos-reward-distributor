@@ -2,8 +2,8 @@ import logging
 import pytest
 from datetime import datetime
 from unittest.mock import MagicMock, patch
-from Constants import CURRENT_TESTNET, TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
-from main import start_application
+from src.Constants import CURRENT_TESTNET, TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
+from src.main import start_application
 from tests.utils import Args, make_config
 
 

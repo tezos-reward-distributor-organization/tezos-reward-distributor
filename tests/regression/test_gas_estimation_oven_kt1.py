@@ -1,27 +1,27 @@
 #  FIXME redo mockups for this test
 from unittest.mock import patch, MagicMock
 
-from pay.batch_payer import BatchPayer
-from cli.client_manager import ClientManager
-from Constants import (
+from src.pay.batch_payer import BatchPayer
+from src.cli.client_manager import ClientManager
+from src.Constants import (
     PUBLIC_NODE_URL,
     RewardsType,
     PRIVATE_SIGNER_URL,
     MUTEZ_PER_TEZ,
 )
-from api.provider_factory import ProviderFactory
-from config.yaml_baking_conf_parser import BakingYamlConfParser
-from model.baking_conf import BakingConf
-from calc.service_fee_calculator import ServiceFeeCalculator
+from src.api.provider_factory import ProviderFactory
+from src.config.yaml_baking_conf_parser import BakingYamlConfParser
+from src.model.baking_conf import BakingConf
+from src.calc.service_fee_calculator import ServiceFeeCalculator
 from tests.utils import make_config
-from model.rules_model import RulesModel
-from NetworkConfiguration import default_network_config_map
-from plugins.plugins import PluginManager
+from src.model.rules_model import RulesModel
+from src.NetworkConfiguration import default_network_config_map
+from src.plugins.plugins import PluginManager
 
-from calc.phased_payment_calculator import PhasedPaymentCalculator
-from calc.calculate_phaseMapping import CalculatePhaseMapping
-from calc.calculate_phaseMerge import CalculatePhaseMerge
-from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
+from src.calc.phased_payment_calculator import PhasedPaymentCalculator
+from src.calc.calculate_phaseMapping import CalculatePhaseMapping
+from src.calc.calculate_phaseMerge import CalculatePhaseMerge
+from src.calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
 from src.model.reward_log import TYPE_DELEGATOR
 
 node_endpoint = PUBLIC_NODE_URL["MAINNET"]

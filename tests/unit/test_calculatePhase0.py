@@ -1,8 +1,8 @@
 from unittest import TestCase
-from calc.calculate_phase0 import CalculatePhase0
-from model.reward_log import TYPE_OWNERS_PARENT
-from api.provider_factory import ProviderFactory
-from Constants import DEFAULT_NETWORK_CONFIG_MAP, RewardsType
+from src.calc.calculate_phase0 import CalculatePhase0
+from src.model.reward_log import TYPE_OWNERS_PARENT
+from src.api.provider_factory import ProviderFactory
+from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, RewardsType
 
 BAKING_ADDRESS = "tz1fikAGfa1MTxX2oJ7UCtvDpVKeH4KTp1UY"
 CYCLE = 420

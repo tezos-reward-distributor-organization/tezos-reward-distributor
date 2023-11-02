@@ -2,20 +2,20 @@ import pytest
 import queue
 import logging
 from unittest.mock import MagicMock, patch
-from pay.payment_producer import PaymentProducer
-from pay.payment_consumer import PaymentConsumer
+from src.pay.payment_producer import PaymentProducer
+from src.pay.payment_consumer import PaymentConsumer
 from tests.utils import Args, make_config
-from plugins import plugins
-from Constants import RunMode, TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
-from cli.client_manager import ClientManager
-from NetworkConfiguration import init_network_config
-from model.baking_dirs import BakingDirs
-from model.baking_conf import BakingConf
-from api.provider_factory import ProviderFactory
-from config.yaml_baking_conf_parser import BakingYamlConfParser
-from calc.service_fee_calculator import ServiceFeeCalculator
-from util.process_life_cycle import ProcessLifeCycle
-from util.disk_is_full import disk_is_full
+from src.plugins import plugins
+from src.Constants import RunMode, TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
+from src.cli.client_manager import ClientManager
+from src.NetworkConfiguration import init_network_config
+from src.model.baking_dirs import BakingDirs
+from src.model.baking_conf import BakingConf
+from src.api.provider_factory import ProviderFactory
+from src.config.yaml_baking_conf_parser import BakingYamlConfParser
+from src.calc.service_fee_calculator import ServiceFeeCalculator
+from src.util.process_life_cycle import ProcessLifeCycle
+from src.util.disk_is_full import disk_is_full
 
 logger = logging.getLogger("unittesting")
 logger.setLevel(logging.DEBUG)

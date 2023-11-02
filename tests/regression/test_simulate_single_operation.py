@@ -1,9 +1,9 @@
 from unittest.mock import patch, MagicMock
-from pay.batch_payer import BatchPayer, TX_FEES, MUTEZ_PER_GAS_UNIT
-from model.reward_log import RewardLog
-from cli.client_manager import ClientManager
+from src.pay.batch_payer import BatchPayer, TX_FEES, MUTEZ_PER_GAS_UNIT
+from src.model.reward_log import RewardLog
+from src.cli.client_manager import ClientManager
 from http import HTTPStatus
-from Constants import (
+from src.Constants import (
     CURRENT_TESTNET,
     PUBLIC_NODE_URL,
     PRIVATE_SIGNER_URL,

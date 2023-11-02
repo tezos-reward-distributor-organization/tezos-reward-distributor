@@ -3,7 +3,7 @@ from src.blockwatch.tzpro_reward_api import TzProRewardApiImpl
 from unittest.mock import patch, MagicMock
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, RewardsType
 from tests.utils import load_reward_model, store_reward_model, Constants
-from exception.api_provider import ApiProviderException
+from src.exception.api_provider import ApiProviderException
 
 MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
 CYCLE = 100

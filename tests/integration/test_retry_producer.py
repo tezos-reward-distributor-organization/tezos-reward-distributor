@@ -5,13 +5,13 @@ from http import HTTPStatus
 from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
-from Constants import PaymentStatus, RewardsType, TEMP_TEST_DATA_DIR
-from cli.client_manager import ClientManager
-from pay.payment_consumer import PaymentConsumer
-from pay.payment_producer_abc import PaymentProducerABC
-from pay.retry_producer import RetryProducer
-from util.csv_payment_file_parser import CsvPaymentFileParser
-from util.dir_utils import get_payment_report_file_path
+from src.Constants import PaymentStatus, RewardsType, TEMP_TEST_DATA_DIR
+from src.cli.client_manager import ClientManager
+from src.pay.payment_consumer import PaymentConsumer
+from src.pay.payment_producer_abc import PaymentProducerABC
+from src.pay.retry_producer import RetryProducer
+from src.util.csv_payment_file_parser import CsvPaymentFileParser
+from src.util.dir_utils import get_payment_report_file_path
 
 
 TEST_REPORT_DIR = "tests/integration/test_reports"

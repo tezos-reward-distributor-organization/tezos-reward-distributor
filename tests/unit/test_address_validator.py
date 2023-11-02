@@ -1,11 +1,11 @@
-from util.address_validator import (
+from src.util.address_validator import (
     AddressValidator,
     IncorrectAddressError,
     IncorrectLengthError,
 )
 import pytest
 
-from exception.configuration import ConfigurationException
+from src.exception.configuration import ConfigurationException
 
 
 @pytest.mark.parametrize(

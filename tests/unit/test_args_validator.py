@@ -1,13 +1,13 @@
-from util.parser import (
+from src.util.parser import (
     build_parser,
     add_argument_provider,
 )
-from util.args_validator import ArgsValidator, validate
+from src.util.args_validator import ArgsValidator, validate
 import argparse
 import pytest
 import logging
 import os
-from Constants import PUBLIC_NODE_URL
+from src.Constants import PUBLIC_NODE_URL
 
 
 LOGGER = logging.getLogger(__name__)

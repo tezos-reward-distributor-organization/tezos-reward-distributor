@@ -1,8 +1,8 @@
 import argparse
 import pytest
 import os
-from Constants import PUBLIC_NODE_URL
-from util.parser import (
+from src.Constants import PUBLIC_NODE_URL
+from src.util.parser import (
     build_parser,
     add_argument_verbose,
     add_argument_log_file,
