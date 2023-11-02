@@ -48,4 +48,8 @@ def load_key_from_env_variables():
         key = os.getenv("TZPRO_API_KEY")
     except:
         verbose_logger.exception("Unable to load TZPRO_API_KEY from .env file!")
+    if key == "":
+        verbose_logger.exception(
+            "Please copy the .env.example file to .env and add your personal TZPRO_API_KEY!"
+        )
     return key
