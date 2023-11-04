@@ -57,8 +57,12 @@ class BakingYamlConfParser(YamlConfParser):
         self.clnt_mngr = clnt_mngr
         self.network_config = network_config
         if block_api is None:
+            # NOTE: We need to parse the config early to get the api key for tzpro if no block api was defined
+            # TODO: We might wanna disable the option to pass a None block_api parameter
             tzpro_api_key = (
-                self.tzpro_api_key if provider_factory.provider == "tzpro" else ""
+                ""
+                if provider_factory.provider != "tzpro"
+                else yaml.safe_load(yaml_text).get("tzpro_api_key", "")
             )
             block_api = provider_factory.newBlockApi(
                 network_config,
