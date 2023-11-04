@@ -5,7 +5,19 @@ class AddrType(Enum):
     KT = 1
     TZ = 2
     KTALS = 3
-    TZALS = (4,)
+    TZALS = 4
+
+    def is_kt(self):
+        return self.value == 1
+
+    def is_tz(self):
+        return self.value == 2
+
+    def is_ktals(self):
+        return self.value == 3
+
+    def is_tz(self):
+        return self.value == 4
 
     @staticmethod
     def to_string(obj):
@@ -18,3 +30,6 @@ class AddrType(Enum):
             return "KTALS"
         if self.value == 4:
             return "TZALS"
+
+    def __str__(self):
+        return self.name

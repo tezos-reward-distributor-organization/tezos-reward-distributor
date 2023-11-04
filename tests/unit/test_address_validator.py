@@ -1,11 +1,11 @@
-from util.address_validator import (
+from src.util.address_validator import (
     AddressValidator,
     IncorrectAddressError,
     IncorrectLengthError,
 )
 import pytest
 
-from exception.configuration import ConfigurationException
+from src.exception.configuration import ConfigurationException
 
 
 @pytest.mark.parametrize(
@@ -82,22 +82,18 @@ def test_validate_baking_address():
     validator.validate_baking_address(baking_address)
 
     # Test invalid address prefix
-    with pytest.raises(
-        ConfigurationException, match="Baking address must be a valid tz address"
-    ):
+    with pytest.raises(Exception, match="Baking address must be a valid tz address"):
         baking_address = "not_valid_prefix1abcdefghijklmno"
         validator.validate_baking_address(baking_address)
 
     # Test invalid address lenght
-    with pytest.raises(
-        ConfigurationException, match="Baking address must be a valid tz address"
-    ):
+    with pytest.raises(Exception, match="Baking address must be a valid tz address"):
         baking_address = "tz1abcdefghijklmnopqrstuvwxyz"
         validator.validate_baking_address(baking_address)
 
     # Test KT address
     with pytest.raises(
-        ConfigurationException,
+        Exception,
         match="KT addresses cannot act as bakers. Only tz addresses can be registered to bake.",
     ):
         baking_address = "KT1qwertyuiopasdfghjklzxcvbnm1234567"

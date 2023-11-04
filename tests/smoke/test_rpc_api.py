@@ -3,8 +3,8 @@ import logging
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 from tests.utils import Args, make_config
-from Constants import CURRENT_TESTNET, PUBLIC_NODE_URL
-from main import start_application
+from src.Constants import CURRENT_TESTNET, PUBLIC_NODE_URL
+from src.main import start_application
 
 
 @pytest.fixture

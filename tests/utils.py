@@ -4,14 +4,14 @@ from os.path import dirname, join, normpath
 from urllib.parse import urlparse
 from unittest.mock import MagicMock
 from http import HTTPStatus
-from tzstats.tzstats_reward_api import RewardProviderModel
+from src.blockwatch.tzpro_reward_api import RewardProviderModel
 from typing import Optional
-from Constants import (
+from src.Constants import (
     CONFIG_DIR,
     DEFAULT_LOG_FILE,
     TEMP_TEST_DATA_DIR,
 )
-from util.exit_program import exit_program, ExitCode
+from src.util.exit_program import exit_program, ExitCode
 
 
 def load_reward_model(
@@ -117,7 +117,12 @@ class Args:
 
 
 def make_config(
-    baking_address, payment_address, service_fee, min_delegation_amt, min_payment_amt
+    baking_address,
+    payment_address,
+    service_fee,
+    min_delegation_amt,
+    min_payment_amt,
+    tzpro_api_key="",
 ):
     """This helper function creates a YAML bakers config
 
@@ -153,6 +158,7 @@ def make_config(
     service_fee: {:f}
     specials_map: {{}}
     supporters_set: !!set {{}}
+    tzpro_api_key: {:s}
     plugins:
         enabled:
     """.format(
@@ -161,11 +167,11 @@ def make_config(
         min_payment_amt,
         payment_address,
         service_fee,
+        tzpro_api_key,
     )
 
 
 def mock_request_get(url, timeout, **kwargs):
-
     path = urlparse(url).path
     # print("Mock URL: {}".format(path))
 

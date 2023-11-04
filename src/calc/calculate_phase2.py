@@ -40,7 +40,6 @@ class CalculatePhase2(CalculatePhaseBase):
 
         # exclude requested addresses from reward list
         for rl1 in self.filterskipped(reward_data1):
-
             total_balance += rl1.staking_balance
 
             if rl1.address in self.excluded_set:

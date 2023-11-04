@@ -3,18 +3,18 @@ from time import sleep
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from Constants import RewardsType, MUTEZ_PER_TEZ
-from api.provider_factory import ProviderFactory
-from calc.phased_payment_calculator import PhasedPaymentCalculator
-from calc.calculate_phaseMapping import CalculatePhaseMapping
-from calc.calculate_phaseMerge import CalculatePhaseMerge
-from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
-from calc.service_fee_calculator import ServiceFeeCalculator
-from config.yaml_baking_conf_parser import BakingYamlConfParser
-from exception.api_provider import ApiProviderException
-from model.rules_model import RulesModel
-from model.baking_conf import BakingConf
-from NetworkConfiguration import default_network_config_map
+from src.Constants import RewardsType, MUTEZ_PER_TEZ
+from src.api.provider_factory import ProviderFactory
+from src.calc.phased_payment_calculator import PhasedPaymentCalculator
+from src.calc.calculate_phaseMapping import CalculatePhaseMapping
+from src.calc.calculate_phaseMerge import CalculatePhaseMerge
+from src.calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
+from src.calc.service_fee_calculator import ServiceFeeCalculator
+from src.config.yaml_baking_conf_parser import BakingYamlConfParser
+from src.exception.api_provider import ApiProviderException
+from src.model.rules_model import RulesModel
+from src.model.baking_conf import BakingConf
+from src.NetworkConfiguration import default_network_config_map
 from tests.utils import mock_request_get, make_config
 
 PAYOUT_CYCLE = 557
@@ -25,7 +25,6 @@ logger.addHandler(logging.StreamHandler())
 
 
 class TestCalculatePhases(TestCase):
-
     baking_config = make_config(
         baking_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
         payment_address="tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs",
@@ -54,7 +53,6 @@ class TestCalculatePhases(TestCase):
         ),
     )
     def test_process_payouts(self):
-
         logger.debug("")  # Console formatting
         factory = ProviderFactory(provider="prpc")
         parser = BakingYamlConfParser(
@@ -196,7 +194,6 @@ class TestCalculatePhases(TestCase):
 
         # Verify that TRD calculated matches known values
         for r in reward_logs:
-
             # We know this address should be skipped
             if r.address == "tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT":
                 self.assertEqual(r.skipped, 1)

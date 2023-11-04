@@ -1,3 +1,4 @@
+import os
 import pytest
 import requests
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, PUBLIC_NODE_URL, RewardsType
@@ -5,13 +6,12 @@ from tests.utils import Constants
 
 # Block APIs
 from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
-from src.tzstats.tzstats_block_api import TzStatsBlockApiImpl
+from src.blockwatch.tzpro_block_api import TzProBlockApiImpl
 from src.rpc.rpc_block_api import RpcBlockApiImpl
 
 # Reward APIs
 from src.tzkt.tzkt_reward_api import TzKTRewardApiImpl
-from src.tzstats.tzstats_reward_api import TzStatsRewardApiImpl
-from src.rpc.rpc_reward_api import RpcRewardApiImpl
+from src.blockwatch.tzpro_reward_api import TzProRewardApiImpl
 
 MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR
 MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
@@ -19,6 +19,7 @@ MAINNET_ADDRESS_BAKEXTZ4ME_BAKER = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
 GHOSTNET_ADDRESS_STAKENOW_BAKER = Constants.GHOSTNET_ADDRESS_STAKENOW_BAKER
 MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT
 
+TZ_PRO_API_KEY = os.environ.get("TZ_PRO_API_KEY")
 
 # These tests should not be mocked but test the overall consistency
 # accross all tezos APIs which are available in TRD
@@ -30,8 +31,8 @@ def address_block_api_tzkt():
 
 
 @pytest.fixture
-def address_block_api_tzstats():
-    return TzStatsBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"])
+def address_block_api_tzpro():
+    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], TZ_PRO_API_KEY)
 
 
 @pytest.fixture
@@ -43,55 +44,55 @@ def address_block_api_rpc():
 
 @pytest.fixture
 def current_cycle():
-    tip = "https://api.tzstats.com/explorer/tip"
-    resp = requests.get(tip, timeout=5)
+    tip = "https://api.tzpro.io/explorer/tip"
+    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZ_PRO_API_KEY})
     return int(resp.json()["cycle"])
 
 
 def test_get_revelation(
-    address_block_api_tzkt, address_block_api_tzstats, address_block_api_rpc
+    address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
 ):
     assert address_block_api_tzkt.get_revelation(
         MAINNET_ADDRESS_DELEGATOR
-    ) == address_block_api_tzstats.get_revelation(MAINNET_ADDRESS_DELEGATOR)
+    ) == address_block_api_tzpro.get_revelation(MAINNET_ADDRESS_DELEGATOR)
     assert address_block_api_tzkt.get_revelation(
         MAINNET_ADDRESS_DELEGATOR
     ) == address_block_api_rpc.get_revelation(MAINNET_ADDRESS_DELEGATOR)
-    assert address_block_api_tzstats.get_revelation(
+    assert address_block_api_tzpro.get_revelation(
         MAINNET_ADDRESS_DELEGATOR
     ) == address_block_api_rpc.get_revelation(MAINNET_ADDRESS_DELEGATOR)
 
 
 def test_get_current_cycle_and_level(
-    address_block_api_tzkt, address_block_api_tzstats, address_block_api_rpc
+    address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
 ):
     cycle_tzkt, level_tzkt = address_block_api_tzkt.get_current_cycle_and_level()
     (
-        cycle_tzstats,
-        level_tzstats,
-    ) = address_block_api_tzstats.get_current_cycle_and_level()
+        cycle_tzpro,
+        level_tzpro,
+    ) = address_block_api_tzpro.get_current_cycle_and_level()
     cycle_rpc, level_rpc = address_block_api_rpc.get_current_cycle_and_level()
 
-    assert cycle_tzkt == cycle_tzstats
-    assert cycle_rpc == cycle_tzstats
+    assert cycle_tzkt == cycle_tzpro
+    assert cycle_rpc == cycle_tzpro
     assert cycle_tzkt == cycle_rpc
 
     # Allow a delta of 1 for level query
-    assert abs(level_tzkt - level_tzstats) <= 1
-    assert abs(level_rpc - level_tzstats) <= 1
+    assert abs(level_tzkt - level_tzpro) <= 1
+    assert abs(level_rpc - level_tzpro) <= 1
     assert abs(level_tzkt - level_rpc) <= 1
 
 
 def test_get_delegatable(
-    address_block_api_tzkt, address_block_api_tzstats, address_block_api_rpc
+    address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
 ):
     assert address_block_api_tzkt.get_delegatable(
         MAINNET_ADDRESS_STAKENOW_BAKER
-    ) == address_block_api_tzstats.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
+    ) == address_block_api_tzpro.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
     assert address_block_api_tzkt.get_delegatable(
         MAINNET_ADDRESS_STAKENOW_BAKER
     ) == address_block_api_rpc.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
-    assert address_block_api_tzstats.get_delegatable(
+    assert address_block_api_tzpro.get_delegatable(
         MAINNET_ADDRESS_STAKENOW_BAKER
     ) == address_block_api_rpc.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
 
@@ -105,42 +106,41 @@ def address_reward_api_tzkt():
 
 
 @pytest.fixture
-def address_reward_api_tzstats():
-    return TzStatsRewardApiImpl(
-        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
+def address_reward_api_tzpro():
+    return TzProRewardApiImpl(
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
+        MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
+        TZ_PRO_API_KEY,
     )
 
 
 @pytest.fixture
 def current_cycle_ghostnet():
-    tip = "https://api.ghostnet.tzkt.io/v1/head"
-    resp = requests.get(tip, timeout=5)
+    tip = "https://api.ghost.tzpro.io/explorer/tip"
+    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZ_PRO_API_KEY})
     return int(resp.json()["cycle"])
 
 
 def test_get_rewards_for_cycle_map(
     address_reward_api_tzkt,
-    address_reward_api_tzstats,
+    address_reward_api_tzpro,
     current_cycle,
 ):
     last_cycle = current_cycle - 1
     rewards_tzkt = address_reward_api_tzkt.get_rewards_for_cycle_map(
         cycle=last_cycle, rewards_type=RewardsType.ACTUAL
     )
-    rewards_tzstats = address_reward_api_tzstats.get_rewards_for_cycle_map(
+    rewards_tzpro = address_reward_api_tzpro.get_rewards_for_cycle_map(
         cycle=last_cycle, rewards_type=RewardsType.ACTUAL
     )
 
     # Check total_reward_amount
-    assert rewards_tzkt.total_reward_amount == rewards_tzstats.total_reward_amount
+    assert rewards_tzkt.total_reward_amount == rewards_tzpro.total_reward_amount
 
     # Check delegate_staking_balance
     assert (
-        rewards_tzkt.delegate_staking_balance
-        == rewards_tzstats.delegate_staking_balance
+        rewards_tzkt.delegate_staking_balance == rewards_tzpro.delegate_staking_balance
     )
-    # assert rewards_rpc.delegate_staking_balance == rewards_tzstats.delegate_staking_balance
-    # assert rewards_rpc.delegate_staking_balance == rewards_tzkt.delegate_staking_balance
 
     # Check delegator_balance_dict
     for (
@@ -150,41 +150,41 @@ def test_get_rewards_for_cycle_map(
         if MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT == tzkt_delegator_adress:
             continue
 
-        tzstats_balance = rewards_tzstats.delegator_balance_dict.get(
+        tzpro_balance = rewards_tzpro.delegator_balance_dict.get(
             tzkt_delegator_adress,
         )
-        if tzstats_balance is not None:
+        if tzpro_balance is not None:
             assert tzkt_balance_dict["current_balance"] == pytest.approx(
-                tzstats_balance["current_balance"],
+                tzpro_balance["current_balance"],
                 1,
             )
             assert tzkt_balance_dict["staking_balance"] == pytest.approx(
-                tzstats_balance["staking_balance"],
+                tzpro_balance["staking_balance"],
                 1,
             )
 
     # Check num_baking_rights
-    assert rewards_tzkt.num_baking_rights == rewards_tzstats.num_baking_rights
+    assert rewards_tzkt.num_baking_rights == rewards_tzpro.num_baking_rights
 
     # Check denunciation_rewards
-    assert rewards_tzkt.denunciation_rewards == rewards_tzstats.denunciation_rewards
+    assert rewards_tzkt.denunciation_rewards == rewards_tzpro.denunciation_rewards
 
     # Check equivocation_losses
-    assert rewards_tzkt.equivocation_losses == rewards_tzstats.equivocation_losses
+    assert rewards_tzkt.equivocation_losses == rewards_tzpro.equivocation_losses
 
     # Check offline_losses
     assert rewards_tzkt.offline_losses == pytest.approx(
-        rewards_tzstats.offline_losses, 60000
+        rewards_tzpro.offline_losses, 60000
     )
 
     # Check potential_endorsement_rewards
-    # TODO: tzstats total_active_stake does not match rpc and tzkt exactly thus the approximation
+    # TODO: tzpro total_active_stake does not match rpc and tzkt exactly thus the approximation
     assert rewards_tzkt.potential_endorsement_rewards == pytest.approx(
-        rewards_tzstats.potential_endorsement_rewards, 60000
+        rewards_tzpro.potential_endorsement_rewards, 60000
     )
 
     # Check rewards_and_fees
-    assert rewards_tzkt.rewards_and_fees == rewards_tzstats.rewards_and_fees
+    assert rewards_tzkt.rewards_and_fees == rewards_tzpro.rewards_and_fees
 
     # Check computed_reward_amount
-    assert rewards_tzkt.computed_reward_amount == rewards_tzstats.computed_reward_amount
+    assert rewards_tzkt.computed_reward_amount == rewards_tzpro.computed_reward_amount

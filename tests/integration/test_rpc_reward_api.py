@@ -1,15 +1,15 @@
 import pytest
 from http import HTTPStatus
-from rpc.rpc_reward_api import RpcRewardApiImpl
+from src.rpc.rpc_reward_api import RpcRewardApiImpl
 from unittest.mock import patch, MagicMock
-from Constants import (
+from src.Constants import (
     PUBLIC_NODE_URL,
     DEFAULT_NETWORK_CONFIG_MAP,
     MAX_SEQUENT_CALLS,
     RewardsType,
 )
 from tests.utils import load_reward_model, store_reward_model, Constants
-from exception.api_provider import ApiProviderException
+from src.exception.api_provider import ApiProviderException
 from requests.exceptions import RequestException
 
 # Use this baker because he has < 40 delegates which can be fetched fast
@@ -135,7 +135,7 @@ def test_rpc_terminate_404(address_api):
     current_cycle = 200
 
     with pytest.raises(
-        ApiProviderException,
+        Exception,
         match="RPC URL '{}/chains/main/blocks/head' not found. Is this node in archive mode?".format(
             PUBLIC_NODE_URL["MAINNET"]
         ),

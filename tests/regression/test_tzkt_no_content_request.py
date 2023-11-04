@@ -1,8 +1,8 @@
 import pytest
 from http import HTTPStatus
 from unittest.mock import patch, MagicMock
-from tzkt.tzkt_api import TzKTApi, TzKTApiError
-from Constants import TZKT_PUBLIC_API_URL
+from src.tzkt.tzkt_api import TzKTApi, TzKTApiError
+from src.Constants import TZKT_PUBLIC_API_URL
 
 
 class NoContentResponse:

@@ -12,7 +12,6 @@ plugin_name = "DiscordPlugin"
 
 
 class DiscordPlugin(plugins.Plugin):
-
     _req_cfg_keys = ["endpoint", "discord_text", "send_admin"]
 
     def __init__(self, cfg):
@@ -22,13 +21,11 @@ class DiscordPlugin(plugins.Plugin):
     def send_admin_notification(
         self, subject, message, attachments=None, reward_data=None
     ):
-
         admin_text = "**{:s}**\n{:s}".format(subject, message)
         if self.send_admin:
             self.post_to_discord(admin_text, "ADMIN")
 
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
-
         # Do template replacements
         payout_message = (
             self.discord_text.replace("%CYCLE%", str(cycle))
@@ -38,7 +35,6 @@ class DiscordPlugin(plugins.Plugin):
         self.post_to_discord(payout_message, "PAYOUT")
 
     def post_to_discord(self, message, type):
-
         try:
             resp = requests.post(
                 self.endpoint,

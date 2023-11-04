@@ -1,9 +1,9 @@
 import unittest
-from log_config import main_logger
-from calc.calculate_phase_base import BY_ZERO_BALANCE
-from calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
-from model import reward_log
-from model.reward_log import RewardLog
+from src.log_config import main_logger
+from src.calc.calculate_phase_base import BY_ZERO_BALANCE
+from src.calc.calculate_phaseZeroBalance import CalculatePhaseZeroBalance
+from src.model import reward_log
+from src.model.reward_log import RewardLog
 
 
 class TestCalculatePhaseZeroBalance(unittest.TestCase):

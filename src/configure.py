@@ -117,7 +117,6 @@ def onbakingaddress(input):
 
 def onpaymentaddress(input):
     try:
-
         AddressValidator("payouts address").validate(input)
 
         global parser
@@ -509,7 +508,6 @@ def main(args):
 
 
 if __name__ == "__main__":
-
     if not (
         sys.version_info.major >= PYTHON_MAJOR
         and sys.version_info.minor >= PYTHON_MINOR

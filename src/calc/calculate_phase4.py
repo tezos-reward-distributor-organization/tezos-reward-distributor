@@ -26,7 +26,6 @@ class CalculatePhase4(CalculatePhaseBase):
         self.reward_api = reward_api
 
     def calculate(self, reward_data3, total_amount):
-
         new_rewards = []
 
         # move skipped records to next phase

@@ -1,8 +1,8 @@
 import sys
 import unittest
 from enum import Enum
-from log_config import main_logger
-from util.exit_program import ExitCode, exit_program
+from src.log_config import main_logger
+from src.util.exit_program import ExitCode, exit_program
 
 
 class TestExitProgram(unittest.TestCase):

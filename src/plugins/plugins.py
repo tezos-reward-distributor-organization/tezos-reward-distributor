@@ -23,7 +23,6 @@ class PluginManager(object):
 
         # Get the list of enabled plugins, and attempt to load
         if cfg["enabled"] is not None:
-
             if not isinstance(cfg["enabled"], list):
                 raise PluginConfigurationError(
                     "[Plugins] 'enabled' list is not properly configured."
@@ -41,7 +40,6 @@ class PluginManager(object):
     def send_admin_notification(
         self, subject, message, attachments=None, reward_data=None
     ):
-
         if not self.plugins:
             logger.info("[Plugins] Not sending notification; no plugins enabled")
 
@@ -65,7 +63,6 @@ class PluginManager(object):
     # Go through each plugin module and call send_payout_notification
     # TODO: Optimize DRY
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
-
         if not self.plugins:
             logger.info("[Plugins] Not sending notification; no plugins enabled")
 
@@ -86,7 +83,6 @@ class PluginManager(object):
 
     # Dynamically load python modules as plugins
     def loadPlugin(self, plugin_name, cfg):
-
         try:
             # Dynamically load the .py file for the plugin
             imported_plugin = importlib.import_module("plugins." + plugin_name)

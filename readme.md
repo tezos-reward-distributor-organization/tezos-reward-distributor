@@ -16,17 +16,15 @@ The documentation can be found [here](https://tezos-reward-distributor-organizat
 
 You can also ask for support on the TRD channel of the Tezos-Baking Slack group, if you are a member of this group you can view the channel [here](https://tezos-baking.slack.com/messages/CQ35AM8KE), if you are not a member you can [join the group](https://join.slack.com/t/tezos-baking/shared_invite/zt-yqxeszcy-rpvYmBtXr5oewh6M0DFkyQ) and find the trd channel from the channel list or simply [file an issue](https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues).
 
-TRD supports complex payments, pays in batches, and supports three backends for calculations: Tezos RPC, [TzStats API](https://tzstats.com/docs/api/) and [TzKT API](https://api.tzkt.io/). TRD is developed and tested extensively by the community.
+TRD supports complex payments, pays in batches, and supports three backends for calculations: Tezos RPC, [TZPRO API](https://docs.tzpro.io/) and [TzKT API](https://api.tzkt.io/). TRD is developed and tested extensively by the community.
 
 **Provider notes:**
 
-### TzStats
+### Blockwatch: TZPRO
 
-The [terms and conditions](https://tzstats.com/terms) of TzStats note that a license is needed for the commercial use of the API.
+The [terms and conditions](https://tzpro.io/terms) of TZPRO note that an account and API key are needed for the use of the API. Please review the [pricing](https://tzpro.io/#pricing) information. For further help contact hello@blockwatch.cc for more information.
 
-> If you wish to use the Data in a manner that is primarily intended for or directed towards commercial advantage or monetary compensation (such use, “Commercial Use”), Blockwatch requires that you enter into a separate commercial license agreement. Entering into a separate commercial license allows us to protect Blockwatch’s investment in the Data and to maintain the integrity of the Data.
->
-> Please contact us at license@blockwatch.cc for more information about Commercial Uses of our Data.
+In order to use your API key in the application copy and rename the .env.example to .env and add the API key for TZPRO.
 
 ### TzKT
 
@@ -106,4 +104,4 @@ TRD necessitates of an interface to get provided with income and delegator data 
 The default provider is the TzKT API. However, it is possible to change the data provider to a local node with the flag `-P rpc`.
 In this case, the default node would be `127.0.0.1:8732`. In order to change the node URL for the provider, you can pass it in the form `node_url:port` using the flag `-A` (e.g. `-P rpc -A 127.0.0.1:8733`). Please note that the node should be an [archive node](https://tezos.gitlab.io/user/history_modes.html#setting-up-a-node-in-archive-mode), and that the port should be the RPC port specified while launching the node.
 
-It is also possible to use a public RPC node with flag `-P prpc`, which defaults to `https://rpc.tzstats.com`.
+It is also possible to use a public RPC node with flag `-P prpc`, which defaults to `https://mainnet.smartpy.io`.

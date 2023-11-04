@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from calc.calculate_phase3 import CalculatePhase3
-from calc.service_fee_calculator import ServiceFeeCalculator
-from model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
-from Constants import ALMOST_ZERO
+from src.calc.calculate_phase3 import CalculatePhase3
+from src.calc.service_fee_calculator import ServiceFeeCalculator
+from src.model.reward_log import RewardLog, TYPE_FOUNDERS_PARENT
+from src.Constants import ALMOST_ZERO
 
 
 class TestCalculatePhase3(TestCase):

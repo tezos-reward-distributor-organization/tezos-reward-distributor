@@ -10,7 +10,6 @@ logger = main_logger
 
 
 def stats_publisher(stats_dict):
-
     logger.info(
         "Sending anonymous statistics; See docs/statistics.rst for more information."
     )
