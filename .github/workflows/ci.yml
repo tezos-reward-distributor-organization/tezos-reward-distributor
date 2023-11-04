@@ -61,6 +61,8 @@ jobs:
         pip install -r requirements_developers.txt
 
     - name: Test with pytest
+      env:
+        TZPRO_API_KEY: ${{ secrets.TZPRO_API_KEY }} 
       run: pytest tests/
 
   build-documentation:

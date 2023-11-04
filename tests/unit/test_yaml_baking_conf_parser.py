@@ -1,14 +1,16 @@
 import unittest
-from config.yaml_baking_conf_parser import BakingYamlConfParser, ConfigurationException
-from api.provider_factory import ProviderFactory
+from src.config.yaml_baking_conf_parser import (
+    BakingYamlConfParser,
+    ConfigurationException,
+)
+from src.api.provider_factory import ProviderFactory
 from tests.utils import make_config
-from Constants import DryRun
-from util.address_validator import AddressValidator
-from model.baking_conf import BAKING_ADDRESS
+from src.Constants import DryRun
+from src.util.address_validator import AddressValidator
+from src.model.baking_conf import BAKING_ADDRESS
 
 
 class TestYamlBakingConfigParser(unittest.TestCase):
-
     baking_config = make_config(
         baking_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
         payment_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",

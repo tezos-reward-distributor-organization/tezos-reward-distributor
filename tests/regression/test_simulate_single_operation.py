@@ -1,9 +1,9 @@
 from unittest.mock import patch, MagicMock
-from pay.batch_payer import BatchPayer, TX_FEES, MUTEZ_PER_GAS_UNIT
-from model.reward_log import RewardLog
-from cli.client_manager import ClientManager
+from src.pay.batch_payer import BatchPayer, TX_FEES, MUTEZ_PER_GAS_UNIT
+from src.model.reward_log import RewardLog
+from src.cli.client_manager import ClientManager
 from http import HTTPStatus
-from Constants import (
+from src.Constants import (
     CURRENT_TESTNET,
     PUBLIC_NODE_URL,
     PRIVATE_SIGNER_URL,
@@ -57,10 +57,11 @@ def test_simulate_single_operation():
     )
     reward_log.amount = 15577803
     reward_log.skipped = False
+    # TODO: Simulate operation got deprecated https://tezos.gitlab.io/introduction/breaking_changes.html?highlight=run_operation#deprecation
     simulation_status, simulation_results = batch_payer.simulate_single_operation(
         reward_log, reward_log.amount, "hash", "unittest"
     )
-    assert PaymentStatus.DONE == simulation_status
+    assert simulation_status.is_done()
     consumed_gas, tx_fee, storage = simulation_results
     assert 250 == consumed_gas
     assert 323.0 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
@@ -99,4 +100,4 @@ def test_failed_simulate_single_operation():
     simulation_status, simulation_results = batch_payer.simulate_single_operation(
         reward_log, reward_log.amount, "hash", "unittest"
     )
-    assert PaymentStatus.FAIL == simulation_status
+    assert simulation_status.is_fail()

@@ -5,22 +5,20 @@ from time import sleep
 from exception.api_provider import ApiProviderException
 
 from log_config import main_logger, verbose_logger
-from tzstats.tzstats_api_constants import (
-    idx_n_baking_rights,
+from blockwatch.tzpro_api_constants import (
+    idx_income_baking_rights,
     idx_income_expected_income,
     idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
     idx_cb_delegator_address,
     idx_cb_current_balance,
-    idx_n_active_stake,
+    idx_income_active_stake,
     idx_income_lost_accusation_deposits,
     idx_income_lost_seed_fees,
     idx_income_lost_seed_rewards,
-    idx_income_missed_baking_income,
-    idx_income_missed_endorsing_income,
 )
-from Constants import TZSTATS_PUBLIC_API_URL, MUTEZ_PER_TEZ
+from Constants import TZPRO_API_URL, MUTEZ_PER_TEZ
 
 logger = main_logger
 
@@ -50,18 +48,19 @@ def split(input, n):
         yield input[i : i + n]
 
 
-class TzStatsRewardProviderHelper:
-    def __init__(self, nw, baking_address):
-        super(TzStatsRewardProviderHelper, self).__init__()
+class TzProRewardProviderHelper:
+    def __init__(self, nw, baking_address, key):
+        super(TzProRewardProviderHelper, self).__init__()
 
-        self.api = TZSTATS_PUBLIC_API_URL[nw["NAME"]]
+        self.key = key
+
+        self.api = TZPRO_API_URL[nw["NAME"]]
         if self.api is None:
             raise ApiProviderException("Unknown network {}".format(nw))
 
         self.baking_address = baking_address
 
     def get_rewards_for_cycle(self, cycle):
-
         root = {
             "delegate_staking_balance": 0,
             "num_baking_rights": 0,
@@ -77,14 +76,14 @@ class TzStatsRewardProviderHelper:
         #
         uri = self.api + rewards_split_call.format(self.baking_address, cycle)
 
-        sleep(0.5)  # be nice to tzstats
+        sleep(0.5)  # be nice to tzpro
 
         verbose_logger.debug("Requesting rewards breakdown, {}".format(uri))
 
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         verbose_logger.debug(
-            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+            "Response from tzpro is {}".format(resp.content.decode("utf8"))
         )
 
         if resp.status_code != HTTPStatus.OK:
@@ -93,8 +92,8 @@ class TzStatsRewardProviderHelper:
 
         resp = resp.json()[0]
 
-        root["num_baking_rights"] = resp[idx_n_baking_rights]
-        root["active_stake"] = resp[idx_n_active_stake]
+        root["num_baking_rights"] = resp[idx_income_baking_rights]
+        root["active_stake"] = resp[idx_income_active_stake]
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)
         root["rewards_and_fees"] = int(
@@ -111,7 +110,7 @@ class TzStatsRewardProviderHelper:
                 + float(resp[idx_income_lost_seed_rewards])
             )
         )
-        # TODO: Find out how to calculate denuciation rewards via tzstats
+        # TODO: Find out how to calculate denuciation rewards via tzpro
         root["denunciation_rewards"] = int(
             MUTEZ_PER_TEZ
             * (
@@ -132,16 +131,16 @@ class TzStatsRewardProviderHelper:
         # Get staking balances of delegators at snapshot block
         #
         uri = self.api + reward_snapshot.format(self.baking_address, cycle)
-        sleep(0.5)  # be nice to tzstats
+        sleep(0.5)  # be nice to tzpro
 
         verbose_logger.debug(
             "Requesting staking balances of delegators, {}".format(uri)
         )
 
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         verbose_logger.debug(
-            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+            "Response from tzpro is {}".format(resp.content.decode("utf8"))
         )
 
         if resp.status_code != HTTPStatus.OK:
@@ -160,27 +159,27 @@ class TzStatsRewardProviderHelper:
         #
         # Get current balance of delegates
         #
-        # This is done in 2 phases. 1) make a single API call to tzstats, retrieving an array
+        # This is done in 2 phases. 1) make a single API call to tzpro, retrieving an array
         # of arrays with current balance of each delegator who "currently" delegates to delegate. There may
         # be a case where the delegator has changed delegations and would therefor not be in this array.
         # Thus, 2) determines which delegators are not in the first result, and makes individual
-        # calls to get their balance. This approach should reduce the overall number of API calls made to tzstats.
+        # calls to get their balance. This approach should reduce the overall number of API calls made to tzpro.
         #
 
         # Phase 1
         #
         uri = self.api + batch_current_balance_call.format(self.baking_address)
 
-        sleep(0.5)  # be nice to tzstats
+        sleep(0.5)  # be nice to tzpro
 
         verbose_logger.debug(
             "Requesting current balance of delegators, phase 1, {}".format(uri)
         )
 
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         verbose_logger.debug(
-            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+            "Response from tzpro is {}".format(resp.content.decode("utf8"))
         )
 
         if resp.status_code != HTTPStatus.OK:
@@ -250,10 +249,9 @@ class TzStatsRewardProviderHelper:
                 d.current_balance = list_curr_balances[d.address]
 
     def get_snapshot_level(self, cycle):
-
         uri = self.api + snapshot_cycle.format(cycle)
 
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -263,10 +261,9 @@ class TzStatsRewardProviderHelper:
         return snapshot_height
 
     def get_cycle_total_stake(self, cycle):
-
         uri = self.api + snapshot_cycle.format(cycle)
 
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         if resp.status_code != HTTPStatus.OK:
             # This means something went wrong.
@@ -278,7 +275,7 @@ class TzStatsRewardProviderHelper:
 
     def get_current_cycle(self):
         uri = self.api + tip
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
         root = resp.json()
         return root["cycle"]
 
@@ -289,16 +286,16 @@ class TzStatsRewardProviderHelper:
         param_txt = param_txt[:-1]
         uri = self.api + single_current_balance_call.format(param_txt)
 
-        sleep(0.5)  # be nice to tzstats
+        sleep(0.5)  # be nice to tzpro
 
         verbose_logger.debug(
             "Requesting current balance of delegator, phase 2, {}".format(uri)
         )
 
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         verbose_logger.debug(
-            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+            "Response from tzpro is {}".format(resp.content.decode("utf8"))
         )
 
         if resp.status_code != HTTPStatus.OK:
@@ -320,10 +317,10 @@ class TzStatsRewardProviderHelper:
 
         verbose_logger.debug("Requesting contract storage, {}".format(uri))
 
-        resp = requests.get(uri, timeout=5)
+        resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
 
         verbose_logger.debug(
-            "Response from tzstats is {}".format(resp.content.decode("utf8"))
+            "Response from tzpro is {}".format(resp.content.decode("utf8"))
         )
 
         if resp.status_code != HTTPStatus.OK:
@@ -343,9 +340,9 @@ class TzStatsRewardProviderHelper:
 
             offset += 100
             verbose_logger.debug("Requesting LP balances, {}".format(uri))
-            resp = requests.get(uri, timeout=5)
+            resp = requests.get(uri, timeout=5, headers={"X-API-Key": self.key})
             verbose_logger.debug(
-                "Response from tzstats is {}".format(resp.content.decode("utf8"))
+                "Response from tzpro is {}".format(resp.content.decode("utf8"))
             )
 
             if resp.status_code != HTTPStatus.OK:

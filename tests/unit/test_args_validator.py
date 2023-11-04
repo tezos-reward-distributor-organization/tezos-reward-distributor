@@ -1,13 +1,13 @@
-from util.parser import (
+from src.util.parser import (
     build_parser,
     add_argument_provider,
 )
-from util.args_validator import ArgsValidator, validate
+from src.util.args_validator import ArgsValidator, validate
 import argparse
 import pytest
 import logging
 import os
-from Constants import PUBLIC_NODE_URL
+from src.Constants import PUBLIC_NODE_URL
 
 
 LOGGER = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ def test_reward_data_provider_validator_throws(caplog, capsys):
     out, err = capsys.readouterr()
     assert excinfo.value.code == 2
     assert excinfo.type == SystemExit
-    assert "is not functional at the moment. Please use: tzkt, tzstats" in err
+    assert "is not functional at the moment. Please use: tzkt, tzpro" in err
 
 
 def test_payment_offset_validator_throws(caplog, capsys):

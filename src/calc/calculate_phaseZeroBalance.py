@@ -18,10 +18,8 @@ class CalculatePhaseZeroBalance(CalculatePhaseBase):
         self.phase = 7
 
     def calculate(self, reward_logs, reactivate_zeroed):
-
         reward_data7 = []
         for delegate in reward_logs:
-
             # If delegate's current balance is 0, and we are NOT reactivating it,
             # then mark address as being skipped with a description to be included
             # in the CSV payment report

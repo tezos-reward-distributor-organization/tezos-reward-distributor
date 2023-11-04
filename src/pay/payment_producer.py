@@ -72,21 +72,26 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.node_url = node_url
         self.client_manager = client_manager
+        self.tzpro_api_key = baking_cfg.get_tzpro_api_key()
         self.reward_api = self.provider_factory.newRewardApi(
             network_config,
             self.baking_address,
             self.node_url,
             node_url_public,
             api_base_url,
+            self.tzpro_api_key,
         )
         self.block_api = self.provider_factory.newBlockApi(
-            network_config, self.node_url, api_base_url
+            network_config,
+            self.node_url,
+            api_base_url,
+            self.tzpro_api_key,
         )
 
         dexter_contracts_set = baking_cfg.get_contracts_set()
-        if len(dexter_contracts_set) > 0 and not (self.reward_api.name == "tzstats"):
+        if len(dexter_contracts_set) > 0 and not (self.reward_api.name == "tzpro"):
             logger.warning(
-                "The Dexter functionality is currently only supported using tzstats."
+                "The Dexter functionality is currently only supported using tzpro."
                 "The contract address will be treated as a normal delegator."
             )
         else:
@@ -223,12 +228,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         get_verbose_log_helper().reset(pymnt_cycle)
 
         while not self.exiting and self.life_cycle.is_running():
-
             # take a breath
             sleep(5)
 
             try:
-
                 # Exit if disk is full
                 # https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
                 if disk_is_full():
@@ -605,7 +608,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
             # 5- if total_rewards > 0, proceed with payment
             if total_amount_to_pay > 0:
-
                 self.payments_queue.put(PaymentBatch(self, pymnt_cycle, reward_logs))
 
                 sleep(5.0)

@@ -1,9 +1,9 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
-from main import start_application
+from src.main import start_application
 from tests.utils import Args, make_config
-from Constants import TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
+from src.Constants import TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
 
 
 @pytest.fixture

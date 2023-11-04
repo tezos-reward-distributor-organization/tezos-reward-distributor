@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from calc.calculate_phaseMapping import CalculatePhaseMapping
-from model.reward_log import RewardLog
-from Constants import ALMOST_ZERO
+from src.calc.calculate_phaseMapping import CalculatePhaseMapping
+from src.model.reward_log import RewardLog
+from src.Constants import ALMOST_ZERO
 
 
 class TestCalculatePhaseMapping(TestCase):

@@ -1,11 +1,13 @@
+import os
 import pytest
-from src.tzstats.tzstats_block_api import TzStatsBlockApiImpl
+from src.blockwatch.tzpro_block_api import TzProBlockApiImpl
 from unittest.mock import patch, MagicMock
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP
 from tests.utils import Constants
 
 MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR
 MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
+TZ_PRO_API_KEY = os.environ.get("TZ_PRO_API_KEY")
 
 
 class MockResponse:
@@ -19,7 +21,7 @@ class MockResponse:
 
 @pytest.fixture
 def address_api():
-    return TzStatsBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"])
+    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], TZ_PRO_API_KEY)
 
 
 def test_get_revelation(address_api):
@@ -32,11 +34,11 @@ class MockCycleLevelResponse(MockResponse):
 
 
 @patch(
-    "src.tzstats.tzstats_block_api.requests.get",
+    "src.blockwatch.tzpro_block_api.requests.get",
     MagicMock(return_value=MockCycleLevelResponse()),
 )
 def test_get_current_cycle_and_level(address_api):
-    # NOTE: The block count for tzstats is incremented internally by one to synch tzstats with tzkt
+    # NOTE: The block count for tzpro is incremented internally by one to sync tzpro with tzkt
     assert address_api.get_current_cycle_and_level() == (523, 2701515 + 1)
 
 

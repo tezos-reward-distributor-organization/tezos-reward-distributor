@@ -1,8 +1,6 @@
 import pytest
-from src.main import requirements_installed, installed
-from main import start_application
+from src.main import requirements_installed, installed, start_application
 from unittest.mock import patch, MagicMock
-from datetime import date
 
 
 @patch("main.requirements_installed", MagicMock(return_value=False))

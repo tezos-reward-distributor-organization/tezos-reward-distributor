@@ -3,26 +3,30 @@ import math
 
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
-from tzstats.tzstats_reward_provider_helper import TzStatsRewardProviderHelper
+from blockwatch.tzpro_reward_provider_helper import TzProRewardProviderHelper
 from Constants import MUTEZ_PER_TEZ
 from Dexter import dexter_utils as dxtz
 
 logger = main_logger
 
 
-class TzStatsRewardApiImpl(RewardApi):
-    def __init__(self, nw, baking_address):
+class TzProRewardApiImpl(RewardApi):
+    def __init__(self, nw, baking_address, tzpro_api_key):
         super().__init__()
-        self.name = "tzstats"
+        self.name = "tzpro"
         self.logger = main_logger
-        self.helper = TzStatsRewardProviderHelper(nw, baking_address)
+        if tzpro_api_key == "":
+            raise Exception(
+                "Please set a tzpro api key in the config to use this reward api!"
+            )
+        self.key = tzpro_api_key
+        self.helper = TzProRewardProviderHelper(nw, baking_address, self.key)
 
         self.blocks_per_cycle = nw["BLOCKS_PER_CYCLE"]
         self.consensus_committee_size = nw["CONSENSUS_COMMITTEE_SIZE"]
         self.endorsing_reward_per_slot = nw["ENDORSING_REWARD_PER_SLOT"]
 
     def get_rewards_for_cycle_map(self, cycle, rewards_type):
-
         root = self.helper.get_rewards_for_cycle(cycle)
 
         delegate_staking_balance = root["delegate_staking_balance"]
