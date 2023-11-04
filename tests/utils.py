@@ -117,7 +117,12 @@ class Args:
 
 
 def make_config(
-    baking_address, payment_address, service_fee, min_delegation_amt, min_payment_amt
+    baking_address,
+    payment_address,
+    service_fee,
+    min_delegation_amt,
+    min_payment_amt,
+    tzpro_api_key="",
 ):
     """This helper function creates a YAML bakers config
 
@@ -153,6 +158,7 @@ def make_config(
     service_fee: {:f}
     specials_map: {{}}
     supporters_set: !!set {{}}
+    tzpro_api_key: {:s}
     plugins:
         enabled:
     """.format(
@@ -161,6 +167,7 @@ def make_config(
         min_payment_amt,
         payment_address,
         service_fee,
+        tzpro_api_key,
     )
 
 

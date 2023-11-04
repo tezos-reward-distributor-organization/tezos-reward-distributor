@@ -1,3 +1,4 @@
+import os
 import pytest
 import requests
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, PUBLIC_NODE_URL, RewardsType
@@ -11,7 +12,6 @@ from src.rpc.rpc_block_api import RpcBlockApiImpl
 # Reward APIs
 from src.tzkt.tzkt_reward_api import TzKTRewardApiImpl
 from src.blockwatch.tzpro_reward_api import TzProRewardApiImpl
-from src.blockwatch.tzpro_api_constants import load_key_from_env_variables
 
 MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR
 MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
@@ -19,7 +19,7 @@ MAINNET_ADDRESS_BAKEXTZ4ME_BAKER = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
 GHOSTNET_ADDRESS_STAKENOW_BAKER = Constants.GHOSTNET_ADDRESS_STAKENOW_BAKER
 MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT
 
-TZ_PRO_API_KEY = load_key_from_env_variables()
+TZ_PRO_API_KEY = os.environ.get("TZ_PRO_API_KEY")
 
 # These tests should not be mocked but test the overall consistency
 # accross all tezos APIs which are available in TRD
@@ -32,7 +32,7 @@ def address_block_api_tzkt():
 
 @pytest.fixture
 def address_block_api_tzpro():
-    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"])
+    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], TZ_PRO_API_KEY)
 
 
 @pytest.fixture
@@ -108,7 +108,9 @@ def address_reward_api_tzkt():
 @pytest.fixture
 def address_reward_api_tzpro():
     return TzProRewardApiImpl(
-        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
+        MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
+        TZ_PRO_API_KEY,
     )
 
 

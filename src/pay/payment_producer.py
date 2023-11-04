@@ -72,15 +72,20 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.node_url = node_url
         self.client_manager = client_manager
+        self.tzpro_api_key = baking_cfg.get_tzpro_api_key()
         self.reward_api = self.provider_factory.newRewardApi(
             network_config,
             self.baking_address,
             self.node_url,
             node_url_public,
             api_base_url,
+            self.tzpro_api_key,
         )
         self.block_api = self.provider_factory.newBlockApi(
-            network_config, self.node_url, api_base_url
+            network_config,
+            self.node_url,
+            api_base_url,
+            self.tzpro_api_key,
         )
 
         dexter_contracts_set = baking_cfg.get_contracts_set()

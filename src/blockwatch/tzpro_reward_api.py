@@ -4,7 +4,6 @@ import math
 from log_config import main_logger
 from model.reward_provider_model import RewardProviderModel
 from blockwatch.tzpro_reward_provider_helper import TzProRewardProviderHelper
-from blockwatch.tzpro_api_constants import load_key_from_env_variables
 from Constants import MUTEZ_PER_TEZ
 from Dexter import dexter_utils as dxtz
 
@@ -12,11 +11,15 @@ logger = main_logger
 
 
 class TzProRewardApiImpl(RewardApi):
-    def __init__(self, nw, baking_address):
+    def __init__(self, nw, baking_address, tzpro_api_key):
         super().__init__()
         self.name = "tzpro"
         self.logger = main_logger
-        self.key = load_key_from_env_variables()
+        if tzpro_api_key == "":
+            raise Exception(
+                "Please set a tzpro api key in the config to use this reward api!"
+            )
+        self.key = tzpro_api_key
         self.helper = TzProRewardProviderHelper(nw, baking_address, self.key)
 
         self.blocks_per_cycle = nw["BLOCKS_PER_CYCLE"]

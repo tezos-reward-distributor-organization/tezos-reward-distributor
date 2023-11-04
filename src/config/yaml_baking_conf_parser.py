@@ -57,8 +57,14 @@ class BakingYamlConfParser(YamlConfParser):
         self.clnt_mngr = clnt_mngr
         self.network_config = network_config
         if block_api is None:
+            tzpro_api_key = (
+                self.tzpro_api_key if provider_factory.provider == "tzpro" else ""
+            )
             block_api = provider_factory.newBlockApi(
-                network_config, node_url, api_base_url=api_base_url
+                network_config,
+                node_url,
+                api_base_url=api_base_url,
+                tzpro_api_key=tzpro_api_key,
             )
         self.block_api = block_api
         self.dry_run = dry_run

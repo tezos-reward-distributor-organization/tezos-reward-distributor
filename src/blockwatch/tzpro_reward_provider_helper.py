@@ -6,19 +6,17 @@ from exception.api_provider import ApiProviderException
 
 from log_config import main_logger, verbose_logger
 from blockwatch.tzpro_api_constants import (
-    idx_n_baking_rights,
+    idx_income_baking_rights,
     idx_income_expected_income,
     idx_income_total_income,
     idx_income_lost_accusation_fees,
     idx_income_lost_accusation_rewards,
     idx_cb_delegator_address,
     idx_cb_current_balance,
-    idx_n_active_stake,
+    idx_income_active_stake,
     idx_income_lost_accusation_deposits,
     idx_income_lost_seed_fees,
     idx_income_lost_seed_rewards,
-    idx_income_missed_baking_income,
-    idx_income_missed_endorsing_income,
 )
 from Constants import TZPRO_API_URL, MUTEZ_PER_TEZ
 
@@ -94,8 +92,8 @@ class TzProRewardProviderHelper:
 
         resp = resp.json()[0]
 
-        root["num_baking_rights"] = resp[idx_n_baking_rights]
-        root["active_stake"] = resp[idx_n_active_stake]
+        root["num_baking_rights"] = resp[idx_income_baking_rights]
+        root["active_stake"] = resp[idx_income_active_stake]
 
         # rewards earned (excluding equivocation losses and equivocation accusation income)
         root["rewards_and_fees"] = int(

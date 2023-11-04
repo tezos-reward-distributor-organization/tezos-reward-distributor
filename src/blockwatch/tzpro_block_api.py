@@ -3,19 +3,23 @@ from api.block_api import BlockApi
 from exception.api_provider import ApiProviderException
 from log_config import main_logger, verbose_logger
 from Constants import TZPRO_API_URL
-from blockwatch.tzpro_api_constants import load_key_from_env_variables
 
 logger = main_logger
 
 
 class TzProBlockApiImpl(BlockApi):
-    def __init__(self, nw):
+    def __init__(self, nw, tzpro_api_key):
         super(TzProBlockApiImpl, self).__init__(nw)
 
         self.head_api = TZPRO_API_URL[nw["NAME"]]
         if self.head_api is None:
             raise Exception("Unknown network {}".format(nw))
-        self.key = load_key_from_env_variables()
+
+        if tzpro_api_key == "":
+            raise Exception(
+                "Please set a tzpro api key in the config to use this block api!"
+            )
+        self.key = tzpro_api_key
 
     def get_current_cycle_and_level(self):
         uri = self.head_api + "/explorer/tip"

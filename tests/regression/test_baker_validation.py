@@ -1,3 +1,4 @@
+import os
 import pytest
 from src.cli.client_manager import ClientManager
 from src.config.yaml_baking_conf_parser import BakingYamlConfParser
@@ -8,7 +9,7 @@ from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
 from src.blockwatch.tzpro_block_api import TzProBlockApiImpl
 from tests.utils import Constants
 
-
+TZ_PRO_API_KEY = os.environ.get("TZ_PRO_API_KEY")
 node_endpoint = PUBLIC_NODE_URL["MAINNET"]
 network = {"NAME": "MAINNET"}
 
@@ -18,7 +19,9 @@ network = {"NAME": "MAINNET"}
     [
         pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
         pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
-        pytest.param(TzProBlockApiImpl(network), id="TzProBlockApiImpl"),
+        pytest.param(
+            TzProBlockApiImpl(network, TZ_PRO_API_KEY), id="TzProBlockApiImpl"
+        ),
     ],
 )
 def test_address_is_baker_address(block_api):
@@ -48,7 +51,9 @@ def test_address_is_baker_address(block_api):
     [
         pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
         pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
-        pytest.param(TzProBlockApiImpl(network), id="TzProBlockApiImpl"),
+        pytest.param(
+            TzProBlockApiImpl(network, TZ_PRO_API_KEY), id="TzProBlockApiImpl"
+        ),
     ],
 )
 def test_address_is_not_baker_address(block_api):
@@ -80,7 +85,9 @@ def test_address_is_not_baker_address(block_api):
     [
         pytest.param(RpcBlockApiImpl(network, node_endpoint), id="RpcBlockApiImpl"),
         pytest.param(TzKTBlockApiImpl(network), id="TzKTBlockApiImpl"),
-        pytest.param(TzProBlockApiImpl(network), id="TzProBlockApiImpl"),
+        pytest.param(
+            TzProBlockApiImpl(network, TZ_PRO_API_KEY), id="TzProBlockApiImpl"
+        ),
     ],
 )
 def test_invalid_baking_address(block_api):

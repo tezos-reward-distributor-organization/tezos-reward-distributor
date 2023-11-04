@@ -1,3 +1,4 @@
+import os
 import pytest
 from src.blockwatch.tzpro_block_api import TzProBlockApiImpl
 from unittest.mock import patch, MagicMock
@@ -6,6 +7,7 @@ from tests.utils import Constants
 
 MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR
 MAINNET_ADDRESS_STAKENOW_BAKER = Constants.MAINNET_ADDRESS_STAKENOW_BAKER
+TZ_PRO_API_KEY = os.environ.get("TZ_PRO_API_KEY")
 
 
 class MockResponse:
@@ -19,7 +21,7 @@ class MockResponse:
 
 @pytest.fixture
 def address_api():
-    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"])
+    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], TZ_PRO_API_KEY)
 
 
 def test_get_revelation(address_api):
