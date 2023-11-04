@@ -6,6 +6,7 @@ from src.Constants import (
     RewardsType,
     DEFAULT_NETWORK_CONFIG_MAP,
 )
+from src.Constants import DryRun
 from src.cli.client_manager import ClientManager
 from src.config.addr_type import AddrType
 from src.config.yaml_baking_conf_parser import BakingYamlConfParser
@@ -51,6 +52,7 @@ class TestYamlAppConfParser(TestCase):
             network_config=network,
             node_url=self.mainnet_public_node_url,
             block_api=block_api,
+            dry_run=DryRun.NO_SIGNER,
         )
         cnf_prsr.parse()
         cnf_prsr.validate()
@@ -73,7 +75,8 @@ class TestYamlAppConfParser(TestCase):
             "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194",
         )
         self.assertEqual(
-            cnf_prsr.get_conf_obj_attr("__payment_address_type"), AddrType.TZ
+            cnf_prsr.get_conf_obj_attr("__payment_address_type").value,
+            AddrType.TZ.value,
         )
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr("min_delegation_amt"), 0)
@@ -82,7 +85,7 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr("reactivate_zeroed"), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr("delegator_pays_ra_fee"), True)
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr("rewards_type"), RewardsType.ACTUAL)
+        self.assertTrue(cnf_prsr.get_conf_obj_attr("rewards_type").isActual())
 
         plugins = cnf_prsr.get_conf_obj_attr("plugins")
         self.assertIsInstance(plugins, dict)
@@ -115,6 +118,7 @@ class TestYamlAppConfParser(TestCase):
             network_config=network,
             node_url=self.mainnet_public_node_url,
             block_api=block_api,
+            dry_run=DryRun.NO_SIGNER,
         )
         cnf_prsr.parse()
         cnf_prsr.validate()
@@ -136,7 +140,8 @@ class TestYamlAppConfParser(TestCase):
             "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194",
         )
         self.assertEqual(
-            cnf_prsr.get_conf_obj_attr("__payment_address_type"), AddrType.TZ
+            cnf_prsr.get_conf_obj_attr("__payment_address_type").value,
+            AddrType.TZ.value,
         )
 
         self.assertEqual(cnf_prsr.get_conf_obj_attr("founders_map"), dict())
@@ -149,7 +154,7 @@ class TestYamlAppConfParser(TestCase):
         self.assertEqual(cnf_prsr.get_conf_obj_attr("reactivate_zeroed"), False)
         self.assertEqual(cnf_prsr.get_conf_obj_attr("delegator_pays_ra_fee"), True)
 
-        self.assertEqual(cnf_prsr.get_conf_obj_attr("rewards_type"), RewardsType.ACTUAL)
+        self.assertTrue(cnf_prsr.get_conf_obj_attr("rewards_type").isActual())
 
         plugins = cnf_prsr.get_conf_obj_attr("plugins")
         self.assertIsInstance(plugins, dict)

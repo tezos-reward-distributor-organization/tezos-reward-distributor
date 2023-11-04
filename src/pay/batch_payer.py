@@ -433,7 +433,7 @@ class BatchPayer:
                 wait_random(block_time)
 
         for payment_item in payment_items:
-            if payment_item.paid == PaymentStatus.UNDEFINED:
+            if payment_item.paid.is_undefined():
                 payment_item.paid = status
                 payment_item.hash = operation_hash
                 payment_item.desc += error_message

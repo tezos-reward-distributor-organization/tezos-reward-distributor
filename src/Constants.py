@@ -163,6 +163,9 @@ class PaymentStatus(Enum):
     INJECTED = 3
     AVOIDED = 4
 
+    def is_undefined(self):
+        return self.value == -1
+
     def is_fail(self):
         return self.value == 0
 

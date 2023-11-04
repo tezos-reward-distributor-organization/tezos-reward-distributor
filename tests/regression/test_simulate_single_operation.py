@@ -57,6 +57,7 @@ def test_simulate_single_operation():
     )
     reward_log.amount = 15577803
     reward_log.skipped = False
+    # TODO: Simulate operation got deprecated https://tezos.gitlab.io/introduction/breaking_changes.html?highlight=run_operation#deprecation
     simulation_status, simulation_results = batch_payer.simulate_single_operation(
         reward_log, reward_log.amount, "hash", "unittest"
     )
