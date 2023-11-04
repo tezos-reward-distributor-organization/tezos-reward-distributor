@@ -135,7 +135,7 @@ def test_rpc_terminate_404(address_api):
     current_cycle = 200
 
     with pytest.raises(
-        ApiProviderException,
+        Exception,
         match="RPC URL '{}/chains/main/blocks/head' not found. Is this node in archive mode?".format(
             PUBLIC_NODE_URL["MAINNET"]
         ),

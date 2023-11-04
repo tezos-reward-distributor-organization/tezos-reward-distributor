@@ -89,7 +89,7 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
     status, operation_hash, _ = batch_payer.attempt_single_batch(
         [reward_log], opt_counter, dry_run=True
     )
-    assert status == PaymentStatus.DONE
+    assert status.is_done()
     assert operation_hash is None
     assert reward_log.delegator_transaction_fee == int(
         TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"]
@@ -151,7 +151,7 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
     status, operation_hash, _ = batch_payer.attempt_single_batch(
         [reward_log], opt_counter, dry_run=True
     )
-    assert status == PaymentStatus.DONE
+    assert status.is_done()
     assert operation_hash is None
     assert reward_log.delegator_transaction_fee == 9004
     assert opt_counter.counter == 4

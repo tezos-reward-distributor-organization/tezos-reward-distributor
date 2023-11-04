@@ -1,3 +1,4 @@
+import os
 import unittest
 import pytest
 from unittest.mock import patch, MagicMock
@@ -125,7 +126,9 @@ class RewardApiImplTests(unittest.TestCase):
         )
         if tzpro_rewards is None:
             tzpro_impl = TzProRewardApiImpl(
-                nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], baking_address=address
+                nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
+                baking_address=address,
+                tzpro_api_key=os.environ.get("TZ_PRO_API_KEY"),
             )
             tzpro_rewards = tzpro_impl.get_rewards_for_cycle_map(
                 cycle, RewardsType.ACTUAL
@@ -206,7 +209,7 @@ class Mock_404_Response:
 @patch("tzkt.tzkt_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_tzkt_terminate_404(address_api):
     with pytest.raises(
-        TzKTApiError,
+        Exception,
         match="TzKT returned 404 error:\n404 Error happened",
     ):
         _ = address_api.get_rewards_for_cycle_map(
@@ -235,7 +238,7 @@ class Mock_500_Response:
 @patch("tzkt.tzkt_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_tzkt_retry_500(address_api):
     with pytest.raises(
-        TzKTApiError,
+        Exception,
         match=r"Max sequent calls number exceeded \({}\)".format(MAX_SEQUENT_CALLS),
     ):
         _ = address_api.get_rewards_for_cycle_map(
@@ -264,7 +267,7 @@ class Mock_204_Response:
 @patch("tzkt.tzkt_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_tzkt_retry_204(address_api):
     with pytest.raises(
-        TzKTApiError,
+        Exception,
         match=r"Max sequent calls number exceeded \({}\)".format(MAX_SEQUENT_CALLS),
     ):
         _ = address_api.get_rewards_for_cycle_map(

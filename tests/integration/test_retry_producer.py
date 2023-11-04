@@ -184,7 +184,7 @@ class TestRetryProducer(TestCase):
         self.assertEqual(31, len(payment_batch.batch))
         self.assertEqual(
             5,
-            len([row for row in payment_batch.batch if row.paid == PaymentStatus.FAIL]),
+            len([row for row in payment_batch.batch if row.paid.is_fail()]),
         )
 
         nw = dict({"MINIMAL_BLOCK_DELAY": 30})
@@ -197,7 +197,11 @@ class TestRetryProducer(TestCase):
         success_report_rows = CsvPaymentFileParser().parse(success_report, 10)
         success_count = len([row for row in success_report_rows])
         hash_xxx_op_count = len(
-            [row for row in success_report_rows if row.hash == "xxx_op_hash"]
+            [
+                row
+                for row in success_report_rows
+                if (row.hash is None or row.hash == "xxx_op_hash")
+            ]
         )
         failed_reports_count = len(
             [

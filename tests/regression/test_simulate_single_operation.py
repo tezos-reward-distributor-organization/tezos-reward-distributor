@@ -60,7 +60,7 @@ def test_simulate_single_operation():
     simulation_status, simulation_results = batch_payer.simulate_single_operation(
         reward_log, reward_log.amount, "hash", "unittest"
     )
-    assert PaymentStatus.DONE == simulation_status
+    assert simulation_status.is_done()
     consumed_gas, tx_fee, storage = simulation_results
     assert 250 == consumed_gas
     assert 323.0 == default_fee + consumed_gas * MUTEZ_PER_GAS_UNIT
@@ -99,4 +99,4 @@ def test_failed_simulate_single_operation():
     simulation_status, simulation_results = batch_payer.simulate_single_operation(
         reward_log, reward_log.amount, "hash", "unittest"
     )
-    assert PaymentStatus.FAIL == simulation_status
+    assert simulation_status.is_fail()

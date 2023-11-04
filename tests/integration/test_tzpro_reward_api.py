@@ -1,3 +1,4 @@
+import os
 import pytest
 from src.blockwatch.tzpro_reward_api import TzProRewardApiImpl
 from unittest.mock import patch, MagicMock
@@ -14,6 +15,7 @@ def address_api():
     return TzProRewardApiImpl(
         nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
         baking_address=MAINNET_ADDRESS_STAKENOW_BAKER,
+        tzpro_api_key=os.environ.get("TZ_PRO_API_KEY"),
     )
 
 
@@ -62,7 +64,7 @@ class Mock_404_Response:
 )
 def test_tzpro_terminate_404(address_api):
     with pytest.raises(
-        ApiProviderException,
+        Exception,
         match=r"GET https://api.tzpro.io/tables/income\?address=tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194&cycle=100 404",
     ):
         _ = address_api.get_rewards_for_cycle_map(

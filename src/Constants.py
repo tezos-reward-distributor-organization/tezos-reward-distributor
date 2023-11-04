@@ -166,6 +166,18 @@ class PaymentStatus(Enum):
     def is_fail(self):
         return self.value == 0
 
+    def is_paid(self):
+        return self.value == 1
+
+    def is_done(self):
+        return self.value == 2
+
+    def is_injected(self):
+        return self.value == 3
+
+    def is_avoided(self):
+        return self.value == 4
+
     def is_processed(self):
         return self.value > 0
 
