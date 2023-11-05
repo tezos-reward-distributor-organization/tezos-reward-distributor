@@ -11,7 +11,7 @@ def start_application(args=None):
     # Requirements need to be checked outside of the state machine
     # because the library transitions could not be present
     ready = (
-        python_version_ok
+        python_version_ok()
         and requirements_installed()
         and renamed_fee_ini()
         and not new_protocol_live()
