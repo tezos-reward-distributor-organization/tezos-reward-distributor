@@ -16,7 +16,7 @@ class AddrType(Enum):
     def is_ktals(self):
         return self.value == 3
 
-    def is_tz(self):
+    def is_tzals(self):
         return self.value == 4
 
     @staticmethod
