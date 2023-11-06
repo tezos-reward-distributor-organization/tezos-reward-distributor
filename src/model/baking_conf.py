@@ -20,7 +20,7 @@ PLUGINS_CONF = "plugins"
 REWARDS_TYPE = "rewards_type"
 PAY_DENUNCIATION_REWARDS = "pay_denunciation_rewards"
 MIN_PAYMENT_AMT = "min_payment_amt"
-TZPRO_API_KEY = "tzpro_api_key"
+TZ_PRO_API_KEY = "tzpro_api_key"
 
 # extensions
 FULL_SUPPORTERS_SET = "__full_supporters_set"
@@ -121,4 +121,4 @@ class BakingConf:
         return self.get_attribute(MIN_PAYMENT_AMT)
 
     def get_tzpro_api_key(self):
-        return self.get_attribute(TZPRO_API_KEY)
+        return self.get_attribute(TZ_PRO_API_KEY)
