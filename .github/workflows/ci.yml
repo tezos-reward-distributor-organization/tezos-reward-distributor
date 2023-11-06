@@ -62,7 +62,7 @@ jobs:
 
     - name: Test with pytest
       env:
-        TZ_PRO_API_KEY: ${{ secrets.TZ_PRO_API_KEY }} 
+        TZPRO_API_KEY: ${{ secrets.TZPRO_API_KEY }} 
       run: pytest tests/
 
   build-documentation:

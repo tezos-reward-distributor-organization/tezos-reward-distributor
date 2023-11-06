@@ -19,7 +19,7 @@ MAINNET_ADDRESS_BAKEXTZ4ME_BAKER = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
 GHOSTNET_ADDRESS_STAKENOW_BAKER = Constants.GHOSTNET_ADDRESS_STAKENOW_BAKER
 MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT
 
-TZ_PRO_API_KEY = os.environ.get("TZ_PRO_API_KEY")
+TZPRO_API_KEY = os.environ.get("TZPRO_API_KEY")
 
 # These tests should not be mocked but test the overall consistency
 # accross all tezos APIs which are available in TRD
@@ -32,7 +32,7 @@ def address_block_api_tzkt():
 
 @pytest.fixture
 def address_block_api_tzpro():
-    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], TZ_PRO_API_KEY)
+    return TzProBlockApiImpl(DEFAULT_NETWORK_CONFIG_MAP["MAINNET"], TZPRO_API_KEY)
 
 
 @pytest.fixture
@@ -45,7 +45,7 @@ def address_block_api_rpc():
 @pytest.fixture
 def current_cycle():
     tip = "https://api.tzpro.io/explorer/tip"
-    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZ_PRO_API_KEY})
+    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZPRO_API_KEY})
     return int(resp.json()["cycle"])
 
 
@@ -110,14 +110,14 @@ def address_reward_api_tzpro():
     return TzProRewardApiImpl(
         DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
         MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
-        TZ_PRO_API_KEY,
+        TZPRO_API_KEY,
     )
 
 
 @pytest.fixture
 def current_cycle_ghostnet():
     tip = "https://api.ghost.tzpro.io/explorer/tip"
-    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZ_PRO_API_KEY})
+    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZPRO_API_KEY})
     return int(resp.json()["cycle"])
 
 
