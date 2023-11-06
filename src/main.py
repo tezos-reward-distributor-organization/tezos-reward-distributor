@@ -1,5 +1,5 @@
 from launch_common import (
-    new_protocol_live,
+    new_protocol_not_live,
     requirements_installed,
     renamed_fee_ini,
     python_version_ok,
@@ -14,7 +14,7 @@ def start_application(args=None):
         python_version_ok()
         and requirements_installed()
         and renamed_fee_ini()
-        and not new_protocol_live()
+        and new_protocol_not_live()
     )
 
     if ready:

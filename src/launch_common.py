@@ -17,23 +17,35 @@ from Constants import (
 
 
 def python_version_ok(args=None):
+    print("Checking python version ...\n")
+    major = sys.version_info.major
+    minor = sys.version_info.minor
     if not (
-        sys.version_info.major >= PYTHON_MAJOR
-        and sys.version_info.minor >= PYTHON_MINOR
+        major >= PYTHON_MAJOR
+        and minor >= PYTHON_MINOR
     ):
         raise Exception(
-            "Must be using Python {}.{} or later but it is {}.{}".format(
+            "... must be using Python {}.{} or later but it installed is {}.{}. Please upgrade!\n".format(
                 PYTHON_MAJOR,
                 PYTHON_MINOR,
-                sys.version_info.major,
-                sys.version_info.minor,
+                major,
+                minor,
             )
         )
     else:
+        print(
+            "... installed Python version {}.{} is greater then minimum required version {}.{}. OK!\n".format(
+                major,
+                minor,
+                PYTHON_MAJOR,
+                PYTHON_MINOR,
+            )
+        )
         return True
 
 
 def print_banner(args, script_name):
+    print(LINER, flush=True)
     with open("./banner.txt", "rt") as file:
         print(file.read())
     print(LINER, flush=True)
@@ -62,10 +74,11 @@ def renamed_fee_ini(args=None):
     return True
 
 
-def new_protocol_live(args=None):
+def new_protocol_not_live(args=None):
+    print("Checking ...\n")
     today = date.today()
-    print(("Current date: {}").format(today))
-    print(("New protocol date: {}").format(NEW_PROTOCOL_DATE))
+    print(("... current date: {}\n").format(today))
+    print(("... new protocol date: {}\n").format(NEW_PROTOCOL_DATE))
     if today >= NEW_PROTOCOL_DATE:
         print(
             (
@@ -77,8 +90,10 @@ def new_protocol_live(args=None):
         print("Do you want to continue using this branch? (y/N)")
         value = input().lower()
         if not value or value == "n":
-            return True
-    return False
+            return False
+    else:
+        print(("... protocol {} not live yet. OK!").format(NEW_PROTOCOL_NAME))
+        return True
 
 
 def in_venv():
@@ -145,7 +160,7 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
                 print("Requirements successfully installed!\n")
                 return True
         else:
-            print("... all dependencies available!\n")
+            print("... all dependencies available. OK!\n")
             return True
     except (OSError, IOError) as e:
         print(
