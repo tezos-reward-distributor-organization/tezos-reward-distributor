@@ -15,7 +15,7 @@ def address_api():
     return TzProRewardApiImpl(
         nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
         baking_address=MAINNET_ADDRESS_STAKENOW_BAKER,
-        tzpro_api_key=os.environ.get("TZ_PRO_API_KEY"),
+        tzpro_api_key=os.environ.get("TZPRO_API_KEY"),
     )
 
 
