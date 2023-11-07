@@ -1,7 +1,6 @@
 from unittest import TestCase
-
-from calc.calculate_phase2 import CalculatePhase2
-from model.reward_log import RewardLog
+from src.calc.calculate_phase2 import CalculatePhase2
+from src.model.reward_log import RewardLog
 
 
 class TestCalculatePhase2(TestCase):

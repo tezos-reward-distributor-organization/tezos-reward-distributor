@@ -13,7 +13,6 @@ plugin_name = "TelegramPlugin"
 
 
 class TelegramPlugin(plugins.Plugin):
-
     _req_cfg_keys = [
         "admin_chat_ids",
         "payouts_chat_ids",
@@ -29,14 +28,12 @@ class TelegramPlugin(plugins.Plugin):
     def send_admin_notification(
         self, subject, message, attachments=None, reward_data=None
     ):
-
         admin_text = "<b>{:s}</b>\n{:s}".format(subject, message)
 
         for c in self.admin_chat_ids:
             self.postMessage(c, admin_text, "ADMIN")
 
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
-
         # Do template replacements
         payout_message = (
             self.telegram_text.replace("%CYCLE%", str(cycle))

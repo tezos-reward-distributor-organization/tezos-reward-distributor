@@ -99,7 +99,6 @@ class RewardLog:
 
 
 def cmp_by_skip_type_balance(rl1, rl2):
-
     if rl1.skipped == rl2.skipped:
         if rl1.type == rl2.type:
             if rl1.staking_balance is None:
@@ -120,7 +119,6 @@ def cmp_by_skip_type_balance(rl1, rl2):
 
 
 def cmp_by_type_balance(rl1, rl2):
-
     if rl1.type == rl2.type:
         if rl1.staking_balance is None:
             return 1

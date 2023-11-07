@@ -30,15 +30,14 @@ logger = main_logger.getChild("payment_consumer")
 
 
 def count_and_log_failed(payment_logs):
-
     nb_paid = nb_failed = nb_injected = 0
 
     for pymnt_itm in payment_logs:
-        if pymnt_itm.paid == PaymentStatus.PAID:
+        if pymnt_itm.paid.is_paid():
             nb_paid += 1
-        elif pymnt_itm.paid == PaymentStatus.FAIL:
+        elif pymnt_itm.paid.is_fail():
             nb_failed += 1
-        elif pymnt_itm.paid == PaymentStatus.INJECTED:
+        elif pymnt_itm.paid.is_injected():
             nb_injected += 1
 
     return nb_paid, nb_failed, nb_injected
@@ -197,7 +196,6 @@ class PaymentConsumer(threading.Thread):
 
             # 8- send notification via plugins
             if total_attempts > 0:
-
                 subject = "Reward Payouts for Cycle {:d}".format(pymnt_cycle)
 
                 status = ""
@@ -278,7 +276,6 @@ class PaymentConsumer(threading.Thread):
     def create_payment_report(
         self, nb_failed, payment_logs, payment_cycle, already_paid_items
     ):
-
         logger.info(
             "Processing completed for {} payment items{}.".format(
                 len(payment_logs),
@@ -291,12 +288,8 @@ class PaymentConsumer(threading.Thread):
 
         payouts = already_paid_items + payment_logs
 
-        successful_payouts = [
-            payout for payout in payouts if payout.paid != PaymentStatus.FAIL
-        ]
-        unsuccessful_payouts = [
-            payout for payout in payouts if payout.paid == PaymentStatus.FAIL
-        ]
+        successful_payouts = [payout for payout in payouts if not payout.paid.is_fail()]
+        unsuccessful_payouts = [payout for payout in payouts if payout.paid.is_fail()]
 
         report_file = get_payment_report_file_path(self.payments_dir, payment_cycle, 0)
         CsvPaymentFileParser().write(report_file, successful_payouts)
@@ -373,7 +366,6 @@ class PaymentConsumer(threading.Thread):
         payment_logs,
         total_attempts,
     ):
-
         from uuid import NAMESPACE_URL, uuid3
 
         n_f_type = len([pl for pl in payment_logs if pl.type == TYPE_FOUNDER])

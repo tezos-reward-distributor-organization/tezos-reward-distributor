@@ -28,7 +28,6 @@ class CalculatePhase3(CalculatePhaseBase):
         self.phase = 3
 
     def calculate(self, reward_data2, total_amount):
-
         new_rewards = []
         total_excluded_ratio = 0.0
 

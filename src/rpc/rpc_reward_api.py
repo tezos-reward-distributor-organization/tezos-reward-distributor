@@ -475,7 +475,6 @@ class RpcRewardApiImpl(RewardApi):
         return endorsing_rewards, lost_endorsing_rewards
 
     def do_rpc_request(self, request, time_out=120):
-
         verbose_logger.debug("[do_rpc_request] Requesting URL {:s}".format(request))
 
         sleep(0.1)  # be nice to public node service
@@ -518,7 +517,6 @@ class RpcRewardApiImpl(RewardApi):
                 request, resp.status_code
             )
             if "CF-RAY" in resp.headers:
-
                 message += ", unique request_id: {:s}".format(resp.headers["CF-RAY"])
             raise ApiProviderException(message)
 
@@ -530,7 +528,6 @@ class RpcRewardApiImpl(RewardApi):
         return response
 
     def update_current_balances(self, reward_logs):
-
         for rl in reward_logs:
             try:
                 rl.current_balance = self.get_current_balance_of_delegator(rl.address)

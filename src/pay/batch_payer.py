@@ -197,9 +197,8 @@ class BatchPayer:
         estimated_sum_burn_fees = 0
         estimated_sum_xfer_fees = 0
         for payment_item in unprocessed_payment_items:
-
             # Reinitialize status for items fetched from failed payment files
-            if payment_item.paid == PaymentStatus.FAIL:
+            if payment_item.paid.is_fail():
                 payment_item.paid = PaymentStatus.UNDEFINED
             # Check if payment item was skipped due to any of the phase calculations.
             # Add any items which are marked as skipped to the returning array so that they are logged to reports.
@@ -289,7 +288,6 @@ class BatchPayer:
         )
 
         if payment_address_balance is not None:
-
             logger.info(
                 "Current balance in payout address is {:<,d} mutez.".format(
                     payment_address_balance
@@ -301,7 +299,6 @@ class BatchPayer:
             )
 
             if number_future_payable_cycles < 0:
-
                 for payment_item in payment_items:
                     payment_item.paid = PaymentStatus.FAIL
                     payment_item.desc += "Insufficient funds. "
@@ -324,7 +321,6 @@ class BatchPayer:
                 return payment_logs, 0, 0, 0, ExitCode.INSUFFICIENT_FUNDS
 
             elif number_future_payable_cycles < 1:
-
                 subject = "WARNING Payouts - Low Payment Address Funds"
                 message = (
                     "The payout address will soon run out of funds. The current balance, {:<,d} mutez, "
@@ -364,9 +360,9 @@ class BatchPayer:
 
             for payment_item in payment_items_chunk:
                 if (
-                    payment_item.paid == PaymentStatus.PAID
-                    or payment_item.paid == PaymentStatus.INJECTED
-                    or payment_item.paid == PaymentStatus.DONE
+                    payment_item.paid.is_paid()
+                    or payment_item.paid.is_injected()
+                    or payment_item.paid.is_done()
                 ):
                     amount_to_pay += payment_item.adjusted_amount
                     delegator_transaction_fees += payment_item.delegator_transaction_fee
@@ -437,7 +433,7 @@ class BatchPayer:
                 wait_random(block_time)
 
         for payment_item in payment_items:
-            if payment_item.paid == PaymentStatus.UNDEFINED:
+            if payment_item.paid.is_undefined():
                 payment_item.paid = status
                 payment_item.hash = operation_hash
                 payment_item.desc += error_message
@@ -556,7 +552,6 @@ class BatchPayer:
         total_gas = total_tx_fees = total_burn_fees = 0
 
         for payment_item in payment_items:
-
             pymnt_amnt = payment_item.adjusted_amount  # expected in micro tez
 
             # Get initial default values for storage, gas and fees
@@ -588,7 +583,7 @@ class BatchPayer:
                     payment_item.desc += "Payment simulation encountered an error while executing. Marking payment as failed. "
                     continue
 
-                if simulation_status == PaymentStatus.FAIL:
+                if simulation_status.is_fail():
                     logger.info(
                         "Payment to {} script could not be processed. Possible reason: liquidated contract. Avoiding. Think about redirecting the payout to the owner address using the maps rules. Please refer to the TRD documentation or to one of the TRD maintainers.".format(
                             payment_item.paymentaddress

@@ -5,6 +5,7 @@
 */__pycache__/
 docs/build/
 venv/
+env/
 */__TEMP_DATA__/
 
 # File extensions

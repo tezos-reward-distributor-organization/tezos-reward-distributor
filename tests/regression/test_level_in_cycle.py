@@ -1,5 +1,5 @@
-from Constants import DEFAULT_NETWORK_CONFIG_MAP
-from api.block_api import BlockApi
+from src.Constants import DEFAULT_NETWORK_CONFIG_MAP
+from src.api.block_api import BlockApi
 
 
 class DummyApiImpl(BlockApi):

@@ -174,7 +174,13 @@ Available configuration parameters are:
        tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7        #(redirects payment from tz1V9S... to tz1fgX...)
        tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs: Dexter                                      #(indicates address is a dexter pool; TRD will send rewards to pool members)
        mindelegation: TOE                                                                #(mindelegation will be shared with everyone)
-  
+
+**tzpro_api_key**
+  Generate a tzpro API key [here](https://tzpro.io/) if you want to use it as reward or block API.
+
+  Example::
+    tzpro_api_key: XXXXXXXXXX
+
 **plugins**
   Please consult the `plugins docs`_ for more details on the configuring the various plugins.
 

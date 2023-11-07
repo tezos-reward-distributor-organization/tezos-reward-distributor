@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from fsm.TransitionsFsmBuilder import TransitionsFsmBuilder
+from src.fsm.TransitionsFsmBuilder import TransitionsFsmBuilder
 
 
 class TestFsmBuilder(TestCase):
