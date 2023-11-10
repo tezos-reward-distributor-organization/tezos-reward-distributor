@@ -1,10 +1,9 @@
-from pay.utils import (
+from src.pay.utils import (
     calculate_required_fee,
     calculate_tx_fee,
     calculate_consumed_gas,
     calculate_consumed_storage,
 )
-from Constants import PaymentStatus
 import pytest
 
 

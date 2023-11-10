@@ -11,7 +11,6 @@ plugin_name = "TwitterPlugin"
 
 
 class TwitterPlugin(plugins.Plugin):
-
     MAX_TWEET_LEN = 280
 
     _req_cfg_keys = [
@@ -60,7 +59,6 @@ class TwitterPlugin(plugins.Plugin):
         return
 
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
-
         # Replace template variables
         tweet = (
             self.tweet_text.replace("%CYCLE%", str(cycle))

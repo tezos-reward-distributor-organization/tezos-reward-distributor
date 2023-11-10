@@ -11,7 +11,6 @@ plugin_name = "WebhookPlugin"
 
 
 class WebhookPlugin(plugins.Plugin):
-
     _req_cfg_keys = ["endpoint", "token"]
 
     def __init__(self, cfg):
@@ -55,7 +54,6 @@ class WebhookPlugin(plugins.Plugin):
     def send_admin_notification(
         self, subject, message, attachments=None, reward_data=None
     ):
-
         payload = self.generate_payload(subject, message, reward_data)
 
         try:

@@ -77,21 +77,19 @@ def log_and_fail(operation_result):
 
 def init_payment_logs(payment_items):
     main_logger.info("{} payment items to process".format(len(payment_items)))
-    payment_logs_paid = [pi for pi in payment_items if pi.paid == PaymentStatus.PAID]
+    payment_logs_paid = [pi for pi in payment_items if pi.paid.is_paid()]
     if payment_logs_paid:
         main_logger.info(
             "{} payment items are already paid".format(len(payment_logs_paid))
         )
 
-    payment_logs_done = [pi for pi in payment_items if pi.paid == PaymentStatus.DONE]
+    payment_logs_done = [pi for pi in payment_items if pi.paid.is_done()]
     if payment_logs_done:
         main_logger.info(
             "{} payment items are already processed".format(len(payment_logs_done))
         )
 
-    payment_logs_injected = [
-        pi for pi in payment_items if pi.paid == PaymentStatus.INJECTED
-    ]
+    payment_logs_injected = [pi for pi in payment_items if pi.paid.is_injected()]
     if payment_logs_injected:
         main_logger.info(
             "{} payment items are in injected status".format(len(payment_logs_injected))

@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP
-from tzkt.tzkt_block_api import TzKTBlockApiImpl
+from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tests.utils import Constants
 
 MAINNET_ADDRESS_DELEGATOR = Constants.MAINNET_ADDRESS_DELEGATOR

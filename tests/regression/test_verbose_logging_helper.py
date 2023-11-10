@@ -1,10 +1,10 @@
+import os
 import shutil
+import logging
 from unittest import TestCase
 
-from log_config import FORMATTER
-from verbose_logging_helper import VerboseLoggingHelper
-import logging
-import os
+from src.log_config import FORMATTER
+from src.verbose_logging_helper import VerboseLoggingHelper
 
 
 class TestVerboseLoggingHelper(TestCase):

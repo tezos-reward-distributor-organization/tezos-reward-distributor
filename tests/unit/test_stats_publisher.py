@@ -2,7 +2,7 @@ import logging
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from stats.stats_publisher import stats_publisher
+from src.stats.stats_publisher import stats_publisher
 from uuid import uuid1
 
 logger = logging.getLogger("unittesting")
@@ -18,7 +18,6 @@ class TestStatsPublish(TestCase):
         ),
     )
     def test_publish(self):
-
         stats_dict = {
             "uuid": str(uuid1()),
             "cycle": 1,

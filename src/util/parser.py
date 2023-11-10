@@ -1,5 +1,6 @@
-import argparse
 import os
+import argparse
+from util.args_validator import validate
 
 from Constants import (
     BASE_DIR,
@@ -121,8 +122,8 @@ def add_argument_provider(argparser):
         "Set to 'rpc' to use your own local node defined with the -A flag, "
         "(it must be an ARCHIVE node in this case). "
         "Set to 'prpc' to use a public RPC node defined with the -Ap flag. "
-        "An alternative for providing reward data is 'tzstats', but pay attention for license in case of commercial use!",
-        choices=["rpc", "prpc", "tzstats", "tzkt"],
+        "An alternative for providing reward data is 'tzpro', but an API key associated with your account needs to be provided in the .env file!",
+        choices=["rpc", "prpc", "tzpro", "tzkt"],
         default="tzkt",
     )
 
@@ -268,3 +269,10 @@ def add_argument_log_file(argparser):
         ),
         default=default_log_file,
     )
+
+
+def parse_arguments(args=None):
+    parser = build_parser()
+    # Basic validations
+    args = validate(parser)
+    return args

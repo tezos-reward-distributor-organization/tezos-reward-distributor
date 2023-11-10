@@ -82,15 +82,11 @@ class RetryProducer:
                 )
 
             # 2.2 Translate batch into a list of dictionaries
-            nb_paid = len(list(filter(lambda f: f.paid == PaymentStatus.PAID, batch)))
-            nb_done = len(list(filter(lambda f: f.paid == PaymentStatus.DONE, batch)))
-            nb_injected = len(
-                list(filter(lambda f: f.paid == PaymentStatus.INJECTED, batch))
-            )
-            nb_failed = len(list(filter(lambda f: f.paid == PaymentStatus.FAIL, batch)))
-            nb_avoided = len(
-                list(filter(lambda f: f.paid == PaymentStatus.AVOIDED, batch))
-            )
+            nb_paid = len(list(filter(lambda f: f.paid.is_paid(), batch)))
+            nb_done = len(list(filter(lambda f: f.paid.is_done(), batch)))
+            nb_injected = len(list(filter(lambda f: f.paid.is_injected(), batch)))
+            nb_failed = len(list(filter(lambda f: f.paid.is_fail(), batch)))
+            nb_avoided = len(list(filter(lambda f: f.paid.is_avoided(), batch)))
 
             logger.info(
                 "Summary {} paid, {} done, {} injected, {} fail, {} avoided".format(
@@ -126,7 +122,7 @@ class RetryProducer:
     def convert_injected_to_fail(batch):
         nb_converted = 0
         for pl in batch:
-            if pl.paid == PaymentStatus.INJECTED:
+            if pl.paid.is_injected():
                 pl.paid = PaymentStatus.FAIL
                 nb_converted += 1
                 logger.debug(

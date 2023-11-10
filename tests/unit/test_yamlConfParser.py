@@ -1,7 +1,7 @@
 from unittest import TestCase
-from exception.configuration import ConfigurationException
+from src.exception.configuration import ConfigurationException
 
-from config.yaml_conf_parser import YamlConfParser
+from src.config.yaml_conf_parser import YamlConfParser
 
 document = """
 none: [~, null]

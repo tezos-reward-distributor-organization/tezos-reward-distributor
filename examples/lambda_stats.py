@@ -20,7 +20,6 @@ logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
-
     getpost = event["requestContext"]["http"]["method"].lower()
 
     # check if POST
@@ -66,7 +65,6 @@ def lambda_handler(event, context):
 
     # else GET, display stats
     elif getpost == "get":
-
         try:
             table = db.Table("trd_statistics")
             results = []

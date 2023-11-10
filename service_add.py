@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 from src.Constants import BASE_DIR, CONFIG_DIR
-from util.exit_program import exit_program, ExitCode
+from src.util.exit_program import exit_program, ExitCode
 
 
 def command_line_arguments():

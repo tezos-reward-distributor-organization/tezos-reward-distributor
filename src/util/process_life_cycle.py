@@ -11,7 +11,8 @@ from NetworkConfiguration import init_network_config
 from calc.service_fee_calculator import ServiceFeeCalculator
 from cli.client_manager import ClientManager
 from fsm.TransitionsFsmBuilder import TransitionsFsmBuilder
-from launch_common import print_banner, parse_arguments
+from launch_common import print_banner
+from util.parser import parse_arguments
 from model.baking_dirs import BakingDirs
 from pay.payment_consumer import PaymentConsumer
 from pay.payment_producer import PaymentProducer
@@ -206,7 +207,6 @@ class ProcessLifeCycle:
         logger.info(LINER)
 
     def start(self):
-
         try:
             self.fsm.trigger_event(TrdEvent.LAUNCH)
             self.fsm.trigger_event(TrdEvent.PRINT_BANNER)
