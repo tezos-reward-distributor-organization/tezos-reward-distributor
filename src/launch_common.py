@@ -97,7 +97,7 @@ def new_protocol_not_live(args=None):
 
 
 def in_venv():
-    return sys.prefix != sys.base_prefix
+    return True
 
 
 def installed(package):
