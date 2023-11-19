@@ -176,7 +176,7 @@ Available configuration parameters are:
        mindelegation: TOE                                                                #(mindelegation will be shared with everyone)
 
 **tzpro_api_key**
-  Generate a tzpro API key [here](https://tzpro.io/) if you want to use it as reward or block API.
+  Generate a tzpro API key [here](https://tzpro.io/) if you want to use it as reward or block API or leave blank.
 
   Example::
     tzpro_api_key: XXXXXXXXXX

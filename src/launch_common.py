@@ -121,7 +121,11 @@ def installed(package):
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
     if not in_venv():
         print(
-            "Please make sure to activate a virtual environment for python due to breaking changes in Ubutu >= 23.XX:\n"
+            "System wide installations of packages using pip is deprecated in recent Linux distributions.\n"
+            "Please make sure to activate a virtual environment for python:\n\n"
+            "> python3 -m venv env\n"
+            "> source env/bin/activate\n\n"
+            "Read the documentation for more information:\n"
             "https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/ \n"
         )
         return False
