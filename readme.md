@@ -53,8 +53,8 @@ git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-
 To install required modules, use pip with `requirements.txt` provided. Follow the instructions to create a virtual environment for your project specific python installation: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
 
 ```bash
-python3 -m venv env
-source env/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 ```bash

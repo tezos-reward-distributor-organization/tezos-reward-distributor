@@ -20,10 +20,7 @@ def python_version_ok(args=None):
     print("Checking python version ...\n")
     major = sys.version_info.major
     minor = sys.version_info.minor
-    if not (
-        major >= PYTHON_MAJOR
-        and minor >= PYTHON_MINOR
-    ):
+    if not (major >= PYTHON_MAJOR and minor >= PYTHON_MINOR):
         raise Exception(
             "... must be using Python {}.{} or later but it installed is {}.{}. Please upgrade!\n".format(
                 PYTHON_MAJOR,
@@ -123,8 +120,8 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
         print(
             "System wide installations of packages using pip is deprecated in recent Linux distributions.\n"
             "Please make sure to activate a virtual environment for python:\n\n"
-            "> python3 -m venv env\n"
-            "> source env/bin/activate\n\n"
+            "> python3 -m venv .venv\n"
+            "> source .venv/bin/activate\n\n"
             "Read the documentation for more information:\n"
             "https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/ \n"
         )

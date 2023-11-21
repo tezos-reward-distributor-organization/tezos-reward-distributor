@@ -4,8 +4,7 @@
 */*/__pycache__/
 */__pycache__/
 docs/build/
-venv/
-env/
+.venv/
 */__TEMP_DATA__/
 
 # File extensions
