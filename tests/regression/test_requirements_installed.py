@@ -1,5 +1,6 @@
 import pytest
-from src.main import requirements_installed, installed, start_application
+from src.launch_common import requirements_installed, installed
+from src.main import start_application
 from unittest.mock import patch, MagicMock
 
 
