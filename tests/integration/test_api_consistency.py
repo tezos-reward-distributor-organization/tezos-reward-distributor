@@ -1,5 +1,6 @@
 import os
 import pytest
+import vcr
 import requests
 from src.Constants import DEFAULT_NETWORK_CONFIG_MAP, PUBLIC_NODE_URL, RewardsType
 from tests.utils import Constants
@@ -49,6 +50,10 @@ def current_cycle():
     return int(resp.json()["cycle"])
 
 
+@vcr.use_cassette(
+    "tests/integration/cassettes/api_consistency/test_get_revelation.yaml",
+    filter_headers=["X-API-Key"],
+)
 def test_get_revelation(
     address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
 ):
@@ -63,6 +68,10 @@ def test_get_revelation(
     ) == address_block_api_rpc.get_revelation(MAINNET_ADDRESS_DELEGATOR)
 
 
+@vcr.use_cassette(
+    "tests/integration/cassettes/api_consistency/test_get_current_cycle_and_level.yaml",
+    filter_headers=["X-API-Key"],
+)
 def test_get_current_cycle_and_level(
     address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
 ):
@@ -83,6 +92,10 @@ def test_get_current_cycle_and_level(
     assert abs(level_tzkt - level_rpc) <= 1
 
 
+@vcr.use_cassette(
+    "tests/integration/cassettes/api_consistency/test_get_delegatable.yaml",
+    filter_headers=["X-API-Key"],
+)
 def test_get_delegatable(
     address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
 ):
@@ -121,6 +134,10 @@ def current_cycle_ghostnet():
     return int(resp.json()["cycle"])
 
 
+@vcr.use_cassette(
+    "tests/integration/cassettes/api_consistency/test_get_rewards_for_cycle_map.yaml",
+    filter_headers=["X-API-Key"],
+)
 def test_get_rewards_for_cycle_map(
     address_reward_api_tzkt,
     address_reward_api_tzpro,

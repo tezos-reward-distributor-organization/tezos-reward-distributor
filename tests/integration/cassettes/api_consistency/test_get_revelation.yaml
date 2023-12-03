@@ -1,0 +1,344 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEA4VUXXOiQBD8LzxrFQv4AW8Rc7Fi9BLE8sq3DYxkA+ya3cVEU/nvN4Ak+HF1L1bZ
+        vdM73TPLp8FiwxsSc2jbHUPvt2B4RqFAGh2DxrEEpRDQBzJ3lpsnn75M0mDxMqJ85z49uiHP/8wT
+        n775+zUWbIvnjEVT2GMJxNu0ECK6uZ2ud+nr/V3w5rwu9++zyXIlbH89IZZW8WbMJr59f+ss94ws
+        hI0iEnZAM8CutCygYzzTjPII23LMgTUYDgnp4yGRZcV2JHiM7ZkdQ+VU6uAMjETBNTrxBoQMbNft
+        GDFkkFCNYp8GzRgtvS00TWEu3s8NJ8Ndmkcx9NVqSu+s+dxdTQ9+Op71gwN7I65TFkSa7VCt7PTr
+        W54J/oAmMsMjpNezeoM2E7K8jNgyLbNLzK5ph8TxHOIRq0yQF7kvuJYoXBurjSq/tHLutIXWjYQi
+        Bd6g5TjL/6M6vwbG8Co4lJSrDcgGx3SOIixKQTcwZqsr4EzmGz/XQQJN3JTBUI1J1DYQGtfZ1xCp
+        Tv2WLGG8OVZjlV7ZSVXqEAwPi4NqKVCrPhRAwhSOFrNSmvJjVnhuAXoMW6GYVg8sx98qMyRmLJHN
+        RWXvH/WytDr4ibghF8UzSoyojl4uSV/kSF7iAehC8nIzL7lfaDZjB6hrc+BX63Ox+8+JV6jyubxg
+        zNS2bDe8mOFx2jXxU8h4JIEqeKQsXmghaYJXN6sWS8r4cWwtuPXWbuJ4hl8IrGrtS4v34dRki7r9
+        gKjQ12WbqVxnH8uvjGqNpKUaQITpydP4T/jNyaUS8H+1F3c0b5uo30LwL3rDpNLVkjONX7v6nePT
+        OsGvP3Xz+NQz2lZw+gPX7uF2t+EfAbtLrK5phaTn2aZnOmvj6y//uxx4ugUAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 03 Dec 2023 19:17:25 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4685604'
+      Tzkt-Level:
+      - '4685604'
+      Tzkt-Synced-At:
+      - '2023-12-03T19:17:20Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/account/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4VTTW/iMBC978/wmSCPY5M4t920Kioq2lIQKy6RSSbUTUggTuhCtf99k5BQutKK
+        o9+8N/Pmwx+kyN8DHRHPZbbkYkBUFBVoDPFIeYIpX8TPvnodJ7OX1x8qO8jnn3KebX9NN77a+8cV
+        uQiC8rjDWoUREwJkHdhV6wSPLbRLqjwPv99PVofk7fFhtudvi+P703ixzG1/NQZWmii+02Pffrzn
+        i6OGl9yuM4R5lZVYEM8BcGwpB2StkubdeNu4h2QbRjgyy4l6YNOpXE5OfnL3NJqd9B4krxPEujBl
+        oDPiAQjBxKiH8qrsMWdAUtWx+MiRtoAOOZM4lbIhnYUG8TpbyztjF22EKW5UiVFgdBbiVZ3eTlDq
+        bTMrRhm1gFrUngP3OPWArciVxf/woON1tq9YtgXMomwOwrOpR/mF9TUZWJRbFOZAPS487nwWbVq5
+        4e7S8o26/4zhRi9lXqo0KDBEfcD6HLnjwhBc12HQBw1m9T4c6vbAuiqyhkuHTLpM9HCMaIKd0m0E
+        anPia6gyZxEIx+YDYnaYRWqdYrBWqWoXxqnDho7rAtQr1iaIqyxqNGVRYQtcervCCjygSj+hej6/
+        A1OFYfubgHVIrHRLot37fGR9tDnC+tD/fPsLH2EJ0JkDAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 19:17:25 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=4
+      expires:
+      - Sun, 03 Dec 2023 19:17:30 GMT
+      last-modified:
+      - Sat, 02 Dec 2023 15:30:04 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4685603'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99426'
+      x-rate-limit-reset:
+      - '1701745537'
+      x-request-id:
+      - 5c315ca5-5db4-4d75-a831-d09bcca4a50e
+      x-runtime:
+      - '0.002167'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEA4VUXXOiQBD8LzxrFQv4AW8Rc7Fi9BLE8sq3DYxkA+ya3cVEU/nvN4Ak+HF1L1bZ
+        vdM73TPLp8FiwxsSc2jbHUPvt2B4RqFAGh2DxrEEpRDQBzJ3lpsnn75M0mDxMqJ85z49uiHP/8wT
+        n775+zUWbIvnjEVT2GMJxNu0ECK6uZ2ud+nr/V3w5rwu9++zyXIlbH89IZZW8WbMJr59f+ss94ws
+        hI0iEnZAM8CutCygYzzTjPII23LMgTUYDgnp4yGRZcV2JHiM7ZkdQ+VU6uAMjETBNTrxBoQMbNft
+        GDFkkFCNYp8GzRgtvS00TWEu3s8NJ8Ndmkcx9NVqSu+s+dxdTQ9+Op71gwN7I65TFkSa7VCt7PTr
+        W54J/oAmMsMjpNezeoM2E7K8jNgyLbNLzK5ph8TxHOIRq0yQF7kvuJYoXBurjSq/tHLutIXWjYQi
+        Bd6g5TjL/6M6vwbG8Co4lJSrDcgGx3SOIixKQTcwZqsr4EzmGz/XQQJN3JTBUI1J1DYQGtfZ1xCp
+        Tv2WLGG8OVZjlV7ZSVXqEAwPi4NqKVCrPhRAwhSOFrNSmvJjVnhuAXoMW6GYVg8sx98qMyRmLJHN
+        RWXvH/WytDr4ibghF8UzSoyojl4uSV/kSF7iAehC8nIzL7lfaDZjB6hrc+BX63Ox+8+JV6jyubxg
+        zNS2bDe8mOFx2jXxU8h4JIEqeKQsXmghaYJXN6sWS8r4cWwtuPXWbuJ4hl8IrGrtS4v34dRki7r9
+        gKjQ12WbqVxnH8uvjGqNpKUaQITpydP4T/jNyaUS8H+1F3c0b5uo30LwL3rDpNLVkjONX7v6nePT
+        OsGvP3Xz+NQz2lZw+gPX7uF2t+EfAbtLrK5phaTn2aZnOmvj6y//uxx4ugUAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 03 Dec 2023 19:17:29 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4685604'
+      Tzkt-Level:
+      - '4685604'
+      Tzkt-Synced-At:
+      - '2023-12-03T19:17:20Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ/manager_key
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA1JKTSnILs3PT3Z09Y4qy87ycg8qNMkKrSz39QgNzzd2jvIwNCopTklzyfRwNvZy
+        NQmtzDQMzjdW4gIAAAD//wMAkKKHBDkAAAA=
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 82fe266ade84bbec-FRA
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 03 Dec 2023 19:17:29 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=eBUOGeiA242ZyoZoIOsxy3FaKq%2FV87%2Ffd7eUahXHC9ai1KuhIpXP%2BJ%2FMyZZLdta2JPN%2FkeVo16kep%2FFLJ00NlSPwQFBdhavkfPZfmSJYASUVvhAk9gIKOMm0oVHIQbVFEkd%2FDutS2o79RVJOcPIBFQ%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      access-control-allow-origin:
+      - '*'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/account/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4VTTW/iMBC978/wmSCPY5M4t920Kioq2lIQKy6RSSbUTUggTuhCtf99k5BQutKK
+        o9+8N/Pmwx+kyN8DHRHPZbbkYkBUFBVoDPFIeYIpX8TPvnodJ7OX1x8qO8jnn3KebX9NN77a+8cV
+        uQiC8rjDWoUREwJkHdhV6wSPLbRLqjwPv99PVofk7fFhtudvi+P703ixzG1/NQZWmii+02Pffrzn
+        i6OGl9yuM4R5lZVYEM8BcGwpB2StkubdeNu4h2QbRjgyy4l6YNOpXE5OfnL3NJqd9B4krxPEujBl
+        oDPiAQjBxKiH8qrsMWdAUtWx+MiRtoAOOZM4lbIhnYUG8TpbyztjF22EKW5UiVFgdBbiVZ3eTlDq
+        bTMrRhm1gFrUngP3OPWArciVxf/woON1tq9YtgXMomwOwrOpR/mF9TUZWJRbFOZAPS487nwWbVq5
+        4e7S8o26/4zhRi9lXqo0KDBEfcD6HLnjwhBc12HQBw1m9T4c6vbAuiqyhkuHTLpM9HCMaIKd0m0E
+        anPia6gyZxEIx+YDYnaYRWqdYrBWqWoXxqnDho7rAtQr1iaIqyxqNGVRYQtcervCCjygSj+hej6/
+        A1OFYfubgHVIrHRLot37fGR9tDnC+tD/fPsLH2EJ0JkDAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 19:17:29 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=0
+      expires:
+      - Sun, 03 Dec 2023 19:17:30 GMT
+      last-modified:
+      - Sat, 02 Dec 2023 15:30:04 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4685603'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99425'
+      x-rate-limit-reset:
+      - '1701745537'
+      x-request-id:
+      - e3646861-7dbf-4425-b90d-2105cec67dca
+      x-runtime:
+      - '0.002210'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ/manager_key
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA1JKTSnILs3PT3Z09Y4qy87ycg8qNMkKrSz39QgNzzd2jvIwNCopTklzyfRwNvZy
+        NQmtzDQMzjdW4gIAAAD//wMAkKKHBDkAAAA=
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 82fe266e5dd43a3e-FRA
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 03 Dec 2023 19:17:30 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=tT1qaN3fG69jpFTsyF1iZ9rDSgoF0nf4AoHYapkBhOGZzEScBSHcob%2FUDT9%2F%2Bo6EhPwTBJLpPkuLcPcpvgL6x%2FsYsdU7yKHHlm9nQhhHDCLc51TqApv7Z2LxWMimUxYqHxfJR7%2Fm6I%2B6M7S5BDYwuw%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      access-control-allow-origin:
+      - '*'
+    status:
+      code: 200
+      message: OK
+version: 1

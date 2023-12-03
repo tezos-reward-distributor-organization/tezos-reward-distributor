@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/account/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4VSy46bMBTd9zO8TiK/sIFtUnUx7UjNRE2VDTJwmVIIEGySSar+e20nhIk0Upec
+        x73Hl/MH9e0pKXMUswgTMkMqz3vQGsXIXMhreKz2WQ5Cb5/UF/r8HG2fLstq9U2sL+WBRBzdDYk5
+        d2BdkNMgIJEluiGt4OyhrjKHSq8bveTFT5K+bbd89eMl/9WW/Y4sybrqP58O/LxT6W/I9qvd1++n
+        Fzsha4fGQG+zSUH4DBVlr01SNiimVARyBNrBOEQKNkO1uim4CAOG8Q3xEi4kiyQdbRpgmuRVV8Q5
+        IxpO6xJT7t3TKCbhHMs5kRsS2nvFnO7QuxAf6Ch2Oiqd7hZtUlE2J3SO2YbIOLDT2F31MOwmIxsi
+        7MaYkmmpC/yfdPeHfbDXpbPS0OlMa1Sd9JBBeQRbB44p5sGCsCBifKQ1NPaOkoSURwsR2WPKkUqH
+        vnE+IhYyvBsKAJ10yvULL0QomZQP1KDBU1iyANs/oztocpXWkKSqVk1mA0sZ2pGM2aUzVOqkGJrc
+        mUw/gAdyqOFVGYcVqtZXsIcjqPpBl6rKden6bc/xlughy3zXA1cUDxWq9K7x2xdnon2z2N9P/wBW
+        4vKrNwMAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 20:39:00 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=7
+      expires:
+      - Sun, 03 Dec 2023 20:39:08 GMT
+      last-modified:
+      - Sun, 03 Dec 2023 20:38:38 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4685928'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99320'
+      x-rate-limit-reset:
+      - '1701745538'
+      x-request-id:
+      - 4fa1e0eb-139e-4a61-af4b-543ae6b842ae
+      x-runtime:
+      - '0.002588'
+    status:
+      code: 200
+      message: OK
+version: 1

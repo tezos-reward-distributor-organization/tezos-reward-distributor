@@ -20,10 +20,7 @@ def python_version_ok(args=None):
     print("Checking python version ...\n")
     major = sys.version_info.major
     minor = sys.version_info.minor
-    if not (
-        major >= PYTHON_MAJOR
-        and minor >= PYTHON_MINOR
-    ):
+    if not (major >= PYTHON_MAJOR and minor >= PYTHON_MINOR):
         raise Exception(
             "... must be using Python {}.{} or later but it installed is {}.{}. Please upgrade!\n".format(
                 PYTHON_MAJOR,

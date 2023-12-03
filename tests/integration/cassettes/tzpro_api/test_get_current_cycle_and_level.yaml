@@ -1,0 +1,84 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/tip
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4VVy27bRhTd9zO0tol5P7SrGzcG2gpN4ziON8SQHEkDURyVj9hy4H/vGVKWZKRB
+        AC0099zHmXvPXH6bNW7rZ/PZrX+O3exi1vj+MbYbWP5yocEJtm6/LWIN0/3tA47lGkgeKhgWvr+v
+        Puza8m6zc58/AVz5xnehy/swpmWEmkuiLjm5pWpO9JyzlKKoY7nJ165bw+fqz/0/94vmev1uE2/u
+        6ULf3b33j8XCLWN51fcr/fTly3X4tC9v7m27UOLrQyKVCnS92+7GKoxfUnZJ+C0jc27wS1XWPqzW
+        /WwulJGWGTDflzVYKW0vZrs29rEcr/V3v3ChjUXYd93NsDZ6fb1e3l29/+2u/YN/bj6aB/b7rdhv
+        r2T/qxMtbT4sE4HYuzp3ZRmHpu9QRRtlDXsFytj0rSsTQo0UTL8CbazrYZfM9GK2HJrKV2dZmNBK
+        KjhXQ9ef2Q1HJ+3BXPnar1wf25RFGmVec8eU11BiqBAU1jeOaAJHycJtfDpzq9K4H49Fck4wU0Gt
+        FGhV7V17xuwASmq/Iz1B1BCJiqFZ1q4PscnpHv6cS6Itz7ghRLNzuHW9n3wyRZmihGuupJCMyTQ5
+        V/fQRqLYDbtdDb9vszY+jrKb5ml/MuCjAv9XG2O/UMBwapglLLOcaI0UGFn4Cm6oo0GfS05MJgj+
+        AhyasnbIC5ARxDJjM0UMV7haGdpySJdrVok4o9YqipszJiiuUYd/h0TegDklloqM8DTs45BSUmnQ
+        KKG5yIxmSkAGkPhmzKhhRyqrM0KklKkx6+DrKoVxKWFliusDf5+nuNQJYzWRlKoMA6DWHPHzolpo
+        axlnGQQsBX+TY6ytLGOastQIYxXhaY7f57GJGDpJCKdEnPkc81AGATFjMkmllUizDc0YyhgoUqJF
+        ZiXTieaE5MUh0hiGjhiVYRz4d8R9U0Hch+RKSUY5SFrc+OTTeV9NHpAizeQRwKOv2ogFgoyEgLfm
+        jJ7ChqILFYQn0UIiWQoshraZ+FqlNUK4SKqezHkVh6L2R84MfI3OhBIkvdy3ThNxTAj6A2WoRZhj
+        gTy2YYX2pYcC2hALywTVJ9zVWKAHmEH5YAefE97hybuVT00hlAqVEYzwBPunXR3K0I8TsZRmQhil
+        +CkcHcu3oeumyVCdcWUFP13CFZ1vypQfXUhTw+u14ghPK242J9gVbXz2zSghA3nZDE8meU52yGcX
+        u5AW3A8cWv/o2qo7y5UvvX9zLmIzOryMr6UfurQrtrFKr7/bN+XsZB/PGODhC9Sd7ZIl+l2HZ1+d
+        rZOAPff0xoKvxqr1qTEQSu2wi4ddBfn/aNG8vPzyH8JhTtFjBwAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 20:38:59 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=8
+      expires:
+      - Sun, 03 Dec 2023 20:39:08 GMT
+      last-modified:
+      - Sun, 03 Dec 2023 20:38:38 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4685928'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99321'
+      x-rate-limit-reset:
+      - '1701745537'
+      x-request-id:
+      - 32bbd819-8cf1-4dd8-95f2-9650d42ff739
+      x-runtime:
+      - '0.000038'
+    status:
+      code: 200
+      message: OK
+version: 1
