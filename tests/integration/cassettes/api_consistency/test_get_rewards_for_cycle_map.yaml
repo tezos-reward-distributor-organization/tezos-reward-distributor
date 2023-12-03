@@ -61,17 +61,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:18:12 GMT
+      - Sun, 03 Dec 2023 21:25:17 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4685607'
+      - '4686111'
       Tzkt-Level:
-      - '4685607'
+      - '4686111'
       Tzkt-Synced-At:
-      - '2023-12-03T19:18:01Z'
+      - '2023-12-03T21:25:11Z'
       Tzkt-Version:
       - 1.12.4.0
     status:
@@ -93,14 +93,14 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAEA6WRy27iQBBF/6XXxqrqdj/sXUAOGchEWBBiZeeYTuwJfmA3EE80/z4FA5todlm1
-        VLfq1O1bnywvsrJmEavoqa1j3r/Kjw3VHqxLN0nb5ev3Nnt6PGlDvrUsUjr02NYe7JZFgTJSgfZY
-        kfUFDY3vf866j+Nh06ardbI7rNIZ3mzSpFxOp/Pl3Vtv0t9qrQ+T3byqymRIql8EbrvGNXlDPLZw
-        D1nZNS/l0Pd3+8LoIi5e1+PpZN3NxVO9NM/8dhUM1Vi6myzosE5eCVDbD7f4LsSVle1dVrVkgwMX
-        I+QjECsMIzQRwDPtOTSurN/itsnps1JeCwvblQ1lhogee6+bY33/JZ5t1rvlUOf/ReMJ3ZNqieG6
-        vfXYbt84+xVyLo4dQbiPUgqOAaKSyDGMR0Buzg3xvmMR+Nrw0IDROgyp7XSis/rY0w7wjeQKhBJG
-        ghFKios6qQe6rw88VMhDgVIgyuvorCURufRRSBkaoREDUPwyOu+OpwBA+FxppaWRkhqu4NhRYOAD
-        gAgDDDjZV4EQiovgMj99odzBV5q8agkCAjBcyz9/AS0Skr6lAgAA
+        H4sIAAAAAAAEA6WRT3PaMBDFv4vO4NnVf/lWGAotlCENIZSbcUTsAWTHFqROpt+9S0p6yPTW0UEz
+        +7S/t/v0yvIiKwNL2ZGu4CPr/al8eaDa3Mf1w03d5Kt9nd3fXbQuP3iWauN67ODP/sBSqa1GxB4r
+        sragpsG0fCzX+x9CL7uw28/sNzVTVu+iE+v4sufbGOVmOJ6I+cvTND9PdovvBK6bKlZ5RTy2iPOs
+        bKpt2bXt5FRYU4yK3WowHq6aqbgPt3bDPy9ldxyo+CmTDYabHQGC/xkX/wuJ5dG3MTvWNAYHLvrI
+        +yCWHFOuUnAb8jlXsQyPo7rKaVml3gsL35QVZfaWxD5Uz2H2IZ5D1sbbLuT/QiNe0C2pnhixOfke
+        ezpV0X+EvBUHkSA8QQV0JOdgEZQZ9YGmeXswOjUshcRYYZR2qBVai5Zf1buWPCCxigsjjaM9tRLu
+        XR2Gjv43AW6ck4o7jqidvLZ+rUlErhKwGlCj1hLQ2as6bZ4vAQBPnEElrXWc3P8OFSkwSACAzCQ4
+        MtYKjBNKXPvHW8odEm3QKYVGO06TGfXrN1lg3F2lAgAA
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -111,17 +111,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:18:13 GMT
+      - Sun, 03 Dec 2023 21:25:17 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4685607'
+      - '4686111'
       Tzkt-Level:
-      - '4685607'
+      - '4686111'
       Tzkt-Synced-At:
-      - '2023-12-03T19:18:01Z'
+      - '2023-12-03T21:25:11Z'
       Tzkt-Version:
       - 1.12.4.0
     status:
@@ -155,7 +155,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:18:13 GMT
+      - Sun, 03 Dec 2023 21:25:18 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -167,7 +167,7 @@ interactions:
       cache-control:
       - public, max-age=30
       expires:
-      - Sun, 03 Dec 2023 19:18:43 GMT
+      - Sun, 03 Dec 2023 21:25:48 GMT
       server:
       - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
       trailer:
@@ -175,7 +175,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685606'
+      - '4686110'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -185,13 +185,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99420'
+      - '99291'
       x-rate-limit-reset:
       - '1701745537'
       x-request-id:
-      - 2d90517b-c116-4515-a3b7-fb6c79892b57
+      - 8620603c-9884-416a-8a94-8ff5e9d4a2cf
       x-runtime:
-      - '0.002243'
+      - '0.005045'
     status:
       code: 200
       message: OK
@@ -248,7 +248,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:18:14 GMT
+      - Sun, 03 Dec 2023 21:25:19 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -260,13 +260,13 @@ interactions:
       cache-control:
       - public, max-age=30
       expires:
-      - Sun, 03 Dec 2023 19:18:44 GMT
+      - Sun, 03 Dec 2023 21:25:49 GMT
       server:
       - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685606'
+      - '4686110'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -276,13 +276,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99419'
+      - '99290'
       x-rate-limit-reset:
-      - '1701745537'
+      - '1701745538'
       x-request-id:
-      - 3d42dc79-d483-41af-8a7e-c14a52b93fd0
+      - 2ff1f8be-04a8-45c2-9db7-5e69136bdcc4
       x-runtime:
-      - '0.008704'
+      - '0.006541'
     status:
       code: 200
       message: OK
@@ -336,7 +336,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:18:15 GMT
+      - Sun, 03 Dec 2023 21:25:19 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -348,7 +348,7 @@ interactions:
       cache-control:
       - public, max-age=30
       expires:
-      - Sun, 03 Dec 2023 19:18:45 GMT
+      - Sun, 03 Dec 2023 21:25:49 GMT
       server:
       - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
       trailer:
@@ -356,7 +356,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685606'
+      - '4686110'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -366,13 +366,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99418'
+      - '99289'
       x-rate-limit-reset:
-      - '1701745538'
+      - '1701745537'
       x-request-id:
-      - 63f11b92-7c23-4043-a598-5ff3d5faf1b7
+      - 93744efa-b017-45e5-8589-ab4f44b8aa2a
       x-runtime:
-      - '0.007917'
+      - '0.005421'
     status:
       code: 200
       message: OK
@@ -403,9 +403,9 @@ interactions:
         i0L6gRlj532nYRowOZnLM5IfNzbZgk2pmBXyjk2qwplZYROJPMylpMOOskkZYsMYgZlz/k/ZlEoB
         Rthk62ySeRS5hLO1G5tWsO+zCdJE2DQxNqnnmkKZVlZzE2MTMxBUnyHNIt01LMYmi7Op9IJNK1fQ
         1IIzof4bmUjDzRXSGNHdr8wXZLIFmUDzZzh1TQQymYqSaTMukW48i9oqoxcEBjKtXhA7kmnVCplS
-        ZIpLQ7jTFRxu02+QKRUtwFUyPWQSPh+SJxqw9s11SzSNWKCppZX+Vp6hqUnlKoomS1FtUOZM5BxW
-        PptI3ybMBdARzdG8B/MM3YzMm/YnNFNcUplGPplA924ang1AHp4JlnBHJER5hAWKsAQRIuTBkjSI
-        cgYLymAFMvg7vmCBFyzhgi9YgjuWYuBADJSFeN4tggjMkIgDka6ykOLn54/fxYPrFy4KAAA=
+        ZIpLQ7jTFRxu02+QKRUtwFUyPWQSPh+SJxqw9s11SzSNWKCppZX+Vp6hqUnlKoomS1FtUNK40DCu
+        fDaRvk2YC8yZmKN5D+YZuhmZN+1PaKa4pDKNfDKB7t00PBuAPDwTLOGOSIjyCAsUYQkiRMiDJWkQ
+        5QwWlMEKZPB3fMECL1jCBV+wBHcsxcCBGCgL8bxbBBGYIREHIl1lIcXPzx+/AVUgDOwuCgAA
     headers:
       Connection:
       - keep-alive
@@ -414,7 +414,412 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:18:15 GMT
+      - Sun, 03 Dec 2023 21:25:20 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=3
+      expires:
+      - Sun, 03 Dec 2023 21:25:24 GMT
+      last-modified:
+      - Sun, 03 Dec 2023 21:24:54 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4686110'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99288'
+      x-rate-limit-reset:
+      - '1701745538'
+      x-request-id:
+      - 2310b610-38d6-43ba-bb93-92c0d235d414
+      x-runtime:
+      - '0.005492'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/678
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA72V226jMBCG7/cxuC5oxmfzHLnaG0QTN0UlEAFpt6r67js2OUAw3UqrXYlc8M/Y
+        82c8n/lItu/b2iW50uYh6YeyG4pnV+2fhyQXSiET9iFxzW4iaq04u+QO1YEWJwwYTxFTZjcIOTc5
+        ip/JuHCWwVJgGzA5PRJ9xrFr953r+yRHgIek6ottezjWbqA1Q3dyQeqb8tg/t8NEKrdD9Uo5T2Xd
+        k3LJmHrnzKpJpGp27heVmUgR8zZHchfMd21de18okcnxtWjfGteRyDW1ZfRQ7Fzt9uXQeh2N1IZd
+        Q4/ly5huRWjYS9Xsi/50PNbv1HGLBo3VOrNWAOe3jKPrtq6hf6Eho6UCDFKu0oJ2eWu7kHPZmkl+
+        E6nfZGMsKcnhoep7tyu69tTsgjt+1c6pB6rjI1wgIkWbYteeHutgnXZMcphokzUh0Lf1q/NNLA5V
+        Q5vImVT6bjM+01wZ8jKmBSprGRotrFS+u2Rx3Aaub34Hfn0LayEDMqqs4PQHuZYAyMKcXYwVXeln
+        x5rMcFCCMf+zFmdJ/VhJKCPvdV9TWWPu9VDdH1mGgiwbYRVYj4HzDQ41wwTTUfRDOJ1d8Vi325cw
+        i0L6gRlj532nYRowOZnLM5IfNzbZgk2pmBXyjk2qwplZYROJPMylpMOOskkZYsMYgZlz/k/ZlEoB
+        Rthk62ySeRS5hLO1G5tWsO+zCdJE2DQxNqnnmkKZVlZzE2MTMxBUnyHNIt01LMYmi7Op9IJNK1fQ
+        1IIzof4bmUjDzRXSGNHdr8wXZLIFmUDzZzh1TQQymYqSaTMukW48i9oqoxcEBjKtXhA7kmnVCplS
+        ZIpLQ7jTFRxu02+QKRUtwFUyPWQSPh+SJxqw9s11SzSNWKCppZX+Vp6hqUnlKoomS1FtUNK40DCu
+        fDaRvk2YC8yZmKN5D+YZuhmZN+1PaKa4pDKNfDKB7t00PBuAPDwTLOGOSIjyCAsUYQkiRMiDJWkQ
+        5QwWlMEKZPB3fMECL1jCBV+wBHcsxcCBGCgL8bxbBBGYIREHIl1lIcXPzx+/AVUgDOwuCgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 21:25:20 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=3
+      expires:
+      - Sun, 03 Dec 2023 21:25:24 GMT
+      last-modified:
+      - Sun, 03 Dec 2023 21:24:54 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4686110'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99287'
+      x-rate-limit-reset:
+      - '1701745537'
+      x-request-id:
+      - 2a74649e-89c2-4820-bfee-b80595317e66
+      x-runtime:
+      - '0.005585'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/income?address=tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN&cycle=678
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA6WNvUpDcQzF9z5G5xDy9c/HE3Qpd1AQtXSQii0FcWmh16c33q3gZrKcQ37nZLdT
+        G8IKHgmaNAjYgCXEcGi5O4RUJYpbGUOOEMEkcwpQB2lcrYBQo9Q6TYRlUIU1oHNdKL0E5VRgv7hm
+        WyM0DW9UC1NS2CGdGV10ePdUN0Z4gizk6GeEtMydYCmWv0//EevLN08Pm9vzU5388X16e90ejp/n
+        6/amp3mWj3z52kzr/Wr/A01xWZ5CAQAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 21:25:21 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Sun, 03 Dec 2023 21:25:51 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4686110'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99286'
+      x-rate-limit-reset:
+      - '1701745538'
+      x-request-id:
+      - 57f0cb04-9d88-4a0b-81ea-7752e06a832f
+      x-runtime:
+      - '0.002244'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/bakers/tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN/snapshot/678
+  response:
+    body:
+      string: !!binary |
+        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
+        +Z//A2vFXDi1DgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 21:25:22 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Sun, 03 Dec 2023 21:25:52 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4686110'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99285'
+      x-rate-limit-reset:
+      - '1701745538'
+      x-request-id:
+      - d3212eb3-bdc0-459c-aa15-b1f91c8fde4b
+      x-runtime:
+      - '0.003536'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/account?baker=tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN&columns=row_id,spendable_balance,address&limit=50000
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 21:25:22 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Sun, 03 Dec 2023 21:25:52 GMT
+      server:
+      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4686110'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99284'
+      x-rate-limit-reset:
+      - '1701745537'
+      x-request-id:
+      - ea2a0241-faff-40a4-b1ce-02a80a84803b
+      x-runtime:
+      - '0.006555'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/678
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA72V226jMBCG7/cxuC5oxmfzHLnaG0QTN0UlEAFpt6r67js2OUAw3UqrXYlc8M/Y
+        82c8n/lItu/b2iW50uYh6YeyG4pnV+2fhyQXSiET9iFxzW4iaq04u+QO1YEWJwwYTxFTZjcIOTc5
+        ip/JuHCWwVJgGzA5PRJ9xrFr953r+yRHgIek6ottezjWbqA1Q3dyQeqb8tg/t8NEKrdD9Uo5T2Xd
+        k3LJmHrnzKpJpGp27heVmUgR8zZHchfMd21de18okcnxtWjfGteRyDW1ZfRQ7Fzt9uXQeh2N1IZd
+        Q4/ly5huRWjYS9Xsi/50PNbv1HGLBo3VOrNWAOe3jKPrtq6hf6Eho6UCDFKu0oJ2eWu7kHPZmkl+
+        E6nfZGMsKcnhoep7tyu69tTsgjt+1c6pB6rjI1wgIkWbYteeHutgnXZMcphokzUh0Lf1q/NNLA5V
+        Q5vImVT6bjM+01wZ8jKmBSprGRotrFS+u2Rx3Aaub34Hfn0LayEDMqqs4PQHuZYAyMKcXYwVXeln
+        x5rMcFCCMf+zFmdJ/VhJKCPvdV9TWWPu9VDdH1mGgiwbYRVYj4HzDQ41wwTTUfRDOJ1d8Vi325cw
+        i0L6gRlj532nYRowOZnLM5IfNzbZgk2pmBXyjk2qwplZYROJPMylpMOOskkZYsMYgZlz/k/ZlEoB
+        Rthk62ySeRS5hLO1G5tWsO+zCdJE2DQxNqnnmkKZVlZzE2MTMxBUnyHNIt01LMYmi7Op9IJNK1fQ
+        1IIzof4bmUjDzRXSGNHdr8wXZLIFmUDzZzh1TQQymYqSaTMukW48i9oqoxcEBjKtXhA7kmnVCplS
+        ZIpLQ7jTFRxu02+QKRUtwFUyPWQSPh+SJxqw9s11SzSNWKCppZX+Vp6hqUnlKoomS1FtUNK40DCu
+        fDaRvk2YC8yZmKN5D+YZuhmZN+1PaKa4pDKNfDKB7t00PBuAPDwTLOGOSIjyCAsUYQkiRMiDJWkQ
+        5QwWlMEKZPB3fMECL1jCBV+wBHcsxcCBGCgL8bxbBBGYIREHIl1lIcXPzx+/AVUgDOwuCgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 03 Dec 2023 21:25:23 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -426,15 +831,15 @@ interactions:
       cache-control:
       - public, max-age=0
       expires:
-      - Sun, 03 Dec 2023 19:18:15 GMT
+      - Sun, 03 Dec 2023 21:25:24 GMT
       last-modified:
-      - Sun, 03 Dec 2023 19:17:45 GMT
+      - Sun, 03 Dec 2023 21:24:54 GMT
       server:
       - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685606'
+      - '4686110'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -444,13 +849,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99417'
+      - '99283'
       x-rate-limit-reset:
       - '1701745537'
       x-request-id:
-      - dcd198d6-3e16-4384-88ed-63b2b6489465
+      - c7eebda9-1d43-4855-b68c-ddf5dc643909
       x-runtime:
-      - '0.006005'
+      - '0.005455'
     status:
       code: 200
       message: OK
@@ -481,9 +886,9 @@ interactions:
         i0L6gRlj532nYRowOZnLM5IfNzbZgk2pmBXyjk2qwplZYROJPMylpMOOskkZYsMYgZlz/k/ZlEoB
         Rthk62ySeRS5hLO1G5tWsO+zCdJE2DQxNqnnmkKZVlZzE2MTMxBUnyHNIt01LMYmi7Op9IJNK1fQ
         1IIzof4bmUjDzRXSGNHdr8wXZLIFmUDzZzh1TQQymYqSaTMukW48i9oqoxcEBjKtXhA7kmnVCplS
-        ZIpLQ7jTFRxu02+QKRUtwFUyPWQSPh+SJxqw9s11SzSNWKCppZX+Vp6hqUnlKoomS1FtUOZM5BxW
-        PptI3ybMBdARzdG8B/MM3YzMm/YnNFNcUplGPplA924ang1AHp4JlnBHJER5hAWKsAQRIuTBkjSI
-        cgYLymAFMvg7vmCBFyzhgi9YgjuWYuBADJSFeN4tggjMkIgDka6ykOLn54/fxYPrFy4KAAA=
+        ZIpLQ7jTFRxu02+QKRUtwFUyPWQSPh+SJxqw9s11SzSNWKCppZX+Vp6hqUnlKoomS1FtUNK40DCu
+        fDaRvk2YC8yZmKN5D+YZuhmZN+1PaKa4pDKNfDKB7t00PBuAPDwTLOGOSIjyCAsUYQkiRMiDJWkQ
+        5QwWlMEKZPB3fMECL1jCBV+wBHcsxcCBGCgL8bxbBBGYIREHIl1lIcXPzx+/AVUgDOwuCgAA
     headers:
       Connection:
       - keep-alive
@@ -492,7 +897,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:18:15 GMT
+      - Sun, 03 Dec 2023 21:25:24 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -502,17 +907,17 @@ interactions:
       Vary:
       - Accept-Encoding
       cache-control:
-      - public, max-age=14
+      - public, max-age=0
       expires:
-      - Sun, 03 Dec 2023 19:18:30 GMT
+      - Sun, 03 Dec 2023 21:25:24 GMT
       last-modified:
-      - Sun, 03 Dec 2023 19:18:00 GMT
+      - Sun, 03 Dec 2023 21:24:54 GMT
       server:
       - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685607'
+      - '4686110'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -522,13 +927,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99416'
+      - '99282'
       x-rate-limit-reset:
-      - '1701745537'
+      - '1701745538'
       x-request-id:
-      - f919d2e0-5a2c-47e9-ba42-0bf048169170
+      - cf61f3bc-c085-4153-aefb-8ff0dbee86f2
       x-runtime:
-      - '0.005173'
+      - '0.006872'
     status:
       code: 200
       message: OK

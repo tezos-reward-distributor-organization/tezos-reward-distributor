@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU/balance
+  response:
+    body:
+      string: '"9457031"
+
+        '
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 82ff12af1ab63838-FRA
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '10'
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 03 Dec 2023 21:58:46 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=PVhuQDF1g2e1%2BaDXhJuHcI6ns1xZ%2Bia5TvtddoQt1K7rwsvTL%2FJwi059QcGEUuLeQGkw%2BFhvlDWnxvDjTR2O99RkWk77boT77xkvQxNSRDmLjuKRWhKWx7i6cWB62BrAG%2Fcq35VVHNlcXuHR9qzy8A%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      access-control-allow-origin:
+      - '*'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -110,7 +110,7 @@ def test_get_delegatable(
     ) == address_block_api_rpc.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
 
 
-# NOTE: We are using a testnet balker where we can manage the amount of delegates
+# NOTE: We are using a testnet baker where we can manage the amount of delegates
 @pytest.fixture
 def address_reward_api_tzkt():
     return TzKTRewardApiImpl(
@@ -120,6 +120,15 @@ def address_reward_api_tzkt():
 
 @pytest.fixture
 def address_reward_api_tzpro():
+    return TzProRewardApiImpl(
+        DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
+        MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
+        TZPRO_API_KEY,
+    )
+
+
+@pytest.fixture
+def address_reward_api_rpc():
     return TzProRewardApiImpl(
         DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
         MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
@@ -141,6 +150,7 @@ def current_cycle_ghostnet():
 def test_get_rewards_for_cycle_map(
     address_reward_api_tzkt,
     address_reward_api_tzpro,
+    address_reward_api_rpc,
     current_cycle,
 ):
     last_cycle = current_cycle - 1
@@ -150,14 +160,19 @@ def test_get_rewards_for_cycle_map(
     rewards_tzpro = address_reward_api_tzpro.get_rewards_for_cycle_map(
         cycle=last_cycle, rewards_type=RewardsType.ACTUAL
     )
+    rewards_rpc = address_reward_api_rpc.get_rewards_for_cycle_map(
+        cycle=last_cycle, rewards_type=RewardsType.ACTUAL
+    )
 
     # Check total_reward_amount
     assert rewards_tzkt.total_reward_amount == rewards_tzpro.total_reward_amount
+    assert rewards_tzkt.total_reward_amount == rewards_rpc.total_reward_amount
 
     # Check delegate_staking_balance
     assert (
         rewards_tzkt.delegate_staking_balance == rewards_tzpro.delegate_staking_balance
     )
+    assert rewards_tzkt.delegate_staking_balance == rewards_rpc.delegate_staking_balance
 
     # Check delegator_balance_dict
     for (
@@ -170,28 +185,45 @@ def test_get_rewards_for_cycle_map(
         tzpro_balance = rewards_tzpro.delegator_balance_dict.get(
             tzkt_delegator_adress,
         )
-        if tzpro_balance is not None:
-            assert tzkt_balance_dict["current_balance"] == pytest.approx(
-                tzpro_balance["current_balance"],
-                1,
-            )
-            assert tzkt_balance_dict["staking_balance"] == pytest.approx(
-                tzpro_balance["staking_balance"],
-                1,
-            )
+        assert tzkt_balance_dict["current_balance"] == pytest.approx(
+            tzpro_balance["current_balance"],
+            1,
+        )
+        assert tzkt_balance_dict["staking_balance"] == pytest.approx(
+            tzpro_balance["staking_balance"],
+            1,
+        )
+
+        rpc_balance = rewards_rpc.delegator_balance_dict.get(
+            tzkt_delegator_adress,
+        )
+        assert tzkt_balance_dict["current_balance"] == pytest.approx(
+            rpc_balance["current_balance"],
+            1,
+        )
+        assert tzkt_balance_dict["staking_balance"] == pytest.approx(
+            rpc_balance["staking_balance"],
+            1,
+        )
 
     # Check num_baking_rights
     assert rewards_tzkt.num_baking_rights == rewards_tzpro.num_baking_rights
+    assert rewards_tzkt.num_baking_rights == rewards_rpc.num_baking_rights
 
     # Check denunciation_rewards
     assert rewards_tzkt.denunciation_rewards == rewards_tzpro.denunciation_rewards
+    assert rewards_tzkt.denunciation_rewards == rewards_rpc.denunciation_rewards
 
     # Check equivocation_losses
     assert rewards_tzkt.equivocation_losses == rewards_tzpro.equivocation_losses
+    assert rewards_tzkt.equivocation_losses == rewards_rpc.equivocation_losses
 
     # Check offline_losses
     assert rewards_tzkt.offline_losses == pytest.approx(
         rewards_tzpro.offline_losses, 60000
+    )
+    assert rewards_tzkt.offline_losses == pytest.approx(
+        rewards_rpc.offline_losses, 60000
     )
 
     # Check potential_endorsement_rewards
@@ -199,9 +231,14 @@ def test_get_rewards_for_cycle_map(
     assert rewards_tzkt.potential_endorsement_rewards == pytest.approx(
         rewards_tzpro.potential_endorsement_rewards, 60000
     )
+    assert rewards_tzkt.potential_endorsement_rewards == pytest.approx(
+        rewards_rpc.potential_endorsement_rewards, 60000
+    )
 
     # Check rewards_and_fees
     assert rewards_tzkt.rewards_and_fees == rewards_tzpro.rewards_and_fees
+    assert rewards_tzkt.rewards_and_fees == rewards_rpc.rewards_and_fees
 
     # Check computed_reward_amount
     assert rewards_tzkt.computed_reward_amount == rewards_tzpro.computed_reward_amount
+    assert rewards_tzkt.computed_reward_amount == rewards_rpc.computed_reward_amount
