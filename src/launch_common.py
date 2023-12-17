@@ -65,8 +65,8 @@ def renamed_fee_ini(args=None):
         try:
             os.rename("fee.ini", "fee.ini.old")
             print("File fee.ini has been renamed to fee.ini.old")
-        except:
-            print("Failed: File fee.ini needs to be manually deleted or renamed")
+        except Exception as e:
+            print("Failed: File fee.ini needs to be manually deleted or renamed:", e)
             return False
     return True
 
@@ -105,7 +105,8 @@ def installed(package):
     try:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
 
     # if hasattr(pip, "main"):
