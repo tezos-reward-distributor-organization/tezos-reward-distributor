@@ -201,7 +201,9 @@ class RpcRewardApiImpl(RewardApi):
                     else:
                         # we are not block proposer for this block
                         if baking_right[rights_name] == 0:
-                            logger.warning("Found missed baking slot {}.".format(r))
+                            logger.warning(
+                                "Found missed baking slot {}.".format(baking_right)
+                            )
                             offline_losses += block_bonus + block_reward_and_fees
                     if block_payload_proposer == self.baking_address:
                         # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.

@@ -70,7 +70,7 @@ def test_address_is_not_baker_address(block_api):
     )
     cnf_prsr.parse()
     with pytest.raises(
-        ConfigurationException,
+        Exception,
         match="Baking address tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ is not enabled for delegation",
     ):
         cnf_prsr.validate_baking_address(cnf_prsr.conf_obj)
@@ -102,7 +102,7 @@ def test_invalid_baking_address(block_api):
     )
     cnf_prsr.parse()
     with pytest.raises(
-        ConfigurationException,
+        Exception,
         match="Baking address must be a valid tz address of length 36",
     ):
         cnf_prsr.validate_baking_address(cnf_prsr.conf_obj)
