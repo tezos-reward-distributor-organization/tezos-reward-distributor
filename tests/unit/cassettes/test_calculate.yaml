@@ -1,0 +1,105 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/rewards/split/tz1fikAGfa1MTxX2oJ7UCtvDpVKeH4KTp1UY/420?offset=0&limit=10000
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEA4VUXY+bMBD8L35GJ7CJgXsrJR+KrmrV6qReTn3wweaKQiAFk4873X/vBoKxgap5
+        SmZ2dsbxrt9JfIkzIPcutS1SSbFL89dQZCKPEaQ0oL5nO44fWETEMj3CDyxBxuF290EZZBBLSG4c
+        91zu0Y7GtgnyrwILVGM286gz8xi1SF7vo5YvygotLQLnQ9MuzIp4h5B956B9h87zBAthD7lEzg3u
+        PGaRbS3rEpTAAL7DSZTJtY9FXrqWt686t0+rCiP2FRqg17VeZgxsPYJ1DRih6fU4PaIKKeUzTmcW
+        aZ1NC2cCVkrPd6665ngLgPawWn6FJUX9kkHYXLNSX69Iwx8K/CPaFi3cBsHBGCsUNRJ9K6E946RO
+        ZzVpCUfIhEyLXLfqUa30NlTN0Dy/E5EkJVSYmsg3ujh9FhA9rVfrsJ7PluLy51AE293jlyhkG/5p
+        +UTwv+qGnDGbuT7nrkXiuixxrvoxZbYbcNbc1/4gU0jI/VZkFXxYA8fHyJM/15ew3EbhKl+8/c4F
+        PPib5eocR5s6Ekx3pNznns39sSFuocuCgGEWMA1/WaQ45dp0wlmWQvvd3vZXo+Y2R4PKOo+LI5SQ
+        mMUKnv+r3hxInJoukX5ZfS4dNdONmd5T51SkLukk+R+tllqXd9nVavTBFWSmHsC9rSJGecfMhGqw
+        ezKCQ1Gl19dtvJhSP8JQqNwGa4tbM9VU392JvgatWhu7aKhMRgm0p9k4WPNWGcjoBTVY6B9MDf/4
+        C46iRB3BBgAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 04 Jan 2024 23:29:47 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4868769'
+      Tzkt-Level:
+      - '4868769'
+      Tzkt-Synced-At:
+      - '2024-01-04T23:29:43Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/head
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEA6WSS3PaMBCA/4vOxrN6r3zDhNCWTgYmCSS5OUbULmA7tgg4nf73LjRcMrnlpJn9
+        pG9f+sPyIisrlrAdHZUPLPof+b6i2I0PD6t50+aLTZMt70+sz7eeJcZBxLb+1W9ZotCgNS5iRdYV
+        9Cid/h4+cl+scTM6Xi2P6O1uuJpPrvkhzfhL4d/69KFAUYRM4erqcRHWJG7aOtR5TT42CzdZ2dbP
+        Zd913/YF2mJcrBfpZLRop3JZ3eKTuL5T/S7VYZipllfzk6DyxzD7qiSUO9+FbNdQGQKEGgAfgLoT
+        MhEuUfBEeV7rUFa/xk2dU7NaXwIz35Y1zYxzGbFNVR+qnx/Gs826cNtX+adqeVJ3RD05Qrv3EXvZ
+        18F/lJyDaSCJiAUoUEKCFkIrJXA8ACrnfGO8b1kCMTqhjDMErXYW1Tu97ygJxI62xlFao8AAdxc6
+        qnpacOy0RBDGaXDaOGrqLP7REOSKx1JoowlLjsLiO522B6ICeewMV5LcGgW3l6ICTQxiAFASQFL1
+        VhJ3mv7OWT55prlDbC1wK7iRChEl/v0Hxqe4aaQCAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 04 Jan 2024 23:29:47 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4868769'
+      Tzkt-Level:
+      - '4868769'
+      Tzkt-Synced-At:
+      - '2024-01-04T23:29:43Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+version: 1

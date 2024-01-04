@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/constants
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4RW27arKgx9P5/Bsw9qre32ZxgR0sopEjdgL2uP9e9nAFq17drnrTaTMJPMJPxh
+        gyU6cTrxG9kLN2QEcqe+kDXHjKVPjebsO9bsyoz1cOdgyHAaHB/Q8laTuLCmmI00oAWvyHAJHlZn
+        D/UxIQZLAznQ6bxEjWfwyJoyT/ZeiQ61MsgNSeSCRuNZs8/z/A3QPjw6rlWvtgjQmm4o+VlTC5oL
+        Ms6D8Y5LHAKbIkEFiA65hgeNfgp6l7Hk3pHhPdxVP/bcP4Y5KWWeFxlzPVjPLWk9DgHFbxaGASVP
+        2WyVAfuYPaa7tkfQOTgnnzP9Kv9Vf/Bsxr5FGwo0HUpp03hFzRoWI8lzlrHBokN7RcnFQ2h0rNln
+        LFYnnYj/sqaod8dqa6C+V77HkOWifFbdhhtSJX1n0XWkJWv2Rbk57DxckDsDg+soOMjLKmOJQQRc
+        yStzDj8VycipAyv5Gaa6RdBTNDGiaoroA3BSGyvrJey1fldMWXksqkP161Afirze71morFE96ESa
+        NSw5mRxd5YlLdTopMWr/YA07rq0OUfL3xKghMC73CURWnZVJpkku+0PGWriEFFi8hYBO6h6EQnaK
+        d/+8Y4tryYxTjnXILCuLascyhkaSdSvgClJU5ZFlTJCb0vUIjcXK/TOdzpMNyvuc+3pi8nskO/a8
+        VyYqPl/+gTtrDqnPlHm2Mk/m2IMZ0+r3qKTyDz5F5MbWKfl4pipc8QbydD5r5NjDuorFswgv48Vx
+        r3rknrhW15DpKl8KHGUSRgvES0Pt4wdXRlgMUo+hWxpNUErKmXFo3OimfvA4t3wKd7Gv2FV1fVhu
+        HcB6JdSQBBBpsuYPM2MfOJNlTRl4GOqDSML37jtF5TS4bt0mZcZOlr7QhIlFTvmoBIHGwzk0cZ4x
+        SWOrcc7eMBrlutTErK4W4UYaoT9e/cU7Mcln8pWkhcnLhnjxQrz8nqenE1YN8/QslmJN1jgepHLe
+        qnaMeZmn0/GJgX7QaZR4XJv9fR6EaKANw+sE2uHa8N5xVbx9QSTVP+dsDFeZlu7Twvhf8DR2E3wN
+        jnNf+U5auM3brAUvwn7Zr4HLgA1NLZepPZVoQZ6UAR16YtZB9cpwvvBnRKAVA0Q3784qL94xm3Uy
+        ZaTIizfcwv7p7/jqbzNwYgufQCThlG8OvRIX9HyAhyaQz71abSpu8V8UsazTk4FO2326QN1oHPp5
+        I+6qw67Kf2VMpo6EHr1VIuj5hOBHi69qWjZsmKIuDO06Y+A9BkUGChrOsQXW/613Yr5ZiTiQmF5L
+        FuVoJBjxWBJSZ2yYd/9z62taWqg67g/1hlaQpUs5+n55IsyxeDviiwms8h0frv1rwBvUewfVu6J6
+        AYkOdHjJIb8pI+nGlUkzNjRqXlev75vU9tAnubzIfet56Y2k6LXrOv/wINJEF+gQNsjiUB7zT2gQ
+        Xl2R0+hbuieN/MA5bpcE+/TSKt7crwqUpOoCI6nc9JkksDkSVlZ4a76HWuW7Mv/r80/EuRyed0tD
+        xvfUX84E/WuNmp+hD0M1EPq6/DBVF8NPU3VBxOWPRqbFHfpToAt1yL//+Q8AAP//AwAX3EsXVAwA
+        AA==
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 840739a47b3b39c2-FRA
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 04 Jan 2024 23:22:43 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=ji7P3hRHf3rffGMIWj0vliXEn49mjUGtcFRrLrnYdWVT6nUBvUH%2BTcFiz122kT5S5azQaovd7sPyvraXWVicsnImbFZDmttXo1QkIawBqOtyPWGLihKiZEw4u5WMhPcNzMbE52pBmhVXICX%2FIIA74Q%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      access-control-allow-origin:
+      - '*'
+    status:
+      code: 200
+      message: OK
+version: 1
