@@ -1,0 +1,118 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEA4VVy5LaOhD9F6/hliULP9gFmGQxj8s1VCbFTtgNUfwQI8nMDKn597QsDAbmVthx
+        TqvfffzbE7k3JkHE4oFn3nfgjb0cSthyA97A43muQGsEzYFs431RZTmE+vmef6NPT8nz/WFazB7D
+        9CBeSMLsg8yIPToxqoGBt2vWpcju4R0dQL4rzEuh01pP2eYHWb89P7PZ90X+Uwq1IlOSFuru9YW9
+        r/j6F2TVbPXw3+sCXSrYAy8B03RO17zkdYYxSBJGSRxHgU8weSXLstlNZJ1juv7A0xVXJr0CN0oe
+        oJ7BTmphrIeR3/0G3gX5IKrWIg7Cs0Umm9qA8sZBFNLoWC03QtYPmGTpjSmNwqCPL0VlW0oxxaEf
+        DUm0pP44SMY0WmFp2vBC1NvJqaI4YDgJQkgQ08FpEPnZIAyihCU0wLTYwKubaipro7DrWDTpmqCn
+        Ns/rLvRQN6WlLACH4Wwxa2P/H0N1MEWnLb5UvNYbUB3BsMVHNyIrwHQ4wqYFrhyd8GtHSGAZM7dz
+        Utk6aIi9RXBSyqywAAt8V+1dnaMJVFDbggN/RFjsHMwVwAVJ/CR0XnhZytYca0SvcyVx/Ly0jl2c
+        L3Zp2zEidsxH4urCpB3PJeZSwKldwqf4PeZJ4p6mdjM655RhP/f5pgeeZ4W5nfE51Lw0AjAj3ASk
+        TnFTeOXKLjmljjn2DrcQQRZTV/a/SmxF3QUeJa2Ttvl2bK3t6LhDNqrrR2uUwlZoXHNcLVzQttOu
+        KQswx9PR7XlgOOKYR7FVXShEzJs7vF4O5zI7ctGs8cQm3GQ/b8mprJC8xVMwjartld9yX7HcUhzA
+        vbU7cmuTQiX3f7FA9bENun08E3pn013ebPzxOBxxfijqTAHXMOciXxip+BZDd6fZ7HIUWdtkvMJG
+        o0qeuVxxgTLldPgM9zTtS54/ojKjx97l9fhpeySfPr17g6yxkbtMes+6iX3Ozq2e6964ei9TyLCz
+        6nI0F/zmIqgC/N/uzDde9YtwqpL+H70RSpv2YoXB7wql4Qiv+AK9FV0SW9Fl1IpuyfvvWRzGLMLr
+        6MMnB5QNfTL02ZJSFAvc9la15cbgCaKu//awYo27ghK/J/E/BN3bobaKT4MhIUPqL8lo7KPihyvv
+        4+ojYw/ok0/Q6cLxlNxH6StYIfA//gAizajcrwcAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 04 Jan 2024 22:17:13 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4868479'
+      Tzkt-Level:
+      - '4868479'
+      Tzkt-Synced-At:
+      - '2024-01-04T22:17:11Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEA4VVy5LaOhD9F6/hliULP9gFmGQxj8s1VCbFTtgNUfwQI8nMDKn597QsDAbmVthx
+        TqvfffzbE7k3JkHE4oFn3nfgjb0cSthyA97A43muQGsEzYFs431RZTmE+vmef6NPT8nz/WFazB7D
+        9CBeSMLsg8yIPToxqoGBt2vWpcju4R0dQL4rzEuh01pP2eYHWb89P7PZ90X+Uwq1IlOSFuru9YW9
+        r/j6F2TVbPXw3+sCXSrYAy8B03RO17zkdYYxSBJGSRxHgU8weSXLstlNZJ1juv7A0xVXJr0CN0oe
+        oJ7BTmphrIeR3/0G3gX5IKrWIg7Cs0Umm9qA8sZBFNLoWC03QtYPmGTpjSmNwqCPL0VlW0oxxaEf
+        DUm0pP44SMY0WmFp2vBC1NvJqaI4YDgJQkgQ08FpEPnZIAyihCU0wLTYwKubaipro7DrWDTpmqCn
+        Ns/rLvRQN6WlLACH4Wwxa2P/H0N1MEWnLb5UvNYbUB3BsMVHNyIrwHQ4wqYFrhyd8GtHSGAZM7dz
+        Utk6aIi9RXBSyqywAAt8V+1dnaMJVFDbggN/RFjsHMwVwAVJ/CR0XnhZytYca0SvcyVx/Ly0jl2c
+        L3Zp2zEidsxH4urCpB3PJeZSwKldwqf4PeZJ4p6mdjM655RhP/f5pgeeZ4W5nfE51Lw0AjAj3ASk
+        TnFTeOXKLjmljjn2DrcQQRZTV/a/SmxF3QUeJa2Ttvl2bK3t6LhDNqrrR2uUwlZoXHNcLVzQttOu
+        KQswx9PR7XlgOOKYR7FVXShEzJs7vF4O5zI7ctGs8cQm3GQ/b8mprJC8xVMwjartld9yX7HcUhzA
+        vbU7cmuTQiX3f7FA9bENun08E3pn013ebPzxOBxxfijqTAHXMOciXxip+BZDd6fZ7HIUWdtkvMJG
+        o0qeuVxxgTLldPgM9zTtS54/ojKjx97l9fhpeySfPr17g6yxkbtMes+6iX3Ozq2e6964ei9TyLCz
+        6nI0F/zmIqgC/N/uzDde9YtwqpL+H70RSpv2YoXB7wql4Qiv+AK9FV0SW9Fl1IpuyfvvWRzGLMLr
+        6MMnB5QNfTL02ZJSFAvc9la15cbgCaKu//awYo27ghK/J/E/BN3bobaKT4MhIUPqL8lo7KPihyvv
+        4+ojYw/ok0/Q6cLxlNxH6StYIfA//gAizajcrwcAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 04 Jan 2024 22:17:14 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4868479'
+      Tzkt-Level:
+      - '4868479'
+      Tzkt-Synced-At:
+      - '2024-01-04T22:17:11Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+version: 1

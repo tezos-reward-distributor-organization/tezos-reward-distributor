@@ -52,7 +52,7 @@ class VerboseLoggingHelper:
 
     @staticmethod
     def is_archive_file(base_name):
-        return base_name.endswith(".zip") and base_name.startswith("app_verbose_")
+        return base_name.endswith(".gz") and base_name.startswith("app_verbose_")
 
     @staticmethod
     def is_log_file(base_name):

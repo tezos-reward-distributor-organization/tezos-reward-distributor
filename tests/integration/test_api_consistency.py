@@ -43,13 +43,6 @@ def address_block_api_rpc():
     )
 
 
-@pytest.fixture
-def current_cycle():
-    tip = "https://api.tzpro.io/explorer/tip"
-    resp = requests.get(tip, timeout=5, headers={"X-API-Key": TZPRO_API_KEY})
-    return int(resp.json()["cycle"])
-
-
 @vcr.use_cassette(
     "tests/integration/cassettes/api_consistency/test_get_revelation.yaml",
     filter_headers=["X-API-Key", "authorization"],
@@ -141,12 +134,11 @@ def current_cycle_ghostnet():
 def test_get_rewards_for_cycle_map(
     address_reward_api_tzkt,
     address_reward_api_tzpro,
-    current_cycle,
 ):
     # NOTE: There is currently a level limit query with rpc when querying endorsing rewards in the past
     # thus we are disabling the consistency check with other APIs for now but will hopefully reenable it in the future
 
-    last_cycle = current_cycle - 1
+    last_cycle = 689
     rewards_tzkt = address_reward_api_tzkt.get_rewards_for_cycle_map(
         cycle=last_cycle, rewards_type=RewardsType.ACTUAL
     )
