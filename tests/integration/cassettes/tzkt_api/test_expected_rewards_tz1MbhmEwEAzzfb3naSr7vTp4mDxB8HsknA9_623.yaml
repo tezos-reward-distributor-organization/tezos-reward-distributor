@@ -14,11 +14,9 @@ interactions:
     uri: https://api.tzpro.io/tables/income?address=tz1MbhmEwEAzzfb3naSr7vTp4mDxB8HsknA9&cycle=623
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA72MsQ7CQAiGdx+jMyFwcMcx1tjExUm3poMdjIlpY9So6dPb66BvICwf8PO1rXDK
-        SSEFATanmBhmIg4JjUlCBhZNhhw4GEGQ6IJZOHoGISBQYgJGUc9cwoTZwB1NZw0hlUxpicrgIO4+
-        TxEtzC5dgN3TYkZZzFDeSv2u380foHpMvOvPQ/Nq6mk69TIe9zd7Hq46bN7rvL1fxtqrbtV9AA+T
-        xmI+AQAA
+      string: '[[316864,623,1790561,3,10126.710328,13467.121270,23593.831598,30,0,4010,1.349818,130.87,99.74,100.00,0,0,0,3541,9,3999,0,5.722354,5.721996,2359.383159,0.000000,5.721996,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,"tz1MbhmEwEAzzfb3naSr7vTp4mDxB8HsknA9"]
+
+        ]'
     headers:
       Connection:
       - keep-alive
@@ -27,7 +25,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 17 Dec 2023 12:21:49 GMT
+      - Fri, 05 Jan 2024 21:22:50 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -39,7 +37,7 @@ interactions:
       cache-control:
       - public, max-age=30
       expires:
-      - Sun, 17 Dec 2023 12:22:19 GMT
+      - Fri, 05 Jan 2024 21:23:20 GMT
       server:
       - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
       trailer:
@@ -47,7 +45,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4763820'
+      - '4873961'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -57,13 +55,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99516'
+      - '99409'
       x-rate-limit-reset:
-      - '1705438130'
+      - '1705438131'
       x-request-id:
-      - d51555a0-d5e5-4aa9-98e2-c2f3f948eddc
+      - f11bd005-3fda-4514-ad91-97e85deb6abe
       x-runtime:
-      - '0.000644'
+      - '0.002798'
     status:
       code: 200
       message: OK
@@ -82,32 +80,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/bakers/tz1MbhmEwEAzzfb3naSr7vTp4mDxB8HsknA9/snapshot/623
   response:
     body:
-      string: !!binary |
-        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
+      string: '{"baking_cycle":623,"snapshot_height":3668992,"snapshot_cycle":617,"snapshot_time":"2023-06-07T23:33:47Z","snapshot_index":6,"snapshot_rolls":3,"active_stake":23593831598,"staking_balance":23593831598,"own_balance":10126710328,"delegated_balance":13467121270,"n_delegations":30,"expected_income":5722354,"total_income":5721996,"total_deposits":2359383159,"baking_income":0,"endorsing_income":5721996,"accusation_income":0,"seed_income":0,"fees_income":0,"total_loss":0,"accusation_loss":0,"seed_loss":0,"endorsing_loss":0,"lost_accusation_fees":0,"lost_accusation_rewards":0,"lost_accusation_deposits":0,"lost_seed_fees":0,"lost_seed_rewards":0,"delegators":[{"address":"tz1Pj5v5YC7oVF4Q8bmjeA5exPGcPAn5SUwe","balance":7049999165,"is_funded":true},{"address":"tz1Pqec8GXCyUrpJEZcj4sqeKciVEXUkHMd8","balance":4330209569,"is_funded":true},{"address":"tz1XjiXxtuYCbwKkwZU5ZgRBS6NYaZWnkAk2","balance":572704589,"is_funded":true},{"address":"tz1ZfXBr91jtpVi4WUjowXK8BkbU2CrBBXW4","balance":501117010,"is_funded":true},{"address":"tz1UWVQCHz3FCHXYssKZ1w357vqtDdwHJBkC","balance":290225288,"is_funded":true},{"address":"tz1W4w7QPxNB2QNwB1xMtCAyirnZ12sdGN1Y","balance":203595827,"is_funded":true},{"address":"tz2F1YdDx25CZgQ7ku9y2NcNpUkui9hFFG6W","balance":178315209,"is_funded":true},{"address":"tz1SFSoCxewh7daFb36s8f95mbLguUQf7UyF","balance":107970724,"is_funded":true},{"address":"tz2Kp82FmnqAH5MdRXRnvm3kyc4NkKdJWiro","balance":59390207,"is_funded":true},{"address":"tz1UCbv24XXq1XMGvzc2wG7ZFCQh1RtdX4U4","balance":26813301,"is_funded":true},{"address":"tz2MRXnAYz5FGfnWi5qKMVbCzF9pRbz168MA","balance":26621788,"is_funded":true},{"address":"tz1cKdFUBuuA8wY7H1zUNfAFV8Ex6E1yYsL3","balance":26355216,"is_funded":true},{"address":"tz1fEB2HQjzi6VD2RapCA7QhxZMc7nGGjFnz","balance":20055866,"is_funded":true},{"address":"tz2EXWVQ4hisDkifNmGombCgswRdJHZKCZM1","balance":17999858,"is_funded":true},{"address":"tz2SdAMQ4fKLptKWdVhXDGebYC6DHvmQ9mC1","balance":17739364,"is_funded":true},{"address":"tz29wMnRp3ExYa8XsD29qA1ePqyWHvUTYB4E","balance":15047846,"is_funded":true},{"address":"tz1QYy4MYN9ns1ehFwGv9AY3vNzJhnAVqF87","balance":8645352,"is_funded":true},{"address":"tz1WmBqBG8X9oaDCNEtUE44BjWLdc7iA8PvF","balance":5552238,"is_funded":true},{"address":"tz1X83j8S5k3m2PGUpgbwET6nzzfXgnq6eQN","balance":4499113,"is_funded":true},{"address":"tz1RkWDQCkA6LdSRk1NcHp5wzYgnigEJdEes","balance":2390296,"is_funded":true},{"address":"tz1dU6PMzqLWVYizZT4ykMMwpneojGSCCM8j","balance":697219,"is_funded":true},{"address":"tz1SAr8Ub6DBjcztjbpq5Nnpks4XtbRZbyaU","balance":614602,"is_funded":true},{"address":"tz1bZDRYRjMRHaHFKNvgG8BepZwiH2xEVUoC","balance":258422,"is_funded":true},{"address":"tz1MZ2eShjYaYdYWmKmt8hhYtTKwRfUMkoLp","balance":226345,"is_funded":true},{"address":"KT1CPurbEq3TXzPLPGH1CWzbVk53i1kNv9Qy","balance":31852,"is_funded":true},{"address":"KT1HM5dyAGYRGjuZ5sNo7HqZW9Z49YU3yE7n","balance":16667,"is_funded":true},{"address":"tz1Kft1UivKWpbsCgub583iKLYissj3kxhAq","balance":13077,"is_funded":true},{"address":"tz1Yd4NBTUpUT531cabMY3RArb8Bbo9C3dVz","balance":7870,"is_funded":true},{"address":"KT19vcp5DT1uCJZpbGtQwXuGgdUL9tGwZQ4t","balance":5679,"is_funded":true},{"address":"KT1Q4cTfHzxT9hibSJKkCgYBVyTBUa4BPbEU","balance":1711,"is_funded":true}]}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -116,7 +91,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 17 Dec 2023 12:21:50 GMT
+      - Fri, 05 Jan 2024 21:22:50 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -128,13 +103,13 @@ interactions:
       cache-control:
       - public, max-age=30
       expires:
-      - Sun, 17 Dec 2023 12:22:20 GMT
+      - Fri, 05 Jan 2024 21:23:20 GMT
       server:
       - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4763820'
+      - '4873961'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -144,13 +119,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99515'
+      - '99408'
       x-rate-limit-reset:
-      - '1705438131'
+      - '1705438130'
       x-request-id:
-      - 502ace1e-cd3a-4d4d-bffd-140cb863615e
+      - 772e2c3e-b0e5-4a28-8750-58bd1f5af56b
       x-runtime:
-      - '0.003601'
+      - '0.019620'
     status:
       code: 200
       message: OK
@@ -169,32 +144,75 @@ interactions:
     uri: https://api.tzpro.io/tables/account?baker=tz1MbhmEwEAzzfb3naSr7vTp4mDxB8HsknA9&columns=row_id,spendable_balance,address&limit=50000
   response:
     body:
-      string: !!binary |
-        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
-        rcT/+Re84lfv+AcAAA==
+      string: '[[280777,3879.091886,"tz1Pqec8GXCyUrpJEZcj4sqeKciVEXUkHMd8"]
+
+        ,[737773,0.258445,"tz1bZDRYRjMRHaHFKNvgG8BepZwiH2xEVUoC"]
+
+        ,[854383,6.709548,"tz2EXWVQ4hisDkifNmGombCgswRdJHZKCZM1"]
+
+        ,[1553971,8.833711,"tz1QYy4MYN9ns1ehFwGv9AY3vNzJhnAVqF87"]
+
+        ,[1592798,61.099967,"tz2Kp82FmnqAH5MdRXRnvm3kyc4NkKdJWiro"]
+
+        ,[1685958,111.096077,"tz1SFSoCxewh7daFb36s8f95mbLguUQf7UyF"]
+
+        ,[1704006,16.718691,"tz1ZfXBr91jtpVi4WUjowXK8BkbU2CrBBXW4"]
+
+        ,[1704016,20.005257,"tz1WmBqBG8X9oaDCNEtUE44BjWLdc7iA8PvF"]
+
+        ,[1790561,11356.557529,"tz1MbhmEwEAzzfb3naSr7vTp4mDxB8HsknA9"]
+
+        ,[1846052,27.376708,"tz2MRXnAYz5FGfnWi5qKMVbCzF9pRbz168MA"]
+
+        ,[1853811,183.490335,"tz2F1YdDx25CZgQ7ku9y2NcNpUkui9hFFG6W"]
+
+        ,[1962036,20.609352,"tz1fEB2HQjzi6VD2RapCA7QhxZMc7nGGjFnz"]
+
+        ,[1962100,24.725844,"tz1UCbv24XXq1XMGvzc2wG7ZFCQh1RtdX4U4"]
+
+        ,[1999585,0.005679,"KT19vcp5DT1uCJZpbGtQwXuGgdUL9tGwZQ4t"]
+
+        ,[1999711,0.016667,"KT1HM5dyAGYRGjuZ5sNo7HqZW9Z49YU3yE7n"]
+
+        ,[2000228,0.700954,"tz1dU6PMzqLWVYizZT4ykMMwpneojGSCCM8j"]
+
+        ,[2008305,209.507610,"tz1W4w7QPxNB2QNwB1xMtCAyirnZ12sdGN1Y"]
+
+        ,[2008927,0.013077,"tz1Kft1UivKWpbsCgub583iKLYissj3kxhAq"]
+
+        ,[2012077,0.031852,"KT1CPurbEq3TXzPLPGH1CWzbVk53i1kNv9Qy"]
+
+        ,[2240942,0.616920,"tz1SAr8Ub6DBjcztjbpq5Nnpks4XtbRZbyaU"]
+
+        ,[2247329,2.577671,"tz1RkWDQCkA6LdSRk1NcHp5wzYgnigEJdEes"]
+
+        ,[2283358,298.661372,"tz1UWVQCHz3FCHXYssKZ1w357vqtDdwHJBkC"]
+
+        ,[2332454,589.371863,"tz1XjiXxtuYCbwKkwZU5ZgRBS6NYaZWnkAk2"]
+
+        ,[2565161,18.235457,"tz2SdAMQ4fKLptKWdVhXDGebYC6DHvmQ9mC1"]
+
+        ,[2700596,0.001711,"KT1Q4cTfHzxT9hibSJKkCgYBVyTBUa4BPbEU"]
+
+        ,[2847418,27.102365,"tz1cKdFUBuuA8wY7H1zUNfAFV8Ex6E1yYsL3"]
+
+        ,[2886494,0.226345,"tz1MZ2eShjYaYdYWmKmt8hhYtTKwRfUMkoLp"]
+
+        ,[2952092,14.286119,"tz1X83j8S5k3m2PGUpgbwET6nzzfXgnq6eQN"]
+
+        ,[2971599,344.869236,"tz1TuB8HaRonQRvKSfyyn1LCs3y2bJ4vj6Jr"]
+
+        ,[3027091,0.173377,"tz2KEY6pdzgrPw9jD1anC3BiZu2ZUme7sUJ9"]
+
+        ,[3249668,0.007870,"tz1Yd4NBTUpUT531cabMY3RArb8Bbo9C3dVz"]
+
+        ,[4167115,15.465506,"tz29wMnRp3ExYa8XsD29qA1ePqyWHvUTYB4E"]
+
+        ,[4618445,1020.208251,"tz1Pj5v5YC7oVF4Q8bmjeA5exPGcPAn5SUwe"]
+
+        ,[4648373,41038.919801,"tz1T4jwFGDcr6kuT8wFann2S22MXNBhpyRMv"]
+
+        ]'
     headers:
       Connection:
       - keep-alive
@@ -203,7 +221,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 17 Dec 2023 12:21:51 GMT
+      - Fri, 05 Jan 2024 21:22:51 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -215,7 +233,7 @@ interactions:
       cache-control:
       - public, max-age=30
       expires:
-      - Sun, 17 Dec 2023 12:22:21 GMT
+      - Fri, 05 Jan 2024 21:23:21 GMT
       server:
       - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
       trailer:
@@ -223,7 +241,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4763820'
+      - '4873961'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -233,13 +251,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99514'
+      - '99407'
       x-rate-limit-reset:
       - '1705438131'
       x-request-id:
-      - 5a303f56-f459-4a6f-aec3-2f3b4f897989
+      - fb91b3ff-afa2-48fd-88ae-bbe6c6d446db
       x-runtime:
-      - '0.007023'
+      - '0.010302'
     status:
       code: 200
       message: OK
@@ -258,23 +276,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/cycle/623
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA7WVS27jSAyG93MMrROBrAcfOodXsxEcW50YkSVDUjrTaOTuzZIdt2VJjRlgAmgj
-        Fov1F4sf+TPb/djVVVaQ8w9ZP2y7oXypDs8vQ1Z4JkCnD1nV7G+MTBHdp+9wONrmzIHzj0CPLmwA
-        CuAC4e/svPHegzbOFfb5kDxOXfvcVX2f2Q54yA59uWuPp7oabM/QvVWjqW+2p/6lHW5M291w+G4+
-        37Z1b5ZPj1uZMYjcrByaffWPHRNubHNtyEWUwvmkrWvrOglDD5HPv2X73lSdGUNSexZR7qu6et4O
-        bbKjBAxyXXravp7dUceMvR6a57J/O53qH5Zy1uAkBJ8rCHj57XGqul3V2DUY8sBoCWeJ3nwtynvb
-        jT6foV1wv42WcJMx2r23mx4PfV/ty659a/bJBny1XVyPdk6Kgs5Hb3dqyn379lSP0i1iVtzabvaM
-        C31bf69SEsvjobHLx4lpa+kmnJiq7eiWBy/I6IUYhZPQUeE5Clz/UgB3/Rv3Qg5pB7M6JeGgSnGs
-        s09dZbdNtaOS2ztYelmAFJUmTv35pMBJ3tQ+itYQ7+3j6XYi5F4BMJBF9xa1r1J+z2f6nOP4Fv0w
-        Ps++fKrb3euFJH9du0SeLifQroV5gfLnlU7kGZ1EKC7e0UksDmSFThjr20mBboVO0A0G03Mh4Mvo
-        JBJVN6eT1uEE3jhvVW2vNoUzepzBGVbg9FFwDuel9U3hFANCQCFHe+3oluFUj8rE4ChG8QtwXgpi
-        BqfiDE5EWYHTOoCk8vif2XRjf5zDiRqtjBhBPUfQP8AZZnAC23sl8tJWAO8X4dTcG7psrc36KPEy
-        m3HGYDqSIVXiEpumOndBnFMVCFGnbGrurHGs4JlQSlW0gidRIPEfD9k3q7L2vermfDqd8SnRsuDv
-        +LSWJUiLfPIj4gakiHShb8anedh8JWvj1q+/lE+hSCniv+bTpLkNxsJpgVM+HQd/x6c9/hqfkBrd
-        HZ9EvDQ8OZJNLBuQVkm0jCd6c3HRM2gMS6OTlukkmtOpa3SiNVz6gtEZ/SKdTsjgUhEndjL/t9Fp
-        UoPSGWyjE1dGpwbCKI5tfGpYHJ3RuRm259HJuoKnMzw9Aqs1VOuWEzzH8l0iU8gmvK6SmRgL8PHx
-        1y+6LhTVyAoAAA==
+      string: '{"cycle":623,"start_height":3760129,"end_height":3776512,"start_time":"2023-06-24T00:07:10Z","end_time":"2023-06-26T22:22:34Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3775488,"snapshot_index":14,"snapshot_time":"2023-06-26T17:58:23Z","rolls":113057,"roll_owners":400,"active_delegators":184148,"active_bakers":419,"staking_supply":679428443.908038,"staking_percent":70.47165178532849,"working_bakers":242,"working_endorsers":334,"missed_rounds":307,"missed_endorsements":2123530,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":61,"solvetime_mean":15.438171386718734,"round_min":0,"round_max":2,"round_mean":0.018737792968749965,"endorsement_rate":98.14842878069196,"endorsements_min":4761,"endorsements_max":6945,"endorsements_mean":6870.390014648436,"seed_rate":93.75,"worst_baked_block":3760135,"worst_endorsed_block":3760129,"snapshot_cycle":{"cycle":617,"start_height":3661825,"end_height":3678208,"start_time":"2023-06-06T17:28:12Z","end_time":"2023-06-09T14:37:23Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3668992,"snapshot_index":6,"snapshot_time":"2023-06-07T23:33:47Z","rolls":113531,"roll_owners":404,"active_delegators":183581,"active_bakers":423,"staking_supply":682358090.101452,"staking_percent":70.93197670265583,"working_bakers":275,"working_endorsers":391,"missed_rounds":118,"missed_endorsements":716829,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":288,"solvetime_mean":15.195678710937509,"round_min":0,"round_max":4,"round_mean":0.007202148437500033,"endorsement_rate":99.3749747140067,"endorsements_min":4755,"endorsements_max":7000,"endorsements_mean":6956.248229980459,"seed_rate":99.21875,"worst_baked_block":3661831,"worst_endorsed_block":3664683},"follower_cycle":{"cycle":629,"start_height":3858433,"end_height":3874816,"start_time":"2023-07-11T08:56:23Z","end_time":"2023-07-14T06:30:21Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3865600,"snapshot_index":6,"snapshot_time":"2023-07-12T15:29:17Z","rolls":112743,"roll_owners":374,"active_delegators":183017,"active_bakers":667,"staking_supply":677565300.44976,"staking_percent":70.1365325370954,"working_bakers":246,"working_endorsers":366,"missed_rounds":198,"missed_endorsements":1208630,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":53,"solvetime_mean":15.286437988281207,"round_min":0,"round_max":2,"round_mean":0.012084960937500031,"endorsement_rate":98.94615827287946,"endorsements_min":5227,"endorsements_max":6979,"endorsements_mean":6926.231079101558,"seed_rate":100,"worst_baked_block":3869969,"worst_endorsed_block":3858440}}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -283,7 +287,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 17 Dec 2023 12:21:51 GMT
+      - Fri, 05 Jan 2024 21:22:53 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -295,7 +299,7 @@ interactions:
       cache-control:
       - public, max-age=86400
       expires:
-      - Mon, 18 Dec 2023 12:21:51 GMT
+      - Sat, 06 Jan 2024 21:22:51 GMT
       last-modified:
       - Fri, 14 Jul 2023 06:30:21 GMT
       server:
@@ -303,7 +307,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4763820'
+      - '4873961'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -313,13 +317,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99513'
+      - '99406'
       x-rate-limit-reset:
-      - '1705438131'
+      - '1705438130'
       x-request-id:
-      - d8521c43-98ab-4f12-93f5-842058c8d847
+      - 27d957dc-7295-421f-a478-e9eca0ac9408
       x-runtime:
-      - '0.000068'
+      - '1.802724'
     status:
       code: 200
       message: OK
@@ -338,23 +342,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/cycle/623
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA7WVS27jSAyG93MMrROBrAcfOodXsxEcW50YkSVDUjrTaOTuzZIdt2VJjRlgAmgj
-        Fov1F4sf+TPb/djVVVaQ8w9ZP2y7oXypDs8vQ1Z4JkCnD1nV7G+MTBHdp+9wONrmzIHzj0CPLmwA
-        CuAC4e/svPHegzbOFfb5kDxOXfvcVX2f2Q54yA59uWuPp7oabM/QvVWjqW+2p/6lHW5M291w+G4+
-        37Z1b5ZPj1uZMYjcrByaffWPHRNubHNtyEWUwvmkrWvrOglDD5HPv2X73lSdGUNSexZR7qu6et4O
-        bbKjBAxyXXravp7dUceMvR6a57J/O53qH5Zy1uAkBJ8rCHj57XGqul3V2DUY8sBoCWeJ3nwtynvb
-        jT6foV1wv42WcJMx2r23mx4PfV/ty659a/bJBny1XVyPdk6Kgs5Hb3dqyn379lSP0i1iVtzabvaM
-        C31bf69SEsvjobHLx4lpa+kmnJiq7eiWBy/I6IUYhZPQUeE5Clz/UgB3/Rv3Qg5pB7M6JeGgSnGs
-        s09dZbdNtaOS2ztYelmAFJUmTv35pMBJ3tQ+itYQ7+3j6XYi5F4BMJBF9xa1r1J+z2f6nOP4Fv0w
-        Ps++fKrb3euFJH9du0SeLifQroV5gfLnlU7kGZ1EKC7e0UksDmSFThjr20mBboVO0A0G03Mh4Mvo
-        JBJVN6eT1uEE3jhvVW2vNoUzepzBGVbg9FFwDuel9U3hFANCQCFHe+3oluFUj8rE4ChG8QtwXgpi
-        BqfiDE5EWYHTOoCk8vif2XRjf5zDiRqtjBhBPUfQP8AZZnAC23sl8tJWAO8X4dTcG7psrc36KPEy
-        m3HGYDqSIVXiEpumOndBnFMVCFGnbGrurHGs4JlQSlW0gidRIPEfD9k3q7L2vermfDqd8SnRsuDv
-        +LSWJUiLfPIj4gakiHShb8anedh8JWvj1q+/lE+hSCniv+bTpLkNxsJpgVM+HQd/x6c9/hqfkBrd
-        HZ9EvDQ8OZJNLBuQVkm0jCd6c3HRM2gMS6OTlukkmtOpa3SiNVz6gtEZ/SKdTsjgUhEndjL/t9Fp
-        UoPSGWyjE1dGpwbCKI5tfGpYHJ3RuRm259HJuoKnMzw9Aqs1VOuWEzzH8l0iU8gmvK6SmRgL8PHx
-        1y+6LhTVyAoAAA==
+      string: '{"cycle":623,"start_height":3760129,"end_height":3776512,"start_time":"2023-06-24T00:07:10Z","end_time":"2023-06-26T22:22:34Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3775488,"snapshot_index":14,"snapshot_time":"2023-06-26T17:58:23Z","rolls":113057,"roll_owners":400,"active_delegators":184148,"active_bakers":419,"staking_supply":679428443.908038,"staking_percent":70.47165178532849,"working_bakers":242,"working_endorsers":334,"missed_rounds":307,"missed_endorsements":2123530,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":61,"solvetime_mean":15.438171386718734,"round_min":0,"round_max":2,"round_mean":0.018737792968749965,"endorsement_rate":98.14842878069196,"endorsements_min":4761,"endorsements_max":6945,"endorsements_mean":6870.390014648436,"seed_rate":93.75,"worst_baked_block":3760135,"worst_endorsed_block":3760129,"snapshot_cycle":{"cycle":617,"start_height":3661825,"end_height":3678208,"start_time":"2023-06-06T17:28:12Z","end_time":"2023-06-09T14:37:23Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3668992,"snapshot_index":6,"snapshot_time":"2023-06-07T23:33:47Z","rolls":113531,"roll_owners":404,"active_delegators":183581,"active_bakers":423,"staking_supply":682358090.101452,"staking_percent":70.93197670265583,"working_bakers":275,"working_endorsers":391,"missed_rounds":118,"missed_endorsements":716829,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":288,"solvetime_mean":15.195678710937509,"round_min":0,"round_max":4,"round_mean":0.007202148437500033,"endorsement_rate":99.3749747140067,"endorsements_min":4755,"endorsements_max":7000,"endorsements_mean":6956.248229980459,"seed_rate":99.21875,"worst_baked_block":3661831,"worst_endorsed_block":3664683},"follower_cycle":{"cycle":629,"start_height":3858433,"end_height":3874816,"start_time":"2023-07-11T08:56:23Z","end_time":"2023-07-14T06:30:21Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3865600,"snapshot_index":6,"snapshot_time":"2023-07-12T15:29:17Z","rolls":112743,"roll_owners":374,"active_delegators":183017,"active_bakers":667,"staking_supply":677565300.44976,"staking_percent":70.1365325370954,"working_bakers":246,"working_endorsers":366,"missed_rounds":198,"missed_endorsements":1208630,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":53,"solvetime_mean":15.286437988281207,"round_min":0,"round_max":2,"round_mean":0.012084960937500031,"endorsement_rate":98.94615827287946,"endorsements_min":5227,"endorsements_max":6979,"endorsements_mean":6926.231079101558,"seed_rate":100,"worst_baked_block":3869969,"worst_endorsed_block":3858440}}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -363,7 +353,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 17 Dec 2023 12:21:51 GMT
+      - Fri, 05 Jan 2024 21:22:53 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -375,7 +365,7 @@ interactions:
       cache-control:
       - public, max-age=86400
       expires:
-      - Mon, 18 Dec 2023 12:21:51 GMT
+      - Sat, 06 Jan 2024 21:22:53 GMT
       last-modified:
       - Fri, 14 Jul 2023 06:30:21 GMT
       server:
@@ -383,7 +373,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4763820'
+      - '4873961'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -393,13 +383,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99512'
+      - '99405'
       x-rate-limit-reset:
-      - '1705438131'
+      - '1705438130'
       x-request-id:
-      - 799084b2-51ff-4823-a04b-a7a98b662187
+      - 499acda7-486c-4c77-b45f-05b409767cb3
       x-runtime:
-      - '0.000043'
+      - '0.000148'
     status:
       code: 200
       message: OK
@@ -418,39 +408,7 @@ interactions:
     uri: https://api.tzkt.io/v1/rewards/split/tz1MbhmEwEAzzfb3naSr7vTp4mDxB8HsknA9/623?offset=0&limit=10000
   response:
     body:
-      string: !!binary |
-        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
-        89NFBXn6nlKRht8fT0r4P/8CvNkLJ84SAAA=
+      string: '{"cycle":623,"stakingBalance":23593831598,"activeStake":23593831598,"selectedStake":675258266577710,"delegatedBalance":13467121270,"numDelegators":30,"expectedBlocks":0,"expectedEndorsements":4007,"futureBlocks":0,"futureBlockRewards":0,"blocks":0,"blockRewards":0,"missedBlocks":0,"missedBlockRewards":0,"futureEndorsements":0,"futureEndorsementRewards":0,"endorsements":3999,"endorsementRewards":5721996,"missedEndorsements":11,"missedEndorsementRewards":0,"blockFees":0,"missedBlockFees":0,"doubleBakingRewards":0,"doubleBakingLosses":0,"doubleEndorsingRewards":0,"doubleEndorsingLosses":0,"doublePreendorsingRewards":0,"doublePreendorsingLosses":0,"revelationRewards":0,"revelationLosses":0,"delegators":[{"address":"tz1Pj5v5YC7oVF4Q8bmjeA5exPGcPAn5SUwe","balance":7049999165,"currentBalance":1020208251,"emptied":false},{"address":"tz1Pqec8GXCyUrpJEZcj4sqeKciVEXUkHMd8","balance":4330209569,"currentBalance":3879091886,"emptied":false},{"address":"tz1XjiXxtuYCbwKkwZU5ZgRBS6NYaZWnkAk2","balance":572704589,"currentBalance":589371863,"emptied":false},{"address":"tz1ZfXBr91jtpVi4WUjowXK8BkbU2CrBBXW4","balance":501117010,"currentBalance":16718691,"emptied":false},{"address":"tz1UWVQCHz3FCHXYssKZ1w357vqtDdwHJBkC","balance":290225288,"currentBalance":298661372,"emptied":false},{"address":"tz1W4w7QPxNB2QNwB1xMtCAyirnZ12sdGN1Y","balance":203595827,"currentBalance":209507610,"emptied":false},{"address":"tz2F1YdDx25CZgQ7ku9y2NcNpUkui9hFFG6W","balance":178315209,"currentBalance":183490335,"emptied":false},{"address":"tz1SFSoCxewh7daFb36s8f95mbLguUQf7UyF","balance":107970724,"currentBalance":111096077,"emptied":false},{"address":"tz2Kp82FmnqAH5MdRXRnvm3kyc4NkKdJWiro","balance":59390207,"currentBalance":61099967,"emptied":false},{"address":"tz1UCbv24XXq1XMGvzc2wG7ZFCQh1RtdX4U4","balance":26813301,"currentBalance":24725844,"emptied":false},{"address":"tz2MRXnAYz5FGfnWi5qKMVbCzF9pRbz168MA","balance":26621788,"currentBalance":27376708,"emptied":false},{"address":"tz1cKdFUBuuA8wY7H1zUNfAFV8Ex6E1yYsL3","balance":26355216,"currentBalance":27102365,"emptied":false},{"address":"tz1fEB2HQjzi6VD2RapCA7QhxZMc7nGGjFnz","balance":20055866,"currentBalance":20609352,"emptied":false},{"address":"tz2EXWVQ4hisDkifNmGombCgswRdJHZKCZM1","balance":17999858,"currentBalance":6709548,"emptied":false},{"address":"tz2SdAMQ4fKLptKWdVhXDGebYC6DHvmQ9mC1","balance":17739364,"currentBalance":18235457,"emptied":false},{"address":"tz29wMnRp3ExYa8XsD29qA1ePqyWHvUTYB4E","balance":15047846,"currentBalance":15465506,"emptied":false},{"address":"tz1QYy4MYN9ns1ehFwGv9AY3vNzJhnAVqF87","balance":8645352,"currentBalance":8833711,"emptied":false},{"address":"tz1WmBqBG8X9oaDCNEtUE44BjWLdc7iA8PvF","balance":5552238,"currentBalance":20005257,"emptied":false},{"address":"tz1X83j8S5k3m2PGUpgbwET6nzzfXgnq6eQN","balance":4499113,"currentBalance":14286119,"emptied":false},{"address":"tz1RkWDQCkA6LdSRk1NcHp5wzYgnigEJdEes","balance":2390296,"currentBalance":2577671,"emptied":false},{"address":"tz1dU6PMzqLWVYizZT4ykMMwpneojGSCCM8j","balance":697219,"currentBalance":700954,"emptied":false},{"address":"tz1SAr8Ub6DBjcztjbpq5Nnpks4XtbRZbyaU","balance":614602,"currentBalance":616920,"emptied":false},{"address":"tz1bZDRYRjMRHaHFKNvgG8BepZwiH2xEVUoC","balance":258422,"currentBalance":258445,"emptied":false},{"address":"tz1MZ2eShjYaYdYWmKmt8hhYtTKwRfUMkoLp","balance":226345,"currentBalance":226345,"emptied":false},{"address":"KT1CPurbEq3TXzPLPGH1CWzbVk53i1kNv9Qy","balance":31852,"currentBalance":31852,"emptied":false},{"address":"KT1HM5dyAGYRGjuZ5sNo7HqZW9Z49YU3yE7n","balance":16667,"currentBalance":16667,"emptied":false},{"address":"tz1Kft1UivKWpbsCgub583iKLYissj3kxhAq","balance":13077,"currentBalance":13077,"emptied":false},{"address":"tz1Yd4NBTUpUT531cabMY3RArb8Bbo9C3dVz","balance":7870,"currentBalance":7870,"emptied":false},{"address":"KT19vcp5DT1uCJZpbGtQwXuGgdUL9tGwZQ4t","balance":5679,"currentBalance":5679,"emptied":false},{"address":"KT1Q4cTfHzxT9hibSJKkCgYBVyTBUa4BPbEU","balance":1711,"currentBalance":1711,"emptied":false}],"ownBlocks":0,"extraBlocks":0,"missedOwnBlocks":0,"missedExtraBlocks":0,"uncoveredOwnBlocks":0,"uncoveredExtraBlocks":0,"uncoveredEndorsements":0,"ownBlockRewards":0,"extraBlockRewards":0,"missedOwnBlockRewards":0,"missedExtraBlockRewards":0,"uncoveredOwnBlockRewards":0,"uncoveredExtraBlockRewards":0,"uncoveredEndorsementRewards":0,"ownBlockFees":0,"extraBlockFees":0,"missedOwnBlockFees":0,"missedExtraBlockFees":0,"uncoveredOwnBlockFees":0,"uncoveredExtraBlockFees":0,"doubleBakingLostDeposits":0,"doubleBakingLostRewards":0,"doubleBakingLostFees":0,"doubleEndorsingLostDeposits":0,"doubleEndorsingLostRewards":0,"doubleEndorsingLostFees":0,"revelationLostRewards":0,"revelationLostFees":0,"futureBlockDeposits":0,"blockDeposits":0,"futureEndorsementDeposits":0,"endorsementDeposits":0}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -461,17 +419,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 17 Dec 2023 12:21:51 GMT
+      - Fri, 05 Jan 2024 21:22:54 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4763821'
+      - '4873962'
       Tzkt-Level:
-      - '4763821'
+      - '4873962'
       Tzkt-Synced-At:
-      - '2023-12-17T12:21:46Z'
+      - '2024-01-05T21:22:46Z'
       Tzkt-Version:
       - 1.12.4.0
     status:
@@ -492,15 +450,7 @@ interactions:
     uri: https://api.tzkt.io/v1/head
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEA6WRS4/aMBSF/4vXIbKv39kRRJlCQaAZHjO7TDBNNOCExECjav57LxQ2I3XVlaVz
-        fL57ffyb5EVWepKQAx7eBRL9Vb5vUZu5sNku6iZffdTZenn1unzvSKKMiMjend2eJEIrboBFpMja
-        AkPptL8bnNf98QKWM7/eyvYY+svN/KlS49dpO93YerLUabeeFxd57CZs9IrguqlClVfII/Mwy8qm
-        ei+7tn06FUYXw2K3SkeDVTPha/9s3uDbi+gOqQz9TDTML3YI8O5XmP8vJJQH14bsUOMaQIH3GPSY
-        fmGQAEuEesM55yqU/uewrnJ8rJQPYe6assLOGIOIfPjq4n98qWefteG58/m/0S26DhmhObmIHE9V
-        cF8hNzENCIEYqKSMWqUtA2n0sEdxm9uF4akhCY2NUExaqUFLBZLil93cZYszaGyBU86FFWAlAtTd
-        HfgO/zeWXEpulFRcKgXmQR7X6DLOYqaVxfmCacm0uWcnzeXagDWx5kaCNlZSBY+5w4CN0ZjSa0oL
-        CpZSrhi3+h4fvWPvNMZ9BWgLhjNDtTWffwC3OVxwpQIAAA==
+      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":690,"level":4873962,"hash":"BKqVZs1jevuSz734MgRjBcjDDmDVgNEL79UGv9AaMFdnRmirFm7","protocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","nextProtocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","timestamp":"2024-01-05T21:22:45Z","votingEpoch":55,"votingPeriod":113,"knownLevel":4873962,"lastSync":"2024-01-05T21:22:46Z","synced":true,"quoteLevel":4873962,"quoteBtc":2.112388872844163E-05,"quoteEur":0.844757931418738,"quoteUsd":0.9239466247895785,"quoteCny":6.558727510731311,"quoteJpy":133.75531792698828,"quoteKrw":1214.5877922584375,"quoteEth":0.00041195122882407327,"quoteGbp":0.7265306452572892}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -511,17 +461,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 17 Dec 2023 12:21:51 GMT
+      - Fri, 05 Jan 2024 21:22:54 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4763821'
+      - '4873962'
       Tzkt-Level:
-      - '4763821'
+      - '4873962'
       Tzkt-Synced-At:
-      - '2023-12-17T12:21:46Z'
+      - '2024-01-05T21:22:46Z'
       Tzkt-Version:
       - 1.12.4.0
     status:

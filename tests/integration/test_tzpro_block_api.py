@@ -30,7 +30,7 @@ def test_get_revelation(address_api):
 )
 def test_get_current_cycle_and_level(address_api):
     # NOTE: The block count for tzpro is incremented internally by one to sync tzpro with tzkt
-    assert address_api.get_current_cycle_and_level() == (679, 4685929)
+    assert address_api.get_current_cycle_and_level() == (690, 4873963)
 
 
 @vcr.use_cassette(

@@ -25,15 +25,15 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 17 Dec 2023 12:24:53 GMT
+      - Fri, 05 Jan 2024 21:23:07 GMT
       Server:
       - nginx
       Tzkt-Known-Level:
-      - '4763833'
+      - '4873963'
       Tzkt-Level:
-      - '4763833'
+      - '4873963'
       Tzkt-Synced-At:
-      - '2023-12-17T12:24:50Z'
+      - '2024-01-05T21:23:01Z'
       Tzkt-Version:
       - 1.12.4.0
     status:

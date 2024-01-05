@@ -33,13 +33,13 @@ def address_api():
     filter_headers=["X-API-Key", "authorization"],
 )
 def test_get_rewards_for_cycle_map(address_api):
-    cycle = 678
+    cycle = 689
     rewards = address_api.get_rewards_for_cycle_map(
         cycle=cycle, rewards_type=RewardsType.ACTUAL
     )
-    assert rewards.delegate_staking_balance == 77565473342
-    assert rewards.total_reward_amount == 19390680
-    assert len(rewards.delegator_balance_dict) == 35
+    assert rewards.delegate_staking_balance == 77965234131
+    assert rewards.total_reward_amount == 19935448
+    assert len(rewards.delegator_balance_dict) == 34
 
 
 @vcr.use_cassette(
@@ -49,11 +49,11 @@ def test_get_rewards_for_cycle_map(address_api):
 @patch("src.rpc.rpc_reward_api.sleep", MagicMock())
 @patch("src.rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_rpc_terminate_404(address_api):
-    current_cycle = 515
+    current_cycle = 660
 
     with pytest.raises(
         Exception,
-        match="RPC URL '{}/chains/main/blocks/4686197/context/raw/json/cycle/515/total_active_stake' not found. Is this node in archive mode?".format(
+        match="RPC URL '{}/chains/main/blocks/4873991/context/raw/json/cycle/660/total_active_stake' not found. Is this node in archive mode?".format(
             PUBLIC_NODE_URL["MAINNET"]
         ),
     ):
@@ -122,7 +122,7 @@ def test_rpc_contract_balance(address_api):
     contract_balance = address_api.get_contract_balance(
         contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block="head"
     )
-    assert contract_balance == 9457031
+    assert contract_balance == 9484475
 
 
 # TODO: If a test needs to be disabled because of an unsolvable API issue
@@ -155,11 +155,11 @@ def test_get_block_data(address_api):
         reward_and_fees,
         bonus,
         double_signing_reward,
-    ) = address_api.get_block_data(4686474)
-    assert author == "tz3RKYFsLuQzKBtmYuLNas7uMu3AsYd4QdsA"
-    assert payload_proposer == "tz3RKYFsLuQzKBtmYuLNas7uMu3AsYd4QdsA"
-    assert reward_and_fees == 5182732
-    assert bonus == 4920328
+    ) = address_api.get_block_data(4874002)
+    assert author == "tz1ei4WtWEMEJekSv8qDnu9PExG6Q8HgRGr3"
+    assert payload_proposer == "tz1ei4WtWEMEJekSv8qDnu9PExG6Q8HgRGr3"
+    assert reward_and_fees == 5007339
+    assert bonus == 4834608
     assert double_signing_reward == 0
 
 
@@ -233,7 +233,7 @@ def test_get_endorsing_rewards_mocked(address_api):
     filter_headers=["X-API-Key", "authorization"],
 )
 def test_get_current_balance_of_delegator(address_api):
-    assert 4051010646 == address_api.get_current_balance_of_delegator(
+    assert 5023009232 == address_api.get_current_balance_of_delegator(
         MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
     )
 
@@ -265,5 +265,5 @@ def test_get_delegators_and_delgators_balances(address_api):
 )
 def test_get_current_level(address_api):
     current_level, current_cycle = address_api.get_current_level()
-    assert 4686285 == current_level
-    assert 679 == current_cycle
+    assert 4873961 == current_level
+    assert 690 == current_cycle

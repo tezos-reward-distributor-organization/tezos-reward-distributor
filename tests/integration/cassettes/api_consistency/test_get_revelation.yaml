@@ -14,19 +14,7 @@ interactions:
     uri: https://api.tzkt.io/v1/accounts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEA4VUXXOiQBD8LzxrFQv4AW8Rc7Fi9BLE8sq3DYxkA+ya3cVEU/nvN4Ak+HF1L1bZ
-        vdM73TPLp8FiwxsSc2jbHUPvt2B4RqFAGh2DxrEEpRDQBzJ3lpsnn75M0mDxMqJ85z49uiHP/8wT
-        n775+zUWbIvnjEVT2GMJxNu0ECK6uZ2ud+nr/V3w5rwu9++zyXIlbH89IZZW8WbMJr59f+ss94ws
-        hI0iEnZAM8CutCygYzzTjPII23LMgTUYDgnp4yGRZcV2JHiM7ZkdQ+VU6uAMjETBNTrxBoQMbNft
-        GDFkkFCNYp8GzRgtvS00TWEu3s8NJ8Ndmkcx9NVqSu+s+dxdTQ9+Op71gwN7I65TFkSa7VCt7PTr
-        W54J/oAmMsMjpNezeoM2E7K8jNgyLbNLzK5ph8TxHOIRq0yQF7kvuJYoXBurjSq/tHLutIXWjYQi
-        Bd6g5TjL/6M6vwbG8Co4lJSrDcgGx3SOIixKQTcwZqsr4EzmGz/XQQJN3JTBUI1J1DYQGtfZ1xCp
-        Tv2WLGG8OVZjlV7ZSVXqEAwPi4NqKVCrPhRAwhSOFrNSmvJjVnhuAXoMW6GYVg8sx98qMyRmLJHN
-        RWXvH/WytDr4ibghF8UzSoyojl4uSV/kSF7iAehC8nIzL7lfaDZjB6hrc+BX63Ox+8+JV6jyubxg
-        zNS2bDe8mOFx2jXxU8h4JIEqeKQsXmghaYJXN6sWS8r4cWwtuPXWbuJ4hl8IrGrtS4v34dRki7r9
-        gKjQ12WbqVxnH8uvjGqNpKUaQITpydP4T/jNyaUS8H+1F3c0b5uo30LwL3rDpNLVkjONX7v6nePT
-        OsGvP3Xz+NQz2lZw+gPX7uF2t+EfAbtLrK5phaTn2aZnOmvj6y//uxx4ugUAAA==
+      string: '{"id":810833,"type":"user","address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","publicKey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","revealed":true,"balance":4091995705,"rollupBonds":0,"smartRollupBonds":0,"counter":7117400,"delegate":{"alias":"Bakerman_CH","address":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","active":true},"delegationLevel":4797825,"delegationTime":"2023-12-23T11:46:51Z","numContracts":0,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":6,"tokenTransfersCount":9,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numActivations":0,"numDelegations":2,"numOriginations":1,"numTransactions":427,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":0,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"firstActivity":1155256,"firstActivityTime":"2020-10-03T14:40:12Z","lastActivity":4842952,"lastActivityTime":"2023-12-31T10:06:13Z"}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -37,17 +25,17 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 03 Dec 2023 19:17:25 GMT
+      - Fri, 05 Jan 2024 21:16:49 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4685604'
+      - '4873938'
       Tzkt-Level:
-      - '4685604'
+      - '4873937'
       Tzkt-Synced-At:
-      - '2023-12-03T19:17:20Z'
+      - '2024-01-05T21:16:48Z'
       Tzkt-Version:
       - 1.12.4.0
     status:
@@ -68,16 +56,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/account/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4VTTW/iMBC978/wmSCPY5M4t920Kioq2lIQKy6RSSbUTUggTuhCtf99k5BQutKK
-        o9+8N/Pmwx+kyN8DHRHPZbbkYkBUFBVoDPFIeYIpX8TPvnodJ7OX1x8qO8jnn3KebX9NN77a+8cV
-        uQiC8rjDWoUREwJkHdhV6wSPLbRLqjwPv99PVofk7fFhtudvi+P703ixzG1/NQZWmii+02Pffrzn
-        i6OGl9yuM4R5lZVYEM8BcGwpB2StkubdeNu4h2QbRjgyy4l6YNOpXE5OfnL3NJqd9B4krxPEujBl
-        oDPiAQjBxKiH8qrsMWdAUtWx+MiRtoAOOZM4lbIhnYUG8TpbyztjF22EKW5UiVFgdBbiVZ3eTlDq
-        bTMrRhm1gFrUngP3OPWArciVxf/woON1tq9YtgXMomwOwrOpR/mF9TUZWJRbFOZAPS487nwWbVq5
-        4e7S8o26/4zhRi9lXqo0KDBEfcD6HLnjwhBc12HQBw1m9T4c6vbAuiqyhkuHTLpM9HCMaIKd0m0E
-        anPia6gyZxEIx+YDYnaYRWqdYrBWqWoXxqnDho7rAtQr1iaIqyxqNGVRYQtcervCCjygSj+hej6/
-        A1OFYfubgHVIrHRLot37fGR9tDnC+tD/fPsLH2EJ0JkDAAA=
+      string: '{"row_id":823945,"address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","address_type":"ed25519","pubkey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","counter":7117400,"baker":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","first_in":1155256,"first_out":1155257,"last_in":4842952,"last_out":4797825,"first_seen":1155256,"last_seen":4842952,"delegated_since":4797825,"first_in_time":"2020-10-03T14:40:12Z","first_out_time":"2020-10-03T14:41:12Z","last_in_time":"2023-12-31T10:06:13Z","last_out_time":"2023-12-23T11:46:51Z","first_seen_time":"2020-10-03T14:40:12Z","last_seen_time":"2023-12-31T10:06:13Z","delegated_since_time":"2023-12-23T11:46:51Z","total_received":4800.396724,"total_sent":708,"total_burned":0.29825,"total_fees_paid":0.102769,"total_fees_used":0.16032,"spendable_balance":4091.995705,"is_funded":true,"is_delegated":true,"is_revealed":true,"n_tx_success":13,"n_tx_failed":0,"n_tx_out":13,"n_tx_in":409}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -86,7 +67,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:17:25 GMT
+      - Fri, 05 Jan 2024 21:16:49 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -96,17 +77,17 @@ interactions:
       Vary:
       - Accept-Encoding
       cache-control:
-      - public, max-age=4
+      - public, max-age=10
       expires:
-      - Sun, 03 Dec 2023 19:17:30 GMT
+      - Fri, 05 Jan 2024 21:17:00 GMT
       last-modified:
-      - Sat, 02 Dec 2023 15:30:04 GMT
+      - Sun, 31 Dec 2023 10:06:13 GMT
       server:
-      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685603'
+      - '4873937'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -118,11 +99,11 @@ interactions:
       x-rate-limit-remaining:
       - '99426'
       x-rate-limit-reset:
-      - '1701745537'
+      - '1705438131'
       x-request-id:
-      - 5c315ca5-5db4-4d75-a831-d09bcca4a50e
+      - 679be8fa-c507-41ec-af6e-f1707d42744d
       x-runtime:
-      - '0.002167'
+      - '0.002112'
     status:
       code: 200
       message: OK
@@ -141,19 +122,7 @@ interactions:
     uri: https://api.tzkt.io/v1/accounts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEA4VUXXOiQBD8LzxrFQv4AW8Rc7Fi9BLE8sq3DYxkA+ya3cVEU/nvN4Ak+HF1L1bZ
-        vdM73TPLp8FiwxsSc2jbHUPvt2B4RqFAGh2DxrEEpRDQBzJ3lpsnn75M0mDxMqJ85z49uiHP/8wT
-        n775+zUWbIvnjEVT2GMJxNu0ECK6uZ2ud+nr/V3w5rwu9++zyXIlbH89IZZW8WbMJr59f+ss94ws
-        hI0iEnZAM8CutCygYzzTjPII23LMgTUYDgnp4yGRZcV2JHiM7ZkdQ+VU6uAMjETBNTrxBoQMbNft
-        GDFkkFCNYp8GzRgtvS00TWEu3s8NJ8Ndmkcx9NVqSu+s+dxdTQ9+Op71gwN7I65TFkSa7VCt7PTr
-        W54J/oAmMsMjpNezeoM2E7K8jNgyLbNLzK5ph8TxHOIRq0yQF7kvuJYoXBurjSq/tHLutIXWjYQi
-        Bd6g5TjL/6M6vwbG8Co4lJSrDcgGx3SOIixKQTcwZqsr4EzmGz/XQQJN3JTBUI1J1DYQGtfZ1xCp
-        Tv2WLGG8OVZjlV7ZSVXqEAwPi4NqKVCrPhRAwhSOFrNSmvJjVnhuAXoMW6GYVg8sx98qMyRmLJHN
-        RWXvH/WytDr4ibghF8UzSoyojl4uSV/kSF7iAehC8nIzL7lfaDZjB6hrc+BX63Ox+8+JV6jyubxg
-        zNS2bDe8mOFx2jXxU8h4JIEqeKQsXmghaYJXN6sWS8r4cWwtuPXWbuJ4hl8IrGrtS4v34dRki7r9
-        gKjQ12WbqVxnH8uvjGqNpKUaQITpydP4T/jNyaUS8H+1F3c0b5uo30LwL3rDpNLVkjONX7v6nePT
-        OsGvP3Xz+NQz2lZw+gPX7uF2t+EfAbtLrK5phaTn2aZnOmvj6y//uxx4ugUAAA==
+      string: '{"id":810833,"type":"user","address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","publicKey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","revealed":true,"balance":4091995705,"rollupBonds":0,"smartRollupBonds":0,"counter":7117400,"delegate":{"alias":"Bakerman_CH","address":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","active":true},"delegationLevel":4797825,"delegationTime":"2023-12-23T11:46:51Z","numContracts":0,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":6,"tokenTransfersCount":9,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numActivations":0,"numDelegations":2,"numOriginations":1,"numTransactions":427,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":0,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"firstActivity":1155256,"firstActivityTime":"2020-10-03T14:40:12Z","lastActivity":4842952,"lastActivityTime":"2023-12-31T10:06:13Z"}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -164,17 +133,17 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 03 Dec 2023 19:17:29 GMT
+      - Fri, 05 Jan 2024 21:16:49 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4685604'
+      - '4873938'
       Tzkt-Level:
-      - '4685604'
+      - '4873938'
       Tzkt-Synced-At:
-      - '2023-12-03T19:17:20Z'
+      - '2024-01-05T21:16:48Z'
       Tzkt-Version:
       - 1.12.4.0
     status:
@@ -195,14 +164,14 @@ interactions:
     uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ/manager_key
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA1JKTSnILs3PT3Z09Y4qy87ycg8qNMkKrSz39QgNzzd2jvIwNCopTklzyfRwNvZy
-        NQmtzDQMzjdW4gIAAAD//wMAkKKHBDkAAAA=
+      string: '"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3"
+
+        '
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 82fe266ade84bbec-FRA
+      - 840ebe9bfbb99076-FRA
       Connection:
       - keep-alive
       Content-Encoding:
@@ -210,11 +179,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 03 Dec 2023 19:17:29 GMT
+      - Fri, 05 Jan 2024 21:16:49 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=eBUOGeiA242ZyoZoIOsxy3FaKq%2FV87%2Ffd7eUahXHC9ai1KuhIpXP%2BJ%2FMyZZLdta2JPN%2FkeVo16kep%2FFLJ00NlSPwQFBdhavkfPZfmSJYASUVvhAk9gIKOMm0oVHIQbVFEkd%2FDutS2o79RVJOcPIBFQ%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=%2BbeUNVXzz2seA14wbhvhIWZP%2BtyhNYRHvYM3WmIGrzZIobu6dBBNIkfr57c1qREobu1VoD8jomLo1btFnN4f0vqn2XQXqtKsteDOhFU0H0sdAeUzdEoOUWhMVVi%2BZTG3BZGegyw%2Bah%2F%2BstNHt5IW0g%3D%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Transfer-Encoding:
@@ -239,16 +208,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/account/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4VTTW/iMBC978/wmSCPY5M4t920Kioq2lIQKy6RSSbUTUggTuhCtf99k5BQutKK
-        o9+8N/Pmwx+kyN8DHRHPZbbkYkBUFBVoDPFIeYIpX8TPvnodJ7OX1x8qO8jnn3KebX9NN77a+8cV
-        uQiC8rjDWoUREwJkHdhV6wSPLbRLqjwPv99PVofk7fFhtudvi+P703ixzG1/NQZWmii+02Pffrzn
-        i6OGl9yuM4R5lZVYEM8BcGwpB2StkubdeNu4h2QbRjgyy4l6YNOpXE5OfnL3NJqd9B4krxPEujBl
-        oDPiAQjBxKiH8qrsMWdAUtWx+MiRtoAOOZM4lbIhnYUG8TpbyztjF22EKW5UiVFgdBbiVZ3eTlDq
-        bTMrRhm1gFrUngP3OPWArciVxf/woON1tq9YtgXMomwOwrOpR/mF9TUZWJRbFOZAPS487nwWbVq5
-        4e7S8o26/4zhRi9lXqo0KDBEfcD6HLnjwhBc12HQBw1m9T4c6vbAuiqyhkuHTLpM9HCMaIKd0m0E
-        anPia6gyZxEIx+YDYnaYRWqdYrBWqWoXxqnDho7rAtQr1iaIqyxqNGVRYQtcervCCjygSj+hej6/
-        A1OFYfubgHVIrHRLot37fGR9tDnC+tD/fPsLH2EJ0JkDAAA=
+      string: '{"row_id":823945,"address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","address_type":"ed25519","pubkey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","counter":7117400,"baker":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","first_in":1155256,"first_out":1155257,"last_in":4842952,"last_out":4797825,"first_seen":1155256,"last_seen":4842952,"delegated_since":4797825,"first_in_time":"2020-10-03T14:40:12Z","first_out_time":"2020-10-03T14:41:12Z","last_in_time":"2023-12-31T10:06:13Z","last_out_time":"2023-12-23T11:46:51Z","first_seen_time":"2020-10-03T14:40:12Z","last_seen_time":"2023-12-31T10:06:13Z","delegated_since_time":"2023-12-23T11:46:51Z","total_received":4800.396724,"total_sent":708,"total_burned":0.29825,"total_fees_paid":0.102769,"total_fees_used":0.16032,"spendable_balance":4091.995705,"is_funded":true,"is_delegated":true,"is_revealed":true,"n_tx_success":13,"n_tx_failed":0,"n_tx_out":13,"n_tx_in":409}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -257,7 +219,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 19:17:29 GMT
+      - Fri, 05 Jan 2024 21:16:50 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -267,17 +229,17 @@ interactions:
       Vary:
       - Accept-Encoding
       cache-control:
-      - public, max-age=0
+      - public, max-age=9
       expires:
-      - Sun, 03 Dec 2023 19:17:30 GMT
+      - Fri, 05 Jan 2024 21:17:00 GMT
       last-modified:
-      - Sat, 02 Dec 2023 15:30:04 GMT
+      - Sun, 31 Dec 2023 10:06:13 GMT
       server:
-      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685603'
+      - '4873937'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -289,11 +251,11 @@ interactions:
       x-rate-limit-remaining:
       - '99425'
       x-rate-limit-reset:
-      - '1701745537'
+      - '1705438131'
       x-request-id:
-      - e3646861-7dbf-4425-b90d-2105cec67dca
+      - 651358f1-bbeb-4992-b799-99e24d91a0f3
       x-runtime:
-      - '0.002210'
+      - '0.002142'
     status:
       code: 200
       message: OK
@@ -312,14 +274,14 @@ interactions:
     uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ/manager_key
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA1JKTSnILs3PT3Z09Y4qy87ycg8qNMkKrSz39QgNzzd2jvIwNCopTklzyfRwNvZy
-        NQmtzDQMzjdW4gIAAAD//wMAkKKHBDkAAAA=
+      string: '"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3"
+
+        '
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 82fe266e5dd43a3e-FRA
+      - 840ebe9e68e9917a-FRA
       Connection:
       - keep-alive
       Content-Encoding:
@@ -327,11 +289,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 03 Dec 2023 19:17:30 GMT
+      - Fri, 05 Jan 2024 21:16:50 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=tT1qaN3fG69jpFTsyF1iZ9rDSgoF0nf4AoHYapkBhOGZzEScBSHcob%2FUDT9%2F%2Bo6EhPwTBJLpPkuLcPcpvgL6x%2FsYsdU7yKHHlm9nQhhHDCLc51TqApv7Z2LxWMimUxYqHxfJR7%2Fm6I%2B6M7S5BDYwuw%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=ffgmzCDGOtjCzo3VOLQ7Fqs%2BNvWWIgM3AtqpzoJwSbz47yGptLgqrCxpXbTIlFK10wLvGU15YOJqlZn5xwojBClFYSvZS4CIU3NDW3V%2BOl5dJMGJlDqpkQUYY8yf9kJ4bOQCcMFB%2Fq%2FG8uYSriBc%2FQ%3D%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Transfer-Encoding:

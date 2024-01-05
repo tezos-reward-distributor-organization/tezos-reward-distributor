@@ -14,25 +14,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/tip
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4VVy27bRhTd9zO0tol5P7SrGzcG2gpN4ziON8SQHEkDURyVj9hy4H/vGVKWZKRB
-        AC0099zHmXvPXH6bNW7rZ/PZrX+O3exi1vj+MbYbWP5yocEJtm6/LWIN0/3tA47lGkgeKhgWvr+v
-        Puza8m6zc58/AVz5xnehy/swpmWEmkuiLjm5pWpO9JyzlKKoY7nJ165bw+fqz/0/94vmev1uE2/u
-        6ULf3b33j8XCLWN51fcr/fTly3X4tC9v7m27UOLrQyKVCnS92+7GKoxfUnZJ+C0jc27wS1XWPqzW
-        /WwulJGWGTDflzVYKW0vZrs29rEcr/V3v3ChjUXYd93NsDZ6fb1e3l29/+2u/YN/bj6aB/b7rdhv
-        r2T/qxMtbT4sE4HYuzp3ZRmHpu9QRRtlDXsFytj0rSsTQo0UTL8CbazrYZfM9GK2HJrKV2dZmNBK
-        KjhXQ9ef2Q1HJ+3BXPnar1wf25RFGmVec8eU11BiqBAU1jeOaAJHycJtfDpzq9K4H49Fck4wU0Gt
-        FGhV7V17xuwASmq/Iz1B1BCJiqFZ1q4PscnpHv6cS6Itz7ghRLNzuHW9n3wyRZmihGuupJCMyTQ5
-        V/fQRqLYDbtdDb9vszY+jrKb5ml/MuCjAv9XG2O/UMBwapglLLOcaI0UGFn4Cm6oo0GfS05MJgj+
-        AhyasnbIC5ARxDJjM0UMV7haGdpySJdrVok4o9YqipszJiiuUYd/h0TegDklloqM8DTs45BSUmnQ
-        KKG5yIxmSkAGkPhmzKhhRyqrM0KklKkx6+DrKoVxKWFliusDf5+nuNQJYzWRlKoMA6DWHPHzolpo
-        axlnGQQsBX+TY6ytLGOastQIYxXhaY7f57GJGDpJCKdEnPkc81AGATFjMkmllUizDc0YyhgoUqJF
-        ZiXTieaE5MUh0hiGjhiVYRz4d8R9U0Hch+RKSUY5SFrc+OTTeV9NHpAizeQRwKOv2ogFgoyEgLfm
-        jJ7ChqILFYQn0UIiWQoshraZ+FqlNUK4SKqezHkVh6L2R84MfI3OhBIkvdy3ThNxTAj6A2WoRZhj
-        gTy2YYX2pYcC2hALywTVJ9zVWKAHmEH5YAefE97hybuVT00hlAqVEYzwBPunXR3K0I8TsZRmQhil
-        +CkcHcu3oeumyVCdcWUFP13CFZ1vypQfXUhTw+u14ghPK242J9gVbXz2zSghA3nZDE8meU52yGcX
-        u5AW3A8cWv/o2qo7y5UvvX9zLmIzOryMr6UfurQrtrFKr7/bN+XsZB/PGODhC9Sd7ZIl+l2HZ1+d
-        rZOAPff0xoKvxqr1qTEQSu2wi4ddBfn/aNG8vPzyH8JhTtFjBwAA
+      string: '{"name":"Tezos","network":"Mainnet","symbol":"XTZ","chain_id":"NetXdQprcVkpaWU","genesis_time":"2018-06-30T16:07:32Z","block_hash":"BKqVZs1jevuSz734MgRjBcjDDmDVgNEL79UGv9AaMFdnRmirFm7","timestamp":"2024-01-05T21:22:45Z","height":4873962,"cycle":690,"protocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","total_accounts":4870450,"total_contracts":189641,"total_rollups":11,"funded_accounts":2496587,"dust_accounts":840510,"dust_delegators":16103,"ghost_accounts":2053959,"total_ops":856157818,"delegators":186935,"bakers":384,"new_accounts_30d":68790,"cleared_accounts_30d":12780,"funded_accounts_30d":31241,"inflation_1y":43246372.697131,"inflation_rate_1y":4.582227182311885,"health":96,"supply":{"row_id":4873963,"height":4873962,"cycle":690,"time":"2024-01-05T21:22:45Z","total":987031370.177587,"activated":743363291.116411,"unclaimed":20955306.896289,"circulating":966076063.281298,"liquid":897229864.650545,"delegated":582181935.744628,"staking":702445352.563945,"shielded":355.002637,"active_stake":686110931.742792,"active_delegated":574847374.407774,"active_staking":691446131.057287,"inactive_delegated":7334561.336854,"inactive_staking":10999221.506658,"minted":225059415.185065,"minted_baking":90148892.323102,"minted_endorsing":128447888.170669,"minted_seeding":10967.25,"minted_airdrop":28700.007321,"minted_subsidy":6205095,"burned":2346643.020178,"burned_double_baking":228687.464089,"burned_double_endorse":31838.219485,"burned_origination":19413.167,"burned_allocation":294997.51425,"burned_storage":1224508.67525,"burned_explicit":136314.940923,"burned_seed_miss":226883.883339,"burned_absence":183999.155842,"burned_rollup":0,"frozen":68846198.630753,"frozen_deposits":68846198.630753,"frozen_rewards":0,"frozen_fees":0,"frozen_bonds":0},"status":{"mode":"sync","status":"synced","blocks":4873963,"finalized":4873962,"indexed":4873962,"progress":1,"last_update":"2024-01-05T21:22:45Z"}}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -41,7 +25,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 20:38:59 GMT
+      - Fri, 05 Jan 2024 21:23:07 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -51,17 +35,17 @@ interactions:
       Vary:
       - Accept-Encoding
       cache-control:
-      - public, max-age=8
+      - public, max-age=7
       expires:
-      - Sun, 03 Dec 2023 20:39:08 GMT
+      - Fri, 05 Jan 2024 21:23:15 GMT
       last-modified:
-      - Sun, 03 Dec 2023 20:38:38 GMT
+      - Fri, 05 Jan 2024 21:22:45 GMT
       server:
-      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685928'
+      - '4873962'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -71,13 +55,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99321'
+      - '99384'
       x-rate-limit-reset:
-      - '1701745537'
+      - '1705438130'
       x-request-id:
-      - 32bbd819-8cf1-4dd8-95f2-9650d42ff739
+      - 6da27cd1-e394-4fdb-bc21-eaead2a7e82b
       x-runtime:
-      - '0.000038'
+      - '0.000129'
     status:
       code: 200
       message: OK

@@ -14,16 +14,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/account/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4VTXZOaMBR978/gWZ3cJIDhraU76+xOnbqL05YXJsJljSAoCVq30/9eQHDddjo+
-        5txzzv3ML6sqj5FKLG9KmeD2yJJJUqHWlmeZV5jzZbrw5XqWPT2vP8niIBZfRVBsv89ffLn3T6F1
-        EUTmtMNGhQm1bRBNYFevMjx10C6ryzL+ePcYHrLNw/3Tnm+Wp+OX2fJbyfxwBtToJP2sZj57uOPL
-        k4LnkjUOcVkXBivLcwFcTsjIWsmsfbe1LVycZ8cf98FjON8v6HbPoIpDMz/4m+M6OC5pY5CqSptI
-        FZYHYNvUdgaorM2AuSMrlz2LTzkVNu2RjsRd4U6pPQg14rVbxztjF22COb5Ig0mkVRHjPxaqiIza
-        trOihJIxkDFhAXCPEw9oaF2V+B8e9Ly+7CsWGwMdMwiAeMTxgF1Y7806Gm3MwOOOZ8Nb0raVG9Vd
-        Wr6R968x3EhvSiPzqMIY1QGTdpqETJhwXMqHoMai2YdLpgOwqqui5ZIJFd18z3CKqKOdVF0ECHUd
-        8S5U67MIHMKadekdFolc5RitZC7PCyMCJkLYLmlMlY7Sukhajalq7IBLb1dYhQeU+RvUzOdnpOs4
-        7n4TsB5JpepIpH+fL3GIdkdIxO8PfwDoQKcMmQMAAA==
+      string: '{"row_id":823945,"address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","address_type":"ed25519","pubkey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","counter":7117400,"baker":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","first_in":1155256,"first_out":1155257,"last_in":4842952,"last_out":4797825,"first_seen":1155256,"last_seen":4842952,"delegated_since":4797825,"first_in_time":"2020-10-03T14:40:12Z","first_out_time":"2020-10-03T14:41:12Z","last_in_time":"2023-12-31T10:06:13Z","last_out_time":"2023-12-23T11:46:51Z","first_seen_time":"2020-10-03T14:40:12Z","last_seen_time":"2023-12-31T10:06:13Z","delegated_since_time":"2023-12-23T11:46:51Z","total_received":4800.396724,"total_sent":708,"total_burned":0.29825,"total_fees_paid":0.102769,"total_fees_used":0.16032,"spendable_balance":4091.995705,"is_funded":true,"is_delegated":true,"is_revealed":true,"n_tx_success":13,"n_tx_failed":0,"n_tx_out":13,"n_tx_in":409}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -32,7 +25,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Thu, 04 Jan 2024 22:19:11 GMT
+      - Fri, 05 Jan 2024 21:23:18 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -42,9 +35,9 @@ interactions:
       Vary:
       - Accept-Encoding
       cache-control:
-      - public, max-age=13
+      - public, max-age=11
       expires:
-      - Thu, 04 Jan 2024 22:19:25 GMT
+      - Fri, 05 Jan 2024 21:23:30 GMT
       last-modified:
       - Sun, 31 Dec 2023 10:06:13 GMT
       server:
@@ -52,7 +45,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4868486'
+      - '4873963'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -62,13 +55,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99428'
+      - '99372'
       x-rate-limit-reset:
-      - '1705438131'
+      - '1705438130'
       x-request-id:
-      - 33ddba2e-554b-4901-adc3-b7fa4f99f9a9
+      - 9eecc8c9-3bb6-48aa-9178-0fc7cef9ce4f
       x-runtime:
-      - '0.005428'
+      - '0.002074'
     status:
       code: 200
       message: OK
@@ -87,16 +80,9 @@ interactions:
     uri: https://api.tzpro.io/explorer/account/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4VTXZOaMBR978/gWZ3cJIDhraU76+xOnbqL05YXJsJljSAoCVq30/9eQHDddjo+
-        5txzzv3ML6sqj5FKLG9KmeD2yJJJUqHWlmeZV5jzZbrw5XqWPT2vP8niIBZfRVBsv89ffLn3T6F1
-        EUTmtMNGhQm1bRBNYFevMjx10C6ryzL+ePcYHrLNw/3Tnm+Wp+OX2fJbyfxwBtToJP2sZj57uOPL
-        k4LnkjUOcVkXBivLcwFcTsjIWsmsfbe1LVycZ8cf98FjON8v6HbPoIpDMz/4m+M6OC5pY5CqSptI
-        FZYHYNvUdgaorM2AuSMrlz2LTzkVNu2RjsRd4U6pPQg14rVbxztjF22COb5Ig0mkVRHjPxaqiIza
-        trOihJIxkDFhAXCPEw9oaF2V+B8e9Ly+7CsWGwMdMwiAeMTxgF1Y7806Gm3MwOOOZ8Nb0raVG9Vd
-        Wr6R968x3EhvSiPzqMIY1QGTdpqETJhwXMqHoMai2YdLpgOwqqui5ZIJFd18z3CKqKOdVF0ECHUd
-        8S5U67MIHMKadekdFolc5RitZC7PCyMCJkLYLmlMlY7Sukhajalq7IBLb1dYhQeU+RvUzOdnpOs4
-        7n4TsB5JpepIpH+fL3GIdkdIxO8PfwDoQKcMmQMAAA==
+      string: '{"row_id":823945,"address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","address_type":"ed25519","pubkey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","counter":7117400,"baker":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","first_in":1155256,"first_out":1155257,"last_in":4842952,"last_out":4797825,"first_seen":1155256,"last_seen":4842952,"delegated_since":4797825,"first_in_time":"2020-10-03T14:40:12Z","first_out_time":"2020-10-03T14:41:12Z","last_in_time":"2023-12-31T10:06:13Z","last_out_time":"2023-12-23T11:46:51Z","first_seen_time":"2020-10-03T14:40:12Z","last_seen_time":"2023-12-31T10:06:13Z","delegated_since_time":"2023-12-23T11:46:51Z","total_received":4800.396724,"total_sent":708,"total_burned":0.29825,"total_fees_paid":0.102769,"total_fees_used":0.16032,"spendable_balance":4091.995705,"is_funded":true,"is_delegated":true,"is_revealed":true,"n_tx_success":13,"n_tx_failed":0,"n_tx_out":13,"n_tx_in":409}
+
+        '
     headers:
       Connection:
       - keep-alive
@@ -105,7 +91,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Thu, 04 Jan 2024 22:19:11 GMT
+      - Fri, 05 Jan 2024 21:23:18 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -115,9 +101,9 @@ interactions:
       Vary:
       - Accept-Encoding
       cache-control:
-      - public, max-age=13
+      - public, max-age=11
       expires:
-      - Thu, 04 Jan 2024 22:19:25 GMT
+      - Fri, 05 Jan 2024 21:23:30 GMT
       last-modified:
       - Sun, 31 Dec 2023 10:06:13 GMT
       server:
@@ -125,7 +111,7 @@ interactions:
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4868486'
+      - '4873963'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -135,13 +121,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99427'
+      - '99371'
       x-rate-limit-reset:
       - '1705438130'
       x-request-id:
-      - 24fbdf39-4cf3-41ec-9dca-ff39f53950da
+      - 307b82a0-9977-4b26-9d30-34df8ca1be15
       x-runtime:
-      - '0.001797'
+      - '0.002028'
     status:
       code: 200
       message: OK

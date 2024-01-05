@@ -14,34 +14,14 @@ interactions:
     uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/constants
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4RW27arKgx9P5/Bsw9qre32ZxgR0sopEjdgL2uP9e9nAFq17drnrTaTMJPMJPxh
-        gyU6cTrxG9kLN2QEcqe+kDXHjKVPjebsO9bsyoz1cOdgyHAaHB/Q8laTuLCmmI00oAWvyHAJHlZn
-        D/UxIQZLAznQ6bxEjWfwyJoyT/ZeiQ61MsgNSeSCRuNZs8/z/A3QPjw6rlWvtgjQmm4o+VlTC5oL
-        Ms6D8Y5LHAKbIkEFiA65hgeNfgp6l7Hk3pHhPdxVP/bcP4Y5KWWeFxlzPVjPLWk9DgHFbxaGASVP
-        2WyVAfuYPaa7tkfQOTgnnzP9Kv9Vf/Bsxr5FGwo0HUpp03hFzRoWI8lzlrHBokN7RcnFQ2h0rNln
-        LFYnnYj/sqaod8dqa6C+V77HkOWifFbdhhtSJX1n0XWkJWv2Rbk57DxckDsDg+soOMjLKmOJQQRc
-        yStzDj8VycipAyv5Gaa6RdBTNDGiaoroA3BSGyvrJey1fldMWXksqkP161Afirze71morFE96ESa
-        NSw5mRxd5YlLdTopMWr/YA07rq0OUfL3xKghMC73CURWnZVJpkku+0PGWriEFFi8hYBO6h6EQnaK
-        d/+8Y4tryYxTjnXILCuLascyhkaSdSvgClJU5ZFlTJCb0vUIjcXK/TOdzpMNyvuc+3pi8nskO/a8
-        VyYqPl/+gTtrDqnPlHm2Mk/m2IMZ0+r3qKTyDz5F5MbWKfl4pipc8QbydD5r5NjDuorFswgv48Vx
-        r3rknrhW15DpKl8KHGUSRgvES0Pt4wdXRlgMUo+hWxpNUErKmXFo3OimfvA4t3wKd7Gv2FV1fVhu
-        HcB6JdSQBBBpsuYPM2MfOJNlTRl4GOqDSML37jtF5TS4bt0mZcZOlr7QhIlFTvmoBIHGwzk0cZ4x
-        SWOrcc7eMBrlutTErK4W4UYaoT9e/cU7Mcln8pWkhcnLhnjxQrz8nqenE1YN8/QslmJN1jgepHLe
-        qnaMeZmn0/GJgX7QaZR4XJv9fR6EaKANw+sE2uHa8N5xVbx9QSTVP+dsDFeZlu7Twvhf8DR2E3wN
-        jnNf+U5auM3brAUvwn7Zr4HLgA1NLZepPZVoQZ6UAR16YtZB9cpwvvBnRKAVA0Q3784qL94xm3Uy
-        ZaTIizfcwv7p7/jqbzNwYgufQCThlG8OvRIX9HyAhyaQz71abSpu8V8UsazTk4FO2326QN1oHPp5
-        I+6qw67Kf2VMpo6EHr1VIuj5hOBHi69qWjZsmKIuDO06Y+A9BkUGChrOsQXW/613Yr5ZiTiQmF5L
-        FuVoJBjxWBJSZ2yYd/9z62taWqg67g/1hlaQpUs5+n55IsyxeDviiwms8h0frv1rwBvUewfVu6J6
-        AYkOdHjJIb8pI+nGlUkzNjRqXlev75vU9tAnubzIfet56Y2k6LXrOv/wINJEF+gQNsjiUB7zT2gQ
-        Xl2R0+hbuieN/MA5bpcE+/TSKt7crwqUpOoCI6nc9JkksDkSVlZ4a76HWuW7Mv/r80/EuRyed0tD
-        xvfUX84E/WuNmp+hD0M1EPq6/DBVF8NPU3VBxOWPRqbFHfpToAt1yL//+Q8AAP//AwAX3EsXVAwA
-        AA==
+      string: '{"proof_of_work_nonce_size":8,"nonce_length":32,"max_anon_ops_per_block":132,"max_operation_data_length":32768,"max_proposals_per_delegate":20,"max_micheline_node_count":50000,"max_micheline_bytes_limit":50000,"max_allowed_global_constants_depth":10000,"cache_layout_size":3,"michelson_maximum_type_size":2001,"smart_rollup_max_wrapped_proof_binary_size":30000,"smart_rollup_message_size_limit":4096,"smart_rollup_max_number_of_messages_per_level":"1000000","preserved_cycles":5,"blocks_per_cycle":16384,"blocks_per_commitment":128,"nonce_revelation_threshold":512,"blocks_per_stake_snapshot":1024,"cycles_per_voting_period":5,"hard_gas_limit_per_operation":"1040000","hard_gas_limit_per_block":"2600000","proof_of_work_threshold":"281474976710655","minimal_stake":"6000000000","vdf_difficulty":"8000000000","seed_nonce_revelation_tip":"125000","origination_size":257,"baking_reward_fixed_portion":"5000000","baking_reward_bonus_per_slot":"2143","endorsing_reward_per_slot":"1428","cost_per_byte":"250","hard_storage_limit_per_operation":"60000","quorum_min":2000,"quorum_max":7000,"min_proposal_quorum":500,"liquidity_baking_subsidy":"1250000","liquidity_baking_toggle_ema_threshold":1000000000,"max_operations_time_to_live":240,"minimal_block_delay":"15","delay_increment_per_round":"8","consensus_committee_size":7000,"consensus_threshold":4667,"minimal_participation_ratio":{"numerator":2,"denominator":3},"max_slashing_period":2,"frozen_deposits_percentage":10,"double_baking_punishment":"640000000","ratio_of_frozen_deposits_slashed_per_double_endorsement":{"numerator":1,"denominator":2},"cache_script_size":100000000,"cache_stake_distribution_cycles":8,"cache_sampler_state_cycles":8,"tx_rollup_enable":false,"tx_rollup_origination_size":4000,"tx_rollup_hard_size_limit_per_inbox":500000,"tx_rollup_hard_size_limit_per_message":5000,"tx_rollup_max_withdrawals_per_batch":15,"tx_rollup_commitment_bond":"10000000000","tx_rollup_finality_period":40000,"tx_rollup_withdraw_period":40000,"tx_rollup_max_inboxes_count":40100,"tx_rollup_max_messages_per_inbox":1010,"tx_rollup_max_commitments_count":80100,"tx_rollup_cost_per_byte_ema_factor":120,"tx_rollup_max_ticket_payload_size":2048,"tx_rollup_rejection_max_proof_size":30000,"tx_rollup_sunset_level":3473409,"dal_parametric":{"feature_enable":false,"number_of_slots":256,"attestation_lag":1,"attestation_threshold":50,"blocks_per_epoch":32,"redundancy_factor":16,"page_size":4096,"slot_size":1048576,"number_of_shards":2048},"smart_rollup_enable":true,"smart_rollup_arith_pvm_enable":false,"smart_rollup_origination_size":6314,"smart_rollup_challenge_window_in_blocks":80640,"smart_rollup_stake_amount":"10000000000","smart_rollup_commitment_period_in_blocks":60,"smart_rollup_max_lookahead_in_blocks":172800,"smart_rollup_max_active_outbox_levels":80640,"smart_rollup_max_outbox_messages_per_level":100,"smart_rollup_number_of_sections_in_dissection":32,"smart_rollup_timeout_period_in_blocks":40320,"smart_rollup_max_number_of_cemented_commitments":5,"smart_rollup_max_number_of_parallel_games":32,"zk_rollup_enable":false,"zk_rollup_origination_size":4000,"zk_rollup_min_pending_to_process":10}
+
+        '
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 840739a2bb932bdd-FRA
+      - 840ec81c2f283803-FRA
       Connection:
       - keep-alive
       Content-Encoding:
@@ -49,11 +29,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Jan 2024 23:22:43 GMT
+      - Fri, 05 Jan 2024 21:23:19 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=mR3RB14lad1%2F2ISdB9xlosGuDgSMBXft1KtDdORIYjwE5SJPl1F%2FBPaq1XyTYjLQ7YuhdY5vAiR3oJh7l7PzpmmW6AhBb3%2F5DV7xN4zbHmYEQTudAbdtSVm%2FgSUuD30k%2B99tl4L4n4wsjK6ujeFw1A%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=KPbZt9Nmp3tw2qXlAkr11kfU%2FwcbM0hl7mIobHKAZGvcCGgwRIRdSFJUEtfhQO%2FQ74Y4qHjIuAT0mN4vOKfebYLVmslZKJxZ%2FiaCtr2vl%2FGnR%2FxILNum2fHexKtPqVoaGvuE2hlEp%2BPVLfGV7y8SUQ%3D%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Transfer-Encoding:

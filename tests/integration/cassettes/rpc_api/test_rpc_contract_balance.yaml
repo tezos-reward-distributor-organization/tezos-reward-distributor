@@ -14,14 +14,14 @@ interactions:
     uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU/balance
   response:
     body:
-      string: '"9457031"
+      string: '"9484475"
 
         '
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 82ff12af1ab63838-FRA
+      - 840ec6937db59b88-FRA
       Connection:
       - keep-alive
       Content-Length:
@@ -29,11 +29,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 03 Dec 2023 21:58:46 GMT
+      - Fri, 05 Jan 2024 21:22:16 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=PVhuQDF1g2e1%2BaDXhJuHcI6ns1xZ%2Bia5TvtddoQt1K7rwsvTL%2FJwi059QcGEUuLeQGkw%2BFhvlDWnxvDjTR2O99RkWk77boT77xkvQxNSRDmLjuKRWhKWx7i6cWB62BrAG%2Fcq35VVHNlcXuHR9qzy8A%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=00OwHMOCq3Vsnbt3tX2mlk7yHDOYOCO9QxwOOYUAnXO98fGaTefhmVJhAakNRDTvqwenEJlYXSypP5X1gEfZGzaT4pChNwZcCiwUENfYw35IHSNVwj6ailddRrKVSV0MrEbSF2awK%2FNEyU7xwW2b8A%3D%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       access-control-allow-origin:

@@ -35,7 +35,7 @@ dummy_addr_dict = dict(
         ("tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN", 650),
         ("tz1MbhmEwEAzzfb3naSr7vTp4mDxB8HsknA9", 623),
         ("tz1S8e9GgdZG78XJRB3NqabfWeM37GnhZMWQ", 683),
-        ("tz1RV1MBbZMR68tacosb7Mwj6LkbPSUS1er1", 619),
+        ("tz1RV1MBbZMR68tacosb7Mwj6LkbPSUS1er1", 644),
         ("tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8", 600),
     ],
 )

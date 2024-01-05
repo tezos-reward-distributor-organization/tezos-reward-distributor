@@ -14,14 +14,14 @@ interactions:
     uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU/storage
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA6pWKi4pysxLV7JSKqkyDC7z8nH2Msz2DjCtCvPLyw8uDwt1LA03Twmw9HB1rXA1
-        VqrlAgAAAP//AwBNEqFnMgAAAA==
+      string: '{"string":"tz1SvJLCJ1kKP5zVNnoSwVUAuW7dP9HEExE3"}
+
+        '
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 82ff12aabf0e8fe0-FRA
+      - 840ec68eb9019b9a-FRA
       Connection:
       - keep-alive
       Content-Encoding:
@@ -29,11 +29,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 03 Dec 2023 21:58:46 GMT
+      - Fri, 05 Jan 2024 21:22:15 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=8kCLWzbeO6b8Err7CpOjXMiYa10f1DGTSw3JDp0VqZZKcm4Vn1aelJAMC2l9IKU4vy9apbWx34Nn7GOLyBL6B1klgiS1MarybsjAk9MdHNXqwV%2BB0pUWypdzur8%2BNggjRR3aoWVVmVGAFao9cafiIA%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=LXvPD4PRIMxvHaUx4dxpY1JMCU0%2FMdbQXrcGRfgU9to9USp3imZoxlevhTMbnP3GrLbicUrYTk8xbYkwh8XCMZU7MwvPc2NZcbIPd96c0wfP8mxhorezDx7%2BZ%2Bt9hVbMkQRdPOe3eDvkNuMi%2FJPt5w%3D%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Transfer-Encoding:

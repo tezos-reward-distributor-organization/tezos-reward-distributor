@@ -14,14 +14,14 @@ interactions:
     uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ/manager_key
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA1JKTSnILs3PT3Z09Y4qy87ycg8qNMkKrSz39QgNzzd2jvIwNCopTklzyfRwNvZy
-        NQmtzDQMzjdW4gIAAAD//wMAkKKHBDkAAAA=
+      string: '"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3"
+
+        '
     headers:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 8406dc8fdd1e4dc0-FRA
+      - 840ec814eacb3a7e-FRA
       Connection:
       - keep-alive
       Content-Encoding:
@@ -29,11 +29,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Jan 2024 22:19:10 GMT
+      - Fri, 05 Jan 2024 21:23:17 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=Pm6NgH%2Fn3S0ZNaeg%2FEuW1Zlj0wB4e2yN%2Fv3LExg3Xz2t5Ut%2Fy9bsYcX5%2F9mjkMPuUmr5yuAWxIjWtQsAjx99iqcBtKDJYYrMNQL%2BYnQ7T2dAdF8ChqAzkreyuD3dFxjl%2FdM4oKJLy%2BEud0M%2FFTpKqA%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=S7xmloYafWd1ovLSGusxBi%2F%2BA57n%2FJg%2FBYQnrZv7h5yd67nUpPqzbXD8rld%2F9MsWka%2FshYARg1cC4gmp1K%2B7Lry5zqL%2FnfYCZILEaWfXgVvg1aMIP0Pk9k%2BAjzK644SohO61eE0w0xlXIofoeE7hwg%3D%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Transfer-Encoding:
@@ -65,7 +65,7 @@ interactions:
       CF-Cache-Status:
       - DYNAMIC
       CF-RAY:
-      - 8406dc910d866946-FRA
+      - 840ec815ff511e4c-FRA
       Connection:
       - keep-alive
       Content-Length:
@@ -73,11 +73,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Jan 2024 22:19:10 GMT
+      - Fri, 05 Jan 2024 21:23:18 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=8JAKjaOb9SIwQ7Fvkd0n8dJ4xZT6Vs50PZjwTRwYAFDm0avhlGnmY4F3kNNxXndm6BgwByy%2BUJavLR%2FmtE92NsFbIwJNRY5Gsy8hl5s9zujywpMWHad1LAhmIUlkIer2eZI%2B8hEF9HQ5O3ObNw2d7A%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=RAA584wRKmSkevlUZgxKgCd4Zef4p7toL0wd70ukVlP4u6TcqFD3I2y18hHjRXzya2zjKeriligzTQjJ3PPTw2aAKIhoGAWluvRp6klNONUcC%2Bltl%2BbG80iOYlmdFlRuBwLOVYIf9gVqmsEzlFeLFA%3D%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       access-control-allow-origin:

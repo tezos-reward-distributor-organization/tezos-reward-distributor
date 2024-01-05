@@ -17,7 +17,7 @@ interactions:
       string: "{\n  \"errors\": [\n    {\n      \"code\": 1007,\n      \"status\":
         400,\n      \"message\": \"incorrect request syntax\",\n      \"scope\": \"StreamTable\",\n
         \     \"detail\": \"invalid address 'tzxxxxxxxxx'\",\n      \"request_id\":
-        \"e6bd8e6c-c3ef-4288-a22b-341859da7148\"\n    }\n  ]\n}"
+        \"ab88a504-7cd0-4d50-9b78-37384bc1bcfd\"\n    }\n  ]\n}"
     headers:
       Connection:
       - keep-alive
@@ -26,7 +26,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 03 Dec 2023 20:37:03 GMT
+      - Fri, 05 Jan 2024 21:23:12 GMT
       Keep-Alive:
       - timeout=60
       Strict-Transport-Security:
@@ -34,15 +34,15 @@ interactions:
       cache-control:
       - max-age=0, no-cache, no-store, must-revalidate
       expires:
-      - Sun, 03 Dec 2023 20:37:03 GMT
+      - Fri, 05 Jan 2024 21:23:12 GMT
       pragma:
       - no-cache
       server:
-      - tzindex-cloud/v17.0.2-6-g07d345a-alpine.07d345a
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
       x-api-version:
       - v017-2023-05-31
       x-chain-height:
-      - '4685920'
+      - '4873962'
       x-network-id:
       - NetXdQprcVkpaWU
       x-protocol-hash:
@@ -52,13 +52,13 @@ interactions:
       x-rate-limit-limit:
       - '100000'
       x-rate-limit-remaining:
-      - '99323'
+      - '99375'
       x-rate-limit-reset:
-      - '1701745537'
+      - '1705438131'
       x-request-id:
-      - e6bd8e6c-c3ef-4288-a22b-341859da7148
+      - ab88a504-7cd0-4d50-9b78-37384bc1bcfd
       x-runtime:
-      - '0.000065'
+      - '0.000213'
     status:
       code: 400
       message: Bad Request
