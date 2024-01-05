@@ -57,13 +57,18 @@ jobs:
         python -m pip install --upgrade pip
         sudo apt-get update -y
         sudo apt-get install graphviz -y
+        sudo apt-get install virtualenv
+        virtualenv -p /usr/bin/python venv
+        source venv/bin/activate
         pip install -r requirements.txt
         pip install -r requirements_developers.txt
 
     - name: Test with pytest
       env:
         TZPRO_API_KEY: ${{ secrets.TZPRO_API_KEY }} 
-      run: pytest tests/
+      run: |
+        source venv/bin/activate
+        pytest tests/
 
   build-documentation:
     runs-on: ubuntu-latest
