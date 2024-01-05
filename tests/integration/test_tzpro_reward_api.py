@@ -35,6 +35,7 @@ def not_existent_address_api():
 @vcr.use_cassette(
     "tests/integration/cassettes/tzpro_api/test_get_rewards_for_cycle_map.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_rewards_for_cycle_map(address_api):
     rewards = address_api.get_rewards_for_cycle_map(
@@ -48,6 +49,7 @@ def test_get_rewards_for_cycle_map(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/tzpro_api/test_tzpro_terminate_400.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_tzpro_terminate_400(not_existent_address_api):
     with pytest.raises(

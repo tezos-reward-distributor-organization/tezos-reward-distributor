@@ -66,6 +66,7 @@ forge = "0" * (TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
 @vcr.use_cassette(
     "tests/regression/cassettes/test_batch_payer_total_payout_amount.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_batch_payer_total_payout_amount():
     # NOTE: For better payment tests we are doing actual tzkz api calls for reward calculation

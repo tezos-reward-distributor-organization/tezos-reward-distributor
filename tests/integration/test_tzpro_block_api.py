@@ -19,6 +19,7 @@ def address_api():
 @vcr.use_cassette(
     "tests/integration/cassettes/tzpro_api/test_get_revelation.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_revelation(address_api):
     assert address_api.get_revelation(MAINNET_ADDRESS_DELEGATOR)
@@ -27,6 +28,7 @@ def test_get_revelation(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/tzpro_api/test_get_current_cycle_and_level.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_current_cycle_and_level(address_api):
     # NOTE: The block count for tzpro is incremented internally by one to sync tzpro with tzkt
@@ -36,6 +38,7 @@ def test_get_current_cycle_and_level(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/tzpro_api/test_get_delegatable_baker.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_delegatable_baker(address_api):
     assert address_api.get_delegatable(MAINNET_ADDRESS_STAKENOW_BAKER)
@@ -44,6 +47,7 @@ def test_get_delegatable_baker(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/tzpro_api/test_get_delegatable_non_baker.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_delegatable_non_baker(address_api):
     assert not address_api.get_delegatable(MAINNET_ADDRESS_DELEGATOR)

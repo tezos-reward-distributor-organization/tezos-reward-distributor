@@ -25,7 +25,11 @@ network = {"NAME": "MAINNET"}
 )
 def test_address_is_baker_address(block_api):
     cassette_path = f"tests/regression/cassettes/test_address_is_baker_address_{block_api.__class__.__name__}.yaml"
-    with vcr.use_cassette(cassette_path, filter_headers=["X-API-Key", "authorization"]):
+    with vcr.use_cassette(
+        cassette_path,
+        filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
+    ):
         data_fine = """
         version: 1.0
         baking_address: {0}
@@ -57,7 +61,11 @@ def test_address_is_baker_address(block_api):
 )
 def test_address_is_not_baker_address(block_api):
     cassette_path = f"tests/regression/cassettes/test_address_is_not_baker_address_{block_api.__class__.__name__}.yaml"
-    with vcr.use_cassette(cassette_path, filter_headers=["X-API-Key", "authorization"]):
+    with vcr.use_cassette(
+        cassette_path,
+        filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
+    ):
         data_fine = """
         version: 1.0
         baking_address: tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ

@@ -57,6 +57,7 @@ def args():
 @vcr.use_cassette(
     "tests/regression/cassettes/test_disk_full_payment_producer.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_disk_full_payment_producer(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
@@ -122,6 +123,7 @@ def test_disk_full_payment_producer(args, caplog):
 @vcr.use_cassette(
     "tests/regression/cassettes/test_disk_full_payment_consumer.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_disk_full_payment_consumer(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504

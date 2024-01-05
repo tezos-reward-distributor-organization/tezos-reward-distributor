@@ -46,6 +46,7 @@ def address_block_api_rpc():
 @vcr.use_cassette(
     "tests/integration/cassettes/api_consistency/test_get_revelation.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_revelation(
     address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
@@ -64,6 +65,7 @@ def test_get_revelation(
 @vcr.use_cassette(
     "tests/integration/cassettes/api_consistency/test_get_current_cycle_and_level.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_current_cycle_and_level(
     address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
@@ -88,6 +90,7 @@ def test_get_current_cycle_and_level(
 @vcr.use_cassette(
     "tests/integration/cassettes/api_consistency/test_get_delegatable.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_delegatable(
     address_block_api_tzkt, address_block_api_tzpro, address_block_api_rpc
@@ -130,6 +133,7 @@ def current_cycle_ghostnet():
 @vcr.use_cassette(
     "tests/integration/cassettes/api_consistency/test_get_rewards_for_cycle_map.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_rewards_for_cycle_map(
     address_reward_api_tzkt,

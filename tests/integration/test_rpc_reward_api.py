@@ -31,6 +31,7 @@ def address_api():
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_rewards_for_cycle_map.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_rewards_for_cycle_map(address_api):
     cycle = 689
@@ -45,6 +46,7 @@ def test_get_rewards_for_cycle_map(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_rpc_terminate_404.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 @patch("src.rpc.rpc_reward_api.sleep", MagicMock())
 @patch("src.rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
@@ -82,6 +84,7 @@ class Mock_500_Response:
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_rpc_contract_storage_500.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_rpc_contract_storage_500(address_api, caplog):
     # This test will retry to get_contract_storage 256 times
@@ -105,6 +108,7 @@ def test_rpc_contract_storage_500(address_api, caplog):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_rpc_contract_storage.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_rpc_contract_storage(address_api):
     # API call to test the storage account
@@ -117,6 +121,7 @@ def test_rpc_contract_storage(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_rpc_contract_balance.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_rpc_contract_balance(address_api):
     contract_balance = address_api.get_contract_balance(
@@ -131,6 +136,7 @@ def test_rpc_contract_balance(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_baking_rights.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_baking_rights(address_api):
     _, current_cycle = address_api.get_current_level()
@@ -147,6 +153,7 @@ def test_get_baking_rights(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_block_data.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_block_data(address_api):
     (
@@ -166,6 +173,7 @@ def test_get_block_data(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_endorsing_rewards.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_endorsing_rewards(address_api):
     endorsing_rewards, lost_endorsing_rewards = address_api.get_endorsing_rewards(
@@ -219,6 +227,7 @@ class Mock_Endorsing_Reward_Response:
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_endorsing_rewards_mocked.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_endorsing_rewards_mocked(address_api):
     endorsing_rewards, lost_endorsing_rewards = address_api.get_endorsing_rewards(
@@ -231,6 +240,7 @@ def test_get_endorsing_rewards_mocked(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_current_balance_of_delegator.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_current_balance_of_delegator(address_api):
     assert 5023009232 == address_api.get_current_balance_of_delegator(
@@ -245,6 +255,7 @@ def test_get_current_balance_of_delegator(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_delegators_and_delgators_balances.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_delegators_and_delgators_balances(address_api):
     (
@@ -262,6 +273,7 @@ def test_get_delegators_and_delgators_balances(address_api):
 @vcr.use_cassette(
     "tests/integration/cassettes/rpc_api/test_get_current_level.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_current_level(address_api):
     current_level, current_cycle = address_api.get_current_level()

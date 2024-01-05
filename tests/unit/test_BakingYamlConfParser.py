@@ -29,6 +29,7 @@ class TestYamlAppConfParser(TestCase):
     @vcr.use_cassette(
         "tests/unit/cassettes/test_validate.yaml",
         filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
     )
     def test_validate(self):
         data_fine = """
@@ -99,6 +100,7 @@ class TestYamlAppConfParser(TestCase):
     @vcr.use_cassette(
         "tests/unit/cassettes/test_validate_no_founders_map.yaml",
         filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
     )
     def test_validate_no_founders_map(self):
         data_no_founders = """

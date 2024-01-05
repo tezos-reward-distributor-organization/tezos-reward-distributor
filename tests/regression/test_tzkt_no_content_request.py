@@ -46,6 +46,7 @@ def test_request_dns_lookup_error():
 @vcr.use_cassette(
     "tests/regression/cassettes/test_request_content_response.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_request_content_response():
     """Test the handling of API calls which respond with a content (200)."""

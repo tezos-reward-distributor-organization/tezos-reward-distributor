@@ -41,7 +41,11 @@ dummy_addr_dict = dict(
 )
 def test_expected_rewards(address, cycle):
     cassette_path = f"tests/integration/cassettes/tzkt_api/test_expected_rewards_{address}_{cycle}.yaml"
-    with vcr.use_cassette(cassette_path, filter_headers=["X-API-Key", "authorization"]):
+    with vcr.use_cassette(
+        cassette_path,
+        filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
+    ):
         tzpro_impl = TzProRewardApiImpl(
             nw=DEFAULT_NETWORK_CONFIG_MAP["MAINNET"],
             baking_address=address,
@@ -79,6 +83,7 @@ def test_expected_rewards(address, cycle):
 @vcr.use_cassette(
     "tests/integration/cassettes/tzkt_api/test_update_current_balances.yaml",
     filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_update_current_balances():
     log_items = [
