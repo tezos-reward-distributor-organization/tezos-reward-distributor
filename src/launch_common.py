@@ -93,10 +93,6 @@ def new_protocol_not_live(args=None):
         return True
 
 
-def in_venv():
-    return sys.prefix != sys.base_prefix
-
-
 def installed(package):
     """
     The error status is 0. (bool(0) == False)
@@ -117,13 +113,6 @@ def installed(package):
 
 
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
-    if not in_venv():
-        print(
-            "Please make sure to activate a virtual environment for python due to breaking changes in Ubutu >= 23.XX:\n"
-            "https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/ \n"
-        )
-        return False
-
     print("Checking installed packages ...\n")
     missing_requirements = []
     try:
