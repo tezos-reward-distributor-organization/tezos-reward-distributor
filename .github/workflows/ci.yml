@@ -63,8 +63,7 @@ jobs:
     - name: Test with pytest
       env:
         TZPRO_API_KEY: ${{ secrets.TZPRO_API_KEY }} 
-      run: |
-        pytest tests/
+      run: pytest tests/
 
   build-documentation:
     runs-on: ubuntu-latest

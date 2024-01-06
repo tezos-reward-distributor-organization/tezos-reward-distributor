@@ -63,7 +63,7 @@ class TzKTApi:
                 url=url,
                 params=data,
                 timeout=self.timeout,
-                headers={"User-Agent": f"trd-{VERSION}", "Accept-Encoding": "identity"},
+                headers={"User-Agent": f"trd-{VERSION}"},
             )
         except requests.Timeout:
             raise TzKTApiError("Request timeout")
