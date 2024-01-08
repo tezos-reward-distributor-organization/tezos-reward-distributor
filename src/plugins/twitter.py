@@ -26,6 +26,12 @@ class TwitterPlugin(plugins.Plugin):
         super().__init__("Twitter", cfg["twitter"])
 
         # Must auth against Twitter API to get Token
+        auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
+        auth.set_access_token(self.access_token, self.access_secret)
+
+        self.twitter = tweepy.API(auth)
+
+        # Must auth against Twitter API to get Token
         auth = tweepy.OAuth1UserHandler(
             self.api_key, self.api_secret, self.access_token, self.access_secret
         )
@@ -59,6 +65,7 @@ class TwitterPlugin(plugins.Plugin):
         return
 
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
+
         # Replace template variables
         tweet = (
             self.tweet_text.replace("%CYCLE%", str(cycle))
@@ -69,7 +76,13 @@ class TwitterPlugin(plugins.Plugin):
         # Truncate message to max tweet length
         tweet = tweet[: self.MAX_TWEET_LEN]
 
-        resp = self.twitter.update_status(tweet)
+        # We use APIv2 to post, API 1.1 no longer allow posting tweet
+        client = tweepy.Client(
+            consumer_key=self.api_key, consumer_secret=self.api_secret, access_token=self.access_token, access_token_secret=self.access_secret
+        )
+
+        # resp = self.twitter.update_status(tweet)
+        resp = client.create_tweet(text=tweet)
 
         logger.info("[TwitterPlugin] Payout Notification '{:s}' sent".format(tweet))
         logger.debug("[TwitterPlugin] Payout Response '{:s}'".format(str(resp)))
