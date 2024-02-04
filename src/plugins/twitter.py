@@ -26,12 +26,6 @@ class TwitterPlugin(plugins.Plugin):
         super().__init__("Twitter", cfg["twitter"])
 
         # Must auth against Twitter API to get Token
-        auth = tweepy.OAuthHandler(self.api_key, self.api_secret)
-        auth.set_access_token(self.access_token, self.access_secret)
-
-        self.twitter = tweepy.API(auth)
-
-        # Must auth against Twitter API to get Token
         auth = tweepy.OAuth1UserHandler(
             self.api_key, self.api_secret, self.access_token, self.access_secret
         )
