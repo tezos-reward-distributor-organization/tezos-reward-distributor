@@ -220,7 +220,7 @@ class ClientManager:
                 )
                 # If all MAX_NB_TRIES tries were not successful
                 if try_i == MAX_NB_TRIES - 1:
-                    exit_program(ExitCode.SIGNER_ERROR, e)
+                    exit_program(ExitCode.SIGNER_ERROR, str(e))
         if response is None:
             return
         # If request returns failed code

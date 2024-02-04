@@ -1,0 +1,1388 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/income?address=tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8&cycle=600
+  response:
+    body:
+      string: '[[304535,600,44094,487,353774.980808,2572310.369891,2926085.350699,444,56,486570,-130.170869,90.60,99.92,100.48,56,56,0,16373,11,486210,0,1254.396322,1260.506584,303197.626904,556.292704,694.416408,0.000000,0.000000,9.797472,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,"tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:04 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:33 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99391'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - d6eb3367-b116-4524-aa9e-0c7ed2e331ce
+      x-runtime:
+      - '0.002092'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/bakers/tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8/snapshot/600
+  response:
+    body:
+      string: '{"baking_cycle":600,"snapshot_height":3289088,"snapshot_cycle":594,"snapshot_time":"2023-04-02T08:11:19Z","snapshot_index":3,"snapshot_rolls":487,"active_stake":2926085350699,"staking_balance":2926085350699,"own_balance":353774980808,"delegated_balance":2572310369891,"n_delegations":444,"expected_income":1254396322,"total_income":1260506584,"total_deposits":303197626904,"baking_income":556292704,"endorsing_income":694416408,"accusation_income":0,"seed_income":0,"fees_income":9797472,"total_loss":0,"accusation_loss":0,"seed_loss":0,"endorsing_loss":0,"lost_accusation_fees":0,"lost_accusation_rewards":0,"lost_accusation_deposits":0,"lost_seed_fees":0,"lost_seed_rewards":0,"delegators":[{"address":"KT1VE3tEoqMLLoDXVo4c8ikxhD1i37okeJxX","balance":1076126591806,"is_funded":true},{"address":"KT1MfgCNUdkNES1pBJ6uJVHyHZw79DjRZzw5","balance":896844911504,"is_funded":true},{"address":"tz1i2Vdnh4J3ufgcbe2TYLYE1UhLM6PSvJGw","balance":112982363494,"is_funded":true},{"address":"KT1Pe4jwGLkHT1KCx8ZHDCafr9vZSh547t4e","balance":62370151695,"is_funded":false},{"address":"KT1Esk7iCt8E5CrAXkPsVQwsZokwPGdbgrs6","balance":45612615142,"is_funded":true},{"address":"KT1D6XTy8oAHkUWdzuQrzySECCDMnANEchQq","balance":44592514901,"is_funded":true},{"address":"tz1PZt2vuK7Yx2QiXPuqQrpDw4NDr2cS3knR","balance":26274242748,"is_funded":true},{"address":"tz1bdvAK5go5U2qRZikXUFSCvpT4zWyeniqW","balance":22277595779,"is_funded":true},{"address":"tz1TToVAGWQ1s9rCaTLMMCJHuV6BLWZ26iKw","balance":17967379623,"is_funded":true},{"address":"tz1NF4C2MeeKgYopu6wMfLDCH5M5n143vjoU","balance":17038698371,"is_funded":true},{"address":"tz1WEWrGbRzrdarqxGNLruVmgX4bj3sVXQkT","balance":16616493277,"is_funded":true},{"address":"tz1NwCtqG4pErKBSFJ2tcqRt9bE2tMXKUoCi","balance":14969276371,"is_funded":true},{"address":"tz1R94PftGa6iK3Sa2nDB1FaEnBphseGaoid","balance":13727210441,"is_funded":true},{"address":"KT1BrFQdx8wdwaFEAZsNWAD1epv6i3aEZxJy","balance":13572096193,"is_funded":true},{"address":"tz1h5frRwDbJMGyTPntdwMC8i745q2Z1fzyF","balance":11853577005,"is_funded":true},{"address":"tz1dzYRdp3v243wuL1b2wEkoy3DnUZWgs4yr","balance":10670764986,"is_funded":true},{"address":"tz1TzHDLTNK1J1fCotGBLuE43DoogC5pHGyT","balance":10077428569,"is_funded":true},{"address":"KT1WtPAbkmeYR4jCjihgsVRd6yoF5Hc8HVBL","balance":9736981026,"is_funded":true},{"address":"tz1SvUaqgBxn9NC4DUeKAuMGEDKrnFyLyPQ4","balance":8832636751,"is_funded":true},{"address":"tz1dfTLy1Hjh5SjKHxtHvX1LwoZuYanLErDa","balance":7893848303,"is_funded":true},{"address":"tz1XPqbWruHijnzGXm6kh7pD9FnNxTAzpgj3","balance":7321143679,"is_funded":true},{"address":"KT1EBtpBAh7Z2wPLDP7dNdE6qtNcqVPhX1kk","balance":6529958493,"is_funded":true},{"address":"tz1at5ZdyzC2P4z5bWEuGR9pHZzmt3ai69gB","balance":6124793078,"is_funded":true},{"address":"tz1fgi1uzttMr9FiJwaH83zS6EJFVHQdkjfm","balance":5739581680,"is_funded":true},{"address":"tz1RivV2RsQNpVALQy9oCdRLN6ELH62kLQCh","balance":5069737712,"is_funded":true},{"address":"KT1VhQiko8ALkp7EKZeYmeqjjWHekWYoCq8u","balance":4995383438,"is_funded":true},{"address":"KT1UiGpFAVtiEpQY3Mk9mtGU2HUK8X88b7Vj","balance":4430118120,"is_funded":true},{"address":"KT1EuNqG3UiVRyExRU3M2qzzi9t4jwqWJ4Ms","balance":4397472176,"is_funded":true},{"address":"tz1LYQEVvxeMyhpD6oMeADmPVtMQRyyo91Ug","balance":4321802933,"is_funded":true},{"address":"tz1ZrXdMSP515KsNjy5Jk5SxxVSRKxwgJhjo","balance":4182686764,"is_funded":true},{"address":"KT1QwmHxbHyYWtTzxiidtGeFjbF4JAkHcVKf","balance":4151275624,"is_funded":true},{"address":"KT1LVi6LEEWK1eJsJ9HauHvBYgvJnQA2V3Z5","balance":3994666034,"is_funded":true},{"address":"tz1YXVedQWCjRbrE83DHtUg9siofXeXox11K","balance":3832709975,"is_funded":true},{"address":"tz1bqr363yzKK6EJgPWZ5wUzfmT4A6XSkqGq","balance":3794469241,"is_funded":true},{"address":"tz1itBC8dDiBSVSMyc8EPoQE1TKFs8kRzQSF","balance":3725412189,"is_funded":true},{"address":"tz1av6oBBFgD3Y2j9ATHmLacQ9oTnpBmjqTE","balance":3357935187,"is_funded":true},{"address":"KT1XU78xy4oVjjJR5tnNvmw4FZqrp8k8BKeg","balance":2804366120,"is_funded":true},{"address":"KT1XPx4ZDePd7c29fCBDRJtVFcrsJS8FVSJj","balance":2224878770,"is_funded":true},{"address":"tz1WT3oAw91JTcNujeWa7fdoWHAaZGGLMRBS","balance":2095499344,"is_funded":true},{"address":"tz1b7rj6katS1oFMkPqKJGAnG8e9xMVhMCDe","balance":2031199393,"is_funded":true},{"address":"tz1Q1pG4YF9gGXa1Nkc8ck9mYS8yhEu8oFTd","balance":2006173633,"is_funded":true},{"address":"tz1V3fPD3AKPNwZf42PKGzFaWU3vZ83Gjvfq","balance":1943033159,"is_funded":true},{"address":"tz1bWwABZhz1ModvF6YDC5pmgKfPPRHCHmLX","balance":1770683879,"is_funded":true},{"address":"KT1DRJWSknF2EheKQvD3uZUrqzCNzebwU8pU","balance":1643037115,"is_funded":true},{"address":"tz1Rbbw8QZQ9HL6z2n9YBLrV47X1g6RTvozy","balance":1535113049,"is_funded":true},{"address":"KT1EeRvbfscKnPUBWQWomPN37dK1EMxoNump","balance":1489533961,"is_funded":true},{"address":"tz1SQ3QgAXufErcaX2D62ee8S91vBxJe6qjS","balance":1384891339,"is_funded":true},{"address":"tz1PmS8oENwMQ6AzUrB9LCTpq3eM3qdh4WbW","balance":1365965461,"is_funded":true},{"address":"KT1DudxoY45PHMLNgqYErSTG9YNLeLGcGp5q","balance":1245851521,"is_funded":true},{"address":"tz1MNLwfhBWYPGPKi2wc5E298SVdFSgU6THP","balance":1233726180,"is_funded":true},{"address":"tz1apzYQkJc1VegDGsBDvZodDsErYeUZNGmg","balance":1171566405,"is_funded":true},{"address":"tz2KrVWh7Pji8kp71pscoCXfbJq1abctc7ok","balance":1144577181,"is_funded":true},{"address":"tz1X2debvxGtmv1px96EHCXZemHFr2kEZner","balance":1081745315,"is_funded":true},{"address":"tz1hjczuxDLZD3JxYtyU8orp4QTRNzVrcJxc","balance":1076576653,"is_funded":true},{"address":"tz1UNqVTyWtpAsUbiH7cvgmGwirkyfKh4jss","balance":1007421784,"is_funded":true},{"address":"tz1MzdEcgLX9Nk4SDkmWbcVZKupeH4K9Hae2","balance":912178059,"is_funded":true},{"address":"tz1Z4xVY4HrA3z51qwFLfD9KPxg47wxskndP","balance":901443947,"is_funded":true},{"address":"tz1U65RWzwihAraB3i7hU19F4RFLhUfUU6TP","balance":889754828,"is_funded":true},{"address":"tz1YHsinBJHMj1YFN7UrCsVAgTcaJCH86PjK","balance":881235778,"is_funded":true},{"address":"tz1Zrz4fEZiBrHSGxmKh4DFe744kV4mwH8QX","balance":875209330,"is_funded":true},{"address":"tz1c7cCZFtPrfRcnRSmA3wE5raQx9XAxFs6k","balance":818442359,"is_funded":true},{"address":"tz1RDBYNBri3fJ7HwzSDDKPUWepHXEFgH2dJ","balance":799043552,"is_funded":true},{"address":"KT1TYJxPiTizat8d16PHysq7HN18FP29LZeF","balance":774783997,"is_funded":true},{"address":"tz1bBtV7JcWQmGERatwjqCdckUAy8zwD7MpF","balance":764059041,"is_funded":true},{"address":"tz1L4tCj7Bg9HtDTxZZfLH4KdyaN5K26Afkh","balance":750932012,"is_funded":true},{"address":"KT1JUqExJyfDebBPr6MnDdPN9d63uixjijzq","balance":698055053,"is_funded":true},{"address":"tz1VaSnsBBxLqikdET3rLc7ywSab7bms777v","balance":639131640,"is_funded":true},{"address":"tz1cDuDQwNrpmXUAwL278ATjaPAkpmxa2nLc","balance":633844696,"is_funded":true},{"address":"tz1cwRGw8iogHkXxzud1mtH1LRreorRzuicz","balance":626455606,"is_funded":true},{"address":"tz1Q9YbdtzmSaFKMEsN2qX21m69RwgdoBMk7","balance":562052073,"is_funded":true},{"address":"KT1U1vTJnqpmJ6nSnvxaHpa6LYnLn1N3VdHu","balance":536053258,"is_funded":true},{"address":"tz1aKTCbAUuea2RV9kxqRVRg3HT7f1RKnp6a","balance":533933515,"is_funded":true},{"address":"tz1P4QL5pbCeNDmYntgjY1XA2XoikR6itzdD","balance":437070533,"is_funded":true},{"address":"KT1FgkDGMkxininHETF1SuSPYfuPpVJSJsAA","balance":403523888,"is_funded":true},{"address":"KT1EYfzGs1MDRW5Me9TSqX16rcwJbk7HNiPw","balance":397878115,"is_funded":true},{"address":"tz2KjTaQXgMSwUgALhxq8CRVHe5Hmgr1fPmo","balance":381744415,"is_funded":true},{"address":"tz1PomC4T3ZdPyVpyiJSBh1CM6mRP4qirCTS","balance":376280478,"is_funded":true},{"address":"KT1C8ZJ5vFkjZS2na87YXWeiJqwpVZHDC12Z","balance":373319443,"is_funded":true},{"address":"tz1fnVrMZjP5GhfozQ5zHE8xXDtjoUCptQBZ","balance":362738531,"is_funded":true},{"address":"KT1RzpiU2jc4BqGyv2uGjAn71eAtEHDtQhjW","balance":359651071,"is_funded":true},{"address":"KT1EcrQ85diCfTjN5nQMzVH3G53kxCrw8Z5S","balance":335922005,"is_funded":true},{"address":"tz1QjFsFrSYStAf5yhH5obYt1eAPjbT5MZPK","balance":323199804,"is_funded":true},{"address":"tz1LzqfHmPwKDKKwaYo8aXwPRq83mjfKH1W2","balance":296144780,"is_funded":true},{"address":"tz1LrhG94RrF1JFVJWzWJbcrJtvYCqkncwRh","balance":291331865,"is_funded":true},{"address":"tz1YJgNgAJHnjuJSfasz9hVVn7GTi1mWrRTS","balance":287393752,"is_funded":true},{"address":"tz1euHavatDymHRQFMwjHfoUAHmjiVWBSLLw","balance":283951585,"is_funded":true},{"address":"KT1NruHZsn7MVhhkLkveTRStKNAyFqyWoaW8","balance":277337863,"is_funded":true},{"address":"tz1VDr6Lvpduj2eHNhGrGQuaXqPDNEF6CSio","balance":265657290,"is_funded":true},{"address":"tz1ivTmsxVwWno7CRFhw1FaH13hpjvAvDMY2","balance":257408408,"is_funded":true},{"address":"KT1LyHdBHEH9aknxLuvNQqPbWVLpacxPVirs","balance":254409137,"is_funded":true},{"address":"KT1WGfxkm67LQm6FEcewCVg2fYZBcuiiRwFf","balance":234399251,"is_funded":true},{"address":"tz1Nk8ahECVrWYA5TPJkSLveuxEkhbu3woYL","balance":230542122,"is_funded":true},{"address":"tz1YQQQeZpnHfnVfnS9txx4jHCub6jb9tCXX","balance":223537376,"is_funded":true},{"address":"KT1Snm9n2HEkEq6eqzRQC3FUbVXqv55px7EL","balance":222081503,"is_funded":true},{"address":"tz1Y99qsUYh9J1fsNqDQyQAGox4t7ydVUKC4","balance":217021955,"is_funded":true},{"address":"tz1QFJJjXz6aPYEs86GFFYc6BjkuoAdtdyUE","balance":211731000,"is_funded":true},{"address":"tz1RDPxy3a3LGGt5wSupYHUsiuSkWHEs8VMm","balance":207222752,"is_funded":true},{"address":"tz1MwvWz611pLwYdFMZpWCEsh247MEYtm5ii","balance":205611091,"is_funded":true},{"address":"tz1dXQvSDQ1VPwf5XcJVs1JrqwvEQo6Sj9LU","balance":202919423,"is_funded":true},{"address":"tz1QYCGhGXS9CyZVqWFNxGXnNSHNtm4TBH3V","balance":202386464,"is_funded":true},{"address":"tz1SrBUe5Y1fsmwjs2vcFmTztueYqauzxZfN","balance":202296446,"is_funded":true},{"address":"KT1CFWAGiNiGtMRhYqVFQC2rq3FWxv7tefGt","balance":196334496,"is_funded":true},{"address":"tz1YUigABASqRUWAG97qHfHwYkYEGDk9q2Qv","balance":184595188,"is_funded":true},{"address":"tz1coTCxAqASmX6dgswcwz7Au4U5hWPmmkP4","balance":169835149,"is_funded":true},{"address":"tz1RWdtGZ86ctH6TYUQt6KZMcfdHSCo5m8NY","balance":165951644,"is_funded":true},{"address":"tz1iBtVvGo33nnskeMyjZogL4FVbjndoQKEY","balance":164529606,"is_funded":true},{"address":"tz1fxPuoP66N3u4iBNLkpZSeGGpqerzmn8kK","balance":138467568,"is_funded":true},{"address":"KT1HMNLAc1aHqTcbh1EuRcAadHx7P74UQu18","balance":127353753,"is_funded":true},{"address":"KT1MJDzcwo23hifL6xDZNyPrfrh9rETyTwPV","balance":125099738,"is_funded":true},{"address":"tz1ULgYrbjqUUEfzxXPzbxzKNdBCCWfnkA23","balance":122546237,"is_funded":true},{"address":"tz1PR4Hwo9AxpcPY8qCQqcqJUXp9qZ1DWFeo","balance":115456644,"is_funded":true},{"address":"tz1MjjLZU7Z4ZTQEZ5K13uZpYozMTdSxXAqk","balance":113268499,"is_funded":true},{"address":"tz1aJ4GQVQahiy1MuLmqrWnZzjLg1ya3TPkR","balance":111122981,"is_funded":true},{"address":"tz1dUFGGinuEXRt6mJxGKoioDGFFhcf4pz9A","balance":109489015,"is_funded":true},{"address":"tz1bm5ZXZeXiAggfXjr3KWFReNKmLg5o5XE5","balance":107784415,"is_funded":true},{"address":"tz1Y4uhZXpGNejA8MSHYbZeShbGTK9bLiuLW","balance":107650427,"is_funded":true},{"address":"tz1gdiKBmjmvav67FTAjeftyYdcjuLsMPiwf","balance":107406786,"is_funded":true},{"address":"KT1Akno6N5Js5YfJZ8DGfL22qKFta5ETyZHK","balance":104579128,"is_funded":true},{"address":"tz1d6wbAMkzqeZkzoux5ghFf4SC7Jyny77UQ","balance":94785271,"is_funded":true},{"address":"tz1Z28DjstDRxgv7XfMXAQEr3KPRBwCX3RWa","balance":92840359,"is_funded":true},{"address":"KT1RiXEpRTKM2SDxX3Z2vJjRPMbkuSW4v3X3","balance":90458879,"is_funded":true},{"address":"tz1brbRnN4jsT83h68j1HQRnUeWgfrCg51gY","balance":88276879,"is_funded":true},{"address":"tz1bkejtzWoGzdJvdk1yXWfUWRGvpRYGeBne","balance":85174400,"is_funded":true},{"address":"KT1LDAMFb8Y3x3skBGpaFoB9e7fSakZn15p7","balance":84361937,"is_funded":true},{"address":"tz1e5iPM5eurnPdL8LbiP32jDekeDhbrkpNK","balance":83581489,"is_funded":true},{"address":"tz1i32Dx2t2zyMKmWQXgDgHEbyvGP1Av768o","balance":78819926,"is_funded":true},{"address":"tz1d5rtyuH8jxWRBjTXoPxYZjsVX3TnEfidg","balance":76628156,"is_funded":true},{"address":"tz1g6Tfpmhcvkii8G8kPAwUYWjaazmQAPrwa","balance":73247159,"is_funded":true},{"address":"tz1QkobCfiTkDampjxH6uhVSj8dtvVq2vseR","balance":71846052,"is_funded":true},{"address":"tz1NVEo1zc66uBTap5kwvgDs9jUwGRHbdfWL","balance":71346500,"is_funded":true},{"address":"tz1VY6J9nhUyzTfy9Ed2cKFaDykqWzKb68kt","balance":66175247,"is_funded":true},{"address":"tz1PtNfAv2dCXsgCfqSG34VGi8UFTuTBrHFu","balance":57474081,"is_funded":true},{"address":"tz1KujM8SoS1VbRanN74EB9qY2uqA7qPJTBu","balance":57465233,"is_funded":true},{"address":"tz2J5my9PHKs6s8qgGEMr2K9rigxi4a9JW4h","balance":55339294,"is_funded":true},{"address":"tz1YLTmav3esgPzqE7y8LsbJneZhTndonWvg","balance":51862875,"is_funded":true},{"address":"KT1QSJgzuzaLAvt6ecL6f9RVtyUgd6dNpcTp","balance":51731797,"is_funded":true},{"address":"tz1dEw5jNnGYnvNBsuNbTqPLy3im7YWrXYHX","balance":48276082,"is_funded":true},{"address":"tz1QrRzkTAKuPKF8dmGW6c1ScEHBUGvoiJBM","balance":47174662,"is_funded":true},{"address":"tz1geibxThpe3ou1iADNA9R5CHMWLGdnSJbj","balance":43972636,"is_funded":true},{"address":"KT1DfmtF3SHQB5pHXiDov2FuUhFuNyUnMfQz","balance":42478866,"is_funded":true},{"address":"KT1CirJj1oQRmv6m1kMdhWB7US8ZXpkNXC6X","balance":37856138,"is_funded":true},{"address":"tz1U7oAmuAAKZzZszs783a9B5xAc4MuKk1xX","balance":36551499,"is_funded":true},{"address":"tz1MANvdxDpPfN657xqhtiX7dqQrbKtPM3SU","balance":36529821,"is_funded":true},{"address":"KT1WSbisG12AKmXbG8H5gnRt8xiLHgpiWPtJ","balance":33743291,"is_funded":true},{"address":"KT1M1QBWSo9RRE9dmg6bJfKtbV94xVKwFGzn","balance":31244587,"is_funded":true},{"address":"tz1R72pdt1VGiXZLzbujJXKNp9C7j52pirBY","balance":30661226,"is_funded":true},{"address":"tz1cJMfYDaM7tdNrnJ8hURvNWfpVDwEqsDrc","balance":29712893,"is_funded":true},{"address":"tz1Q7HmHxYxnEoaTggkgxF5pzJ4tQfJK4GRB","balance":29695715,"is_funded":true},{"address":"tz1TQxmf4irW6xBNfa6Seg2KytMwDvJtiktn","balance":29688049,"is_funded":true},{"address":"tz1fL9T8PkfFUWQNbAZmcBXAUCyfXRozWTek","balance":29384842,"is_funded":true},{"address":"KT1MxPwvnT8hGYCsL9WkHh4hXKRNzXUiCMAT","balance":29029970,"is_funded":true},{"address":"tz1Q45ukC92WA1wnExbNDbUS6UqJRxaFmkDJ","balance":27740903,"is_funded":true},{"address":"tz1bMjp17zozqNPMqXWDwJieQEUez2rSzB4W","balance":27423647,"is_funded":true},{"address":"KT19curYUrivF5kGokjH7YJjBdhaQ9jp5phv","balance":25790026,"is_funded":true},{"address":"KT1XGUBoms5p2Fb7Dq8ByKndVKqkdV4aV9yc","balance":23664037,"is_funded":true},{"address":"tz1aXGU6GodhaMVjjAZBTXPXKQs5Ye4vQoGD","balance":23432419,"is_funded":true},{"address":"KT1Cri8avJX2Cfb8rpCD5HEWSDMXEkdjYzD2","balance":23061826,"is_funded":true},{"address":"tz1d19gQZHtM2VYqzqEDXjmNRUZ5G4w4eWKR","balance":22807965,"is_funded":true},{"address":"KT1BK71847dCqemXFBNnnqyeWDhjjofT9S26","balance":21460059,"is_funded":true},{"address":"tz1dx5HkHXHYcGJ4S5RmhadtqwyK6T5PSdWg","balance":20693198,"is_funded":true},{"address":"KT1JTBbQZNPPMuJk4a9iJrBqHbFfE9WdbW7a","balance":20000000,"is_funded":true},{"address":"tz2QhmKtUWRyArfaqfBedvVdidgKpCcckMXV","balance":19006659,"is_funded":true},{"address":"tz1iBadNdkm8qhokF2wxcMZZpR6nDM4KMskp","balance":19002948,"is_funded":true},{"address":"tz1LaDK9VdH6nRXwtKoppGyFpYqKFFkzwcPe","balance":18402283,"is_funded":true},{"address":"tz1LUXZUrrytwCVz11MPadYcDNxS2eLNRDrK","balance":17947480,"is_funded":true},{"address":"KT1Sxw5qpNoY4QqVgggDr2didvPtDqs8MGKc","balance":17600850,"is_funded":true},{"address":"tz1g6a2CVkkDbVb1JQMiQnSXjuPUkqNU8MYp","balance":17360385,"is_funded":true},{"address":"tz1Vd4fAzLXeVuv4pUvmfZoXwGuywUDwAFaA","balance":16946952,"is_funded":true},{"address":"KT1PqWBFYH7TiwAU226wy1DwwtnXoRFRu6r5","balance":16883359,"is_funded":true},{"address":"tz1bJcRvNVFRgNRL1T6dAUM4pB1uHRAUqVXG","balance":16690861,"is_funded":true},{"address":"tz1aaJ5uwwtASbQkyubcE9hu4JvkwNfduViG","balance":16540446,"is_funded":true},{"address":"tz1XT9KYBvKBvARVz9f2okayXMkXQLbqJfgi","balance":16186756,"is_funded":true},{"address":"tz1fFgW1zDHvfrNT46dZy8ETnPaoBizeUHr2","balance":15948896,"is_funded":true},{"address":"tz1R81i6xDXXkNcqEKTrfWMVfTuBwucQcm2X","balance":15364229,"is_funded":true},{"address":"tz1fFjMpXYpKBvaSw2V9djnM18Pzji7a3CVj","balance":15320087,"is_funded":true},{"address":"tz1UWSDW98mexXQquC9Jam6zWxoBtEoo9EZu","balance":15235936,"is_funded":true},{"address":"KT1QLnZfqi2fGzHN7FRd5d1BsKkxyPFpTaJL","balance":14926295,"is_funded":true},{"address":"tz1L2ZgTRTyiCRQ5empm52ouq2vn5ZjyJzhY","balance":14345130,"is_funded":true},{"address":"tz1WU9pemKyqEAhNXiUoajbi7B9RC1ed4K8V","balance":14311154,"is_funded":true},{"address":"tz1bMj813rUPiWi9FDwjgTpi811R6o1BQoiZ","balance":12707944,"is_funded":true},{"address":"tz1iqjWyrSZTmhV1okq6BDweoBzGVT1Catc1","balance":12672605,"is_funded":true},{"address":"tz1Mk7Ub9gHmgUWpEUqpzmMpcGLDvZtXWFme","balance":12550178,"is_funded":true},{"address":"tz1ao6HFpvXahT1UgbHU8Q845YwxGwfGf7kT","balance":11631960,"is_funded":true},{"address":"tz1gYPDSZyBMYYfzv595NYEfrEDWVopdCGPW","balance":11479406,"is_funded":true},{"address":"tz1RHMiwvBzWdD77fvGMTVGraMrLk3BHNyrS","balance":11390967,"is_funded":true},{"address":"tz1aCTAigzJdkKUH19A5P9CqMViVJxaezZmY","balance":11267383,"is_funded":true},{"address":"tz1RRXhv8nJbq6siCZE3UbpPXQG2EuL9TzS1","balance":10990333,"is_funded":true},{"address":"tz1bTao8eTkMMZrhwRPrjU5HpSeN3czw4T3A","balance":10531115,"is_funded":true},{"address":"KT1MDdKQ5QN3h2q9iNDqFGV98csdkFiiXcmK","balance":9708433,"is_funded":true},{"address":"KT1DaSTVGsh8BSbSeVZ1AyDngfPEFntpFeAZ","balance":9072559,"is_funded":true},{"address":"tz1hyc2XWqJ1VkkkmbtkVXCjQHGTbmfbEwuk","balance":9071934,"is_funded":true},{"address":"KT1Esi1Q19iKohp16iejnwSVfgrE1Yn9iYZ9","balance":8848733,"is_funded":true},{"address":"KT1UeAniuYbRLvwMqv4vQwak3eZHPPWjPWMF","balance":8286256,"is_funded":true},{"address":"KT1Fqv5sQ6vQi6izu9z5i5zLC6bg7FueDywK","balance":7399340,"is_funded":true},{"address":"tz1T6iG1EDGWvaTDXZubAapPy4cpXebFyQAR","balance":7150351,"is_funded":true},{"address":"tz1UQYv1C3WPu4sRLXoWnTNrVg5kMuvqwkvj","balance":7132101,"is_funded":true},{"address":"KT1DDacdWtMRLN7xCJse7Zf7tak9NSMxPnuP","balance":7008161,"is_funded":true},{"address":"tz1aDynhRYQerbCNUfRKAv5ZdrhQjQvDSAzm","balance":6864133,"is_funded":true},{"address":"tz1QyysnzkbH5WZXQsQsi4jf6i4qBeGEszwQ","balance":6655583,"is_funded":true},{"address":"KT19ccFz6rQwuaiTjgxhWYCcWzQZygCexGLU","balance":6523565,"is_funded":true},{"address":"tz1RuWdz19pXMM2F1N7tz9ebTZUxTy94RAJp","balance":6458644,"is_funded":true},{"address":"tz1cwp7qujsigxqaCiYxqozPoTYza69RqW4o","balance":6389151,"is_funded":true},{"address":"KT1G9KZg8z5RinBMiHWRLdx3pycN7UZRuoJC","balance":5952462,"is_funded":true},{"address":"KT1T9SQAP26huHLsgoDzp1EYFuZNrr61N6jS","balance":5909190,"is_funded":true},{"address":"KT19sPJ1GXjD51ia4VUHW3ocn4paoNW5rcUT","balance":5661047,"is_funded":true},{"address":"tz1XwcnHXatm41UwLiCH93gJsrefLNfQEYe6","balance":5461897,"is_funded":true},{"address":"KT1VuxkCb2jXWSbcTTYaLZzwrcwdsaJQeLP4","balance":5413433,"is_funded":true},{"address":"tz1hKNbDTJqjj3AL2MFwsdnhDiQhXvu9SLa8","balance":5067838,"is_funded":true},{"address":"tz1PJiMryJtJBRbe4AHZ47gtMxV2YAHZxsNK","balance":5037947,"is_funded":true},{"address":"KT1PCivps9ehcitiaESnTAFXnMJhTCBGraSQ","balance":5016193,"is_funded":true},{"address":"tz1gyZoD56iStaAeeeH4dmsSQAdCF1i9ixPn","balance":4979847,"is_funded":true},{"address":"tz1Moo9LhWGMVTnEacRg5PBHNq2voHxz5zeP","balance":4876639,"is_funded":true},{"address":"tz1anuStPsvpSWFwzpA5XmLYgS5CaZJEzboi","balance":4709004,"is_funded":true},{"address":"tz1fd3DiRxE9PzcW5rAM7UhB625un8oqe8CF","balance":4475261,"is_funded":true},{"address":"tz1SUMwzFbv9N4gUVv6Ywn2BXb6L8ZuHQ4nw","balance":4434939,"is_funded":true},{"address":"tz1NdfibiXci9hQnUk1NuaWgwdhY6emuE4bA","balance":4201016,"is_funded":true},{"address":"tz1ZGyutYcTpJopyunbDnBHADgioh5PKYweK","balance":4147975,"is_funded":true},{"address":"KT1KdSPNw9Bb19bgKRZg9LV5WrZXoB6s63NC","balance":4128621,"is_funded":true},{"address":"KT1SjHE2knKkNQ7ZkYoJFCvhcqYW9dmebmWY","balance":4000000,"is_funded":true},{"address":"tz2XeqeHxqZBEiUCTbEekYb3UDgPZfX4PF3w","balance":3973969,"is_funded":true},{"address":"tz1TqcNKXEFGEjqx5F2z2UcA1gk1pxEsdLDM","balance":3718213,"is_funded":true},{"address":"tz1ejfY1m4N9gy3WTP29vD1C3Ai3561EzXoQ","balance":3592660,"is_funded":true},{"address":"tz1UGCGYUmVV68S1sabhzY1VCbBw5AtWAgCv","balance":3375267,"is_funded":true},{"address":"KT1U6M1UwEwoJz8zPmEtusgkyEsSQ8NEQY8Z","balance":3329366,"is_funded":true},{"address":"tz1L1XwcVmD2z4qPfLtBJ6RPThgAwLcXG6kW","balance":3175964,"is_funded":true},{"address":"tz2Xeqe4opwV1JkqYrNHcJ1jKzUMaiQXGfch","balance":3106056,"is_funded":true},{"address":"KT1TEqgqgSvNEV5VtTgXLSp51WNfrdBWzLjk","balance":3066046,"is_funded":true},{"address":"tz1R6rQPcMHKX5u1J6pZfKP8kSQJgLKHU1qG","balance":2982080,"is_funded":true},{"address":"KT1DvoXuk5csqnSkHWa82639N1WpwtXscvC3","balance":2957511,"is_funded":true},{"address":"KT1CkBiamTQvyPsUyHfc9NKjoaUPUmVaWyhp","balance":2947514,"is_funded":true},{"address":"KT1G2Tw7ukNWNHnqPw5MQHgq9mj5GiB7jyYo","balance":2901008,"is_funded":true},{"address":"tz1ZockEM4bXXwvrUvbLErvofPWEJj66Arsk","balance":2867996,"is_funded":true},{"address":"tz1imwm1XRzqg5dYwvdmy67FMjxEduhzdrTf","balance":2857403,"is_funded":true},{"address":"tz1X4sxpgg5X6aag4Mf1TmdWTrDbx3jBFwyT","balance":2810065,"is_funded":true},{"address":"KT1WFXv9bVLeGk83rKs4w4DmerTBDWhEMcFE","balance":2660168,"is_funded":true},{"address":"KT1Dna6SKSqA6B5bYqro1MRWiPsjrZ6enT74","balance":2651571,"is_funded":true},{"address":"KT1W1rmdoRjJD8LEuq2jL3uFB2zcQQ41XvP3","balance":2635773,"is_funded":true},{"address":"tz1YqXbVkJyfysN3w9ZxqoLrR9ru4ebY5JjX","balance":2495535,"is_funded":true},{"address":"tz1PjYXRbCL6YKvmpyiCBigK7G2NkbzbdkdB","balance":2481414,"is_funded":true},{"address":"KT1BQWBUY4knqARBEdqFeLwpKab4yhz3Fm5A","balance":2381419,"is_funded":true},{"address":"tz1MDNy3Nu23MAUmLHnJFao5ahnyoWfDx9rV","balance":2369022,"is_funded":true},{"address":"tz1QYKqJ5vXAXXCbbCNXFC4JFbeiXQXzceSU","balance":2353012,"is_funded":true},{"address":"tz1bk49Xre2MnV17YNZxPhddqDMovkFnuPPS","balance":2292331,"is_funded":true},{"address":"tz1SUREnFpoXFfEm2ikWSBFY4n6ivf13hp8Q","balance":2266124,"is_funded":true},{"address":"tz1YCWh1wfbmirM2JLbF5GGfCBjQUvA7g7t4","balance":2162631,"is_funded":true},{"address":"KT1XWdbmBYQmuFgLm1dULXANVcoGQTmpZ1XJ","balance":2090589,"is_funded":true},{"address":"tz1Z4C1y84qpYPhWeDbNX88A1TkBpnDWrjGQ","balance":1946493,"is_funded":true},{"address":"KT1WBhKnDh122rLwnLwp1uW8uCzkfWQ1kMZH","balance":1897041,"is_funded":true},{"address":"tz1YUKwiv3uUMmjzdeQtAnrYk4aHh7KwFu93","balance":1845591,"is_funded":true},{"address":"tz1bkJCZJX8VjUZHwfEgf9V9m5KQDGqgDnXt","balance":1833087,"is_funded":true},{"address":"tz1TDe6JZeZQoWkiYFDFCssxVvmN74M6zAfV","balance":1739220,"is_funded":true},{"address":"tz1QB5LdNbZgfC2zxa26bMLARwDjv63M9gCg","balance":1720062,"is_funded":true},{"address":"tz1dTwuaqy69XVMnJDoMtEtcJYMQjdyCsaLN","balance":1685982,"is_funded":true},{"address":"KT1LgWZLctCwKEuaC5Zcy8QXZNibEDFNaXTp","balance":1623577,"is_funded":true},{"address":"tz1Woy5F9hBFnKEucMFtP9HPwmWHa3DEyaRj","balance":1591280,"is_funded":true},{"address":"tz1ZbokEB5tekbPxyWdo28ugn3UUkbQjguK3","balance":1473958,"is_funded":true},{"address":"tz1X8Lzs5zbXfSgchYcLm2ymhS7QDC1cz5Ep","balance":1472172,"is_funded":true},{"address":"tz1dZW5Tnhbs6HkzG2HBdgo3kagCPq47dUfY","balance":1466285,"is_funded":true},{"address":"tz1fhVND6cPEdZzbZWvQMqLz5EJQNiZ8dQEX","balance":1463769,"is_funded":true},{"address":"tz1cqQCbeh9WrFjmuuXG9XWBbaGhyUEpBxNw","balance":1448800,"is_funded":true},{"address":"tz1UZnap4oGDuXNxVK7BrP8B3CvGuvSr2wNf","balance":1433770,"is_funded":true},{"address":"tz1SQZ47RFjK26nEZ7Qau4knYBCgaHeJggMc","balance":1433534,"is_funded":true},{"address":"KT1G5m6Qk9duJeoP7zQW7Akyk2f2y5BHtzuJ","balance":1402414,"is_funded":true},{"address":"tz1dsvPTAN1cF4dReiZo1ZrzAppBWcRcRTbr","balance":1335724,"is_funded":true},{"address":"KT1XHSLHnqQaocFwAyLXGKGczFcnGK4qhwnq","balance":1317377,"is_funded":true},{"address":"tz1emWx1hfSLkFYXhhyxQ8NX1BTzwk1RpySW","balance":1287074,"is_funded":true},{"address":"tz1SXtCyKkgeifcK4hvmd6KV7zZEvEEnNxR2","balance":1241903,"is_funded":true},{"address":"KT1X6MdxcomohfjPfZ7WBNp9wpzf9iWH5niV","balance":1203807,"is_funded":true},{"address":"tz2Xeqe5U8iPf6xPmRjzMM1W2o9p9APqKZhp","balance":1190234,"is_funded":true},{"address":"tz1SryCXCRcWWCc168ED8sRW7UBAaiwPg2LY","balance":1185598,"is_funded":true},{"address":"KT1XSCMBNNjvYUEsXbLxTZeWda8CAcz8ipUm","balance":1169036,"is_funded":true},{"address":"tz1cAuRa3dCNBJUbmAP4r8cyzYWKfP7N2rSL","balance":1156198,"is_funded":true},{"address":"tz1fSN8YEdC67UwJChfLahA4BoWWHGXAQPhU","balance":1149633,"is_funded":true},{"address":"tz2Dq8MZSYbS7USTkPeJjZ7qpYjdCNGfAZdE","balance":1144209,"is_funded":true},{"address":"KT1CdTv5PUDneehaMcL4RBBsQo2vb8RbXy4V","balance":1137838,"is_funded":true},{"address":"tz1PnbhBb2TV4tJjX1BpAScx8rPk2YAcc5VD","balance":1058669,"is_funded":true},{"address":"KT18h3ZuYE7x41vGw3ck4bjHXs7DUK3ZWQMF","balance":1051606,"is_funded":true},{"address":"tz1SVRxhanh1XWe2yu3r445uY33zgvKRCJG9","balance":1038835,"is_funded":true},{"address":"tz1bWdgitBxGvBDacgZDGu6i7uKsFPixhkmZ","balance":1035083,"is_funded":true},{"address":"tz2Xeqe4qJPA9xeh5Z8qz8WMmxsNo3FkwVG7","balance":1012448,"is_funded":true},{"address":"tz1Q11DHvu9ZAcieiAWU4ffyRXwesaqM8qKX","balance":999166,"is_funded":true},{"address":"tz1Rfd2ZwEgDZUBCG9SXFMW3KKfuSMx5L12V","balance":999166,"is_funded":true},{"address":"tz1RGtzQJfu6vMhXXwzBtra1xVDhtSB3KGUZ","balance":951991,"is_funded":true},{"address":"KT1EBNereHBqbLMkMYTzCpia7F9ShW8sEsqy","balance":943362,"is_funded":true},{"address":"tz1eSbJKiZCtKGXaw8EyP7TBJKjeFKJqEt8u","balance":928731,"is_funded":true},{"address":"tz1eE4khL2YN2TsR6P9feZkwh6h1yiAfmD3S","balance":916512,"is_funded":true},{"address":"tz1Q8qFQH4wTM5L6mqT1JEBtG9tzkU3GqtU7","balance":898302,"is_funded":true},{"address":"tz1SktFxrvyGB3iqYgWqmLCJvQpwbPvD6ynp","balance":897118,"is_funded":true},{"address":"tz1YH6miEQBbH9tFP5svwscP1qNPKXPM1VW2","balance":889796,"is_funded":true},{"address":"tz1QNsfxJBa8KJr4eS2fiubGbDcGmRryp5f8","balance":840603,"is_funded":true},{"address":"tz1Z6BsY2y9RtHwqFNuCxSHeyrANhbJ2dccr","balance":817331,"is_funded":true},{"address":"tz2XeqeKNSRa4H6Xg6Z65eDcBmsTyFfe9SEb","balance":745199,"is_funded":true},{"address":"KT1N7ciDJbxnxjVn6k1faiTKzKhgaSfLKt59","balance":741967,"is_funded":true},{"address":"KT1UXatfbzdr5okigNpXvFS2VvM72Tm5QmuD","balance":716211,"is_funded":true},{"address":"tz1VALUZim3EtQBg7N6mrN8s39peXWztzyFS","balance":714199,"is_funded":true},{"address":"KT1HNgs6k3uEPLh7MbGjp9ipxHidBWGGhoqY","balance":710554,"is_funded":true},{"address":"tz1RmgZX9FNGbnuKzUPvduuaWKFyrgwfQeAW","balance":701504,"is_funded":true},{"address":"KT1U9MJRHv9qdtHxJcXjyLyX7vdNbG3zz8Mu","balance":674152,"is_funded":true},{"address":"tz1LdisB5zwHkr5YDdh3cUwg8cu1KsLcAmbd","balance":665998,"is_funded":true},{"address":"tz1bH4aD512h437nwyQucZcuyMnmExFUKMD4","balance":660951,"is_funded":true},{"address":"tz2XeqeHy6ZXdZvFq6Lk4yAGASVEoHt48tPW","balance":647725,"is_funded":true},{"address":"tz2XeqeK6L46AW1rHH7c6Gi3kc4eKEpP4FhY","balance":637653,"is_funded":true},{"address":"KT1GuRpgkd9wCsaoU6GHrhwNG1NjzH7W291Z","balance":629361,"is_funded":true},{"address":"tz2Xeqe4khB4Ghetuzgdu9PprZRBowCzRoWN","balance":622604,"is_funded":true},{"address":"tz1NmevmAdpNMF8LXv4bYcbBSkJzq5Qsjry5","balance":614892,"is_funded":true},{"address":"tz1aeqN21nDpK6GX5sH2mmwyGxJpxmZHBgEp","balance":593663,"is_funded":true},{"address":"tz2XeqeNw8U89gSdmq7acTqvJRNCUvCwFjo5","balance":593290,"is_funded":true},{"address":"tz1SVSiCPbHdRi1xSoyVuvpmny4bgETJmpME","balance":585073,"is_funded":true},{"address":"KT1PeeC5HDV1FAueixJF75e4DGyvsLBTuBXL","balance":506163,"is_funded":true},{"address":"KT1BoPhaVSypwNxc8vojXLjW43yL9vxZUrHX","balance":497882,"is_funded":true},{"address":"tz1QptmjQWPkv7iwa9qrw8ECScLAfPkmvwCu","balance":489300,"is_funded":true},{"address":"KT1LYfYqDRHqbkswwQYWd3kURHHHbo8qo56B","balance":478938,"is_funded":true},{"address":"tz1g8vgvvGi3vKU12LT9jfJ5oGSx7pNmQLKb","balance":425293,"is_funded":true},{"address":"KT1C8K7dVQfC83PngySbnytpFbPwVSiSwzbP","balance":385738,"is_funded":true},{"address":"KT1DdoNksZWRDeTzgzTntXFbdRVCb1bSzH6k","balance":385581,"is_funded":true},{"address":"tz1Xf2wsRXEevRdCBE1ZEu6fYwQToUnc9Wvw","balance":377941,"is_funded":true},{"address":"tz1UPcX1mZXupVjDrnLy9JEccKY8B1xCH8Vt","balance":375259,"is_funded":true},{"address":"tz1QHvePLWRT7E4CJuVVLxFUjNbMNa3hjydp","balance":355966,"is_funded":true},{"address":"KT1E6ZuQpx8thATa3DXYxEUSUpo8mzNYDG3v","balance":352776,"is_funded":true},{"address":"KT1B8gPQrL1GTx5dNmFWxiJ7EcnsAJLSVRAr","balance":344298,"is_funded":true},{"address":"tz1W7Kgs6814REJBrYTmcAexTnjkvhHfzz1Z","balance":335082,"is_funded":true},{"address":"tz2Xeqe5TJKZUpEpqNycHPRkZXbEQr61RJFa","balance":333103,"is_funded":true},{"address":"KT1FGT61GsK8WqBjNRt9iaH8TqUHYnBZFA4W","balance":332668,"is_funded":true},{"address":"tz1MVF37cBSinkzbtPAso2Ty5TeZmiJXMR5m","balance":298189,"is_funded":true},{"address":"tz1UETA3UM2yXR5UHxsHP9hy6ueTUDtkCixB","balance":291688,"is_funded":true},{"address":"tz1aNmqLfEbr1KXUh5Z4K5SxipHnkP8tWie4","balance":289613,"is_funded":true},{"address":"KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR","balance":281513,"is_funded":true},{"address":"KT1JZh1DVXj3ZiJHhnFVWN73D9qPdYZxA1GZ","balance":273613,"is_funded":true},{"address":"tz1Xp3Pmg468iEZPotQow8aAmzwzAL9CdJjn","balance":261088,"is_funded":true},{"address":"tz1Pvbj4J7DTzcNbrxZhY9FDVBrCX8G9vLpV","balance":257104,"is_funded":true},{"address":"tz1Rx4cKtfFJdS3rS9aRXQZT2NGruiBDPz15","balance":255440,"is_funded":true},{"address":"KT1GFQWjnitsvekzUmtKPhfJSmcDTebx2ugb","balance":243780,"is_funded":true},{"address":"KT1WLwDWL89rxPMSQJ4kLGETMASxUqY8vWd3","balance":235696,"is_funded":true},{"address":"tz1V5QPoXBd35eK8irtFfrxBKrHYQHDz6piS","balance":235096,"is_funded":true},{"address":"tz1ejD1vdVefcBdD48o446Sju5Hya2MVHTj6","balance":227939,"is_funded":true},{"address":"tz1ekF3WqER31x4U3riRtE8PAv7Lnd1cFJ7i","balance":219867,"is_funded":true},{"address":"tz1Y5FRYFt8e4CPF61udrjZkdYE4uoYBsmyr","balance":210750,"is_funded":true},{"address":"tz1RNEMGpcxRnumNmQtEB16LKLeXXu77rHva","balance":210750,"is_funded":true},{"address":"KT1KLbkEY952sxF7SsYhLqqojs7uKXZRirdT","balance":210695,"is_funded":true},{"address":"tz1aXnkvnxVb55j16rAJYvmsTnbnWG2N5oFv","balance":203779,"is_funded":true},{"address":"KT1DWUC5YZkAhgMrJqGvfgCsso8d7rUXaV3D","balance":202875,"is_funded":true},{"address":"KT1NX7KSCNQjT8fx3KRX4vL2zEgq3iwKWkqe","balance":197961,"is_funded":true},{"address":"tz1gSjEPXCqj8sHZnCbMpz7ZWRsjnGcEC22T","balance":191330,"is_funded":true},{"address":"tz1hc63jbfqZYLpQCAKvsZKoSy2Ec4xvwA5q","balance":190572,"is_funded":true},{"address":"KT1Fzs2ZmqJP5fKXYkZY2fy5qTK65BSzBe9d","balance":172055,"is_funded":true},{"address":"KT1WrmdxQaoQMoNTUmt2sfUyhJsPEGcDsVDZ","balance":166892,"is_funded":true},{"address":"tz1TMXEnp8WYxeRXN75L28V163FVRPtfAEw8","balance":163201,"is_funded":true},{"address":"KT1R3M7bFTBLcCEdWuDbKLwQ9jPkJw4xieoV","balance":151406,"is_funded":true},{"address":"KT1CpSYBVRTDzg14rUS9BiJxKB34AGmwERV5","balance":138587,"is_funded":true},{"address":"tz1gGczbzTypc4KthAnUq4ub99pET1FsaybW","balance":128177,"is_funded":true},{"address":"KT1Afb5GpU4auWKNKcEiKVboCrJWbMLoHUQd","balance":112579,"is_funded":true},{"address":"tz1ivuUi9DyfztY32uY383ce6eLGKNUT1GaB","balance":106879,"is_funded":true},{"address":"KT1N2kJZFGF8goP3Yz8ti7LwSaLz1vMSq5Nm","balance":100661,"is_funded":true},{"address":"tz1QeH5hj2hNacp2eQ827SQk2g5xTJxirPLs","balance":97908,"is_funded":true},{"address":"KT1J8T7U6J1BAo9fJAxvedHsNErnejwvPyUH","balance":89940,"is_funded":true},{"address":"tz1QLtz8TBbbwg96miE1Cw6r8qdNXYxtoqHL","balance":72095,"is_funded":true},{"address":"KT1DRBZNSWt1YC31LyUY3UFd4esHHhFqseBS","balance":70969,"is_funded":true},{"address":"tz1gWPGm8JDE951W3jbtRb3SEbBcCQfbTXLM","balance":67097,"is_funded":true},{"address":"tz1SaYQMJJsr5B9Lx255FbTHLWEEK5AzNdxz","balance":57085,"is_funded":true},{"address":"tz1SdUBQvk5R1JMAKEE9ezJBkFoKGpv1pBHQ","balance":55808,"is_funded":true},{"address":"KT1H2kykVtyVef8BzM8hJQZHJ62gisfEDTqi","balance":55125,"is_funded":true},{"address":"tz1VU6fzXJ1pHazPAAfL9EwBtac959arAgkU","balance":53614,"is_funded":true},{"address":"KT19aegCWQ1RTejjoBYBAPJzcbJupR9CBcyX","balance":52666,"is_funded":true},{"address":"tz1ZoqzHtm1ciwaGXP43AyUfEQ2uCBYTMAun","balance":52164,"is_funded":true},{"address":"KT1WExZ6AL7N3k4Z3JRRHTeDJLuBASjbhVKd","balance":51425,"is_funded":true},{"address":"KT1R24ygjvkkoib9Zsd3ww7Zpo2aNGUxSGXr","balance":51308,"is_funded":true},{"address":"KT1DNBQxyQfaCN7b4NjdZxujupfX4jwatBYV","balance":50000,"is_funded":true},{"address":"tz1cQSFC7CygBAEqvTHqRZHrzqmY88vJJwc2","balance":43573,"is_funded":true},{"address":"KT1EFVH7GagEsgD7DG5eKqFniUpaE1KcqfWp","balance":42665,"is_funded":true},{"address":"KT1TWPamKVQ7F5WQBrqmrkCv1HMxEXXJDQFB","balance":33297,"is_funded":true},{"address":"KT1AEs53ibPZ5XT77KRbb1HFhAUGazgHxzvS","balance":30000,"is_funded":true},{"address":"tz1YCyMmXtTY83smS9bDWYLiZMxMgbE8Ggxy","balance":26543,"is_funded":true},{"address":"KT1RBqbF1cWTyCMWHabUpHmETCP9KN5M8ks5","balance":23349,"is_funded":true},{"address":"tz2917sFmzf14fUHEm9ywCdzvsfwBJCJXas4","balance":19218,"is_funded":true},{"address":"tz1WTkPTYCPAFDfhJXBbK336ePKFrwa1ZVc1","balance":17189,"is_funded":true},{"address":"tz1QgoYLP6QziYvEGggXPUS4X6yky4XayU8o","balance":17101,"is_funded":true},{"address":"KT1RBPh9izZKcJx7chzpWd1ZoCbu9rx3ZJpP","balance":13212,"is_funded":true},{"address":"KT1HZSFTfmVkRkwajVuxiXoovgdm29D6X3Wq","balance":11495,"is_funded":true},{"address":"KT1HyKFXcHXySJYkhsN3gAnXKCsDEdRfiUcg","balance":10000,"is_funded":true},{"address":"KT1VTbwyXsGxbGQtfREpW9oNeuEiPz3ZigL7","balance":10000,"is_funded":true},{"address":"KT19rZZ7a593jKtDRkfyXYVTANCtXutQFJPW","balance":7533,"is_funded":true},{"address":"KT1TbF8W4cpf975twewZddU1XvPsgU9VGyFM","balance":5726,"is_funded":true},{"address":"KT1UJVW92FXpo4fY7Ym2VcmU9CfXP2xWCq1p","balance":5000,"is_funded":true},{"address":"KT1RSbzm5GQ3RP9Esvy6sxtqaSs4Wz7bV4Ag","balance":5000,"is_funded":true},{"address":"KT1VT2Z5PVk3fLU3dW5wFYofu8X2jWKuZ3RL","balance":2000,"is_funded":true},{"address":"KT1GhbDXpNTKp75HvtwdxaTY7eZt88nhAZz4","balance":1493,"is_funded":true},{"address":"KT1SERQjJogR6zZUWU1sDU93juekYsqXprkQ","balance":567,"is_funded":true},{"address":"KT1L5FKSQK5DwDuQjkVbcXU7VUPwks2zRm1j","balance":116,"is_funded":true},{"address":"tz1U7FhZJDq7qVjUKLmisW2KpqH9fBugNE1D","balance":32,"is_funded":true},{"address":"KT1E6fLbBv2JgPmjc6D7XyWZLeSF6XDBassu","balance":21,"is_funded":true},{"address":"KT1H1AUdDYeLh1HoTVAK2dhmBoDZSKcXN5mE","balance":2,"is_funded":true},{"address":"tz1WHMkXRn2Un4npdjSNZzcycXJK9NWRu91m","balance":1,"is_funded":true},{"address":"tz2XeqeKLaK2ipRsfKebEQ55ij1dg3baTq5S","balance":1,"is_funded":true},{"address":"tz1daok4j8YTyzktM3sQgHs7mQXmC5Td67Gg","balance":1,"is_funded":true},{"address":"tz1bM2TokVXyiMt8PCcn9NCFTDcEPH99AfD5","balance":1,"is_funded":true},{"address":"tz1SLWhk8pwps9hEGEon1SFHVD54n7cBKkcM","balance":1,"is_funded":true},{"address":"tz1QQ5rfGLcxuCcFB23mutDukqXfU5Pg9sfj","balance":1,"is_funded":true},{"address":"tz2XeqeNsPjEnFt6DR7LBnwHrYQjGNMTNtDq","balance":1,"is_funded":true},{"address":"tz2XeqeK4CKdaBwbJ24uB1Xs8zCBpkhNGPTs","balance":1,"is_funded":true},{"address":"tz1coivWrvBQpF3ZQCBcB9Zncdrwn8Fgbg96","balance":1,"is_funded":true},{"address":"tz1VakNzn6GsCiW6pQFMF4hDxyBJtTTkCV9B","balance":1,"is_funded":true},{"address":"tz1duCWi2SxVaMZ69DxQ4em5Sxk4RQPfusy1","balance":1,"is_funded":true},{"address":"tz1aoKNZ9PrCr9tswgGTBkzkgrqMW6BTkcAR","balance":1,"is_funded":true},{"address":"tz1ivKjEv8mBnodzKRi7nqaVQSLp6FCdipz4","balance":1,"is_funded":true},{"address":"tz1ddqu7yDWd1ubFTn25u12q4j9jVw3pPwek","balance":1,"is_funded":true},{"address":"tz1ikBrfYXv8UyYqHAwufhvFf69ULsSeCywr","balance":1,"is_funded":true},{"address":"tz1gnUaNgiiAgEQdcdkafdaNQjUZzkK33vyx","balance":1,"is_funded":true},{"address":"tz1eG7RpipQwwDPXsJ7GLaxUqqpFuus4ehk6","balance":1,"is_funded":true},{"address":"tz2MMfCb5DeGieT5jt7MW8X4wHYx66iTZApd","balance":1,"is_funded":true},{"address":"tz1cpNkRGzA5j5BHHj68FrhkjDmfmty4zDWJ","balance":1,"is_funded":true},{"address":"tz1NbSd6GVnJZhzj4TtMGgs52Cmetkp9uuRh","balance":1,"is_funded":true},{"address":"tz1fmFHUmrKTmwAtai2A4nJiFdp7pKvWYmDP","balance":1,"is_funded":true},{"address":"tz1hJVe3GrVYAUwFGxhEy4DYcUvR7BJtvazY","balance":1,"is_funded":true},{"address":"tz1X4sTq1YoGSa79QUgH9wL7qFX2eAuHSGzP","balance":1,"is_funded":true},{"address":"KT1AaujJdS18aUm8s3TNW8s27qmgQQQNjuwf","balance":1,"is_funded":true},{"address":"tz1UBx7YpuRiLVugA8qbFd9kitqwYDHAtf21","balance":1,"is_funded":true},{"address":"KT1HDPvfAVi4fFcFXEU68kLU3NPhcuB84ML4","balance":1,"is_funded":true},{"address":"tz1Y77S4EcSQwyUWzAwtYGU6NTtKXbH3VQLg","balance":1,"is_funded":true},{"address":"tz1QCc3LVUwUkwtWxLzqwXNacGUxhshVwpVu","balance":1,"is_funded":true},{"address":"tz1crF9UuSpKekMebnxQk92Ad1WSVWUp1duU","balance":1,"is_funded":true},{"address":"KT1GbxL7hUSwaotVh2kDSGuuCunrmPgXRwxC","balance":0,"is_funded":false},{"address":"KT1DGWMzDncxgbw7CtTAmeaTG1QiXQwCYhaQ","balance":0,"is_funded":false},{"address":"KT1JFgKWyMmamddQcjrHgRruaf3qkE33XQCJ","balance":0,"is_funded":false},{"address":"KT1RrVwdAwrFM1kREEyDd7Sx1YqfrWQYyPhR","balance":0,"is_funded":false},{"address":"KT1Fg6Y2ZyGvuX8kAGNd5iMCqg1kZGsUsWNh","balance":0,"is_funded":false},{"address":"KT1EWMPYx8mYsMTAhdGEX8PSGAHQVxp1GiX5","balance":0,"is_funded":false},{"address":"KT1NDdMypGentwFtUjivb6xdim7WfCuR5n2x","balance":0,"is_funded":false},{"address":"KT1TYbNqjwUmfm9EHD5BHHo8BGQPqqQCPoF8","balance":0,"is_funded":false},{"address":"KT1T14WrhNCvaBDwn1TxxnseFDvFJCUJuJkD","balance":0,"is_funded":false},{"address":"KT1EamjLeYwYeC6BWvmpwKyWozQ7xtiJn7HT","balance":0,"is_funded":false},{"address":"KT1S2Tiyt4Nz5PDCFQpF3xF9WgYJDvWDEcmo","balance":0,"is_funded":false},{"address":"KT1NgojupHTegYBohf3UoAE9shfJBdSamZVM","balance":0,"is_funded":false},{"address":"KT1CM6Vb5cWS3Y5eXU1q1gbDYse1Hig9YFjp","balance":0,"is_funded":false},{"address":"KT1SCUe5Dpd4hB2Vjb7qGVTafRcQREvLnqxC","balance":0,"is_funded":false},{"address":"KT1XRSF9sko9ndTQuYN5aqTjMhdLgpva9y2w","balance":0,"is_funded":false},{"address":"KT1Uuz6BqqgTHrB92wi31qFgczZvQZRtScs3","balance":0,"is_funded":false},{"address":"KT1RFdYnBdqokzkHjScZQ16GK6fczvJ582x6","balance":0,"is_funded":false},{"address":"KT1Abv1Ui9kqdLSEnngQodBTcVcXMKhDcniC","balance":0,"is_funded":false},{"address":"KT1UsnNBfRqKjJQFd7yGhoJfczhuk6RfuVV3","balance":0,"is_funded":false},{"address":"KT1NBZYXkDNS3QNg7uZsBhVQRi1Hh9MfHj8X","balance":0,"is_funded":false},{"address":"KT1EBHEUWaqKeNZ9kK67AbhMD4MNdikmfvXX","balance":0,"is_funded":false},{"address":"KT1MQCuEMiK3aHt8Cwkzw7ZR9EuNBZXEaQJB","balance":0,"is_funded":false},{"address":"KT1E57Z6tAuuKYDJp4aNxPZbRYotEod42eb8","balance":0,"is_funded":false},{"address":"KT1UcsSaKskyPdt61cfnY1JfU373rMraNAC2","balance":0,"is_funded":false}]}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:04 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:34 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99390'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - 592d9c35-edc2-47b9-a7f2-81d76e2c4c93
+      x-runtime:
+      - '0.019360'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/account?baker=tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8&columns=row_id,spendable_balance,address&limit=50000
+  response:
+    body:
+      string: '[[692,652.759003,"tz1cwRGw8iogHkXxzud1mtH1LRreorRzuicz"]
+
+        ,[6579,1.036651,"tz1UBx7YpuRiLVugA8qbFd9kitqwYDHAtf21"]
+
+        ,[7538,0.055808,"tz1SdUBQvk5R1JMAKEE9ezJBkFoKGpv1pBHQ"]
+
+        ,[9479,7628.541298,"tz1XPqbWruHijnzGXm6kh7pD9FnNxTAzpgj3"]
+
+        ,[10101,16.009335,"tz1R81i6xDXXkNcqEKTrfWMVfTuBwucQcm2X"]
+
+        ,[10276,220.621089,"tz1QFJJjXz6aPYEs86GFFYc6BjkuoAdtdyUE"]
+
+        ,[14952,0.000001,"tz1QQ5rfGLcxuCcFB23mutDukqXfU5Pg9sfj"]
+
+        ,[15198,1027.322712,"tz1Sp14XCduSwNkKqL4Dr6GbTKZ76gdZEfBG"]
+
+        ,[20151,0.000001,"tz1coivWrvBQpF3ZQCBcB9Zncdrwn8Fgbg96"]
+
+        ,[31785,0.000001,"tz1VakNzn6GsCiW6pQFMF4hDxyBJtTTkCV9B"]
+
+        ,[34674,0.051308,"KT1R24ygjvkkoib9Zsd3ww7Zpo2aNGUxSGXr"]
+
+        ,[35614,505.646545,"KT1XPx4ZDePd7c29fCBDRJtVFcrsJS8FVSJj"]
+
+        ,[36182,4325.577934,"KT1QwmHxbHyYWtTzxiidtGeFjbF4JAkHcVKf"]
+
+        ,[37895,0.478938,"KT1LYfYqDRHqbkswwQYWd3kURHHHbo8qo56B"]
+
+        ,[38234,15.553015,"KT1QLnZfqi2fGzHN7FRd5d1BsKkxyPFpTaJL"]
+
+        ,[38667,0.281513,"KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR"]
+
+        ,[39191,4503.265283,"tz1LYQEVvxeMyhpD6oMeADmPVtMQRyyo91Ug"]
+
+        ,[39380,0.000000,"KT1CM6Vb5cWS3Y5eXU1q1gbDYse1Hig9YFjp"]
+
+        ,[39574,26.872884,"KT19curYUrivF5kGokjH7YJjBdhaQ9jp5phv"]
+
+        ,[40549,0.112579,"KT1Afb5GpU4auWKNKcEiKVboCrJWbMLoHUQd"]
+
+        ,[41184,5.909190,"KT1T9SQAP26huHLsgoDzp1EYFuZNrr61N6jS"]
+
+        ,[41601,18.339868,"KT1Sxw5qpNoY4QqVgggDr2didvPtDqs8MGKc"]
+
+        ,[44094,7410.722900,"tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8"]
+
+        ,[45528,1.402414,"KT1G5m6Qk9duJeoP7zQW7Akyk2f2y5BHtzuJ"]
+
+        ,[45541,1.137838,"KT1CdTv5PUDneehaMcL4RBBsQo2vb8RbXy4V"]
+
+        ,[45580,0.023349,"KT1RBqbF1cWTyCMWHabUpHmETCP9KN5M8ks5"]
+
+        ,[45636,2.572165,"tz1PnbhBb2TV4tJjX1BpAScx8rPk2YAcc5VD"]
+
+        ,[45638,0.000000,"KT1MQCuEMiK3aHt8Cwkzw7ZR9EuNBZXEaQJB"]
+
+        ,[45856,0.000000,"KT1UcsSaKskyPdt61cfnY1JfU373rMraNAC2"]
+
+        ,[45861,0.000000,"KT1NBZYXkDNS3QNg7uZsBhVQRi1Hh9MfHj8X"]
+
+        ,[52582,5.661047,"KT19sPJ1GXjD51ia4VUHW3ocn4paoNW5rcUT"]
+
+        ,[52684,0.210695,"KT1KLbkEY952sxF7SsYhLqqojs7uKXZRirdT"]
+
+        ,[52690,0.506163,"KT1PeeC5HDV1FAueixJF75e4DGyvsLBTuBXL"]
+
+        ,[53555,0.273613,"KT1JZh1DVXj3ZiJHhnFVWN73D9qPdYZxA1GZ"]
+
+        ,[53792,14141.956623,"KT1BrFQdx8wdwaFEAZsNWAD1epv6i3aEZxJy"]
+
+        ,[53996,3.066046,"KT1TEqgqgSvNEV5VtTgXLSp51WNfrdBWzLjk"]
+
+        ,[54011,0.243780,"KT1GFQWjnitsvekzUmtKPhfJSmcDTebx2ugb"]
+
+        ,[54720,2.090589,"KT1XWdbmBYQmuFgLm1dULXANVcoGQTmpZ1XJ"]
+
+        ,[54775,0.000000,"KT1NgojupHTegYBohf3UoAE9shfJBdSamZVM"]
+
+        ,[54820,30.248868,"KT1MxPwvnT8hGYCsL9WkHh4hXKRNzXUiCMAT"]
+
+        ,[54908,0.000000,"KT1EamjLeYwYeC6BWvmpwKyWozQ7xtiJn7HT"]
+
+        ,[55009,0.055125,"KT1H2kykVtyVef8BzM8hJQZHJ62gisfEDTqi"]
+
+        ,[55022,4.128621,"KT1KdSPNw9Bb19bgKRZg9LV5WrZXoB6s63NC"]
+
+        ,[55208,0.000021,"KT1E6fLbBv2JgPmjc6D7XyWZLeSF6XDBassu"]
+
+        ,[55332,420.466907,"KT1FgkDGMkxininHETF1SuSPYfuPpVJSJsAA"]
+
+        ,[55345,414.584089,"KT1EYfzGs1MDRW5Me9TSqX16rcwJbk7HNiPw"]
+
+        ,[55354,0.000000,"KT1DGWMzDncxgbw7CtTAmeaTG1QiXQwCYhaQ"]
+
+        ,[55553,0.070969,"KT1DRBZNSWt1YC31LyUY3UFd4esHHhFqseBS"]
+
+        ,[55719,0.000000,"KT1JFgKWyMmamddQcjrHgRruaf3qkE33XQCJ"]
+
+        ,[55854,0.332668,"KT1FGT61GsK8WqBjNRt9iaH8TqUHYnBZFA4W"]
+
+        ,[55900,0.089940,"KT1J8T7U6J1BAo9fJAxvedHsNErnejwvPyUH"]
+
+        ,[56115,0.013212,"KT1RBPh9izZKcJx7chzpWd1ZoCbu9rx3ZJpP"]
+
+        ,[56128,9.708433,"KT1MDdKQ5QN3h2q9iNDqFGV98csdkFiiXcmK"]
+
+        ,[56155,1.051606,"KT18h3ZuYE7x41vGw3ck4bjHXs7DUK3ZWQMF"]
+
+        ,[56186,1552.075992,"KT1EeRvbfscKnPUBWQWomPN37dK1EMxoNump"]
+
+        ,[56369,22.361115,"KT1BK71847dCqemXFBNnnqyeWDhjjofT9S26"]
+
+        ,[56488,0.000000,"KT1XRSF9sko9ndTQuYN5aqTjMhdLgpva9y2w"]
+
+        ,[56512,8.286256,"KT1UeAniuYbRLvwMqv4vQwak3eZHPPWjPWMF"]
+
+        ,[56529,0.352776,"KT1E6ZuQpx8thATa3DXYxEUSUpo8mzNYDG3v"]
+
+        ,[56675,0.344298,"KT1B8gPQrL1GTx5dNmFWxiJ7EcnsAJLSVRAr"]
+
+        ,[56726,0.497882,"KT1BoPhaVSypwNxc8vojXLjW43yL9vxZUrHX"]
+
+        ,[56760,2.660168,"KT1WFXv9bVLeGk83rKs4w4DmerTBDWhEMcFE"]
+
+        ,[56907,0.000000,"KT1EWMPYx8mYsMTAhdGEX8PSGAHQVxp1GiX5"]
+
+        ,[56929,0.716211,"KT1UXatfbzdr5okigNpXvFS2VvM72Tm5QmuD"]
+
+        ,[56981,0.001493,"KT1GhbDXpNTKp75HvtwdxaTY7eZt88nhAZz4"]
+
+        ,[57000,0.005726,"KT1TbF8W4cpf975twewZddU1XvPsgU9VGyFM"]
+
+        ,[57199,807.315359,"KT1TYJxPiTizat8d16PHysq7HN18FP29LZeF"]
+
+        ,[57346,6.523565,"KT19ccFz6rQwuaiTjgxhWYCcWzQZygCexGLU"]
+
+        ,[57356,388.994249,"KT1C8ZJ5vFkjZS2na87YXWeiJqwpVZHDC12Z"]
+
+        ,[57389,0.235696,"KT1WLwDWL89rxPMSQJ4kLGETMASxUqY8vWd3"]
+
+        ,[57486,0.674152,"KT1U9MJRHv9qdtHxJcXjyLyX7vdNbG3zz8Mu"]
+
+        ,[57488,0.005000,"KT1UJVW92FXpo4fY7Ym2VcmU9CfXP2xWCq1p"]
+
+        ,[57556,109.060315,"tz1QjFsFrSYStAf5yhH5obYt1eAPjbT5MZPK"]
+
+        ,[57558,0.000000,"KT1UsnNBfRqKjJQFd7yGhoJfczhuk6RfuVV3"]
+
+        ,[57706,0.052666,"KT19aegCWQ1RTejjoBYBAPJzcbJupR9CBcyX"]
+
+        ,[57717,0.051425,"KT1WExZ6AL7N3k4Z3JRRHTeDJLuBASjbhVKd"]
+
+        ,[57783,0.005000,"KT1RSbzm5GQ3RP9Esvy6sxtqaSs4Wz7bV4Ag"]
+
+        ,[57808,2.651571,"KT1Dna6SKSqA6B5bYqro1MRWiPsjrZ6enT74"]
+
+        ,[58099,8545.521951,"tz1TzHDLTNK1J1fCotGBLuE43DoogC5pHGyT"]
+
+        ,[58275,2.635773,"KT1W1rmdoRjJD8LEuq2jL3uFB2zcQQ41XvP3"]
+
+        ,[58376,0.100661,"KT1N2kJZFGF8goP3Yz8ti7LwSaLz1vMSq5Nm"]
+
+        ,[58483,0.000000,"KT1E57Z6tAuuKYDJp4aNxPZbRYotEod42eb8"]
+
+        ,[58548,0.197961,"KT1NX7KSCNQjT8fx3KRX4vL2zEgq3iwKWkqe"]
+
+        ,[58559,0.000002,"KT1H1AUdDYeLh1HoTVAK2dhmBoDZSKcXN5mE"]
+
+        ,[58570,0.629361,"KT1GuRpgkd9wCsaoU6GHrhwNG1NjzH7W291Z"]
+
+        ,[59150,13.061799,"KT1UiGpFAVtiEpQY3Mk9mtGU2HUK8X88b7Vj"]
+
+        ,[59230,2.381419,"KT1BQWBUY4knqARBEdqFeLwpKab4yhz3Fm5A"]
+
+        ,[59543,4.475261,"tz1fd3DiRxE9PzcW5rAM7UhB625un8oqe8CF"]
+
+        ,[59556,0.151406,"KT1R3M7bFTBLcCEdWuDbKLwQ9jPkJw4xieoV"]
+
+        ,[60793,0.172055,"KT1Fzs2ZmqJP5fKXYkZY2fy5qTK65BSzBe9d"]
+
+        ,[60897,94.257037,"KT1RiXEpRTKM2SDxX3Z2vJjRPMbkuSW4v3X3"]
+
+        ,[61057,9.072559,"KT1DaSTVGsh8BSbSeVZ1AyDngfPEFntpFeAZ"]
+
+        ,[61676,4582.111698,"KT1EuNqG3UiVRyExRU3M2qzzi9t4jwqWJ4Ms"]
+
+        ,[61800,32.556471,"KT1M1QBWSo9RRE9dmg6bJfKtbV94xVKwFGzn"]
+
+        ,[62113,0.138587,"KT1CpSYBVRTDzg14rUS9BiJxKB34AGmwERV5"]
+
+        ,[62171,2.947514,"KT1CkBiamTQvyPsUyHfc9NKjoaUPUmVaWyhp"]
+
+        ,[62439,0.943362,"KT1EBNereHBqbLMkMYTzCpia7F9ShW8sEsqy"]
+
+        ,[62535,1.623577,"KT1LgWZLctCwKEuaC5Zcy8QXZNibEDFNaXTp"]
+
+        ,[62555,2.901008,"KT1G2Tw7ukNWNHnqPw5MQHgq9mj5GiB7jyYo"]
+
+        ,[62592,0.710554,"KT1HNgs6k3uEPLh7MbGjp9ipxHidBWGGhoqY"]
+
+        ,[62614,35.160098,"KT1WSbisG12AKmXbG8H5gnRt8xiLHgpiWPtJ"]
+
+        ,[62661,17.234938,"tz1aaJ5uwwtASbQkyubcE9hu4JvkwNfduViG"]
+
+        ,[62663,0.000000,"KT1S2Tiyt4Nz5PDCFQpF3xF9WgYJDvWDEcmo"]
+
+        ,[62687,5.016193,"KT1PCivps9ehcitiaESnTAFXnMJhTCBGraSQ"]
+
+        ,[62775,1.728495,"KT1DRJWSknF2EheKQvD3uZUrqzCNzebwU8pU"]
+
+        ,[62902,17.592254,"KT1PqWBFYH7TiwAU226wy1DwwtnXoRFRu6r5"]
+
+        ,[62940,1.897041,"KT1WBhKnDh122rLwnLwp1uW8uCzkfWQ1kMZH"]
+
+        ,[63039,44.262454,"KT1DfmtF3SHQB5pHXiDov2FuUhFuNyUnMfQz"]
+
+        ,[63042,1.038835,"tz1SVRxhanh1XWe2yu3r445uY33zgvKRCJG9"]
+
+        ,[63053,0.000000,"KT1RrVwdAwrFM1kREEyDd7Sx1YqfrWQYyPhR"]
+
+        ,[63055,108.970162,"KT1Akno6N5Js5YfJZ8DGfL22qKFta5ETyZHK"]
+
+        ,[63108,5.413433,"KT1VuxkCb2jXWSbcTTYaLZzwrcwdsaJQeLP4"]
+
+        ,[63117,10145.813976,"KT1WtPAbkmeYR4jCjihgsVRd6yoF5Hc8HVBL"]
+
+        ,[63157,87.904097,"KT1LDAMFb8Y3x3skBGpaFoB9e7fSakZn15p7"]
+
+        ,[63492,727.364743,"KT1JUqExJyfDebBPr6MnDdPN9d63uixjijzq"]
+
+        ,[67680,585.651317,"tz1Q9YbdtzmSaFKMEsN2qX21m69RwgdoBMk7"]
+
+        ,[69113,796.140088,"tz1bBtV7JcWQmGERatwjqCdckUAy8zwD7MpF"]
+
+        ,[70079,1.287074,"tz1emWx1hfSLkFYXhhyxQ8NX1BTzwk1RpySW"]
+
+        ,[270881,374.751977,"KT1RzpiU2jc4BqGyv2uGjAn71eAtEHDtQhjW"]
+
+        ,[271626,39.445629,"KT1CirJj1oQRmv6m1kMdhWB7US8ZXpkNXC6X"]
+
+        ,[273039,0.741967,"KT1N7ciDJbxnxjVn6k1faiTKzKhgaSfLKt59"]
+
+        ,[273578,24.657635,"KT1XGUBoms5p2Fb7Dq8ByKndVKqkdV4aV9yc"]
+
+        ,[274076,2.957511,"KT1DvoXuk5csqnSkHWa82639N1WpwtXscvC3"]
+
+        ,[274519,652.677118,"tz1cDuDQwNrpmXUAwL278ATjaPAkpmxa2nLc"]
+
+        ,[274666,2249.017976,"tz1Q1pG4YF9gGXa1Nkc8ck9mYS8yhEu8oFTd"]
+
+        ,[274717,288.982626,"KT1NruHZsn7MVhhkLkveTRStKNAyFqyWoaW8"]
+
+        ,[274896,130.352385,"KT1MJDzcwo23hifL6xDZNyPrfrh9rETyTwPV"]
+
+        ,[276207,1298.161895,"KT1DudxoY45PHMLNgqYErSTG9YNLeLGcGp5q"]
+
+        ,[276352,201.051129,"tz1YUigABASqRUWAG97qHfHwYkYEGDk9q2Qv"]
+
+        ,[276661,5.952462,"KT1G9KZg8z5RinBMiHWRLdx3pycN7UZRuoJC"]
+
+        ,[276955,1.203807,"KT1X6MdxcomohfjPfZ7WBNp9wpzf9iWH5niV"]
+
+        ,[277796,0.000001,"KT1HDPvfAVi4fFcFXEU68kLU3NPhcuB84ML4"]
+
+        ,[278027,0.033297,"KT1TWPamKVQ7F5WQBrqmrkCv1HMxEXXJDQFB"]
+
+        ,[278048,265.091185,"KT1LyHdBHEH9aknxLuvNQqPbWVLpacxPVirs"]
+
+        ,[279922,0.000001,"KT1AaujJdS18aUm8s3TNW8s27qmgQQQNjuwf"]
+
+        ,[281362,5205.127849,"KT1VhQiko8ALkp7EKZeYmeqjjWHekWYoCq8u"]
+
+        ,[281573,0.000000,"KT1Fg6Y2ZyGvuX8kAGNd5iMCqg1kZGsUsWNh"]
+
+        ,[282282,3.329366,"KT1U6M1UwEwoJz8zPmEtusgkyEsSQ8NEQY8Z"]
+
+        ,[282470,4162.392674,"KT1LVi6LEEWK1eJsJ9HauHvBYgvJnQA2V3Z5"]
+
+        ,[283896,8.848733,"KT1Esi1Q19iKohp16iejnwSVfgrE1Yn9iYZ9"]
+
+        ,[285269,7.008161,"KT1DDacdWtMRLN7xCJse7Zf7tak9NSMxPnuP"]
+
+        ,[286476,0.000000,"KT1NDdMypGentwFtUjivb6xdim7WfCuR5n2x"]
+
+        ,[292121,24.030134,"KT1Cri8avJX2Cfb8rpCD5HEWSDMXEkdjYzD2"]
+
+        ,[295395,132.701038,"KT1HMNLAc1aHqTcbh1EuRcAadHx7P74UQu18"]
+
+        ,[295662,1220.757724,"tz1apzYQkJc1VegDGsBDvZodDsErYeUZNGmg"]
+
+        ,[296439,0.000000,"KT1T14WrhNCvaBDwn1TxxnseFDvFJCUJuJkD"]
+
+        ,[296540,0.385581,"KT1DdoNksZWRDeTzgzTntXFbdRVCb1bSzH6k"]
+
+        ,[296629,0.030000,"KT1AEs53ibPZ5XT77KRbb1HFhAUGazgHxzvS"]
+
+        ,[296638,0.010000,"KT1HyKFXcHXySJYkhsN3gAnXKCsDEdRfiUcg"]
+
+        ,[296652,0.010000,"KT1VTbwyXsGxbGQtfREpW9oNeuEiPz3ZigL7"]
+
+        ,[296658,7.399340,"KT1Fqv5sQ6vQi6izu9z5i5zLC6bg7FueDywK"]
+
+        ,[298048,0.000001,"tz1aKTCbAUuea2RV9kxqRVRg3HT7f1RKnp6a"]
+
+        ,[298177,15597.801110,"tz1NwCtqG4pErKBSFJ2tcqRt9bE2tMXKUoCi"]
+
+        ,[299778,0.202875,"KT1DWUC5YZkAhgMrJqGvfgCsso8d7rUXaV3D"]
+
+        ,[312747,950.478274,"tz1MzdEcgLX9Nk4SDkmWbcVZKupeH4K9Hae2"]
+
+        ,[312994,1.317377,"KT1XHSLHnqQaocFwAyLXGKGczFcnGK4qhwnq"]
+
+        ,[313735,11118.805339,"tz1dzYRdp3v243wuL1b2wEkoy3DnUZWgs4yr"]
+
+        ,[316990,0.000001,"tz1gnUaNgiiAgEQdcdkafdaNQjUZzkK33vyx"]
+
+        ,[319258,0.002406,"tz1SUREnFpoXFfEm2ikWSBFY4n6ivf13hp8Q"]
+
+        ,[323715,0.000000,"KT1RFdYnBdqokzkHjScZQ16GK6fczvJ582x6"]
+
+        ,[327895,0.387907,"KT1QSJgzuzaLAvt6ecL6f9RVtyUgd6dNpcTp"]
+
+        ,[330560,0.000001,"tz1QB5LdNbZgfC2zxa26bMLARwDjv63M9gCg"]
+
+        ,[332045,0.166892,"KT1WrmdxQaoQMoNTUmt2sfUyhJsPEGcDsVDZ"]
+
+        ,[340313,0.000000,"KT1SCUe5Dpd4hB2Vjb7qGVTafRcQREvLnqxC"]
+
+        ,[343092,10.973294,"tz1bTao8eTkMMZrhwRPrjU5HpSeN3czw4T3A"]
+
+        ,[353040,2.353012,"tz1QYKqJ5vXAXXCbbCNXFC4JFbeiXQXzceSU"]
+
+        ,[372716,347.456202,"tz1hjczuxDLZD3JxYtyU8orp4QTRNzVrcJxc"]
+
+        ,[383979,3.375267,"tz1UGCGYUmVV68S1sabhzY1VCbBw5AtWAgCv"]
+
+        ,[418567,0.235096,"tz1V5QPoXBd35eK8irtFfrxBKrHYQHDz6piS"]
+
+        ,[418580,0.362909,"tz1YLTmav3esgPzqE7y8LsbJneZhTndonWvg"]
+
+        ,[428525,5980.573224,"tz1fgi1uzttMr9FiJwaH83zS6EJFVHQdkjfm"]
+
+        ,[430254,9201.726222,"tz1SvUaqgBxn9NC4DUeKAuMGEDKrnFyLyPQ4"]
+
+        ,[435338,0.000001,"tz1hJVe3GrVYAUwFGxhEy4DYcUvR7BJtvazY"]
+
+        ,[440772,118.024372,"tz1MjjLZU7Z4ZTQEZ5K13uZpYozMTdSxXAqk"]
+
+        ,[442985,27377.436464,"tz1PZt2vuK7Yx2QiXPuqQrpDw4NDr2cS3knR"]
+
+        ,[443492,0.257104,"tz1Pvbj4J7DTzcNbrxZhY9FDVBrCX8G9vLpV"]
+
+        ,[443879,6804.136108,"KT1EBtpBAh7Z2wPLDP7dNdE6qtNcqVPhX1kk"]
+
+        ,[444886,0.261088,"tz1Xp3Pmg468iEZPotQow8aAmzwzAL9CdJjn"]
+
+        ,[450936,31.948619,"tz1R72pdt1VGiXZLzbujJXKNp9C7j52pirBY"]
+
+        ,[454407,23212.979684,"tz1bdvAK5go5U2qRZikXUFSCvpT4zWyeniqW"]
+
+        ,[456068,0.053614,"tz1VU6fzXJ1pHazPAAfL9EwBtac959arAgkU"]
+
+        ,[494751,18721.787680,"tz1TToVAGWQ1s9rCaTLMMCJHuV6BLWZ26iKw"]
+
+        ,[500996,244.241126,"KT1WGfxkm67LQm6FEcewCVg2fYZBcuiiRwFf"]
+
+        ,[532207,0.182095,"tz1Q1cCSvfTtwjWmbXoFdAM7S8zMy4CgSx8k"]
+
+        ,[537561,7.132101,"tz1UQYv1C3WPu4sRLXoWnTNrVg5kMuvqwkvj"]
+
+        ,[548577,927.113543,"tz1U65RWzwihAraB3i7hU19F4RFLhUfUU6TP"]
+
+        ,[549668,76.322632,"tz1g6Tfpmhcvkii8G8kPAwUYWjaazmQAPrwa"]
+
+        ,[560367,0.000001,"tz1ivKjEv8mBnodzKRi7nqaVQSLp6FCdipz4"]
+
+        ,[560484,0.000032,"tz1U7FhZJDq7qVjUKLmisW2KpqH9fBugNE1D"]
+
+        ,[566234,5282.604089,"tz1RivV2RsQNpVALQy9oCdRLN6ELH62kLQCh"]
+
+        ,[570604,0.190572,"tz1hc63jbfqZYLpQCAKvsZKoSy2Ec4xvwA5q"]
+
+        ,[571367,1049.273337,"tz1UNqVTyWtpAsUbiH7cvgmGwirkyfKh4jss"]
+
+        ,[582203,0.000001,"tz1Y77S4EcSQwyUWzAwtYGU6NTtKXbH3VQLg"]
+
+        ,[607627,5.067838,"tz1hKNbDTJqjj3AL2MFwsdnhDiQhXvu9SLa8"]
+
+        ,[609845,120.304398,"tz1PR4Hwo9AxpcPY8qCQqcqJUXp9qZ1DWFeo"]
+
+        ,[617650,0.817331,"tz1Z6BsY2y9RtHwqFNuCxSHeyrANhbJ2dccr"]
+
+        ,[620412,0.660951,"tz1bH4aD512h437nwyQucZcuyMnmExFUKMD4"]
+
+        ,[629704,2.481414,"tz1PjYXRbCL6YKvmpyiCBigK7G2NkbzbdkdB"]
+
+        ,[645014,0.057085,"tz1SaYQMJJsr5B9Lx255FbTHLWEEK5AzNdxz"]
+
+        ,[649368,1423.319137,"tz1PmS8oENwMQ6AzUrB9LCTpq3eM3qdh4WbW"]
+
+        ,[651658,74.862702,"tz1QkobCfiTkDampjxH6uhVSj8dtvVq2vseR"]
+
+        ,[653358,0.128177,"tz1gGczbzTypc4KthAnUq4ub99pET1FsaybW"]
+
+        ,[661066,1.557117,"tz1VaSnsBBxLqikdET3rLc7ywSab7bms777v"]
+
+        ,[710043,0.050000,"KT1DNBQxyQfaCN7b4NjdZxujupfX4jwatBYV"]
+
+        ,[711783,0.163201,"tz1TMXEnp8WYxeRXN75L28V163FVRPtfAEw8"]
+
+        ,[768865,98.765079,"tz1d6wbAMkzqeZkzoux5ghFf4SC7Jyny77UQ"]
+
+        ,[782909,14303.583754,"tz1R94PftGa6iK3Sa2nDB1FaEnBphseGaoid"]
+
+        ,[820434,3.955889,"tz1ZbokEB5tekbPxyWdo28ugn3UUkbQjguK3"]
+
+        ,[824011,88.750672,"tz1bkejtzWoGzdJvdk1yXWfUWRGvpRYGeBne"]
+
+        ,[844843,0.072095,"tz1QLtz8TBbbwg96miE1Cw6r8qdNXYxtoqHL"]
+
+        ,[848976,852.806829,"tz1c7cCZFtPrfRcnRSmA3wE5raQx9XAxFs6k"]
+
+        ,[849251,0.355966,"tz1QHvePLWRT7E4CJuVVLxFUjNbMNa3hjydp"]
+
+        ,[863600,4.876639,"tz1Moo9LhWGMVTnEacRg5PBHNq2voHxz5zeP"]
+
+        ,[880378,832.593513,"tz1RDBYNBri3fJ7HwzSDDKPUWepHXEFgH2dJ"]
+
+        ,[893691,0.106879,"tz1ivuUi9DyfztY32uY383ce6eLGKNUT1GaB"]
+
+        ,[911771,0.219867,"tz1ekF3WqER31x4U3riRtE8PAv7Lnd1cFJ7i"]
+
+        ,[914054,1.591280,"tz1Woy5F9hBFnKEucMFtP9HPwmWHa3DEyaRj"]
+
+        ,[914336,8225.292447,"tz1dfTLy1Hjh5SjKHxtHvX1LwoZuYanLErDa"]
+
+        ,[945504,0.000001,"tz1aoKNZ9PrCr9tswgGTBkzkgrqMW6BTkcAR"]
+
+        ,[955808,0.701504,"tz1RmgZX9FNGbnuKzUPvduuaWKFyrgwfQeAW"]
+
+        ,[962544,0.000001,"tz1SLWhk8pwps9hEGEon1SFHVD54n7cBKkcM"]
+
+        ,[1003046,0.000000,"KT1Uuz6BqqgTHrB92wi31qFgczZvQZRtScs3"]
+
+        ,[1030059,1.185598,"tz1SryCXCRcWWCc168ED8sRW7UBAaiwPg2LY"]
+
+        ,[1037196,2.383218,"tz1LrhG94RrF1JFVJWzWJbcrJtvYCqkncwRh"]
+
+        ,[1039717,0.191330,"tz1gSjEPXCqj8sHZnCbMpz7ZWRsjnGcEC22T"]
+
+        ,[1072356,0.291688,"tz1UETA3UM2yXR5UHxsHP9hy6ueTUDtkCixB"]
+
+        ,[1074639,6.458644,"tz1RuWdz19pXMM2F1N7tz9ebTZUxTy94RAJp"]
+
+        ,[1078168,0.714199,"tz1VALUZim3EtQBg7N6mrN8s39peXWztzyFS"]
+
+        ,[1084228,0.000001,"tz1WHMkXRn2Un4npdjSNZzcycXJK9NWRu91m"]
+
+        ,[1091293,115.788774,"tz1aJ4GQVQahiy1MuLmqrWnZzjLg1ya3TPkR"]
+
+        ,[1107340,0.000000,"KT1Abv1Ui9kqdLSEnngQodBTcVcXMKhDcniC"]
+
+        ,[1109790,231.406182,"KT1Snm9n2HEkEq6eqzRQC3FUbVXqv55px7EL"]
+
+        ,[1111660,50.303081,"tz1dEw5jNnGYnvNBsuNbTqPLy3im7YWrXYHX"]
+
+        ,[1129741,38.086209,"tz1U7oAmuAAKZzZszs783a9B5xAc4MuKk1xX"]
+
+        ,[1146326,114.086198,"tz1dUFGGinuEXRt6mJxGKoioDGFFhcf4pz9A"]
+
+        ,[1147683,0.052164,"tz1ZoqzHtm1ciwaGXP43AyUfEQ2uCBYTMAun"]
+
+        ,[1156095,7.150351,"tz1T6iG1EDGWvaTDXZubAapPy4cpXebFyQAR"]
+
+        ,[1164969,1599.568840,"tz1Rbbw8QZQ9HL6z2n9YBLrV47X1g6RTvozy"]
+
+        ,[1165426,0.002000,"KT1VT2Z5PVk3fLU3dW5wFYofu8X2jWKuZ3RL"]
+
+        ,[1167877,0.000000,"KT1EBHEUWaqKeNZ9kK67AbhMD4MNdikmfvXX"]
+
+        ,[1170176,112.170415,"tz1Y4uhZXpGNejA8MSHYbZeShbGTK9bLiuLW"]
+
+        ,[1173269,117726.227470,"tz1i2Vdnh4J3ufgcbe2TYLYE1UhLM6PSvJGw"]
+
+        ,[1174753,107.102021,"tz2KjTaQXgMSwUgALhxq8CRVHe5Hmgr1fPmo"]
+
+        ,[1179986,34.816972,"tz1L1XwcVmD2z4qPfLtBJ6RPThgAwLcXG6kW"]
+
+        ,[1186093,442.527353,"tz1MwvWz611pLwYdFMZpWCEsh247MEYtm5ii"]
+
+        ,[1190735,0.000001,"tz1bM2TokVXyiMt8PCcn9NCFTDcEPH99AfD5"]
+
+        ,[1207537,0.227939,"tz1ejD1vdVefcBdD48o446Sju5Hya2MVHTj6"]
+
+        ,[1223487,0.928731,"tz1eSbJKiZCtKGXaw8EyP7TBJKjeFKJqEt8u"]
+
+        ,[1243914,0.205625,"tz1NVEo1zc66uBTap5kwvgDs9jUwGRHbdfWL"]
+
+        ,[1245699,8.436396,"tz1i32Dx2t2zyMKmWQXgDgHEbyvGP1Av768o"]
+
+        ,[1245955,0.000001,"tz1duCWi2SxVaMZ69DxQ4em5Sxk4RQPfusy1"]
+
+        ,[1246124,11.451791,"tz1RRXhv8nJbq6siCZE3UbpPXQG2EuL9TzS1"]
+
+        ,[1258177,4.979847,"tz1gyZoD56iStaAeeeH4dmsSQAdCF1i9ixPn"]
+
+        ,[1258575,112.310028,"tz1bm5ZXZeXiAggfXjr3KWFReNKmLg5o5XE5"]
+
+        ,[1261185,1192.874252,"tz1Z4xVY4HrA3z51qwFLfD9KPxg47wxskndP"]
+
+        ,[1269101,0.017101,"tz1QgoYLP6QziYvEGggXPUS4X6yky4XayU8o"]
+
+        ,[1275874,3.388648,"tz1cwp7qujsigxqaCiYxqozPoTYza69RqW4o"]
+
+        ,[1290444,18094.963084,"tz1WEWrGbRzrdarqxGNLruVmgX4bj3sVXQkT"]
+
+        ,[1291442,1.466285,"tz1dZW5Tnhbs6HkzG2HBdgo3kagCPq47dUfY"]
+
+        ,[1324656,9.071934,"tz1hyc2XWqJ1VkkkmbtkVXCjQHGTbmfbEwuk"]
+
+        ,[1339308,368.083089,"tz1YXVedQWCjRbrE83DHtUg9siofXeXox11K"]
+
+        ,[1347606,0.043573,"tz1cQSFC7CygBAEqvTHqRZHrzqmY88vJJwc2"]
+
+        ,[1357812,0.614892,"tz1NmevmAdpNMF8LXv4bYcbBSkJzq5Qsjry5"]
+
+        ,[1358234,0.073515,"tz1cJMfYDaM7tdNrnJ8hURvNWfpVDwEqsDrc"]
+
+        ,[1358800,210.790394,"tz1SrBUe5Y1fsmwjs2vcFmTztueYqauzxZfN"]
+
+        ,[1361305,4.434939,"tz1SUMwzFbv9N4gUVv6Ywn2BXb6L8ZuHQ4nw"]
+
+        ,[1370405,91.596223,"tz1Z28DjstDRxgv7XfMXAQEr3KPRBwCX3RWa"]
+
+        ,[1372227,2.982080,"tz1R6rQPcMHKX5u1J6pZfKP8kSQJgLKHU1qG"]
+
+        ,[1372274,1.448800,"tz1cqQCbeh9WrFjmuuXG9XWBbaGhyUEpBxNw"]
+
+        ,[1382656,0.097908,"tz1QeH5hj2hNacp2eQ827SQk2g5xTJxirPLs"]
+
+        ,[1388049,2.162631,"tz1YCWh1wfbmirM2JLbF5GGfCBjQUvA7g7t4"]
+
+        ,[1391033,6.864133,"tz1aDynhRYQerbCNUfRKAv5ZdrhQjQvDSAzm"]
+
+        ,[1395882,2.504852,"tz1WT3oAw91JTcNujeWa7fdoWHAaZGGLMRBS"]
+
+        ,[1420614,11.961397,"tz1gYPDSZyBMYYfzv595NYEfrEDWVopdCGPW"]
+
+        ,[1429432,1.035083,"tz1bWdgitBxGvBDacgZDGu6i7uKsFPixhkmZ"]
+
+        ,[1437169,1.241903,"tz1SXtCyKkgeifcK4hvmd6KV7zZEvEEnNxR2"]
+
+        ,[1442179,5.461897,"tz1XwcnHXatm41UwLiCH93gJsrefLNfQEYe6"]
+
+        ,[1444752,2.857403,"tz1imwm1XRzqg5dYwvdmy67FMjxEduhzdrTf"]
+
+        ,[1456563,0.916512,"tz1eE4khL2YN2TsR6P9feZkwh6h1yiAfmD3S"]
+
+        ,[1474256,1.946493,"tz1Z4C1y84qpYPhWeDbNX88A1TkBpnDWrjGQ"]
+
+        ,[1482536,0.000000,"KT1GbxL7hUSwaotVh2kDSGuuCunrmPgXRwxC"]
+
+        ,[1489829,1.845591,"tz1YUKwiv3uUMmjzdeQtAnrYk4aHh7KwFu93"]
+
+        ,[1512661,13.147940,"tz1bMj813rUPiWi9FDwjgTpi811R6o1BQoiZ"]
+
+        ,[1521092,11.740475,"tz1aCTAigzJdkKUH19A5P9CqMViVJxaezZmY"]
+
+        ,[1523090,0.000001,"tz1ddqu7yDWd1ubFTn25u12q4j9jVw3pPwek"]
+
+        ,[1532005,0.026543,"tz1YCyMmXtTY83smS9bDWYLiZMxMgbE8Ggxy"]
+
+        ,[1533691,911.957312,"tz1Zrz4fEZiBrHSGxmKh4DFe744kV4mwH8QX"]
+
+        ,[1539545,0.210750,"tz1RNEMGpcxRnumNmQtEB16LKLeXXu77rHva"]
+
+        ,[1541027,0.210750,"tz1Y5FRYFt8e4CPF61udrjZkdYE4uoYBsmyr"]
+
+        ,[1556193,13.018373,"tz1X2debvxGtmv1px96EHCXZemHFr2kEZner"]
+
+        ,[1580523,3498.926992,"tz1av6oBBFgD3Y2j9ATHmLacQ9oTnpBmjqTE"]
+
+        ,[1584551,0.508325,"tz1e5iPM5eurnPdL8LbiP32jDekeDhbrkpNK"]
+
+        ,[1585195,8.240378,"tz1QyysnzkbH5WZXQsQsi4jf6i4qBeGEszwQ"]
+
+        ,[1590776,1.149633,"tz1fSN8YEdC67UwJChfLahA4BoWWHGXAQPhU"]
+
+        ,[1592582,0.019218,"tz2917sFmzf14fUHEm9ywCdzvsfwBJCJXas4"]
+
+        ,[1592935,68.953787,"tz1VY6J9nhUyzTfy9Ed2cKFaDykqWzKb68kt"]
+
+        ,[1595228,0.261667,"KT1C8K7dVQfC83PngySbnytpFbPwVSiSwzbP"]
+
+        ,[1598313,0.000567,"KT1SERQjJogR6zZUWU1sDU93juekYsqXprkQ"]
+
+        ,[1598507,0.042665,"KT1EFVH7GagEsgD7DG5eKqFniUpaE1KcqfWp"]
+
+        ,[1603516,204.578121,"KT1CFWAGiNiGtMRhYqVFQC2rq3FWxv7tefGt"]
+
+        ,[1603914,1.144209,"tz2Dq8MZSYbS7USTkPeJjZ7qpYjdCNGfAZdE"]
+
+        ,[1603929,2.292331,"tz1bk49Xre2MnV17YNZxPhddqDMovkFnuPPS"]
+
+        ,[1681787,0.898302,"tz1Q8qFQH4wTM5L6mqT1JEBtG9tzkU3GqtU7"]
+
+        ,[1684017,0.067097,"tz1gWPGm8JDE951W3jbtRb3SEbBcCQfbTXLM"]
+
+        ,[1689529,0.000001,"tz1QCc3LVUwUkwtWxLzqwXNacGUxhshVwpVu"]
+
+        ,[1691736,15.812099,"tz1UWSDW98mexXQquC9Jam6zWxoBtEoo9EZu"]
+
+        ,[1691766,90.630461,"tz1brbRnN4jsT83h68j1HQRnUeWgfrCg51gY"]
+
+        ,[1700885,111.916543,"tz1gdiKBmjmvav67FTAjeftyYdcjuLsMPiwf"]
+
+        ,[1710563,2.532822,"tz1MDNy3Nu23MAUmLHnJFao5ahnyoWfDx9rV"]
+
+        ,[1711660,7.691318,"tz1bkJCZJX8VjUZHwfEgf9V9m5KQDGqgDnXt"]
+
+        ,[1713782,0.000001,"tz1cpNkRGzA5j5BHHj68FrhkjDmfmty4zDWJ"]
+
+        ,[1717627,6.446425,"tz1TDe6JZeZQoWkiYFDFCssxVvmN74M6zAfV"]
+
+        ,[1721866,14.947448,"tz1L2ZgTRTyiCRQ5empm52ouq2vn5ZjyJzhY"]
+
+        ,[1734572,239.415260,"tz1QYCGhGXS9CyZVqWFNxGXnNSHNtm4TBH3V"]
+
+        ,[1736284,1.734407,"tz1SktFxrvyGB3iqYgWqmLCJvQpwbPvD6ynp"]
+
+        ,[1746462,57.662865,"tz2J5my9PHKs6s8qgGEMr2K9rigxi4a9JW4h"]
+
+        ,[1761776,43.538658,"tz1VDr6Lvpduj2eHNhGrGQuaXqPDNEF6CSio"]
+
+        ,[1795634,3.277561,"tz1dTwuaqy69XVMnJDoMtEtcJYMQjdyCsaLN"]
+
+        ,[1805327,0.000001,"tz2MMfCb5DeGieT5jt7MW8X4wHYx66iTZApd"]
+
+        ,[1817762,0.585073,"tz1SVSiCPbHdRi1xSoyVuvpmny4bgETJmpME"]
+
+        ,[1825405,288.501489,"tz1YHsinBJHMj1YFN7UrCsVAgTcaJCH86PjK"]
+
+        ,[1831565,113.353780,"tz1SQ3QgAXufErcaX2D62ee8S91vBxJe6qjS"]
+
+        ,[1844966,1.335724,"tz1dsvPTAN1cF4dReiZo1ZrzAppBWcRcRTbr"]
+
+        ,[1849817,0.951991,"tz1RGtzQJfu6vMhXXwzBtra1xVDhtSB3KGUZ"]
+
+        ,[1851848,38.063623,"tz1MANvdxDpPfN657xqhtiX7dqQrbKtPM3SU"]
+
+        ,[1861851,0.840603,"tz1QNsfxJBa8KJr4eS2fiubGbDcGmRryp5f8"]
+
+        ,[1881780,455.422092,"tz1P4QL5pbCeNDmYntgjY1XA2XoikR6itzdD"]
+
+        ,[1890926,215.923551,"tz1RDPxy3a3LGGt5wSupYHUsiuSkWHEs8VMm"]
+
+        ,[1895733,109.034070,"tz1bMjp17zozqNPMqXWDwJieQEUez2rSzB4W"]
+
+        ,[1913176,0.000001,"tz1daok4j8YTyzktM3sQgHs7mQXmC5Td67Gg"]
+
+        ,[1913439,0.000001,"tz1eG7RpipQwwDPXsJ7GLaxUqqpFuus4ehk6"]
+
+        ,[1916035,0.489300,"tz1QptmjQWPkv7iwa9qrw8ECScLAfPkmvwCu"]
+
+        ,[1936225,2.810065,"tz1X4sxpgg5X6aag4Mf1TmdWTrDbx3jBFwyT"]
+
+        ,[1938242,0.999166,"tz1Rfd2ZwEgDZUBCG9SXFMW3KKfuSMx5L12V"]
+
+        ,[1965342,4.201016,"tz1NdfibiXci9hQnUk1NuaWgwdhY6emuE4bA"]
+
+        ,[1966288,0.000001,"tz1crF9UuSpKekMebnxQk92Ad1WSVWUp1duU"]
+
+        ,[1978945,0.000001,"tz1ikBrfYXv8UyYqHAwufhvFf69ULsSeCywr"]
+
+        ,[1988082,5.885502,"tz1g6a2CVkkDbVb1JQMiQnSXjuPUkqNU8MYp"]
+
+        ,[1995409,171.437820,"tz1iBtVvGo33nnskeMyjZogL4FVbjndoQKEY"]
+
+        ,[2028561,4.000000,"KT1SjHE2knKkNQ7ZkYoJFCvhcqYW9dmebmWY"]
+
+        ,[2049282,13.077130,"tz1Mk7Ub9gHmgUWpEUqpzmMpcGLDvZtXWFme"]
+
+        ,[2069854,0.017189,"tz1WTkPTYCPAFDfhJXBbK336ePKFrwa1ZVc1"]
+
+        ,[2071921,10.246861,"tz1ao6HFpvXahT1UgbHU8Q845YwxGwfGf7kT"]
+
+        ,[2078214,0.889796,"tz1YH6miEQBbH9tFP5svwscP1qNPKXPM1VW2"]
+
+        ,[2151125,12.897036,"tz1anuStPsvpSWFwzpA5XmLYgS5CaZJEzboi"]
+
+        ,[2156273,0.000001,"tz1fmFHUmrKTmwAtai2A4nJiFdp7pKvWYmDP"]
+
+        ,[2157230,0.346697,"tz1UPcX1mZXupVjDrnLy9JEccKY8B1xCH8Vt"]
+
+        ,[2157492,2116.484688,"tz1b7rj6katS1oFMkPqKJGAnG8e9xMVhMCDe"]
+
+        ,[2161275,1.156198,"tz1cAuRa3dCNBJUbmAP4r8cyzYWKfP7N2rSL"]
+
+        ,[2164358,20.000000,"KT1JTBbQZNPPMuJk4a9iJrBqHbFfE9WdbW7a"]
+
+        ,[2166258,45.818946,"tz1geibxThpe3ou1iADNA9R5CHMWLGdnSJbj"]
+
+        ,[2172918,0.000116,"KT1L5FKSQK5DwDuQjkVbcXU7VUPwks2zRm1j"]
+
+        ,[2173006,0.999166,"tz1Q11DHvu9ZAcieiAWU4ffyRXwesaqM8qKX"]
+
+        ,[2185905,1.634715,"KT1U1vTJnqpmJ6nSnvxaHpa6LYnLn1N3VdHu"]
+
+        ,[2212128,17013.687479,"tz1NF4C2MeeKgYopu6wMfLDCH5M5n143vjoU"]
+
+        ,[2235686,3.707213,"tz1TqcNKXEFGEjqx5F2z2UcA1gk1pxEsdLDM"]
+
+        ,[2276777,270104.911504,"KT1MfgCNUdkNES1pBJ6uJVHyHZw79DjRZzw5"]
+
+        ,[2286130,0.000001,"tz1X4sTq1YoGSa79QUgH9wL7qFX2eAuHSGzP"]
+
+        ,[2321591,18.876204,"tz1fFjMpXYpKBvaSw2V9djnM18Pzji7a3CVj"]
+
+        ,[2369050,0.000000,"KT1TYbNqjwUmfm9EHD5BHHo8BGQPqqQCPoF8"]
+
+        ,[2378630,3.598001,"tz1YJgNgAJHnjuJSfasz9hVVn7GTi1mWrRTS"]
+
+        ,[2417303,30.502627,"tz1TQxmf4irW6xBNfa6Seg2KytMwDvJtiktn"]
+
+        ,[2421986,0.366120,"KT1XU78xy4oVjjJR5tnNvmw4FZqrp8k8BKeg"]
+
+        ,[2430771,11.572594,"tz1UZnap4oGDuXNxVK7BrP8B3CvGuvSr2wNf"]
+
+        ,[2430773,5.817249,"tz1aXnkvnxVb55j16rAJYvmsTnbnWG2N5oFv"]
+
+        ,[2431516,0.007533,"KT19rZZ7a593jKtDRkfyXYVTANCtXutQFJPW"]
+
+        ,[2431692,0.011495,"KT1HZSFTfmVkRkwajVuxiXoovgdm29D6X3Wq"]
+
+        ,[2435856,91.547837,"KT1D6XTy8oAHkUWdzuQrzySECCDMnANEchQq"]
+
+        ,[2461226,806.737233,"tz1h5frRwDbJMGyTPntdwMC8i745q2Z1fzyF"]
+
+        ,[2489072,27.987260,"tz1d19gQZHtM2VYqzqEDXjmNRUZ5G4w4eWKR"]
+
+        ,[2638434,35.067132,"tz1Q7HmHxYxnEoaTggkgxF5pzJ4tQfJK4GRB"]
+
+        ,[2677126,178.250783,"tz1coTCxAqASmX6dgswcwz7Au4U5hWPmmkP4"]
+
+        ,[2687546,28.905677,"tz1Q45ukC92WA1wnExbNDbUS6UqJRxaFmkDJ"]
+
+        ,[2687870,1858.424414,"tz1bWwABZhz1ModvF6YDC5pmgKfPPRHCHmLX"]
+
+        ,[2688111,7374.559102,"tz1itBC8dDiBSVSMyc8EPoQE1TKFs8kRzQSF"]
+
+        ,[2690237,5.037947,"tz1PJiMryJtJBRbe4AHZ47gtMxV2YAHZxsNK"]
+
+        ,[2705960,59.892957,"tz1KujM8SoS1VbRanN74EB9qY2uqA7qPJTBu"]
+
+        ,[2730781,4.755428,"tz2XeqeHxqZBEiUCTbEekYb3UDgPZfX4PF3w"]
+
+        ,[2735482,4.688626,"tz2Xeqe4khB4Ghetuzgdu9PprZRBowCzRoWN"]
+
+        ,[2735497,0.000001,"tz2XeqeK4CKdaBwbJ24uB1Xs8zCBpkhNGPTs"]
+
+        ,[2735582,0.000001,"tz2XeqeNsPjEnFt6DR7LBnwHrYQjGNMTNtDq"]
+
+        ,[2739450,0.000001,"tz2XeqeKLaK2ipRsfKebEQ55ij1dg3baTq5S"]
+
+        ,[2739456,3.171259,"tz2Xeqe5TJKZUpEpqNycHPRkZXbEQr61RJFa"]
+
+        ,[2745317,1.472172,"tz1X8Lzs5zbXfSgchYcLm2ymhS7QDC1cz5Ep"]
+
+        ,[2786280,325.603790,"tz1dXQvSDQ1VPwf5XcJVs1JrqwvEQo6Sj9LU"]
+
+        ,[2786284,303.309695,"tz1i4GYGprDY5kMFuhmTgDqaZgjAZex7BzpE"]
+
+        ,[2786302,7.631407,"tz1ZockEM4bXXwvrUvbLErvofPWEJj66Arsk"]
+
+        ,[2786307,299.776391,"tz1RtPV2JmAtTZ6gQMQvpcoSJ7HdgPP7mVw6"]
+
+        ,[2786315,227.847711,"tz1PomC4T3ZdPyVpyiJSBh1CM6mRP4qirCTS"]
+
+        ,[2787057,301.028296,"tz1LzqfHmPwKDKKwaYo8aXwPRq83mjfKH1W2"]
+
+        ,[2787131,0.836407,"tz1g8vgvvGi3vKU12LT9jfJ5oGSx7pNmQLKb"]
+
+        ,[2787142,17.493298,"tz1bJcRvNVFRgNRL1T6dAUM4pB1uHRAUqVXG"]
+
+        ,[2787153,5.880760,"tz1ZGyutYcTpJopyunbDnBHADgioh5PKYweK"]
+
+        ,[2787298,0.735526,"tz1aNmqLfEbr1KXUh5Z4K5SxipHnkP8tWie4"]
+
+        ,[2787415,19.266159,"tz1LaDK9VdH6nRXwtKoppGyFpYqKFFkzwcPe"]
+
+        ,[2787423,33.582898,"tz1fL9T8PkfFUWQNbAZmcBXAUCyfXRozWTek"]
+
+        ,[2787867,1.140205,"tz1LdisB5zwHkr5YDdh3cUwg8cu1KsLcAmbd"]
+
+        ,[2787868,1.079773,"tz1aeqN21nDpK6GX5sH2mmwyGxJpxmZHBgEp"]
+
+        ,[2788859,11.973102,"tz1RHMiwvBzWdD77fvGMTVGraMrLk3BHNyrS"]
+
+        ,[2791118,16.967671,"tz1XT9KYBvKBvARVz9f2okayXMkXQLbqJfgi"]
+
+        ,[2791124,19.892040,"tz1iBadNdkm8qhokF2wxcMZZpR6nDM4KMskp"]
+
+        ,[2791129,21.653564,"tz1dx5HkHXHYcGJ4S5RmhadtqwyK6T5PSdWg"]
+
+        ,[2792809,18.792256,"tz1LUXZUrrytwCVz11MPadYcDNxS2eLNRDrK"]
+
+        ,[2796882,0.418130,"tz1ejfY1m4N9gy3WTP29vD1C3Ai3561EzXoQ"]
+
+        ,[2799945,16.719792,"tz1fFgW1zDHvfrNT46dZy8ETnPaoBizeUHr2"]
+
+        ,[2800273,13.204692,"tz1iqjWyrSZTmhV1okq6BDweoBzGVT1Catc1"]
+
+        ,[2801360,0.000001,"tz1NbSd6GVnJZhzj4TtMGgs52Cmetkp9uuRh"]
+
+        ,[2801729,214.071551,"tz1euHavatDymHRQFMwjHfoUAHmjiVWBSLLw"]
+
+        ,[2803108,15.013128,"tz1WU9pemKyqEAhNXiUoajbi7B9RC1ed4K8V"]
+
+        ,[2807550,2.551246,"tz1fhVND6cPEdZzbZWvQMqLz5EJQNiZ8dQEX"]
+
+        ,[2808805,2.581435,"tz1SQZ47RFjK26nEZ7Qau4knYBCgaHeJggMc"]
+
+        ,[2823198,1.242484,"tz1W7Kgs6814REJBrYTmcAexTnjkvhHfzz1Z"]
+
+        ,[2830808,0.745199,"tz2XeqeKNSRa4H6Xg6Z65eDcBmsTyFfe9SEb"]
+
+        ,[2835700,5.318223,"tz1MVF37cBSinkzbtPAso2Ty5TeZmiJXMR5m"]
+
+        ,[2839966,240.222043,"tz1Nk8ahECVrWYA5TPJkSLveuxEkhbu3woYL"]
+
+        ,[2845752,307.057759,"tz1fxPuoP66N3u4iBNLkpZSeGGpqerzmn8kK"]
+
+        ,[2867402,6.239251,"tz2Xeqe4opwV1JkqYrNHcJ1jKzUMaiQXGfch"]
+
+        ,[2867403,0.637653,"tz2XeqeK6L46AW1rHH7c6Gi3kc4eKEpP4FhY"]
+
+        ,[2867820,4.607282,"tz2XeqeHy6ZXdZvFq6Lk4yAGASVEoHt48tPW"]
+
+        ,[2885594,11.420677,"tz2Xeqe5U8iPf6xPmRjzMM1W2o9p9APqKZhp"]
+
+        ,[2885636,0.593290,"tz2XeqeNw8U89gSdmq7acTqvJRNCUvCwFjo5"]
+
+        ,[2891646,1.012448,"tz2Xeqe4qJPA9xeh5Z8qz8WMmxsNo3FkwVG7"]
+
+        ,[2908950,20.559178,"tz1Vd4fAzLXeVuv4pUvmfZoXwGuywUDwAFaA"]
+
+        ,[2926595,235.741419,"tz1YQQQeZpnHfnVfnS9txx4jHCub6jb9tCXX"]
+
+        ,[2944795,2637.553937,"tz1YguzZ47fHNdAgMUjGeH7kDj2M5Vu1PaoX"]
+
+        ,[2947764,24.416290,"tz1aXGU6GodhaMVjjAZBTXPXKQs5Ye4vQoGD"]
+
+        ,[2952635,172.919562,"tz1RWdtGZ86ctH6TYUQt6KZMcfdHSCo5m8NY"]
+
+        ,[2999596,2.495535,"tz1YqXbVkJyfysN3w9ZxqoLrR9ru4ebY5JjX"]
+
+        ,[3005359,3982.491952,"tz1bqr363yzKK6EJgPWZ5wUzfmT4A6XSkqGq"]
+
+        ,[3006912,2329.419443,"tz1ZrXdMSP515KsNjy5Jk5SxxVSRKxwgJhjo"]
+
+        ,[3006918,6428.287484,"tz1at5ZdyzC2P4z5bWEuGR9pHZzmt3ai69gB"]
+
+        ,[3021279,1121310.618868,"KT1VE3tEoqMLLoDXVo4c8ikxhD1i37okeJxX"]
+
+        ,[3026864,0.000236,"KT1XSCMBNNjvYUEsXbLxTZeWda8CAcz8ipUm"]
+
+        ,[3044568,350.026581,"KT1EcrQ85diCfTjN5nQMzVH3G53kxCrw8Z5S"]
+
+        ,[3103801,123.112998,"tz1ULgYrbjqUUEfzxXPzbxzKNdBCCWfnkA23"]
+
+        ,[3115128,1285.527444,"tz1MNLwfhBWYPGPKi2wc5E298SVdFSgU6THP"]
+
+        ,[3136536,9188.236935,"KT1Esk7iCt8E5CrAXkPsVQwsZokwPGdbgrs6"]
+
+        ,[3183173,710.172112,"tz2KrVWh7Pji8kp71pscoCXfbJq1abctc7ok"]
+
+        ,[4068419,0.000000,"KT1Pe4jwGLkHT1KCx8ZHDCafr9vZSh547t4e"]
+
+        ,[4098891,1.517645,"tz1d5rtyuH8jxWRBjTXoPxYZjsVX3TnEfidg"]
+
+        ,[4105817,0.859282,"tz1ivTmsxVwWno7CRFhw1FaH13hpjvAvDMY2"]
+
+        ,[4163412,180249.023543,"KT19qWdPBRtkWrsQnDvVfsqJgJB19keBhhMX"]
+
+        ,[4599392,186288.462164,"KT1VQ5TEVgwSPLUPioMRfmtSqA2B515pP3AS"]
+
+        ,[4734579,4026.907235,"tz1e52JwM8fUedsr1hEnNgjKHYRBpvV6QVG5"]
+
+        ,[4884939,8891.022470,"tz1eFLgfnDQ2zYGcxJ1RoBH1PhgxKhJGJyJZ"]
+
+        ,[4972536,1.131520,"tz1UHsYmxp7RrusBkMRKT937kMtjY2qPzruu"]
+
+        ,[5022014,3.316979,"tz1U7onVLiyp5n2sjtHSod7WceGt54KPaXVV"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:05 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:35 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99389'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - 844dbf1f-1687-4f24-9309-8269f593ec61
+      x-runtime:
+      - '0.008516'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/account?address.in=tz1L4tCj7Bg9HtDTxZZfLH4KdyaN5K26Afkh,tz1PtNfAv2dCXsgCfqSG34VGi8UFTuTBrHFu,tz1QrRzkTAKuPKF8dmGW6c1ScEHBUGvoiJBM,tz1Rx4cKtfFJdS3rS9aRXQZT2NGruiBDPz15,tz1V3fPD3AKPNwZf42PKGzFaWU3vZ83Gjvfq,tz1Xf2wsRXEevRdCBE1ZEu6fYwQToUnc9Wvw,tz1Y99qsUYh9J1fsNqDQyQAGox4t7ydVUKC4,tz1fnVrMZjP5GhfozQ5zHE8xXDtjoUCptQBZ,tz2QhmKtUWRyArfaqfBedvVdidgKpCcckMXV&columns=row_id,spendable_balance,address
+  response:
+    body:
+      string: '[[1093,564.559607,"tz1V3fPD3AKPNwZf42PKGzFaWU3vZ83Gjvfq"]
+
+        ,[581678,377.968779,"tz1fnVrMZjP5GhfozQ5zHE8xXDtjoUCptQBZ"]
+
+        ,[612056,0.941419,"tz1QrRzkTAKuPKF8dmGW6c1ScEHBUGvoiJBM"]
+
+        ,[1142707,226.774225,"tz1Y99qsUYh9J1fsNqDQyQAGox4t7ydVUKC4"]
+
+        ,[1509022,1220.383446,"tz1L4tCj7Bg9HtDTxZZfLH4KdyaN5K26Afkh"]
+
+        ,[1604844,0.279036,"tz1Rx4cKtfFJdS3rS9aRXQZT2NGruiBDPz15"]
+
+        ,[1680237,240.578564,"tz2QhmKtUWRyArfaqfBedvVdidgKpCcckMXV"]
+
+        ,[1734710,59.964559,"tz1PtNfAv2dCXsgCfqSG34VGi8UFTuTBrHFu"]
+
+        ,[2403411,0.366941,"tz1Xf2wsRXEevRdCBE1ZEu6fYwQToUnc9Wvw"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:06 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:36 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99388'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - 63fc5ba8-742f-4920-a213-91ad9f35ac42
+      x-runtime:
+      - '0.009681'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/600
+  response:
+    body:
+      string: '{"cycle":600,"start_height":3383297,"end_height":3399680,"start_time":"2023-04-18T21:30:28Z","end_time":"2023-04-21T18:23:48Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3391488,"snapshot_index":7,"snapshot_time":"2023-04-20T07:57:24Z","rolls":115750,"roll_owners":406,"active_delegators":190451,"active_bakers":425,"staking_supply":695629918.018814,"staking_percent":72.7517434058186,"working_bakers":284,"working_endorsers":392,"missed_rounds":88,"missed_endorsements":536330,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.13763427734377,"round_min":0,"round_max":1,"round_mean":0.005371093750000003,"endorsement_rate":99.53235735212054,"endorsements_min":4670,"endorsements_max":6997,"endorsements_mean":6967.265014648459,"seed_rate":100,"worst_baked_block":3383298,"worst_endorsed_block":3383845,"snapshot_cycle":{"cycle":594,"start_height":3284993,"end_height":3301376,"start_time":"2023-04-01T14:56:50Z","end_time":"2023-04-04T11:48:45Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3289088,"snapshot_index":3,"snapshot_time":"2023-04-02T08:11:19Z","rolls":115062,"roll_owners":408,"active_delegators":189557,"active_bakers":422,"staking_supply":691536832.615904,"staking_percent":72.48263685548692,"working_bakers":272,"working_endorsers":378,"missed_rounds":85,"missed_endorsements":754256,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":53,"solvetime_mean":15.133422851562468,"round_min":0,"round_max":1,"round_mean":0.005187988281250014,"endorsement_rate":99.34234095982143,"endorsements_min":5275,"endorsements_max":6994,"endorsements_mean":6953.963867187465,"seed_rate":97.65625,"worst_baked_block":3285051,"worst_endorsed_block":3297380},"follower_cycle":{"cycle":606,"start_height":3481601,"end_height":3497984,"start_time":"2023-05-06T02:43:50Z","end_time":"2023-05-08T23:36:48Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3493888,"snapshot_index":11,"snapshot_time":"2023-05-08T06:25:46Z","rolls":115378,"roll_owners":411,"active_delegators":189196,"active_bakers":430,"staking_supply":693403157.903949,"staking_percent":72.35966203448906,"working_bakers":264,"working_endorsers":394,"missed_rounds":82,"missed_endorsements":480298,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.136291503906296,"round_min":0,"round_max":3,"round_mean":0.005004882812499997,"endorsement_rate":99.58121337890626,"endorsements_min":5423,"endorsements_max":6996,"endorsements_mean":6970.684936523427,"seed_rate":100,"worst_baked_block":3481606,"worst_endorsed_block":3486360}}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:06 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=86400
+      expires:
+      - Sat, 06 Jan 2024 21:23:06 GMT
+      last-modified:
+      - Mon, 08 May 2023 23:36:48 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99387'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - d45a372c-6b56-4132-954c-96f03596f9e0
+      x-runtime:
+      - '0.000189'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/600
+  response:
+    body:
+      string: '{"cycle":600,"start_height":3383297,"end_height":3399680,"start_time":"2023-04-18T21:30:28Z","end_time":"2023-04-21T18:23:48Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3391488,"snapshot_index":7,"snapshot_time":"2023-04-20T07:57:24Z","rolls":115750,"roll_owners":406,"active_delegators":190451,"active_bakers":425,"staking_supply":695629918.018814,"staking_percent":72.7517434058186,"working_bakers":284,"working_endorsers":392,"missed_rounds":88,"missed_endorsements":536330,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.13763427734377,"round_min":0,"round_max":1,"round_mean":0.005371093750000003,"endorsement_rate":99.53235735212054,"endorsements_min":4670,"endorsements_max":6997,"endorsements_mean":6967.265014648459,"seed_rate":100,"worst_baked_block":3383298,"worst_endorsed_block":3383845,"snapshot_cycle":{"cycle":594,"start_height":3284993,"end_height":3301376,"start_time":"2023-04-01T14:56:50Z","end_time":"2023-04-04T11:48:45Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3289088,"snapshot_index":3,"snapshot_time":"2023-04-02T08:11:19Z","rolls":115062,"roll_owners":408,"active_delegators":189557,"active_bakers":422,"staking_supply":691536832.615904,"staking_percent":72.48263685548692,"working_bakers":272,"working_endorsers":378,"missed_rounds":85,"missed_endorsements":754256,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":53,"solvetime_mean":15.133422851562468,"round_min":0,"round_max":1,"round_mean":0.005187988281250014,"endorsement_rate":99.34234095982143,"endorsements_min":5275,"endorsements_max":6994,"endorsements_mean":6953.963867187465,"seed_rate":97.65625,"worst_baked_block":3285051,"worst_endorsed_block":3297380},"follower_cycle":{"cycle":606,"start_height":3481601,"end_height":3497984,"start_time":"2023-05-06T02:43:50Z","end_time":"2023-05-08T23:36:48Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":3493888,"snapshot_index":11,"snapshot_time":"2023-05-08T06:25:46Z","rolls":115378,"roll_owners":411,"active_delegators":189196,"active_bakers":430,"staking_supply":693403157.903949,"staking_percent":72.35966203448906,"working_bakers":264,"working_endorsers":394,"missed_rounds":82,"missed_endorsements":480298,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.136291503906296,"round_min":0,"round_max":3,"round_mean":0.005004882812499997,"endorsement_rate":99.58121337890626,"endorsements_min":5423,"endorsements_max":6996,"endorsements_mean":6970.684936523427,"seed_rate":100,"worst_baked_block":3481606,"worst_endorsed_block":3486360}}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:06 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=86400
+      expires:
+      - Sat, 06 Jan 2024 21:23:06 GMT
+      last-modified:
+      - Mon, 08 May 2023 23:36:48 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99386'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - 28c3da10-e9d2-461b-ae52-f54446c4e1d0
+      x-runtime:
+      - '0.000125'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/rewards/split/tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8/600?offset=0&limit=10000
+  response:
+    body:
+      string: '{"cycle":600,"stakingBalance":2926085350699,"activeStake":2926085350699,"selectedStake":690100624414239,"delegatedBalance":2572310369891,"numDelegators":444,"expectedBlocks":69,"expectedEndorsements":486286,"futureBlocks":0,"futureBlockRewards":0,"blocks":56,"blockRewards":556292704,"missedBlocks":0,"missedBlockRewards":0,"futureEndorsements":0,"futureEndorsementRewards":0,"endorsements":486210,"endorsementRewards":694416408,"missedEndorsements":354,"missedEndorsementRewards":0,"blockFees":9797472,"missedBlockFees":0,"doubleBakingRewards":0,"doubleBakingLosses":0,"doubleEndorsingRewards":0,"doubleEndorsingLosses":0,"doublePreendorsingRewards":0,"doublePreendorsingLosses":0,"revelationRewards":0,"revelationLosses":0,"delegators":[{"address":"KT1VE3tEoqMLLoDXVo4c8ikxhD1i37okeJxX","balance":1076126591806,"currentBalance":1121310618868,"emptied":false},{"address":"KT1MfgCNUdkNES1pBJ6uJVHyHZw79DjRZzw5","balance":896844911504,"currentBalance":270104911504,"emptied":false},{"address":"tz1i2Vdnh4J3ufgcbe2TYLYE1UhLM6PSvJGw","balance":112982363494,"currentBalance":117726227470,"emptied":false},{"address":"KT1Pe4jwGLkHT1KCx8ZHDCafr9vZSh547t4e","balance":62370151695,"currentBalance":0,"emptied":false},{"address":"KT1Esk7iCt8E5CrAXkPsVQwsZokwPGdbgrs6","balance":45612615142,"currentBalance":9188236935,"emptied":false},{"address":"KT1D6XTy8oAHkUWdzuQrzySECCDMnANEchQq","balance":44592514901,"currentBalance":91547837,"emptied":false},{"address":"tz1PZt2vuK7Yx2QiXPuqQrpDw4NDr2cS3knR","balance":26274242748,"currentBalance":27377436464,"emptied":false},{"address":"tz1bdvAK5go5U2qRZikXUFSCvpT4zWyeniqW","balance":22277595779,"currentBalance":23212979684,"emptied":false},{"address":"tz1TToVAGWQ1s9rCaTLMMCJHuV6BLWZ26iKw","balance":17967379623,"currentBalance":18721787680,"emptied":false},{"address":"tz1NF4C2MeeKgYopu6wMfLDCH5M5n143vjoU","balance":17038698371,"currentBalance":17013687479,"emptied":false},{"address":"tz1WEWrGbRzrdarqxGNLruVmgX4bj3sVXQkT","balance":16616493277,"currentBalance":18094963084,"emptied":false},{"address":"tz1NwCtqG4pErKBSFJ2tcqRt9bE2tMXKUoCi","balance":14969276371,"currentBalance":15597801110,"emptied":false},{"address":"tz1R94PftGa6iK3Sa2nDB1FaEnBphseGaoid","balance":13727210441,"currentBalance":14303583754,"emptied":false},{"address":"KT1BrFQdx8wdwaFEAZsNWAD1epv6i3aEZxJy","balance":13572096193,"currentBalance":14141956623,"emptied":false},{"address":"tz1h5frRwDbJMGyTPntdwMC8i745q2Z1fzyF","balance":11853577005,"currentBalance":806737233,"emptied":false},{"address":"tz1dzYRdp3v243wuL1b2wEkoy3DnUZWgs4yr","balance":10670764986,"currentBalance":11118805339,"emptied":false},{"address":"tz1TzHDLTNK1J1fCotGBLuE43DoogC5pHGyT","balance":10077428569,"currentBalance":8545521951,"emptied":false},{"address":"KT1WtPAbkmeYR4jCjihgsVRd6yoF5Hc8HVBL","balance":9736981026,"currentBalance":10145813976,"emptied":false},{"address":"tz1SvUaqgBxn9NC4DUeKAuMGEDKrnFyLyPQ4","balance":8832636751,"currentBalance":9201726222,"emptied":false},{"address":"tz1dfTLy1Hjh5SjKHxtHvX1LwoZuYanLErDa","balance":7893848303,"currentBalance":8225292447,"emptied":false},{"address":"tz1XPqbWruHijnzGXm6kh7pD9FnNxTAzpgj3","balance":7321143679,"currentBalance":7628541298,"emptied":false},{"address":"KT1EBtpBAh7Z2wPLDP7dNdE6qtNcqVPhX1kk","balance":6529958493,"currentBalance":6804136108,"emptied":false},{"address":"tz1at5ZdyzC2P4z5bWEuGR9pHZzmt3ai69gB","balance":6124793078,"currentBalance":6428287484,"emptied":false},{"address":"tz1fgi1uzttMr9FiJwaH83zS6EJFVHQdkjfm","balance":5739581680,"currentBalance":5980573224,"emptied":false},{"address":"tz1RivV2RsQNpVALQy9oCdRLN6ELH62kLQCh","balance":5069737712,"currentBalance":5282604089,"emptied":false},{"address":"KT1VhQiko8ALkp7EKZeYmeqjjWHekWYoCq8u","balance":4995383438,"currentBalance":5205127849,"emptied":false},{"address":"KT1UiGpFAVtiEpQY3Mk9mtGU2HUK8X88b7Vj","balance":4430118120,"currentBalance":13061799,"emptied":false},{"address":"KT1EuNqG3UiVRyExRU3M2qzzi9t4jwqWJ4Ms","balance":4397472176,"currentBalance":4582111698,"emptied":false},{"address":"tz1LYQEVvxeMyhpD6oMeADmPVtMQRyyo91Ug","balance":4321802933,"currentBalance":4503265283,"emptied":false},{"address":"tz1ZrXdMSP515KsNjy5Jk5SxxVSRKxwgJhjo","balance":4182686764,"currentBalance":2329419443,"emptied":false},{"address":"KT1QwmHxbHyYWtTzxiidtGeFjbF4JAkHcVKf","balance":4151275624,"currentBalance":4325577934,"emptied":false},{"address":"KT1LVi6LEEWK1eJsJ9HauHvBYgvJnQA2V3Z5","balance":3994666034,"currentBalance":4162392674,"emptied":false},{"address":"tz1YXVedQWCjRbrE83DHtUg9siofXeXox11K","balance":3832709975,"currentBalance":368083089,"emptied":false},{"address":"tz1bqr363yzKK6EJgPWZ5wUzfmT4A6XSkqGq","balance":3794469241,"currentBalance":3982491952,"emptied":false},{"address":"tz1itBC8dDiBSVSMyc8EPoQE1TKFs8kRzQSF","balance":3725412189,"currentBalance":7374559102,"emptied":false},{"address":"tz1av6oBBFgD3Y2j9ATHmLacQ9oTnpBmjqTE","balance":3357935187,"currentBalance":3498926992,"emptied":false},{"address":"KT1XU78xy4oVjjJR5tnNvmw4FZqrp8k8BKeg","balance":2804366120,"currentBalance":366120,"emptied":false},{"address":"KT1XPx4ZDePd7c29fCBDRJtVFcrsJS8FVSJj","balance":2224878770,"currentBalance":505646545,"emptied":false},{"address":"tz1WT3oAw91JTcNujeWa7fdoWHAaZGGLMRBS","balance":2095499344,"currentBalance":2504852,"emptied":false},{"address":"tz1b7rj6katS1oFMkPqKJGAnG8e9xMVhMCDe","balance":2031199393,"currentBalance":2116484688,"emptied":false},{"address":"tz1Q1pG4YF9gGXa1Nkc8ck9mYS8yhEu8oFTd","balance":2006173633,"currentBalance":2249017976,"emptied":false},{"address":"tz1V3fPD3AKPNwZf42PKGzFaWU3vZ83Gjvfq","balance":1943033159,"currentBalance":564559607,"emptied":false},{"address":"tz1bWwABZhz1ModvF6YDC5pmgKfPPRHCHmLX","balance":1770683879,"currentBalance":1858424414,"emptied":false},{"address":"KT1DRJWSknF2EheKQvD3uZUrqzCNzebwU8pU","balance":1643037115,"currentBalance":1728495,"emptied":false},{"address":"tz1Rbbw8QZQ9HL6z2n9YBLrV47X1g6RTvozy","balance":1535113049,"currentBalance":1599568840,"emptied":false},{"address":"KT1EeRvbfscKnPUBWQWomPN37dK1EMxoNump","balance":1489533961,"currentBalance":1552075992,"emptied":false},{"address":"tz1SQ3QgAXufErcaX2D62ee8S91vBxJe6qjS","balance":1384891339,"currentBalance":113353780,"emptied":false},{"address":"tz1PmS8oENwMQ6AzUrB9LCTpq3eM3qdh4WbW","balance":1365965461,"currentBalance":1423319137,"emptied":false},{"address":"KT1DudxoY45PHMLNgqYErSTG9YNLeLGcGp5q","balance":1245851521,"currentBalance":1298161895,"emptied":false},{"address":"tz1MNLwfhBWYPGPKi2wc5E298SVdFSgU6THP","balance":1233726180,"currentBalance":1285527444,"emptied":false},{"address":"tz1apzYQkJc1VegDGsBDvZodDsErYeUZNGmg","balance":1171566405,"currentBalance":1220757724,"emptied":false},{"address":"tz2KrVWh7Pji8kp71pscoCXfbJq1abctc7ok","balance":1144577181,"currentBalance":710172112,"emptied":false},{"address":"tz1X2debvxGtmv1px96EHCXZemHFr2kEZner","balance":1081745315,"currentBalance":13018373,"emptied":false},{"address":"tz1hjczuxDLZD3JxYtyU8orp4QTRNzVrcJxc","balance":1076576653,"currentBalance":347456202,"emptied":false},{"address":"tz1UNqVTyWtpAsUbiH7cvgmGwirkyfKh4jss","balance":1007421784,"currentBalance":1049273337,"emptied":false},{"address":"tz1MzdEcgLX9Nk4SDkmWbcVZKupeH4K9Hae2","balance":912178059,"currentBalance":950478274,"emptied":false},{"address":"tz1Z4xVY4HrA3z51qwFLfD9KPxg47wxskndP","balance":901443947,"currentBalance":1192874252,"emptied":false},{"address":"tz1U65RWzwihAraB3i7hU19F4RFLhUfUU6TP","balance":889754828,"currentBalance":927113543,"emptied":false},{"address":"tz1YHsinBJHMj1YFN7UrCsVAgTcaJCH86PjK","balance":881235778,"currentBalance":288501489,"emptied":false},{"address":"tz1Zrz4fEZiBrHSGxmKh4DFe744kV4mwH8QX","balance":875209330,"currentBalance":911957312,"emptied":false},{"address":"tz1c7cCZFtPrfRcnRSmA3wE5raQx9XAxFs6k","balance":818442359,"currentBalance":852806829,"emptied":false},{"address":"tz1RDBYNBri3fJ7HwzSDDKPUWepHXEFgH2dJ","balance":799043552,"currentBalance":832593513,"emptied":false},{"address":"KT1TYJxPiTizat8d16PHysq7HN18FP29LZeF","balance":774783997,"currentBalance":807315359,"emptied":false},{"address":"tz1bBtV7JcWQmGERatwjqCdckUAy8zwD7MpF","balance":764059041,"currentBalance":796140088,"emptied":false},{"address":"tz1L4tCj7Bg9HtDTxZZfLH4KdyaN5K26Afkh","balance":750932012,"currentBalance":1220383446,"emptied":false},{"address":"KT1JUqExJyfDebBPr6MnDdPN9d63uixjijzq","balance":698055053,"currentBalance":727364743,"emptied":false},{"address":"tz1VaSnsBBxLqikdET3rLc7ywSab7bms777v","balance":639131640,"currentBalance":1557117,"emptied":false},{"address":"tz1cDuDQwNrpmXUAwL278ATjaPAkpmxa2nLc","balance":633844696,"currentBalance":652677118,"emptied":false},{"address":"tz1cwRGw8iogHkXxzud1mtH1LRreorRzuicz","balance":626455606,"currentBalance":652759003,"emptied":false},{"address":"tz1Q9YbdtzmSaFKMEsN2qX21m69RwgdoBMk7","balance":562052073,"currentBalance":585651317,"emptied":false},{"address":"KT1U1vTJnqpmJ6nSnvxaHpa6LYnLn1N3VdHu","balance":536053258,"currentBalance":1634715,"emptied":false},{"address":"tz1aKTCbAUuea2RV9kxqRVRg3HT7f1RKnp6a","balance":533933515,"currentBalance":1,"emptied":false},{"address":"tz1P4QL5pbCeNDmYntgjY1XA2XoikR6itzdD","balance":437070533,"currentBalance":455422092,"emptied":false},{"address":"KT1FgkDGMkxininHETF1SuSPYfuPpVJSJsAA","balance":403523888,"currentBalance":420466907,"emptied":false},{"address":"KT1EYfzGs1MDRW5Me9TSqX16rcwJbk7HNiPw","balance":397878115,"currentBalance":414584089,"emptied":false},{"address":"tz2KjTaQXgMSwUgALhxq8CRVHe5Hmgr1fPmo","balance":381744415,"currentBalance":107102021,"emptied":false},{"address":"tz1PomC4T3ZdPyVpyiJSBh1CM6mRP4qirCTS","balance":376280478,"currentBalance":227847711,"emptied":false},{"address":"KT1C8ZJ5vFkjZS2na87YXWeiJqwpVZHDC12Z","balance":373319443,"currentBalance":388994249,"emptied":false},{"address":"tz1fnVrMZjP5GhfozQ5zHE8xXDtjoUCptQBZ","balance":362738531,"currentBalance":377968779,"emptied":false},{"address":"KT1RzpiU2jc4BqGyv2uGjAn71eAtEHDtQhjW","balance":359651071,"currentBalance":374751977,"emptied":false},{"address":"KT1EcrQ85diCfTjN5nQMzVH3G53kxCrw8Z5S","balance":335922005,"currentBalance":350026581,"emptied":false},{"address":"tz1QjFsFrSYStAf5yhH5obYt1eAPjbT5MZPK","balance":323199804,"currentBalance":109060315,"emptied":false},{"address":"tz1LzqfHmPwKDKKwaYo8aXwPRq83mjfKH1W2","balance":296144780,"currentBalance":301028296,"emptied":false},{"address":"tz1LrhG94RrF1JFVJWzWJbcrJtvYCqkncwRh","balance":291331865,"currentBalance":2383218,"emptied":false},{"address":"tz1YJgNgAJHnjuJSfasz9hVVn7GTi1mWrRTS","balance":287393752,"currentBalance":3598001,"emptied":false},{"address":"tz1euHavatDymHRQFMwjHfoUAHmjiVWBSLLw","balance":283951585,"currentBalance":214071551,"emptied":false},{"address":"KT1NruHZsn7MVhhkLkveTRStKNAyFqyWoaW8","balance":277337863,"currentBalance":288982626,"emptied":false},{"address":"tz1VDr6Lvpduj2eHNhGrGQuaXqPDNEF6CSio","balance":265657290,"currentBalance":43538658,"emptied":false},{"address":"tz1ivTmsxVwWno7CRFhw1FaH13hpjvAvDMY2","balance":257408408,"currentBalance":859282,"emptied":false},{"address":"KT1LyHdBHEH9aknxLuvNQqPbWVLpacxPVirs","balance":254409137,"currentBalance":265091185,"emptied":false},{"address":"KT1WGfxkm67LQm6FEcewCVg2fYZBcuiiRwFf","balance":234399251,"currentBalance":244241126,"emptied":false},{"address":"tz1Nk8ahECVrWYA5TPJkSLveuxEkhbu3woYL","balance":230542122,"currentBalance":240222043,"emptied":false},{"address":"tz1YQQQeZpnHfnVfnS9txx4jHCub6jb9tCXX","balance":223537376,"currentBalance":235741419,"emptied":false},{"address":"KT1Snm9n2HEkEq6eqzRQC3FUbVXqv55px7EL","balance":222081503,"currentBalance":231406182,"emptied":false},{"address":"tz1Y99qsUYh9J1fsNqDQyQAGox4t7ydVUKC4","balance":217021955,"currentBalance":226774225,"emptied":false},{"address":"tz1QFJJjXz6aPYEs86GFFYc6BjkuoAdtdyUE","balance":211731000,"currentBalance":220621089,"emptied":false},{"address":"tz1RDPxy3a3LGGt5wSupYHUsiuSkWHEs8VMm","balance":207222752,"currentBalance":215923551,"emptied":false},{"address":"tz1MwvWz611pLwYdFMZpWCEsh247MEYtm5ii","balance":205611091,"currentBalance":442527353,"emptied":false},{"address":"tz1dXQvSDQ1VPwf5XcJVs1JrqwvEQo6Sj9LU","balance":202919423,"currentBalance":325603790,"emptied":false},{"address":"tz1QYCGhGXS9CyZVqWFNxGXnNSHNtm4TBH3V","balance":202386464,"currentBalance":239415260,"emptied":false},{"address":"tz1SrBUe5Y1fsmwjs2vcFmTztueYqauzxZfN","balance":202296446,"currentBalance":210790394,"emptied":false},{"address":"KT1CFWAGiNiGtMRhYqVFQC2rq3FWxv7tefGt","balance":196334496,"currentBalance":204578121,"emptied":false},{"address":"tz1YUigABASqRUWAG97qHfHwYkYEGDk9q2Qv","balance":184595188,"currentBalance":201051129,"emptied":false},{"address":"tz1coTCxAqASmX6dgswcwz7Au4U5hWPmmkP4","balance":169835149,"currentBalance":178250783,"emptied":false},{"address":"tz1RWdtGZ86ctH6TYUQt6KZMcfdHSCo5m8NY","balance":165951644,"currentBalance":172919562,"emptied":false},{"address":"tz1iBtVvGo33nnskeMyjZogL4FVbjndoQKEY","balance":164529606,"currentBalance":171437820,"emptied":false},{"address":"tz1fxPuoP66N3u4iBNLkpZSeGGpqerzmn8kK","balance":138467568,"currentBalance":307057759,"emptied":false},{"address":"KT1HMNLAc1aHqTcbh1EuRcAadHx7P74UQu18","balance":127353753,"currentBalance":132701038,"emptied":false},{"address":"KT1MJDzcwo23hifL6xDZNyPrfrh9rETyTwPV","balance":125099738,"currentBalance":130352385,"emptied":false},{"address":"tz1ULgYrbjqUUEfzxXPzbxzKNdBCCWfnkA23","balance":122546237,"currentBalance":123112998,"emptied":false},{"address":"tz1PR4Hwo9AxpcPY8qCQqcqJUXp9qZ1DWFeo","balance":115456644,"currentBalance":120304398,"emptied":false},{"address":"tz1MjjLZU7Z4ZTQEZ5K13uZpYozMTdSxXAqk","balance":113268499,"currentBalance":118024372,"emptied":false},{"address":"tz1aJ4GQVQahiy1MuLmqrWnZzjLg1ya3TPkR","balance":111122981,"currentBalance":115788774,"emptied":false},{"address":"tz1dUFGGinuEXRt6mJxGKoioDGFFhcf4pz9A","balance":109489015,"currentBalance":114086198,"emptied":false},{"address":"tz1bm5ZXZeXiAggfXjr3KWFReNKmLg5o5XE5","balance":107784415,"currentBalance":112310028,"emptied":false},{"address":"tz1Y4uhZXpGNejA8MSHYbZeShbGTK9bLiuLW","balance":107650427,"currentBalance":112170415,"emptied":false},{"address":"tz1gdiKBmjmvav67FTAjeftyYdcjuLsMPiwf","balance":107406786,"currentBalance":111916543,"emptied":false},{"address":"KT1Akno6N5Js5YfJZ8DGfL22qKFta5ETyZHK","balance":104579128,"currentBalance":108970162,"emptied":false},{"address":"tz1d6wbAMkzqeZkzoux5ghFf4SC7Jyny77UQ","balance":94785271,"currentBalance":98765079,"emptied":false},{"address":"tz1Z28DjstDRxgv7XfMXAQEr3KPRBwCX3RWa","balance":92840359,"currentBalance":91596223,"emptied":false},{"address":"KT1RiXEpRTKM2SDxX3Z2vJjRPMbkuSW4v3X3","balance":90458879,"currentBalance":94257037,"emptied":false},{"address":"tz1brbRnN4jsT83h68j1HQRnUeWgfrCg51gY","balance":88276879,"currentBalance":90630461,"emptied":false},{"address":"tz1bkejtzWoGzdJvdk1yXWfUWRGvpRYGeBne","balance":85174400,"currentBalance":88750672,"emptied":false},{"address":"KT1LDAMFb8Y3x3skBGpaFoB9e7fSakZn15p7","balance":84361937,"currentBalance":87904097,"emptied":false},{"address":"tz1e5iPM5eurnPdL8LbiP32jDekeDhbrkpNK","balance":83581489,"currentBalance":508325,"emptied":false},{"address":"tz1i32Dx2t2zyMKmWQXgDgHEbyvGP1Av768o","balance":78819926,"currentBalance":8436396,"emptied":false},{"address":"tz1d5rtyuH8jxWRBjTXoPxYZjsVX3TnEfidg","balance":76628156,"currentBalance":1517645,"emptied":false},{"address":"tz1g6Tfpmhcvkii8G8kPAwUYWjaazmQAPrwa","balance":73247159,"currentBalance":76322632,"emptied":false},{"address":"tz1QkobCfiTkDampjxH6uhVSj8dtvVq2vseR","balance":71846052,"currentBalance":74862702,"emptied":false},{"address":"tz1NVEo1zc66uBTap5kwvgDs9jUwGRHbdfWL","balance":71346500,"currentBalance":205625,"emptied":false},{"address":"tz1VY6J9nhUyzTfy9Ed2cKFaDykqWzKb68kt","balance":66175247,"currentBalance":68953787,"emptied":false},{"address":"tz1PtNfAv2dCXsgCfqSG34VGi8UFTuTBrHFu","balance":57474081,"currentBalance":59964559,"emptied":false},{"address":"tz1KujM8SoS1VbRanN74EB9qY2uqA7qPJTBu","balance":57465233,"currentBalance":59892957,"emptied":false},{"address":"tz2J5my9PHKs6s8qgGEMr2K9rigxi4a9JW4h","balance":55339294,"currentBalance":57662865,"emptied":false},{"address":"tz1YLTmav3esgPzqE7y8LsbJneZhTndonWvg","balance":51862875,"currentBalance":362909,"emptied":false},{"address":"KT1QSJgzuzaLAvt6ecL6f9RVtyUgd6dNpcTp","balance":51731797,"currentBalance":387907,"emptied":false},{"address":"tz1dEw5jNnGYnvNBsuNbTqPLy3im7YWrXYHX","balance":48276082,"currentBalance":50303081,"emptied":false},{"address":"tz1QrRzkTAKuPKF8dmGW6c1ScEHBUGvoiJBM","balance":47174662,"currentBalance":941419,"emptied":false},{"address":"tz1geibxThpe3ou1iADNA9R5CHMWLGdnSJbj","balance":43972636,"currentBalance":45818946,"emptied":false},{"address":"KT1DfmtF3SHQB5pHXiDov2FuUhFuNyUnMfQz","balance":42478866,"currentBalance":44262454,"emptied":false},{"address":"KT1CirJj1oQRmv6m1kMdhWB7US8ZXpkNXC6X","balance":37856138,"currentBalance":39445629,"emptied":false},{"address":"tz1U7oAmuAAKZzZszs783a9B5xAc4MuKk1xX","balance":36551499,"currentBalance":38086209,"emptied":false},{"address":"tz1MANvdxDpPfN657xqhtiX7dqQrbKtPM3SU","balance":36529821,"currentBalance":38063623,"emptied":false},{"address":"KT1WSbisG12AKmXbG8H5gnRt8xiLHgpiWPtJ","balance":33743291,"currentBalance":35160098,"emptied":false},{"address":"KT1M1QBWSo9RRE9dmg6bJfKtbV94xVKwFGzn","balance":31244587,"currentBalance":32556471,"emptied":false},{"address":"tz1R72pdt1VGiXZLzbujJXKNp9C7j52pirBY","balance":30661226,"currentBalance":31948619,"emptied":false},{"address":"tz1cJMfYDaM7tdNrnJ8hURvNWfpVDwEqsDrc","balance":29712893,"currentBalance":73515,"emptied":false},{"address":"tz1Q7HmHxYxnEoaTggkgxF5pzJ4tQfJK4GRB","balance":29695715,"currentBalance":35067132,"emptied":false},{"address":"tz1TQxmf4irW6xBNfa6Seg2KytMwDvJtiktn","balance":29688049,"currentBalance":30502627,"emptied":false},{"address":"tz1fL9T8PkfFUWQNbAZmcBXAUCyfXRozWTek","balance":29384842,"currentBalance":33582898,"emptied":false},{"address":"KT1MxPwvnT8hGYCsL9WkHh4hXKRNzXUiCMAT","balance":29029970,"currentBalance":30248868,"emptied":false},{"address":"tz1Q45ukC92WA1wnExbNDbUS6UqJRxaFmkDJ","balance":27740903,"currentBalance":28905677,"emptied":false},{"address":"tz1bMjp17zozqNPMqXWDwJieQEUez2rSzB4W","balance":27423647,"currentBalance":109034070,"emptied":false},{"address":"KT19curYUrivF5kGokjH7YJjBdhaQ9jp5phv","balance":25790026,"currentBalance":26872884,"emptied":false},{"address":"KT1XGUBoms5p2Fb7Dq8ByKndVKqkdV4aV9yc","balance":23664037,"currentBalance":24657635,"emptied":false},{"address":"tz1aXGU6GodhaMVjjAZBTXPXKQs5Ye4vQoGD","balance":23432419,"currentBalance":24416290,"emptied":false},{"address":"KT1Cri8avJX2Cfb8rpCD5HEWSDMXEkdjYzD2","balance":23061826,"currentBalance":24030134,"emptied":false},{"address":"tz1d19gQZHtM2VYqzqEDXjmNRUZ5G4w4eWKR","balance":22807965,"currentBalance":27987260,"emptied":false},{"address":"KT1BK71847dCqemXFBNnnqyeWDhjjofT9S26","balance":21460059,"currentBalance":22361115,"emptied":false},{"address":"tz1dx5HkHXHYcGJ4S5RmhadtqwyK6T5PSdWg","balance":20693198,"currentBalance":21653564,"emptied":false},{"address":"KT1JTBbQZNPPMuJk4a9iJrBqHbFfE9WdbW7a","balance":20000000,"currentBalance":20000000,"emptied":false},{"address":"tz2QhmKtUWRyArfaqfBedvVdidgKpCcckMXV","balance":19006659,"currentBalance":240578564,"emptied":false},{"address":"tz1iBadNdkm8qhokF2wxcMZZpR6nDM4KMskp","balance":19002948,"currentBalance":19892040,"emptied":false},{"address":"tz1LaDK9VdH6nRXwtKoppGyFpYqKFFkzwcPe","balance":18402283,"currentBalance":19266159,"emptied":false},{"address":"tz1LUXZUrrytwCVz11MPadYcDNxS2eLNRDrK","balance":17947480,"currentBalance":18792256,"emptied":false},{"address":"KT1Sxw5qpNoY4QqVgggDr2didvPtDqs8MGKc","balance":17600850,"currentBalance":18339868,"emptied":false},{"address":"tz1g6a2CVkkDbVb1JQMiQnSXjuPUkqNU8MYp","balance":17360385,"currentBalance":5885502,"emptied":false},{"address":"tz1Vd4fAzLXeVuv4pUvmfZoXwGuywUDwAFaA","balance":16946952,"currentBalance":20559178,"emptied":false},{"address":"KT1PqWBFYH7TiwAU226wy1DwwtnXoRFRu6r5","balance":16883359,"currentBalance":17592254,"emptied":false},{"address":"tz1bJcRvNVFRgNRL1T6dAUM4pB1uHRAUqVXG","balance":16690861,"currentBalance":17493298,"emptied":false},{"address":"tz1aaJ5uwwtASbQkyubcE9hu4JvkwNfduViG","balance":16540446,"currentBalance":17234938,"emptied":false},{"address":"tz1XT9KYBvKBvARVz9f2okayXMkXQLbqJfgi","balance":16186756,"currentBalance":16967671,"emptied":false},{"address":"tz1fFgW1zDHvfrNT46dZy8ETnPaoBizeUHr2","balance":15948896,"currentBalance":16719792,"emptied":false},{"address":"tz1R81i6xDXXkNcqEKTrfWMVfTuBwucQcm2X","balance":15364229,"currentBalance":16009335,"emptied":false},{"address":"tz1fFjMpXYpKBvaSw2V9djnM18Pzji7a3CVj","balance":15320087,"currentBalance":18876204,"emptied":false},{"address":"tz1UWSDW98mexXQquC9Jam6zWxoBtEoo9EZu","balance":15235936,"currentBalance":15812099,"emptied":false},{"address":"KT1QLnZfqi2fGzHN7FRd5d1BsKkxyPFpTaJL","balance":14926295,"currentBalance":15553015,"emptied":false},{"address":"tz1L2ZgTRTyiCRQ5empm52ouq2vn5ZjyJzhY","balance":14345130,"currentBalance":14947448,"emptied":false},{"address":"tz1WU9pemKyqEAhNXiUoajbi7B9RC1ed4K8V","balance":14311154,"currentBalance":15013128,"emptied":false},{"address":"tz1bMj813rUPiWi9FDwjgTpi811R6o1BQoiZ","balance":12707944,"currentBalance":13147940,"emptied":false},{"address":"tz1iqjWyrSZTmhV1okq6BDweoBzGVT1Catc1","balance":12672605,"currentBalance":13204692,"emptied":false},{"address":"tz1Mk7Ub9gHmgUWpEUqpzmMpcGLDvZtXWFme","balance":12550178,"currentBalance":13077130,"emptied":false},{"address":"tz1ao6HFpvXahT1UgbHU8Q845YwxGwfGf7kT","balance":11631960,"currentBalance":10246861,"emptied":false},{"address":"tz1gYPDSZyBMYYfzv595NYEfrEDWVopdCGPW","balance":11479406,"currentBalance":11961397,"emptied":false},{"address":"tz1RHMiwvBzWdD77fvGMTVGraMrLk3BHNyrS","balance":11390967,"currentBalance":11973102,"emptied":false},{"address":"tz1aCTAigzJdkKUH19A5P9CqMViVJxaezZmY","balance":11267383,"currentBalance":11740475,"emptied":false},{"address":"tz1RRXhv8nJbq6siCZE3UbpPXQG2EuL9TzS1","balance":10990333,"currentBalance":11451791,"emptied":false},{"address":"tz1bTao8eTkMMZrhwRPrjU5HpSeN3czw4T3A","balance":10531115,"currentBalance":10973294,"emptied":false},{"address":"KT1MDdKQ5QN3h2q9iNDqFGV98csdkFiiXcmK","balance":9708433,"currentBalance":9708433,"emptied":false},{"address":"KT1DaSTVGsh8BSbSeVZ1AyDngfPEFntpFeAZ","balance":9072559,"currentBalance":9072559,"emptied":false},{"address":"tz1hyc2XWqJ1VkkkmbtkVXCjQHGTbmfbEwuk","balance":9071934,"currentBalance":9071934,"emptied":false},{"address":"KT1Esi1Q19iKohp16iejnwSVfgrE1Yn9iYZ9","balance":8848733,"currentBalance":8848733,"emptied":false},{"address":"KT1UeAniuYbRLvwMqv4vQwak3eZHPPWjPWMF","balance":8286256,"currentBalance":8286256,"emptied":false},{"address":"KT1Fqv5sQ6vQi6izu9z5i5zLC6bg7FueDywK","balance":7399340,"currentBalance":7399340,"emptied":false},{"address":"tz1T6iG1EDGWvaTDXZubAapPy4cpXebFyQAR","balance":7150351,"currentBalance":7150351,"emptied":false},{"address":"tz1UQYv1C3WPu4sRLXoWnTNrVg5kMuvqwkvj","balance":7132101,"currentBalance":7132101,"emptied":false},{"address":"KT1DDacdWtMRLN7xCJse7Zf7tak9NSMxPnuP","balance":7008161,"currentBalance":7008161,"emptied":false},{"address":"tz1aDynhRYQerbCNUfRKAv5ZdrhQjQvDSAzm","balance":6864133,"currentBalance":6864133,"emptied":false},{"address":"tz1QyysnzkbH5WZXQsQsi4jf6i4qBeGEszwQ","balance":6655583,"currentBalance":8240378,"emptied":false},{"address":"KT19ccFz6rQwuaiTjgxhWYCcWzQZygCexGLU","balance":6523565,"currentBalance":6523565,"emptied":false},{"address":"tz1RuWdz19pXMM2F1N7tz9ebTZUxTy94RAJp","balance":6458644,"currentBalance":6458644,"emptied":false},{"address":"tz1cwp7qujsigxqaCiYxqozPoTYza69RqW4o","balance":6389151,"currentBalance":3388648,"emptied":false},{"address":"KT1G9KZg8z5RinBMiHWRLdx3pycN7UZRuoJC","balance":5952462,"currentBalance":5952462,"emptied":false},{"address":"KT1T9SQAP26huHLsgoDzp1EYFuZNrr61N6jS","balance":5909190,"currentBalance":5909190,"emptied":false},{"address":"KT19sPJ1GXjD51ia4VUHW3ocn4paoNW5rcUT","balance":5661047,"currentBalance":5661047,"emptied":false},{"address":"tz1XwcnHXatm41UwLiCH93gJsrefLNfQEYe6","balance":5461897,"currentBalance":5461897,"emptied":false},{"address":"KT1VuxkCb2jXWSbcTTYaLZzwrcwdsaJQeLP4","balance":5413433,"currentBalance":5413433,"emptied":false},{"address":"tz1hKNbDTJqjj3AL2MFwsdnhDiQhXvu9SLa8","balance":5067838,"currentBalance":5067838,"emptied":false},{"address":"tz1PJiMryJtJBRbe4AHZ47gtMxV2YAHZxsNK","balance":5037947,"currentBalance":5037947,"emptied":false},{"address":"KT1PCivps9ehcitiaESnTAFXnMJhTCBGraSQ","balance":5016193,"currentBalance":5016193,"emptied":false},{"address":"tz1gyZoD56iStaAeeeH4dmsSQAdCF1i9ixPn","balance":4979847,"currentBalance":4979847,"emptied":false},{"address":"tz1Moo9LhWGMVTnEacRg5PBHNq2voHxz5zeP","balance":4876639,"currentBalance":4876639,"emptied":false},{"address":"tz1anuStPsvpSWFwzpA5XmLYgS5CaZJEzboi","balance":4709004,"currentBalance":12897036,"emptied":false},{"address":"tz1fd3DiRxE9PzcW5rAM7UhB625un8oqe8CF","balance":4475261,"currentBalance":4475261,"emptied":false},{"address":"tz1SUMwzFbv9N4gUVv6Ywn2BXb6L8ZuHQ4nw","balance":4434939,"currentBalance":4434939,"emptied":false},{"address":"tz1NdfibiXci9hQnUk1NuaWgwdhY6emuE4bA","balance":4201016,"currentBalance":4201016,"emptied":false},{"address":"tz1ZGyutYcTpJopyunbDnBHADgioh5PKYweK","balance":4147975,"currentBalance":5880760,"emptied":false},{"address":"KT1KdSPNw9Bb19bgKRZg9LV5WrZXoB6s63NC","balance":4128621,"currentBalance":4128621,"emptied":false},{"address":"KT1SjHE2knKkNQ7ZkYoJFCvhcqYW9dmebmWY","balance":4000000,"currentBalance":4000000,"emptied":false},{"address":"tz2XeqeHxqZBEiUCTbEekYb3UDgPZfX4PF3w","balance":3973969,"currentBalance":4755428,"emptied":false},{"address":"tz1TqcNKXEFGEjqx5F2z2UcA1gk1pxEsdLDM","balance":3718213,"currentBalance":3707213,"emptied":false},{"address":"tz1ejfY1m4N9gy3WTP29vD1C3Ai3561EzXoQ","balance":3592660,"currentBalance":418130,"emptied":false},{"address":"tz1UGCGYUmVV68S1sabhzY1VCbBw5AtWAgCv","balance":3375267,"currentBalance":3375267,"emptied":false},{"address":"KT1U6M1UwEwoJz8zPmEtusgkyEsSQ8NEQY8Z","balance":3329366,"currentBalance":3329366,"emptied":false},{"address":"tz1L1XwcVmD2z4qPfLtBJ6RPThgAwLcXG6kW","balance":3175964,"currentBalance":34816972,"emptied":false},{"address":"tz2Xeqe4opwV1JkqYrNHcJ1jKzUMaiQXGfch","balance":3106056,"currentBalance":6239251,"emptied":false},{"address":"KT1TEqgqgSvNEV5VtTgXLSp51WNfrdBWzLjk","balance":3066046,"currentBalance":3066046,"emptied":false},{"address":"tz1R6rQPcMHKX5u1J6pZfKP8kSQJgLKHU1qG","balance":2982080,"currentBalance":2982080,"emptied":false},{"address":"KT1DvoXuk5csqnSkHWa82639N1WpwtXscvC3","balance":2957511,"currentBalance":2957511,"emptied":false},{"address":"KT1CkBiamTQvyPsUyHfc9NKjoaUPUmVaWyhp","balance":2947514,"currentBalance":2947514,"emptied":false},{"address":"KT1G2Tw7ukNWNHnqPw5MQHgq9mj5GiB7jyYo","balance":2901008,"currentBalance":2901008,"emptied":false},{"address":"tz1ZockEM4bXXwvrUvbLErvofPWEJj66Arsk","balance":2867996,"currentBalance":7631407,"emptied":false},{"address":"tz1imwm1XRzqg5dYwvdmy67FMjxEduhzdrTf","balance":2857403,"currentBalance":2857403,"emptied":false},{"address":"tz1X4sxpgg5X6aag4Mf1TmdWTrDbx3jBFwyT","balance":2810065,"currentBalance":2810065,"emptied":false},{"address":"KT1WFXv9bVLeGk83rKs4w4DmerTBDWhEMcFE","balance":2660168,"currentBalance":2660168,"emptied":false},{"address":"KT1Dna6SKSqA6B5bYqro1MRWiPsjrZ6enT74","balance":2651571,"currentBalance":2651571,"emptied":false},{"address":"KT1W1rmdoRjJD8LEuq2jL3uFB2zcQQ41XvP3","balance":2635773,"currentBalance":2635773,"emptied":false},{"address":"tz1YqXbVkJyfysN3w9ZxqoLrR9ru4ebY5JjX","balance":2495535,"currentBalance":2495535,"emptied":false},{"address":"tz1PjYXRbCL6YKvmpyiCBigK7G2NkbzbdkdB","balance":2481414,"currentBalance":2481414,"emptied":false},{"address":"KT1BQWBUY4knqARBEdqFeLwpKab4yhz3Fm5A","balance":2381419,"currentBalance":2381419,"emptied":false},{"address":"tz1MDNy3Nu23MAUmLHnJFao5ahnyoWfDx9rV","balance":2369022,"currentBalance":2532822,"emptied":false},{"address":"tz1QYKqJ5vXAXXCbbCNXFC4JFbeiXQXzceSU","balance":2353012,"currentBalance":2353012,"emptied":false},{"address":"tz1bk49Xre2MnV17YNZxPhddqDMovkFnuPPS","balance":2292331,"currentBalance":2292331,"emptied":false},{"address":"tz1SUREnFpoXFfEm2ikWSBFY4n6ivf13hp8Q","balance":2266124,"currentBalance":2406,"emptied":false},{"address":"tz1YCWh1wfbmirM2JLbF5GGfCBjQUvA7g7t4","balance":2162631,"currentBalance":2162631,"emptied":false},{"address":"KT1XWdbmBYQmuFgLm1dULXANVcoGQTmpZ1XJ","balance":2090589,"currentBalance":2090589,"emptied":false},{"address":"tz1Z4C1y84qpYPhWeDbNX88A1TkBpnDWrjGQ","balance":1946493,"currentBalance":1946493,"emptied":false},{"address":"KT1WBhKnDh122rLwnLwp1uW8uCzkfWQ1kMZH","balance":1897041,"currentBalance":1897041,"emptied":false},{"address":"tz1YUKwiv3uUMmjzdeQtAnrYk4aHh7KwFu93","balance":1845591,"currentBalance":1845591,"emptied":false},{"address":"tz1bkJCZJX8VjUZHwfEgf9V9m5KQDGqgDnXt","balance":1833087,"currentBalance":7691318,"emptied":false},{"address":"tz1TDe6JZeZQoWkiYFDFCssxVvmN74M6zAfV","balance":1739220,"currentBalance":6446425,"emptied":false},{"address":"tz1QB5LdNbZgfC2zxa26bMLARwDjv63M9gCg","balance":1720062,"currentBalance":1,"emptied":false},{"address":"tz1dTwuaqy69XVMnJDoMtEtcJYMQjdyCsaLN","balance":1685982,"currentBalance":3277561,"emptied":false},{"address":"KT1LgWZLctCwKEuaC5Zcy8QXZNibEDFNaXTp","balance":1623577,"currentBalance":1623577,"emptied":false},{"address":"tz1Woy5F9hBFnKEucMFtP9HPwmWHa3DEyaRj","balance":1591280,"currentBalance":1591280,"emptied":false},{"address":"tz1ZbokEB5tekbPxyWdo28ugn3UUkbQjguK3","balance":1473958,"currentBalance":3955889,"emptied":false},{"address":"tz1X8Lzs5zbXfSgchYcLm2ymhS7QDC1cz5Ep","balance":1472172,"currentBalance":1472172,"emptied":false},{"address":"tz1dZW5Tnhbs6HkzG2HBdgo3kagCPq47dUfY","balance":1466285,"currentBalance":1466285,"emptied":false},{"address":"tz1fhVND6cPEdZzbZWvQMqLz5EJQNiZ8dQEX","balance":1463769,"currentBalance":2551246,"emptied":false},{"address":"tz1cqQCbeh9WrFjmuuXG9XWBbaGhyUEpBxNw","balance":1448800,"currentBalance":1448800,"emptied":false},{"address":"tz1UZnap4oGDuXNxVK7BrP8B3CvGuvSr2wNf","balance":1433770,"currentBalance":11572594,"emptied":false},{"address":"tz1SQZ47RFjK26nEZ7Qau4knYBCgaHeJggMc","balance":1433534,"currentBalance":2581435,"emptied":false},{"address":"KT1G5m6Qk9duJeoP7zQW7Akyk2f2y5BHtzuJ","balance":1402414,"currentBalance":1402414,"emptied":false},{"address":"tz1dsvPTAN1cF4dReiZo1ZrzAppBWcRcRTbr","balance":1335724,"currentBalance":1335724,"emptied":false},{"address":"KT1XHSLHnqQaocFwAyLXGKGczFcnGK4qhwnq","balance":1317377,"currentBalance":1317377,"emptied":false},{"address":"tz1emWx1hfSLkFYXhhyxQ8NX1BTzwk1RpySW","balance":1287074,"currentBalance":1287074,"emptied":false},{"address":"tz1SXtCyKkgeifcK4hvmd6KV7zZEvEEnNxR2","balance":1241903,"currentBalance":1241903,"emptied":false},{"address":"KT1X6MdxcomohfjPfZ7WBNp9wpzf9iWH5niV","balance":1203807,"currentBalance":1203807,"emptied":false},{"address":"tz2Xeqe5U8iPf6xPmRjzMM1W2o9p9APqKZhp","balance":1190234,"currentBalance":11420677,"emptied":false},{"address":"tz1SryCXCRcWWCc168ED8sRW7UBAaiwPg2LY","balance":1185598,"currentBalance":1185598,"emptied":false},{"address":"KT1XSCMBNNjvYUEsXbLxTZeWda8CAcz8ipUm","balance":1169036,"currentBalance":236,"emptied":false},{"address":"tz1cAuRa3dCNBJUbmAP4r8cyzYWKfP7N2rSL","balance":1156198,"currentBalance":1156198,"emptied":false},{"address":"tz1fSN8YEdC67UwJChfLahA4BoWWHGXAQPhU","balance":1149633,"currentBalance":1149633,"emptied":false},{"address":"tz2Dq8MZSYbS7USTkPeJjZ7qpYjdCNGfAZdE","balance":1144209,"currentBalance":1144209,"emptied":false},{"address":"KT1CdTv5PUDneehaMcL4RBBsQo2vb8RbXy4V","balance":1137838,"currentBalance":1137838,"emptied":false},{"address":"tz1PnbhBb2TV4tJjX1BpAScx8rPk2YAcc5VD","balance":1058669,"currentBalance":2572165,"emptied":false},{"address":"KT18h3ZuYE7x41vGw3ck4bjHXs7DUK3ZWQMF","balance":1051606,"currentBalance":1051606,"emptied":false},{"address":"tz1SVRxhanh1XWe2yu3r445uY33zgvKRCJG9","balance":1038835,"currentBalance":1038835,"emptied":false},{"address":"tz1bWdgitBxGvBDacgZDGu6i7uKsFPixhkmZ","balance":1035083,"currentBalance":1035083,"emptied":false},{"address":"tz2Xeqe4qJPA9xeh5Z8qz8WMmxsNo3FkwVG7","balance":1012448,"currentBalance":1012448,"emptied":false},{"address":"tz1Rfd2ZwEgDZUBCG9SXFMW3KKfuSMx5L12V","balance":999166,"currentBalance":999166,"emptied":false},{"address":"tz1Q11DHvu9ZAcieiAWU4ffyRXwesaqM8qKX","balance":999166,"currentBalance":999166,"emptied":false},{"address":"tz1RGtzQJfu6vMhXXwzBtra1xVDhtSB3KGUZ","balance":951991,"currentBalance":951991,"emptied":false},{"address":"KT1EBNereHBqbLMkMYTzCpia7F9ShW8sEsqy","balance":943362,"currentBalance":943362,"emptied":false},{"address":"tz1eSbJKiZCtKGXaw8EyP7TBJKjeFKJqEt8u","balance":928731,"currentBalance":928731,"emptied":false},{"address":"tz1eE4khL2YN2TsR6P9feZkwh6h1yiAfmD3S","balance":916512,"currentBalance":916512,"emptied":false},{"address":"tz1Q8qFQH4wTM5L6mqT1JEBtG9tzkU3GqtU7","balance":898302,"currentBalance":898302,"emptied":false},{"address":"tz1SktFxrvyGB3iqYgWqmLCJvQpwbPvD6ynp","balance":897118,"currentBalance":1734407,"emptied":false},{"address":"tz1YH6miEQBbH9tFP5svwscP1qNPKXPM1VW2","balance":889796,"currentBalance":889796,"emptied":false},{"address":"tz1QNsfxJBa8KJr4eS2fiubGbDcGmRryp5f8","balance":840603,"currentBalance":840603,"emptied":false},{"address":"tz1Z6BsY2y9RtHwqFNuCxSHeyrANhbJ2dccr","balance":817331,"currentBalance":817331,"emptied":false},{"address":"tz2XeqeKNSRa4H6Xg6Z65eDcBmsTyFfe9SEb","balance":745199,"currentBalance":745199,"emptied":false},{"address":"KT1N7ciDJbxnxjVn6k1faiTKzKhgaSfLKt59","balance":741967,"currentBalance":741967,"emptied":false},{"address":"KT1UXatfbzdr5okigNpXvFS2VvM72Tm5QmuD","balance":716211,"currentBalance":716211,"emptied":false},{"address":"tz1VALUZim3EtQBg7N6mrN8s39peXWztzyFS","balance":714199,"currentBalance":714199,"emptied":false},{"address":"KT1HNgs6k3uEPLh7MbGjp9ipxHidBWGGhoqY","balance":710554,"currentBalance":710554,"emptied":false},{"address":"tz1RmgZX9FNGbnuKzUPvduuaWKFyrgwfQeAW","balance":701504,"currentBalance":701504,"emptied":false},{"address":"KT1U9MJRHv9qdtHxJcXjyLyX7vdNbG3zz8Mu","balance":674152,"currentBalance":674152,"emptied":false},{"address":"tz1LdisB5zwHkr5YDdh3cUwg8cu1KsLcAmbd","balance":665998,"currentBalance":1140205,"emptied":false},{"address":"tz1bH4aD512h437nwyQucZcuyMnmExFUKMD4","balance":660951,"currentBalance":660951,"emptied":false},{"address":"tz2XeqeHy6ZXdZvFq6Lk4yAGASVEoHt48tPW","balance":647725,"currentBalance":4607282,"emptied":false},{"address":"tz2XeqeK6L46AW1rHH7c6Gi3kc4eKEpP4FhY","balance":637653,"currentBalance":637653,"emptied":false},{"address":"KT1GuRpgkd9wCsaoU6GHrhwNG1NjzH7W291Z","balance":629361,"currentBalance":629361,"emptied":false},{"address":"tz2Xeqe4khB4Ghetuzgdu9PprZRBowCzRoWN","balance":622604,"currentBalance":4688626,"emptied":false},{"address":"tz1NmevmAdpNMF8LXv4bYcbBSkJzq5Qsjry5","balance":614892,"currentBalance":614892,"emptied":false},{"address":"tz1aeqN21nDpK6GX5sH2mmwyGxJpxmZHBgEp","balance":593663,"currentBalance":1079773,"emptied":false},{"address":"tz2XeqeNw8U89gSdmq7acTqvJRNCUvCwFjo5","balance":593290,"currentBalance":593290,"emptied":false},{"address":"tz1SVSiCPbHdRi1xSoyVuvpmny4bgETJmpME","balance":585073,"currentBalance":585073,"emptied":false},{"address":"KT1PeeC5HDV1FAueixJF75e4DGyvsLBTuBXL","balance":506163,"currentBalance":506163,"emptied":false},{"address":"KT1BoPhaVSypwNxc8vojXLjW43yL9vxZUrHX","balance":497882,"currentBalance":497882,"emptied":false},{"address":"tz1QptmjQWPkv7iwa9qrw8ECScLAfPkmvwCu","balance":489300,"currentBalance":489300,"emptied":false},{"address":"KT1LYfYqDRHqbkswwQYWd3kURHHHbo8qo56B","balance":478938,"currentBalance":478938,"emptied":false},{"address":"tz1g8vgvvGi3vKU12LT9jfJ5oGSx7pNmQLKb","balance":425293,"currentBalance":836407,"emptied":false},{"address":"KT1C8K7dVQfC83PngySbnytpFbPwVSiSwzbP","balance":385738,"currentBalance":261667,"emptied":false},{"address":"KT1DdoNksZWRDeTzgzTntXFbdRVCb1bSzH6k","balance":385581,"currentBalance":385581,"emptied":false},{"address":"tz1Xf2wsRXEevRdCBE1ZEu6fYwQToUnc9Wvw","balance":377941,"currentBalance":366941,"emptied":false},{"address":"tz1UPcX1mZXupVjDrnLy9JEccKY8B1xCH8Vt","balance":375259,"currentBalance":346697,"emptied":false},{"address":"tz1QHvePLWRT7E4CJuVVLxFUjNbMNa3hjydp","balance":355966,"currentBalance":355966,"emptied":false},{"address":"KT1E6ZuQpx8thATa3DXYxEUSUpo8mzNYDG3v","balance":352776,"currentBalance":352776,"emptied":false},{"address":"KT1B8gPQrL1GTx5dNmFWxiJ7EcnsAJLSVRAr","balance":344298,"currentBalance":344298,"emptied":false},{"address":"tz1W7Kgs6814REJBrYTmcAexTnjkvhHfzz1Z","balance":335082,"currentBalance":1242484,"emptied":false},{"address":"tz2Xeqe5TJKZUpEpqNycHPRkZXbEQr61RJFa","balance":333103,"currentBalance":3171259,"emptied":false},{"address":"KT1FGT61GsK8WqBjNRt9iaH8TqUHYnBZFA4W","balance":332668,"currentBalance":332668,"emptied":false},{"address":"tz1MVF37cBSinkzbtPAso2Ty5TeZmiJXMR5m","balance":298189,"currentBalance":5318223,"emptied":false},{"address":"tz1UETA3UM2yXR5UHxsHP9hy6ueTUDtkCixB","balance":291688,"currentBalance":291688,"emptied":false},{"address":"tz1aNmqLfEbr1KXUh5Z4K5SxipHnkP8tWie4","balance":289613,"currentBalance":735526,"emptied":false},{"address":"KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR","balance":281513,"currentBalance":281513,"emptied":false},{"address":"KT1JZh1DVXj3ZiJHhnFVWN73D9qPdYZxA1GZ","balance":273613,"currentBalance":273613,"emptied":false},{"address":"tz1Xp3Pmg468iEZPotQow8aAmzwzAL9CdJjn","balance":261088,"currentBalance":261088,"emptied":false},{"address":"tz1Pvbj4J7DTzcNbrxZhY9FDVBrCX8G9vLpV","balance":257104,"currentBalance":257104,"emptied":false},{"address":"tz1Rx4cKtfFJdS3rS9aRXQZT2NGruiBDPz15","balance":255440,"currentBalance":279036,"emptied":false},{"address":"KT1GFQWjnitsvekzUmtKPhfJSmcDTebx2ugb","balance":243780,"currentBalance":243780,"emptied":false},{"address":"KT1WLwDWL89rxPMSQJ4kLGETMASxUqY8vWd3","balance":235696,"currentBalance":235696,"emptied":false},{"address":"tz1V5QPoXBd35eK8irtFfrxBKrHYQHDz6piS","balance":235096,"currentBalance":235096,"emptied":false},{"address":"tz1ejD1vdVefcBdD48o446Sju5Hya2MVHTj6","balance":227939,"currentBalance":227939,"emptied":false},{"address":"tz1ekF3WqER31x4U3riRtE8PAv7Lnd1cFJ7i","balance":219867,"currentBalance":219867,"emptied":false},{"address":"tz1RNEMGpcxRnumNmQtEB16LKLeXXu77rHva","balance":210750,"currentBalance":210750,"emptied":false},{"address":"tz1Y5FRYFt8e4CPF61udrjZkdYE4uoYBsmyr","balance":210750,"currentBalance":210750,"emptied":false},{"address":"KT1KLbkEY952sxF7SsYhLqqojs7uKXZRirdT","balance":210695,"currentBalance":210695,"emptied":false},{"address":"tz1aXnkvnxVb55j16rAJYvmsTnbnWG2N5oFv","balance":203779,"currentBalance":5817249,"emptied":false},{"address":"KT1DWUC5YZkAhgMrJqGvfgCsso8d7rUXaV3D","balance":202875,"currentBalance":202875,"emptied":false},{"address":"KT1NX7KSCNQjT8fx3KRX4vL2zEgq3iwKWkqe","balance":197961,"currentBalance":197961,"emptied":false},{"address":"tz1gSjEPXCqj8sHZnCbMpz7ZWRsjnGcEC22T","balance":191330,"currentBalance":191330,"emptied":false},{"address":"tz1hc63jbfqZYLpQCAKvsZKoSy2Ec4xvwA5q","balance":190572,"currentBalance":190572,"emptied":false},{"address":"KT1Fzs2ZmqJP5fKXYkZY2fy5qTK65BSzBe9d","balance":172055,"currentBalance":172055,"emptied":false},{"address":"KT1WrmdxQaoQMoNTUmt2sfUyhJsPEGcDsVDZ","balance":166892,"currentBalance":166892,"emptied":false},{"address":"tz1TMXEnp8WYxeRXN75L28V163FVRPtfAEw8","balance":163201,"currentBalance":163201,"emptied":false},{"address":"KT1R3M7bFTBLcCEdWuDbKLwQ9jPkJw4xieoV","balance":151406,"currentBalance":151406,"emptied":false},{"address":"KT1CpSYBVRTDzg14rUS9BiJxKB34AGmwERV5","balance":138587,"currentBalance":138587,"emptied":false},{"address":"tz1gGczbzTypc4KthAnUq4ub99pET1FsaybW","balance":128177,"currentBalance":128177,"emptied":false},{"address":"KT1Afb5GpU4auWKNKcEiKVboCrJWbMLoHUQd","balance":112579,"currentBalance":112579,"emptied":false},{"address":"tz1ivuUi9DyfztY32uY383ce6eLGKNUT1GaB","balance":106879,"currentBalance":106879,"emptied":false},{"address":"KT1N2kJZFGF8goP3Yz8ti7LwSaLz1vMSq5Nm","balance":100661,"currentBalance":100661,"emptied":false},{"address":"tz1QeH5hj2hNacp2eQ827SQk2g5xTJxirPLs","balance":97908,"currentBalance":97908,"emptied":false},{"address":"KT1J8T7U6J1BAo9fJAxvedHsNErnejwvPyUH","balance":89940,"currentBalance":89940,"emptied":false},{"address":"tz1QLtz8TBbbwg96miE1Cw6r8qdNXYxtoqHL","balance":72095,"currentBalance":72095,"emptied":false},{"address":"KT1DRBZNSWt1YC31LyUY3UFd4esHHhFqseBS","balance":70969,"currentBalance":70969,"emptied":false},{"address":"tz1gWPGm8JDE951W3jbtRb3SEbBcCQfbTXLM","balance":67097,"currentBalance":67097,"emptied":false},{"address":"tz1SaYQMJJsr5B9Lx255FbTHLWEEK5AzNdxz","balance":57085,"currentBalance":57085,"emptied":false},{"address":"tz1SdUBQvk5R1JMAKEE9ezJBkFoKGpv1pBHQ","balance":55808,"currentBalance":55808,"emptied":false},{"address":"KT1H2kykVtyVef8BzM8hJQZHJ62gisfEDTqi","balance":55125,"currentBalance":55125,"emptied":false},{"address":"tz1VU6fzXJ1pHazPAAfL9EwBtac959arAgkU","balance":53614,"currentBalance":53614,"emptied":false},{"address":"KT19aegCWQ1RTejjoBYBAPJzcbJupR9CBcyX","balance":52666,"currentBalance":52666,"emptied":false},{"address":"tz1ZoqzHtm1ciwaGXP43AyUfEQ2uCBYTMAun","balance":52164,"currentBalance":52164,"emptied":false},{"address":"KT1WExZ6AL7N3k4Z3JRRHTeDJLuBASjbhVKd","balance":51425,"currentBalance":51425,"emptied":false},{"address":"KT1R24ygjvkkoib9Zsd3ww7Zpo2aNGUxSGXr","balance":51308,"currentBalance":51308,"emptied":false},{"address":"KT1DNBQxyQfaCN7b4NjdZxujupfX4jwatBYV","balance":50000,"currentBalance":50000,"emptied":false},{"address":"tz1cQSFC7CygBAEqvTHqRZHrzqmY88vJJwc2","balance":43573,"currentBalance":43573,"emptied":false},{"address":"KT1EFVH7GagEsgD7DG5eKqFniUpaE1KcqfWp","balance":42665,"currentBalance":42665,"emptied":false},{"address":"KT1TWPamKVQ7F5WQBrqmrkCv1HMxEXXJDQFB","balance":33297,"currentBalance":33297,"emptied":false},{"address":"KT1AEs53ibPZ5XT77KRbb1HFhAUGazgHxzvS","balance":30000,"currentBalance":30000,"emptied":false},{"address":"tz1YCyMmXtTY83smS9bDWYLiZMxMgbE8Ggxy","balance":26543,"currentBalance":26543,"emptied":false},{"address":"KT1RBqbF1cWTyCMWHabUpHmETCP9KN5M8ks5","balance":23349,"currentBalance":23349,"emptied":false},{"address":"tz2917sFmzf14fUHEm9ywCdzvsfwBJCJXas4","balance":19218,"currentBalance":19218,"emptied":false},{"address":"tz1WTkPTYCPAFDfhJXBbK336ePKFrwa1ZVc1","balance":17189,"currentBalance":17189,"emptied":false},{"address":"tz1QgoYLP6QziYvEGggXPUS4X6yky4XayU8o","balance":17101,"currentBalance":17101,"emptied":false},{"address":"KT1RBPh9izZKcJx7chzpWd1ZoCbu9rx3ZJpP","balance":13212,"currentBalance":13212,"emptied":false},{"address":"KT1HZSFTfmVkRkwajVuxiXoovgdm29D6X3Wq","balance":11495,"currentBalance":11495,"emptied":false},{"address":"KT1VTbwyXsGxbGQtfREpW9oNeuEiPz3ZigL7","balance":10000,"currentBalance":10000,"emptied":false},{"address":"KT1HyKFXcHXySJYkhsN3gAnXKCsDEdRfiUcg","balance":10000,"currentBalance":10000,"emptied":false},{"address":"KT19rZZ7a593jKtDRkfyXYVTANCtXutQFJPW","balance":7533,"currentBalance":7533,"emptied":false},{"address":"KT1TbF8W4cpf975twewZddU1XvPsgU9VGyFM","balance":5726,"currentBalance":5726,"emptied":false},{"address":"KT1RSbzm5GQ3RP9Esvy6sxtqaSs4Wz7bV4Ag","balance":5000,"currentBalance":5000,"emptied":false},{"address":"KT1UJVW92FXpo4fY7Ym2VcmU9CfXP2xWCq1p","balance":5000,"currentBalance":5000,"emptied":false},{"address":"KT1VT2Z5PVk3fLU3dW5wFYofu8X2jWKuZ3RL","balance":2000,"currentBalance":2000,"emptied":false},{"address":"KT1GhbDXpNTKp75HvtwdxaTY7eZt88nhAZz4","balance":1493,"currentBalance":1493,"emptied":false},{"address":"KT1SERQjJogR6zZUWU1sDU93juekYsqXprkQ","balance":567,"currentBalance":567,"emptied":false},{"address":"KT1L5FKSQK5DwDuQjkVbcXU7VUPwks2zRm1j","balance":116,"currentBalance":116,"emptied":false},{"address":"tz1U7FhZJDq7qVjUKLmisW2KpqH9fBugNE1D","balance":32,"currentBalance":32,"emptied":false},{"address":"KT1E6fLbBv2JgPmjc6D7XyWZLeSF6XDBassu","balance":21,"currentBalance":21,"emptied":false},{"address":"KT1H1AUdDYeLh1HoTVAK2dhmBoDZSKcXN5mE","balance":2,"currentBalance":2,"emptied":false},{"address":"tz1crF9UuSpKekMebnxQk92Ad1WSVWUp1duU","balance":1,"currentBalance":1,"emptied":false},{"address":"KT1AaujJdS18aUm8s3TNW8s27qmgQQQNjuwf","balance":1,"currentBalance":1,"emptied":false},{"address":"tz2XeqeNsPjEnFt6DR7LBnwHrYQjGNMTNtDq","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1ikBrfYXv8UyYqHAwufhvFf69ULsSeCywr","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1Y77S4EcSQwyUWzAwtYGU6NTtKXbH3VQLg","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1QCc3LVUwUkwtWxLzqwXNacGUxhshVwpVu","balance":1,"currentBalance":1,"emptied":false},{"address":"KT1HDPvfAVi4fFcFXEU68kLU3NPhcuB84ML4","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1QQ5rfGLcxuCcFB23mutDukqXfU5Pg9sfj","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1UBx7YpuRiLVugA8qbFd9kitqwYDHAtf21","balance":1,"currentBalance":1036651,"emptied":false},{"address":"tz1daok4j8YTyzktM3sQgHs7mQXmC5Td67Gg","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1ivKjEv8mBnodzKRi7nqaVQSLp6FCdipz4","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1ddqu7yDWd1ubFTn25u12q4j9jVw3pPwek","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1cpNkRGzA5j5BHHj68FrhkjDmfmty4zDWJ","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1fmFHUmrKTmwAtai2A4nJiFdp7pKvWYmDP","balance":1,"currentBalance":1,"emptied":false},{"address":"tz2XeqeK4CKdaBwbJ24uB1Xs8zCBpkhNGPTs","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1hJVe3GrVYAUwFGxhEy4DYcUvR7BJtvazY","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1gnUaNgiiAgEQdcdkafdaNQjUZzkK33vyx","balance":1,"currentBalance":1,"emptied":false},{"address":"tz2MMfCb5DeGieT5jt7MW8X4wHYx66iTZApd","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1X4sTq1YoGSa79QUgH9wL7qFX2eAuHSGzP","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1aoKNZ9PrCr9tswgGTBkzkgrqMW6BTkcAR","balance":1,"currentBalance":1,"emptied":false},{"address":"tz2XeqeKLaK2ipRsfKebEQ55ij1dg3baTq5S","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1WHMkXRn2Un4npdjSNZzcycXJK9NWRu91m","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1SLWhk8pwps9hEGEon1SFHVD54n7cBKkcM","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1coivWrvBQpF3ZQCBcB9Zncdrwn8Fgbg96","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1bM2TokVXyiMt8PCcn9NCFTDcEPH99AfD5","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1NbSd6GVnJZhzj4TtMGgs52Cmetkp9uuRh","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1duCWi2SxVaMZ69DxQ4em5Sxk4RQPfusy1","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1VakNzn6GsCiW6pQFMF4hDxyBJtTTkCV9B","balance":1,"currentBalance":1,"emptied":false},{"address":"tz1eG7RpipQwwDPXsJ7GLaxUqqpFuus4ehk6","balance":1,"currentBalance":1,"emptied":false},{"address":"KT1CM6Vb5cWS3Y5eXU1q1gbDYse1Hig9YFjp","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1S2Tiyt4Nz5PDCFQpF3xF9WgYJDvWDEcmo","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1EBHEUWaqKeNZ9kK67AbhMD4MNdikmfvXX","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1RFdYnBdqokzkHjScZQ16GK6fczvJ582x6","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1NDdMypGentwFtUjivb6xdim7WfCuR5n2x","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1Uuz6BqqgTHrB92wi31qFgczZvQZRtScs3","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1SCUe5Dpd4hB2Vjb7qGVTafRcQREvLnqxC","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1Fg6Y2ZyGvuX8kAGNd5iMCqg1kZGsUsWNh","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1Abv1Ui9kqdLSEnngQodBTcVcXMKhDcniC","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1GbxL7hUSwaotVh2kDSGuuCunrmPgXRwxC","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1RrVwdAwrFM1kREEyDd7Sx1YqfrWQYyPhR","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1UsnNBfRqKjJQFd7yGhoJfczhuk6RfuVV3","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1NgojupHTegYBohf3UoAE9shfJBdSamZVM","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1JFgKWyMmamddQcjrHgRruaf3qkE33XQCJ","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1EWMPYx8mYsMTAhdGEX8PSGAHQVxp1GiX5","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1T14WrhNCvaBDwn1TxxnseFDvFJCUJuJkD","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1TYbNqjwUmfm9EHD5BHHo8BGQPqqQCPoF8","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1EamjLeYwYeC6BWvmpwKyWozQ7xtiJn7HT","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1E57Z6tAuuKYDJp4aNxPZbRYotEod42eb8","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1DGWMzDncxgbw7CtTAmeaTG1QiXQwCYhaQ","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1XRSF9sko9ndTQuYN5aqTjMhdLgpva9y2w","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1MQCuEMiK3aHt8Cwkzw7ZR9EuNBZXEaQJB","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1NBZYXkDNS3QNg7uZsBhVQRi1Hh9MfHj8X","balance":0,"currentBalance":0,"emptied":false},{"address":"KT1UcsSaKskyPdt61cfnY1JfU373rMraNAC2","balance":0,"currentBalance":0,"emptied":false}],"ownBlocks":56,"extraBlocks":0,"missedOwnBlocks":0,"missedExtraBlocks":0,"uncoveredOwnBlocks":0,"uncoveredExtraBlocks":0,"uncoveredEndorsements":0,"ownBlockRewards":556292704,"extraBlockRewards":0,"missedOwnBlockRewards":0,"missedExtraBlockRewards":0,"uncoveredOwnBlockRewards":0,"uncoveredExtraBlockRewards":0,"uncoveredEndorsementRewards":0,"ownBlockFees":9797472,"extraBlockFees":0,"missedOwnBlockFees":0,"missedExtraBlockFees":0,"uncoveredOwnBlockFees":0,"uncoveredExtraBlockFees":0,"doubleBakingLostDeposits":0,"doubleBakingLostRewards":0,"doubleBakingLostFees":0,"doubleEndorsingLostDeposits":0,"doubleEndorsingLostRewards":0,"doubleEndorsingLostFees":0,"revelationLostRewards":0,"revelationLostFees":0,"futureBlockDeposits":0,"blockDeposits":0,"futureEndorsementDeposits":0,"endorsementDeposits":0}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:06 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873963'
+      Tzkt-Level:
+      - '4873963'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:23:01Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/head
+  response:
+    body:
+      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":690,"level":4873963,"hash":"BM4zzyg72k5oQKMUm3EEEZyd9TB5evhqurZcZWXeWkMTsGz3jzC","protocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","nextProtocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","timestamp":"2024-01-05T21:23:00Z","votingEpoch":55,"votingPeriod":113,"knownLevel":4873963,"lastSync":"2024-01-05T21:23:01Z","synced":true,"quoteLevel":4873963,"quoteBtc":2.112388872844163E-05,"quoteEur":0.844757931418738,"quoteUsd":0.9239466247895785,"quoteCny":6.558727510731311,"quoteJpy":133.75531792698828,"quoteKrw":1214.5877922584375,"quoteEth":0.00041195122882407327,"quoteGbp":0.7265306452572892}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:07 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873963'
+      Tzkt-Level:
+      - '4873963'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:23:01Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+version: 1

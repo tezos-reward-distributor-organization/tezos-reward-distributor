@@ -20,10 +20,7 @@ def python_version_ok(args=None):
     print("Checking python version ...\n")
     major = sys.version_info.major
     minor = sys.version_info.minor
-    if not (
-        major >= PYTHON_MAJOR
-        and minor >= PYTHON_MINOR
-    ):
+    if not (major >= PYTHON_MAJOR and minor >= PYTHON_MINOR):
         raise Exception(
             "... must be using Python {}.{} or later but it installed is {}.{}. Please upgrade!\n".format(
                 PYTHON_MAJOR,
@@ -68,8 +65,8 @@ def renamed_fee_ini(args=None):
         try:
             os.rename("fee.ini", "fee.ini.old")
             print("File fee.ini has been renamed to fee.ini.old")
-        except:
-            print("Failed: File fee.ini needs to be manually deleted or renamed")
+        except Exception as e:
+            print("Failed: File fee.ini needs to be manually deleted or renamed:", e)
             return False
     return True
 
@@ -96,10 +93,6 @@ def new_protocol_not_live(args=None):
         return True
 
 
-def in_venv():
-    return sys.prefix != sys.base_prefix
-
-
 def installed(package):
     """
     The error status is 0. (bool(0) == False)
@@ -108,7 +101,8 @@ def installed(package):
     try:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
 
     # if hasattr(pip, "main"):
@@ -119,13 +113,6 @@ def installed(package):
 
 
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
-    if not in_venv():
-        print(
-            "Please make sure to activate a virtual environment for python due to breaking changes in Ubutu >= 23.XX:\n"
-            "https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/ \n"
-        )
-        return False
-
     print("Checking installed packages ...\n")
     missing_requirements = []
     try:
