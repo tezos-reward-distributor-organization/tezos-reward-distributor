@@ -1,3 +1,4 @@
+import vcr
 from unittest import TestCase
 from src.calc.calculate_phase0 import CalculatePhase0
 from src.model.reward_log import TYPE_OWNERS_PARENT
@@ -10,6 +11,11 @@ REWARDS_TYPE = RewardsType.ACTUAL
 
 
 class TestCalculatePhase0(TestCase):
+    @vcr.use_cassette(
+        "tests/unit/cassettes/test_calculate.yaml",
+        filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
+    )
     def test_calculate(self):
         nw = DEFAULT_NETWORK_CONFIG_MAP["MAINNET"]
 

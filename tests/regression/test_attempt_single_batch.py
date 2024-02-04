@@ -40,7 +40,7 @@ TEST_TZ_ADDRESS = "tz2JrnsSXPkN3QHKsYm1bGijwVHc1vFaR5kU"
 
 
 @patch(
-    "cli.client_manager.ClientManager.request_url_post",
+    "src.cli.client_manager.ClientManager.request_url_post",
     side_effect=[
         (HTTPStatus.OK, run_ops_parsed),
         (HTTPStatus.OK, forge),
@@ -49,14 +49,14 @@ TEST_TZ_ADDRESS = "tz2JrnsSXPkN3QHKsYm1bGijwVHc1vFaR5kU"
     ],
 )
 @patch(
-    "cli.client_manager.ClientManager.request_url",
+    "src.cli.client_manager.ClientManager.request_url",
     side_effect=[
         (HTTPStatus.OK, 3209357),
         (HTTPStatus.OK, payment_head),
     ],
 )
 @patch(
-    "cli.client_manager.ClientManager.sign",
+    "src.cli.client_manager.ClientManager.sign",
     return_value=forge,
 )
 def test_attempt_single_batch_tz(sign, request_url, request_url_post):
@@ -65,7 +65,7 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
         node_url="node_addr",
         pymnt_addr=TEST_TZ_ADDRESS,
         clnt_mngr=ClientManager(
-            node_endpoint=PUBLIC_NODE_URL[CURRENT_TESTNET],
+            node_endpoint=PUBLIC_NODE_URL["MAINNET"],
             signer_endpoint=PRIVATE_SIGNER_URL,
         ),
         delegator_pays_ra_fee=True,
@@ -101,7 +101,7 @@ TEST_KT_ADDRESS = "KT1SZrurTqTBWsWsZUVR27GZ8bHK3EhFV62g"
 
 
 @patch(
-    "cli.client_manager.ClientManager.request_url_post",
+    "src.cli.client_manager.ClientManager.request_url_post",
     side_effect=[
         (HTTPStatus.OK, run_ops_parsed),
         (HTTPStatus.OK, forge),
@@ -111,14 +111,14 @@ TEST_KT_ADDRESS = "KT1SZrurTqTBWsWsZUVR27GZ8bHK3EhFV62g"
     ],
 )
 @patch(
-    "cli.client_manager.ClientManager.request_url",
+    "src.cli.client_manager.ClientManager.request_url",
     side_effect=[
         (HTTPStatus.OK, 3),
         (HTTPStatus.OK, payment_head),
     ],
 )
 @patch(
-    "cli.client_manager.ClientManager.sign",
+    "src.cli.client_manager.ClientManager.sign",
     return_value=forge,
 )
 def test_attempt_single_batch_KT(sign, request_url, request_url_post):

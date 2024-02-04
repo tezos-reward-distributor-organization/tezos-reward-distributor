@@ -1,7 +1,8 @@
 #  FIXME redo mockups for this test
 from unittest.mock import patch, MagicMock
+import vcr
 
-from src.pay.batch_payer import BatchPayer
+from src.pay.batch_payer import BatchPayer, TX_FEES
 from src.cli.client_manager import ClientManager
 from src.Constants import (
     PUBLIC_NODE_URL,
@@ -38,27 +39,34 @@ baking_config = make_config(
 
 PAYOUT_CYCLE = 500
 PAYMENT_ADDRESS_BALANCE = int(1000 * MUTEZ_PER_TEZ)
+forge = "0" * (TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
 
 
+@patch("src.cli.client_manager.ClientManager.sign", MagicMock(return_value=forge))
 @patch(
-    "rpc.rpc_reward_api.logger",
+    "src.rpc.rpc_reward_api.logger",
     MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)),
 )
 @patch(
-    "pay.payment_producer.logger",
+    "src.pay.payment_producer.logger",
     MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)),
 )
 @patch(
-    "calc.phased_payment_calculator.logger",
+    "src.calc.phased_payment_calculator.logger",
     MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)),
 )
 @patch(
-    "pay.batch_payer.logger",
+    "src.pay.batch_payer.logger",
     MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)),
 )
 @patch(
-    "pay.batch_payer.BatchPayer.get_payment_address_balance",
+    "src.pay.batch_payer.BatchPayer.get_payment_address_balance",
     MagicMock(return_value=PAYMENT_ADDRESS_BALANCE),
+)
+@vcr.use_cassette(
+    "tests/regression/cassettes/test_batch_payer_total_payout_amount.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_batch_payer_total_payout_amount():
     # NOTE: For better payment tests we are doing actual tzkz api calls for reward calculation

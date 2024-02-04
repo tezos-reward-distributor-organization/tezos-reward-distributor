@@ -89,12 +89,12 @@ class TestVerboseLoggingHelper(TestCase):
     def test_is_archive_file(self):
         self.assertTrue(
             self.verbose_logging_helper.is_archive_file(
-                "app_verbose_init_20200101000000.zip"
+                "app_verbose_init_20200101000000.gz"
             )
         )
         self.assertTrue(
             self.verbose_logging_helper.is_archive_file(
-                "app_verbose_10_20200101000000.zip"
+                "app_verbose_10_20200101000000.gz"
             )
         )
         self.assertFalse(
@@ -104,7 +104,7 @@ class TestVerboseLoggingHelper(TestCase):
         )
         self.assertFalse(
             self.verbose_logging_helper.is_archive_file(
-                "app_log_init_20200101000000.zip"
+                "app_log_init_20200101000000.gz"
             )
         )
 
@@ -119,7 +119,7 @@ class TestVerboseLoggingHelper(TestCase):
         )
         self.assertFalse(
             self.verbose_logging_helper.is_log_file(
-                "app_verbose_init_20200101000000.zip"
+                "app_verbose_init_20200101000000.gz"
             )
         )
         self.assertFalse(

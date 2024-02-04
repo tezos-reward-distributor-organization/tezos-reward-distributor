@@ -1,0 +1,88 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/contracts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ/manager_key
+  response:
+    body:
+      string: '"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3"
+
+        '
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 840ec814eacb3a7e-FRA
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Jan 2024 21:23:17 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=S7xmloYafWd1ovLSGusxBi%2F%2BA57n%2FJg%2FBYQnrZv7h5yd67nUpPqzbXD8rld%2F9MsWka%2FshYARg1cC4gmp1K%2B7Lry5zqL%2FnfYCZILEaWfXgVvg1aMIP0Pk9k%2BAjzK644SohO61eE0w0xlXIofoeE7hwg%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      access-control-allow-origin:
+      - '*'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://mainnet.smartpy.io/chains/main/blocks/head/context/delegates/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+  response:
+    body:
+      string: '[{"kind":"temporary","id":"proto.017-PtNairob.delegate.not_registered","pkh":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ"}]
+
+        '
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 840ec815ff511e4c-FRA
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '118'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Jan 2024 21:23:18 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=RAA584wRKmSkevlUZgxKgCd4Zef4p7toL0wd70ukVlP4u6TcqFD3I2y18hHjRXzya2zjKeriligzTQjJ3PPTw2aAKIhoGAWluvRp6klNONUcC%2Bltl%2BbG80iOYlmdFlRuBwLOVYIf9gVqmsEzlFeLFA%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      access-control-allow-origin:
+      - '*'
+    status:
+      code: 500
+      message: Internal Server Error
+version: 1

@@ -1,0 +1,65 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/income?address=tzxxxxxxxxx&cycle=100
+  response:
+    body:
+      string: "{\n  \"errors\": [\n    {\n      \"code\": 1007,\n      \"status\":
+        400,\n      \"message\": \"incorrect request syntax\",\n      \"scope\": \"StreamTable\",\n
+        \     \"detail\": \"invalid address 'tzxxxxxxxxx'\",\n      \"request_id\":
+        \"ab88a504-7cd0-4d50-9b78-37384bc1bcfd\"\n    }\n  ]\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '257'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:12 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      cache-control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      expires:
+      - Fri, 05 Jan 2024 21:23:12 GMT
+      pragma:
+      - no-cache
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99375'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - ab88a504-7cd0-4d50-9b78-37384bc1bcfd
+      x-runtime:
+      - '0.000213'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

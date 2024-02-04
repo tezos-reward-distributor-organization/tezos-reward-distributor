@@ -1,3 +1,4 @@
+import vcr
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 from src.Constants import (
@@ -25,6 +26,11 @@ class TestYamlAppConfParser(TestCase):
         self.mainnet_public_node_url = node_endpoint
         self.signer_endpoint = PRIVATE_SIGNER_URL
 
+    @vcr.use_cassette(
+        "tests/unit/cassettes/test_validate.yaml",
+        filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
+    )
     def test_validate(self):
         data_fine = """
         version: 1.0
@@ -91,6 +97,11 @@ class TestYamlAppConfParser(TestCase):
         self.assertIsInstance(plugins, dict)
         self.assertIsNone(plugins["enabled"], None)
 
+    @vcr.use_cassette(
+        "tests/unit/cassettes/test_validate_no_founders_map.yaml",
+        filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
+    )
     def test_validate_no_founders_map(self):
         data_no_founders = """
         version: 1.0

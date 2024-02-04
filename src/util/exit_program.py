@@ -16,5 +16,5 @@ class ExitCode(Enum):
 
 
 def exit_program(exit_code: ExitCode = ExitCode.SUCCESS, exit_message="Success!"):
-    main_logger.info(exit_message + " Exit code: {}".format(exit_code.value))
+    main_logger.info(f"{exit_message}, exit code: {exit_code.value}")
     sys.exit(exit_code.value)

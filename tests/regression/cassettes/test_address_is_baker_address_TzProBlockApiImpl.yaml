@@ -1,0 +1,134 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/account/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+  response:
+    body:
+      string: '{"row_id":39011,"address":"tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194","address_type":"ed25519","pubkey":"edpktqksRnsC4fX1bxWW4DVSdhoirZ1C1RkrEwq4yZabjecmDZLQwS","counter":37627,"first_in":22657,"first_out":22763,"last_in":4873936,"last_out":4860362,"first_seen":22657,"last_seen":4873963,"first_in_time":"2018-07-17T18:39:42Z","first_out_time":"2018-07-17T20:39:27Z","last_in_time":"2024-01-05T21:16:15Z","last_out_time":"2024-01-03T11:59:17Z","first_seen_time":"2018-07-17T18:39:42Z","last_seen_time":"2024-01-05T21:23:00Z","total_received":419057.987538,"total_sent":794933.699727,"total_burned":16.784,"total_fees_paid":0.693959,"total_fees_used":0.074642,"spendable_balance":1908.566333,"is_funded":true,"is_delegated":false,"is_revealed":true,"is_baker":true,"n_tx_success":509,"n_tx_failed":0,"n_tx_out":509,"n_tx_in":46}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:17 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=12
+      expires:
+      - Fri, 05 Jan 2024 21:23:30 GMT
+      last-modified:
+      - Fri, 05 Jan 2024 21:23:00 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873963'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99374'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - ea6d5609-d65e-4082-b2b6-7a745622991d
+      x-runtime:
+      - '0.002571'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/account/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+  response:
+    body:
+      string: '{"row_id":39011,"address":"tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194","address_type":"ed25519","pubkey":"edpktqksRnsC4fX1bxWW4DVSdhoirZ1C1RkrEwq4yZabjecmDZLQwS","counter":37627,"first_in":22657,"first_out":22763,"last_in":4873936,"last_out":4860362,"first_seen":22657,"last_seen":4873963,"first_in_time":"2018-07-17T18:39:42Z","first_out_time":"2018-07-17T20:39:27Z","last_in_time":"2024-01-05T21:16:15Z","last_out_time":"2024-01-03T11:59:17Z","first_seen_time":"2018-07-17T18:39:42Z","last_seen_time":"2024-01-05T21:23:00Z","total_received":419057.987538,"total_sent":794933.699727,"total_burned":16.784,"total_fees_paid":0.693959,"total_fees_used":0.074642,"spendable_balance":1908.566333,"is_funded":true,"is_delegated":false,"is_revealed":true,"is_baker":true,"n_tx_success":509,"n_tx_failed":0,"n_tx_out":509,"n_tx_in":46}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:17 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=12
+      expires:
+      - Fri, 05 Jan 2024 21:23:30 GMT
+      last-modified:
+      - Fri, 05 Jan 2024 21:23:00 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873963'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99373'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - 4e054320-9177-43d5-af46-3a6662351f62
+      x-runtime:
+      - '0.001980'
+    status:
+      code: 200
+      message: OK
+version: 1
