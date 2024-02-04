@@ -1,0 +1,86 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+  response:
+    body:
+      string: '{"id":13748,"type":"delegate","address":"tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194","active":true,"publicKey":"edpktqksRnsC4fX1bxWW4DVSdhoirZ1C1RkrEwq4yZabjecmDZLQwS","revealed":true,"balance":196908566333,"rollupBonds":0,"smartRollupBonds":0,"frozenDeposit":195000000000,"frozenDepositLimit":183600000000,"counter":37627,"activationLevel":22763,"activationTime":"2018-07-17T20:39:27Z","stakingBalance":1834936724232,"delegatedBalance":1638028157899,"numContracts":1,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":21,"tokenTransfersCount":40,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numDelegators":1265,"numBlocks":14315,"numEndorsements":3056959,"numPreendorsements":1097,"numBallots":33,"numProposals":17,"numActivations":0,"numDoubleBaking":0,"numDoubleEndorsing":0,"numDoublePreendorsing":0,"numNonceRevelations":241,"vdfRevelationsCount":0,"numRevelationPenalties":2,"numEndorsingRewards":222,"numDelegations":4828,"numOriginations":59,"numTransactions":564,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":10,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"updateConsensusKeyCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"firstActivity":22657,"firstActivityTime":"2018-07-17T18:39:42Z","lastActivity":4873963,"lastActivityTime":"2024-01-05T21:23:00Z","software":{"version":"v18.1","date":"2023-11-20T15:09:26Z"},"frozenDeposits":195000000000,"frozenRewards":0,"frozenFees":0}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Jan 2024 21:23:17 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873964'
+      Tzkt-Level:
+      - '4873963'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:23:16Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
+  response:
+    body:
+      string: '{"id":13748,"type":"delegate","address":"tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194","active":true,"publicKey":"edpktqksRnsC4fX1bxWW4DVSdhoirZ1C1RkrEwq4yZabjecmDZLQwS","revealed":true,"balance":196908566333,"rollupBonds":0,"smartRollupBonds":0,"frozenDeposit":195000000000,"frozenDepositLimit":183600000000,"counter":37627,"activationLevel":22763,"activationTime":"2018-07-17T20:39:27Z","stakingBalance":1834936724232,"delegatedBalance":1638028157899,"numContracts":1,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":21,"tokenTransfersCount":40,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numDelegators":1265,"numBlocks":14315,"numEndorsements":3056959,"numPreendorsements":1097,"numBallots":33,"numProposals":17,"numActivations":0,"numDoubleBaking":0,"numDoubleEndorsing":0,"numDoublePreendorsing":0,"numNonceRevelations":241,"vdfRevelationsCount":0,"numRevelationPenalties":2,"numEndorsingRewards":222,"numDelegations":4828,"numOriginations":59,"numTransactions":564,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":10,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"updateConsensusKeyCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"firstActivity":22657,"firstActivityTime":"2018-07-17T18:39:42Z","lastActivity":4873963,"lastActivityTime":"2024-01-05T21:23:00Z","software":{"version":"v18.1","date":"2023-11-20T15:09:26Z"},"frozenDeposits":195000000000,"frozenRewards":0,"frozenFees":0}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Jan 2024 21:23:17 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873964'
+      Tzkt-Level:
+      - '4873964'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:23:16Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+version: 1

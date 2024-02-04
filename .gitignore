@@ -4,7 +4,9 @@
 */*/__pycache__/
 */__pycache__/
 docs/build/
+.venv/
 venv/
+.env/
 env/
 */__TEMP_DATA__/
 

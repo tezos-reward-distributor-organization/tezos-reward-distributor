@@ -1,0 +1,68 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/tip
+  response:
+    body:
+      string: '{"name":"Tezos","network":"Mainnet","symbol":"XTZ","chain_id":"NetXdQprcVkpaWU","genesis_time":"2018-06-30T16:07:32Z","block_hash":"BKqVZs1jevuSz734MgRjBcjDDmDVgNEL79UGv9AaMFdnRmirFm7","timestamp":"2024-01-05T21:22:45Z","height":4873962,"cycle":690,"protocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","total_accounts":4870450,"total_contracts":189641,"total_rollups":11,"funded_accounts":2496587,"dust_accounts":840510,"dust_delegators":16103,"ghost_accounts":2053959,"total_ops":856157818,"delegators":186935,"bakers":384,"new_accounts_30d":68790,"cleared_accounts_30d":12780,"funded_accounts_30d":31241,"inflation_1y":43246372.697131,"inflation_rate_1y":4.582227182311885,"health":96,"supply":{"row_id":4873963,"height":4873962,"cycle":690,"time":"2024-01-05T21:22:45Z","total":987031370.177587,"activated":743363291.116411,"unclaimed":20955306.896289,"circulating":966076063.281298,"liquid":897229864.650545,"delegated":582181935.744628,"staking":702445352.563945,"shielded":355.002637,"active_stake":686110931.742792,"active_delegated":574847374.407774,"active_staking":691446131.057287,"inactive_delegated":7334561.336854,"inactive_staking":10999221.506658,"minted":225059415.185065,"minted_baking":90148892.323102,"minted_endorsing":128447888.170669,"minted_seeding":10967.25,"minted_airdrop":28700.007321,"minted_subsidy":6205095,"burned":2346643.020178,"burned_double_baking":228687.464089,"burned_double_endorse":31838.219485,"burned_origination":19413.167,"burned_allocation":294997.51425,"burned_storage":1224508.67525,"burned_explicit":136314.940923,"burned_seed_miss":226883.883339,"burned_absence":183999.155842,"burned_rollup":0,"frozen":68846198.630753,"frozen_deposits":68846198.630753,"frozen_rewards":0,"frozen_fees":0,"frozen_bonds":0},"status":{"mode":"sync","status":"synced","blocks":4873963,"finalized":4873962,"indexed":4873962,"progress":1,"last_update":"2024-01-05T21:22:45Z"}}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:07 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=7
+      expires:
+      - Fri, 05 Jan 2024 21:23:15 GMT
+      last-modified:
+      - Fri, 05 Jan 2024 21:22:45 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99384'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - 6da27cd1-e394-4fdb-bc21-eaead2a7e82b
+      x-runtime:
+      - '0.000129'
+    status:
+      code: 200
+      message: OK
+version: 1

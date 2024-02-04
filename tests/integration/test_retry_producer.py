@@ -84,24 +84,24 @@ class TestRetryProducerBeforeInitialCycle(TestCase):
             pass
 
     @patch(
-        "pay.payment_consumer.BatchPayer.get_payment_address_balance",
+        "src.pay.payment_consumer.BatchPayer.get_payment_address_balance",
         MagicMock(return_value=100_000_000),
     )
     @patch(
-        "pay.payment_consumer.BatchPayer.simulate_single_operation",
+        "src.pay.payment_consumer.BatchPayer.simulate_single_operation",
         MagicMock(return_value=(PaymentStatus.DONE, (500, 100, 0))),
     )
-    @patch("pay.batch_payer.sleep", MagicMock())
+    @patch("src.pay.batch_payer.sleep", MagicMock())
     @patch(
-        "cli.client_manager.ClientManager.request_url",
+        "src.cli.client_manager.ClientManager.request_url",
         MagicMock(side_effect=request_url),
     )
     @patch(
-        "cli.client_manager.ClientManager.request_url_post",
+        "src.cli.client_manager.ClientManager.request_url_post",
         MagicMock(side_effect=request_url_post),
     )
     @patch(
-        "cli.client_manager.ClientManager.sign",
+        "src.cli.client_manager.ClientManager.sign",
         MagicMock(
             return_value="edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"
         ),
@@ -137,24 +137,24 @@ class TestRetryProducer(TestCase):
             pass
 
     @patch(
-        "pay.payment_consumer.BatchPayer.get_payment_address_balance",
+        "src.pay.payment_consumer.BatchPayer.get_payment_address_balance",
         MagicMock(return_value=100_000_000),
     )
     @patch(
-        "pay.payment_consumer.BatchPayer.simulate_single_operation",
+        "src.pay.payment_consumer.BatchPayer.simulate_single_operation",
         MagicMock(return_value=(PaymentStatus.DONE, (500, 100, 0))),
     )
-    @patch("pay.batch_payer.sleep", MagicMock())
+    @patch("src.pay.batch_payer.sleep", MagicMock())
     @patch(
-        "cli.client_manager.ClientManager.request_url",
+        "src.cli.client_manager.ClientManager.request_url",
         MagicMock(side_effect=request_url),
     )
     @patch(
-        "cli.client_manager.ClientManager.request_url_post",
+        "src.cli.client_manager.ClientManager.request_url_post",
         MagicMock(side_effect=request_url_post),
     )
     @patch(
-        "cli.client_manager.ClientManager.sign",
+        "src.cli.client_manager.ClientManager.sign",
         MagicMock(
             return_value="edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"
         ),

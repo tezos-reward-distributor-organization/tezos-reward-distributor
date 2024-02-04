@@ -1,0 +1,2930 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/income?address=tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194&cycle=100
+  response:
+    body:
+      string: '[[45607,100,39011,16,41762.450711,120956.876490,0.000000,20,1,54,32.000000,134.78,100.00,99.20,1,1,0,53,0,54,0,124.000000,123.000000,3968.000000,16.000000,107.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,"tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:09 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:39 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99381'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - 5f5c7f1f-d099-46a8-aeac-792ab85fde79
+      x-runtime:
+      - '0.002084'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/bakers/tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194/snapshot/100
+  response:
+    body:
+      string: '{"baking_cycle":100,"snapshot_height":381696,"snapshot_cycle":93,"snapshot_time":"2019-04-04T17:22:49Z","snapshot_index":2,"snapshot_rolls":16,"active_stake":162719327201,"staking_balance":162719327201,"own_balance":41762450711,"delegated_balance":120956876490,"n_delegations":20,"expected_income":124000000,"total_income":123000000,"total_deposits":3968000000,"baking_income":16000000,"endorsing_income":107000000,"accusation_income":0,"seed_income":0,"fees_income":0,"total_loss":0,"accusation_loss":0,"seed_loss":0,"endorsing_loss":0,"lost_accusation_fees":0,"lost_accusation_rewards":0,"lost_accusation_deposits":0,"lost_seed_fees":0,"lost_seed_rewards":0,"delegators":[{"address":"KT1GSm2yYpHdVo6XHwKYsfGpoqarABYQ4v5D","balance":26572975578,"is_funded":false},{"address":"KT1Wf5tnwXUEgYYP5bQLDTuJz57eN2HoTyYS","balance":20547854951,"is_funded":true},{"address":"KT1W41RamGajHZg7aq9Vqz6fs4jpTKMnUKhX","balance":14346102343,"is_funded":false},{"address":"KT1Hw4wDC4pyRgDR9LttEE45erELztkrcJgT","balance":10926633568,"is_funded":false},{"address":"KT1T9qV7E2mgZg2BRY51wQDbGAJLBtr4wXCJ","balance":10407248485,"is_funded":true},{"address":"KT1QxYusq5wWqwjtn6smjQJX2e3m5ZvhPstj","balance":8807276874,"is_funded":false},{"address":"KT1DBxFhWRHR7VQXnkKxNoRo29c1mi3HVSpu","balance":7512781103,"is_funded":true},{"address":"KT1QNy5GWnLLhJvrBbeZnhRjAg5up8QRWEz9","balance":7166748503,"is_funded":true},{"address":"KT1FCVzaCK1oiNgCG3m5SJuq3GXurqwU5QCG","balance":3976331398,"is_funded":true},{"address":"KT1BJu8FBib6viw6JXfLhWnrGjy2cqdkYLEn","balance":2784208761,"is_funded":false},{"address":"KT1BnYTKyDdzMzD4PmMPJM7899maVmsoPvuU","balance":2443162023,"is_funded":true},{"address":"KT1ViB1vubnsFrEPxk6ctE6UGR7XEjawDMHP","balance":1814309401,"is_funded":true},{"address":"KT1Ur1UGAGLt2KG5geMhHvFQ35HHZne5oMyg","balance":1541858788,"is_funded":true},{"address":"KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU","balance":1407019641,"is_funded":true},{"address":"KT1CKMCJ2Qk26TFfs2apZbDFvv2Wjw8x1B8U","balance":427436260,"is_funded":false},{"address":"KT1GnWjdC311TkVCn2NWpdrBMCwN4L3mJP2T","balance":209646111,"is_funded":true},{"address":"KT1SYGAFSXH673zsuB3N68W2SpbdMYW3giVU","balance":50883568,"is_funded":true},{"address":"KT1PHSjRhXqUhvPzxB2Ex3AxHdi1isF1YrRh","balance":14373733,"is_funded":true},{"address":"KT1JnE94HxAxxaJjDqtabk3c1hpEdNXqxMUp","balance":25401,"is_funded":true},{"address":"KT1QM5NcXeH6NkNyVuvc81MmUDvzVEndb9mW","balance":0,"is_funded":false}]}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:09 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:39 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99380'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - ebee3e16-3e25-41ad-8061-f2412ae9ffe0
+      x-runtime:
+      - '0.015333'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/account?baker=tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194&columns=row_id,spendable_balance,address&limit=50000
+  response:
+    body:
+      string: '[[3937,317.370397,"tz1c2JnHgWDsxje34PPKstbbzSjgGeP8VKMv"]
+
+        ,[4530,22.609952,"tz1MmMxfyyCdKoWHMVaobKY9qQNwoE4x29SE"]
+
+        ,[5432,15.434815,"tz1Nv4FLATirNP9Asmqhcxz5ZYY68gFno4Gs"]
+
+        ,[6032,0.559410,"tz1MYRyhV85D6oZM49CCyoLbUFWkjbFXye7c"]
+
+        ,[7366,10709.876318,"tz1SPtyPeFVV6Dqnk8V6yp68nYLR5S66knhi"]
+
+        ,[8215,14630.297137,"tz1gkxA5WF93rYjMW9GEnYobVjwum3fZBKVn"]
+
+        ,[8633,53.609325,"tz1bB7g9BjXEjRrgmaXMG68HjBiQQauEH8xH"]
+
+        ,[11289,30.395996,"tz1Luw5yEtRXhZXcQN5Va3bX8FgXWWEHerqH"]
+
+        ,[12532,39.576753,"tz1KypGHKihqS67aztyVPjGEuvzWPnQ9zrtH"]
+
+        ,[13130,1.129933,"tz1Ta5o3xnBRTEn5BMRQKEJZYMaj6cqP6GTB"]
+
+        ,[15646,18.095720,"tz1eT1gT1q1rfyuc2ymdjnGicygFFjW6rd8Q"]
+
+        ,[16115,12616.985385,"tz1RAGVXPLBmDdLYFGULE5nTeeTeiKuDPst8"]
+
+        ,[16748,267.932565,"tz1eQVG5DzuG5yUjKNsdw3qFVpbR18jqeYjK"]
+
+        ,[17095,2.270596,"tz1ZLgVy7sBNoWS4FjbDu3Tq5aRYJFZs1FYL"]
+
+        ,[17913,0.069457,"tz1WxjhZH5tCTf8VR2H3gwujP7qMmjWRCF3c"]
+
+        ,[19673,7.698818,"tz1ctYXm2zSZg7WNRneo8Kz8CmFcso1XBW4v"]
+
+        ,[24310,10041.446497,"tz1N3KK9LhZ2Mf4ZJAQxPeDHRmcmaLYjdH4i"]
+
+        ,[24393,6.687069,"tz1fkELKp9QAw9ihZhvtZ2pJoeDqFWP8pN2S"]
+
+        ,[26736,0.000001,"tz1c2uWcTFYwXAvnV8vvviCxzHTRhkiRwnnd"]
+
+        ,[26924,19.512077,"tz1aiBiwUp2wFutFPbp31k4ebkKhtfU7iRRk"]
+
+        ,[29604,1301.465173,"tz1dbC3KvPJZQmfKfgGayPR5JgEGK4veQNYy"]
+
+        ,[30575,2.860070,"tz1M3Nyo1NR4rrv85JEbk5qRfHozAcvnn9Vr"]
+
+        ,[31122,8.337794,"tz1X5xW4mCRykFAKmy5wV4xoE1xCpjV5riN7"]
+
+        ,[31125,0.231711,"tz1XdFmxokiNBZUfXC3JEX6WyUFF21QHVM2X"]
+
+        ,[34819,1.608866,"KT1M4NV3NjAg2uD7yg7yc6S8qf1y1YrTH9Zo"]
+
+        ,[39011,1908.566333,"tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194"]
+
+        ,[39039,0.005000,"KT1GnWjdC311TkVCn2NWpdrBMCwN4L3mJP2T"]
+
+        ,[40232,0.000000,"KT1QM5NcXeH6NkNyVuvc81MmUDvzVEndb9mW"]
+
+        ,[40240,0.000001,"KT1QNy5GWnLLhJvrBbeZnhRjAg5up8QRWEz9"]
+
+        ,[41887,9.484475,"KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU"]
+
+        ,[43168,0.346945,"tz1iHMwwJYdfd88Z6fzK2FZqHGPJT5rcRY9y"]
+
+        ,[43174,0.000001,"KT1DBxFhWRHR7VQXnkKxNoRo29c1mi3HVSpu"]
+
+        ,[43225,0.026291,"KT1JnE94HxAxxaJjDqtabk3c1hpEdNXqxMUp"]
+
+        ,[43227,17.601034,"KT1PHSjRhXqUhvPzxB2Ex3AxHdi1isF1YrRh"]
+
+        ,[43665,0.000001,"tz1i1wQdZkEMsYreG5ebaceKXtfTzUSXqbhw"]
+
+        ,[45535,16.399181,"tz1dUuAYXbRn5UTkqPFkubtW8ybMuZWjsSPy"]
+
+        ,[45536,0.000001,"KT1ViB1vubnsFrEPxk6ctE6UGR7XEjawDMHP"]
+
+        ,[53640,10867.395171,"KT1T9qV7E2mgZg2BRY51wQDbGAJLBtr4wXCJ"]
+
+        ,[54030,1.164512,"KT1SYGAFSXH673zsuB3N68W2SpbdMYW3giVU"]
+
+        ,[54237,0.188723,"KT1FyUsU7fwr4hQq1AoWbwRZbbzHPdhyPHEL"]
+
+        ,[54500,18054.519391,"tz1Q34HVeX15YDMhSNQBbBqhmqeRGCSjUMjN"]
+
+        ,[54930,3660.627345,"tz1S76iAuKfDLFDU2koK9fChRFPnTXutHozj"]
+
+        ,[54938,1997.684027,"KT1Ur1UGAGLt2KG5geMhHvFQ35HHZne5oMyg"]
+
+        ,[55434,0.000900,"KT1BBLgqqbT23U2SAx9P2TcZ1jsfBxn49Dkc"]
+
+        ,[55990,545.570754,"tz1UzPm71KXoNZA9pDd2c8eXxNFHYcXdB6KA"]
+
+        ,[55991,0.000000,"KT1CKMCJ2Qk26TFfs2apZbDFvv2Wjw8x1B8U"]
+
+        ,[58122,53780.952334,"tz1VuWw3Jvmamx1m8pjPwUir8ZDDm9XzVH5D"]
+
+        ,[58123,0.000000,"KT1QxYusq5wWqwjtn6smjQJX2e3m5ZvhPstj"]
+
+        ,[58188,53.541804,"KT1MUy1P9KxBn2Ff56wSDx5xMMuCnqUncgRg"]
+
+        ,[58472,1.872077,"tz1YSd7ideP154zebFuhhW1PPtdLD73qJBXz"]
+
+        ,[58493,0.000001,"KT1BnYTKyDdzMzD4PmMPJM7899maVmsoPvuU"]
+
+        ,[58737,9.978753,"tz1aU6Ewswmi44HhfbgizEbQ9fkRDze7XiBT"]
+
+        ,[59602,58675.691850,"tz1aCtZgFA3a1jkXnWtM8Ei6U958casxnW2p"]
+
+        ,[60623,7767.346189,"tz1fBEEXXmBpX4n3viPZVuTyQt2Z2q2iQ4wb"]
+
+        ,[61010,116.471746,"tz1hR64yaQaQmmrsWAyDB9VANZH6WUEEohv6"]
+
+        ,[61077,0.058274,"KT1VxWdfGpL6z51PWuoSjS4Xbv5e2TJkkXeo"]
+
+        ,[61214,4.066633,"KT1HjHrd35uSgZxwtmMRe5qSmPN9ftVq8pEZ"]
+
+        ,[61413,12185.406992,"tz1Z7sLY1yUXQZnNaWo7XccMNxYkSccB6zzk"]
+
+        ,[62312,0.928958,"tz1Z9MNnBhmrKkNEuYzSVg9kTJ95e244vcEP"]
+
+        ,[62838,0.170928,"KT1FCVzaCK1oiNgCG3m5SJuq3GXurqwU5QCG"]
+
+        ,[63651,0.000001,"tz1Ywgcavxq9D6hL32Q2AQWHAux9MrWqGoZC"]
+
+        ,[63685,38.141405,"tz1KgCQucu1dQ1zXF4pQ5rACu1Kh5SS1XbLq"]
+
+        ,[63863,0.076658,"tz1V4HR3TSXgZjCmrzDEJdYWNK33MnRwtBmK"]
+
+        ,[65808,9.627076,"tz1RpEMpzptXyQKmnPyoTN8fXLyb92waWGuq"]
+
+        ,[66217,0.004771,"tz1bosfHztQqjTVhWmb7jFp73cBngBbqq93W"]
+
+        ,[66229,12.854363,"tz1dVC6jtB6XrDD6ptcWg7gJwgbWVUeg2au5"]
+
+        ,[66605,26.058731,"tz1MjnUCFdxB2KAPmieLVbfBcan9EF5EeWJq"]
+
+        ,[66969,11.931222,"tz1ebw5YsNhBG6qo4yvvk8R57P7F2Z5MzwJD"]
+
+        ,[67370,1.857527,"tz1aX9L4y7jWHSjNg1TxBb1bxZ3fXiwyzYGW"]
+
+        ,[68057,1.713570,"tz1hqrms3mLHhjUKYy6X7iAfmVo1KsZiKwPe"]
+
+        ,[68699,3.526690,"tz1VuHTgRJaVERx982gHbeNBtCiM3MDofXv7"]
+
+        ,[68720,0.004305,"tz1YZu69gLGqXJgfrembXjXBzGoX5boQaYXK"]
+
+        ,[69531,1.534662,"tz1c21QYLQ9pi1rt3nhj8uggqsgpM6zBeuY8"]
+
+        ,[71847,0.291701,"KT1DdJRh5LxfnJqWEuF7HbuV96awqj6upeVH"]
+
+        ,[271389,0.040717,"tz1QLAgHFTeFBjapHDhkDhMMkJeZBPy268fN"]
+
+        ,[273076,50.167337,"tz1R91FoN5o65PcUwH9KaeTcExfEDfwc5qHY"]
+
+        ,[273678,454.325551,"tz1Sspuytccv7PjRuXyja54616228EW4cmb9"]
+
+        ,[274061,125287.220809,"tz1VuXgMsTC9VFRQYVZgSuUtmZ7kxrLLzqtG"]
+
+        ,[274390,18561.391938,"tz1NdS3X9adSTkn2HMEuGa4b1oHHrnHTMBCn"]
+
+        ,[274846,0.005000,"KT1Wf5tnwXUEgYYP5bQLDTuJz57eN2HoTyYS"]
+
+        ,[274866,0.048521,"tz1evhjNZjVUJ9Byqxmm3fDYdn3pRjtZEgBL"]
+
+        ,[274954,0.000001,"KT1SZrurTqTBWsWsZUVR27GZ8bHK3EhFV62g"]
+
+        ,[275078,2.243393,"tz1dhFTeayoCuQu9cNDGcFi6vErL7qTjhVcu"]
+
+        ,[275127,1343.250054,"tz1MpXstmyg9Xy7g2jgagFEa722UV5LNaTZ6"]
+
+        ,[276208,12.852605,"KT1JewngSWVpKqQm21ENwEYfewCpoU6rbL4U"]
+
+        ,[276681,0.000001,"tz1fXGt1qAuJpDXVuL2L4USP5UrKf7eTfgna"]
+
+        ,[276896,0.378724,"tz1gvZKXxHAJf7jt4uxXBLB6mqs1o5J7Q6EY"]
+
+        ,[277473,0.003522,"KT1TA1FveDZVRggDT92otoMxEdij44aTPcH1"]
+
+        ,[278377,67490.876799,"tz1ae3fXqwV9uwmQp1DjjScBHJbruUorMVw6"]
+
+        ,[278662,2415.787633,"tz1Ljkpb7eQpPWuTSw5fAMHBVBcKrzqXrixC"]
+
+        ,[278862,47.062216,"tz1diGgjGs2EPtDasvEEpgNFNaS7fjkY6VC1"]
+
+        ,[278867,0.000000,"KT1W41RamGajHZg7aq9Vqz6fs4jpTKMnUKhX"]
+
+        ,[279271,0.097325,"tz1PMdb6fAvYpKAitfBXLkccvUpt3CAys3Kv"]
+
+        ,[280647,3.345043,"tz1fjVtMN4t91wWxmZ6NzMc4yegiTaU2t1sY"]
+
+        ,[282057,0.076976,"tz1NRaKaxpTMcbDoEAwCHaimULZqjM6v6PXE"]
+
+        ,[282363,2427.054845,"tz1NjEKmqGvLGTNuJirkd1xHevLcFCb26adx"]
+
+        ,[282981,0.000015,"tz1LsoU3qdkHPyyKX5XdTrNAnDNnf1osnMj5"]
+
+        ,[283583,7.709773,"tz1YuVkBYgm4d4HBDQ1cSbpgjMPh3wG7PYjB"]
+
+        ,[283683,100.658919,"KT1DwJktFa4rPJAFV1Ggqu239GfjRBsnTjo1"]
+
+        ,[284526,5.719038,"KT1U7jaabRLuoeyi8vfYereacXivxXXgDRLx"]
+
+        ,[285511,23.542499,"tz1NGW8uA5kJWPQeBFrNky57whyhaenbnQ46"]
+
+        ,[286324,0.062104,"tz1SQQysAG32BEER9GThA8jHEPD9yGtDsjn9"]
+
+        ,[286325,3664.189251,"tz1ig8czmvGBPycFGUj7QSmHF4eqwbvvMZdw"]
+
+        ,[286638,1.917777,"tz1cg8z4bf1PoZP9KKX7ZbxJzmAdrDEzwNjp"]
+
+        ,[286811,0.009567,"tz1QrmMv8Yik9ojUkthdDqez8r2Yn1DbEZJE"]
+
+        ,[287237,0.113159,"tz1LEx63XvLdZkuRYBnQj1zxcLVjWQNda6aU"]
+
+        ,[288581,44541.597931,"tz1Xw8ecW3J6aP5vnWLXjFyfksqE6WxfKeMH"]
+
+        ,[289056,0.091168,"tz1bbkYXSSbyua1LJVVTjK1GTZQWZtmRMrKN"]
+
+        ,[289367,1211.883799,"tz1UF2Wv2z3MGq7ai8ZHx7192ZKWNVm9G8FN"]
+
+        ,[290172,7.743185,"KT19Zsn9BGd6PjWHQGHURVsVdn3KcM4SaPvf"]
+
+        ,[290289,29.645720,"KT1UW2s3gAmirHZPmF5HxbuoDPMDcnqxMTou"]
+
+        ,[290632,1.585193,"KT1WYTLrjgiYWVGe4e8tDyGhQ3XXtBywwUa7"]
+
+        ,[290649,3492.505841,"tz1PmmAwK55dUxYa1KG5udtEyZaaNcY82mjH"]
+
+        ,[290785,0.319952,"tz1LaGwWRhTjTtWaQX9A3nkS8r8jjBxjWon8"]
+
+        ,[291276,1.000001,"tz1ZbGSQnte2gpV9kZhtgmdRRAAZAwmJZJx1"]
+
+        ,[292472,0.000000,"KT1KR8xP5vNosawgghXCsQssDpqdQwiWnUrh"]
+
+        ,[292618,10.179105,"tz1SQ7N2dKFAFcMb912hWWnHFJrKdbZKE2SA"]
+
+        ,[293338,2581.402489,"tz1ff8omztYhSzufiac7k4V9wE3ZkakHc1hi"]
+
+        ,[294563,0.051074,"KT1EB7SnS5dEGWaEpq9zQXcJk5AQVsRK7vQd"]
+
+        ,[295308,0.000000,"KT1C5nUXMpHpnT9uEd3LQVA3wTKwVMKkfGtP"]
+
+        ,[295603,0.083561,"KT1UNFTnAfUr1A7LLFc5mmiWUdpt4CDhrAdZ"]
+
+        ,[296653,2.416099,"KT1NFeH6D2sw8jsR99fH3Nxpoif9Xdf5WcS3"]
+
+        ,[296829,9835.811754,"tz1bZRWm6rN1JPRHsN5ZXrvCDYrWVLCghw4K"]
+
+        ,[299164,3093.245147,"tz1N8WKJr2fmw33FCBANTzaW5vRXtY9u171R"]
+
+        ,[299386,0.005062,"KT1MDEhPxE5jr5QCQFrqdJA6LFtzmF3TYwHZ"]
+
+        ,[299559,104.404555,"tz1ajh5AsXEa8d8CZHkVLFJgXLjDQhLdFGWy"]
+
+        ,[300160,2.385198,"tz1MN2aCTSDuQXYQnmJwh2G4b9sbFn9s4UVd"]
+
+        ,[300731,0.004047,"tz1ST6yioKhm7jHRnNPLxogAkZvNbSWGrTWo"]
+
+        ,[301194,0.000001,"tz1UvXtg5HnCeyH3WRyNdTTTjAKhCEHDCvwd"]
+
+        ,[301354,1.926375,"tz1SrMbTP6PcFWenWTN3X78TW37spmxGFw57"]
+
+        ,[312347,10.512494,"tz1QEh1W9eoCMWgsjuVDgQU8HsiH18eqEALs"]
+
+        ,[312844,4.678928,"tz1KiDLpPY5GYUypeiyTUbhsFVCbDDYXAD4Z"]
+
+        ,[313915,832.041876,"tz1ZM4YaW5G8Z13P1XtwdHVj92EqUsSkgiXE"]
+
+        ,[313921,3.923313,"tz1T8BQzn8B65Pm5XKjVwKTBZgk37w6EPjGG"]
+
+        ,[314703,12000.489898,"tz1aX1uZ8u9L88e9fmQhDVnKqLZfVFYdXSm2"]
+
+        ,[315292,5.978125,"tz1dEuqrE1KEmLCHQueAr7EreE7bNb3D57uS"]
+
+        ,[321104,4284.879402,"tz1gkTDSMeTF4bcLr9jwwq6VSCPVDGiT8gLS"]
+
+        ,[321164,12507.450575,"tz1N4Y5zBYFT3bGRuCT5oFL6VYBxUfy6RHLG"]
+
+        ,[321621,0.000001,"KT1AUUNs5xvoXh8WHE7RiYNkWM8Cii3aDhRt"]
+
+        ,[323199,26.939186,"tz1gbB3uurLbrNRYUT7K8Rdt4kb5S6xXU6Uu"]
+
+        ,[324413,0.572474,"KT1V3cyBEaBn1W8arogPwkYwNiG2U9QhPPXq"]
+
+        ,[324637,7279.828719,"tz1QZmiBaGzJ1iXVf6tCScihiZYoyvj9442h"]
+
+        ,[324987,2.343439,"tz1QforRym1Ksx2v7d8P4CdSR5PVLSsZa9gX"]
+
+        ,[325667,362.973262,"tz1U995BS4YDUxs21XuLUZCi5T2gqzBeu3uA"]
+
+        ,[326103,8776.917053,"KT1RptUb83JySF1dcCL1bmb6n54PSkFsNerr"]
+
+        ,[326870,45037.397193,"KT1W4PaQvVrNazVKZThXBvwNU3G6hYcZHHbY"]
+
+        ,[327433,0.348632,"tz1dNzgKhcCWSeB6fFpdaFeTcW4g1aidhYFm"]
+
+        ,[335179,0.000001,"KT1E9C18ogu2DtZ9skEfHFa6Z5d1DU14vSRy"]
+
+        ,[340063,6.068984,"KT1LHcaRKz6PJPAKMCX5dqneqxyrNw8LjNSJ"]
+
+        ,[342215,6951.587420,"tz1fPw6cLKB2MmNUjGAbyXWZstxjS1fMW8zU"]
+
+        ,[342427,0.000194,"tz1T2xgZsqhd8Vvmqw5ADZNYnRCyfg8KPsC4"]
+
+        ,[343024,0.000001,"tz1fw2ZgPyeq7ZxRpToM8byZxtcadYTT2yhh"]
+
+        ,[343190,0.931866,"tz1iTYUZBdqpNBuFEyAnL4FeTXY7fvaDC2pj"]
+
+        ,[343558,0.001957,"tz1c6USL5oymgEetVXgZAAfJq9cSRsNnGoxa"]
+
+        ,[345665,1.574283,"tz1P6VU5L4izui5mDvBBucmTFPAJ6D2FPiP1"]
+
+        ,[346735,11637.248254,"tz1LpgCM6mgWBiNgiAyRMLTqfrjaJqexDy4A"]
+
+        ,[347328,9.286798,"tz1Ti46r2hBJevLmcb2gvSWiDGBP8BeteREL"]
+
+        ,[347820,1.528710,"tz1eeJYnMjemmUWvXks8TaN9j13eMQNhpQ44"]
+
+        ,[351002,7513.991788,"tz1Mhy1CTjhmchWn1uefn5YtvMoPDiBzxmCj"]
+
+        ,[352263,410.846523,"tz1QsxfBYF55tiSEUUCAPmgeAN5rEFiJR5EQ"]
+
+        ,[352558,0.001907,"tz1YufqgHyYadTkaZunQZCMtv863GvDn1z3X"]
+
+        ,[352688,610.526959,"tz1bpSYFE9NGTAdMKLQYnZMwd24WcaEuzgGB"]
+
+        ,[353552,2.147363,"tz1TuAA7Qbupo617L4gkuhdPZunwrmpBSJYS"]
+
+        ,[353627,32.930087,"tz1Q9tGXokdehQfvWPsDR5tVdre3pjnTqYhT"]
+
+        ,[354091,0.091189,"tz1gAYs72E33VbzvbzhnX3NcMEHf6aoMgcYj"]
+
+        ,[354101,3.261195,"tz1PDmYhcKaZvJFWjw4Fea55yRzu5SxwWsPa"]
+
+        ,[354104,880.519740,"tz1LbBCWjxJXpqJv2LvCu7HgzEkvGzujh7uz"]
+
+        ,[354390,9.753150,"tz1TuiAj2pVE9nR6PypKaTFnhk48PKnmSxts"]
+
+        ,[354596,0.034249,"tz1fXDWQUnQfaycQ5tcvXSfZAUfeNHxKWjLB"]
+
+        ,[354815,0.001907,"tz1aLsp9AtvqiRhpAQr9X1x2WziWmy7jVpwT"]
+
+        ,[354864,0.486517,"tz1eEodWHcH8E89uyZuAPDZggGp4YvP6eWK3"]
+
+        ,[354935,7.664085,"tz1Z2tVgkFKitEbU6M5LuPGmeEZjhB81yNbj"]
+
+        ,[360487,0.894968,"tz1QComvDQBUsYeTBZNkFNiPMohYeDRH7wHa"]
+
+        ,[360510,1.303500,"tz1hhLKeq4HbzAZBRPYLDmGxFm6tB3q81Vdx"]
+
+        ,[361649,650.618739,"tz1NaxrJd5HjPK2ZzEHdV2S3JSZSBfy9SR8w"]
+
+        ,[361978,0.261994,"tz1QBDqsqaReEDSUyxgoN8YEXfzeRtzCC2fV"]
+
+        ,[362035,0.001907,"tz1W6rNTCtZF83k7E5tCaGeqqx26kZgFXJLW"]
+
+        ,[362100,1.274109,"tz1dx3QkBJF9SpB6ZqcsDRYbimRGwAZmXbNX"]
+
+        ,[362202,629.639564,"tz1bXr5zr7AMoXuyZivev3ZjMtwLaW9bN1Zz"]
+
+        ,[362747,0.000016,"tz1bMX4EipabgYGtKNRgZrL1a8DK4tuLAfCF"]
+
+        ,[363481,0.000000,"KT1Thze3SZXkH12PSuJQnAiPK8G2vACtiCUs"]
+
+        ,[364669,80.130052,"tz1dYtjw3YEmF7UeZ7n8mBuCnMCG1wrvUonS"]
+
+        ,[364883,109.849301,"tz1Poc6Kw66f4jbVmbuhgLvwyoTteDi3HsUZ"]
+
+        ,[365391,1499.894157,"tz1fGGMmuF6opG6KCvHpxKq5ZJjWZDfEnowg"]
+
+        ,[366907,243.279892,"tz1X8XD7p6DJUB5AurhJd9Vtc5dAouBdx721"]
+
+        ,[367624,5.017515,"tz1cTFs431L5vngegcUXQ36fmb4L7C6gTNhn"]
+
+        ,[367928,700.878906,"tz1N5m9YZqREhyxkocq3McG6Gt545N4gNLHB"]
+
+        ,[368512,7603.955454,"tz1VAGGrUF41MaipWeFRBCVNMz24zML2Vwv2"]
+
+        ,[368867,1067.045472,"tz1Vw631HYtCLkwU7uXwLRoEhXy3F1kvssbj"]
+
+        ,[369371,2301.368099,"tz1WcdSveCiXQCptpfVqWw9ifCxxHKiv5USX"]
+
+        ,[369837,0.119665,"KT1EJK92NmhTR8xuApFRLchtEjMdWPsLTSVb"]
+
+        ,[370171,0.000001,"KT1Pg5vVC5ac5AZRRUxv8GAQ2sWAytHomLoz"]
+
+        ,[370175,0.008821,"tz1WTngkURvYown2fATXNuT7swRrxEknBYfL"]
+
+        ,[370797,8957.682146,"tz1XMdqRMFwXBXwwz3D6Dv19dtx5PL8jXsF4"]
+
+        ,[370908,26.720738,"tz1aCQwzHxXJ4PeE4DsWoAWbsBpQCPUWdMu8"]
+
+        ,[371106,11.192902,"tz1WF3tQobhZomRxP8Y8M35qgA8KehHzkVM1"]
+
+        ,[371114,49.486120,"tz1ivuVZ39kkfdw3UrnA68kWp3qeFeMamV5j"]
+
+        ,[371151,582.080678,"tz1ZasZQcQ3FM2yTu8T413uLKMXL3Xg6M6Du"]
+
+        ,[371518,0.005835,"tz1hN7Hu1txyyzavePhVERUpC9NbDeE5hWjB"]
+
+        ,[371618,771.457868,"tz1SK6KtiijjekLBprLBVfzBaEzuneeMvwfy"]
+
+        ,[371632,1288.574315,"tz1iWUe1Pih6MUr5i2p42oh58nEdrhkskvZJ"]
+
+        ,[371639,1.397786,"tz1VMmSMLy8cD8GvL4SsGpr74htGPbPY638N"]
+
+        ,[371655,85.177471,"tz1igWaPavbevEDXv7xbpUsstH2vG9J1Pi59"]
+
+        ,[371744,3.133832,"tz1desiKoKG3UyXM46dVfDbPKPmio6heWUPJ"]
+
+        ,[371747,104.661246,"tz1ia93w9MKHjAjdsvaA3x5pUMAAyx98gR97"]
+
+        ,[371786,308.748231,"tz1dWojdkYirsfCqAhg7ZDCoBjoWmo13Q7bQ"]
+
+        ,[371858,573.693784,"tz1MAbLQ67TitDBZC8kDbLPLg221b4tYMAtf"]
+
+        ,[371969,1461.035064,"tz1LZX3DYnyYU8wfNw9SiXua2VBqxLXAhrve"]
+
+        ,[372040,1735.812657,"tz1RpDYDRc6damKwyZETciVnSjFnQ23PyLnL"]
+
+        ,[372180,2065.984448,"tz1i7RE3utL8Y5UkJFXVpd8MMb7yqcY8Ejxt"]
+
+        ,[372231,26.657063,"tz1MKzSa6xccuRfrvMtcycSyiQUFwjaYY6uN"]
+
+        ,[372242,123.283465,"tz1RJcSi5TKaC2uxLh7BPTQnF9XUf6eWA7YW"]
+
+        ,[372253,126.517876,"tz1fiD3hsLWXH6gVzsoewo4ZeBGo6PYr21MA"]
+
+        ,[372338,0.555969,"tz1TzfYm3jKExqNpey7hLzKs7uMngSb2hDW7"]
+
+        ,[372344,148.027515,"tz1Y1PVCbc1iP9SRt2ZnJ1y6TF6ZkLeeHKS4"]
+
+        ,[372428,1077.016259,"tz1YHuYuA5zbbCN3hJaQwjVEP86SEdR5iAmk"]
+
+        ,[372435,0.010243,"tz1befJDypofQQ4QnGPFPtxD9KgZtti5YYgk"]
+
+        ,[372486,136.090162,"tz1ZKT9ZKAjjc9tNJYdz4eEoQ2jVVVg6bvom"]
+
+        ,[372488,26.061224,"tz1Y2tuMoFHrsejCDTiJGJgAM46B8tgToMZe"]
+
+        ,[372493,181.829347,"tz1enZ3kjPPz3mjQQWTBmqgk3uAbaTwPssdV"]
+
+        ,[372654,6.026951,"tz1gzkTU4rsDkiCk8Fq2HJigwUg7DnrYnz9w"]
+
+        ,[372660,9.571425,"tz1N4PtWiowscLLhRxbkUDTKk8K7tbyo17CM"]
+
+        ,[372725,0.011475,"tz1b41b1uVJkHHVSAkuN9HsNH7sUGiEK2nMf"]
+
+        ,[372726,0.525554,"tz1PJDWjUaUpJjXTxKUzke2HfFrZEdyKdTi9"]
+
+        ,[372757,7801.528001,"tz1YQZeshRPaiVPjRU5kYjinwKFXUbH91mKJ"]
+
+        ,[372862,5.465989,"tz1ipP8qgNzuR2iuocq6rofSJB5fHDU3ddiv"]
+
+        ,[372870,8.184575,"tz1diTTMVNnNzA6panHhQpS5wwRKZdjGKd4t"]
+
+        ,[372946,360.648682,"tz1cGwTJz7xmaBoC2EvvK3rxJ2oeb2xjqLsq"]
+
+        ,[373037,0.457559,"tz1XpWVT2cAgDDfLbKimJoU7jPkXqNkQWhNj"]
+
+        ,[373097,584.153746,"tz1hy6yhQEvRjURCwBvHZGWbkSmFth7d3ktu"]
+
+        ,[373408,1027.517577,"tz1g8yCto1BvmCUr5m2ptTQH27tDfbwLcquK"]
+
+        ,[373451,91.246339,"tz1aDsH1QcbgEgJxaViQ9Xasboe8N1SyWbbN"]
+
+        ,[373632,62.390659,"tz1cakmH6ZC2Fnaa88U98tX11XvMvqbohHWG"]
+
+        ,[374180,445.443036,"tz1XBLdQtnioKk26RXS2Jv2xKin8jHGvP227"]
+
+        ,[374245,518.850109,"tz1Mg5v1gatc8B2KRi6YSht4TZz6K9wKgN3j"]
+
+        ,[374275,701.701779,"tz1eh21unVZUVtdouLnkL3uVBpE689tnVmHV"]
+
+        ,[374391,38.399234,"tz1UrgWLF5DEWsjdqk8xdWSsTbJ4XbZrXiYX"]
+
+        ,[374956,21722.682129,"tz1WeZ5YLzvgbY9HWM4Jo6i3Z6ESDvUyfBYW"]
+
+        ,[375038,245.602468,"tz1PBbzzozowqu5ZGeBk9kicso5hJmiR3pDQ"]
+
+        ,[375270,204.954651,"tz1avFuw74u4LgoR9AQwrW7S28T4jUjtg1qi"]
+
+        ,[375429,8548.233656,"tz1gUWB9zeTVYzriy3kN4GMSYYR18sBaTX79"]
+
+        ,[375460,42.555914,"tz1SkDw9TyHPgoWvHEHGkPUoWWYDD7gyEd6u"]
+
+        ,[375636,13.292896,"tz1Qm7axUmYzeSfcg7yoqSLoeqDkeVJ6NHQe"]
+
+        ,[375668,0.599174,"tz1hEiN3AgemYD8pkxbsyC5hcKyHpHDu7cgZ"]
+
+        ,[375676,90.068937,"tz1NZqP9uyeqvZNe3mRaD9KGz6tJcPCs4WXs"]
+
+        ,[375727,9.115729,"tz1WSGas8Kh8H8SNc8Lvm7Uxt5S1cnekqmkW"]
+
+        ,[375805,121.797349,"tz1fuiRun5u7UfxMJ7wFuN7fH6P1G9xGsy4a"]
+
+        ,[375896,94.349312,"tz1QfwPicG1GEo4xcWf1xe4nXVCecYqe4s6C"]
+
+        ,[375899,2.252479,"tz1T8LyjFb3BWAU4a3Gob9ejKATc7REttgNc"]
+
+        ,[376001,96.014855,"tz1YyeAbLyU7hVACYcjpTTJ1kJmQ24JzfeE6"]
+
+        ,[376031,2.566455,"tz1W3wsJBGgEoKWjUr1aTisqcWBPaQ2gZK4L"]
+
+        ,[376077,48.850771,"tz1cRmJJrTUrHd3Rwe28cDraK1zJUkumRrYa"]
+
+        ,[376205,271.085966,"tz1UzuM7fhvPxJrWPaQYS38xrLK8V8YNrSHe"]
+
+        ,[376293,173.951148,"tz1XiTdA6AveDvKtWBdhqPD3kV2ajbToVcwp"]
+
+        ,[376342,0.146065,"tz1UptcJMg9EQaY4PA4u88j3V14Epfxf4Qvf"]
+
+        ,[376629,0.001907,"tz1MSFQcoT71xn4ptJ2JTnsYRktWWjaQkDjd"]
+
+        ,[376667,1913.342480,"tz1bBpVgFQbfXFoE6ASi2gMwGS8CbqjZzVQ8"]
+
+        ,[376673,73.454484,"tz1LUmVkotKqWGPMbVP5BULNXzrqDb1qCUfK"]
+
+        ,[376795,432.583849,"tz1LR11eoKRujRCkxwBp1nNadGJdVSgxV17N"]
+
+        ,[376810,2057.929997,"tz1dv9Z3LkYZFg1ivSX25bWZzcbxP4nqZyip"]
+
+        ,[376835,93.733541,"tz1R2u47796ne2GLR2FxMZCRLfJAUGWfFfgb"]
+
+        ,[376874,1.057380,"tz1LgfHsDJbDBWpuWGFcQV83BSg5htYdxhgR"]
+
+        ,[376952,817.067203,"tz1YEBLc1TDmDMYodUaSE1dDJhLK52A6GtQT"]
+
+        ,[376961,1116.872407,"tz1bfLRCTM3TbxY2EiH4hEnoRnh3iG5dPYh9"]
+
+        ,[376994,310.328664,"tz1NAw1LoM4F3B8qXY74FvC1kiMoMvLV3yDn"]
+
+        ,[377245,5.866780,"tz1bH9QKH8fCbApNLyE5rjEyqkiV5ERiF1Tc"]
+
+        ,[377451,4.007055,"tz1Q2vefo3ouZdQZTJ5jLA7sDtAciXNmqzMx"]
+
+        ,[377683,1.787562,"tz1VD4iM3evvfcgdFAbjMxgMs4dD4i1NfRSV"]
+
+        ,[377805,9.557437,"tz1SoqXBYZEEkGbaeWm5MNv9pqbUV1ns9BMa"]
+
+        ,[377878,0.006063,"tz1LNtypoTWSfMREgCm1KdTi8obqQKsKF4h5"]
+
+        ,[377982,131.373703,"tz1Zj1W3yKK7nwhMxHTSqKqvXECgDj9Dc3ou"]
+
+        ,[379313,98.829760,"tz1WyvWYpAdeDH96p5YijbxVUXzMW7snLSrZ"]
+
+        ,[379324,4221.438064,"tz1QagBHjmpHjUo7eZ8M6XMMrv7fq2hBE4yM"]
+
+        ,[379469,0.546022,"tz1LQZYGyPNt4FysLvWaLU4xeKy7J3fnj87b"]
+
+        ,[380996,3.972831,"tz1LtUsZa1pXSw451kBRH99f6Vq3cW9mscVV"]
+
+        ,[381295,120.835038,"tz1SdEwcC8jCwbsm2mMZvRb8yv386bHRtVUg"]
+
+        ,[381444,108.159618,"tz1WuUbP8z68UVjnhzUniF6ra7ENLso6xy1W"]
+
+        ,[381480,0.001907,"tz1cjUGPmsKFoQme9cBLSrVxRqmsh5d3fYhM"]
+
+        ,[381582,2129.416843,"tz1cAEyWqsVFKC717XNwmnZmSihcKGuyegKx"]
+
+        ,[381603,52.433154,"tz1MbqPkUNgpztrodCp73fZsxmwanCxpbF4r"]
+
+        ,[381930,0.873990,"tz1WkZwKUrcHvXbd1BvNpPF2fFG9vVEB2zEf"]
+
+        ,[383125,293.865573,"tz1WWkywpFVa9VQoqxtzJEVfvL7vZY5HSHYg"]
+
+        ,[383647,0.811174,"tz1hh6XpvVg4MK1pstSYgfQtmn2YrhgruKyr"]
+
+        ,[384060,3741.577262,"tz1iT7iVmdrYK2yNFppECBbhMrwnfDjCZGpj"]
+
+        ,[384752,1800.752521,"tz1RWc5JpSkEeRYRSrkzD2Wvsu5HwXQAFTuj"]
+
+        ,[385124,4238.510098,"tz1WBKVxipqFijxqzzcXA2jucnv4fKM1WDvu"]
+
+        ,[389873,228.035786,"tz1f8wNxnvbkdx9fWuszC2eY9aCWjMD2BXBt"]
+
+        ,[391367,5704.816472,"tz1R3jqeqtdt1ebqJ4jHhQK3nnfHutxdaHyy"]
+
+        ,[392014,2.905047,"tz1LZw4CPhy2p5nUjqyxbDk68yAAi1YEnKhg"]
+
+        ,[392632,1191.469835,"tz1fNYFxuLvm1VcNPHTgFbeMaGGG4Ww7AC8r"]
+
+        ,[393259,980.233423,"tz1RwhUFBX1V3h5yHxJaLEpGA1EsU3qmALri"]
+
+        ,[393380,768.471646,"tz1hDU8DvK7sHGXAAPDxDraC4KFtpD3cYhrN"]
+
+        ,[393586,150.746848,"tz1USoczucGstS4vGSKuc8Bm1hpuNCMLFK1B"]
+
+        ,[393979,155.927848,"tz1LEYLcbkcJRZa3stS51dbidiTwgWG5pSwC"]
+
+        ,[400318,16.697553,"tz1YmRTSs6DKuivmY6m7uJENvtJ6W1FYgzC6"]
+
+        ,[402116,542.093674,"tz1KzjJ2ym5gLe9tTZ3sScEs1bkJbbR3E3is"]
+
+        ,[404987,40.459368,"tz1Zn4k6Tzr6AmV8oc2tK146d723kH3dDRsg"]
+
+        ,[407221,60.118875,"tz1aS8gF8XG2VDBYdTS3jfKRyBpKqXiSDS4p"]
+
+        ,[410797,280.982028,"tz1iuZctKaaEYvyeMhU86JB2oLYWd8oopsQ7"]
+
+        ,[412091,5.645187,"tz1VNiycRUJ9Kpo3Y8bXhZAUkVazbkvyoL6a"]
+
+        ,[413525,62.263500,"tz1f9ZTeXj28iHCECEAewEMCwZ3wBSoMfXzt"]
+
+        ,[417299,269.855077,"tz1RPtNE6bAvHFSbvucNb3Z331cGrLyDDoDD"]
+
+        ,[420482,365.286186,"tz1RvjnnU5deQWqQjYfuFRWDXrU6xgUsNn4n"]
+
+        ,[422705,279.901786,"tz1iYDuvysjatKodzoYgAJxB7WBouQjAafeQ"]
+
+        ,[424584,0.638052,"tz1XYRjypx11qu7xZSGCreaMtsx3GQhmY4Hr"]
+
+        ,[426497,0.021121,"tz1T6w1ocpNYYe72Sbe3DzFsoxAksW66BT6y"]
+
+        ,[426964,212.301357,"tz1METDQsuzUUXh4fFGqxX3jSGBVFHsgpbsx"]
+
+        ,[427197,1024.428668,"tz1YaDtQBYbebq3fwFas8rgN83JBnTYJsLW9"]
+
+        ,[428238,3337.873653,"tz1fqMwpdVdVnQ3ajFEJkjMM7AGsrtscXWJr"]
+
+        ,[429629,91.235946,"tz1ejQRjjKh27h7KWGg8y1ZoSTLBir56QznN"]
+
+        ,[431188,642.910314,"tz1hwEgkhYQ8cNnZsvQDSk93RZ2yw1MtuVzC"]
+
+        ,[431219,303.598151,"tz1Py1AFkXxaMghGBwyD3xMBkjVnn6MpDvGK"]
+
+        ,[433344,10.059322,"tz1PvEWVsNebX2XQc8uLVQkRtHm3fXaZYdtL"]
+
+        ,[433355,1561.657737,"tz1YPedGfYo3GdtxFYiPmtztWu6ZbPCVtVGr"]
+
+        ,[434244,361.185608,"tz1hFv4dLZAurSXbg5BqN35uJbTmBFGE1T9G"]
+
+        ,[434447,1.089745,"tz1iWXQjbZDMhDxrfUWpBFQho7DxT1FhnMBR"]
+
+        ,[434683,10.337213,"tz1UhFzDyVGKzB7tj22msGfKjKN5J9zjDPnN"]
+
+        ,[436420,11.192169,"tz1SYXZYSEYLC9vLGmGAc6j4FEMo3Rb6YaDn"]
+
+        ,[439581,0.000001,"tz1eMi8rfJD7N3dQEHF9JbM7TV89F8MQ8hzw"]
+
+        ,[441690,1.105352,"tz1YfRC9rHzWhSapMbwvtSGeQwVQ83vV2rJ7"]
+
+        ,[442738,223.124616,"tz1ZMnXd4Qagvcmzhf3ESkD6i9vGC5xtQaEw"]
+
+        ,[443490,6.005985,"tz1LwHtwccz6g8hUPitLCNNfwzsUNt5BsKUj"]
+
+        ,[444170,0.648703,"tz1L9Df4DkXvwDFNeodB3jPkLbGSgDtzCxyi"]
+
+        ,[445835,292.017095,"tz1PhzB5qfRYKWt14hj1SbNUPNf68SVjqNDJ"]
+
+        ,[445842,287.772622,"tz1gmnNri5dAYmB7nNqBQt13tAtwD2VbLt9x"]
+
+        ,[446435,3.667192,"tz1Nfg8FTFhBpB3yt96va2LogfMWaMXMeky6"]
+
+        ,[447012,131.379991,"tz1enT2GWv7U8jyPmmoVb228u8hvi6hJh5FF"]
+
+        ,[448152,61.706810,"tz1b2rCusXYmUNqJQJqP1hW1d9MjqNPLeBsa"]
+
+        ,[449829,1.131970,"tz1gZZyUKqvv5kxfj5oEmT9yWshdoj1r3En4"]
+
+        ,[450863,223.211792,"tz1Mzvo1DVmLd6cVmhsqH5qP6vMxWh9vbXik"]
+
+        ,[452224,62.661735,"tz1gbw9b3zRxWH6isvYUFsLRW8cey9AMwPVi"]
+
+        ,[454209,5.906502,"tz1fo8XrcdfkDovLvn3yspeNFFFRQKUmZTAD"]
+
+        ,[454876,40.329195,"tz1Wd53SX69SvjjL8MTuKrZiVMhbVysYjADY"]
+
+        ,[455977,0.001907,"tz1UDgg2Cz1MP6fa9TPZo2ncE4Eo1XF357T6"]
+
+        ,[456646,84.415320,"tz1c6SDSciLZT9qgv2KL3K2CcdfcNzksZXNc"]
+
+        ,[456911,35.217470,"tz1hi1hHVJBvibSYct7Ut6GDYTWibB18YNQa"]
+
+        ,[457279,0.435710,"tz1S4AJT4W8czAPQEk7qhGh9w3Li5b1LUWqj"]
+
+        ,[458509,0.449419,"tz1ifp2cSGWHSCWPPE9PnRWqKNkawFaY3kmw"]
+
+        ,[458842,120.142937,"tz1ijyJy2QncvgDKZJARDgPqEYVRk6yTE5d7"]
+
+        ,[458884,1367.065383,"tz1cXgyV1JQDTuhNHz3pfD6x1oqF8cR68APz"]
+
+        ,[458916,103.953684,"tz1QX4VehrTBzCGdzC7FAZDfEaRejCsawjtj"]
+
+        ,[459387,63.158937,"tz1RDcbo3eridX8gDgY6ydu8wN2pHKHyoViX"]
+
+        ,[460085,47.548163,"tz1gj8AEbUchxnr49qHNtaNekuxJ7NVvpByy"]
+
+        ,[461225,12144.935149,"tz1R24RNTjjtgiHoXPt1VSZD5zMsRbYDyXPg"]
+
+        ,[461257,2.198600,"tz1cZbimxwmWeVAbA3wyPRLdCzMUztnYCGuc"]
+
+        ,[461780,3.543398,"tz1Q84sFTx6HMtC5BrxyAbXQdL4MYCGYMrPK"]
+
+        ,[462727,0.797163,"tz1f6ReGNMnnjC3K4XAg88aTzTHvwtRzKKkC"]
+
+        ,[463096,17.296275,"tz1giMm7XjCBhEY3Qrf6dc5pKjjZKxmF1GZN"]
+
+        ,[468057,238.679467,"tz1ZvTAUjV1sufCDjKxAsvcAUauzn7J4JyHi"]
+
+        ,[469225,608.678351,"tz1SoBc9wZGG2NPVnNN2Bfevv9SugaVymfPn"]
+
+        ,[470444,10.654950,"tz1bdBZBQyDk2BUYcT42BRGuv4fVq7erSJM4"]
+
+        ,[473991,604.779501,"tz1SK6a5Si7Km53DwGemTyd1Juw4VBPT8wdj"]
+
+        ,[474202,2398.564863,"tz1PsLtB4P8YkXs7dBibktKBjxd7eSehuk3s"]
+
+        ,[476132,47.207474,"tz1aXrcZzmhjYpPph1St4TyGP9DiaV8YE2tU"]
+
+        ,[477769,0.993708,"tz1ecZP7BifuLuGXqqLGKYjbzG6pvGWANM9R"]
+
+        ,[478720,90.468742,"tz1asDA12UG7rr24nXRK17Rz4iWSnhCwpEeY"]
+
+        ,[479370,231.648005,"tz1cRWUMcoX6q1botBvGxwgY8BBP7YRibVs9"]
+
+        ,[480709,2.893281,"tz1Tkzr4vbA9nNPBpUoSjCE4P5eJmXdxZ1N6"]
+
+        ,[480971,10.726392,"tz1QxiPzSTsBQfsB8JEHvumy12MzxKQhonSv"]
+
+        ,[481194,2.880457,"tz1P1bT8yUkooHALdLSCa5xAhc8HxtqZ4oVU"]
+
+        ,[482445,2331.361237,"tz1hUgkVDQy1f85iGn2joAaCHqyBzSqEY2x7"]
+
+        ,[483250,100.277252,"tz1fCkNxtqR8NbpvTsih8MyZgD5hbHoVn4B4"]
+
+        ,[483848,7.048700,"tz1MF26ASzm4nAYHb6u2LzFN5ocXHJhvGpJN"]
+
+        ,[484626,16.868045,"tz1Zg2LmJYAEANkBVJiMhAX6F8c5Z24tSHdK"]
+
+        ,[485091,0.275213,"tz1gBAKSwT5EqWoJtYToicpU76M6apvJmnYt"]
+
+        ,[485640,3.392810,"tz1aoCSC9JF2W7zVmDbmnnBZsvu9Lfzqhbhq"]
+
+        ,[487193,716.077591,"tz1Lxg8QTE62jkeDijCR4GtB321x6xvWh8cU"]
+
+        ,[488203,15.719180,"tz1eMfNbFBywgtezBo7RTBCwKfXnzsZ58mGC"]
+
+        ,[488240,76.496409,"tz1i8rjcyqnXz6o3mEWtDAWfqV7K7feKgaLm"]
+
+        ,[488772,178.088070,"tz1bRkTyU8jULP3u5WmfYK33tenQjWiX73zW"]
+
+        ,[488911,1068.261096,"tz1h1FDFR4ochvDH1ernyr8J4j1GuyWQ1onD"]
+
+        ,[490799,0.000001,"KT1QWban5PMY4Q4y8DtJAXhPurrtsS8fdffq"]
+
+        ,[490885,77.576452,"tz1VQbYRx91onHg2JC4ethNCEGxzHxfUzV28"]
+
+        ,[492743,559.985763,"tz1cUUfpv67ZfK5CzNJqAUWxJmYRUrhAUcd4"]
+
+        ,[494013,0.270729,"tz1fGwsxwcVTxhRwwpo9osPPkRDiDHLPkVB5"]
+
+        ,[494365,207.639891,"tz1dd4pM9gg3pnainG1eY7NAc61o4dikevXZ"]
+
+        ,[495182,559.311941,"tz1LTznMTK7cEEadRZN8Tnv8hoCBGnF1vJNL"]
+
+        ,[495740,514.500785,"tz1Rq2hqySVSCsWv6J3rD7gqvJn99VDCcdrA"]
+
+        ,[496788,0.302259,"tz1hQggwrG1J6cix1YUagaeLd4bf9uLfyUaF"]
+
+        ,[497266,1.311708,"tz1fKsCoVya9TpqEgkD8zhCvRpeh4Dn8nERA"]
+
+        ,[498961,6527.049250,"tz1Yo4asBCaT7xmvVGLh73uw5SNAZ15TYv2c"]
+
+        ,[499188,1509.496489,"tz1iB885ytvta1Nq1eVVN1Dz7CAqx7AYk6ym"]
+
+        ,[499855,4331.396526,"tz1fp6eHJ6CqMX77dCTjVjm1aP8BKRnfKnRM"]
+
+        ,[499950,2506.315416,"tz1MVQnXPtfr2YJA5SVsbKWqDgRuBgh9AFYJ"]
+
+        ,[501789,0.013133,"tz1TBHgvUGq1CguakxbsjvagZLv3jRVEr5Ze"]
+
+        ,[502230,11.496487,"tz1esxdp7MTKoYhUbvzGSCsYJAyr4qBLtcNk"]
+
+        ,[502701,172.103873,"tz1XYvCa3yRXgkww7r1ZchWxBRzFhfGY2yy3"]
+
+        ,[503812,821.326106,"tz1PmZvzsLJCuNVZmPFG9VhXBkBbYjDUsJpQ"]
+
+        ,[507266,42.266765,"tz1hnjxRLQkQZ65NNQwd5EvKJfe7Sh159PHH"]
+
+        ,[509210,143.991015,"tz1hvrPkERVpuYef7pgAtDkZh6srrhBpAgRF"]
+
+        ,[511128,1840.070522,"tz1UVrnoHnf5stRVuE9vJNjUZJiopuPHCdg3"]
+
+        ,[511222,268.608168,"tz1USM1oDUQx9AypujMxSs8XzbdFfryqAz6u"]
+
+        ,[512301,265.007187,"tz1VUxMDGZWvd7idwpuZ4byadS4aYevwEMwt"]
+
+        ,[512478,1.527679,"tz1N4SxkU6cY6DQ6UonmYx7kU7Ump4Q7cS6c"]
+
+        ,[513373,0.679465,"tz1KkMj1nAWEZNv6CuyPQ4199fcqdDesbsx6"]
+
+        ,[516101,17.961651,"tz1Y4JNFjR6uUQ5ZunJ5aj6W1o8vvPkMso6T"]
+
+        ,[520091,1412.076476,"tz1WmtYymLs8xohjZnPbZ21QY9WFdbHoLinh"]
+
+        ,[520700,47.901198,"tz1hQ7XsLXbozqQTy9WgRyYecLTqxvKoE98q"]
+
+        ,[520913,250.265292,"tz1YuqsjBF7oQnEPh7MyTYcVM6WLXrzSBuMa"]
+
+        ,[521133,0.146499,"tz1iiW55FM3gTgXjV9Wu7cCtw1gErzKqcUC2"]
+
+        ,[522262,34.944700,"tz1ft6KS4v2FmL15mz3eSMFdY5nhrAjb6Fk5"]
+
+        ,[522760,6.502999,"tz1WyqRyq7DvyXc1XCQPr5wXxhpCwTfT5HSQ"]
+
+        ,[523158,6.983810,"tz1SD3Z8FA9gDwWdsd3uS1QPg3XZYckPuCqd"]
+
+        ,[524747,358.738566,"tz1ZVrhAZ2vDkD8fpSDWCAerHTE1ZFptqiTM"]
+
+        ,[525831,7601.542210,"tz1c8qXxfsugQPxfYctqLPHHbcs39CeNzfaF"]
+
+        ,[527434,19.547839,"tz1g54UUKwt4LZmQgVEJq6rqTske59MCnwX8"]
+
+        ,[527580,3688.537959,"tz1SHUWvmShVA26UWEkBRKb3trYzkYJojNsL"]
+
+        ,[527900,463.255858,"tz1UVZwxAsEqqApUmPaZPUbvswhRZDHa4iRA"]
+
+        ,[528784,0.885871,"tz1YKyfPCHyRGrpoaTEM2mynL1GFkPZhpakb"]
+
+        ,[529904,0.178534,"tz1b8VsTt6o7EcyRFtowEeyH67XHJFFMyMcG"]
+
+        ,[530121,109.262603,"tz1f1UsFS47xBhE8Mf3TtBFajEPFHXQrhLUU"]
+
+        ,[530391,333.841421,"tz1ZQUYBva2tNrdiogH4FnttSjVxQmUT36BB"]
+
+        ,[533316,23.759787,"tz1MatEtryJrjgYXXee8R2u8E6X6Vi5jYQAU"]
+
+        ,[533416,1337.575064,"tz1fgyYhxtveSMhGsL7n6Nf215FeQpv86o6R"]
+
+        ,[536495,53.733949,"tz1NZJpHDbcdLkoAoaUiVhJsupPYAhEauCVz"]
+
+        ,[538048,1.784813,"tz1dxaF71ucyoiJtH1YZrz6hcqkhSxZBKCbr"]
+
+        ,[539124,153.031146,"tz1hM7mcwvvhGvcu8F6S16mM3YFc59p5xrDH"]
+
+        ,[542754,2181.555035,"tz1NDAc4f4rVywYgKZaJMQnxFnHnFhoEx8f9"]
+
+        ,[543617,0.435181,"tz1cD5QPUtVc4eyhLa9gwZDqhK4Zf4p8owxv"]
+
+        ,[546646,2.051916,"tz1SF4163B6cvcXmQrmbRdDnhitmtUQytD4V"]
+
+        ,[549897,3.492646,"tz1Zf4ywFWVMMpSMdyGGyJQtoL3VSgb24Ucu"]
+
+        ,[551586,167.365378,"tz1Xb2pBoNWKusPtk3LFWUgQFMLCC2GsndQZ"]
+
+        ,[553755,0.234177,"tz1VfBN2jKXxPaiHP6aXP6vtqjRjkVNZfJCy"]
+
+        ,[554899,294.761869,"tz1VigQArsuiunPo6RFctYUmpRLj9ULo5Y4a"]
+
+        ,[555747,1.013497,"tz1S1wJ2xmmz1a1TsVdQ255JiTZVcxuWj7xe"]
+
+        ,[557164,1.158837,"tz1fr7qPRX2ostfeZwWcvKEjnZF6xLbG1xYA"]
+
+        ,[557370,35.605985,"tz1gAckpmaoKNZ3AW6S44faAaCmyNUXQjU1Y"]
+
+        ,[561063,261.400313,"tz1PLEhGA5gfgwbrAjPJZT3CY2PnFinHcc5x"]
+
+        ,[561266,230.977504,"tz1gVrDLkPxPSVJHQdGM42HvbfBHyQVWJTi1"]
+
+        ,[561867,59.215947,"tz1Lqy17cxE68q8FXZjyLddbemSNbpf5Sqgt"]
+
+        ,[562614,23.313100,"tz1Wyfg5XDLDt8mqn9YNNUsjRwYYkcHmJU4K"]
+
+        ,[562776,1.972984,"tz1SsqcXj5VeQsfV5DWMXdB43dKRG7ACMMWK"]
+
+        ,[562948,33.213337,"tz1bhFt1yhvQLSj7pGuDTjPtQdmcm3ujHdaN"]
+
+        ,[565040,232.388624,"tz1XJGtno9wiCL5PRBinS8HFBzr5fow8urqv"]
+
+        ,[567197,1361.412221,"tz1YjV7o48pYKN5WtSzNdsQSSdXjHDX7NqXs"]
+
+        ,[567266,162.759238,"tz1XZjKqFVFxnnu9f7MdRw3KMsp3vzR9er5h"]
+
+        ,[568162,45.913863,"tz1Pw8dRRjRdEpSjyTkYWuGq8ERRQAxMchg9"]
+
+        ,[568820,49.713518,"tz1fxHtcVfu7YhGQNF5yyjYLkfbf6s61PULK"]
+
+        ,[569281,212.729379,"tz1XtAR9T3xHtvnPngHY7RCNfrwoUASkb9oQ"]
+
+        ,[569468,0.417897,"tz1SFdLJWTjAd8Xr5vEFTiPVpoKoExCQZddq"]
+
+        ,[569683,349.129379,"tz1VvV2eJhzY2TVXbdXPxG1tsskx3qEeiRY7"]
+
+        ,[570758,32.272625,"tz1eSRYW1rtbB4NEwcY5SJ7SSKSrsUCgve5T"]
+
+        ,[572274,5916.348382,"tz1erK2TmaSs6fxXqoYhXPkxKmYjMB1x6v7q"]
+
+        ,[573146,5.342709,"tz1hFhANxSA3CKecZsR12vmke2ygghcpyqwJ"]
+
+        ,[574448,443.335247,"tz1gyCJjMga1kjEssDP6J2bJhRXncE36Ye8A"]
+
+        ,[576234,147.846516,"tz1VTd6PqoFwedZhJaj5Tb5yQWLo1aH4HDEr"]
+
+        ,[577309,124.489645,"tz1VBHTvku97swVnPKE3SQQuDJTjjrPzAd2N"]
+
+        ,[582757,100.145465,"tz1d6AYE4XqE8pqp1f1nwawMRhHHxktHqpkw"]
+
+        ,[584140,363.851965,"tz1PdXNyyoopeWP8NTgvQrry7keoKdwCq1FP"]
+
+        ,[584784,0.263391,"tz1QahA68vbmhzeSTM7XU8CZ5UZ53xwAo2D4"]
+
+        ,[585434,295.558539,"tz1hEMKmqxJg9N8oxCcEQKBQsCj54pdvZySC"]
+
+        ,[588227,0.640404,"tz1VohaLoVqyitkADYETutV5HoCrTQwZDEQ7"]
+
+        ,[589694,5.871148,"tz1dMK9DouR4SEnfAyaeVHoZ3Fe53TbcUhy6"]
+
+        ,[589779,52.865858,"tz1fLdFCApR8RmEAgyPvW7PA2oHodsmHicRG"]
+
+        ,[593851,281.842492,"tz1Sxw6pLw6AWwigY2DdRbXU5xLWWneauoPS"]
+
+        ,[596515,111.070901,"tz1Y4LiqxMTxJoTvzSDxcCmHYzQ28w5CjmF1"]
+
+        ,[598393,56.047555,"tz1er4USyiWsWcYzhCktL8MihSxz8k6PNYWL"]
+
+        ,[601849,1109.923881,"tz1ShrpjLgXLNeCTN26qGrMC94Wq6Qhh9UXG"]
+
+        ,[602803,40.243644,"tz1WPcpifpzyCZGELM2tk84XHhDwv9xeQkS2"]
+
+        ,[603406,513.173577,"tz1UY3PTNyjhbCLYnJydS7Tk3jNcTfQUZeB8"]
+
+        ,[606379,60.824676,"tz1XCPDa11Uou9g55jBQReaUHEA7qwAfXC2t"]
+
+        ,[607508,0.644038,"tz1SR7D2DcDLJu24ix3xtyq1SDXojHkJBSbk"]
+
+        ,[610465,49.268281,"tz1YNsdZXotRiFtz4pYRt2w6FbgqkfmrVKN8"]
+
+        ,[611173,1034.015573,"tz1ce7f6JA2MhdhnnH9cg5g1pD12Us5ssiPw"]
+
+        ,[613411,3182.886689,"tz1hFFXN2HjiSPoM3xX2GsZFsCC6DmJRkKEC"]
+
+        ,[614098,84.297096,"tz1Tnpm6sz8NAx1ZWDvmB4jPCQC5ZtUb9tTm"]
+
+        ,[614689,15.409813,"tz1UMVTfg14feHktopcmV5HrprCFbSy3JKmM"]
+
+        ,[615543,82.329738,"tz1baX3FbRUpQWEbLFzzmguB5zF1VkjMMFPh"]
+
+        ,[615888,5.809786,"tz1TYWMcCny8VGKAuzwqHRMf1PDpuKJLe37w"]
+
+        ,[621643,284.411456,"tz1iCtynkkRni4EbmiGi7ejgP3jPn7eJbY9N"]
+
+        ,[624912,15.751195,"KT1MHvtQbhxQFFMvucetz6D6ZFxtnEBng5uU"]
+
+        ,[626936,76.375001,"tz1NAmgR99FpBbn7x4JgdNtA2XMyCMETNKeA"]
+
+        ,[628516,23.582059,"tz1LLjv571S4EFWK4HjGM6cPeohFvTedrAXf"]
+
+        ,[629432,0.068974,"tz1WNBDNNDQv6u8SRXXDdVbzbTBawgoMh983"]
+
+        ,[632288,450.057077,"tz1a6WXu3ceuJMCNSHaBmBVxWXxw4pf5YMCn"]
+
+        ,[633030,235.118839,"tz1QcnNUMFTJtVyFfd8b4bF2PZwVtmDJg3fX"]
+
+        ,[634410,1509.463753,"tz1TKSciogfrzFas6vSxWzJtnN2R3yBjEZt3"]
+
+        ,[636786,0.021121,"tz1TLDKT5UAxhMhCuKp5kGEN22jzo5Tkfuuq"]
+
+        ,[637233,133.401404,"tz1bTjGuVXUZa2whc6AC9SixJCMcHswhDX9R"]
+
+        ,[638057,26.412558,"tz1gz8kgLpGNqG46vzmmKmRL55qGoy948Sji"]
+
+        ,[639064,4691.863121,"tz1Nry5YPddf4VFDyunXLR8b8AtpvGJLMLZA"]
+
+        ,[641366,539.399033,"tz1VzsSDRjtPyegihfxd7Xsokiu4c5waK9Jo"]
+
+        ,[642131,0.063937,"tz1KhUsY873hK1ghwBM3JuJr5XPaTRVFiCE1"]
+
+        ,[648447,44.046720,"tz1VumzKr21ozFSDtvhDwnpCK7So5rNRBqm1"]
+
+        ,[652039,53.092929,"tz1fpHonL2hjHX9mjWwZF1SqzC6ozCiMfh74"]
+
+        ,[652416,39.700031,"tz1NQuPVYANaid3Yn86eYvRw9hnzP9t2et1Y"]
+
+        ,[653074,1.062685,"tz1Udx9ahyWSKqurBAr79jeZJrqw6ucBoTrq"]
+
+        ,[655467,89.063633,"tz1SHDsfrnH7Ymr8926GTnxLftBvzPbBh3PP"]
+
+        ,[661282,1114.963498,"tz1Rh79G1pUsnz5pQzrVVZ3eRJNzAvsMn4Un"]
+
+        ,[661445,11.892722,"tz1bsNwarx1nWwk1FGNxX5rXZTZy6EniGXsA"]
+
+        ,[664141,1152.235726,"tz1L9XtRTsefmwBMmAhwFKwfbHyZHwtbX6Ag"]
+
+        ,[664232,364.341893,"tz1QP9hauFTjwRLkVgSoyk643SPxFCXFBWx5"]
+
+        ,[675249,73.632504,"tz1QT8ZP9Ma2sgpnoXvDbe98Upw716P5iGv2"]
+
+        ,[689303,62.862595,"tz1QxDDV5tURPSDpHjyRZvLPGcGZA1qEtMjD"]
+
+        ,[692992,119.584352,"tz1hzsaRzsEQ7xPiM75qjBzYx4Wh7TGXG5KS"]
+
+        ,[693136,1707.176680,"tz1iwBEEz53TTwnxaLanqr5uhYApM859GTsA"]
+
+        ,[693723,3.965091,"tz1bJx3Fef756BrCtnDQnhAbAmumHz8GpX5Q"]
+
+        ,[695069,11.777430,"tz1cfWbTuSuVcmGEbEPzqVWh2dQtpeTepdn6"]
+
+        ,[695356,2271.597521,"tz1VLS1n1cDWKF7nF39LMBgbPmRTgRJyKsEQ"]
+
+        ,[698352,1.332878,"tz1VHR57XRvyZaEboWJSDGF82v5mzc6e9aHw"]
+
+        ,[704301,585.086184,"tz1cAiArwa2JHAQ3AUqWzjxo2UNnCxiFr1fS"]
+
+        ,[705160,2164.385879,"tz1c1SAuxYqbaGXL3N1ZvBB1349hMo9UvkUe"]
+
+        ,[707997,260.960258,"tz1MFuxmTiiRUKrxGBV3EV2C3FFmfJUXXYKY"]
+
+        ,[712435,389.438313,"tz1XiNCvpAvZVtsbaS9PgrFjWuafcF2zqxqY"]
+
+        ,[713810,49.358660,"tz1e5HUyvfWw9VSMGiXdU1o46znhP7x2TxWC"]
+
+        ,[715970,121.841411,"tz1VfD8pZXUiJjbs3RnWynR8f4uAXcPB19UG"]
+
+        ,[716420,26.459192,"tz1acvJswmnGg42CCs4ziC46ATTT8DfAqG6e"]
+
+        ,[720548,9.206064,"tz1hRhH9wB2NQnigu9aLt4wnE1MXPVSJ34D9"]
+
+        ,[724171,2.427018,"tz1ZskV9JbWTFXjDXUPq4567bcoyRr2Wsqoo"]
+
+        ,[731741,35.927797,"tz1hEonUqGDkY9Y9dJapUw1mDsGA3qJBY5RT"]
+
+        ,[738277,0.736709,"tz1MbEDJzyjdB9F3Z9sA2ugevwmrbU2XUwxv"]
+
+        ,[740355,1.504022,"tz1Yuh6SVSEiBeLyim14YSG8L45AokaD8Adv"]
+
+        ,[743159,2.019390,"tz1XcUme5rwehEPMQjFeuKuTgU7H61F1jTSp"]
+
+        ,[748291,6.317209,"tz1PvjnWAfKjhFto4AJ9RH73jZdHh3D8U5Tj"]
+
+        ,[751040,139.869983,"tz1Zm6eJMV3dcCv7S7X3w3SecebUpjveG2a8"]
+
+        ,[751262,607.831035,"tz1c9av5KcExGcJAQjn8akjb3gtDjoq8rUhT"]
+
+        ,[758396,0.652165,"tz1a21vhoiHPCGSbAUC7p1DDgCzCAXsBDz95"]
+
+        ,[760547,547.127477,"tz1dvHdziVeoKQKzDxqfbmdWiEdaHQcWV5y4"]
+
+        ,[760843,277.085778,"tz1Ta8utW9daupybpbYcWdLCxNiAhs3fUL3q"]
+
+        ,[764332,1.093714,"tz1RrAt6wGFTa7zgBamS3R5Ck8GY1H5mSmis"]
+
+        ,[764629,52.008498,"tz1NvPeUephdq6ZxTkMVeJBxK7Zhqz9uMyPz"]
+
+        ,[764638,279.711635,"tz1N9Jwk63ZDM4JYx8hsaQZRdwyRfnbdpJEY"]
+
+        ,[768428,80.292684,"tz1aXJbVA8vUwi7r91ggPhgqFqaqY8isLQBW"]
+
+        ,[768664,24.837445,"tz1MmVWswL5K2qCcgr3EeU5sdkGmbXTP3znH"]
+
+        ,[770538,131.145217,"tz1ithee7c14oMJsQfnV1yo4Dy6XbHc5FuTT"]
+
+        ,[775884,11.445369,"tz1SpaavW3gKPNYVScb6i5RJ8Ys4jX2dm1Wq"]
+
+        ,[776642,69.642766,"tz1ZsDvX9GuvFNx3mGmrjt3LCFedrJndm2MU"]
+
+        ,[778476,0.046656,"tz1dvPuFw7RBtJjPyRFDEKrFRnNYi9jDBTq8"]
+
+        ,[779149,470.605435,"tz1M8CHRnWfHNnW4csAVMXmaSsStXqWit8Qy"]
+
+        ,[782412,582.251196,"tz1hRQh2ipZkJ6s7et8FQJhLy6NNBoZUDren"]
+
+        ,[785670,2704.919666,"tz1XCYqxxiqaHQDZXq81uYvbPEdseztD8iDX"]
+
+        ,[787747,71.952987,"tz1gBHF6tiUoengNwoB6hwMJrf34KzvJD11v"]
+
+        ,[788647,3.894833,"tz1e9Hbyx5ZLsEd24vk1GBSk1Lce8zaHJon7"]
+
+        ,[790942,0.870322,"tz1bxfFZgVvpZuuQEFbcpwTLpKmBKZYEKDpn"]
+
+        ,[792346,22.078435,"tz1dRFbwjnYAEoo3aNk8J8gkwZLv1yk9Amm1"]
+
+        ,[795479,97.506075,"tz1aCRtaNTc3cXngYwfLfCWBwD5Bhi8xv5f5"]
+
+        ,[795816,114.843229,"tz1SAq4dFZ5r9Ux55JYbwMZm1JnpNSuFnHKD"]
+
+        ,[796055,0.869311,"tz1h4usezYDDNnhuiAGQqdVNyTtzBXPJTFEP"]
+
+        ,[802612,26.903902,"tz1ZgHra23612YakU32WDMMFCjELQ1tpsZBQ"]
+
+        ,[807802,257.350132,"tz1MC7iTWqPJPPWPscTXETFUm731p37F2DYs"]
+
+        ,[808878,18.856667,"tz1cHEgGciWUPdWuPhZ6wGHzUPdYy381tRxe"]
+
+        ,[811807,3510.033798,"tz1ZqYBGbv3WGL9wzHY4yJsChdXBs9FnXS3e"]
+
+        ,[813383,3133.384296,"tz1gyFF7LzmEwGnE7RvHtgZ8JYMDUDPHsx52"]
+
+        ,[814972,4179.106833,"tz1LoTL8wi6ZGrGozYdtoBVQ6UcN6vkm1Lnj"]
+
+        ,[816655,2.473848,"tz1V97dPeCejPMh838xeuivFXhh46ZMT2r3p"]
+
+        ,[817468,19.686284,"tz1LRL2g4qcLd5caWTsDuTpQvYq1QfEwdtR3"]
+
+        ,[817786,353.919468,"tz1YRQpAZgJwky8KdREFWgeiNDfz88PrCUu1"]
+
+        ,[823511,0.039930,"tz1ggpvBChzAeqT69YqmSVSN6mXmror5Ebg6"]
+
+        ,[825941,1849.038196,"tz1YJxQfbRLwdJ25kY3rCZjo8LF5zBdYEq9X"]
+
+        ,[829286,1.000728,"tz1RA6kGqamajCT9uQqq4Zv1ocVeeyt4Ni1h"]
+
+        ,[830176,3.449862,"tz1adKuZr2369P72QqCMaA7WpbPsjznuseRa"]
+
+        ,[836551,1.273521,"tz1MdTrPXnGNW9SvAshKrSU5jALAwmUYKYMd"]
+
+        ,[836593,3.127866,"tz1dSjmugoudmEuhXn8VHgkyhRYGrA5ju34c"]
+
+        ,[841496,482.220419,"tz1h48J7wLAhxHX6SGfAih8B49SysKpfDZoW"]
+
+        ,[851289,665.081060,"tz1TZQKBcP1CzzizKkdSfFBzsBWzf92hjs79"]
+
+        ,[851514,20.044475,"tz1Y5AYdZQP9bf2YpNQANCfZWArNfdqPQFQk"]
+
+        ,[860622,2.199080,"tz1N6p9Li5cXEj7Ckr8tL5pSaEKa47HsGZYM"]
+
+        ,[862689,501.885128,"tz1eEyrKZgn5vQZ7rcqvzg2JfyydV37Nmc9s"]
+
+        ,[864163,783.502560,"tz1NszL9jJJwqMz7dYe5QiY2dMpGAtt5JwE6"]
+
+        ,[869437,109.182460,"tz1hRSMEoQ6vHTLkguN7dQrgEEWnTizzrV8T"]
+
+        ,[873630,277.655285,"tz1Z7KYQjKWMAXJE9XLe44oZf1KzqvKwJciz"]
+
+        ,[880296,564.022636,"tz1WmhoUMyRRjin9X3xWXQQE14BfS1T2GnWL"]
+
+        ,[882823,13.330240,"tz1Mya11yoY4Kpb8SrABnfCU9HGJ3UBh6wSz"]
+
+        ,[883633,0.228307,"tz1i8Ev2aAubhnLA2RuB6WcYuCp4TJivhRv5"]
+
+        ,[886742,127.876295,"tz1V7HqYj1CgjEFLPH6tcaGNAZtNc2MnDfU4"]
+
+        ,[892635,0.082393,"tz1SagFqusSkspb4RHsLsiEcLAodxebMxq3B"]
+
+        ,[895695,75.287305,"tz1ZFHiP4cG8W2dWxrNq3PQYpYGTHmHuaM4S"]
+
+        ,[903274,0.960415,"tz1VrZHJ3Fp7bWNC1zd8Jna2mNZhqbezYcCA"]
+
+        ,[904614,14.501773,"tz1YYJJp6xaXVkLQvLFZWiKiih8gaHXoMmF4"]
+
+        ,[909574,152.072760,"tz1aRbP9tzBTiyBxsByQ1f6awvCBbn9XmXvH"]
+
+        ,[910379,26.869417,"tz1PqVLjn32HEhKxKMtngBqLDXAy7toVieT7"]
+
+        ,[911409,8.827695,"tz1Uk55evyBjvhDhbTjYnLggvP3hBc2AGirf"]
+
+        ,[911678,159.544255,"tz1QZwyrDSE6S2E3bg7ANEQMLnpxfxGaKcT7"]
+
+        ,[916051,2814.295456,"tz1Tpjn2gjgJcyFfMzSmZdv9UEkvMEzWxSRw"]
+
+        ,[918035,0.327701,"tz1RUbFY29FxKDZN6mwDL1GoMrvviPfWd1Ku"]
+
+        ,[918187,1189.900548,"tz1Qe59M3AJQVndFjzGuCv5tPpP47r24hAK2"]
+
+        ,[919019,0.354836,"tz1aHQwRwP6tK4CxTi9P5yK5ou1vkVbQYesZ"]
+
+        ,[919937,28.575294,"tz1Nx6NVePPd7AEiMTkqaUbceC9kD9HD2Rwy"]
+
+        ,[920989,6.050732,"tz2PV3ff8vW6TbFVof6E7UtLhLZV6XJDXvmw"]
+
+        ,[926587,11.376401,"tz1YPf7butFkBEnibB1YsB4r1UjqQPJudjfT"]
+
+        ,[930290,43.012257,"tz1Pb8CJUL8BHkiHnz3G5GKgbvRWJ44h3nVx"]
+
+        ,[932215,124.839976,"tz1eAHmcyfSKCuyfbP5wefFgRmSHHj3qUYmV"]
+
+        ,[934128,125417.712194,"tz1QbUhKox9U2uBdLVKXmso3kK98aW78JkwU"]
+
+        ,[934947,759.571777,"tz1gKXVQuLJHurFzyYnYAYR8A1VEQ5KdVrf4"]
+
+        ,[934955,94.077391,"tz1TsCGMbEjZ31GmGkJHqAFMe9YXEh4jZD4a"]
+
+        ,[934956,408.368192,"tz1LuH5CepPL1UfcMpJ1DEUGEykSjT94pQJd"]
+
+        ,[940070,14.391445,"tz1fr2ZD9LXshN8owUxWa6MXTc7BWRb2mjnm"]
+
+        ,[941926,0.044630,"KT1W9Cpc3642iewHRTE48S6rhVA5apXh14pL"]
+
+        ,[941928,3.040218,"KT1EoRwF875Mkq7fr2r6PaV2FJ48232K18Wk"]
+
+        ,[943515,1372.836848,"tz1hZUUkFMGVx8CzGe15q5ritzYJ1eyZoJbJ"]
+
+        ,[943603,0.999299,"KT1XTXBsEauzcv3uPvVXW92mVqrx99UGsb9T"]
+
+        ,[944616,0.827372,"tz1RU7KAvcC4X6ZwJwVdxt4ZpudW9VM5oXii"]
+
+        ,[949597,59.523986,"tz1gMSAn25Z5P4HGAH6Mb9EB18kHQT4djCCU"]
+
+        ,[952920,0.003654,"KT1FQWKftzundg2C5ZtoBs78a3xQpSq1CwxC"]
+
+        ,[955920,9.775876,"tz1WZfZ1xVVqb577e9MSbEzFCLocGAS55oHq"]
+
+        ,[958764,94.751740,"tz1hCb7HWUtd3nNqGwDmKDegBsQXrq8sUSWq"]
+
+        ,[966625,0.934691,"KT1Pi6aJiY521Hz3FDoac73VhSZAkhZzmkTH"]
+
+        ,[969730,0.285553,"tz1Yxg5WissHy1fGhQPvg56jWU1TyD7HrM7C"]
+
+        ,[975944,196.764771,"tz1hDeaVZduXb41SvijzHZAg3mCKrvCC338t"]
+
+        ,[985878,0.243739,"tz1Tj4gaW1uxFNcMePs5gvXXivvAqMtc9LbU"]
+
+        ,[994991,424.398813,"tz1VFibeC46a7yfzcqG9s2UE2rLjniw3QRSW"]
+
+        ,[1002471,8.453816,"tz2TYk8Q77gzPzsxjV8zDtYP8qBzP7KojAqF"]
+
+        ,[1003420,91.590960,"tz1ZGVHBVjAZK2Z5eJyQhPqkTTGXe13WSzrf"]
+
+        ,[1008749,105.972337,"tz1YXNsF6cTgtEr1F9qGDffPKxsbkwaUEewz"]
+
+        ,[1009551,10.777744,"tz1KsnHdAbXhjqTTZZiCf93DVC1cBcPrNfDU"]
+
+        ,[1011064,1378.112348,"tz1NKX4rbkxCgVwFQAyabmafbdNqaT99QnBc"]
+
+        ,[1011752,1.180892,"tz1RW7NWPL2s46D6CtPD9fE5JNDM99RjKT3B"]
+
+        ,[1017533,0.021585,"KT19vokTWdfzgBAWdZ9v1pAPiibKzfDzVzd6"]
+
+        ,[1018822,0.000000,"KT1NfLMCv2L8YhGchF2semKtoCxaqbth2d93"]
+
+        ,[1018909,0.000000,"KT1FVvA2o1TNTTMZsSGtezQfH3A26QSoH9Sh"]
+
+        ,[1026414,0.000000,"KT1ACzjZbAdFcbLbEFTW1jx6YnEtimmA1s4K"]
+
+        ,[1029712,21.851175,"tz1WoN3fLxbYfrprVi3WeYG6M5UUHcTpELki"]
+
+        ,[1035261,2118.146656,"tz1YC4ZXxme3nUzJQyo91iEJifUcKNsYFye5"]
+
+        ,[1044584,596.295904,"tz1RvUKgxRHFV6BBPPjAsA4P5CvEv1NH1w9o"]
+
+        ,[1044596,31.406018,"tz1bL63oogGNQazQ3F4GiNNxvKZAWjHazeqq"]
+
+        ,[1046930,4402.392038,"tz1b5RBT4HvtFccN27bSchYpU1ixw7QZT84S"]
+
+        ,[1052607,12.055926,"tz1RQZ8cKEcg65ASrCqnJihc6ZvthnXb5dMU"]
+
+        ,[1054817,324.019324,"tz1PiCnuabCMpaex17YGYgSYc7n4zYg7LN4Q"]
+
+        ,[1068593,89.962479,"tz1ZSugDgNB37XRdMst619Jqmeqg7N4w77CH"]
+
+        ,[1071114,293.348902,"tz1QsxZsPkKFHLhJdkiaRB4NwiSZhY3nryj4"]
+
+        ,[1088577,37.009239,"tz1Wwt4FPDd5mxx6Nhfp3zSwLt4Gk3U1UBcN"]
+
+        ,[1090520,0.032795,"tz1TU7utwFSuFafw3XmU4tYBvwFZRZ7hqJEk"]
+
+        ,[1094350,517.697748,"tz1iFwJzd2Q1sAjUcMGn41XZ2azphhLgthBA"]
+
+        ,[1111678,747.228439,"tz1dmif7aWfJEB21dNvkU3rQobu3HhPHTRw5"]
+
+        ,[1112499,746.188517,"tz1XVSHLsR5UzdwKhKPjFBiXYs7YnRVQjJ22"]
+
+        ,[1115840,2944.215202,"tz1N79bSBSSvsqjEHgEymo6EdEqFcMEuz4wo"]
+
+        ,[1116555,37.144813,"tz1LvBYr743Teiq6qdM8tcVKQQFN48w5Y7LW"]
+
+        ,[1121577,12.346048,"KT1K9SQo6LZxKZQKQSPXj2h4ui71fQ997e5B"]
+
+        ,[1125868,120.459440,"tz1U3j3WPL36go5EXTMHQJHP7nHJEYYLir5G"]
+
+        ,[1130215,452.209162,"tz1cc5g2L3ZxJ9iNMvJUjVctHnrPuGN1NvKs"]
+
+        ,[1131087,463.190753,"tz1UpQqiiSw7Y6tRbJ5pKUvdGPcuwRBn4U6P"]
+
+        ,[1132398,38.507169,"tz1V43trXPA5mFKduwSy6X8ib7Vr5MK4aMVQ"]
+
+        ,[1134916,80.751085,"tz1ZBmPFFFjEZN8MTMxrJi9RcPwqGCDdUhru"]
+
+        ,[1137661,1023.755508,"tz1akTdd6wTARaft8XhaYhZKLxWnpeycwvd4"]
+
+        ,[1141560,4.340783,"tz1VDYFaWGAMs5aTVGmHGaHeE6k2htRraAV1"]
+
+        ,[1148466,0.000000,"KT1A8JrGTQ3ExBLpDFnpEAm3HgvR5CGQk5UU"]
+
+        ,[1166744,0.249945,"tz1L4qCsu9mp4rzAbuC8V3YUX47u95gCu1dR"]
+
+        ,[1167577,128.673639,"tz1SbdiDZ7rg9bvsFBXZZzPtzjtSPTE9y8Qt"]
+
+        ,[1168816,1548.642071,"tz1RRk4gPkyDoZEYCWqMyeZiThDKy2t1UcoX"]
+
+        ,[1170167,17.882200,"tz1cYhBqTcnnmxhPSvqBkM1CMaRL7geSoE1z"]
+
+        ,[1172263,2.807080,"tz1SxWeuekvxtp2NAyfj33wygiDCkEQmDo6x"]
+
+        ,[1173851,318.447191,"KT1D56HQfMmwdopmFLTwNHFJSs6Dsg2didFo"]
+
+        ,[1174742,105.915469,"tz1LzT7QjgB4yLvqyvAbiNBUQqbVNYL35dsr"]
+
+        ,[1174898,22.579910,"tz1L8hBVpams2fWFC9kS1sPVxfGY6Hmg5TQ8"]
+
+        ,[1175835,215.153044,"tz1aARrJpfKCFrX8FH2sF5R2kkrGLnExbRiG"]
+
+        ,[1180558,7.790031,"tz1RgwZfnzxvEznhUpNa6aRniimMdfRVhgKE"]
+
+        ,[1180717,34.475664,"tz1PWTUkXPKAjGdUYMqtwumCpcCKQdUGmork"]
+
+        ,[1180794,1.052400,"tz1hegJfVZ9o63zHMC4jVmYdDPRtNGQmfpw5"]
+
+        ,[1181423,2.004920,"tz1M9kTx5w2dbByeAukXa4SZZ3zzVYzCAgxM"]
+
+        ,[1181853,3.430434,"tz1cxe8a142dSLfhxXvx7vQPyjLqc9uXGcdd"]
+
+        ,[1182180,11.376436,"tz1iPwJuTUVMhid9ahKn2Yb4CVGh2PB2hhR9"]
+
+        ,[1182207,486.171155,"tz1SzjK1j7YgfXatHA4WQnZodsfRbYxkRP7P"]
+
+        ,[1182320,248.011733,"tz1hfuVWgcJ89ZE75ut9Qroi3y7GFJL5Lf2K"]
+
+        ,[1183813,48.996402,"tz1fyAVLtX5CJvEaBo6wgiAZPW42Thhwy5Z9"]
+
+        ,[1183867,145.243089,"tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb"]
+
+        ,[1185798,618.829995,"tz1Mh7WrKQP4PTio9NJUZL4iPW8f9tzBSv1U"]
+
+        ,[1186279,1529.842619,"tz1QUgtPkZTsczKCmuTArg8naZSYEbaZotdL"]
+
+        ,[1186299,22.974028,"tz1idFEncPpXXmpMUqw8ip2vSVaxqR7aNjh7"]
+
+        ,[1186694,1150.946643,"tz1ZgQuhdaVgTieFnK7iXwVkTgrrRAC9xw9g"]
+
+        ,[1186963,2.046905,"tz1hhaDW6YghBcdCVWkUBu76HKWzD9d1tf2i"]
+
+        ,[1187147,62.941414,"tz1huXKdD1pzLumFbMzAEDBp3zZxug5Ud1jD"]
+
+        ,[1188504,22.211499,"tz1NXJziD8RyXrDPgQgAxT6vTG6TD8Pyw7fF"]
+
+        ,[1189121,384.798192,"tz1ViMzA17dRAZpCopuckBHdphMua26YDVgN"]
+
+        ,[1189263,25.603765,"tz1Rwv7Kwy6SzAZasTcZKoXDf7jf8LE8WxiY"]
+
+        ,[1189418,417.862244,"tz1ZMDCUyEvsQykWuxTkBzVDcTzMtUEwTeiw"]
+
+        ,[1189544,10.963182,"tz1U1fd1QvmwmPVa8ZJjhaT5vu1aFxvTiZQi"]
+
+        ,[1189859,218.823865,"tz1SBMy7s348r9Pitvn955gUbbuBdGP5Kv7N"]
+
+        ,[1190038,69.970333,"tz1hHzPzsqxcXRvUR4K55FG78eM2HFjizeWT"]
+
+        ,[1190043,8.926791,"tz1UBanJmi5vBZ1EXfdd8JiusfZBqBKVrcoD"]
+
+        ,[1191529,51.496820,"tz1cjTb6ijvnPrJBfaTEFphxDovW9xQbkmDK"]
+
+        ,[1191569,7.811289,"tz1gwuEA1cDdBBGyp45yPHRoEvMhBr8MCoLj"]
+
+        ,[1191971,231.042700,"tz1KqzBPfhoTquknvyWSsHQ3PX5VDaoYMqq7"]
+
+        ,[1192415,0.248594,"tz1iD9Evoc6HsPTMiK2E7YDSsUGpgiNeuiUA"]
+
+        ,[1193676,2466.653762,"tz1gqaKjfQBhUMCE6LhbkpuittRiWv5Z6w38"]
+
+        ,[1196580,78.383294,"tz1RoA34HzfB3RHmA5KAAQXHFKQyA5fN1BGx"]
+
+        ,[1196596,60.429387,"tz1ZW5giNR2N8mWbPP2ZW4bEMvp8Ps9F343W"]
+
+        ,[1196920,19.129088,"tz1YMqQQme7jcERyk2586QDT9fqWGCz9L2fQ"]
+
+        ,[1198211,13665.895351,"tz1bnWUvcfU77EBpbLUQ41c3hCBKovGuqyGY"]
+
+        ,[1198375,2.025660,"tz1SB763RNFRqLvnKgoXRKVUKm9wduLForib"]
+
+        ,[1199169,7.026052,"tz1WXKNaKnTRAdiU6rC9SyQzkfZQWxrj5Rj1"]
+
+        ,[1199805,26.923429,"tz1TLVQPdwuexNJwBckebgYDHUyTzimxx4bQ"]
+
+        ,[1200303,29.923401,"tz1WDJV8EC2WRegrn2W6A68RmZLyfZP8tzwJ"]
+
+        ,[1201592,146.718203,"tz1hA8fvrFV9XbA1Z4BekjLZKthDdobv3AKF"]
+
+        ,[1202066,2431.089317,"tz1NSff9qnqyV7Afa5izXD6bcWq4YNzFGgJv"]
+
+        ,[1203797,0.698167,"tz1Zp5PvNAmFt7sBwAArFuhQktY6SYzg4duE"]
+
+        ,[1204058,157.997193,"tz1chEJw78Hrgk5JJYyBqD4dkDG2bVYvwHRZ"]
+
+        ,[1204608,1.314192,"tz1eweKpxWA3gqZ9UEen34axxKvfag5w5WWE"]
+
+        ,[1208010,403.476738,"tz1gEVqnejRkwfpfqoxhTfi9tDm1xT2mqiGV"]
+
+        ,[1208554,457.067288,"tz1gweZ5MNRidncb2TS1Vyy63ZqwGhVwPiQm"]
+
+        ,[1209025,0.743613,"tz1KiNFsAEMhX7K2CTVkfeWoYLgdv5UikfpP"]
+
+        ,[1214518,9.315668,"tz1SMT1Am9VpiFnFtpb4f9CeCXGDsnoQsLnC"]
+
+        ,[1215223,836.185496,"tz1Q9fe383mTAoEUNDsKfec3x7PCFuujQ4ZY"]
+
+        ,[1216102,389.180249,"tz2DknFnpN8hgr7MAQcaJ9AMY4RSPuPByfY1"]
+
+        ,[1217180,0.003459,"tz1KojLMYHQZW9BCS6skDYV9BSaYh3hk3aKJ"]
+
+        ,[1219238,6810.562966,"tz1RftNffgQtW9oKGpvYFNRvnrF9d5cfwQtM"]
+
+        ,[1219244,657.929888,"tz1RojNG5AgWKsRR3gvzve66tCmVfHUPkyn9"]
+
+        ,[1220092,111.875053,"tz1gQuxfA16Swf4m97A6ezPf6ioGLDdhtLxv"]
+
+        ,[1221196,4.183324,"tz1NeLhF5HBCsin2hPGWk99vcAESjThcTef5"]
+
+        ,[1221341,5.992803,"tz2UFengDQP723q7R3Mb8ewsJnq2EmErBsj3"]
+
+        ,[1223110,366.031816,"tz1KrEvkq7FxezBaVagRKrhKsH5jVrRv8QjH"]
+
+        ,[1223525,112.584941,"tz1Pu8zRmNghAHzWxsT9Cy2qXHxkCrHcB3vc"]
+
+        ,[1224008,96.367964,"tz1R5aLedcRQb9kYyNBS1UXzHR6aQQ3Z5qoq"]
+
+        ,[1227411,1404.050104,"tz1gNi3b8EyrdejgRXPjYWsJSiMKR6U8LSKs"]
+
+        ,[1227679,1256.686719,"tz1LTepZpT3TfWGAyroTfgDSdV4sAYhdnuGY"]
+
+        ,[1228289,39.516502,"tz1TvzpZnC1WM4nZJuc9WW7YFP7tnETzCVpu"]
+
+        ,[1228537,33.996981,"tz1Z4QS8CL2nkT9BAnHC7qbP3tGQDg3epWS2"]
+
+        ,[1229075,2096.105171,"tz1QsX4VJjty6oKrKnLmXWvyakAXCgx7FaqR"]
+
+        ,[1229629,0.000000,"KT1APGqcGFCLX7DoPF8zM7thWzW4XJ9XV24o"]
+
+        ,[1231074,106.345277,"tz1cRNJr54oVBVpEs5drdVJYfykQyc4ErLEa"]
+
+        ,[1232128,5.272146,"tz1RRtJAWPNu8TYK1JhA6LRyN7EJcsA7Ua51"]
+
+        ,[1232370,2657.949552,"tz1KpzYgTTsE3xqiYbgDJcWmxLaNKD9MvXdb"]
+
+        ,[1233676,0.702251,"tz1av4DbnD1QJTNAGx4tYMvc5CQYJsa61aBP"]
+
+        ,[1233935,1355.302385,"tz1c2e1WMKKtf6oBZcZK3YFxrXgVbb2ggRr9"]
+
+        ,[1234416,0.341876,"tz1dduH6AqakRgWg31naLidumG51wM1oo2pT"]
+
+        ,[1237025,46.896058,"tz1PLvizgqMqjGhxafegRNkCoW3JyWhacBfa"]
+
+        ,[1238669,675.608063,"tz1Xg9bxDfU6TBJAPBUToU1T2MV6Z7887r2s"]
+
+        ,[1240282,90.345647,"tz1YUoxGbMjhomVHjWZiGEowpxTAtiatZfMH"]
+
+        ,[1241065,7.723099,"tz1TiHJ3uu3sW578NuT1AQpjmGPCgL2SSzUo"]
+
+        ,[1242360,204.728504,"tz1ZJJPSdvqFnjCoLiSDHoo17B3YLfdeANA3"]
+
+        ,[1242867,304.913000,"tz1ZhteLTqobRVCYsPj44oFfom5BJ2SdGxeE"]
+
+        ,[1244431,38.025042,"tz1gVRvoRsNRjPKdLCbRB4qGrHrizLAJszRo"]
+
+        ,[1244460,128.203912,"tz1dRwvV7imGaKqMnzeiaTwbDBzXoJa4QF6n"]
+
+        ,[1245066,2.262528,"tz1eqvdjrpFiuXCWBaD5bACw2dV8CXraZpZR"]
+
+        ,[1245602,763.964759,"tz1NdsB8Qqz6vV1Hx5mDEeS8EEFQ86ryDmDB"]
+
+        ,[1245841,11.726277,"tz1W7xzerUToPAXW8VrrJFo9cWvxfRNyHd9N"]
+
+        ,[1245976,162.251492,"tz1awNfZ5aNJPQMYCZXdB9cPXq9KeaEQhq55"]
+
+        ,[1245979,2.337966,"tz1YJvnBXerm9PNBTCwwmx7Y84MHtDsgEmDZ"]
+
+        ,[1246020,1657.473478,"tz1VjDRucYD9jHnVbNiTLRzZf3C4YW9Eupa7"]
+
+        ,[1246456,12.948922,"tz1Rb4fB4MpfDYpoCKEPxY9tAa8PPaChjoTd"]
+
+        ,[1249322,66.873695,"tz1gLC9S2nxAe1A1GijauLxwgymZREbXVRuk"]
+
+        ,[1250297,1888.018503,"tz1VuNRiAt3yNiHZLpGRTVyntBTJHch3oLyu"]
+
+        ,[1250445,73.308646,"tz1ciT2xdSGcZ4NpWM3Q3CSpiTAtmuACjjPT"]
+
+        ,[1251963,883.088950,"tz1YMB6nSw95V8KHnMzeQaRAz43pc5dd7NHk"]
+
+        ,[1252920,37.114190,"tz1iMTNhbvnx3LxcsjtJoGJHWeAsWE4cX4bE"]
+
+        ,[1254657,1.712842,"tz1TB7TNaDuKVXBFGgWC1Tp5oBqc2NBnFpKD"]
+
+        ,[1256383,60.077621,"tz1QfBC68HuuJSDA9yJWoWCbF8RoqtW1joDC"]
+
+        ,[1257737,0.065703,"tz1YK2DHg1LkrbBk9etTuaGqXMH2PoWNEBSW"]
+
+        ,[1257833,3.353693,"tz1QpCCx83DeK38iTX4YQtARZEfv2MNRfHXC"]
+
+        ,[1258038,2.031107,"tz1ewbCAx1vQ2qFDnnKd13UZyK5j3UpUUHaK"]
+
+        ,[1259328,73.523895,"tz1i2XWMBvgx254U8tyqyMe5HZ7JVAkHoPRg"]
+
+        ,[1263448,545.853643,"tz1Ni5XcbEq9nXxdsT8MPTxRMDMFobqwzH5H"]
+
+        ,[1263583,48.126978,"tz1RK8hrgBH23F3dpK86AzCafepDQw4HVyis"]
+
+        ,[1265715,690.455232,"tz1Wn4Wc6d6jieFpj2DJaNEC7HXcwKexW2By"]
+
+        ,[1266376,4.305922,"tz1WYVLRaXfBskzFQGwieXhwzR9SP5bHkYDs"]
+
+        ,[1266580,1.880024,"tz1TAVftbET7zoLirhsRTxJ5YSyUXGLkrRGf"]
+
+        ,[1267903,7.620739,"tz1cGdvL2YBEGi2ekBzeLa1vbeRUKgYiCmEu"]
+
+        ,[1268787,427.065970,"tz1TGFer3chbrkNKHJK1Mv4XHi3oMAJoTCxA"]
+
+        ,[1268792,1.383606,"tz1cubHauF4aRiKP9KkY6udsqcPWuY1qsBda"]
+
+        ,[1271043,66.618537,"tz1MygfHB5gyxKzhVhybbr15PM1nbupcEbVF"]
+
+        ,[1271688,395.654543,"tz1SQFgbVjA12oTBbU36Sn4eAA1HmcDbqy9Y"]
+
+        ,[1271855,0.309574,"tz1LLSwj6gGNX1eFHAvnt4tkC8WQryeRBpPW"]
+
+        ,[1272231,1291.940814,"tz1Z5CYKtvpAGi4V8beGJ3pAXL4gsb5quRaG"]
+
+        ,[1274149,117.148050,"tz1PWCSnWLSTzYc2G8PpNptTPX9Li2ZBG8dt"]
+
+        ,[1276066,1.258847,"tz1RAudFCEhaPnpcBQktY2xe4pfGBrPc4U2M"]
+
+        ,[1278413,61.229071,"tz1eL4fYCgegW8tLCbQ1mYiKY3TdDxWnnKo8"]
+
+        ,[1278755,16.696736,"tz1Kuzv8mEhByypU2S2EnXLxqf289dNw2RJ8"]
+
+        ,[1279620,1.788019,"tz1X9JDjS9De8UZtyKAM5VNX435ZASX4JahZ"]
+
+        ,[1280185,10.397808,"tz1f7cwBhJcqHwqt277DpzPmVHCqzHyxyUUR"]
+
+        ,[1281224,1.794336,"tz2MWnjeMXpDKZoxtSXURE7dhr7HS4uQye86"]
+
+        ,[1281720,0.106264,"tz1Mx3wYypq5Djrw8fHEdhZQbhhg2DMKHxqv"]
+
+        ,[1283683,592.465592,"tz1Zap44HJtRZQY6aczqSaQb5FGdLVX7YsAK"]
+
+        ,[1283690,6.761841,"tz2RuZ9xFVYpdAAmHkPzUbbWEQjJQVywZhDM"]
+
+        ,[1284921,22.253945,"tz1YQDCB6Hbn2ozMyS2kf6WPJDeRvJtmtNqQ"]
+
+        ,[1285996,778.380881,"tz1PPE4uP44WQGnQMstPdayMrYWv883iFGLE"]
+
+        ,[1286397,0.000001,"tz1TxfiuGAkTd6bmsKCKRf67LYW7jCzPhrFc"]
+
+        ,[1286470,183.867038,"tz1Sp7jQSqFHHz1ctPribKYuEFyHQG9VWx9y"]
+
+        ,[1287156,2213.257681,"tz1Tq7KgbvAgUGZbzhKQ2C58NmHtysheWDLY"]
+
+        ,[1288732,353.836969,"tz1hd7DbB234icAFPtziuNgDKtbcMS2NNfnd"]
+
+        ,[1289784,62.714919,"tz1XGtGzqd2yYGeb2WzJ294DttMDm9WpWJkH"]
+
+        ,[1290331,0.290845,"tz1fcDL1nCeUMCHU7hmrh5KzasFdrivMErWd"]
+
+        ,[1291516,0.737383,"tz2Scwje3qgGtAndBjSxFXhmonRvhDpVGYZZ"]
+
+        ,[1293030,1.414507,"tz1ZjdLMY7BBwUsW58D4iZSus4ct6pQghYKg"]
+
+        ,[1293455,49.025629,"tz1PSDB8iTqHKyB3gFftKZG6YLPRkvPv5VDi"]
+
+        ,[1294299,177.577093,"tz1YQs3qHgQGGQm14vX8vMDWwzY1DFXHCzJB"]
+
+        ,[1294825,24.204149,"tz1UWjFtUFFxXk7c5J9rTksRbBqRFXuP1ffG"]
+
+        ,[1295473,16.024801,"tz1hjs35Xy7B1Br5gQCAWz8vYpZ4irXkmntJ"]
+
+        ,[1295719,9.494141,"tz1Qi2vo79b9XRKwUaTA6cURFvrbUHrfAseQ"]
+
+        ,[1298453,4.033854,"tz1ceWH6Sd1iM15LPHUjYBFrmjeufirPzjhX"]
+
+        ,[1301130,88.161325,"tz1WJvfnevqRN6RnDDmaDj9S4tuiK2bJjU6a"]
+
+        ,[1302712,8.976899,"tz1UfsRAprNeWNtHZZQJ2KeUJgfaR2rRxGjt"]
+
+        ,[1303883,92.263087,"tz1eXc8F8ZYcVWQM4suqAYKCLqneZeShmZzV"]
+
+        ,[1304086,1.068322,"tz1Kn1HD3NzsXJvPvuL9M9voKs75oj9CjTbc"]
+
+        ,[1315657,1.314899,"tz1h6wqzZw9g6GXXS6KepXQEtNahdpsaEiSB"]
+
+        ,[1317793,0.527139,"tz1SvkgB16NivQianU2J38DDQhaAUgAdM3ez"]
+
+        ,[1318210,34.249958,"tz1eNKUFXwE2U4Y394utFraTgoruDLs8yTna"]
+
+        ,[1318486,8.240101,"tz1SX8tAYFsc8PWZuLGua1Uh7twVceMoZYDQ"]
+
+        ,[1319838,19.021391,"tz1RT3PiXmre2d227bAoBwvZmKjTaE4qHjXk"]
+
+        ,[1322309,5.980721,"tz1PDwGLyiTcqnF1CY7D16qqii4Nge2kBQtD"]
+
+        ,[1322852,0.025643,"tz1ecuRwDEj4hrbdtWQxk4aTbks8DmTERcF6"]
+
+        ,[1326438,0.188151,"tz1Upi6vkJARYDR8HV7bQZwtVti53dThDAQi"]
+
+        ,[1330117,6.800730,"tz1hGLm5fw2F3SagJ66p1suWtts7sdCAqpuT"]
+
+        ,[1330145,0.046670,"tz1LMo5rwykLbJ7FkyAYPFZKsBtXiE2zVYAo"]
+
+        ,[1331410,0.002929,"tz1aTQqnwJ3tX2uNc2mknTnihrqgMcpYRzzr"]
+
+        ,[1332030,5.589368,"tz1cwJAqRans1XKgyrovBRerveApP8QEd7gb"]
+
+        ,[1332267,27.020596,"tz1TH1jL355bTdpBpbXm5szYs1Htc5yXp8WJ"]
+
+        ,[1333182,0.404389,"tz1fCBF3neYZPX5zLJ1VYmorBZaX24ap8h5G"]
+
+        ,[1334845,33.586199,"tz1ToZGf5KyQMce9v5gcDV4LmRLXwDgv7UP1"]
+
+        ,[1337065,294.135555,"tz1Wu554n8K29Noew58rk7ZQnNtjaXtpsXY2"]
+
+        ,[1338890,180.027596,"tz1eKtxveeTYtk2hk7iJWXSGbUXSPBFs2z9w"]
+
+        ,[1338933,0.000001,"tz1TTq5iw2tSoGMLeLrRtQHcF1XujxrUmYps"]
+
+        ,[1339397,22.847758,"tz1PRgmHUNpgJhJeDV6xNeyUtippEvsSpLeX"]
+
+        ,[1341950,57.346393,"tz1VCYAkAYfC7BjB4fUtJzJPo47kneEmYfTt"]
+
+        ,[1344977,8.757785,"tz1SLpSREWeSSdHhMTVgt1ygi9pkgeBZFGRG"]
+
+        ,[1347372,23.240345,"tz1QtQwVtnWzEGm49korSd4GaWZi6ERHTodY"]
+
+        ,[1347631,22.588839,"tz1WkQopYauFfrnoP5jMNeQoo3Q1TiEHfKZZ"]
+
+        ,[1347815,0.029708,"tz1Wf1Lqz1yHm27P2RQJAVV2CMxnhYK4bBGc"]
+
+        ,[1348477,1.829902,"tz1SryLS51U3wBeQvk6eECgdwaN4JPFkvQ1S"]
+
+        ,[1350072,2620.754741,"tz1cgYRbR57rUWRCMwVDHELe9Bp7vNcpCWKC"]
+
+        ,[1350240,1.597092,"tz1X1UHMkkqDMjjE6foXxPnJmWc8iaQuUk1o"]
+
+        ,[1352833,0.982095,"tz1hUDk1dhVer6kkHGzQBiQ5X7C1TZ87aoPH"]
+
+        ,[1352886,124.275193,"tz1UK1w9zF2sPG4nZmmw82nuQti2kQ1XYMon"]
+
+        ,[1353149,95.022730,"tz1gRHCMkwrkxcyEV6P6VPwZiej8daNhmK6R"]
+
+        ,[1353592,0.004662,"tz1YyjGCuBEPaMrzKCFZApYE5ACip4w5LcAs"]
+
+        ,[1353842,0.260721,"tz1hXrHHJYCDC7xAKdVAugEcKkas9UHpqUYo"]
+
+        ,[1354361,10.930142,"tz1NZ9DNsodZxkuAfKiWiZKG4A4srF6ucNMk"]
+
+        ,[1356307,26163.811725,"tz1Roq6end2LFtkpGrmuyRZH82xsWfaRCat1"]
+
+        ,[1360863,10366.897887,"tz1he2B6L9MqwUrXPysHro7E5GN1QosVLMad"]
+
+        ,[1361204,184.559844,"tz1RzmWx59EZA5yc3ShC2wN4uy2N5jH8giFg"]
+
+        ,[1366508,0.000001,"tz1bABC8q2sbcoQabeg8JjwErweW7erJmxg7"]
+
+        ,[1372020,2.242606,"tz1SaNAfkLFxdh6tM5ueR94VFFxqEv3thAqH"]
+
+        ,[1372432,0.118272,"tz1ZS6oymxxe3rVBF7pm8jXZm8WEcWgfzyCG"]
+
+        ,[1375819,0.101423,"tz1KwfPwapavt3jF8Q3aDKvLxerpQiNYodXt"]
+
+        ,[1381423,372.335768,"tz1awvKcruMo2eWV1VKzoZDtjxR7i3UnhwxB"]
+
+        ,[1381657,8.299167,"tz1fMu4aXYL8znQagc8xggzA7NLvbEVzcgnN"]
+
+        ,[1382809,95.603806,"tz1dMTQ36TLMce5FVBExMszD5Y6naghD8sZw"]
+
+        ,[1386721,79.189531,"tz1RmCscScBT5m9gE1ee8FYTZJswZBq7BLZs"]
+
+        ,[1396091,64.796753,"tz1c4W58bE8u8n6aEiHHoiRuwaMCWa3g1VYH"]
+
+        ,[1396397,4.436416,"tz1dpSucHdcfXTKS8e4nZZYZhskY4sDau7JU"]
+
+        ,[1396446,543.061719,"tz1cP8aT6KsiR91WAbxUUfN2w7yE5kDhj5nb"]
+
+        ,[1398354,0.000939,"tz1iD14omDk7T6Zhn2FseemYT1sr43fBJj5m"]
+
+        ,[1399900,6.348005,"tz2NBQUJ4FtkSYYTLSpqEyRHF9QCrvHCKitS"]
+
+        ,[1403447,69.891853,"tz1cjMXJgGBpbE8795MWSVxRsCk6c9wLcQbr"]
+
+        ,[1405578,4.680622,"tz1b3pd3G8EVyeCRTw8eiaZ8Go6AoUgWqyeq"]
+
+        ,[1405764,0.107046,"tz1bt39e5cx5b98konbtFgin9yYPy22T5MNg"]
+
+        ,[1421897,223.182151,"tz1N29rdwQeatVP9v3gmaGeCkg2ywz2yp3YA"]
+
+        ,[1425566,147.242931,"tz1fEjFvmBEBfRmu3jjFnbcXUoem7KPKXE2C"]
+
+        ,[1437319,16.327146,"tz1inAL1D5NrKgVjjuupFxZThnaJdfN49WJb"]
+
+        ,[1439936,1.205849,"tz1gHtM26pdXKFXBtVsaFjLGiEj6VkQxEQNv"]
+
+        ,[1440015,14.857802,"tz1cLBibAcQbsNYnFysN4mQyuQSBoiZwxnrD"]
+
+        ,[1441270,315.843983,"tz1NNeo6E6vekmBZ9JCuPp6Z7KCNnSTGRw5H"]
+
+        ,[1444625,217.084111,"tz2Aa3GTSULLpHzWBoFK4wtpijQwRtY9CqHu"]
+
+        ,[1444981,60.344420,"tz2SA3kx3piRSggufTnyvnAW8jqxELGEs5co"]
+
+        ,[1445788,3.648408,"tz1XCQrroofUL2WnCJhBdQa4qAjsH78xwFFM"]
+
+        ,[1445948,0.204561,"tz1L264kacoAXJ6xBC5B4s5P6yQQMPVCdpZq"]
+
+        ,[1445964,0.101850,"tz1heZqLx4xkdmrGQxuNr2ALDKHMayWSB5PY"]
+
+        ,[1447183,0.439706,"tz1VpowGiMcNdMUtCo1uRda26fCsnTJTpwFh"]
+
+        ,[1449110,0.382214,"tz1TTdfHdocht5e8Sm9o1v1ZyRU8jv4vZiaf"]
+
+        ,[1452182,4.574428,"tz1eLK8p4oXyLFw1Ew9D9iZ6VY5knwDFf76K"]
+
+        ,[1458870,6.060743,"tz1UvkcZ3e5ormEEhZCEwZArAGaBDhG8h8LK"]
+
+        ,[1462282,0.007534,"tz1Y4ko946Pmu94ho6x7M8An7R4EBipFhubF"]
+
+        ,[1463467,1.255806,"tz1ZRoC2bARM81kK3CGgrMjjZTNh59j8dit1"]
+
+        ,[1463845,34223.745355,"tz1LSqrAutim9ouehng1JmLHzaqY5ndgXm9m"]
+
+        ,[1476399,590.970894,"tz1Wwq2X3pWYHnjLPpyE9BhE6qBQXbjioqaz"]
+
+        ,[1477426,138.926607,"tz1M5u6bHQuRfoTZmayMddB4M7iPqD8TugTi"]
+
+        ,[1478245,37.435155,"tz1RSFiqrk7r4GxmcCQ9iDS4oS6qcvQ5ptXE"]
+
+        ,[1480722,1.570515,"tz1dfZzLxqjuBAqPN2g7SHgEMCUwMBPipcXJ"]
+
+        ,[1480977,235.928966,"tz1Uux3zciJXHe32QEufnU514D7KcSdcAh2c"]
+
+        ,[1483454,2.534372,"tz1d2Y8ANsJe6u3Qggv9u4WVir8iMhr2G3KZ"]
+
+        ,[1485355,0.004213,"tz1fRjz2HDD7paTTvqze252w1VjWmC1yeR5H"]
+
+        ,[1493016,0.061343,"tz1Tr8QYARLxzrR5jY6pGo5MHy6izrecodAY"]
+
+        ,[1493711,195.223277,"tz1cq7G6hgZrS88NpPWr9NQV9pcBMuDRLLWB"]
+
+        ,[1496814,5.557356,"tz1UCY6EquVFV16oNH18rnM78vmC8atse5es"]
+
+        ,[1499861,20.299165,"tz1bwdD4K1vjGnfBzocS3Bhxe1VL6rnrYfT8"]
+
+        ,[1501572,247.782361,"tz1U727emN21i9xoP3SbHPMQ4XoqkaoaixE4"]
+
+        ,[1502600,0.004849,"tz1Kh6QvZetXVqYDKNmb5T4v9QXAadNNi27U"]
+
+        ,[1505555,85.895346,"tz1UQvYr8TDDdn9Y2HKgcH4r1K6VhUkFmqNV"]
+
+        ,[1509821,126.328870,"tz1S97LyH89gMzQY1Adxp3VnPaH1C5UMbSFb"]
+
+        ,[1514101,13.985168,"tz1LqAr9eiK7J6mxSd6nXGNAaxnxZRuUPbzK"]
+
+        ,[1514117,3.932127,"tz1ag7wXQiaDhWJyfWmxXd5vXKAMWDMsRaMp"]
+
+        ,[1516947,0.760385,"tz1VT79GBQ5NBwELi1h1P6rtaHN9eQRcnNYx"]
+
+        ,[1517174,0.529929,"tz1R2THf6EDRZzpawPay9eDP3dNz2VynPHRv"]
+
+        ,[1517288,10.872349,"tz1hxqems4mu4kngRAPenYeHrJY1sTfPtJEC"]
+
+        ,[1517654,25.096715,"tz1hNj53mUP5RsRgc4bsSnXhZX1aBZV4stLL"]
+
+        ,[1520427,6.612397,"tz1PKkj6ij39FrF8R63pDFRaaB2nd8ZixLmJ"]
+
+        ,[1521501,0.003745,"tz1gFmHEhMA5ph8R6eGLbpxgJtfW9FJVfXDU"]
+
+        ,[1531104,3260.959330,"tz1LnDtxAszoXCZKsZBm9LgLa6hnTJe6tSQF"]
+
+        ,[1531800,8.225043,"tz1euCd1rLmBJyebj3Jjd75ZxfPnBcw6oamg"]
+
+        ,[1533633,3466.750210,"tz1PySzbzPK5w42WMDCNoGCZJkpFZpvCFcUu"]
+
+        ,[1533993,347.341689,"tz1Y13CmDk2q8qRcVoek2KTfBfbNb2p1YuUv"]
+
+        ,[1534711,106.184651,"tz1REc2WbRGc5EeCWAL48xBTXXKYFXHSkkfS"]
+
+        ,[1535779,690.838945,"tz1VUyKJGRroxMQH4BoFZ9hau1cHgdXtHwSw"]
+
+        ,[1537176,73.426335,"tz1Z7UJt5HUfqYvQroTqHq7sdsvkJFdfGxZV"]
+
+        ,[1537401,79.525729,"tz1g72BWjJ63gk1ZXp2Ns7XgtnLEa33mM9S3"]
+
+        ,[1538003,12.213603,"tz1h9CuEXZsjSJDEA64NSqYy7TiBgGXucYvv"]
+
+        ,[1540810,0.220323,"tz1ZmFfwhh9BHz6WZyVr6z85JcNYTdhLMKfw"]
+
+        ,[1541169,1.793185,"tz1QjrSMWzsaT7BvZUeJG3CKLP9EbVaSm5xb"]
+
+        ,[1541240,85.828361,"tz1a2PT9urZHDfo2E9wWXvboRDJxQUSgsHRu"]
+
+        ,[1544216,0.915511,"tz1SGWQsjWgNeiUFkxFZBKEXuUgrmfk7oYCY"]
+
+        ,[1544536,5.185070,"tz1ZWJeNBBUXTU2V3w3CHiJTzh3ubMpe1z1x"]
+
+        ,[1545725,13.407179,"tz1cXjZf5A5cbK1cPPEnLMRCYLYVQsRF8Xub"]
+
+        ,[1545801,0.451137,"tz2Kb6uhm8RHn2mQZxoNJhzA75dcPiUtZkUa"]
+
+        ,[1547268,338.239433,"tz1WnMCYBkGmyXdGLVcHnbAyEGKAQ94Xv96D"]
+
+        ,[1547493,21.140230,"tz1iFHkTNRMxirsmffGKGCzwDxEksLSwMgpc"]
+
+        ,[1548715,249.125955,"tz1fLe8MZzQcNuaeeTmZKnnd8zYWYjYG92Sh"]
+
+        ,[1550493,38.647652,"tz1eSDG89qxTM1iyBbLscTPLbRmzYxdhFcYs"]
+
+        ,[1553803,240.677864,"tz1cD87TJp9Kkg8FZ9m48YS8MSiw1F1x8pzG"]
+
+        ,[1555531,0.893810,"tz1Zg8J8e3QRUb7hFT9J13CLLNxNu7PZCwTj"]
+
+        ,[1562841,80.732362,"tz1g4DQcPYmBbqDtae1r6o9i7bfF8j84GJue"]
+
+        ,[1564324,1068.030208,"tz1hTz3zDGDpVkwHG2UWYdV3J6M4dro9hVP1"]
+
+        ,[1566786,59.513303,"tz1cEPWsBYFpnZ1bEFYDQRNUxNLTU6MrRRRg"]
+
+        ,[1566791,2.886109,"tz1Uxzy4bafdnudhbqXP19nTLNzZjjNXRbzS"]
+
+        ,[1577655,5.149679,"tz1SHAA87beGVkchQGaaoyZTE5sS2rvcADak"]
+
+        ,[1577876,9.899676,"tz1eJGg7hAzkdNCjmnVQzm63xcL3dYgsmKSv"]
+
+        ,[1578357,5.532333,"tz1QLHLmgdZKhPqvRofvuxsmykYxZ8URAtzx"]
+
+        ,[1578422,0.000540,"tz1eDSVgM1tviDU2eCkF7t2jT9qY7nstcXRc"]
+
+        ,[1581781,1.752478,"tz1b7YSueVeedqGRjKCBCWUMiH7jBYKn7yrj"]
+
+        ,[1582183,2.461542,"tz1NdgStt7qXD5nfUi6rPHywYfbNZrhqipcm"]
+
+        ,[1583377,11.105770,"tz1dQyQTs6kJTSFdD1WDJGTMj7TNfw48LMtH"]
+
+        ,[1584650,3.459142,"tz1chqbZoayfnqCjdjWKu9ufPrbtEA6wswSH"]
+
+        ,[1584767,180.501667,"tz1MLPBC5zEbhojkcN7CervtG7eGbCeKvRB3"]
+
+        ,[1586413,4.865247,"tz1bp8XT9nZywAzuQgsN5ao3SaoUKQRtQNpA"]
+
+        ,[1586840,348.163148,"tz1eoUDM7xuQwv8rZgkcL2G6DQgV2W6xQfSc"]
+
+        ,[1593459,31.140776,"tz1SZo7qWYLyxdcM57GmmdS6SGWUTT385DUF"]
+
+        ,[1594465,0.000961,"tz1NA7bXJoyjxGmJSkELjgERTfZhdkGiZEU6"]
+
+        ,[1594520,661.891430,"tz1NDEBfJdj885K7TNshQH59px7bs1NiaV2e"]
+
+        ,[1594654,1265.937417,"tz1MgUqGUfCyjNeX9MFzfBKHfpvLpvKNiSpj"]
+
+        ,[1594744,22.137650,"tz1d22M7KyeZVnspLJnNDsWx1FwDa5XXdjyc"]
+
+        ,[1597070,1.503164,"tz1iWY2XCWvQcdjoNp77cxARQC2W53UZbVML"]
+
+        ,[1597968,0.476038,"tz1fyWsXPcvWwaLcp8T2AyycSyNd7yHaxNZd"]
+
+        ,[1598251,22.016399,"tz1gMHPbKYYo5bU9Z4Zsaj9HzPUENAn9CXMC"]
+
+        ,[1598312,0.000147,"KT1HYcu2YNoB1dFiwUtLrZZdyBFb5vehi3HJ"]
+
+        ,[1598361,0.021511,"KT1CZZTHop8Jr4Wco1ePaVbhCHeHFqHmThLE"]
+
+        ,[1599462,528.528518,"tz1fFUug43dxUtG4hF38KTKPu9sw5rSp11TH"]
+
+        ,[1600664,0.071970,"tz1WehSoEq71V5CNEsCqWMkN6mqodP29yvuf"]
+
+        ,[1605574,18.937675,"tz1WrDDRHh4hgbenz8GZswTK9TT6DHhw4BLz"]
+
+        ,[1605641,2.002052,"KT1E4RuPkZiQBd1ZnyGuB5cZ4z28BrHScW7g"]
+
+        ,[1606917,46.894195,"tz1d3zV4fjSwUPwaQUmchCZULvuPizddsfg2"]
+
+        ,[1607947,6.988752,"tz1RBRz58By1iUbqRquEcezknb421NmPsyuz"]
+
+        ,[1643713,53.779417,"tz1RpNRdofbostVviZTirnkf3YeYuDFEe7W2"]
+
+        ,[1682290,5.785913,"tz1caqKMDSN6JcvAXEPGE7pXowGcieVD42uK"]
+
+        ,[1684683,116.292278,"tz1YdJPRURkN3EhgaRfTW7P8YL4uKMRwQ2yX"]
+
+        ,[1687371,45.986512,"tz1YmMjRxRdiNAKeHuVypyL4JR3uJ6v51G58"]
+
+        ,[1688502,1.494356,"tz1bzBwatM9gJvhqt3XFpKXDWg4SYKuWkqVd"]
+
+        ,[1693853,359.693049,"tz1Xzjjw7qf8yR2b3wFuiWNm5V3dSMdkqqxt"]
+
+        ,[1694253,2.529697,"tz1Q8P9RVvpXePh2TFAZmryyTSiAoFn8DWsZ"]
+
+        ,[1704538,1126.957725,"tz1dc2ub1J3jTRQQYWN1BPmL6mUjMKGfadDE"]
+
+        ,[1705059,2803.989822,"tz1NgfUsPgRYAh4o7K2bEBUG9jXYvkpHjehD"]
+
+        ,[1705460,5.589416,"tz1Zzxa4DLyEWFRqyza9dn4ncFXakH8muvFW"]
+
+        ,[1705864,5.430262,"tz1UDWcHBiCs9qfziiqafxzqG33KAQb1rk3e"]
+
+        ,[1707385,121.474781,"tz1R4SfDxJgZ7eWoiH1cMbRySvqdVrY1HU7q"]
+
+        ,[1711240,99.296792,"tz1LH1yn4tKVmNNeSzwoRT6zZ375K9yi1NoR"]
+
+        ,[1719773,133.116642,"tz1ax7L5jtDWodzAPVeLmYkXDNCeankXVpaj"]
+
+        ,[1722110,370.873539,"tz1WmC95MDVAx5JMn61U2ciYsrx6NYfqEgWP"]
+
+        ,[1723323,18.108455,"tz1i7w3qJpA8dTBKYT6HbP8LuugaQJoMYD5v"]
+
+        ,[1730374,13.624487,"tz1bX4dJm94ipt2baWzGwnMn7rGSzufvGGD1"]
+
+        ,[1731218,0.099247,"tz1LcPiKdwwWMASiEiYcuyaTKM54k6FaqrCG"]
+
+        ,[1732381,2192.891810,"tz1P1kHpCStSHQ5t2P6CVGk3tMjS3A8HjtQw"]
+
+        ,[1738415,1.107842,"tz1LivLbZSrc1nHUcGGpvuT5ESG7zBZqgQUC"]
+
+        ,[1740601,1.241795,"tz1iDe7qiukMecuB6Kpq8ctc1XbF7w9vXisz"]
+
+        ,[1745250,412.289624,"tz1fHySrq84F7hf9wVo6W7tYmQuQ5zEma3Ph"]
+
+        ,[1749909,2.203765,"tz1iT9qB9rKgJhVC39FnGAMtHwr7GJUSTSJg"]
+
+        ,[1752373,0.118212,"tz1iWnDY9DZMSeM1Ywm3JcUeCGkz29RVrS1A"]
+
+        ,[1754520,3.339155,"tz1TGHQ9xVoppFavESBMPsj1FU1ZTVBqi1My"]
+
+        ,[1755544,559.206485,"tz1a9kyKd1Mp5D7DgpMQ3SLdB8MYdjfbZ6VM"]
+
+        ,[1781792,31.108008,"tz1gi1ds1zQwTb33VnKVuWBZGk7QhrXBpQdv"]
+
+        ,[1782172,22.606144,"tz1cX25wPQbDoecNqWXScwZ24GTBj4ixpQLA"]
+
+        ,[1782694,788.957134,"tz1gGrTWUrC9ohiHy4XQZWxRgMR5UiYiKXh1"]
+
+        ,[1787381,184.384653,"tz1bGenTUp2UGbUXUhZhtHkGmbdQy34NLKp3"]
+
+        ,[1788168,66.589984,"tz1eTRXkA8Up8ScNRmaumRRiRLD5r9HaZQqU"]
+
+        ,[1788295,7.454410,"tz1WCTySXUFxQfGRek9HoPJW54vQCodiJUrY"]
+
+        ,[1788304,16.059993,"tz1VXBRp4Vp2BbA7nb9CLcjw9bPYRvGAfk77"]
+
+        ,[1790916,0.205202,"tz1gE4BRQrugmBrvLjfwS7BDMUQnH6fNvmof"]
+
+        ,[1791639,9.699256,"tz1LquLyZTKkW6PJbgJYBmmdoVtS1aqpSCQ3"]
+
+        ,[1791944,162.260398,"tz1eFyzWjB6LsJyBXruiaXqkgCXX4iQfYoCK"]
+
+        ,[1797010,0.016706,"tz1VDhXLs2e773JgQFqG933GE2n1W8etBg8Q"]
+
+        ,[1805341,11.998981,"tz1aRgMh54kYvofN4ZLCv6SquUhD8o7KUS4c"]
+
+        ,[1805955,0.000010,"tz1N3TSJp4vF5AYu52iHXPJKVcncZdq2zLED"]
+
+        ,[1807746,121.970875,"tz1iUwxwi9oazhjHqMPhrVdKUNyYK6Dpzayz"]
+
+        ,[1813060,4.476259,"tz1gpapy6puerVvsDUkcBTExdfhJKeEfCvB3"]
+
+        ,[1813914,9.303341,"tz1XAMBMDcDBtHHXmiHMvgdGsoaVMtUbMatZ"]
+
+        ,[1820271,0.306273,"tz1hJG4Syh9aGdkopLV8hHnaob7YbpwCMGUZ"]
+
+        ,[1823414,0.179744,"KT1J2YhooaBzvuaLBt1TBjmRvavUaa9qzhja"]
+
+        ,[1824649,661.114593,"tz1Pfa2SVM9umxzqVBS1nTsPUwoDCHWZj2T5"]
+
+        ,[1825592,67.283836,"tz1aQ5ik1NdiBQtpK6iYaz5Paqm59KUvyND1"]
+
+        ,[1831521,4.645836,"tz1PPpiwYVM2LieQVTxBLc4FeqQWVmQmYfMR"]
+
+        ,[1837795,2019.949671,"tz1Wn2nru9fSJ4axAzayzJJCdYyx5apivkgx"]
+
+        ,[1839075,0.112410,"tz1Zc7F5RGDEEjvifEcJjb8SoaCA8CWbxA2E"]
+
+        ,[1840101,2.409975,"tz1NwbvdktEWzDWkWJzcg9DmgrcC7EEsUbSG"]
+
+        ,[1842498,0.525663,"tz1iqyf8JRMnjahpjjwGVWsyQYTiuSpJA1bK"]
+
+        ,[1843218,121.138234,"tz1LmA5FrhWF6Aj1C9GQGh8M8btJbXtje9vu"]
+
+        ,[1844075,1.106153,"tz1PGiL1CdALP8mcB8DbKd3sb7K9ZaHRoLzj"]
+
+        ,[1845129,206.601972,"tz1LTJnY5KWN26jLWcwCpg6ksYr9DMYmZGhW"]
+
+        ,[1845668,2.742146,"KT1DaLR1RDnEoPLcFWJR4iQnNC3A3cGJpvWJ"]
+
+        ,[1849650,110.205337,"tz1VLmJBDuwybccakVXBKFDatx3iDwWJTp7R"]
+
+        ,[1852601,0.003609,"tz1ZHFZAfa4Z3sHofXVM4XT7svcEAwmcwL1h"]
+
+        ,[1853843,52.521666,"tz1UbRrzNJTNBesvKRN7xeedj4H2GgwugXux"]
+
+        ,[1855340,214.035421,"tz1PEYw1iqfBN1FBKVXJ5fUrGXp7NVty1ZRx"]
+
+        ,[1858143,3288.761881,"tz1cpKyL5vhUQfB1BDqDynHwi7CMvc4eDZ4i"]
+
+        ,[1865917,13.658531,"tz1dJUdrUoPA98fn3VvEr8KLrr2CmWapsG51"]
+
+        ,[1878044,0.874517,"tz28f36EsUqgfUBVUvBq5KsmSWRqdrfD8mnC"]
+
+        ,[1882223,0.010162,"tz1MyFM24c8sY5Xk6HBcBg7XzoeeeDbtGYUJ"]
+
+        ,[1884232,13.657777,"tz1aRmkfGzhB8JNtr6JR8HEMzb71xpiz4cdW"]
+
+        ,[1889717,21.805263,"tz1iSin4L3Fgd3oymMeFGsSPWeZSb6feJh2H"]
+
+        ,[1889727,1.853098,"tz1TDHMVtJo6xbaxJhuvQH23fAYUXDVLyUKP"]
+
+        ,[1894780,18.017539,"tz2Jjn5a8L41hXooNM9zFKumE5LRM6UWfxp4"]
+
+        ,[1899932,0.478006,"tz1ZKHVu77qEzETfUgSWT5XckdBWTLedZ3y7"]
+
+        ,[1905213,0.000160,"tz1TGmB6JWm3tP45DXb3MWKiK6yqMwzWQerW"]
+
+        ,[1905880,39.027767,"tz1PmGZBqPK89gENc1BEDukYSYD3C7sYZg9T"]
+
+        ,[1907257,2.035539,"tz1Z3Bcc7w14EoBAkv7dbdDfHazC3Umh1UWo"]
+
+        ,[1925557,37.563447,"tz1gvKsAwsGXNGr2paJz7uWLe3roCMZnajQM"]
+
+        ,[1925901,309.387340,"tz1WawXmS9XSJceD4WbdmZTryVBourpna8B9"]
+
+        ,[1932224,0.320093,"tz1gfx4umggCfrTGkJfgayY5B4SFVMZmCrrZ"]
+
+        ,[1932625,0.571313,"tz1LsjWRb2Txz6u3LnznRKaHKbbLczNQjYbx"]
+
+        ,[1935535,20.404735,"tz1SWvsZHtazAbe1wQD113P8dvkdyTQYJc5x"]
+
+        ,[1939480,0.373834,"tz1iKdz9mqUGFrxLqwoXiuh4XkhFk22yS9KV"]
+
+        ,[1940316,46.322353,"tz1SBrJVjZnffG1c62tKXv1V4sQYSz8eVbZC"]
+
+        ,[1940982,0.182283,"tz1MHThr7HqE7rKKVJbjhSh7kh7mpfHrLzgv"]
+
+        ,[1941185,1.503780,"tz1h5sT3xcba28Noa61m6Z25mFiJDamhhAoN"]
+
+        ,[1941670,22.018982,"tz1PNVG7Em5nu9utU2tNUBassHvgRY26o251"]
+
+        ,[1943229,1.632769,"tz1W4ecwBCrLZHhjFvsURpvPnBSsCeH3Jxuk"]
+
+        ,[1943866,54.850233,"tz1UKkHuzEstpESVrmDDTqCSrGAa9EMDufKs"]
+
+        ,[1948542,130.928525,"tz1VJSDbCrN4HeMvasmLRXNiEwrFzJMXS6Kc"]
+
+        ,[1948948,0.488560,"tz1MMisnqmGy3nHGxNzdHY6NCM4V1h55F8Qm"]
+
+        ,[1950570,0.000004,"tz1VFswZkJobMFpFKtGoMEneMeRuknr4VswK"]
+
+        ,[1950916,23.376055,"tz1Md8b6FoBCTiq7wKWYjCUTqpgdoiAc2Ffo"]
+
+        ,[1952960,33.070285,"tz1hWkrVYCBbb8Lw22PTeW4ZuMfsvDEXCLPz"]
+
+        ,[1957895,1.230950,"tz1aT7HgcX4ii67Qv6UgvB9J5nH83YV5ozSt"]
+
+        ,[1960834,1.068912,"tz1MEQL7N4H6MMBndvuDjdzSLbZ8AjgeBiGv"]
+
+        ,[1962280,11.784080,"tz1VpcikNAn4c8yDzw1JwJwrf1866aVi8dmi"]
+
+        ,[1963441,1309.168181,"tz1iEe55LY995iVovRaiVbh9ebqyH72R7XzD"]
+
+        ,[1965172,22.904516,"tz1iHAzvRx2YZ4RiMkt8A6Udiezc5ff2cPZt"]
+
+        ,[1965941,201.103639,"tz1ZaQ7uhyjDHCMpNoGrGuXvQa5vZd7BgDsL"]
+
+        ,[1969861,10.331441,"tz1c4988gWZZykMhSWJnVz4x5vst6sj2fCRd"]
+
+        ,[1988688,1.933085,"tz1aTeBN4k93U8adZG2hzGhEYPRnpPr2fVw7"]
+
+        ,[1990667,0.567904,"tz1gcDo7HWiQ3Wo8iPH9CDQhNp19zCFJd9vb"]
+
+        ,[1998282,0.295791,"tz1hVQsaSnt49vGuSVaxTNBiTGWNjnZTjcp4"]
+
+        ,[1999031,0.081463,"tz1Txg4EvdweKKuLhuJ9n3qcU6YjAaoxx4yZ"]
+
+        ,[2003228,0.127774,"tz1MW1pPFuNjtDrQzGxK7RSSU6vocmhN8H4R"]
+
+        ,[2015479,2.570108,"tz1WueXAN4aYR1HjZDpEVCVmVcwVaF7pZPw8"]
+
+        ,[2017273,1478.293932,"tz1LM92mzCWrMwouv2k992NFn9WFqm1neRnU"]
+
+        ,[2027698,11.685554,"KT1XP5uZMsa9Wj599cTYuMAdKEQkS9fzuVEA"]
+
+        ,[2028409,0.000000,"KT18xGGaAVybAW4brVuXd7rePLSxMvDSfZdJ"]
+
+        ,[2028557,0.000000,"KT1ULFHPogqCTjUp7Q8W2XjLwNuNaVsFVV8U"]
+
+        ,[2029166,1.000000,"KT1PgfdgeUM4sX4aRjE8gnu4k6ccjDrLGXyx"]
+
+        ,[2029202,0.000000,"KT1AdTtfPnLkpSb6HwjMq5VZgdzwQTeZVCTi"]
+
+        ,[2038218,103.590323,"KT1Xoxdtc7V21v2SP1XzGQsXtedEcJ8vtJsx"]
+
+        ,[2038822,0.000000,"KT1HL89NdhwUqFhqbVvSeZuXsWDH42pmixDx"]
+
+        ,[2040522,0.000000,"KT1Cgs6hreebeWAZ39k73vfF666nwnMzbiwg"]
+
+        ,[2045255,49.038846,"tz1gHfyFYtFjWT9c2yBoff4eEjiof9XSSZ9u"]
+
+        ,[2047531,0.129693,"tz1apn3gpusFeoJuQh9MVYmVWdsAFRtmYrjF"]
+
+        ,[2055296,0.000000,"KT1XkoAMRhzqcxHfWw4M7RjLYWmT7znrFsV3"]
+
+        ,[2055437,1.708270,"tz1fNhUf756DSMPo1ihcPDTn7MFpyy1r9rSs"]
+
+        ,[2056418,302.203871,"tz1MupEPpLbzrihod8e3z1x1jKpuXpLfyFMt"]
+
+        ,[2061696,457.927580,"tz1iZ2TPEShFC8TqHsXLA9RXdV7tSv8E3aLe"]
+
+        ,[2062043,26.812763,"tz1NkgUndXgbGrbiVA1ntZYH8YXapEWtpwkY"]
+
+        ,[2065631,0.718831,"tz1dokKEQEjJuCbQyr2RQYon9LpQHqTSA7Yo"]
+
+        ,[2068877,61.799934,"tz1g2i5zbCFg17cwTnis32kqyeAufnVRPVbX"]
+
+        ,[2069093,2254.569560,"KT1Hy7UfNtnVn2R4BQSkcrL9ubbZyeKMLAer"]
+
+        ,[2069116,34585.139034,"KT1XGnEMZYXJWKgwNCctGNzPYT7hXVSSMABe"]
+
+        ,[2077764,1.132195,"tz1Y26FkzzFTAKfPGEAsT85fSbQq6mpyTRWK"]
+
+        ,[2079026,0.043504,"tz1QymAN2YLbggEHtQiG8tYHPMydLj6iEzTY"]
+
+        ,[2079050,229.055129,"tz1PLvpZjWPPHSDvCyesT1CPNNV8S7W7NNA7"]
+
+        ,[2079806,7.962521,"tz1ewF2P3erZJSP8m35QiNEKGtwj7qsBhF8z"]
+
+        ,[2117730,3.813509,"tz1fTcspqv1z4keDtJ4pPMj9D5FNh8mz8dvs"]
+
+        ,[2132552,5.714194,"tz2JRLNh7JAG34YaiQUS7wLTm8grVGeeGvBg"]
+
+        ,[2142066,3.392511,"tz1NorXHdoZu7N878oC4vPSPK32CXsWpspHG"]
+
+        ,[2151191,93.961299,"tz1KxDVKgpuuF9oWnUVeNmPudJ4hs8eYTZiv"]
+
+        ,[2151252,78.188443,"tz1TUQjyPwrah7czyMw661yfUCQ1c649xNPM"]
+
+        ,[2151408,6.466625,"tz1VFta2MEK3NS78EXi3KAhUQ1PPYdju4vGF"]
+
+        ,[2154867,22.822753,"tz1YcKBqHQK5FTM4GEdtgt4fBDEGdfqSicsJ"]
+
+        ,[2156250,21330.283794,"tz1TLzvVeDJLWe5GcJGHExqb3tzJniFozghN"]
+
+        ,[2157370,0.155270,"tz1bYEBbBHTJ6oFgZphuvj5EPqj477KvEXVx"]
+
+        ,[2164138,2.379292,"tz2JKJhwoBpyAv6j3ga8pNDsBYJp7r9o3hAM"]
+
+        ,[2167704,468.156925,"tz1LCtWEcp1z2wtLoBFtfyAWh3VHLutHLgJa"]
+
+        ,[2170410,10.918756,"tz1cptVTfL43uZ6Z175vssGTr9CarkdxzWTV"]
+
+        ,[2177503,44.772541,"tz1i6E7Exx1zLrhr3R1zRp1vCsgNvRmxVoCP"]
+
+        ,[2180439,28.515557,"KT1AbGGa6jkVTw6MLoL3uMUHBGP5PcDwj4Vo"]
+
+        ,[2182684,12.613911,"tz1V4HGp9mh36dCUc28vdJAK8pwshgLwGxAs"]
+
+        ,[2183455,0.111278,"tz1e2MoWXfNgjUaQC5oeaNmdJuBXoBiATWm2"]
+
+        ,[2191201,5.260639,"tz1QgJU2usB18aJ1FLFvmQezZJ692Ne11dLA"]
+
+        ,[2196834,2.052356,"tz1LphhG2DmZG4pKyBAsPiC31ziKmFPmGJ3R"]
+
+        ,[2199438,5.111935,"tz1LuTD7QdgWBGJiLfPsPqCPCo8YEzJax6zF"]
+
+        ,[2200349,0.000597,"tz1iDUSjYxzYHFBy5g8U5rN3XoNKDQqr5K9L"]
+
+        ,[2206547,100.151558,"tz1aTFjbQ8KTjP8wK5tWg1p2U2MKC381p2c6"]
+
+        ,[2207970,1.499829,"KT1MmgYdeZq2PTUVQvtWNfeFKpdou9j5sFpg"]
+
+        ,[2210422,6932.804560,"tz1iL778JAbzxvq72ozUjH6g4SCvpBVA8yWu"]
+
+        ,[2213509,536.746178,"tz1iejJgKyH15WDepGFnJSnwwmaLD1XNMija"]
+
+        ,[2226662,618.282121,"tz1gHXGyjYGri3HJgT74Dd8x5fZXG8pCmekJ"]
+
+        ,[2226738,1.562714,"tz1TUrcBYTC5XM2h5wwgNtX8DNYhea78irtJ"]
+
+        ,[2228729,2.159857,"tz2RLdqiUWswGzJViCBSg7YETWq6pgYNorLe"]
+
+        ,[2229926,0.040739,"tz1eakfz8chx5CokEeqTedtMybW3Zub4CHfS"]
+
+        ,[2240798,124.820068,"tz1X6mrSuqwBNJExBD2MhPSHHgc2Rnnoza9p"]
+
+        ,[2241412,2261.148122,"tz1WU19QEQ5Duw9FszTLHThkwuq4v4BgP8dR"]
+
+        ,[2242596,100.532620,"tz1PtxToyJrqRpdgf2BKRgCtQJ36nQocsKEg"]
+
+        ,[2246645,123.863288,"tz1THfAocsx299eE5Zvha1HdpbBRdwomdvv9"]
+
+        ,[2248485,14.754281,"tz1iPau49fkKuwZf4eGoxhm3zLhSYp74BnFr"]
+
+        ,[2249082,9.147991,"tz1ikiuGpLZZRBBRhkbsEbrvexNuzSohAfXB"]
+
+        ,[2250579,19.974836,"tz1NbguRTeaMJNmGtVkDNPkzj9r9AGdMa5xT"]
+
+        ,[2251825,1015.871210,"tz1fkjUPXpNeF1j2fbq815rC5hG7RgtWNZQp"]
+
+        ,[2254503,0.086105,"tz1MFW9yeD84snRQJMHkm9XBdLoRmSzmM8GQ"]
+
+        ,[2254657,208.639494,"tz1N39UkEBChN5ETvfEv1YEygF5mch7fakh4"]
+
+        ,[2255067,102.579695,"tz1T9712Tw2q1vFp8D1g4aZ5kNK3xDtFDgVP"]
+
+        ,[2258101,2.445837,"tz1aZYmCHTN6zhDDH4Y4BJDDpaQi3Czm4X8E"]
+
+        ,[2259476,0.000001,"KT1UiaBjxDxs5d1ARYGeRj9szbFAD11rC9FT"]
+
+        ,[2263114,51.633818,"tz1bc1yjoh3J8MoVcRhDWWx8G2iiDUz4THTs"]
+
+        ,[2264198,14.958587,"tz1c1oJkFzxYThskVAPKfCAnXZN1XKPp7hkV"]
+
+        ,[2264789,52.489914,"tz1Rn7gvrNJVNWGc6TeAkKxrdVBAKmNyAMp3"]
+
+        ,[2267267,0.091782,"tz1Z6WM9qDm9p69vP9VUR5q6FLysBPEXYQqX"]
+
+        ,[2268803,1045.317674,"tz1acCt6XPu5Fa9VbdDbfSiUrYZDHQLwZdLh"]
+
+        ,[2275357,0.011480,"KT19fX94nuu8JnrXgAMpTeUiN8rjG8uPhJdu"]
+
+        ,[2277216,0.508047,"tz1anXM131vyye2JHdYazhhaC71zLJgvQ9r9"]
+
+        ,[2277880,214.349136,"tz1Z7kVhZwhG1E8zxRUBEv8K1tfPWdKn6t7J"]
+
+        ,[2279552,0.109338,"tz1eZcmwauSMtCwXQDRVRRq1ZZECF25rEJaN"]
+
+        ,[2280092,0.005503,"tz1RPTFcc442LJeLHxydyVsew9h7fFQ4uBYw"]
+
+        ,[2280393,558.816881,"tz1YsZZEMHjEPUQpfvzmxhCHUAqvEoZbitNo"]
+
+        ,[2282110,0.841385,"tz1XUmHzuqh8kXe75DBXp4ZLkitg7XfG7Fg6"]
+
+        ,[2282218,31.947877,"tz1Vkdekkqe1SJrkEQJm7q1L4Wxyib3TRQVL"]
+
+        ,[2289420,7063.672228,"tz1ZLQmqPcaUwPwqCAVVQGoHHe9RhKM5Frny"]
+
+        ,[2291355,3.380916,"tz1aBymyQg38uX53PnX3htVxdkJN1eqMwo1N"]
+
+        ,[2297646,0.007253,"tz1TdeDJpVV1GFM2S8jfUCxy9Dv5wSguUwxV"]
+
+        ,[2297715,3.053589,"tz1iEF9t9eLfBuqtt7zshiM5Vq1AyVwHecZh"]
+
+        ,[2298780,5.469574,"tz1NMY9n5Kypd1q4hg3BDsArqrX262yAC5BC"]
+
+        ,[2311743,1.055540,"tz1c5Ud2VkLbTcxcZCx7F4jTUsYzY6ygJeFQ"]
+
+        ,[2312017,8.734164,"tz1RqMnnkeaqiBH6gXnBC3n7yjUiUY27fpEg"]
+
+        ,[2314396,469.071982,"tz1cyuVwNZWd8U8UaZ5WSaiWQnqj6Dx1CXPA"]
+
+        ,[2315565,8773.965050,"tz1VgWtXYAVdTKYhUkocKjgqxfrUqpVQ6RhA"]
+
+        ,[2322163,142.603657,"tz1aCSEDG4DqPEnXLjFWDKzk8YBVQd1M8UT2"]
+
+        ,[2326994,7.361649,"tz1Y3YtzBcFYve68tX4GLT12G3qP1Q4AJFLn"]
+
+        ,[2327746,0.293034,"tz1crkfQsEYQR2ks3RCgmAGkZ3xhoCetNTTx"]
+
+        ,[2329550,1.645604,"tz1UGgbgrMYxLMdKDH6KxioW4JjYeHcVRW39"]
+
+        ,[2332407,4.814843,"tz1g13JY9V77Bq7cenoYse8jFzKmF8J9BuUk"]
+
+        ,[2332799,1.121293,"tz1YXCs46pJXms13mQzeko8MoyEt8S3CWfqp"]
+
+        ,[2333454,5.505411,"tz1fogdBptGYnjRxTqiWhuoGPY3jeK1GM9Vj"]
+
+        ,[2333742,320.756719,"tz1Noa4foFD9vBJpczhhqwDwsTFDtBZPRbVu"]
+
+        ,[2337453,1.907429,"tz1c7B1eR4Xv2XYz3D4ToNWUyvAx5dmFmYEL"]
+
+        ,[2346790,5.416736,"tz2AvGM9wjxJX5g1PtoedZ6M5HMpDs5YbAv4"]
+
+        ,[2350811,0.753049,"tz1aWoF1fg9CAZ1BeTLWmRGBg99LqEtSdkpo"]
+
+        ,[2350915,0.658072,"tz1iPCCzHhhFSdVN7VsWDJK8hoCMV77WnPZz"]
+
+        ,[2350934,0.876888,"tz1XBTfgsX6fAkwQJdjxUqHRJq1uBaxz8JTA"]
+
+        ,[2351012,3.346294,"tz1MGo6jzcpMe1LrKH9FS4Vuv8i3mFqFbBvC"]
+
+        ,[2354875,0.608816,"tz1cUwuCHMEgUnp6wP57BfbUwaBadh4CAMG4"]
+
+        ,[2355437,0.643399,"tz1M9f8cmhjFFTg3fcjDLdYFSLSHtaVoWT71"]
+
+        ,[2356141,1.376091,"tz2HwLbb623sd9hYZLzb4BWnUoSRbEZGFD7M"]
+
+        ,[2358871,857.400737,"tz1PbxQq4QJJrVqnrm8niqpjBwngAKqxBh1J"]
+
+        ,[2365725,0.062397,"tz1Tfc4zj3Vc6HdGvb8u9DbSouwRR8BFYibM"]
+
+        ,[2370709,12.509721,"tz1hsbqoLBhkGyk91YnKYwYRVMWCssG2ebAE"]
+
+        ,[2375157,55.652984,"tz1MSKet3qWFPAxRyxaVWQ6bSLfy299bDkqt"]
+
+        ,[2379693,189.163645,"tz1iPqaoxH85YXjrjFNSF2Uemk9TtkSLVgTf"]
+
+        ,[2385601,245.084962,"tz1dMFEUqGKF9X1xPatcM4vwGbyAeESaW1w4"]
+
+        ,[2385878,12.027056,"tz1fV9tjug8kAtXRLjJAVJ46w47WcGwXcEAQ"]
+
+        ,[2387704,2.128193,"tz1gew1KFK3Wqs7UTUSzgiG5HeQWHrAqHyr9"]
+
+        ,[2390461,0.693941,"tz1KzXebjTV8kbcZGofaKhWByY7evHgM4bNF"]
+
+        ,[2391899,0.894195,"tz1Kt2wNHyYehoSMg3GxbBo4e9qoBRFWh6ki"]
+
+        ,[2392443,0.299991,"tz1iort8DPnRCxJ7EyeAFiCjkmbyT2Zbext7"]
+
+        ,[2409192,13.348335,"tz1VvzmCKkBuJeEjFqNdN1Hz1buSTSy3ihDK"]
+
+        ,[2414388,1.032263,"tz1ZwqPAxqM3MAkR59A13vaX4J7Qfv19wSxz"]
+
+        ,[2417723,4.866876,"tz1dPV9SeizzjKfSabcQkkU8S7E4U1xWojq9"]
+
+        ,[2422185,87.015470,"tz1SNLtQeFxW5SoBXDrKpoWYfX75LRoq9moD"]
+
+        ,[2422692,5.365932,"KT1SajyyAQiz4CMyuVdUtNDMF6mK4mxuvcdB"]
+
+        ,[2426024,0.000007,"tz2XBrVdTRkrFwrsLTMx95CV5HsnzLasSDHP"]
+
+        ,[2426831,4.104875,"tz1f9AhHTv4NZMC4siWXJBfTNeLmfEMqdBBQ"]
+
+        ,[2429125,337.131984,"tz1NKqR2iiWcGZPaFgM8bD8XJ6JuEfRWz4u6"]
+
+        ,[2431382,4.288721,"tz1gWm3GRnnGBKEXwA7a2n8Wu6TpUPY5ohsA"]
+
+        ,[2431579,0.000504,"KT1JBtdapa6tdumTqA63orEdiDLhj9iSBKgY"]
+
+        ,[2432325,0.011615,"tz1be3mXe6Mqz9HT2PsicQwECuZwWLC6beFd"]
+
+        ,[2435146,9353.785370,"tz1LCUV2GGT7pksfBGb78Je4E98fcp2EXASC"]
+
+        ,[2438127,1.604058,"tz1RkXdTa2wjD8n2kmtAHpVs1hx9moySfGk1"]
+
+        ,[2438147,0.792010,"tz1MM6iFQTq24mFNMbK5HLAGHgofjycCBDWz"]
+
+        ,[2438152,0.336076,"tz1hkJxLY4z56fGZHP6jw9Aeu1qFrFPLiCsU"]
+
+        ,[2438154,0.364736,"tz1YiiQKRYxRGXdHYWiq5g6s2dGaAkU9nsXM"]
+
+        ,[2438156,0.335691,"tz1LAA5T98swu2UUcxfo8waDHaF5sZ8f9sgc"]
+
+        ,[2439329,18243.907669,"KT1Hir1o22RGE1Hyrrzpp3rXjhTcoUurSYKu"]
+
+        ,[2443458,78.140360,"tz1gbuZmi6QEBCqCHoeaikCo84yuvcBooEQx"]
+
+        ,[2459498,4.060071,"KT1DR3enMqR7vhMvyRLQpAWs3YPdoEFmsSmk"]
+
+        ,[2491729,51.738581,"tz1h2km8Nb3WWsPAoW1hstdbrudi72QryJDL"]
+
+        ,[2500789,114.391622,"tz1hAaQzZySGcTh8wXphC7rN4yxQuLK5vPq8"]
+
+        ,[2515502,0.000100,"KT1Wce2zSVQRZWQSLL1S1ugKYoxqdmGFhKnp"]
+
+        ,[2519381,8.514586,"tz1ULkijen7FS1uRCiPZNiMgtpbRDfRA2xC5"]
+
+        ,[2535512,205.729794,"tz1KxzUQwSBYG8Twc1yYwpS9NkUJF41iu24S"]
+
+        ,[2542048,149.599904,"tz1cBN4aqRGrTPz7dJAFwsahfnnyr9XCMhdA"]
+
+        ,[2547958,0.305975,"tz1LvM1SYQoBi1sun5piyARq84oxgu4HwF3v"]
+
+        ,[2551549,0.000874,"KT1Ue8WkhjBUWJAoNVEe4M7TG2V7JesamEeu"]
+
+        ,[2566663,1.000000,"KT1DKqT5A88eBS7kNRcFCU2ADcsdTs6XMHtv"]
+
+        ,[2570953,6.585492,"tz1TYfK6Cop7QmP7NUqdzLj1E8NKC3nE5tfx"]
+
+        ,[2600694,311.255371,"tz1dJNjuWUcKNvMnsWBNWG9S1mjMLMeBfMFh"]
+
+        ,[2604639,1088.662067,"tz1VdChVTM6G3mQcQkZxniQt8c989d2oBqr2"]
+
+        ,[2626236,111.133455,"tz1aaDAFznuaFvSQf9jo8m8zwRHKENRthbXM"]
+
+        ,[2629213,9.918444,"tz1TNg2fu58wfJXzgod7FZ91NQKQWmybHV9P"]
+
+        ,[2629880,246.319836,"tz1c882GFj4iJXW5NPanszPyiFyVgvdvKzfi"]
+
+        ,[2630700,236.314683,"tz1L75Ta8NGpzEri4h1hjuNsuzkucyyDnvcj"]
+
+        ,[2631464,6312.386888,"tz1bamhK9eQ4sCmvuszziqQYBn4Ehqbiptv1"]
+
+        ,[2635636,10.654785,"tz1aAFkK8zW9w41tF4f3KXMVUZuPb48mtfa7"]
+
+        ,[2659360,96.387758,"tz1bieR8Y9FXp8LZPx4uU7TEzPjf8ARYhaJ1"]
+
+        ,[2674404,2.853518,"tz2PFBWzhhCeGoXY748X84W5WpWk6A7J3gYs"]
+
+        ,[2674729,102.155700,"tz1ZEqQsvYNn6EwBd6otMu5crKRQ2DeaS1AP"]
+
+        ,[2678609,23.723858,"tz1La1PukRzwvWoppFsZL7ipBbB5DgsMzX4X"]
+
+        ,[2679151,130.696973,"tz1eeqrEgAosnqFiMUHbuscAHa6UAw7bVmCY"]
+
+        ,[2687992,1.288486,"KT1MfU5Vcqn2VGBF7sVM5dPkNSV6coEC1RBz"]
+
+        ,[2700908,21191.577630,"tz1ayRtp5yFXPDdL9x2LaejbU9ViGT2LbVwc"]
+
+        ,[2703644,45.426100,"tz1ZuYD471CfjpumMv3HHAwdAMWtUijf6HdG"]
+
+        ,[2711472,1.741038,"tz1fCig8TYz6KDPe2D5ajUVu1e6QUpzx55rU"]
+
+        ,[2713369,11.652362,"tz1YCGhTfdgMPBzsTdP2Du1UBArbQiv5zimx"]
+
+        ,[2723842,0.938015,"tz1aXBowz98hj6vNSTALUCqC6HvWURnao2z2"]
+
+        ,[2727956,64.610517,"tz1MY5BEqp5schoK6Y9vW8oFV2E34D2VeQtu"]
+
+        ,[2745623,53.764166,"KT1Q1JmDDc8yWdFCbjjkzBAMoJukkDofnHzt"]
+
+        ,[2748718,0.044080,"tz2PgtyhyfMHfiibNbb4m3umV5JahRqpnL86"]
+
+        ,[2761590,24.877351,"tz1M7NmGsGf5CsAAv7wSpSMCkRb2XxKsC5Qe"]
+
+        ,[2763109,0.518144,"tz1TabLqtjeWA9nCGZc62FRVdyWZZt2rfVet"]
+
+        ,[2824462,0.343191,"tz1W9KZuqLwskXjh9tjrMDm4edW5hvWftHeT"]
+
+        ,[2847776,0.697406,"tz1XqfNU8NcwWUCoVUeyqxVyUae7H4rLXewX"]
+
+        ,[2869594,669.310789,"tz1eUw2hPhpw1REzNbfG8KKuK7muNL3bKpZt"]
+
+        ,[2875199,0.518805,"tz1PySyUWKnhrmDzRRDVjWH3upP13HqoZDvn"]
+
+        ,[2881397,3.993319,"tz1eFPcpXgLfxbycjUcGvtgfdjyMyDsgHDMK"]
+
+        ,[2898586,2931.022784,"tz1WWKoicGTSCASDJJikZGys7wffEQyuqdys"]
+
+        ,[2936506,3.744519,"tz1WJkg2zQ3sbNy3sKELPkYAtW9TToBSLA3J"]
+
+        ,[2939198,36.448610,"tz1ZskdkdyKKXVVfgtKrXaroUux5wsrhBuqr"]
+
+        ,[2942532,442.255540,"tz1Q4NZiP51pJwRyMqRVyp1YgNjfL9FGqE5V"]
+
+        ,[2984524,30.804627,"tz1PVjuSeP1tAjjMimTeJjWxTYGh7W2NxZ1f"]
+
+        ,[2985450,0.149179,"tz1SPeAitCC5PhpEgU4AzacSVPm9rYuvX6TF"]
+
+        ,[3037542,113841.283664,"tz1dAvUVWVA3x6iywtChwHbaqxdVigPR3HPm"]
+
+        ,[3047071,470.861112,"tz1NP2YnyZ56mRVZ1eJfn7jTuhbVRUmXkH5y"]
+
+        ,[3060780,621.730028,"tz1i7sHkiE2ys9SCyCPKqhaYQhVhBmYAa3W8"]
+
+        ,[3071778,8.821785,"KT1SX9D81yfHGdPWyFDLErFz6sziBQ327h4m"]
+
+        ,[3076739,174.854854,"KT1DqiW36rKB2BWwbmcyqibtnSQ72erWtKM8"]
+
+        ,[3089549,205.680929,"tz1Ki7Q7atwW8DMz8hRTMae5gSLPvMzBR4GP"]
+
+        ,[3091439,102.620614,"tz1MLaevzreyVqGPN7CuSxFSt6TuhpUUDAgj"]
+
+        ,[3115472,17.937009,"tz1MQJCjVsofdkpSyzmvWrr7G9oL5opyqS1P"]
+
+        ,[3154469,39.536873,"tz1LxDycLm9MhhXhgADMjcVigFVfa8GeYJWc"]
+
+        ,[3168187,182.218179,"tz1TQbZ8FT5GzoBhYVqMxDN7Qhzip32kadCm"]
+
+        ,[3170152,314.752805,"tz1ZpEn8osG3Csfa3Bp6xHUX7oHcAKq7JQXi"]
+
+        ,[3172339,2.637559,"tz1LDutnLrjQm2nMHFKAo9McJwrxUbUnZTAY"]
+
+        ,[3176708,100.854099,"tz1fLocnjUq8vBvtprGwWP8wkVS7NzsMDGBF"]
+
+        ,[3183107,48871.529383,"tz1htGWgjx2a4kL1A5Tmam61bZLhJRa73Av4"]
+
+        ,[4069943,0.300001,"tz1hiCUWXaJugxCNEUozoDdNEdKexFpXUHgV"]
+
+        ,[4072234,0.100000,"KT1Q93Nb3uH9nw9zPAniL1dZBQVK74DVXbgH"]
+
+        ,[4078368,0.898004,"KT198Ny5dc4Q1q8c2XxRg7Wc9bwje4k5nTQJ"]
+
+        ,[4097493,100.000000,"KT1CYazaVPimHKwKTPtiuxPhHRuxaq8FEn9f"]
+
+        ,[4127615,101.978331,"KT1EEJbp9faRH18wawyKQuteU7XRWs7NyQ6L"]
+
+        ,[4127618,101.984689,"KT1Jmm6gwKBiKtpaTK2QQEzgF6bnDoLysjiD"]
+
+        ,[4139620,0.000000,"KT1RR2n5MSkLR11UiZwFAbS9WdMsgjeAKpbF"]
+
+        ,[4158767,4429.185431,"tz1MFnjnvPeoiU8tSpMabMuHqn9D93jx3z4m"]
+
+        ,[4160108,301.879535,"tz1hrjPx44Fw1bqWQRMrRZRzh88H3BZwP2wj"]
+
+        ,[4170474,5072.016144,"tz1hjLrozcwwp2HZYxp1NqphAvWvTUJmUqXa"]
+
+        ,[4315118,463.368026,"tz1idVsk8wSgNdGzRBWPDSFt1oP6JpT5Em7z"]
+
+        ,[4318969,2.416446,"tz1WJeCBmWh6Y2euDfgGVXHkUjuFyDMn5zzo"]
+
+        ,[4339760,32.773467,"tz1Snd8TSRKhoKjWgm98NiD6Hw71QF3xwWe6"]
+
+        ,[4424417,0.114835,"tz1etvTSz4aWKPgMuk6emBFWMKJohypfRZXF"]
+
+        ,[4436910,116.664868,"tz1ehaESNzg8kiwme7m7C38k7b3xEB8qPjMq"]
+
+        ,[4444484,205.694118,"tz1gbpszYj9FXqp6f8ufhc4iPYUHZpkMVtGr"]
+
+        ,[4447644,9.736307,"tz1KekWGf6rh5Pg5skENYK2fZvVGxjK32Fhp"]
+
+        ,[4449672,0.652858,"tz1RYd8SZsENwmerKEJZhZpWHvCnoJhbf5mJ"]
+
+        ,[4450271,178.462977,"tz1dhnDkhurECHvJsv8UzraH9wB2zHJCSxRj"]
+
+        ,[4453415,594.492461,"tz1Y4KVAbpxDhTAWnoUq2PqUjeoE85tBMXCG"]
+
+        ,[4457367,53.904797,"tz1hSZRecPivLG36ESJcimX3Fed8aSSWAYEu"]
+
+        ,[4544925,0.963586,"tz1QW75whqiv7VyAXiccG7YhCM6Gb9HVvLs8"]
+
+        ,[4551306,34.030293,"tz1MSMJd8v2o6VejszRxKHHmonjubSNN8gR7"]
+
+        ,[4552629,91.273469,"tz1U7ke3WDLKA8xE6qbHtnauRAfwjqj5cu8d"]
+
+        ,[4552826,1334.107538,"tz1d7jyZ9x2MArjYFxtv9MSGrkoTB2a46UTs"]
+
+        ,[4554157,0.059057,"tz1iNt7VnZvcoYZNQQdDKwrM3nCHt7reFtaN"]
+
+        ,[4565136,550.038160,"tz1fKvVfMmdz4UpF6DTkGueC7yuifvAVBKTs"]
+
+        ,[4566621,47.495013,"tz1dFsvLU7HTu9wYSJTmHNkgQDeSDFuTGsBw"]
+
+        ,[4573082,123.687996,"tz1hrGdE869Zm6uHLT65wm2x8hz9fJNpsE4J"]
+
+        ,[4577981,1.375506,"tz1fYRkj42RVRPYg6pgphQWA4BZVrhgdyTCX"]
+
+        ,[4578417,421.813307,"tz1NfgKkvPhZiU42aPH6UvFiE3tkgzEkb8g6"]
+
+        ,[4581131,0.618636,"tz1bVXxSepBNjxsyon1NwSjdAHfZ7DbhaqAB"]
+
+        ,[4623778,333.761278,"tz1P6o76QQRmcYs2WXPJwY7Efrzrbfz19tJz"]
+
+        ,[4631589,31.364049,"tz1iqcvdGsyiosko2ukAhKc3pRivci9F9mEn"]
+
+        ,[4634893,99675.556323,"tz1ZWnmQA4HCc6k6c8cWZGVC9ssacn5qr8hV"]
+
+        ,[4651627,138.436132,"tz1VF6x6h9Qm5Mc7tytLnZfjvAVyeT7XWVED"]
+
+        ,[4663787,6.079636,"tz1TSCvK4qAqCGcgST6SdhyA4r5rPFXJ5BRw"]
+
+        ,[4860260,2529.222507,"tz1dpWXoaAcCrnAfmBKEKptjerb3ReZ2xTD2"]
+
+        ,[4877371,0.724320,"tz1eFaMPtnnX5RnDCD46qhNyUm1MVXMRBq3q"]
+
+        ,[4927620,8978.326287,"tz1TN76XftzkpsitNjrpkAv8LHkmSrNhW6h8"]
+
+        ,[4935142,0.136309,"tz1LTjnugRyQPeqw7Nn56CyvhSmPH2xAqVau"]
+
+        ,[4942764,1.003199,"tz1RnyBF2vtMPNvH1BTrjNtEEGHm74zk1p29"]
+
+        ,[4960077,5.806653,"tz1MpwDfUXQbS91xwUPYjjqkCcySg22wAmcS"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:10 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:40 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99379'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - c7766c2d-4fb0-4540-90c4-d43443936d3d
+      x-runtime:
+      - '0.010110'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/account?address.in=KT1BJu8FBib6viw6JXfLhWnrGjy2cqdkYLEn,KT1GSm2yYpHdVo6XHwKYsfGpoqarABYQ4v5D,KT1Hw4wDC4pyRgDR9LttEE45erELztkrcJgT&columns=row_id,spendable_balance,address
+  response:
+    body:
+      string: '[[39835,0.000000,"KT1GSm2yYpHdVo6XHwKYsfGpoqarABYQ4v5D"]
+
+        ,[54502,0.000000,"KT1Hw4wDC4pyRgDR9LttEE45erELztkrcJgT"]
+
+        ,[54934,0.000000,"KT1BJu8FBib6viw6JXfLhWnrGjy2cqdkYLEn"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:11 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:41 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99378'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - fd14233e-d21d-4e68-8bdf-89ddd0739cf5
+      x-runtime:
+      - '0.008855'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/100
+  response:
+    body:
+      string: '{"cycle":100,"start_height":409601,"end_height":413696,"start_time":"2019-04-24T19:42:07Z","end_time":"2019-04-27T18:34:05Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":410880,"snapshot_index":4,"snapshot_time":"2019-04-25T17:56:35Z","rolls":55218,"roll_owners":461,"active_delegators":14027,"active_bakers":520,"staking_supply":553886828.972463,"staking_percent":69.77501446280553,"working_bakers":231,"working_endorsers":415,"missed_rounds":122,"missed_endorsements":1956,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":60,"solvetime_max":142,"solvetime_mean":62.30126953124987,"round_min":0,"round_max":1,"round_mean":0.029785156250000108,"endorsement_rate":98.5076904296875,"endorsements_min":27,"endorsements_max":32,"endorsements_mean":31.522460937499954,"seed_rate":99.21875,"worst_baked_block":409607,"worst_endorsed_block":409602,"snapshot_cycle":{"cycle":93,"start_height":380929,"end_height":385024,"start_time":"2019-04-04T03:54:58Z","end_time":"2019-04-07T02:57:29Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":381696,"snapshot_index":2,"snapshot_time":"2019-04-04T17:22:49Z","rolls":54270,"roll_owners":450,"active_delegators":12836,"active_bakers":501,"staking_supply":544265027.22034,"staking_percent":68.76077294942743,"working_bakers":214,"working_endorsers":415,"missed_rounds":131,"missed_endorsements":1252,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":60,"solvetime_max":210,"solvetime_mean":62.453857421875064,"round_min":0,"round_max":2,"round_mean":0.03198242187500001,"endorsement_rate":99.0447998046875,"endorsements_min":25,"endorsements_max":32,"endorsements_mean":31.694335937500018,"seed_rate":99.21875,"worst_baked_block":381307,"worst_endorsed_block":382807},"follower_cycle":{"cycle":107,"start_height":438273,"end_height":442368,"start_time":"2019-05-15T09:20:39Z","end_time":"2019-05-18T06:38:35Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":439808,"snapshot_index":5,"snapshot_time":"2019-05-16T11:11:46Z","rolls":56098,"roll_owners":462,"active_delegators":14863,"active_bakers":530,"staking_supply":562771772.057878,"staking_percent":70.69238410834413,"working_bakers":220,"working_endorsers":417,"missed_rounds":47,"missed_endorsements":1152,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":60,"solvetime_max":210,"solvetime_mean":60.921875000000014,"round_min":0,"round_max":2,"round_mean":0.011474609375000016,"endorsement_rate":99.12109375,"endorsements_min":28,"endorsements_max":32,"endorsements_mean":31.718750000000032,"seed_rate":100,"worst_baked_block":440037,"worst_endorsed_block":438281}}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:11 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=86400
+      expires:
+      - Sat, 06 Jan 2024 21:23:11 GMT
+      last-modified:
+      - Sat, 18 May 2019 06:38:35 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99377'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - f0726b50-e37e-4653-aa8f-e074aabf36ee
+      x-runtime:
+      - '0.127514'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/100
+  response:
+    body:
+      string: '{"cycle":100,"start_height":409601,"end_height":413696,"start_time":"2019-04-24T19:42:07Z","end_time":"2019-04-27T18:34:05Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":410880,"snapshot_index":4,"snapshot_time":"2019-04-25T17:56:35Z","rolls":55218,"roll_owners":461,"active_delegators":14027,"active_bakers":520,"staking_supply":553886828.972463,"staking_percent":69.77501446280553,"working_bakers":231,"working_endorsers":415,"missed_rounds":122,"missed_endorsements":1956,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":60,"solvetime_max":142,"solvetime_mean":62.30126953124987,"round_min":0,"round_max":1,"round_mean":0.029785156250000108,"endorsement_rate":98.5076904296875,"endorsements_min":27,"endorsements_max":32,"endorsements_mean":31.522460937499954,"seed_rate":99.21875,"worst_baked_block":409607,"worst_endorsed_block":409602,"snapshot_cycle":{"cycle":93,"start_height":380929,"end_height":385024,"start_time":"2019-04-04T03:54:58Z","end_time":"2019-04-07T02:57:29Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":381696,"snapshot_index":2,"snapshot_time":"2019-04-04T17:22:49Z","rolls":54270,"roll_owners":450,"active_delegators":12836,"active_bakers":501,"staking_supply":544265027.22034,"staking_percent":68.76077294942743,"working_bakers":214,"working_endorsers":415,"missed_rounds":131,"missed_endorsements":1252,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":60,"solvetime_max":210,"solvetime_mean":62.453857421875064,"round_min":0,"round_max":2,"round_mean":0.03198242187500001,"endorsement_rate":99.0447998046875,"endorsements_min":25,"endorsements_max":32,"endorsements_mean":31.694335937500018,"seed_rate":99.21875,"worst_baked_block":381307,"worst_endorsed_block":382807},"follower_cycle":{"cycle":107,"start_height":438273,"end_height":442368,"start_time":"2019-05-15T09:20:39Z","end_time":"2019-05-18T06:38:35Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":439808,"snapshot_index":5,"snapshot_time":"2019-05-16T11:11:46Z","rolls":56098,"roll_owners":462,"active_delegators":14863,"active_bakers":530,"staking_supply":562771772.057878,"staking_percent":70.69238410834413,"working_bakers":220,"working_endorsers":417,"missed_rounds":47,"missed_endorsements":1152,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":60,"solvetime_max":210,"solvetime_mean":60.921875000000014,"round_min":0,"round_max":2,"round_mean":0.011474609375000016,"endorsement_rate":99.12109375,"endorsements_min":28,"endorsements_max":32,"endorsements_mean":31.718750000000032,"seed_rate":100,"worst_baked_block":440037,"worst_endorsed_block":438281}}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:23:11 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=86400
+      expires:
+      - Sat, 06 Jan 2024 21:23:11 GMT
+      last-modified:
+      - Sat, 18 May 2019 06:38:35 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873962'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99376'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - 013dc73f-ec16-4ca9-99d6-db6c64bb379a
+      x-runtime:
+      - '0.000133'
+    status:
+      code: 200
+      message: OK
+version: 1

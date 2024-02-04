@@ -1,0 +1,86 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+  response:
+    body:
+      string: '{"id":810833,"type":"user","address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","publicKey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","revealed":true,"balance":4091995705,"rollupBonds":0,"smartRollupBonds":0,"counter":7117400,"delegate":{"alias":"Bakerman_CH","address":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","active":true},"delegationLevel":4797825,"delegationTime":"2023-12-23T11:46:51Z","numContracts":0,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":6,"tokenTransfersCount":9,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numActivations":0,"numDelegations":2,"numOriginations":1,"numTransactions":427,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":0,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"firstActivity":1155256,"firstActivityTime":"2020-10-03T14:40:12Z","lastActivity":4842952,"lastActivityTime":"2023-12-31T10:06:13Z"}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Jan 2024 21:23:18 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873964'
+      Tzkt-Level:
+      - '4873964'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:23:16Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ
+  response:
+    body:
+      string: '{"id":810833,"type":"user","address":"tz1N4UfQCahHkRShBanv9QP9TnmXNgCaqCyZ","publicKey":"edpkuoocAEKZvkjJGRq4jUywMHUWo3CZH12tsdfDiHC3JE4Uyi1So3","revealed":true,"balance":4091995705,"rollupBonds":0,"smartRollupBonds":0,"counter":7117400,"delegate":{"alias":"Bakerman_CH","address":"tz1Q7eNkwYGTKZNqQ2mq31rcZtNvCjwhTwU2","active":true},"delegationLevel":4797825,"delegationTime":"2023-12-23T11:46:51Z","numContracts":0,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":6,"tokenTransfersCount":9,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numActivations":0,"numDelegations":2,"numOriginations":1,"numTransactions":427,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":0,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"firstActivity":1155256,"firstActivityTime":"2020-10-03T14:40:12Z","lastActivity":4842952,"lastActivityTime":"2023-12-31T10:06:13Z"}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Jan 2024 21:23:18 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873964'
+      Tzkt-Level:
+      - '4873964'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:23:16Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+version: 1

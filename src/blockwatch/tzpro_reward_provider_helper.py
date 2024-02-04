@@ -280,10 +280,8 @@ class TzProRewardProviderHelper:
         return root["cycle"]
 
     def fetch_current_balance(self, address_list):
-        param_txt = ""
-        for address in address_list:
-            param_txt += address + ","
-        param_txt = param_txt[:-1]
+        # sort the address list to have a deterministic uri request
+        param_txt = ",".join(sorted(address_list))
         uri = self.api + single_current_balance_call.format(param_txt)
 
         sleep(0.5)  # be nice to tzpro
