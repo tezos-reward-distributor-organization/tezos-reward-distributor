@@ -20,7 +20,7 @@ class TwitterPlugin(plugins.Plugin):
         "access_secret",
         "tweet_text",
     ]
-    _base_api_url = "https://api.twitter.com/1.1/statuses/update.json"
+    # _base_api_url = "https://api.twitter.com/1.1/statuses/update.json"
 
     def __init__(self, cfg):
         super().__init__("Twitter", cfg["twitter"])
@@ -75,7 +75,6 @@ class TwitterPlugin(plugins.Plugin):
             consumer_key=self.api_key, consumer_secret=self.api_secret, access_token=self.access_token, access_token_secret=self.access_secret
         )
 
-        # resp = self.twitter.update_status(tweet)
         resp = client.create_tweet(text=tweet)
 
         logger.info("[TwitterPlugin] Payout Notification '{:s}' sent".format(tweet))
