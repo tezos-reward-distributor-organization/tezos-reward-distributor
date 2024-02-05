@@ -59,7 +59,6 @@ class TwitterPlugin(plugins.Plugin):
         return
 
     def send_payout_notification(self, cycle, payout_amount, nb_delegators):
-
         # Replace template variables
         tweet = (
             self.tweet_text.replace("%CYCLE%", str(cycle))
