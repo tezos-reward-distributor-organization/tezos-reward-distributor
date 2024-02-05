@@ -72,7 +72,10 @@ class TwitterPlugin(plugins.Plugin):
 
         # We use APIv2 to post, API 1.1 no longer allow posting tweet
         client = tweepy.Client(
-            consumer_key=self.api_key, consumer_secret=self.api_secret, access_token=self.access_token, access_token_secret=self.access_secret
+            consumer_key=self.api_key,
+            consumer_secret=self.api_secret,
+            access_token=self.access_token,
+            access_token_secret=self.access_secret
         )
 
         resp = client.create_tweet(text=tweet)
