@@ -20,7 +20,6 @@ class TwitterPlugin(plugins.Plugin):
         "access_secret",
         "tweet_text",
     ]
-    # _base_api_url = "https://api.twitter.com/1.1/statuses/update.json"
 
     def __init__(self, cfg):
         super().__init__("Twitter", cfg["twitter"])
