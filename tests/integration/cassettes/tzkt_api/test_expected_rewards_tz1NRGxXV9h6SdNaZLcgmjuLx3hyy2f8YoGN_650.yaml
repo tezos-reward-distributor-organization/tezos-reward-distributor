@@ -1,0 +1,550 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/income?address=tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN&cycle=650
+  response:
+    body:
+      string: '[[330690,650,38050,14,12285.774618,72844.272693,85130.047311,36,4,14156,20.239317,150.47,98.51,99.96,4,4,0,9340,0,13950,0,60.339083,60.314508,8530.312264,39.927757,20.340432,0.000000,0.000000,0.046319,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,"tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:45 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:15 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873960'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99415'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - efac25a7-4ef7-4ee2-8b9e-a96570d29e7e
+      x-runtime:
+      - '0.005692'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/bakers/tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN/snapshot/650
+  response:
+    body:
+      string: '{"baking_cycle":650,"snapshot_height":4114432,"snapshot_cycle":644,"snapshot_time":"2023-08-25T11:47:30Z","snapshot_index":9,"snapshot_rolls":14,"active_stake":85130047311,"staking_balance":85130047311,"own_balance":12285774618,"delegated_balance":72844272693,"n_delegations":36,"expected_income":60339083,"total_income":60314508,"total_deposits":8530312264,"baking_income":39927757,"endorsing_income":20340432,"accusation_income":0,"seed_income":0,"fees_income":46319,"total_loss":0,"accusation_loss":0,"seed_loss":0,"endorsing_loss":0,"lost_accusation_fees":0,"lost_accusation_rewards":0,"lost_accusation_deposits":0,"lost_seed_fees":0,"lost_seed_rewards":0,"delegators":[{"address":"KT1UkUKJNwhQPJW99m2ax7MErGKTBTf84jfu","balance":58822415596,"is_funded":true},{"address":"tz1WEHHVMWxQUtkWAgrJBFGXjJ5YqZVgfPVE","balance":8489598060,"is_funded":true},{"address":"tz1QKNjpkDm443z9EJ7uo7WVjZhjy3F3drTM","balance":4057695140,"is_funded":true},{"address":"tz1Y1MhPRqRbLjvJRoguQXCe5bUKp43vvqgN","balance":457973160,"is_funded":true},{"address":"tz1PayTZoKjNyofxFQxkzhcv9RCdyW7Q64Wc","balance":330502207,"is_funded":true},{"address":"tz1Rcp8FFWHTcdNWntJ6tekCwpG2ax135ZLx","balance":222057192,"is_funded":true},{"address":"tz1iiwsj27p2LybuaRsdRbrwQ2goAJNANPJH","balance":124418840,"is_funded":true},{"address":"tz1S91vGGRnvezkDddwwsnHuKezstTgoHWwc","balance":121398197,"is_funded":true},{"address":"KT1XNDUDGp72ZQ5Y1qwVJD3HgYe5bR8aM1mA","balance":117685988,"is_funded":true},{"address":"tz1MKit49d7JnzUXxJpK6XN9QWh3WGW6Udsb","balance":25138380,"is_funded":true},{"address":"tz1cPXa65zzRqvZRhSDMzcg52Nw4Re1UHjNy","balance":24559821,"is_funded":true},{"address":"KT1JegRxRmfDutBcCEsERbTw6hSZMmPA5KXN","balance":17262902,"is_funded":true},{"address":"tz1eEoCKWi5cEdfkE21hPSPGjJjwkwK7cgVo","balance":7518322,"is_funded":true},{"address":"KT1EztEvkwyoKqQnDGUvhtq5U7e4VM6eRopD","balance":5339837,"is_funded":true},{"address":"tz1fb8ZfHEE7Q3ZMNpEh6g1MyJmVUaXrHm1h","balance":5000000,"is_funded":true},{"address":"tz1hUz8D6VjdXioc3smt1Qpt3gSgctntY8y2","balance":4044260,"is_funded":true},{"address":"tz1ifCZiifCMETZWJ1S6JqWE9NbbTEWXEjv5","balance":2580134,"is_funded":true},{"address":"KT19BhVAF5urBrS4Zynw33LB5dGS9TTFmVYt","balance":1957345,"is_funded":true},{"address":"tz1SsKGW8vTvwUKUSWn7NVfDb4AhhvWXpfxC","balance":1458812,"is_funded":true},{"address":"KT1DZ7cjwKssJ8UCWo6advw86r88ucVB9m7Z","balance":1049866,"is_funded":true},{"address":"KT18sQZfkyH7rdTVBCVALagRYD9kd4hAGvgk","balance":1000000,"is_funded":true},{"address":"KT1QxfPA6obWUF4LooModaQVpmvqjaGJUFX9","balance":1000000,"is_funded":true},{"address":"KT1HTyV6Uw9HdyVDQGv5bfyLRca6oSjQp1vh","balance":1000000,"is_funded":true},{"address":"KT1EwQ8K6hpKxDyrJi87djud8mw1hdBx1KB8","balance":466764,"is_funded":true},{"address":"tz1Wz5AwggNQfMV4tguR63JrcHuK4jzNUY6p","balance":345071,"is_funded":true},{"address":"tz1XZQtyvTG6XkTfc1UW1VPfDM19vVny81p2","balance":288794,"is_funded":true},{"address":"tz1Re5b99q26dRvMgrNHhGQEnfmKssi4vD9i","balance":210981,"is_funded":true},{"address":"tz1fUbukPpAsdP391cTeogGoTWK2Rtw6uU3y","balance":164664,"is_funded":true},{"address":"tz1dDLXJwZxrV5wyEJkpfHq3snELbhr7pyvT","balance":84605,"is_funded":true},{"address":"tz1PRsHRMvxsieqfqRxeeKyRwAntbJKzy3qg","balance":32014,"is_funded":true},{"address":"tz1LYHaiFmUFWdGBsSmtokz16Boexp5ksreF","balance":12500,"is_funded":true},{"address":"tz1MRXXvtWQXnRhmyTozDDfQC3bWA2DsZYhw","balance":8481,"is_funded":true},{"address":"KT1WuNJ57hHerGuytCeymbUsbc2EtbxUZkaV","balance":3552,"is_funded":true},{"address":"tz2CcKuyWqc6sgjiHmL5BjYRmtnAwsZFBZ17","balance":1108,"is_funded":true},{"address":"KT1NkRFA5WDbtbDvsut1oNoMMxk9vEEMRgzT","balance":100,"is_funded":true},{"address":"KT1U4xqiup8GsdEkC4N5Wp83maPiCfJFoWLw","balance":0,"is_funded":false}]}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:46 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:16 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873960'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99414'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - 87020d12-2109-4ba1-8983-280a5a0a6ea6
+      x-runtime:
+      - '0.018237'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/account?baker=tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN&columns=row_id,spendable_balance,address&limit=50000
+  response:
+    body:
+      string: '[[37870,248.281544,"tz1Y1MhPRqRbLjvJRoguQXCe5bUKp43vvqgN"]
+
+        ,[38050,5023.009232,"tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN"]
+
+        ,[39398,59939.526938,"KT1UkUKJNwhQPJW99m2ax7MErGKTBTf84jfu"]
+
+        ,[43669,226.733226,"tz1Rcp8FFWHTcdNWntJ6tekCwpG2ax135ZLx"]
+
+        ,[43679,0.003552,"KT1WuNJ57hHerGuytCeymbUsbc2EtbxUZkaV"]
+
+        ,[53475,17.446241,"KT1JegRxRmfDutBcCEsERbTw6hSZMmPA5KXN"]
+
+        ,[54977,253.895334,"tz1PayTZoKjNyofxFQxkzhcv9RCdyW7Q64Wc"]
+
+        ,[57012,5.341420,"KT1EztEvkwyoKqQnDGUvhtq5U7e4VM6eRopD"]
+
+        ,[277361,4134.752021,"tz1QKNjpkDm443z9EJ7uo7WVjZhjy3F3drTM"]
+
+        ,[280003,0.000000,"KT1U4xqiup8GsdEkC4N5Wp83maPiCfJFoWLw"]
+
+        ,[286809,1.049866,"KT1DZ7cjwKssJ8UCWo6advw86r88ucVB9m7Z"]
+
+        ,[296946,2.615339,"tz1ifCZiifCMETZWJ1S6JqWE9NbbTEWXEjv5"]
+
+        ,[326462,0.466764,"KT1EwQ8K6hpKxDyrJi87djud8mw1hdBx1KB8"]
+
+        ,[394040,0.288794,"tz1XZQtyvTG6XkTfc1UW1VPfDM19vVny81p2"]
+
+        ,[415785,25.012500,"tz1cPXa65zzRqvZRhSDMzcg52Nw4Re1UHjNy"]
+
+        ,[421919,119.776728,"KT1XNDUDGp72ZQ5Y1qwVJD3HgYe5bR8aM1mA"]
+
+        ,[441839,0.012500,"tz1LYHaiFmUFWdGBsSmtokz16Boexp5ksreF"]
+
+        ,[547135,0.008481,"tz1MRXXvtWQXnRhmyTozDDfQC3bWA2DsZYhw"]
+
+        ,[922449,0.210981,"tz1Re5b99q26dRvMgrNHhGQEnfmKssi4vD9i"]
+
+        ,[1042391,0.345071,"tz1Wz5AwggNQfMV4tguR63JrcHuK4jzNUY6p"]
+
+        ,[1045403,1.957345,"KT19BhVAF5urBrS4Zynw33LB5dGS9TTFmVYt"]
+
+        ,[1237122,4.107271,"tz1hUz8D6VjdXioc3smt1Qpt3gSgctntY8y2"]
+
+        ,[1399053,29.088459,"tz1WEHHVMWxQUtkWAgrJBFGXjJ5YqZVgfPVE"]
+
+        ,[1708384,0.000100,"KT1NkRFA5WDbtbDvsut1oNoMMxk9vEEMRgzT"]
+
+        ,[1711118,123.969505,"tz1S91vGGRnvezkDddwwsnHuKezstTgoHWwc"]
+
+        ,[1782979,7.647322,"tz1eEoCKWi5cEdfkE21hPSPGjJjwkwK7cgVo"]
+
+        ,[2036500,1.000000,"KT1QxfPA6obWUF4LooModaQVpmvqjaGJUFX9"]
+
+        ,[2058434,1.000000,"KT1HTyV6Uw9HdyVDQGv5bfyLRca6oSjQp1vh"]
+
+        ,[2222450,1.000000,"KT18sQZfkyH7rdTVBCVALagRYD9kd4hAGvgk"]
+
+        ,[2240282,0.032014,"tz1PRsHRMvxsieqfqRxeeKyRwAntbJKzy3qg"]
+
+        ,[2240359,0.001108,"tz2CcKuyWqc6sgjiHmL5BjYRmtnAwsZFBZ17"]
+
+        ,[2299321,0.084605,"tz1dDLXJwZxrV5wyEJkpfHq3snELbhr7pyvT"]
+
+        ,[2329295,5.000000,"tz1fb8ZfHEE7Q3ZMNpEh6g1MyJmVUaXrHm1h"]
+
+        ,[2762995,0.270538,"tz1MKit49d7JnzUXxJpK6XN9QWh3WGW6Udsb"]
+
+        ,[2839317,1.472719,"tz1SsKGW8vTvwUKUSWn7NVfDb4AhhvWXpfxC"]
+
+        ,[2923002,0.164664,"tz1fUbukPpAsdP391cTeogGoTWK2Rtw6uU3y"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:47 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:17 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873961'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99413'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - e8de2473-1012-40c0-974d-b77c95bc6908
+      x-runtime:
+      - '0.005493'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/tables/account?address.in=tz1iiwsj27p2LybuaRsdRbrwQ2goAJNANPJH&columns=row_id,spendable_balance,address
+  response:
+    body:
+      string: '[[2745870,2.901922,"tz1iiwsj27p2LybuaRsdRbrwQ2goAJNANPJH"]
+
+        ]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:47 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=30
+      expires:
+      - Fri, 05 Jan 2024 21:23:17 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      trailer:
+      - X-Streaming-Error, X-Streaming-Cursor, X-Streaming-Count, X-Streaming-Runtime
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873961'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99412'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - b43c90d9-1368-4d8a-be24-2cd27d19a715
+      x-runtime:
+      - '0.003634'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/650
+  response:
+    body:
+      string: '{"cycle":650,"start_height":4202497,"end_height":4218880,"start_time":"2023-09-09T21:52:08Z","end_time":"2023-09-12T18:27:35Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":4209664,"snapshot_index":6,"snapshot_time":"2023-09-11T03:51:34Z","rolls":116009,"roll_owners":392,"active_delegators":185294,"active_bakers":509,"staking_supply":697132811.980122,"staking_percent":71.62939967683194,"working_bakers":264,"working_endorsers":366,"missed_rounds":50,"missed_endorsements":278094,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.07214355468745,"round_min":0,"round_max":3,"round_mean":0.003051757812500006,"endorsement_rate":99.75752127511161,"endorsements_min":4820,"endorsements_max":6999,"endorsements_mean":6983.0264892578325,"seed_rate":98.4375,"worst_baked_block":4202504,"worst_endorsed_block":4202505,"snapshot_cycle":{"cycle":644,"start_height":4104193,"end_height":4120576,"start_time":"2023-08-23T16:25:26Z","end_time":"2023-08-26T14:04:09Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":4114432,"snapshot_index":9,"snapshot_time":"2023-08-25T11:47:30Z","rolls":115741,"roll_owners":383,"active_delegators":184552,"active_bakers":393,"staking_supply":695513477.151913,"staking_percent":71.61207067016517,"working_bakers":266,"working_endorsers":369,"missed_rounds":211,"missed_endorsements":1598119,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.303833007812532,"round_min":0,"round_max":2,"round_mean":0.01287841796874996,"endorsement_rate":98.60655081612724,"endorsements_min":5047,"endorsements_max":6958,"endorsements_mean":6902.458557128906,"seed_rate":97.65625,"worst_baked_block":4109625,"worst_endorsed_block":4104200},"follower_cycle":{"cycle":656,"start_height":4300801,"end_height":4317184,"start_time":"2023-09-27T03:30:28Z","end_time":"2023-09-30T00:22:02Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":4314112,"snapshot_index":12,"snapshot_time":"2023-09-29T11:27:31Z","rolls":116491,"roll_owners":389,"active_delegators":184748,"active_bakers":502,"staking_supply":700002875.068878,"staking_percent":71.76934669193619,"working_bakers":262,"working_endorsers":370,"missed_rounds":91,"missed_endorsements":474530,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":123,"solvetime_mean":15.13208007812505,"round_min":0,"round_max":4,"round_mean":0.005554199218749985,"endorsement_rate":99.58624267578125,"endorsements_min":5642,"endorsements_max":6997,"endorsements_mean":6971.036987304728,"seed_rate":100,"worst_baked_block":4300805,"worst_endorsed_block":4306693}}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:48 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=86400
+      expires:
+      - Sat, 06 Jan 2024 21:22:47 GMT
+      last-modified:
+      - Sat, 30 Sep 2023 00:22:02 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873961'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99411'
+      x-rate-limit-reset:
+      - '1705438130'
+      x-request-id:
+      - 7454be6f-c83e-4276-8cd0-70c9dd47fe7f
+      x-runtime:
+      - '0.921123'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.tzpro.io/explorer/cycle/650
+  response:
+    body:
+      string: '{"cycle":650,"start_height":4202497,"end_height":4218880,"start_time":"2023-09-09T21:52:08Z","end_time":"2023-09-12T18:27:35Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":4209664,"snapshot_index":6,"snapshot_time":"2023-09-11T03:51:34Z","rolls":116009,"roll_owners":392,"active_delegators":185294,"active_bakers":509,"staking_supply":697132811.980122,"staking_percent":71.62939967683194,"working_bakers":264,"working_endorsers":366,"missed_rounds":50,"missed_endorsements":278094,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.07214355468745,"round_min":0,"round_max":3,"round_mean":0.003051757812500006,"endorsement_rate":99.75752127511161,"endorsements_min":4820,"endorsements_max":6999,"endorsements_mean":6983.0264892578325,"seed_rate":98.4375,"worst_baked_block":4202504,"worst_endorsed_block":4202505,"snapshot_cycle":{"cycle":644,"start_height":4104193,"end_height":4120576,"start_time":"2023-08-23T16:25:26Z","end_time":"2023-08-26T14:04:09Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":4114432,"snapshot_index":9,"snapshot_time":"2023-08-25T11:47:30Z","rolls":115741,"roll_owners":383,"active_delegators":184552,"active_bakers":393,"staking_supply":695513477.151913,"staking_percent":71.61207067016517,"working_bakers":266,"working_endorsers":369,"missed_rounds":211,"missed_endorsements":1598119,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":84,"solvetime_mean":15.303833007812532,"round_min":0,"round_max":2,"round_mean":0.01287841796874996,"endorsement_rate":98.60655081612724,"endorsements_min":5047,"endorsements_max":6958,"endorsements_mean":6902.458557128906,"seed_rate":97.65625,"worst_baked_block":4109625,"worst_endorsed_block":4104200},"follower_cycle":{"cycle":656,"start_height":4300801,"end_height":4317184,"start_time":"2023-09-27T03:30:28Z","end_time":"2023-09-30T00:22:02Z","progress":100,"is_complete":true,"is_snapshot":true,"is_active":false,"snapshot_height":4314112,"snapshot_index":12,"snapshot_time":"2023-09-29T11:27:31Z","rolls":116491,"roll_owners":389,"active_delegators":184748,"active_bakers":502,"staking_supply":700002875.068878,"staking_percent":71.76934669193619,"working_bakers":262,"working_endorsers":370,"missed_rounds":91,"missed_endorsements":474530,"n_double_baking":0,"n_double_endorsement":0,"solvetime_min":15,"solvetime_max":123,"solvetime_mean":15.13208007812505,"round_min":0,"round_max":4,"round_mean":0.005554199218749985,"endorsement_rate":99.58624267578125,"endorsements_min":5642,"endorsements_max":6997,"endorsements_mean":6971.036987304728,"seed_rate":100,"worst_baked_block":4300805,"worst_endorsed_block":4306693}}
+
+        '
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:49 GMT
+      Keep-Alive:
+      - timeout=60
+      Strict-Transport-Security:
+      - max-age=31536000; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      cache-control:
+      - public, max-age=86400
+      expires:
+      - Sat, 06 Jan 2024 21:22:49 GMT
+      last-modified:
+      - Sat, 30 Sep 2023 00:22:02 GMT
+      server:
+      - tzindex-cloud/v17.1.0-1-gbb5b5221-alpine.bb5b5221
+      x-api-version:
+      - v017-2023-05-31
+      x-chain-height:
+      - '4873961'
+      x-network-id:
+      - NetXdQprcVkpaWU
+      x-protocol-hash:
+      - PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf
+      x-rate-limit-group:
+      - M
+      x-rate-limit-limit:
+      - '100000'
+      x-rate-limit-remaining:
+      - '99410'
+      x-rate-limit-reset:
+      - '1705438131'
+      x-request-id:
+      - 5b62f1b1-d34e-41bb-a687-56b7468fc42c
+      x-runtime:
+      - '0.000049'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/rewards/split/tz1NRGxXV9h6SdNaZLcgmjuLx3hyy2f8YoGN/650?offset=0&limit=10000
+  response:
+    body:
+      string: '{"cycle":650,"stakingBalance":85130047311,"activeStake":85130047311,"selectedStake":685433206934190,"delegatedBalance":72844272693,"numDelegators":36,"expectedBlocks":2,"expectedEndorsements":14244,"futureBlocks":0,"futureBlockRewards":0,"blocks":4,"blockRewards":39927757,"missedBlocks":0,"missedBlockRewards":0,"futureEndorsements":0,"futureEndorsementRewards":0,"endorsements":13950,"endorsementRewards":20340432,"missedEndorsements":206,"missedEndorsementRewards":0,"blockFees":46319,"missedBlockFees":0,"doubleBakingRewards":0,"doubleBakingLosses":0,"doubleEndorsingRewards":0,"doubleEndorsingLosses":0,"doublePreendorsingRewards":0,"doublePreendorsingLosses":0,"revelationRewards":0,"revelationLosses":0,"delegators":[{"address":"KT1UkUKJNwhQPJW99m2ax7MErGKTBTf84jfu","balance":58822415596,"currentBalance":59939526938,"emptied":false},{"address":"tz1WEHHVMWxQUtkWAgrJBFGXjJ5YqZVgfPVE","balance":8489598060,"currentBalance":29088459,"emptied":false},{"address":"tz1QKNjpkDm443z9EJ7uo7WVjZhjy3F3drTM","balance":4057695140,"currentBalance":4134752021,"emptied":false},{"address":"tz1Y1MhPRqRbLjvJRoguQXCe5bUKp43vvqgN","balance":457973160,"currentBalance":248281544,"emptied":false},{"address":"tz1PayTZoKjNyofxFQxkzhcv9RCdyW7Q64Wc","balance":330502207,"currentBalance":253895334,"emptied":false},{"address":"tz1Rcp8FFWHTcdNWntJ6tekCwpG2ax135ZLx","balance":222057192,"currentBalance":226733226,"emptied":false},{"address":"tz1iiwsj27p2LybuaRsdRbrwQ2goAJNANPJH","balance":124418840,"currentBalance":2901922,"emptied":false},{"address":"tz1S91vGGRnvezkDddwwsnHuKezstTgoHWwc","balance":121398197,"currentBalance":123969505,"emptied":false},{"address":"KT1XNDUDGp72ZQ5Y1qwVJD3HgYe5bR8aM1mA","balance":117685988,"currentBalance":119776728,"emptied":false},{"address":"tz1MKit49d7JnzUXxJpK6XN9QWh3WGW6Udsb","balance":25138380,"currentBalance":270538,"emptied":false},{"address":"tz1cPXa65zzRqvZRhSDMzcg52Nw4Re1UHjNy","balance":24559821,"currentBalance":25012500,"emptied":false},{"address":"KT1JegRxRmfDutBcCEsERbTw6hSZMmPA5KXN","balance":17262902,"currentBalance":17446241,"emptied":false},{"address":"tz1eEoCKWi5cEdfkE21hPSPGjJjwkwK7cgVo","balance":7518322,"currentBalance":7647322,"emptied":false},{"address":"KT1EztEvkwyoKqQnDGUvhtq5U7e4VM6eRopD","balance":5339837,"currentBalance":5341420,"emptied":false},{"address":"tz1fb8ZfHEE7Q3ZMNpEh6g1MyJmVUaXrHm1h","balance":5000000,"currentBalance":5000000,"emptied":false},{"address":"tz1hUz8D6VjdXioc3smt1Qpt3gSgctntY8y2","balance":4044260,"currentBalance":4107271,"emptied":false},{"address":"tz1ifCZiifCMETZWJ1S6JqWE9NbbTEWXEjv5","balance":2580134,"currentBalance":2615339,"emptied":false},{"address":"KT19BhVAF5urBrS4Zynw33LB5dGS9TTFmVYt","balance":1957345,"currentBalance":1957345,"emptied":false},{"address":"tz1SsKGW8vTvwUKUSWn7NVfDb4AhhvWXpfxC","balance":1458812,"currentBalance":1472719,"emptied":false},{"address":"KT1DZ7cjwKssJ8UCWo6advw86r88ucVB9m7Z","balance":1049866,"currentBalance":1049866,"emptied":false},{"address":"KT1HTyV6Uw9HdyVDQGv5bfyLRca6oSjQp1vh","balance":1000000,"currentBalance":1000000,"emptied":false},{"address":"KT18sQZfkyH7rdTVBCVALagRYD9kd4hAGvgk","balance":1000000,"currentBalance":1000000,"emptied":false},{"address":"KT1QxfPA6obWUF4LooModaQVpmvqjaGJUFX9","balance":1000000,"currentBalance":1000000,"emptied":false},{"address":"KT1EwQ8K6hpKxDyrJi87djud8mw1hdBx1KB8","balance":466764,"currentBalance":466764,"emptied":false},{"address":"tz1Wz5AwggNQfMV4tguR63JrcHuK4jzNUY6p","balance":345071,"currentBalance":345071,"emptied":false},{"address":"tz1XZQtyvTG6XkTfc1UW1VPfDM19vVny81p2","balance":288794,"currentBalance":288794,"emptied":false},{"address":"tz1Re5b99q26dRvMgrNHhGQEnfmKssi4vD9i","balance":210981,"currentBalance":210981,"emptied":false},{"address":"tz1fUbukPpAsdP391cTeogGoTWK2Rtw6uU3y","balance":164664,"currentBalance":164664,"emptied":false},{"address":"tz1dDLXJwZxrV5wyEJkpfHq3snELbhr7pyvT","balance":84605,"currentBalance":84605,"emptied":false},{"address":"tz1PRsHRMvxsieqfqRxeeKyRwAntbJKzy3qg","balance":32014,"currentBalance":32014,"emptied":false},{"address":"tz1LYHaiFmUFWdGBsSmtokz16Boexp5ksreF","balance":12500,"currentBalance":12500,"emptied":false},{"address":"tz1MRXXvtWQXnRhmyTozDDfQC3bWA2DsZYhw","balance":8481,"currentBalance":8481,"emptied":false},{"address":"KT1WuNJ57hHerGuytCeymbUsbc2EtbxUZkaV","balance":3552,"currentBalance":3552,"emptied":false},{"address":"tz2CcKuyWqc6sgjiHmL5BjYRmtnAwsZFBZ17","balance":1108,"currentBalance":1108,"emptied":false},{"address":"KT1NkRFA5WDbtbDvsut1oNoMMxk9vEEMRgzT","balance":100,"currentBalance":100,"emptied":false},{"address":"KT1U4xqiup8GsdEkC4N5Wp83maPiCfJFoWLw","balance":0,"currentBalance":0,"emptied":false}],"ownBlocks":4,"extraBlocks":0,"missedOwnBlocks":0,"missedExtraBlocks":0,"uncoveredOwnBlocks":0,"uncoveredExtraBlocks":0,"uncoveredEndorsements":0,"ownBlockRewards":39927757,"extraBlockRewards":0,"missedOwnBlockRewards":0,"missedExtraBlockRewards":0,"uncoveredOwnBlockRewards":0,"uncoveredExtraBlockRewards":0,"uncoveredEndorsementRewards":0,"ownBlockFees":46319,"extraBlockFees":0,"missedOwnBlockFees":0,"missedExtraBlockFees":0,"uncoveredOwnBlockFees":0,"uncoveredExtraBlockFees":0,"doubleBakingLostDeposits":0,"doubleBakingLostRewards":0,"doubleBakingLostFees":0,"doubleEndorsingLostDeposits":0,"doubleEndorsingLostRewards":0,"doubleEndorsingLostFees":0,"revelationLostRewards":0,"revelationLostFees":0,"futureBlockDeposits":0,"blockDeposits":0,"futureEndorsementDeposits":0,"endorsementDeposits":0}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:49 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873962'
+      Tzkt-Level:
+      - '4873962'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:22:46Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/head
+  response:
+    body:
+      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":690,"level":4873962,"hash":"BKqVZs1jevuSz734MgRjBcjDDmDVgNEL79UGv9AaMFdnRmirFm7","protocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","nextProtocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","timestamp":"2024-01-05T21:22:45Z","votingEpoch":55,"votingPeriod":113,"knownLevel":4873962,"lastSync":"2024-01-05T21:22:46Z","synced":true,"quoteLevel":4873962,"quoteBtc":2.112388872844163E-05,"quoteEur":0.844757931418738,"quoteUsd":0.9239466247895785,"quoteCny":6.558727510731311,"quoteJpy":133.75531792698828,"quoteKrw":1214.5877922584375,"quoteEth":0.00041195122882407327,"quoteGbp":0.7265306452572892}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 05 Jan 2024 21:22:49 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '4873962'
+      Tzkt-Level:
+      - '4873962'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:22:46Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+version: 1

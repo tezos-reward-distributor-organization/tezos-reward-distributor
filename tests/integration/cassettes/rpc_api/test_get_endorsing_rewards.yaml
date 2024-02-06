@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://mainnet.smartpy.io/chains/main/blocks/2661200/metadata
+  response:
+    body:
+      string: ''
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 840ec6e78b732c46-FRA
+      Connection:
+      - keep-alive
+      Date:
+      - Fri, 05 Jan 2024 21:22:29 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=0LzpUDiGtRbFvM4OVPa3JOLm7Eec2gCKw4nO0p7loyGtezIwu%2FdP7kfFAftFCTtTOQE8mq8L8f6y6UWwRwSGzGZz3sQC9i2tgQp99ociiyFRWhh30eYrA8x9sc4vq20wUSByOCDIgBeBZnBhCVhLig%3D%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      access-control-allow-origin:
+      - '*'
+    status:
+      code: 404
+      message: Not Found
+version: 1

@@ -166,7 +166,7 @@ class RpcRewardApiImpl(RewardApi):
                 ) = self.get_endorsing_rewards(level_of_last_block_in_cycle)
                 offline_losses += lost_endorsing_rewards
 
-                for count, r in enumerate(ensured_baking_rights):
+                for count, baking_right in enumerate(ensured_baking_rights):
                     if count % 10 == 0:
                         logger.info(
                             "Scanning blocks ({}/{}).".format(
@@ -179,14 +179,14 @@ class RpcRewardApiImpl(RewardApi):
                         block_reward_and_fees,
                         block_bonus,
                         block_double_signing_reward,
-                    ) = self.get_block_data(r["level"])
+                    ) = self.get_block_data(baking_right["level"])
                     if block_author == self.baking_address:
                         # we are block proposer for this block
                         total_block_bonus += block_bonus
-                        if r[rights_name] != 0:
+                        if baking_right[rights_name] != 0:
                             logger.info(
                                 "Found stolen baking slot at level {}, round {}.".format(
-                                    r["level"], r[rights_name]
+                                    baking_right["level"], baking_right[rights_name]
                                 )
                             )
                         if block_payload_proposer != self.baking_address:
@@ -194,14 +194,16 @@ class RpcRewardApiImpl(RewardApi):
                                 "We are block proposer ({}) but not payload proposer ({}) for block level {}, round {}.".format(
                                     self.baking_address,
                                     block_payload_proposer,
-                                    r["level"],
-                                    r[rights_name],
+                                    baking_right["level"],
+                                    baking_right[rights_name],
                                 )
                             )
                     else:
                         # we are not block proposer for this block
-                        if r[rights_name] == 0:
-                            logger.warning("Found missed baking slot {}.".format(r))
+                        if baking_right[rights_name] == 0:
+                            logger.warning(
+                                "Found missed baking slot {}.".format(baking_right)
+                            )
                             offline_losses += block_bonus + block_reward_and_fees
                     if block_payload_proposer == self.baking_address:
                         # note: this may also happen when we missed the block. In this case, it's not our fault and should not go to ideal.
@@ -583,8 +585,7 @@ class RpcRewardApiImpl(RewardApi):
                 raise ApiProviderException("[get_d_d_b] No delegators found")
 
             # Loop over delegators; get snapshot balance, and current balance
-            idx = 1
-            for delegator in delegators_addresses:
+            for idx, delegator in enumerate(delegators_addresses, start=1):
                 # create new dictionary for each delegator
                 d_info = {"staking_balance": 0, "current_balance": 0}
                 d_info["staking_balance"] = self.get_contract_balance(
@@ -626,7 +627,6 @@ class RpcRewardApiImpl(RewardApi):
 
                 # "append" to master dict
                 delegators[delegator] = d_info
-                idx += 1
 
         except ApiProviderException as r:
             logger.error("[get_d_d_b] RPC API Error: {}".format(str(r)))

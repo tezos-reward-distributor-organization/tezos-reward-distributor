@@ -29,7 +29,7 @@ run_ops_parsed = {
 
 
 @patch(
-    "cli.client_manager.ClientManager.request_url_post",
+    "src.cli.client_manager.ClientManager.request_url_post",
     MagicMock(return_value=(HTTPStatus.OK, run_ops_parsed)),
 )
 def test_simulate_single_operation():
@@ -70,7 +70,7 @@ def test_simulate_single_operation():
 
 
 @patch(
-    "cli.client_manager.ClientManager.request_url_post",
+    "src.cli.client_manager.ClientManager.request_url_post",
     MagicMock(return_value=(HTTPStatus.FORBIDDEN, run_ops_parsed)),
 )
 def test_failed_simulate_single_operation():
