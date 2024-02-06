@@ -159,6 +159,11 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     logger.debug(
                         "Payment failure, sending sigusr2 signal to main thread."
                     )
+                elif exit_code != ExitCode.SUCCESS:
+                    os.kill(os.getpid(), signal.SIGUSR2)
+                    logger.debug(
+                        "Producer failure, sending sigusr2 signal to main thread."
+                    )
                 else:
                     os.kill(os.getpid(), signal.SIGUSR1)
                     logger.debug("Sending sigusr1 signal.")
