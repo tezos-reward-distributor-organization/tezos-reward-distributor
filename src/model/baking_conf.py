@@ -37,19 +37,22 @@ TOE = "TOE"
 MIN_DELEGATION_KEY = "mindelegation"
 DEXTER = "dexter"
 
+# Unique object to signify that no default value has been provided
+_NO_DEFAULT = object()
+
 
 class BakingConf:
     def __init__(self, cfg_dict) -> None:
         super().__init__()
         self.cfg_dict = cfg_dict
 
-    def get_attribute(self, attr):
+    def get_attribute(self, attr, default=_NO_DEFAULT):
         if attr in self.cfg_dict:
             return self.cfg_dict[attr]
-
-        raise Exception(
-            "Attribute {} not found in application configuration.".format(attr)
-        )
+        elif default is not _NO_DEFAULT:
+            return default
+        else:
+            raise Exception(f"Attribute {attr} not found in application configuration.")
 
     def get_baking_address(self):
         return self.get_attribute(BAKING_ADDRESS)
@@ -121,4 +124,4 @@ class BakingConf:
         return self.get_attribute(MIN_PAYMENT_AMT)
 
     def get_tzpro_api_key(self):
-        return self.get_attribute(TZPRO_API_KEY)
+        return self.get_attribute(TZPRO_API_KEY, default=None)
