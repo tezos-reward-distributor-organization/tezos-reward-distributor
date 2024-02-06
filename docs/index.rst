@@ -67,7 +67,7 @@ __ API_
 Funding
 ------------------------
 
-TRD is an open source, GPL licensed project. It is maintained by various community members. A grant by the Tezos Foundation was approved in October 2020 to fund development through 2021.
+TRD is an open source, GPL licensed project. It is maintained by various community members.
 
 TRD Art Work
 ------------------------
