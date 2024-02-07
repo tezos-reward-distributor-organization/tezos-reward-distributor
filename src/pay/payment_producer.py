@@ -1,5 +1,6 @@
 import _thread
 import os
+import platform
 import signal
 import threading
 from datetime import datetime, timedelta
@@ -154,19 +155,26 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.life_cycle.is_running()
                 and threading.current_thread() is not threading.main_thread()
             ):
+                if platform.system() == 'Windows':
+                    abnormal_signal = signal.SIGTERM
+                    normal_signal = signal.SIGTERM
+                else:
+                    # This will propagate the exit status to main prcess on linux.
+                    abnormal_signal = signal.SIGUSR1
+                    normal_signal = signal.SIGUSR2
                 if self.consumer_failure:
-                    os.kill(os.getpid(), signal.SIGUSR2)
+                    os.kill(os.getpid(), abnormal_signal)
                     logger.debug(
-                        "Payment failure, sending sigusr2 signal to main thread."
+                        "Payment failure, sending abnormal kill signal to main thread."
                     )
                 elif exit_code != ExitCode.SUCCESS:
-                    os.kill(os.getpid(), signal.SIGUSR2)
+                    os.kill(os.getpid(), abnormal_signal)
                     logger.debug(
-                        "Producer failure, sending sigusr2 signal to main thread."
+                        "Producer failure, sending abnormal kill signal to main thread."
                     )
                 else:
-                    os.kill(os.getpid(), signal.SIGUSR1)
-                    logger.debug("Sending sigusr1 signal.")
+                    os.kill(os.getpid(), normal_signal)
+                    logger.debug("Sending normal kill signal.")
                 exit_program(
                     exit_code,
                     "TRD Exit triggered by producer",

@@ -2,7 +2,10 @@ import json
 import logging
 import queue
 import signal
-from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM, SIGUSR1, SIGUSR2
+import platform
+from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
+if platform.system() != 'Windows':
+   from _signal import SIGUSR1, SIGUSR2
 from enum import Enum, auto
 from time import sleep
 
@@ -301,9 +304,11 @@ class ProcessLifeCycle:
         self.__baking_dirs = BakingDirs(self.args, self.__cfg.get_baking_address())
 
     def do_register_signals(self, e):
-        for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM, SIGUSR2):
+        for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM):
             signal.signal(sig, self.stop_handler)
-        signal.signal(SIGUSR1, self.producer_exit_handler)
+        if 'SIGUSR1' in globals():
+            signal.signal(SIGUSR1, self.producer_exit_handler)
+            signal.signal(SIGUSR2, self.stop_handler)
 
     def do_init_service_fees(self, e):
         self.__srvc_fee_calc = ServiceFeeCalculator(
