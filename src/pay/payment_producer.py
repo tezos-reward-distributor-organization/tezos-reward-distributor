@@ -160,8 +160,8 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     normal_signal = signal.SIGTERM
                 else:
                     # This will propagate the exit status to main prcess on linux.
-                    abnormal_signal = signal.SIGUSR1
-                    normal_signal = signal.SIGUSR2
+                    abnormal_signal = signal.SIGUSR2
+                    normal_signal = signal.SIGUSR1
                 if self.consumer_failure:
                     os.kill(os.getpid(), abnormal_signal)
                     logger.debug(
