@@ -1,0 +1,42 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-11.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR
+  response:
+    body:
+      string: '{"id":13228,"type":"contract","address":"KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR","kind":"delegator_contract","balance":281513,"creator":{"address":"tz1QUjUph8ZLhSoEbXwBFkLxw1aJ4Dz3vVYE"},"manager":{"address":"tz1QUjUph8ZLhSoEbXwBFkLxw1aJ4Dz3vVYE","publicKey":"edpku2xXWKUiykPWpsRVT5MirB5nFqRiE2NB8dnruQe61jEsjAinJj"},"delegate":{"alias":"TezosHODL","address":"tz1WnfXMPaNTBmH7DBPwqCWs9cPDJdkGBTZ8","active":true},"delegationLevel":113371,"delegationTime":"2018-09-21T17:54:10Z","numContracts":0,"tokensCount":0,"activeTokensCount":0,"tokenBalancesCount":0,"tokenTransfersCount":0,"ticketsCount":0,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numDelegations":2,"numOriginations":1,"numTransactions":175,"numReveals":1,"numMigrations":0,"transferTicketCount":0,"increasePaidStorageCount":0,"eventsCount":0,"firstActivity":21154,"firstActivityTime":"2018-07-16T14:34:12Z","lastActivity":757116,"lastActivityTime":"2019-12-29T14:58:44Z","typeHash":0,"codeHash":0}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '985'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 05 Jan 2024 21:23:07 GMT
+      Server:
+      - nginx
+      Tzkt-Known-Level:
+      - '4873963'
+      Tzkt-Level:
+      - '4873963'
+      Tzkt-Synced-At:
+      - '2024-01-05T21:23:01Z'
+      Tzkt-Version:
+      - 1.12.4.0
+    status:
+      code: 200
+      message: OK
+version: 1

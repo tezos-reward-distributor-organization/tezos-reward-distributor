@@ -46,7 +46,7 @@ def print_banner(args, script_name):
     with open("./banner.txt", "rt") as file:
         print(file.read())
     print(LINER, flush=True)
-    print("TRD Organization: Copyright 2021, see contributors.csv")
+    print("TRD Organization: Copyright 2021-2024, see contributors.csv")
     print("huseyinabanox@gmail.com")
     print("Please leave copyright information")
     print(LINER, flush=True)
@@ -65,8 +65,8 @@ def renamed_fee_ini(args=None):
         try:
             os.rename("fee.ini", "fee.ini.old")
             print("File fee.ini has been renamed to fee.ini.old")
-        except:
-            print("Failed: File fee.ini needs to be manually deleted or renamed")
+        except Exception as e:
+            print("Failed: File fee.ini needs to be manually deleted or renamed:", e)
             return False
     return True
 
@@ -93,10 +93,6 @@ def new_protocol_not_live(args=None):
         return True
 
 
-def in_venv():
-    return sys.prefix != sys.base_prefix
-
-
 def installed(package):
     """
     The error status is 0. (bool(0) == False)
@@ -105,28 +101,11 @@ def installed(package):
     try:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
-
-    # if hasattr(pip, "main"):
-    #    status_code = pip.main(["install", package])
-    # else:
-    #    status_code = pip._internal.main(["install", package])
-    # return not bool(status_code)
-
 
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
-    if not in_venv():
-        print(
-            "System wide installations of packages using pip is deprecated in recent Linux distributions.\n"
-            "Please make sure to activate a virtual environment for python:\n\n"
-            "> python3 -m venv .venv\n"
-            "> source .venv/bin/activate\n\n"
-            "Read the documentation for more information:\n"
-            "https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/ \n"
-        )
-        return False
-
     print("Checking installed packages ...\n")
     missing_requirements = []
     try:

@@ -10,7 +10,7 @@ def test_print_banner():
     print_banner("test", "test script")
     sys.stdout = sys.__stdout__
     assert (
-        "TRD Organization: Copyright 2021, see contributors.csv"
+        "TRD Organization: Copyright 2021-2024, see contributors.csv"
         in capturedOutput.getvalue()
     )
     assert "huseyinabanox@gmail.com" in capturedOutput.getvalue()

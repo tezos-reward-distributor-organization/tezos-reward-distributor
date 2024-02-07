@@ -52,7 +52,7 @@ class VerboseLoggingHelper:
 
     @staticmethod
     def is_archive_file(base_name):
-        return base_name.endswith(".zip") and base_name.startswith("app_verbose_")
+        return base_name.endswith(".gz") and base_name.startswith("app_verbose_")
 
     @staticmethod
     def is_log_file(base_name):
@@ -96,16 +96,18 @@ class VerboseLoggingHelper:
         self.remove_oldest(archive_dir)
 
     def remove_oldest(self, archive_dir):
-        files = [
-            os.path.join(archive_dir, f)
-            for f in os.listdir(archive_dir)
-            if self.is_archive_file(f)
-        ]
-        sorted_files = sorted(files, key=os.path.getmtime)
+        while True:
+            files = [
+                os.path.join(archive_dir, f)
+                for f in os.listdir(archive_dir)
+                if self.is_archive_file(f)
+            ]
+            sorted_files = sorted(files, key=os.path.getmtime)
 
-        if len(sorted_files) > self.keep_at_most:
-            os.remove(sorted_files[0])
-            self.remove_oldest(archive_dir)
+            if len(sorted_files) <= self.keep_at_most:
+                break  # Exit the loop if the number of files is within the limit
+
+            os.remove(sorted_files[0])  # Remove the oldest file
 
     def get_logger(self):
         return self.logger

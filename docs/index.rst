@@ -31,7 +31,7 @@ However, for all options the Tezos signer is needed.
 **Provider notes:**
 
 Blockwatch: TZPRO
------------
+------------------
 
 The terms_ of TZPRO note that an account and API key are needed for the use of the API. Please review the [pricing](https://tzpro.io/#pricing) information. For further help contact hello@blockwatch.cc for more information.
 
@@ -67,7 +67,7 @@ __ API_
 Funding
 ------------------------
 
-TRD is an open source, GPL licensed project. It is maintained by various community members. A grant by the Tezos Foundation was approved in October 2020 to fund development through 2021.
+TRD is an open source, GPL licensed project. It is maintained by various community members.
 
 TRD Art Work
 ------------------------

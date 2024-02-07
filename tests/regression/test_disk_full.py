@@ -1,6 +1,7 @@
 import pytest
 import queue
 import logging
+import vcr
 from unittest.mock import MagicMock, patch
 from src.pay.payment_producer import PaymentProducer
 from src.pay.payment_consumer import PaymentConsumer
@@ -49,8 +50,15 @@ def args():
     return args
 
 
-@patch("log_config.main_logger", logger)
-@patch("util.disk_is_full.shutil.disk_usage", MagicMock(return_value=(10e9, 9e9, 5e8)))
+@patch("src.log_config.main_logger", logger)
+@patch(
+    "src.util.disk_is_full.shutil.disk_usage", MagicMock(return_value=(10e9, 9e9, 5e8))
+)
+@vcr.use_cassette(
+    "tests/regression/cassettes/test_disk_full_payment_producer.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_disk_full_payment_producer(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
     client_manager = ClientManager(args.node_endpoint, args.signer_endpoint)
@@ -108,8 +116,15 @@ def test_disk_full_payment_producer(args, caplog):
     )
 
 
-@patch("log_config.main_logger", logger)
-@patch("util.disk_is_full.shutil.disk_usage", MagicMock(return_value=(11e9, 8e9, 3e8)))
+@patch("src.log_config.main_logger", logger)
+@patch(
+    "src.util.disk_is_full.shutil.disk_usage", MagicMock(return_value=(11e9, 8e9, 3e8))
+)
+@vcr.use_cassette(
+    "tests/regression/cassettes/test_disk_full_payment_consumer.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_disk_full_payment_consumer(args, caplog):
     # Issue: https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/issues/504
     client_manager = ClientManager(args.node_endpoint, args.signer_endpoint)

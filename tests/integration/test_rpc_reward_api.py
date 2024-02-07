@@ -1,4 +1,5 @@
 import pytest
+import vcr
 from http import HTTPStatus
 from src.rpc.rpc_reward_api import RpcRewardApiImpl
 from unittest.mock import patch, MagicMock
@@ -16,74 +17,6 @@ from requests.exceptions import RequestException
 MAINNET_ADDRESS_BAKEXTZ4ME_BAKER = Constants.MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
 
 
-class MockBlockData:
-    def json(self):
-        return {
-            "protocol": "PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW",
-            "chain_id": "NetXdQprcVkpaWU",
-            "hash": "BMAtbi8QyyUKxqgmwevqXG27AHxz3WmiQgSpHVajnuL8osBmn6A",
-            "header": {
-                "level": 2984089,
-                "proto": 15,
-                "predecessor": "BKmonHxpafq9QyBBdVpipy1DWx3thHetxCDq7gGNiK7Uy7tdhRW",
-                "timestamp": "2022-12-20T01:06:44Z",
-                "validation_pass": 4,
-                "operations_hash": "LLoZuteCN5WBeHBbFEM8qzoHBh8zxURP596KPPkw474HvEkhU372b",
-                "fitness": [],
-                "context": "CoVKmtZ8risGC68EFq8ATgwKeFaN8vSAnfcS8Uu5nq3i64wL6Cqo",
-                "payload_hash": "vh2JpApDHYrGAJxFjoz5jW7iZdaUxeF7ApvJXAXyy7T386r2mpro",
-            },
-            "metadata": {
-                "protocol": "PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW",
-                "next_protocol": "PtLimaPtLMwfNinJi9rCfDPWea8dFgTZ1MeJ9f1m2SRic6ayiwW",
-                "test_chain_status": {...},
-                "max_operations_ttl": 120,
-                "max_operation_data_length": 32768,
-                "max_block_header_length": 289,
-                "max_operation_list_length": [],
-                "proposer": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
-                "baker": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
-                "balance_updates": [
-                    {
-                        "kind": "accumulator",
-                        "category": "block fees",
-                        "change": "-15710",
-                        "origin": "block",
-                    },
-                    {
-                        "kind": "minted",
-                        "category": "baking rewards",
-                        "change": "-10000000",
-                        "origin": "block",
-                    },
-                    {
-                        "kind": "contract",
-                        "contract": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
-                        "change": "10015710",
-                        "origin": "block",
-                    },
-                    {
-                        "kind": "minted",
-                        "category": "baking bonuses",
-                        "change": "-9617784",
-                        "origin": "block",
-                    },
-                    {
-                        "kind": "contract",
-                        "contract": "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2",
-                        "change": "9617784",
-                        "origin": "block",
-                    },
-                ],
-            },
-            "operations": [[], [], [], []],
-        }
-
-    @property
-    def status_code(self):
-        return HTTPStatus.OK
-
-
 @pytest.fixture
 def address_api():
     return RpcRewardApiImpl(
@@ -93,50 +26,36 @@ def address_api():
     )
 
 
-@patch("rpc.rpc_reward_api.sleep", MagicMock())
-@patch("rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+@patch("src.rpc.rpc_reward_api.sleep", MagicMock())
+@patch("src.rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_rewards_for_cycle_map.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_get_rewards_for_cycle_map(address_api):
-    cycle = 515
-    rewards = load_reward_model(
-        MAINNET_ADDRESS_BAKEXTZ4ME_BAKER, cycle, RewardsType.ACTUAL, dir_name="rpc_data"
+    cycle = 689
+    rewards = address_api.get_rewards_for_cycle_map(
+        cycle=cycle, rewards_type=RewardsType.ACTUAL
     )
-    if rewards is None:
-        rewards = address_api.get_rewards_for_cycle_map(
-            cycle=cycle, rewards_type=RewardsType.ACTUAL
-        )
-        store_reward_model(
-            MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
-            cycle,
-            RewardsType.ACTUAL,
-            rewards,
-            dir_name="rpc_data",
-        )
-    assert rewards.delegate_staking_balance == 80573814172
-    assert rewards.total_reward_amount == 19364746
+    assert rewards.delegate_staking_balance == 77965234131
+    assert rewards.total_reward_amount == 19935448
     assert len(rewards.delegator_balance_dict) == 34
 
 
-class Mock_404_Response:
-    def json(self):
-        return None
-
-    @property
-    def status_code(self):
-        return 404
-
-
-@patch(
-    "src.rpc.rpc_reward_api.requests.get",
-    MagicMock(return_value=Mock_404_Response()),
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_rpc_terminate_404.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
-@patch("rpc.rpc_reward_api.sleep", MagicMock())
-@patch("rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+@patch("src.rpc.rpc_reward_api.sleep", MagicMock())
+@patch("src.rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
 def test_rpc_terminate_404(address_api):
-    current_cycle = 200
+    current_cycle = 660
 
     with pytest.raises(
         Exception,
-        match="RPC URL '{}/chains/main/blocks/head' not found. Is this node in archive mode?".format(
+        match="RPC URL '{}/chains/main/blocks/4873991/context/raw/json/cycle/660/total_active_stake' not found. Is this node in archive mode?".format(
             PUBLIC_NODE_URL["MAINNET"]
         ),
     ):
@@ -157,11 +76,16 @@ class Mock_500_Response:
         return 500
 
 
+@patch("src.rpc.rpc_reward_api.sleep", MagicMock())
 @patch(
     "src.rpc.rpc_reward_api.requests.get",
     MagicMock(return_value=Mock_500_Response()),
 )
-@patch("rpc.rpc_reward_api.sleep", MagicMock())
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_rpc_contract_storage_500.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_rpc_contract_storage_500(address_api, caplog):
     # This test will retry to get_contract_storage 256 times
     # defined by the MAX_SEQUENT_CALLS in the constants
@@ -181,6 +105,11 @@ def test_rpc_contract_storage_500(address_api, caplog):
     )
 
 
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_rpc_contract_storage.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_rpc_contract_storage(address_api):
     # API call to test the storage account
     contract_storage = address_api.get_contract_storage(
@@ -189,29 +118,26 @@ def test_rpc_contract_storage(address_api):
     assert contract_storage["string"] == "tz1SvJLCJ1kKP5zVNnoSwVUAuW7dP9HEExE3"
 
 
-class MockContractBalance:
-    def json(self):
-        return "9202886"
-
-    @property
-    def status_code(self):
-        return HTTPStatus.OK
-
-
-@patch(
-    "src.rpc.rpc_reward_api.requests.get",
-    MagicMock(return_value=MockContractBalance()),
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_rpc_contract_balance.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_rpc_contract_balance(address_api):
     contract_balance = address_api.get_contract_balance(
         contract_id="KT1XmgW5Pqpy9CMBEoNU9qmpnM8UVVaeyoXU", block="head"
     )
-    assert contract_balance == 9202886
+    assert contract_balance == 9484475
 
 
 # TODO: If a test needs to be disabled because of an unsolvable API issue
 # please use pytest.mark.skip and give an understandable reason for that
 # @pytest.mark.skip(reason="no way of currently testing this")
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_baking_rights.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_get_baking_rights(address_api):
     _, current_cycle = address_api.get_current_level()
     all_baking_rights = address_api.get_all_baking_rights_cycle(current_cycle)
@@ -224,9 +150,10 @@ def test_get_baking_rights(address_api):
     assert baking_rights[0]["level"] == first_baking_right["level"]
 
 
-@patch(
-    "src.rpc.rpc_reward_api.requests.get",
-    MagicMock(return_value=MockBlockData()),
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_block_data.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_block_data(address_api):
     (
@@ -235,15 +162,19 @@ def test_get_block_data(address_api):
         reward_and_fees,
         bonus,
         double_signing_reward,
-    ) = address_api.get_block_data(2984089)
-
-    assert author == "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2"
-    assert payload_proposer == "tz1S8MNvuFEUsWgjHvi3AxibRBf388NhT1q2"
-    assert reward_and_fees == 10015710
-    assert bonus == 9617784
+    ) = address_api.get_block_data(4874002)
+    assert author == "tz1ei4WtWEMEJekSv8qDnu9PExG6Q8HgRGr3"
+    assert payload_proposer == "tz1ei4WtWEMEJekSv8qDnu9PExG6Q8HgRGr3"
+    assert reward_and_fees == 5007339
+    assert bonus == 4834608
     assert double_signing_reward == 0
 
 
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_endorsing_rewards.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_get_endorsing_rewards(address_api):
     endorsing_rewards, lost_endorsing_rewards = address_api.get_endorsing_rewards(
         2661200
@@ -293,6 +224,11 @@ class Mock_Endorsing_Reward_Response:
     "src.rpc.rpc_reward_api.requests.get",
     MagicMock(return_value=Mock_Endorsing_Reward_Response()),
 )
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_endorsing_rewards_mocked.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_get_endorsing_rewards_mocked(address_api):
     endorsing_rewards, lost_endorsing_rewards = address_api.get_endorsing_rewards(
         2661200
@@ -301,28 +237,26 @@ def test_get_endorsing_rewards_mocked(address_api):
     assert -9956378 == lost_endorsing_rewards
 
 
-class Mock_Current_Balance_Response:
-    def json(self):
-        return "1234567"
-
-    @property
-    def status_code(self):
-        return HTTPStatus.OK
-
-
-@patch(
-    "src.rpc.rpc_reward_api.requests.get",
-    MagicMock(return_value=Mock_Current_Balance_Response()),
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_current_balance_of_delegator.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_current_balance_of_delegator(address_api):
-    assert 1234567 == address_api.get_current_balance_of_delegator(
+    assert 5023009232 == address_api.get_current_balance_of_delegator(
         MAINNET_ADDRESS_BAKEXTZ4ME_BAKER
     )
 
 
 # Check if delegator balance can be queried correctly
 # Please do not mock up to detect any rpc api endpoint changes
-@patch("rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+@patch("src.rpc.rpc_reward_api.sleep", MagicMock())
+@patch("src.rpc.rpc_reward_api.logger", MagicMock(debug=MagicMock(side_effect=print)))
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_delegators_and_delgators_balances.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
+)
 def test_get_delegators_and_delgators_balances(address_api):
     (
         delegate_staking_balance,
@@ -336,20 +270,12 @@ def test_get_delegators_and_delgators_balances(address_api):
     assert isinstance(sum_delegators_stake, int)  # balance is an int
 
 
-class Mock_Current_Level_Response:
-    def json(self):
-        return {"metadata": {"level_info": {"level": 2662060, "cycle": 518}}}
-
-    @property
-    def status_code(self):
-        return HTTPStatus.OK
-
-
-@patch(
-    "src.rpc.rpc_reward_api.requests.get",
-    MagicMock(return_value=Mock_Current_Level_Response()),
+@vcr.use_cassette(
+    "tests/integration/cassettes/rpc_api/test_get_current_level.yaml",
+    filter_headers=["X-API-Key", "authorization"],
+    decode_compressed_response=True,
 )
 def test_get_current_level(address_api):
     current_level, current_cycle = address_api.get_current_level()
-    assert 2662060 == current_level
-    assert 518 == current_cycle
+    assert 4873961 == current_level
+    assert 690 == current_cycle
