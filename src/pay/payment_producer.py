@@ -155,7 +155,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.life_cycle.is_running()
                 and threading.current_thread() is not threading.main_thread()
             ):
-                if platform.system() == 'Windows':
+                if platform.system() == "Windows":
                     abnormal_signal = signal.SIGTERM
                     normal_signal = signal.SIGTERM
                 else:

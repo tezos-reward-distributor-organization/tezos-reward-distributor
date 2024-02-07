@@ -4,7 +4,8 @@ import queue
 import signal
 import platform
 from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
-if platform.system() != 'Windows':
+
+if platform.system() != "Windows":
     from _signal import SIGUSR1, SIGUSR2
 from enum import Enum, auto
 from time import sleep
@@ -306,7 +307,7 @@ class ProcessLifeCycle:
     def do_register_signals(self, e):
         for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM):
             signal.signal(sig, self.stop_handler)
-        if 'SIGUSR1' in globals():
+        if "SIGUSR1" in globals():
             signal.signal(SIGUSR1, self.producer_exit_handler)
             signal.signal(SIGUSR2, self.stop_handler)
 
