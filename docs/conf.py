@@ -49,7 +49,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Tezos Reward Distributor (TRD)"
-copyright = "2023, see contributors.csv"
+copyright = "2021-2024, see contributors.csv"
 author = "TRD Organization"
 
 # The version info for the project you're documenting, acts as replacement for
