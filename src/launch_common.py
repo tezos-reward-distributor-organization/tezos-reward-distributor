@@ -105,6 +105,7 @@ def installed(package):
         print(e)
         return False
 
+
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
     print("Checking installed packages ...\n")
     missing_requirements = []
