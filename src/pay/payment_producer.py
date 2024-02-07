@@ -1,5 +1,6 @@
 import _thread
 import os
+import signal
 import threading
 from datetime import datetime, timedelta
 from _decimal import ROUND_HALF_DOWN, Decimal
@@ -115,6 +116,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.payments_queue = payments_queue
         self.life_cycle = life_cycle
         self.dry_run = dry_run
+        self.consumer_failure = False
 
         self.payment_calc = PhasedPaymentCalculator(
             self.founders_map,
@@ -152,11 +154,22 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 self.life_cycle.is_running()
                 and threading.current_thread() is not threading.main_thread()
             ):
-                _thread.interrupt_main()
-                logger.info("Sending KeyboardInterrupt signal.")
+                if self.consumer_failure:
+                    os.kill(os.getpid(), signal.SIGUSR2)
+                    logger.debug(
+                        "Payment failure, sending sigusr2 signal to main thread."
+                    )
+                elif exit_code != ExitCode.SUCCESS:
+                    os.kill(os.getpid(), signal.SIGUSR2)
+                    logger.debug(
+                        "Producer failure, sending sigusr2 signal to main thread."
+                    )
+                else:
+                    os.kill(os.getpid(), signal.SIGUSR1)
+                    logger.debug("Sending sigusr1 signal.")
                 exit_program(
                     exit_code,
-                    "Error at payment producer. Please consult the verbose logs!",
+                    "TRD Exit triggered by producer",
                 )
             if self.retry_fail_event:
                 self.retry_fail_event.set()
@@ -677,4 +690,5 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.notify_retry_fail_thread()
 
     def on_fail(self, pymnt_batch):
+        self.consumer_failure = True
         pass

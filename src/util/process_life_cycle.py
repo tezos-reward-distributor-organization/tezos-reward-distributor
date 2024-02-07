@@ -2,7 +2,7 @@ import json
 import logging
 import queue
 import signal
-from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
+from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM, SIGUSR1, SIGUSR2
 from enum import Enum, auto
 from time import sleep
 
@@ -301,8 +301,9 @@ class ProcessLifeCycle:
         self.__baking_dirs = BakingDirs(self.args, self.__cfg.get_baking_address())
 
     def do_register_signals(self, e):
-        for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM):
+        for sig in (SIGABRT, SIGILL, SIGSEGV, SIGTERM, SIGUSR2):
             signal.signal(sig, self.stop_handler)
+        signal.signal(SIGUSR1, self.producer_exit_handler)
 
     def do_init_service_fees(self, e):
         self.__srvc_fee_calc = ServiceFeeCalculator(
@@ -380,6 +381,11 @@ class ProcessLifeCycle:
     def stop_handler(self, signum, frame):
         logger.info("Application stop handler called: {}".format(signum))
         self.shut_down_on_error()
+
+    def producer_exit_handler(self, signum, frame):
+        logger.info("Application stop handler called by producer: {}".format(signum))
+        self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_DEMAND)
+        exit_program(ExitCode.SUCCESS, "Shutdown.")
 
     def shut_down_on_error(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_ERROR)
