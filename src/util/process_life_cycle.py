@@ -3,10 +3,10 @@ import logging
 import queue
 import signal
 import platform
-from _signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
+from signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 
 if platform.system() != "Windows":
-    from _signal import SIGUSR1, SIGUSR2
+    from signal import SIGUSR1, SIGUSR2
 from enum import Enum, auto
 from time import sleep
 

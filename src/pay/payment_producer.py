@@ -1,4 +1,3 @@
-import _thread
 import os
 import platform
 import signal
@@ -159,7 +158,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     abnormal_signal = signal.SIGTERM
                     normal_signal = signal.SIGTERM
                 else:
-                    # This will propagate the exit status to main prcess on linux.
+                    # This will propagate the exit status to main process on linux.
                     abnormal_signal = signal.SIGUSR2
                     normal_signal = signal.SIGUSR1
                 if self.consumer_failure:
