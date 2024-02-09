@@ -93,7 +93,7 @@ jobs:
       run:  python docs/fsm/graphviz/draw_state_diagrams.py
 
     - name: Build documentation
-      uses: ammaraskar/sphinx-action@0.4
+      uses: ammaraskar/sphinx-action@master
       with:
         docs-folder: docs/
         pre-build-command: |
