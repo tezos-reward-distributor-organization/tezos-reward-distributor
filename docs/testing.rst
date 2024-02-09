@@ -1,5 +1,6 @@
 Tests
 ========
+In order to run test which rely on the TZPRO API you have to copy the `.env.example` file to `.env` and add your personal TZPRO API Key.
 
 Test Execution
 ---------------
@@ -78,7 +79,20 @@ Check the `pytest documentation and tutorials <https://docs.pytest.org/en/7.1.x/
 Visual Studio Code Test Execution (optional)
 ----------------------------------------------
 
-If you are using `Visual Studio Code <https://code.visualstudio.com/>`_, you want to use it with the extensions installed in the previous section and check them here:
+If you are using `Visual Studio Code <https://code.visualstudio.com/>`_, then copy this into your settings:
+
+.. code-block:: json
+   {
+       "python.testing.pytestArgs": [
+           "tests"
+       ],
+       "python.testing.unittestEnabled": false,
+       "python.testing.pytestEnabled": true,
+       "python.envFile":   "${workspaceFolder}/.env",
+       "esbonio.sphinx.confDir": ""
+   }
+
+In addition you want to use it with the extensions installed in the previous section and check them here:
 
 .. image:: img/extension_vscode.png
   :width: 350

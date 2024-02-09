@@ -4,7 +4,6 @@ from unittest.mock import patch, MagicMock
 from src.Constants import (
     PUBLIC_NODE_URL,
     PRIVATE_SIGNER_URL,
-    RewardsType,
     DEFAULT_NETWORK_CONFIG_MAP,
 )
 from src.Constants import DryRun

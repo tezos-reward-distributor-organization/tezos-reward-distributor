@@ -2,9 +2,9 @@ from enum import Enum
 from datetime import date
 
 # General
-VERSION = 11.0
+VERSION = 12.0
 PYTHON_MAJOR = 3
-PYTHON_MINOR = 7
+PYTHON_MINOR = 8
 LINER = "--------------------------------------------"
 
 # Disabled or enabled options by developers
@@ -20,8 +20,8 @@ TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 # potentially the next upgrade
-NEW_PROTOCOL_DATE = date(2024, 2, 28)
-NEW_PROTOCOL_NAME = "Oxford"
+NEW_PROTOCOL_DATE = date(2024, 6, 30)
+NEW_PROTOCOL_NAME = "P_______"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"

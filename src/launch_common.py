@@ -105,12 +105,6 @@ def installed(package):
         print(e)
         return False
 
-    # if hasattr(pip, "main"):
-    #    status_code = pip.main(["install", package])
-    # else:
-    #    status_code = pip._internal.main(["install", package])
-    # return not bool(status_code)
-
 
 def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
     print("Checking installed packages ...\n")

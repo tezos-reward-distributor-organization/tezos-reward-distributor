@@ -24,7 +24,7 @@ TRD supports complex payments, pays in batches, and supports three backends for 
 
 The [terms and conditions](https://tzpro.io/terms) of TZPRO note that an account and API key are needed for the use of the API. Please review the [pricing](https://tzpro.io/#pricing) information. For further help contact hello@blockwatch.cc for more information.
 
-In order to use your API key in the application copy and rename the .env.example to .env and add the API key for TZPRO.
+In order to use your API key in the application add it to your configuration like tzpro_api_key: XXXXXXXXXX.
 
 ### TzKT
 
@@ -53,8 +53,8 @@ git clone https://github.com/tezos-reward-distributor-organization/tezos-reward-
 To install required modules, use pip with `requirements.txt` provided. Follow the instructions to create a virtual environment for your project specific python installation: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
 
 ```bash
-python3 -m venv env
-source env/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 ```bash

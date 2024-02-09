@@ -14,19 +14,23 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python 3.10
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: "3.10"
 
-    - name: Generate diagrams
+    - name: Install requirements
       run: |
+        sudo apt-get update -y
         sudo apt-get install graphviz -y
-        pip install -r requirements.txt
-        pip install -r requirements_developers.txt
-        python docs/fsm/graphviz/draw_state_diagrams.py
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+        python -m pip install -r requirements_developers.txt
+
+    - name: Generate diagrams
+      run: python docs/fsm/graphviz/draw_state_diagrams.py
 
     - name: Build documentation
       uses: ammaraskar/sphinx-action@master
@@ -35,12 +39,12 @@ jobs:
         pre-build-command: |
           mkdir -p docs/build/
           touch docs/build/.nojekyll
-          pip install -r requirements_developers.txt
+          python -m pip install -r requirements_developers.txt
         build-command: sphinx-build -b html . build
 
     - name: Deploy documentation
-      uses: JamesIves/github-pages-deploy-action@4.1.0
+      uses: JamesIves/github-pages-deploy-action@v4.5.0
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: docs/build
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        folder: docs/build
