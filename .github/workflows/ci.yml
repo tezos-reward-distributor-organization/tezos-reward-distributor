@@ -99,6 +99,7 @@ jobs:
         pre-build-command: |
           mkdir -p docs/build/
           touch docs/build/.nojekyll
+          python -m pip install -r requirements_developers.txt
         build-command: sphinx-build -b html . build
 
   build-docker:
