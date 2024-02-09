@@ -45,6 +45,6 @@ jobs:
     - name: Deploy documentation
       uses: JamesIves/github-pages-deploy-action@v4.5.0
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: docs/build
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        folder: docs/build
