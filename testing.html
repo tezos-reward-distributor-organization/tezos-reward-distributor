@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tests &mdash; Tezos Reward Distributor (TRD) 9.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Tests &mdash; Tezos Reward Distributor (TRD) 12.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -32,7 +32,7 @@
             Tezos Reward Distributor (TRD)
           </a>
               <div class="version">
-                9.0
+                12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -100,6 +100,7 @@
              
   <div class="section" id="tests">
 <h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
+<p>In order to run test which rely on the TZPRO API you have to copy the <cite>.env.example</cite> file to <cite>.env</cite> and add your personal TZPRO API Key.</p>
 <div class="section" id="test-execution">
 <h2>Test Execution<a class="headerlink" href="#test-execution" title="Permalink to this headline">¶</a></h2>
 <p>To run the tests locally you need to have <a class="reference external" href="https://pypi.org/project/pytest/">pytest</a> installed. It is already part of the <cite>requirements_developers.txt</cite> file. You can run the tests via:</p>
@@ -167,7 +168,8 @@ Check the <a class="reference external" href="https://docs.pytest.org/en/7.1.x/c
 </div>
 <div class="section" id="visual-studio-code-test-execution-optional">
 <h2>Visual Studio Code Test Execution (optional)<a class="headerlink" href="#visual-studio-code-test-execution-optional" title="Permalink to this headline">¶</a></h2>
-<p>If you are using <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a>, you want to use it with the extensions installed in the previous section and check them here:</p>
+<p>If you are using <a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a>, then copy this into your settings:</p>
+<p>In addition you want to use it with the extensions installed in the previous section and check them here:</p>
 <a class="reference internal image-reference" href="_images/extension_vscode.png"><img alt="Click extension tab" src="_images/extension_vscode.png" style="width: 350px;" /></a>
 <p>Then click on the test icon tab</p>
 <a class="reference internal image-reference" href="_images/test_vscode.png"><img alt="Click test tab" src="_images/test_vscode.png" style="width: 350px;" /></a>
@@ -195,7 +197,7 @@ Check the <a class="reference external" href="https://docs.pytest.org/en/7.1.x/c
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, see contributors.csv.</p>
+    <p>&#169; Copyright 2021-2024, see contributors.csv.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
