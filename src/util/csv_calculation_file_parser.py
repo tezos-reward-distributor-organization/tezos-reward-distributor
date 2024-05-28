@@ -243,17 +243,23 @@ class CsvCalculationFileParser:
                         pymnt_log.amount,
                         pymnt_log.service_fee_amount,
                         pymnt_log.service_fee_rate,
-                        "pending"
-                        if early_payout
-                        else "{:d}".format(int(pymnt_log.overestimate)),
+                        (
+                            "pending"
+                            if early_payout
+                            else "{:d}".format(int(pymnt_log.overestimate))
+                        ),
                         pymnt_log.adjustment,
                         pymnt_log.adjusted_amount,
-                        "pending"
-                        if not fees_simulated
-                        else "{:d}".format(int(pymnt_log.delegate_transaction_fee)),
-                        "pending"
-                        if not fees_simulated
-                        else "{:d}".format(int(pymnt_log.delegator_transaction_fee)),
+                        (
+                            "pending"
+                            if not fees_simulated
+                            else "{:d}".format(int(pymnt_log.delegate_transaction_fee))
+                        ),
+                        (
+                            "pending"
+                            if not fees_simulated
+                            else "{:d}".format(int(pymnt_log.delegator_transaction_fee))
+                        ),
                         int(1) if pymnt_log.payable else int(0),
                         int(1) if pymnt_log.skipped else int(0),
                         pymnt_log.skippedatphase,
