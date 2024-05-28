@@ -220,9 +220,9 @@ class TzProRewardProviderHelper:
             for list_address in split_addresses:
                 list_curr_balances = self.fetch_current_balance(list_address)
                 for d in list_address:
-                    root["delegators_balances"][d][
-                        "current_balance"
-                    ] = list_curr_balances[d]
+                    root["delegators_balances"][d]["current_balance"] = (
+                        list_curr_balances[d]
+                    )
                     curr_bal_delegators.append(d)
 
         # All done fetching balances.
