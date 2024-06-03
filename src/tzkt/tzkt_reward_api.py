@@ -27,7 +27,7 @@ class TzKTRewardApiImpl(RewardApi):
             address=self.baking_address, cycle=cycle, fetch_delegators=True
         )
 
-        delegate_staking_balance = split["stakingBalance"]
+        delegate_staking_balance = split["delegatedBalance"]
 
         # calculate estimated rewards
         num_blocks = split["blocks"] + split["missedBlocks"] + split["futureBlocks"]
@@ -46,7 +46,6 @@ class TzKTRewardApiImpl(RewardApi):
         rewards_and_fees = (
             split["blockRewards"]
             + split["endorsementRewards"]
-            + split["blockFees"]
             + split["revelationRewards"]
         )
         denunciation_rewards = (
@@ -72,8 +71,8 @@ class TzKTRewardApiImpl(RewardApi):
 
         delegators_balances = {
             item["address"]: {
-                "staking_balance": item["balance"],
-                "current_balance": item["currentBalance"],
+                "staking_balance": item["delegatedBalance"],
+                "current_balance": item["currentDelegatedBalance"],
             }
             for item in split["delegators"]
             if item["balance"] > 0
