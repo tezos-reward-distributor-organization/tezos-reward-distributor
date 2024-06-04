@@ -27,7 +27,7 @@ class TzKTRewardApiImpl(RewardApi):
             address=self.baking_address, cycle=cycle, fetch_delegators=True
         )
 
-        delegate_staking_balance = split["delegatedBalance"]
+        delegate_staking_balance = split["ownDelegatedBalance"] + split["externalDelegatedBalance"]
 
         # calculate estimated rewards
         num_blocks = split["blocks"] + split["missedBlocks"] + split["futureBlocks"]
@@ -72,6 +72,8 @@ class TzKTRewardApiImpl(RewardApi):
         delegators_balances = {
             item["address"]: {
                 "staking_balance": item["delegatedBalance"],
+                # FIXME: current_balance is deprecated and no longer accurate
+                # Instead, tzkt provides a boolean "empty" that can be used.
                 "current_balance": item["currentDelegatedBalance"],
             }
             for item in split["delegators"]
