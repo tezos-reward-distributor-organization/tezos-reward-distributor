@@ -73,7 +73,7 @@ class PhasedPaymentCalculator:
             logger.debug("NO REWARDS to process!")
             return [], 0
 
-        assert reward_provider_model.delegate_staking_balance == sum(
+        assert reward_provider_model.external_delegated_balance + reward_provider_model.own_delegated_balance == sum(
             [rl.staking_balance for rl in rwrd_logs]
         )
         assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs]))

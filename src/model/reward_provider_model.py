@@ -1,7 +1,8 @@
 class RewardProviderModel:
     def __init__(
         self,
-        delegate_staking_balance,
+        own_delegated_balance,
+        external_delegated_balance,
         num_baking_rights,
         potential_endorsement_rewards,
         total_reward_amount,
@@ -14,7 +15,8 @@ class RewardProviderModel:
     ) -> None:
         super().__init__()
         self.delegator_balance_dict = delegator_balance_dict
-        self.delegate_staking_balance = delegate_staking_balance
+        self.own_delegated_balance = own_delegated_balance
+        self.external_delegated_balance = external_delegated_balance
         self.num_baking_rights = num_baking_rights
 
         # endorsement rewards, if paid, will equal this amount
