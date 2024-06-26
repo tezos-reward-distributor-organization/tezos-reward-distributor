@@ -54,7 +54,7 @@ class CsvCalculationFileParser:
     @staticmethod
     def from_payment_csv_dict_row(row):
         rl = RewardLog(row["address"], row["type"], 0, 0)
-        rl.staking_balance = int(row["staked_balance"])
+        rl.staking_balance = int(row["delegated_balance"])
         rl.current_balance = int(row["current_balance"])
         rl.ratio = float(row["ratio"])
         rl.service_fee_ratio = float(row["fee_ratio"])
@@ -128,7 +128,7 @@ class CsvCalculationFileParser:
                 [
                     "address",
                     "type",
-                    "staked_balance",
+                    "delegated_balance",
                     "current_balance",
                     "ratio",
                     "fee_ratio",
