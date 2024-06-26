@@ -37,7 +37,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         calculations_dir,
         run_mode,
         service_fee_calc,
-        release_override,
         payment_offset,
         baking_cfg,
         payments_queue,
@@ -99,6 +98,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.reward_api.set_dexter_contracts_set(dexter_contracts_set)
 
         self.rewards_type = baking_cfg.get_rewards_type()
+        if self.rewards_type != RewardsType.ACTUAL:
+            logger.error("Only 'ACTUAL' rewards type is supported as of Paris protocol. Please fix your configuration.")
+            self.exit(ExitCode.PROVIDER_ERROR)
         self.pay_denunciation_rewards = baking_cfg.get_pay_denunciation_rewards()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
@@ -111,7 +113,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         self.run_mode = run_mode
         self.exiting = False
 
-        self.release_override = release_override
         self.payment_offset = payment_offset
         self.payments_queue = payments_queue
         self.life_cycle = life_cycle
@@ -231,7 +232,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         # if initial_payment_cycle has the default value of -1 resulting in the last released cycle
         if self.initial_payment_cycle == -1:
-            pymnt_cycle = current_cycle - 1 - self.release_override
+            pymnt_cycle = current_cycle - 1
             if pymnt_cycle < 0:
                 logger.error(
                     "Payment cycle cannot be < 0 but configuration results to {}".format(
@@ -280,27 +281,18 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     os.makedirs(self.calculations_dir)
 
                 logger.debug(
-                    "Checking for pending payments: payment_cycle <= current_cycle - 1 - self.release_override"
+                    "Checking for pending payments: payment_cycle <= current_cycle - 1"
                 )
                 logger.info(
-                    "Checking for pending payments: checking {} <= {} - 1 - {}".format(
+                    "Checking for pending payments: checking {} <= {} - 1".format(
                         pymnt_cycle,
                         current_cycle,
-                        self.release_override,
                     )
                 )
 
                 # payments should not pass beyond last released reward cycle
-                if pymnt_cycle <= current_cycle - 1 - self.release_override:
+                if pymnt_cycle <= current_cycle - 1:
                     if not self.payments_queue.full():
-                        # Paying upcoming cycles (--adjusted_early_payouts is provided )
-                        if pymnt_cycle >= current_cycle:
-                            logger.warn(
-                                "Please note that you are doing payouts for future rewards!!! These rewards are not earned yet, they are an estimation."
-                            )
-                            logger.warn(
-                                "TRD will attempt to adjust the amount after the cycle runs, but it may not work."
-                            )
 
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
@@ -421,7 +413,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         calls payment_call.calculate to calculate rewards per delegator.
 
         :param pymnt_cycle: the cycle for which rewards are being calculated
-        :param computation_type: calculate estimated, actual or ideal rewards
+        :param computation_type: not in use
         :param network_config: configuration of the current tezos network, needed to calc rewards.
         :param adjustments: a map of adjustments per address. We add to amount to compute adjusted_amount
         :return: rewards per delegator (reward logs) and total amount
@@ -432,124 +424,17 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         reward_model = self.reward_api.get_rewards_for_cycle_map(
             pymnt_cycle, computation_type
         )
-        if computation_type.isEstimated():
-            logger.info("Using estimated rewards for payouts calculations")
-            block_reward = network_config["BLOCK_REWARD"]
-            total_estimated_block_reward = reward_model.num_baking_rights * block_reward
-            total_estimated_endorsement_reward = (
-                reward_model.potential_endorsement_rewards
-            )
+        logger.info("Using actual rewards for payouts calculations")
+        if self.pay_denunciation_rewards:
+            reward_model.computed_reward_amount = reward_model.total_reward_amount
+        else:
+            # omit denunciation rewards
             reward_model.computed_reward_amount = (
-                total_estimated_block_reward + total_estimated_endorsement_reward
+                reward_model.rewards_and_fees - reward_model.equivocation_losses
             )
-        elif computation_type.isActual():
-            logger.info("Using actual rewards for payouts calculations")
-            if self.pay_denunciation_rewards:
-                reward_model.computed_reward_amount = reward_model.total_reward_amount
-            else:
-                # omit denunciation rewards
-                reward_model.computed_reward_amount = (
-                    reward_model.rewards_and_fees - reward_model.equivocation_losses
-                )
-        elif computation_type.isIdeal():
-            logger.info("Using ideal rewards for payouts calculations")
-            if self.pay_denunciation_rewards:
-                reward_model.computed_reward_amount = (
-                    reward_model.total_reward_amount + reward_model.offline_losses
-                )
-            else:
-                # omit denunciation rewards and double baking loss
-                reward_model.computed_reward_amount = (
-                    reward_model.rewards_and_fees + reward_model.offline_losses
-                )
 
         # 3- calculate rewards for delegators
         return self.payment_calc.calculate(reward_model, adjustments)
-
-    def recompute_rewards(self, completed_cycle, computation_type, network_config):
-        """
-        In case of early payout, the payout is already done when the cycle runs.
-        After a cycle has run, we redo the computations. If we find overpayemnt
-        (overestimate) or underpayment (negative overestimate), we record it in the
-        calculation report csv file and return an adjustment map.
-
-        :param completed_cycle: the cycle for which rewards are being recalculated
-        :param computation_type: calculate estimated, actual or ideal rewards
-        :param network_config: configuration of the current tezos network, needed to calc rewards.
-        :return: adjustments map showing negative of overestimates per delegator
-        """
-        logger.info(
-            "Checking for potential adjustment for recently completed cycle {:s}.".format(
-                str(completed_cycle)
-            )
-        )
-        completed_cycle_report_file_path = get_calculation_report_file_path(
-            self.calculations_dir, completed_cycle
-        )
-        adjustments = {}
-        if os.path.isfile(completed_cycle_report_file_path):
-            logger.info(
-                "TRD ran for cycle: {:s}, calculating adjustments.".format(
-                    str(completed_cycle)
-                )
-            )
-            (
-                reward_logs_from_report,
-                total_amount_from_report,
-                rewards_type_from_report,
-                _,
-            ) = CsvCalculationFileParser().parse(
-                completed_cycle_report_file_path, self.baking_address
-            )
-            # check that the overestimate has not been computed yet
-            if sum([rl.overestimate or 0 for rl in reward_logs_from_report]) > 0:
-                logger.info(
-                    "Overestimate has already been calculated for cycle {:s}, not calculating it again.".format(
-                        str(completed_cycle)
-                    )
-                )
-                completed_cycle_reward_logs, completed_cycle_total_amount = (
-                    reward_logs_from_report,
-                    total_amount_from_report,
-                )
-            else:
-                (
-                    completed_cycle_reward_logs,
-                    completed_cycle_total_amount,
-                ) = self.compute_rewards(
-                    completed_cycle, computation_type, network_config
-                )
-            overestimate = int(total_amount_from_report - completed_cycle_total_amount)
-            logger.info(
-                "We {:s}estimated payout for cycle {:s} by {:<,d} mutez, will attempt to adjust.".format(
-                    ("over" if overestimate > 0 else "under"),
-                    str(completed_cycle),
-                    abs(overestimate),
-                )
-            )
-            for rl in reward_logs_from_report:
-                # overwrite only overestimate in report csv file, leave the rest alone
-                rl.overestimate = int(
-                    Decimal(rl.ratio * overestimate).to_integral_value(
-                        rounding=ROUND_HALF_DOWN
-                    )
-                )
-                # we adjust the cycle we are paying out with the overestimate of the
-                # just completed cycle
-                adjustments[rl.address] = rl.overestimate
-                logger.debug(
-                    f"Will try to recover {adjustments[rl.address]} mutez for {rl.address} based on past overpayment"
-                )
-
-            CsvCalculationFileParser().write(
-                reward_logs_from_report,
-                completed_cycle_report_file_path,
-                total_amount_from_report,
-                rewards_type_from_report,
-                self.baking_address,
-                False,
-            )
-        return adjustments
 
     def try_to_pay(self, pymnt_cycle, rewards_type, network_config, current_cycle):
         try:
@@ -562,44 +447,10 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 logger.warn(past_payment_state)
                 return True
 
-            adjustments = {}
-            early_payout = False
-            current_cycle_rewards_type = rewards_type
-            # 1- adjust past cycle if necessary
-            if (
-                self.release_override == -(network_config["PRESERVED_CYCLES"] + 1)
-                and pymnt_cycle >= current_cycle
-            ):
-                early_payout = True
-                completed_cycle = pymnt_cycle - network_config["PRESERVED_CYCLES"] - 1
-                adjustments = self.recompute_rewards(
-                    completed_cycle, rewards_type, network_config
-                )
-                # payout for current cycle will be estimated since we don't know actual rewards yet
-                current_cycle_rewards_type = RewardsType.ESTIMATED
-
-            # 2- get reward data and compute how to distribute them
             reward_logs, total_amount = self.compute_rewards(
-                pymnt_cycle, current_cycle_rewards_type, network_config, adjustments
+                pymnt_cycle, rewards_type, network_config, {}
             )
-            total_recovered_adjustments = int(
-                sum([rl.adjustment for rl in reward_logs])
-            )
-            total_adjustments_to_recover = int(sum(adjustments.values()))
-            if total_adjustments_to_recover > 0:
-                logger.debug(
-                    "Total adjustments to recover is {:<,d} mutez, total recovered adjustment is {:<,d} mutez.".format(
-                        total_adjustments_to_recover, total_recovered_adjustments
-                    )
-                )
-                logger.info(
-                    "After early payout of cycle {:s}, {:<,d} mutez were not recovered.".format(
-                        str(completed_cycle),
-                        total_adjustments_to_recover + total_recovered_adjustments,
-                    )
-                )
 
-            # 3- create calculations report file. This file contains calculations details
             report_file_path = get_calculation_report_file_path(
                 self.calculations_dir, pymnt_cycle
             )
@@ -608,9 +459,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 reward_logs,
                 report_file_path,
                 total_amount,
-                current_cycle_rewards_type,
+                rewards_type,
                 self.baking_address,
-                early_payout,
+                False,
             )
 
             # 4- set cycle info

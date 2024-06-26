@@ -335,7 +335,6 @@ class ProcessLifeCycle:
             calculations_dir=self.__baking_dirs.calculations_root,
             run_mode=RunMode(self.args.run_mode),
             service_fee_calc=self.__srvc_fee_calc,
-            release_override=self.args.release_override,
             payment_offset=self.args.payment_offset,
             baking_cfg=self.__cfg,
             life_cycle=self,

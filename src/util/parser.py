@@ -48,7 +48,7 @@ def add_argument_cycle(argparser):
         help="Cycle to start payment(s) from. "
         "Default value is -1: will pay rewards that were most recently released. "
         "Cycle for which rewards were most recently released is calculated based on the formula: "
-        "current_cycle - 1 + [if --adjusted_payout_timing == True: (preserved_cycles + 1)] "
+        "current_cycle - 1"
         "Valid range is [-1,).",
         default=-1,
         type=int,
