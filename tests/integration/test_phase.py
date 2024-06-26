@@ -150,7 +150,7 @@ class TestCalculatePhases(TestCase):
 
         # Filter out non-payable items
         reward_logs = [pi for pi in reward_logs if pi.payable]
-        reward_logs.sort(key=lambda rl: (rl.type, -rl.staking_balance))
+        reward_logs.sort(key=lambda rl: (rl.type, -rl.delegating_balance))
 
         # TRD Calculated Results
         # tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT type: D, stake bal:   62657.83, cur bal:   62657.83, ratio: 0.327420, fee_ratio: 0.000000, amount:   0.000000, fee_amount: 0.000000, fee_rate: 0.00, payable: N, skipped: Y, at-phase: 1, desc: Excluded by configuration, pay_addr: tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT

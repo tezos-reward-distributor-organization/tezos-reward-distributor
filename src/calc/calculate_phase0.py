@@ -42,20 +42,20 @@ class CalculatePhase0(CalculatePhaseBase):
 
         for address, delegator_info in delegators_balance_dict.items():
             # NOTE: Staking_balance is a misnomer. It should be delegated_balance now. will rename later
-            staking_balance = delegator_info["delegated_balance"]
+            delegating_balance = delegator_info["delegated_balance"]
             current_balance = delegator_info["current_balance"]
             originaladdress = (
                 delegator_info["originaladdress"]
                 if "originaladdress" in delegator_info
                 else None
             )
-            total_delegator_balance += staking_balance
+            total_delegator_balance += delegating_balance
 
-            ratio = staking_balance / total_delegated_balance
+            ratio = delegating_balance / total_delegated_balance
             reward_item = RewardLog(
                 address=address,
                 type=reward_log.TYPE_DELEGATOR,
-                staking_balance=staking_balance,
+                delegating_balance=delegating_balance,
                 current_balance=current_balance,
                 originaladdress=originaladdress,
             )
@@ -69,7 +69,7 @@ class CalculatePhase0(CalculatePhaseBase):
         owners_rl = RewardLog(
             address=reward_log.TYPE_OWNERS_PARENT,
             type=reward_log.TYPE_OWNERS_PARENT,
-            staking_balance=own_delegated_balance,
+            delegating_balance=own_delegated_balance,
             current_balance=0,
         )
         owners_rl.ratio = 1 - ratio_sum

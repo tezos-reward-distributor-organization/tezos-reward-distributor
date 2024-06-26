@@ -20,10 +20,10 @@ types = {
 
 class RewardLog:
     def __init__(
-        self, address, type, staking_balance, current_balance, originaladdress=None
+        self, address, type, delegating_balance, current_balance, originaladdress=None
     ) -> None:
         super().__init__()
-        self.staking_balance = int(staking_balance)
+        self.delegating_balance = int(delegating_balance)
         self.current_balance = int(current_balance)
         self.address = str(address)
         self.paymentaddress = str(address)
@@ -73,7 +73,7 @@ class RewardLog:
             self.address,
             self.paymentaddress,
             self.type,
-            self.staking_balance,
+            self.delegating_balance,
             self.current_balance,
             self.amount,
             self.adjusted_amount,
@@ -86,7 +86,7 @@ class RewardLog:
         return RewardLog(
             address=EXIT_PAYMENT_TYPE,
             type=EXIT_PAYMENT_TYPE,
-            staking_balance=0,
+            delegating_balance=0,
             current_balance=0,
         )
 
@@ -101,14 +101,14 @@ class RewardLog:
 def cmp_by_skip_type_balance(rl1, rl2):
     if rl1.skipped == rl2.skipped:
         if rl1.type == rl2.type:
-            if rl1.staking_balance is None:
+            if rl1.delegating_balance is None:
                 return 1
-            if rl2.staking_balance is None:
+            if rl2.delegating_balance is None:
                 return -1
-            if rl1.staking_balance == rl2.staking_balance:
+            if rl1.delegating_balance == rl2.delegating_balance:
                 return 1
             else:
-                return rl2.staking_balance - rl1.staking_balance
+                return rl2.delegating_balance - rl1.delegating_balance
         else:
             return types[rl2.type] - types[rl1.type]
     else:
@@ -120,13 +120,13 @@ def cmp_by_skip_type_balance(rl1, rl2):
 
 def cmp_by_type_balance(rl1, rl2):
     if rl1.type == rl2.type:
-        if rl1.staking_balance is None:
+        if rl1.delegating_balance is None:
             return 1
-        if rl2.staking_balance is None:
+        if rl2.delegating_balance is None:
             return -1
-        if rl1.staking_balance == rl2.staking_balance:
+        if rl1.delegating_balance == rl2.delegating_balance:
             return 1
         else:
-            return rl2.staking_balance - rl1.staking_balance
+            return rl2.delegating_balance - rl1.delegating_balance
     else:
         return types[rl2.type] - types[rl1.type]

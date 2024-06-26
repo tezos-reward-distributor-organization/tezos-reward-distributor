@@ -59,12 +59,12 @@ def test_expected_rewards(address, cycle):
         tzkt_rewards = tzkt_impl.get_rewards_for_cycle_map(cycle, RewardsType.ACTUAL)
 
         assert (
-            tzpro_rewards.delegate_staking_balance
-            == tzkt_rewards.delegate_staking_balance
+            tzpro_rewards.delegate_delegating_balance
+            == tzkt_rewards.delegate_delegating_balance
         )
         assert (
-            tzpro_rewards.delegate_staking_balance
-            == tzkt_rewards.delegate_staking_balance
+            tzpro_rewards.delegate_delegating_balance
+            == tzkt_rewards.delegate_delegating_balance
         )
         assert tzpro_rewards.total_reward_amount == tzkt_rewards.total_reward_amount
         assert tzpro_rewards.num_baking_rights == tzkt_rewards.num_baking_rights
@@ -73,8 +73,8 @@ def test_expected_rewards(address, cycle):
             assert (
                 address in tzkt_rewards.delegator_balance_dict
             ), f"{address} is missing"
-            assert balances["staking_balance"] == pytest.approx(
-                tzkt_rewards.delegator_balance_dict[address]["staking_balance"],
+            assert balances["delegating_balance"] == pytest.approx(
+                tzkt_rewards.delegator_balance_dict[address]["delegating_balance"],
                 1,
             ), address
 
@@ -90,7 +90,7 @@ def test_update_current_balances():
         RewardLog(
             address="KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR",
             type="D",
-            staking_balance=100500,
+            delegating_balance=100500,
             current_balance=0,
         )
     ]

@@ -41,7 +41,7 @@ def test_get_rewards_for_cycle_map(address_api):
     rewards = address_api.get_rewards_for_cycle_map(
         cycle=CYCLE, rewards_type=RewardsType.ACTUAL
     )
-    assert rewards.delegate_staking_balance == 162719327201
+    assert rewards.delegate_delegating_balance == 162719327201
     assert rewards.total_reward_amount == 123000000
     assert len(rewards.delegator_balance_dict) == 19
 

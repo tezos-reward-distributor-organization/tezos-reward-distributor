@@ -74,7 +74,7 @@ class PhasedPaymentCalculator:
             return [], 0
 
         assert reward_provider_model.external_delegated_balance + reward_provider_model.own_delegated_balance == sum(
-            [rl.staking_balance for rl in rwrd_logs]
+            [rl.delegating_balance for rl in rwrd_logs]
         )
         assert self.almost_equal(1, sum([rl.ratio for rl in rwrd_logs]))
 
@@ -154,11 +154,11 @@ class PhasedPaymentCalculator:
             self.min_delegation_amnt = int(
                 min(
                     [
-                        rl.staking_balance
+                        rl.delegating_balance
                         for rl in rwrd_logs
                         if not rl.skipped
                         and rl.adjusted_amount > self.min_payment_amnt
-                        and rl.staking_balance
+                        and rl.delegating_balance
                     ]
                 )
             )
@@ -174,7 +174,7 @@ class PhasedPaymentCalculator:
             return rwrd_logs, total_rwrd_amnt
 
         # sort rewards according to type and balance
-        rwrd_logs.sort(key=lambda rl: (rl.type, -rl.staking_balance))
+        rwrd_logs.sort(key=lambda rl: (rl.type, -rl.delegating_balance))
 
         # check if there is difference between sum of calculated amounts and total_rewards
         total_delegator_amounts = int(

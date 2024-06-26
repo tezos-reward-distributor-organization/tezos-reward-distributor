@@ -52,7 +52,7 @@ class CalculatePhase4(CalculatePhaseBase):
 
             elif rl3.type == TYPE_OWNERS_PARENT:
                 for addr, ratio in self.owners_map.items():
-                    rl4 = RewardLog(addr, TYPE_OWNER, ratio * rl3.staking_balance, 0)
+                    rl4 = RewardLog(addr, TYPE_OWNER, ratio * rl3.delegating_balance, 0)
                     # new ratio is parent ratio * ratio of the owner
                     rl4.ratio = ratio * rl3.ratio
                     rl4.ratio4 = rl4.ratio

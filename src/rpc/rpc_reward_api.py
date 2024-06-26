@@ -126,7 +126,7 @@ class RpcRewardApiImpl(RewardApi):
 
             reward_data = {}
             (
-                reward_data["delegate_staking_balance"],
+                reward_data["delegate_delegating_balance"],
                 reward_data["delegators"],
             ) = self.get_delegators_and_delgators_balances(current_level)
             reward_data["delegators_nb"] = len(reward_data["delegators"])
@@ -231,7 +231,7 @@ class RpcRewardApiImpl(RewardApi):
                 total_reward_amount = rewards_and_fees + denunciation_rewards
 
             reward_model = RewardProviderModel(
-                reward_data["delegate_staking_balance"],
+                reward_data["delegate_delegating_balance"],
                 nb_blocks,
                 potential_endorsement_rewards,
                 total_reward_amount,
@@ -244,8 +244,8 @@ class RpcRewardApiImpl(RewardApi):
             )
 
             logger.debug(
-                "delegate_staking_balance = {:d}".format(
-                    reward_data["delegate_staking_balance"]
+                "delegate_delegating_balance = {:d}".format(
+                    reward_data["delegate_delegating_balance"]
                 )
             )
             logger.debug("delegators = {}".format(reward_data["delegators"]))
@@ -564,14 +564,14 @@ class RpcRewardApiImpl(RewardApi):
         get_delegates_request = COMM_DELEGATES.format(
             self.node_url, snapshot_cycle_first_block_level, self.baking_address
         )
-        delegate_staking_balance = 0
+        delegate_delegating_balance = 0
         d_a_len = 0
         delegators = {}
 
         try:
             # get RPC response for delegates and staking balance
             response = self.do_rpc_request(get_delegates_request)
-            delegate_staking_balance = int(response["staking_balance"])
+            delegate_delegating_balance = int(response["delegating_balance"])
 
             # Remove baker's address from list of delegators
             delegators_addresses = list(
@@ -587,14 +587,14 @@ class RpcRewardApiImpl(RewardApi):
             # Loop over delegators; get snapshot balance, and current balance
             for idx, delegator in enumerate(delegators_addresses, start=1):
                 # create new dictionary for each delegator
-                d_info = {"staking_balance": 0, "current_balance": 0}
-                d_info["staking_balance"] = self.get_contract_balance(
+                d_info = {"delegating_balance": 0, "current_balance": 0}
+                d_info["delegating_balance"] = self.get_contract_balance(
                     delegator, snapshot_cycle_first_block_level
                 )
 
                 # Ignore delegators who have zero staking balance
                 # since they are not relevant for reward calculations
-                if not d_info["staking_balance"] > 0:
+                if not d_info["delegating_balance"] > 0:
                     d_a_len -= 1  # decrement the sanity check count
                     logger.debug(
                         "Ignoring delegator {} with zero staking balance!".format(
@@ -616,7 +616,7 @@ class RpcRewardApiImpl(RewardApi):
                         idx,
                         d_a_len,
                         delegator,
-                        d_info["staking_balance"],
+                        d_info["delegating_balance"],
                         d_info["current_balance"],
                     )
                 )
@@ -646,7 +646,7 @@ class RpcRewardApiImpl(RewardApi):
                 )
             )
 
-        return delegate_staking_balance, delegators
+        return delegate_delegating_balance, delegators
 
     def get_current_balance_of_delegator(self, address):
         """Helper function to get current balance of delegator"""

@@ -20,7 +20,7 @@ def get_dexter_balance_map(contract_id, snapshot_block, api_provider):
 def process_original_delegators_map(
     delegator_map, contract_id, snapshot_block, api_provider
 ):
-    contract_balance = delegator_map[contract_id]["staking_balance"]
+    contract_balance = delegator_map[contract_id]["delegating_balance"]
     dexter_liquidity_provider_map, totalLiquidity = get_dexter_balance_map(
         contract_id, snapshot_block, api_provider
     )
@@ -34,10 +34,10 @@ def process_original_delegators_map(
             / totalLiquidity
         )
         if delegator in delegator_map:
-            delegator_map[delegator]["staking_balance"] += balance
+            delegator_map[delegator]["delegating_balance"] += balance
         else:
             delegator_map[delegator] = {}
-            delegator_map[delegator]["staking_balance"] = balance
+            delegator_map[delegator]["delegating_balance"] = balance
             delegator_map[delegator]["current_balance"] = dexter_liquidity_provider_map[
                 delegator
             ]["current_balance"]

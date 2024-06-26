@@ -54,7 +54,7 @@ class CsvCalculationFileParser:
     @staticmethod
     def from_payment_csv_dict_row(row):
         rl = RewardLog(row["address"], row["type"], 0, 0)
-        rl.staking_balance = int(row["delegated_balance"])
+        rl.delegating_balance = int(row["delegated_balance"])
         rl.current_balance = int(row["current_balance"])
         rl.ratio = float(row["ratio"])
         rl.service_fee_ratio = float(row["fee_ratio"])
@@ -156,8 +156,8 @@ class CsvCalculationFileParser:
                     str(baking_address),  # address
                     str("B"),  # type
                     int(
-                        sum([pl.staking_balance for pl in payment_logs])
-                    ),  # staking_balance
+                        sum([pl.delegating_balance for pl in payment_logs])
+                    ),  # delegating_balance
                     int(1),  # current_balance
                     "{0:10f}".format(1.0),  # ratio
                     "{0:10f}".format(0.0),  # service_fee_ratio
@@ -201,7 +201,7 @@ class CsvCalculationFileParser:
                 array = [
                     str(pymnt_log.address),
                     str(pymnt_log.type),
-                    int(pymnt_log.staking_balance),
+                    int(pymnt_log.delegating_balance),
                     int(pymnt_log.current_balance),
                     "{0:.10f}".format(pymnt_log.ratio),
                     "{0:.10f}".format(pymnt_log.service_fee_ratio),
@@ -236,7 +236,7 @@ class CsvCalculationFileParser:
                     "desc: {:s}, pay_addr: {:s}, type: {:s}".format(
                         pymnt_log.address,
                         pymnt_log.type,
-                        pymnt_log.staking_balance,
+                        pymnt_log.delegating_balance,
                         pymnt_log.current_balance,
                         pymnt_log.ratio,
                         pymnt_log.service_fee_ratio,

@@ -15,14 +15,14 @@ class TestCalculatePhaseZeroBalance(unittest.TestCase):
             RewardLog(
                 address="tz1eyuACLrFdapu9rzjSgrEasTa4sFu1Epnz",
                 type=reward_log.TYPE_DELEGATOR,
-                staking_balance=5500000,
+                delegating_balance=5500000,
                 current_balance=0,
                 originaladdress="tz1eyuACLrFdapu9rzjSgrEasTa4sFu1Epnz",
             ),
             RewardLog(
                 address="tz1eyuACLrFdapu9rzjSgrEasTa4sFu1Epn1",
                 type=reward_log.TYPE_OWNER,
-                staking_balance=5500000,
+                delegating_balance=5500000,
                 current_balance=233,
                 originaladdress="tz1eyuACLrFdapu9rzjSgrEasTa4sFu1Epnz",
             ),

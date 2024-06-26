@@ -24,7 +24,7 @@ def load_reward_model(
         with open(path, "r") as f:
             data = json.loads(f.read())
         return RewardProviderModel(
-            delegate_staking_balance=data["delegate_staking_balance"],
+            delegate_delegating_balance=data["delegate_delegating_balance"],
             total_reward_amount=data["total_reward_amount"],
             rewards_and_fees=data["rewards_and_fees"],
             equivocation_losses=data["equivocation_losses"],
@@ -46,7 +46,7 @@ def store_reward_model(
         dirname(__file__), f"integration/{dir_name}/{address}_{cycle}_{suffix}.json"
     )
     data = dict(
-        delegate_staking_balance=model.delegate_staking_balance,
+        delegate_delegating_balance=model.delegate_delegating_balance,
         total_reward_amount=model.total_reward_amount,
         rewards_and_fees=model.rewards_and_fees,
         equivocation_losses=model.equivocation_losses,
@@ -57,7 +57,7 @@ def store_reward_model(
         delegator_balance_dict={
             k: {i: v[i] for i in v if i != "current_balance"}
             for k, v in model.delegator_balance_dict.items()
-            if v["staking_balance"] > 0
+            if v["delegating_balance"] > 0
         },
         computed_reward_amount=model.computed_reward_amount,
     )
@@ -201,7 +201,7 @@ def mock_request_get(url, timeout, **kwargs):
             status_code=HTTPStatus.OK,
             json=lambda: {
                 "balance": "15218028669",
-                "staking_balance": "191368330803",
+                "delegating_balance": "191368330803",
                 "delegated_contracts": [
                     "tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ",
                     "tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT",
@@ -360,7 +360,7 @@ def mock_request_get(url, timeout, **kwargs):
                 "full_balance": "1474309958894",
                 "current_frozen_deposits": "1469667294622",
                 "frozen_deposits": "1469667294622",
-                "staking_balance": "14813298160131",
+                "delegating_balance": "14813298160131",
                 "delegated_contracts": [
                     "tz2XZdnto54v6riWaJEw4ZzCJpVn9SQuxY88",
                     "tz2Eepwyt8UobaWZAKkbnMDgjUq8Nsc8NFiH",

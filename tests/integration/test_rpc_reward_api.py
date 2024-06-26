@@ -38,7 +38,7 @@ def test_get_rewards_for_cycle_map(address_api):
     rewards = address_api.get_rewards_for_cycle_map(
         cycle=cycle, rewards_type=RewardsType.ACTUAL
     )
-    assert rewards.delegate_staking_balance == 77965234131
+    assert rewards.delegate_delegating_balance == 77965234131
     assert rewards.total_reward_amount == 19935448
     assert len(rewards.delegator_balance_dict) == 34
 
@@ -259,14 +259,14 @@ def test_get_current_balance_of_delegator(address_api):
 )
 def test_get_delegators_and_delgators_balances(address_api):
     (
-        delegate_staking_balance,
+        delegate_delegating_balance,
         delegators,
     ) = address_api.get_delegators_and_delgators_balances("head")
-    assert isinstance(delegate_staking_balance, int)  # balance is an int
+    assert isinstance(delegate_delegating_balance, int)  # balance is an int
 
     sum_delegators_stake = 0
     for delegator, delegator_balance in delegators.items():
-        sum_delegators_stake += delegator_balance["staking_balance"]
+        sum_delegators_stake += delegator_balance["delegating_balance"]
     assert isinstance(sum_delegators_stake, int)  # balance is an int
 
 

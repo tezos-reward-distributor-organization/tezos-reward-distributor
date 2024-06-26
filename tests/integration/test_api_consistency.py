@@ -152,9 +152,9 @@ def test_get_rewards_for_cycle_map(
     # Check total_reward_amount
     assert rewards_tzkt.total_reward_amount == rewards_tzpro.total_reward_amount
 
-    # Check delegate_staking_balance
+    # Check delegate_delegating_balance
     assert (
-        rewards_tzkt.delegate_staking_balance == rewards_tzpro.delegate_staking_balance
+        rewards_tzkt.delegate_delegating_balance == rewards_tzpro.delegate_delegating_balance
     )
 
     # Check delegator_balance_dict
@@ -172,8 +172,8 @@ def test_get_rewards_for_cycle_map(
             tzpro_balance["current_balance"],
             1,
         )
-        assert tzkt_balance_dict["staking_balance"] == pytest.approx(
-            tzpro_balance["staking_balance"],
+        assert tzkt_balance_dict["delegating_balance"] == pytest.approx(
+            tzpro_balance["delegating_balance"],
             1,
         )
 

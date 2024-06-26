@@ -148,7 +148,7 @@ def test_batch_payer_total_payout_amount():
 
     # Filter out non-payable items
     reward_logs = [payment_item for payment_item in reward_logs if payment_item.payable]
-    reward_logs.sort(key=lambda rl: (rl.type, -rl.staking_balance))
+    reward_logs.sort(key=lambda rl: (rl.type, -rl.delegating_balance))
 
     batch_payer = BatchPayer(
         node_url=node_endpoint,

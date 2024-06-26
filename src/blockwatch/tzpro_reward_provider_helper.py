@@ -62,7 +62,7 @@ class TzProRewardProviderHelper:
 
     def get_rewards_for_cycle(self, cycle):
         root = {
-            "delegate_staking_balance": 0,
+            "delegate_delegating_balance": 0,
             "num_baking_rights": 0,
             "potential_endorsement_rewards": 0,
             "rewards_and_fees": 0,
@@ -149,11 +149,11 @@ class TzProRewardProviderHelper:
 
         resp = resp.json()
 
-        root["delegate_staking_balance"] = int(resp["staking_balance"])
+        root["delegate_delegating_balance"] = int(resp["delegating_balance"])
         for delegator in resp["delegators"]:
-            delegator_info = {"staking_balance": 0, "current_balance": 0}
-            delegator_info["staking_balance"] = int(delegator["balance"])
-            if delegator_info["staking_balance"] > 0:
+            delegator_info = {"delegating_balance": 0, "current_balance": 0}
+            delegator_info["delegating_balance"] = int(delegator["balance"])
+            if delegator_info["delegating_balance"] > 0:
                 root["delegators_balances"][delegator["address"]] = delegator_info
 
         #

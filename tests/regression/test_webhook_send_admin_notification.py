@@ -8,7 +8,7 @@ from src.model.reward_log import RewardLog
 rewardlog = RewardLog(
     "tz1LrHNbbCLgNJZsEsTUYFvWz2THgJC8fHyX",
     "D",
-    staking_balance=65116664916,
+    delegating_balance=65116664916,
     current_balance=100000000000,
 )
 rewardlog.cycle = 415
@@ -25,14 +25,14 @@ rewardlog.paid = PaymentStatus.DONE
 
 # Second reward log with floats
 rewardlog2 = copy.deepcopy(rewardlog)
-rewardlog2.staking_balance = 123123123.0
+rewardlog2.delegating_balance = 123123123.0
 rewardlog2.current_balance = 1000000000.0
 rewardlog2.adjusted_amount = 200066666.0
 rewardlog2.service_fee_amount = 789789789.0
 
 # Third reward log with strings
 rewardlog3 = copy.deepcopy(rewardlog)
-rewardlog3.staking_balance = "98765643"
+rewardlog3.delegating_balance = "98765643"
 rewardlog2.current_balance = "1000000000"
 rewardlog3.adjusted_amount = "12345678900"
 rewardlog3.service_fee_amount = "5555555"
