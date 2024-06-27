@@ -154,7 +154,8 @@ def test_get_rewards_for_cycle_map(
 
     # Check delegate_delegating_balance
     assert (
-        rewards_tzkt.delegate_delegating_balance == rewards_tzpro.delegate_delegating_balance
+        rewards_tzkt.delegate_delegating_balance
+        == rewards_tzpro.delegate_delegating_balance
     )
 
     # Check delegator_balance_dict

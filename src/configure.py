@@ -151,7 +151,7 @@ def onrewardstype(input):
         rt = RewardsType(input.lower())
         parser.set(REWARDS_TYPE, str(rt))
         if not input == RewardsType.ACTUAL.value:
-            printe('As of Paris protocol, TRD only supports actual reward payout')
+            printe("As of Paris protocol, TRD only supports actual reward payout")
             return
     except Exception:
         printe("Invalid option for rewards type. Please type 'actual' or 'ideal'.")

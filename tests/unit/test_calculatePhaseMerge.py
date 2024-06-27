@@ -11,7 +11,10 @@ class TestCalculatePhaseMerge(TestCase):
         #
         # Alice is a delegate, owner and founder
         rlAD = RewardLog(
-            address="tz1Alice01", type="D", delegating_balance=10000, current_balance=20000
+            address="tz1Alice01",
+            type="D",
+            delegating_balance=10000,
+            current_balance=20000,
         )
         rlAD.amount = 1234
         rewards.append(rlAD)
@@ -39,13 +42,19 @@ class TestCalculatePhaseMerge(TestCase):
         #
         # Charlie is an Owner and Founder, not a delegate
         rlCO = RewardLog(
-            address="tz1Charlie01", type="O", delegating_balance=10000, current_balance=0
+            address="tz1Charlie01",
+            type="O",
+            delegating_balance=10000,
+            current_balance=0,
         )
         rlCO.amount = 1122
         rewards.append(rlCO)
 
         rlCF = RewardLog(
-            address="tz1Charlie01", type="F", delegating_balance=10000, current_balance=0
+            address="tz1Charlie01",
+            type="F",
+            delegating_balance=10000,
+            current_balance=0,
         )
         rlCF.amount = 2233
         rewards.append(rlCF)

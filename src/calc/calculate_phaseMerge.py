@@ -31,7 +31,9 @@ class CalculatePhaseMerge(CalculatePhaseBase):
 
         for addr, rl_list in payment_address_list_dict.items():
             if len(rl_list) > 1:
-                total_delegating_balance = sum([rl.delegating_balance for rl in rl_list])
+                total_delegating_balance = sum(
+                    [rl.delegating_balance for rl in rl_list]
+                )
                 total_current_balance = sum([rl.current_balance for rl in rl_list])
                 total_ratio = sum([rl.ratio for rl in rl_list])
                 total_payment_amount = sum([rl.amount for rl in rl_list])

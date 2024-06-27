@@ -99,7 +99,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.rewards_type = baking_cfg.get_rewards_type()
         if self.rewards_type != RewardsType.ACTUAL:
-            logger.error("Only 'ACTUAL' rewards type is supported as of Paris protocol. Please fix your configuration.")
+            logger.error(
+                "Only 'ACTUAL' rewards type is supported as of Paris protocol. Please fix your configuration."
+            )
             self.exit(ExitCode.PROVIDER_ERROR)
         self.pay_denunciation_rewards = baking_cfg.get_pay_denunciation_rewards()
         self.fee_calc = service_fee_calc

@@ -125,9 +125,7 @@ class ArgsValidator:
                     "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument."
                 )
         if tmp is True:
-            self._parser.error(
-                "adjusted_early_payouts is deprecated"
-            )
+            self._parser.error("adjusted_early_payouts is deprecated")
         return True
 
     def run_validation(self):

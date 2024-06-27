@@ -41,7 +41,8 @@ class TestCalculatePhase0(TestCase):
             # ratio must be equal to stake/total staking balance
             delegator_delegating_balance = int(delegator_info["delegating_balance"])
             self.assertEqual(
-                delegator_delegating_balance / delegate_delegating_balance, reward.ratio0
+                delegator_delegating_balance / delegate_delegating_balance,
+                reward.ratio0,
             )
 
         # last one is owners record

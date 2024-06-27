@@ -1,6 +1,7 @@
 from tzkt.tzkt_block_api import TzKTBlockApiImpl
 from tzkt.tzkt_reward_api import TzKTRewardApiImpl
 
+
 class ProviderFactory:
     def __init__(self, provider):
         self.provider = provider
@@ -14,9 +15,7 @@ class ProviderFactory:
         api_base_url=None,
         tzpro_api_key="",
     ):
-        return TzKTRewardApiImpl(
-            network_config, baking_address, base_url=api_base_url
-        )
+        return TzKTRewardApiImpl(network_config, baking_address, base_url=api_base_url)
 
     def newBlockApi(
         self,

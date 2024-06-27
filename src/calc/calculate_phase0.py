@@ -32,7 +32,9 @@ class CalculatePhase0(CalculatePhaseBase):
         total_delegator_balance = 0
         reward_logs = []
         own_delegated_balance = self.reward_provider_model.own_delegated_balance
-        external_delegated_balance = self.reward_provider_model.external_delegated_balance
+        external_delegated_balance = (
+            self.reward_provider_model.external_delegated_balance
+        )
         total_delegated_balance = own_delegated_balance + external_delegated_balance
         delegators_balance_dict = self.reward_provider_model.delegator_balance_dict
 
