@@ -50,7 +50,7 @@ class CsvCalculationFileParser:
         rl.service_fee_rate = float(row["fee_rate"])
         rl.overestimate = int(0)
         rl.adjustment = int(0)
-        rl.adjusted_amount = (int(row["amount"]),)
+        rl.adjusted_amount = int(row["amount"])
         if "delegate_transaction_fee" in row:
             rl.delegate_transaction_fee = (
                 int(0)
