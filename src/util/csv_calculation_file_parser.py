@@ -34,7 +34,7 @@ class CsvCalculationFileParser:
             return (
                 records,
                 baker_record.amount,
-                RewardsType(baker_record.rewards_type),
+                RewardsType.ACTUAL,
                 False,
             )
 
