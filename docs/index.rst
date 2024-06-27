@@ -10,7 +10,9 @@ PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OU
 What's TRD?
 ------------------------------------------------
 
-TRD is an open-source software for distributing staking rewards from bakers to delegators introduced in detail in this Medium article_. This is not a python script but a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether minimum delegation threshold, special fees for some delegators, or actual vs ideal rewards - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches, and provides three back ends for calculations: Tezos RPC, tzpro_ API and TzKT_ API. TRD is developed and tested extensively by the community and the source code which can be found in the following Github_ repo.
+TRD is an open-source software for distributing staking rewards from bakers to delegators introduced in detail in this Medium article_. This is not a python script but a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether minimum delegation threshold, or special fees for some delegators - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches. It uses TzKT_ API as backend. TRD is developed and tested extensively by the community and the source code which can be found in the following Github_ repo.
+
+Tezos offers two kind of rewards: delegating rewards and staking rewards. TRD pays out delegation rewards. Staking rewards are paid by the protocol, and TRD does not concern itself with them.
 
 Who needs TRD?
 ------------------------------------------------
@@ -22,25 +24,17 @@ What else do you need for TRD?
 
 There are currently the following options to run TRD:
 
-    a. If you want to use RPC (not public RPC) for the reward calculation, you need a Tezos archive node. 
-    b. If you want to use an provider (pRPC, TZPRO, tzkt) for the reward calculation, but want to inject your own transactions, at least a Tezos rolling node is needed.
-    c. If you want to use an provider (pRPC, TZPRO, tzkt) for the reward calculation and don't want to inject your own transactions, only the Tezos signer is needed.
+    a. If you want to inject your own transactions, at least a Tezos rolling node is needed.
+    b. If you don't want to inject your own transactions, only the Tezos signer is needed.
 
 However, for all options the Tezos signer is needed.
 
 **Provider notes:**
 
-Blockwatch: TZPRO
-------------------
-
-The terms_ of TZPRO note that an account and API key are needed for the use of the API. Please review the [pricing](https://tzpro.io/#pricing) information. For further help contact hello@blockwatch.cc for more information.
-
-In order to use your API key in the application add it to your configuration like tzpro_api_key: XXXXXXXXXX.
-
 TzKT
 -----------
 
-With PR232_ the backend of the Tezos Reward Distributor can be optionally `Powered by TzKT API`__ under the following terms:
+The backend of the Tezos Reward Distributor is `Powered by TzKT API`__ under the following terms:
 
     TzKT API is free for everyone and for both commercial and non-commercial usage.
     
