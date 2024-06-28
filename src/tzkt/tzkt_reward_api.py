@@ -27,7 +27,8 @@ class TzKTRewardApiImpl(RewardApi):
             address=self.baking_address, cycle=cycle, fetch_delegators=True
         )
 
-        delegate_staking_balance = split["stakingBalance"]
+        own_delegated_balance = split["ownDelegatedBalance"]
+        external_delegated_balance = split["externalDelegatedBalance"]
 
         # calculate estimated rewards
         num_blocks = split["blocks"] + split["missedBlocks"] + split["futureBlocks"]
@@ -44,10 +45,10 @@ class TzKTRewardApiImpl(RewardApi):
 
         # rewards earned (excluding equivocation losses)
         rewards_and_fees = (
-            split["blockRewards"]
-            + split["endorsementRewards"]
-            + split["blockFees"]
-            + split["revelationRewards"]
+            split["blockRewardsDelegated"]
+            + split["endorsementRewardsDelegated"]
+            + split["nonceRevelationRewardsDelegated"]
+            + split["vdfRevelationRewardsDelegated"]
         )
         denunciation_rewards = (
             split["doubleBakingRewards"]
@@ -55,10 +56,9 @@ class TzKTRewardApiImpl(RewardApi):
             + split["doublePreendorsingRewards"]
         )
         equivocation_losses = (
-            split["doubleBakingLosses"]
-            + split["doubleEndorsingLosses"]
-            + split["doublePreendorsingLosses"]
-            + split["revelationLosses"]
+            split["doubleBakingLostUnstaked"]
+            + split["doubleEndorsingLostUnstaked"]
+            + split["doublePreendorsingLostUnstaked"]
         )
         total_reward_amount = max(
             0, rewards_and_fees + denunciation_rewards - equivocation_losses
@@ -72,15 +72,18 @@ class TzKTRewardApiImpl(RewardApi):
 
         delegators_balances = {
             item["address"]: {
-                "staking_balance": item["balance"],
-                "current_balance": item["currentBalance"],
+                "delegated_balance": item["delegatedBalance"],
+                # FIXME: current_balance is deprecated and no longer accurate
+                # Instead, tzkt provides a boolean "empty" that can be used.
+                "current_balance": item["currentDelegatedBalance"],
             }
             for item in split["delegators"]
             if item["balance"] > 0
         }
 
         return RewardProviderModel(
-            delegate_staking_balance,
+            own_delegated_balance,
+            external_delegated_balance,
             num_blocks,
             potential_endorsement_rewards,
             total_reward_amount,

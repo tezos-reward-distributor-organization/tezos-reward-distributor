@@ -31,7 +31,11 @@ class CalculatePhase0(CalculatePhaseBase):
         ratio_sum = 0.0
         total_delegator_balance = 0
         reward_logs = []
-        delegate_staking_balance = self.reward_provider_model.delegate_staking_balance
+        own_delegated_balance = self.reward_provider_model.own_delegated_balance
+        external_delegated_balance = (
+            self.reward_provider_model.external_delegated_balance
+        )
+        total_delegated_balance = own_delegated_balance + external_delegated_balance
         delegators_balance_dict = self.reward_provider_model.delegator_balance_dict
 
         # calculate how rewards will be distributed
@@ -39,20 +43,21 @@ class CalculatePhase0(CalculatePhaseBase):
         # total of ratios must be 1
 
         for address, delegator_info in delegators_balance_dict.items():
-            staking_balance = delegator_info["staking_balance"]
+            # NOTE: Staking_balance is a misnomer. It should be delegated_balance now. will rename later
+            delegating_balance = delegator_info["delegated_balance"]
             current_balance = delegator_info["current_balance"]
             originaladdress = (
                 delegator_info["originaladdress"]
                 if "originaladdress" in delegator_info
                 else None
             )
-            total_delegator_balance += staking_balance
+            total_delegator_balance += delegating_balance
 
-            ratio = staking_balance / delegate_staking_balance
+            ratio = delegating_balance / total_delegated_balance
             reward_item = RewardLog(
                 address=address,
                 type=reward_log.TYPE_DELEGATOR,
-                staking_balance=staking_balance,
+                delegating_balance=delegating_balance,
                 current_balance=current_balance,
                 originaladdress=originaladdress,
             )
@@ -66,7 +71,7 @@ class CalculatePhase0(CalculatePhaseBase):
         owners_rl = RewardLog(
             address=reward_log.TYPE_OWNERS_PARENT,
             type=reward_log.TYPE_OWNERS_PARENT,
-            staking_balance=delegate_staking_balance - total_delegator_balance,
+            delegating_balance=own_delegated_balance,
             current_balance=0,
         )
         owners_rl.ratio = 1 - ratio_sum

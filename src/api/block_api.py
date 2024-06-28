@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Constants import FIRST_GRANADA_LEVEL, FIRST_MUMBAI_LEVEL
+from Constants import FIRST_GRANADA_LEVEL, FIRST_MUMBAI_LEVEL, FIRST_PARIS_LEVEL
 
 # TODO: we should check if we are on mainnet, or a testnet
 # we could add a get_current_protocol() method and check against it
@@ -15,6 +15,9 @@ class BlockApi(ABC):
         pass
 
     def level_in_cycle(self, level):
+        if level >= FIRST_PARIS_LEVEL:
+            # Since protocol Paris
+            return (level - FIRST_PARIS_LEVEL) % self.nw["BLOCKS_PER_CYCLE"]
         if level >= FIRST_MUMBAI_LEVEL:
             # Since protocol Mumbai
             return (level - FIRST_MUMBAI_LEVEL) % self.nw["BLOCKS_PER_CYCLE"]

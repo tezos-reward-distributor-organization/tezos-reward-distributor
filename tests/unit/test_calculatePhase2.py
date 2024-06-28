@@ -19,7 +19,7 @@ class TestCalculatePhase2(TestCase):
             rl0 = RewardLog(
                 address="addr" + str(i),
                 type="D",
-                staking_balance=total_reward * ratios[addr],
+                delegating_balance=total_reward * ratios[addr],
                 current_balance=0,
             )
             rl0.ratio1 = ratios[addr]

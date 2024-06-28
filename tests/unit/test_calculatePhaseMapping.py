@@ -15,7 +15,7 @@ class TestCalculatePhaseMapping(TestCase):
             rl0 = RewardLog(
                 address="addr" + str(i),
                 type="D",
-                staking_balance=total_reward * ratio,
+                delegating_balance=total_reward * ratio,
                 current_balance=0,
             )
             rl0.ratio = ratio

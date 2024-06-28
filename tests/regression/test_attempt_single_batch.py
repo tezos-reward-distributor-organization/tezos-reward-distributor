@@ -78,7 +78,7 @@ def test_attempt_single_batch_tz(sign, request_url, request_url_post):
     reward_log = RewardLog(
         address=TEST_TZ_ADDRESS,
         type="D",
-        staking_balance=80,
+        delegating_balance=80,
         current_balance=100,
     )
 
@@ -140,7 +140,7 @@ def test_attempt_single_batch_KT(sign, request_url, request_url_post):
     reward_log = RewardLog(
         address=TEST_KT_ADDRESS,
         type="D",
-        staking_balance=50,
+        delegating_balance=50,
         current_balance=100,
     )
 

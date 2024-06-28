@@ -43,7 +43,7 @@ class CalculatePhase3(CalculatePhaseBase):
                 total_excluded_ratio += rl2.ratio
             elif (
                 MIN_DELEGATION_KEY in self.excluded_set
-                and rl2.staking_balance < self.min_delegation_amount
+                and rl2.delegating_balance < self.min_delegation_amount
             ):
                 rl2.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 new_rewards.append(rl2)
@@ -67,7 +67,7 @@ class CalculatePhase3(CalculatePhaseBase):
             rl = RewardLog(
                 address=TYPE_FOUNDERS_PARENT,
                 type=TYPE_FOUNDERS_PARENT,
-                staking_balance=0,
+                delegating_balance=0,
                 current_balance=0,
             )
             rl.service_fee_rate = 0

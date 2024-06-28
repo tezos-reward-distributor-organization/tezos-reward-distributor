@@ -144,7 +144,7 @@ class PaymentConsumer(threading.Thread):
                 payment_items, self.reactivate_zeroed
             )
 
-            payment_items.sort(key=lambda rl: (rl.type, -rl.staking_balance))
+            payment_items.sort(key=lambda rl: (rl.type, -rl.delegating_balance))
 
             batch_payer = BatchPayer(
                 self.node_addr,
@@ -390,9 +390,7 @@ class PaymentConsumer(threading.Thread):
         stats_dict["nb_delegators"] = n_d_type
         stats_dict["pay_xfer_fee"] = 1 if self.delegator_pays_xfer_fee else 0
         stats_dict["pay_ra_fee"] = 1 if self.delegator_pays_ra_fee else 0
-        if self.rewards_type.isIdeal():
-            stats_dict["rewards_type"] = "I"
-        elif self.rewards_type.isActual():
+        if self.rewards_type.isActual():
             stats_dict["rewards_type"] = "A"
         else:
             stats_dict["rewards_type"] = "A"
@@ -404,9 +402,7 @@ class PaymentConsumer(threading.Thread):
         if self.args:
             stats_dict["m_run"] = 1 if self.args.background_service else 0
             stats_dict["m_prov"] = self.args.reward_data_provider
-            stats_dict["m_relov"] = (
-                self.args.release_override if self.args.release_override else 0
-            )
+            stats_dict["m_relov"] = 0
             stats_dict["m_offset"] = (
                 self.args.payment_offset if self.args.payment_offset else 0
             )

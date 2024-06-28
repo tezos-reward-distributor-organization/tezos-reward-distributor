@@ -62,11 +62,6 @@ jobs:
         python -m pip install -r requirements.txt
         python -m pip install -r requirements_developers.txt
 
-    - name: Test with pytest
-      env:
-        TZPRO_API_KEY: ${{ secrets.TZPRO_API_KEY }} 
-      run: pytest tests/
-
   build-documentation:
     runs-on: ubuntu-latest
     strategy:

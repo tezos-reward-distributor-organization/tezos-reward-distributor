@@ -52,7 +52,7 @@ def test_simulate_single_operation():
     reward_log = RewardLog(
         address="KT1P3Y1mkGASzuJqLh7uGuQEvHatztGuQRgC",
         type="D",
-        staking_balance=0,
+        delegating_balance=0,
         current_balance=0,
     )
     reward_log.amount = 15577803
@@ -92,7 +92,7 @@ def test_failed_simulate_single_operation():
     reward_log = RewardLog(
         address="KT1P3Y1mkGASzuJqLh7uGuQEvHatztGuQRgC",
         type="D",
-        staking_balance=0,
+        delegating_balance=0,
         current_balance=0,
     )
     reward_log.amount = 15577803

@@ -26,7 +26,7 @@ class TestCalculatePhase0(TestCase):
         phase0 = CalculatePhase0(model)
         reward_data = phase0.calculate()
 
-        delegate_staking_balance = int(model.delegate_staking_balance)
+        delegate_delegating_balance = int(model.delegate_delegating_balance)
 
         # total reward ratio is 1
         self.assertEqual(1.0, sum(r.ratio0 for r in reward_data))
@@ -39,9 +39,10 @@ class TestCalculatePhase0(TestCase):
             delegators_balances_dict.items(), reward_data
         ):
             # ratio must be equal to stake/total staking balance
-            delegator_staking_balance = int(delegator_info["staking_balance"])
+            delegator_delegating_balance = int(delegator_info["delegating_balance"])
             self.assertEqual(
-                delegator_staking_balance / delegate_staking_balance, reward.ratio0
+                delegator_delegating_balance / delegate_delegating_balance,
+                reward.ratio0,
             )
 
         # last one is owners record

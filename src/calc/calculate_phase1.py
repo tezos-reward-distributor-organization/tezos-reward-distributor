@@ -42,18 +42,18 @@ class CalculatePhase1(CalculatePhaseBase):
 
         # exclude requested addresses from reward list
         for rl0 in reward_data0:
-            total_balance += rl0.staking_balance
+            total_balance += rl0.delegating_balance
             if rl0.address in self.excluded_set:
                 rl0.skip(desc=BY_CONFIGURATION, phase=self.phase)
                 rewards.append(rl0)
-                total_balance_excluded += rl0.staking_balance
+                total_balance_excluded += rl0.delegating_balance
             elif (
                 MIN_DELEGATION_KEY in self.excluded_set
-                and rl0.staking_balance < self.min_delegation_amount
+                and rl0.delegating_balance < self.min_delegation_amount
             ):
                 rl0.skip(desc=BY_MIN_DELEGATION, phase=self.phase)
                 rewards.append(rl0)
-                total_balance_excluded += rl0.staking_balance
+                total_balance_excluded += rl0.delegating_balance
             else:
                 # ratio will be replaced with actual ratio, read below
                 rewards.append(rl0)
@@ -62,7 +62,7 @@ class CalculatePhase1(CalculatePhaseBase):
 
         # calculate new ratio using remaining balance
         for rl1 in self.filterskipped(rewards):
-            rl1.ratio = rl1.staking_balance / new_total_balance
+            rl1.ratio = rl1.delegating_balance / new_total_balance
             rl1.ratio1 = rl1.ratio
 
         # total reward amount needs to be diminished at the same rate total balance diminishes
