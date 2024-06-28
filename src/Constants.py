@@ -20,8 +20,8 @@ TEMP_TEST_DATA_DIR = "__TEMP_DATA__"
 REQUIREMENTS_FILE_PATH = "requirements.txt"
 
 # potentially the next upgrade
-NEW_PROTOCOL_DATE = date(2024, 6, 30)
-NEW_PROTOCOL_NAME = "P_______"
+NEW_PROTOCOL_DATE = date(2024, 12, 31)
+NEW_PROTOCOL_NAME = "Q"
 
 LOCAL_HOST = "127.0.0.1"
 EXIT_PAYMENT_TYPE = "exit"
