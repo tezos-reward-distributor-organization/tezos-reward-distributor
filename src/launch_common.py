@@ -84,10 +84,7 @@ def new_protocol_not_live(args=None):
                 "or accept of the risks of using this branch".format(NEW_PROTOCOL_NAME)
             )
         )
-        print("Do you want to continue using this branch? (y/N)")
-        value = input().lower()
-        if not value or value == "n":
-            return False
+        return True
     else:
         print(("... protocol {} not live yet. OK!").format(NEW_PROTOCOL_NAME))
         return True
