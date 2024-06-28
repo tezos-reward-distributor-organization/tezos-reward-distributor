@@ -143,14 +143,10 @@ If you want to use with a decimal operator within your config, please use a deci
 <dt><strong>rewards_type</strong></dt><dd><p>There are two options for calculating the total rewards earned by a baker at the end of each cycle. If this parameter is missing, ‘actual’ rewards take affect.</p>
 <ul class="simple">
 <li><p>‘actual’: Rewards are calculated based on the actual number of bakes, at any round. Transaction fees, bonuses and other block rewards are included in the rewards when earned. If a bake is missed, rewards are not earned and therefore not included. If endorsement rewards are not earned due to a failure to reveal a nonce or excessive unavailability of your baker, is it not included.</p></li>
-<li><p>‘ideal’: Rewards are calculated assuming ideal behavior of the baker, and actual behavior of other bakers. If a bake is missed, 20 tez rewards are paid out despite not having been earned. If a round 0 payload has been produced, but another baker baked the block, the missed bonus is <strong>not</strong> paid out, because it is due to other bakers being offline and not endorsing. Transaction fees, bonuses and other block rewards are included in the rewards. The endorsing reward is paid out even in case it has not been earned. Select this type of rewards to insure against downtime of your baker but still account for real world conditions. This way, you will get optimal ranking in baker evaluation services despite any downtime.</p></li>
+<li><p>‘ideal’: Deprecated.</p></li>
 </ul>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rewards_type</span><span class="p">:</span> <span class="n">actual</span>
-</pre></div>
-</div>
-<p>Note:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Providing &#39;--adjusted_early_payouts&#39; will trigger estimated payouts which are adjusted later on. See: :ref:`payout_timing`
 </pre></div>
 </div>
 </dd>

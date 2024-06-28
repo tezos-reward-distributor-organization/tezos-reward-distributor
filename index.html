@@ -91,7 +91,8 @@
 <p>PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OUR STATISTICS <a class="reference external" href="statistics.html">POLICY</a> FOR MORE INFORMATION.</p>
 <div class="section" id="what-s-trd">
 <h2>What’s TRD?<a class="headerlink" href="#what-s-trd" title="Permalink to this headline">¶</a></h2>
-<p>TRD is an open-source software for distributing staking rewards from bakers to delegators introduced in detail in this Medium <a class="reference external" href="https://medium.com/&#64;huseyinabanox/tezos-reward-distributor-e6588c4d27e7">article</a>. This is not a python script but a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether minimum delegation threshold, special fees for some delegators, or actual vs ideal rewards - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches, and provides three back ends for calculations: Tezos RPC, <a class="reference external" href="https://tzpro.io/">tzpro</a> API and <a class="reference external" href="https://api.tzkt.io/">TzKT</a> API. TRD is developed and tested extensively by the community and the source code which can be found in the following <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor">Github</a> repo.</p>
+<p>TRD is an open-source software for distributing staking rewards from bakers to delegators introduced in detail in this Medium <a class="reference external" href="https://medium.com/&#64;huseyinabanox/tezos-reward-distributor-e6588c4d27e7">article</a>. This is not a python script but a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether minimum delegation threshold, or special fees for some delegators - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches. It uses <a class="reference external" href="https://api.tzkt.io/">TzKT</a> API as backend. TRD is developed and tested extensively by the community and the source code which can be found in the following <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor">Github</a> repo.</p>
+<p>Tezos offers two kind of rewards: delegating rewards and staking rewards. TRD pays out delegation rewards. Staking rewards are paid by the protocol, and TRD does not concern itself with them.</p>
 </div>
 <div class="section" id="who-needs-trd">
 <h2>Who needs TRD?<a class="headerlink" href="#who-needs-trd" title="Permalink to this headline">¶</a></h2>
@@ -102,22 +103,16 @@
 <p>There are currently the following options to run TRD:</p>
 <blockquote>
 <div><ol class="loweralpha simple">
-<li><p>If you want to use RPC (not public RPC) for the reward calculation, you need a Tezos archive node.</p></li>
-<li><p>If you want to use an provider (pRPC, TZPRO, tzkt) for the reward calculation, but want to inject your own transactions, at least a Tezos rolling node is needed.</p></li>
-<li><p>If you want to use an provider (pRPC, TZPRO, tzkt) for the reward calculation and don’t want to inject your own transactions, only the Tezos signer is needed.</p></li>
+<li><p>If you want to inject your own transactions, at least a Tezos rolling node is needed.</p></li>
+<li><p>If you don’t want to inject your own transactions, only the Tezos signer is needed.</p></li>
 </ol>
 </div></blockquote>
 <p>However, for all options the Tezos signer is needed.</p>
 <p><strong>Provider notes:</strong></p>
 </div>
-<div class="section" id="blockwatch-tzpro">
-<h2>Blockwatch: TZPRO<a class="headerlink" href="#blockwatch-tzpro" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference external" href="https://tzpro.io/terms">terms</a> of TZPRO note that an account and API key are needed for the use of the API. Please review the [pricing](<a class="reference external" href="https://tzpro.io/#pricing">https://tzpro.io/#pricing</a>) information. For further help contact <a class="reference external" href="mailto:hello&#37;&#52;&#48;blockwatch&#46;cc">hello<span>&#64;</span>blockwatch<span>&#46;</span>cc</a> for more information.</p>
-<p>In order to use your API key in the application add it to your configuration like tzpro_api_key: XXXXXXXXXX.</p>
-</div>
 <div class="section" id="tzkt">
 <h2>TzKT<a class="headerlink" href="#tzkt" title="Permalink to this headline">¶</a></h2>
-<p>With <a class="reference external" href="https://github.com/tezos-reward-distributor-organization/tezos-reward-distributor/pull/232">PR232</a> the backend of the Tezos Reward Distributor can be optionally <a class="reference external" href="https://tzkt.io/">Powered by TzKT API</a> under the following terms:</p>
+<p>The backend of the Tezos Reward Distributor is <a class="reference external" href="https://tzkt.io/">Powered by TzKT API</a> under the following terms:</p>
 <blockquote>
 <div><p>TzKT API is free for everyone and for both commercial and non-commercial usage.</p>
 <p>If your application or service uses the TzKT API in any forms: directly on frontend or indirectly on backend, you should mention that fact on your website or application by placing the label “Powered by TzKT API” with a direct link to tzkt.io.</p>
@@ -154,10 +149,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rundocker.html">How to run TRD in Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="payouttiming.html">Payout timing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="payouttiming.html#adjusted-early-payouts">Adjusted early payouts</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="payouttiming.html">Payout timing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="plugins.html#email-plugin">Email Plugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plugins.html#telegram-plugin">Telegram Plugin</a></li>
