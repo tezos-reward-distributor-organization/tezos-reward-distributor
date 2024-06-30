@@ -2,7 +2,7 @@ import vcr
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 from src.Constants import (
-    PUBLIC_NODE_URL,
+    TZKT_PUBLIC_API_URL,
     PRIVATE_SIGNER_URL,
     DEFAULT_NETWORK_CONFIG_MAP,
 )
@@ -12,7 +12,7 @@ from src.config.addr_type import AddrType
 from src.config.yaml_baking_conf_parser import BakingYamlConfParser
 from src.tzkt.tzkt_block_api import TzKTBlockApiImpl
 
-node_endpoint = PUBLIC_NODE_URL["MAINNET"]
+node_endpoint = TZKT_PUBLIC_API_URL["MAINNET"]
 network = DEFAULT_NETWORK_CONFIG_MAP["MAINNET"]
 
 

@@ -23,17 +23,17 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 30 Jun 2024 13:35:37 GMT
+      - Sun, 30 Jun 2024 14:22:14 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '5940956'
+      - '5941222'
       Tzkt-Level:
-      - '5940956'
+      - '5941222'
       Tzkt-Synced-At:
-      - '2024-06-30T13:35:30Z'
+      - '2024-06-30T14:22:05Z'
       Tzkt-Version:
       - 1.14.3.0
       content-length:

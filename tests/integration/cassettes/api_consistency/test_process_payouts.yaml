@@ -23,17 +23,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 30 Jun 2024 17:59:32 GMT
+      - Sun, 30 Jun 2024 17:51:50 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '5942484'
+      - '5942440'
       Tzkt-Level:
-      - '5942484'
+      - '5942439'
       Tzkt-Synced-At:
-      - '2024-06-30T17:59:27Z'
+      - '2024-06-30T17:51:50Z'
       Tzkt-Version:
       - 1.14.3.0
       content-length:
@@ -56,7 +56,7 @@ interactions:
     uri: https://api.tzkt.io/v1/head
   response:
     body:
-      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":751,"level":5942484,"hash":"BKvLvYWhSKdwmPWmH7b5WBe3bGd5G2vBpNerBmGCXDLi4C4quJu","protocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","nextProtocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","timestamp":"2024-06-30T17:59:25Z","votingEpoch":61,"votingPeriod":125,"knownLevel":5942484,"lastSync":"2024-06-30T17:59:27Z","synced":true,"quoteLevel":5942484,"quoteBtc":1.2646190211440659E-05,"quoteEur":0.726865889471809,"quoteUsd":0.7788727829338694,"quoteCny":5.660302175415304,"quoteJpy":125.3089476823155,"quoteKrw":1075.8413976108948,"quoteEth":0.00022875757531460981,"quoteGbp":0.6155883349740472}'
+      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":751,"level":5942439,"hash":"BMECZxveF5R63qsxgRASunKnGHM3e8MuuDFtHGbUojo7BCjFKC9","protocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","nextProtocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","timestamp":"2024-06-30T17:51:40Z","votingEpoch":61,"votingPeriod":125,"knownLevel":5942440,"lastSync":"2024-06-30T17:51:50Z","synced":false,"quoteLevel":5942439,"quoteBtc":1.2637713175978276E-05,"quoteEur":0.7268074310091994,"quoteUsd":0.7788101417972877,"quoteCny":5.659846943483435,"quoteJpy":125.29886966305666,"quoteKrw":1075.7548726617583,"quoteEth":0.00022882297816012543,"quoteGbp":0.6155388260506206}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -65,21 +65,153 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 30 Jun 2024 17:59:32 GMT
+      - Sun, 30 Jun 2024 17:51:51 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '5942484'
+      - '5942440'
       Tzkt-Level:
-      - '5942484'
+      - '5942439'
       Tzkt-Synced-At:
-      - '2024-06-30T17:59:27Z'
+      - '2024-06-30T17:51:50Z'
       Tzkt-Version:
       - 1.14.3.0
       content-length:
-      - '676'
+      - '679'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-12.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD
+  response:
+    body:
+      string: '{"id":4107889,"type":"delegate","address":"tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD","active":true,"alias":"Tezos
+        Foundation Baker 7","publicKey":"p2pk64u1Bmq1xaBPuUDeLXx7v7G382cnaL4Mt7wxBuXPyqmGMm6DZpf","revealed":true,"balance":2387225819799,"rollupBonds":0,"smartRollupBonds":0,"stakedBalance":1386370330886,"unstakedBalance":0,"externalStakedBalance":0,"externalUnstakedBalance":0,"roundingError":0,"totalStakedBalance":1386370330886,"stakersCount":0,"counter":94571627,"activationLevel":3148220,"activationTime":"2023-02-15T14:39:29Z","stakingBalance":13860653696290,"delegatedBalance":11473427876491,"numContracts":0,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":3,"tokenTransfersCount":3,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numDelegators":2,"numBlocks":46081,"numEndorsements":2313080,"numPreendorsements":336,"numBallots":7,"numProposals":0,"numActivations":0,"numDoubleBaking":0,"numDoubleEndorsing":0,"numDoublePreendorsing":4,"numNonceRevelations":487,"vdfRevelationsCount":1,"numRevelationPenalties":0,"numEndorsingRewards":137,"numDelegations":4,"numOriginations":0,"numTransactions":9,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":0,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"updateConsensusKeyCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"stakingOpsCount":0,"autostakingOpsCount":45,"stakingUpdatesCount":46,"setDelegateParametersOpsCount":0,"dalPublishCommitmentOpsCount":0,"firstActivity":3148212,"firstActivityTime":"2023-02-15T14:35:29Z","lastActivity":5942439,"lastActivityTime":"2024-06-30T17:51:40Z","software":{"date":"2024-06-18T09:10:50Z"},"lostBalance":0,"frozenDeposit":1386370330886,"frozenDeposits":1386370330886,"frozenRewards":0,"frozenFees":0,"metadata":{"kind":"foundation","site":"https://tezos.foundation/","alias":"Tezos
+        Foundation Baker 7","twitter":"TezosFoundation"}}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 30 Jun 2024 17:51:51 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '5942440'
+      Tzkt-Level:
+      - '5942440'
+      Tzkt-Synced-At:
+      - '2024-06-30T17:51:50Z'
+      Tzkt-Version:
+      - 1.14.3.0
+      content-length:
+      - '2408'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-12.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz3ipHZQpBBFuxv7eKoFgGnTaU3RBhnS93yY
+  response:
+    body:
+      string: '{"id":4107688,"type":"delegate","address":"tz3ipHZQpBBFuxv7eKoFgGnTaU3RBhnS93yY","active":true,"alias":"Tezos
+        Foundation Baker 2","publicKey":"p2pk65aRfSEqWS1oKrmLCQTaLZULRAEWbmtqouMQhbZC82eirDcUfz4","revealed":true,"balance":2350312749388,"rollupBonds":0,"smartRollupBonds":0,"stakedBalance":1361223930643,"unstakedBalance":0,"externalStakedBalance":0,"externalUnstakedBalance":0,"roundingError":0,"totalStakedBalance":1361223930643,"stakersCount":0,"counter":94561407,"activationLevel":3147736,"activationTime":"2023-02-15T10:35:59Z","stakingBalance":13609453039031,"delegatedBalance":11259140289643,"numContracts":0,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":4,"tokenBalancesCount":4,"tokenTransfersCount":4,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numDelegators":1,"numBlocks":44060,"numEndorsements":2313093,"numPreendorsements":363,"numBallots":7,"numProposals":0,"numActivations":0,"numDoubleBaking":0,"numDoubleEndorsing":0,"numDoublePreendorsing":4,"numNonceRevelations":582,"vdfRevelationsCount":3,"numRevelationPenalties":0,"numEndorsingRewards":137,"numDelegations":3,"numOriginations":0,"numTransactions":10,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":0,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"updateConsensusKeyCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"stakingOpsCount":0,"autostakingOpsCount":45,"stakingUpdatesCount":46,"setDelegateParametersOpsCount":0,"dalPublishCommitmentOpsCount":0,"firstActivity":3147733,"firstActivityTime":"2023-02-15T10:34:29Z","lastActivity":5942440,"lastActivityTime":"2024-06-30T17:51:50Z","software":{"date":"2024-06-18T09:10:50Z"},"lostBalance":0,"frozenDeposit":1361223930643,"frozenDeposits":1361223930643,"frozenRewards":0,"frozenFees":0,"metadata":{"kind":"foundation","site":"https://tezos.foundation/","alias":"Tezos
+        Foundation Baker 2","twitter":"TezosFoundation"}}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 30 Jun 2024 17:51:51 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '5942440'
+      Tzkt-Level:
+      - '5942440'
+      Tzkt-Synced-At:
+      - '2024-06-30T17:51:50Z'
+      Tzkt-Version:
+      - 1.14.3.0
+      content-length:
+      - '2409'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - trd-12.0
+    method: GET
+    uri: https://api.tzkt.io/v1/accounts/tz3dKooaL9Av4UY15AUx9uRGL5H6YyqoGSPV
+  response:
+    body:
+      string: '{"id":2997950,"type":"delegate","address":"tz3dKooaL9Av4UY15AUx9uRGL5H6YyqoGSPV","active":true,"alias":"Kiln","publicKey":"p2pk66Q9oGRCcxiLNQK9JWTaaKPn44xZsS3nPMr7tgnemMYtEPW4ZhS","revealed":true,"balance":706375420577,"rollupBonds":0,"smartRollupBonds":0,"stakedBalance":699232776407,"unstakedBalance":0,"externalStakedBalance":3725565329,"externalUnstakedBalance":4841778,"roundingError":0,"totalStakedBalance":702958341736,"issuedPseudotokens":"3720901168","stakersCount":2,"frozenDepositLimit":622000000000,"limitOfStakingOverBaking":5000000,"edgeOfBakingOverStaking":200000000,"counter":79293392,"activationLevel":2785843,"activationTime":"2022-10-11T08:58:29Z","stakingBalance":6974725194922,"delegatedBalance":6264624209016,"numContracts":0,"rollupsCount":0,"smartRollupsCount":0,"activeTokensCount":3,"tokenBalancesCount":3,"tokenTransfersCount":3,"activeTicketsCount":0,"ticketBalancesCount":0,"ticketTransfersCount":0,"numDelegators":26,"numBlocks":16688,"numEndorsements":3021620,"numPreendorsements":668,"numBallots":10,"numProposals":3,"numActivations":0,"numDoubleBaking":0,"numDoubleEndorsing":0,"numDoublePreendorsing":4,"numNonceRevelations":125,"vdfRevelationsCount":1,"numRevelationPenalties":0,"numEndorsingRewards":211,"numDelegations":135,"numOriginations":0,"numTransactions":1887,"numReveals":1,"numRegisterConstants":0,"numSetDepositsLimits":1,"numMigrations":0,"txRollupOriginationCount":0,"txRollupSubmitBatchCount":0,"txRollupCommitCount":0,"txRollupReturnBondCount":0,"txRollupFinalizeCommitmentCount":0,"txRollupRemoveCommitmentCount":0,"txRollupRejectionCount":0,"txRollupDispatchTicketsCount":0,"transferTicketCount":0,"increasePaidStorageCount":0,"updateConsensusKeyCount":0,"drainDelegateCount":0,"smartRollupAddMessagesCount":0,"smartRollupCementCount":0,"smartRollupExecuteCount":0,"smartRollupOriginateCount":0,"smartRollupPublishCount":0,"smartRollupRecoverBondCount":0,"smartRollupRefuteCount":0,"refutationGamesCount":0,"activeRefutationGamesCount":0,"stakingOpsCount":9,"autostakingOpsCount":45,"stakingUpdatesCount":73,"setDelegateParametersOpsCount":1,"dalPublishCommitmentOpsCount":0,"firstActivity":2785795,"firstActivityTime":"2022-10-11T08:34:29Z","lastActivity":5942440,"lastActivityTime":"2024-06-30T17:51:50Z","software":{"date":"2024-06-18T09:10:50Z"},"lostBalance":0,"frozenDeposit":699232776407,"frozenDeposits":699232776407,"frozenRewards":0,"frozenFees":0,"metadata":{"kind":"public_baker","site":"https://www.kiln.fi/","alias":"Kiln","email":"hello@kiln.fi","twitter":"Kiln_finance","description":"Kiln
+        is the leading enterprise-grade staking platform, enabling customers to stake
+        and to whitelabel staking into their offering."}}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 30 Jun 2024 17:51:52 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+      Tzkt-Known-Level:
+      - '5942440'
+      Tzkt-Level:
+      - '5942440'
+      Tzkt-Synced-At:
+      - '2024-06-30T17:51:50Z'
+      Tzkt-Version:
+      - 1.14.3.0
+      content-length:
+      - '2686'
     status:
       code: 200
       message: OK

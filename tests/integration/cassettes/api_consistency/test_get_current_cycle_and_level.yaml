@@ -14,7 +14,7 @@ interactions:
     uri: https://api.tzkt.io/v1/head
   response:
     body:
-      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":751,"level":5940956,"hash":"BLBQC4HAQNMMJ8ghLJWeva7tbGMuM5PEsiucG5mF3nXAZFVrbWo","protocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","nextProtocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","timestamp":"2024-06-30T13:35:30Z","votingEpoch":61,"votingPeriod":125,"knownLevel":5940956,"lastSync":"2024-06-30T13:35:30Z","synced":true,"quoteLevel":5940956,"quoteBtc":1.2648260735372071E-05,"quoteEur":0.7247391000330536,"quoteUsd":0.776593822766842,"quoteCny":5.643740288193476,"quoteJpy":124.94229717584328,"quoteKrw":1072.6935155113833,"quoteEth":0.00022946977500049758,"quoteGbp":0.6137871405743555}'
+      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":751,"level":5941222,"hash":"BKwP3aJU4Tr4UQuxdquFYFSRp4qZ3RTriwJzLRW24EffJUzGiab","protocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","nextProtocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","timestamp":"2024-06-30T14:22:05Z","votingEpoch":61,"votingPeriod":125,"knownLevel":5941222,"lastSync":"2024-06-30T14:22:05Z","synced":true,"quoteLevel":5941222,"quoteBtc":1.2628986165349365E-05,"quoteEur":0.7261468247986486,"quoteUsd":0.7781022695404011,"quoteCny":5.654702623430958,"quoteJpy":125.18498363500731,"quoteKrw":1074.7771028707643,"quoteEth":0.00022934638058584448,"quoteGbp":0.6149793535494119}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -23,21 +23,21 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 30 Jun 2024 13:35:37 GMT
+      - Sun, 30 Jun 2024 14:22:14 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '5940956'
+      - '5941222'
       Tzkt-Level:
-      - '5940956'
+      - '5941222'
       Tzkt-Synced-At:
-      - '2024-06-30T13:35:30Z'
+      - '2024-06-30T14:22:05Z'
       Tzkt-Version:
       - 1.14.3.0
       content-length:
-      - '677'
+      - '678'
     status:
       code: 200
       message: OK

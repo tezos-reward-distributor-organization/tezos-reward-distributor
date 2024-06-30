@@ -9,35 +9,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - trd-11.0
+      - trd-12.0
     method: GET
     uri: https://api.tzkt.io/v1/rewards/split/tz1fikAGfa1MTxX2oJ7UCtvDpVKeH4KTp1UY/420?offset=0&limit=10000
   response:
     body:
-      string: '{"cycle":420,"stakingBalance":22928701189,"activeStake":16000000000,"selectedStake":674672000000000,"delegatedBalance":357215732,"numDelegators":2,"expectedBlocks":0.19,"expectedEndorsements":49.73,"futureBlocks":0,"futureBlockRewards":0,"blocks":0,"blockRewards":0,"missedBlocks":0,"missedBlockRewards":0,"futureEndorsements":0,"futureEndorsementRewards":0,"endorsements":29,"endorsementRewards":2265625,"missedEndorsements":1,"missedEndorsementRewards":78125,"blockFees":0,"missedBlockFees":0,"doubleBakingRewards":0,"doubleBakingLosses":0,"doubleEndorsingRewards":0,"doubleEndorsingLosses":0,"doublePreendorsingRewards":0,"doublePreendorsingLosses":0,"revelationRewards":0,"revelationLosses":0,"delegators":[{"address":"tz2FwCaeDYJHJBuE5Gayqpo9fkUMDB3Z6AGY","balance":330348664,"currentBalance":330496329,"emptied":false},{"address":"tz2UD7tXJyBrfDBHnFzhnaeL8ZGHxcDZuDa3","balance":26867068,"currentBalance":420439934,"emptied":false}],"ownBlocks":0,"extraBlocks":0,"missedOwnBlocks":0,"missedExtraBlocks":0,"uncoveredOwnBlocks":0,"uncoveredExtraBlocks":0,"uncoveredEndorsements":0,"ownBlockRewards":0,"extraBlockRewards":0,"missedOwnBlockRewards":0,"missedExtraBlockRewards":0,"uncoveredOwnBlockRewards":0,"uncoveredExtraBlockRewards":0,"uncoveredEndorsementRewards":0,"ownBlockFees":0,"extraBlockFees":0,"missedOwnBlockFees":0,"missedExtraBlockFees":0,"uncoveredOwnBlockFees":0,"uncoveredExtraBlockFees":0,"doubleBakingLostDeposits":0,"doubleBakingLostRewards":0,"doubleBakingLostFees":0,"doubleEndorsingLostDeposits":0,"doubleEndorsingLostRewards":0,"doubleEndorsingLostFees":0,"revelationLostRewards":0,"revelationLostFees":0,"futureBlockDeposits":0,"blockDeposits":0,"futureEndorsementDeposits":0,"endorsementDeposits":0}'
+      string: '{"cycle":420,"bakingPower":16000000000,"totalBakingPower":674672000000000,"ownDelegatedBalance":22571485457,"externalDelegatedBalance":357215732,"delegatorsCount":2,"ownStakedBalance":0,"externalStakedBalance":0,"stakersCount":0,"expectedBlocks":0.19,"expectedEndorsements":49.73,"futureBlocks":0,"futureBlockRewards":0,"blocks":0,"blockRewardsDelegated":0,"blockRewardsStakedOwn":0,"blockRewardsStakedEdge":0,"blockRewardsStakedShared":0,"missedBlocks":0,"missedBlockRewards":0,"futureEndorsements":0,"futureEndorsementRewards":0,"endorsements":29,"endorsementRewardsDelegated":2265625,"endorsementRewardsStakedOwn":0,"endorsementRewardsStakedEdge":0,"endorsementRewardsStakedShared":0,"missedEndorsements":1,"missedEndorsementRewards":78125,"blockFees":0,"missedBlockFees":0,"doubleBakingRewards":0,"doubleBakingLostStaked":0,"doubleBakingLostUnstaked":0,"doubleBakingLostExternalStaked":0,"doubleBakingLostExternalUnstaked":0,"doubleEndorsingRewards":0,"doubleEndorsingLostStaked":0,"doubleEndorsingLostUnstaked":0,"doubleEndorsingLostExternalStaked":0,"doubleEndorsingLostExternalUnstaked":0,"doublePreendorsingRewards":0,"doublePreendorsingLostStaked":0,"doublePreendorsingLostUnstaked":0,"doublePreendorsingLostExternalStaked":0,"doublePreendorsingLostExternalUnstaked":0,"vdfRevelationRewardsDelegated":0,"vdfRevelationRewardsStakedOwn":0,"vdfRevelationRewardsStakedEdge":0,"vdfRevelationRewardsStakedShared":0,"nonceRevelationRewardsDelegated":0,"nonceRevelationRewardsStakedOwn":0,"nonceRevelationRewardsStakedEdge":0,"nonceRevelationRewardsStakedShared":0,"nonceRevelationLosses":0,"delegators":[{"address":"tz2FwCaeDYJHJBuE5Gayqpo9fkUMDB3Z6AGY","delegatedBalance":330348664,"stakedBalance":0,"emptied":false,"currentDelegatedBalance":257,"currentStakedBalance":257,"balance":330348664,"currentBalance":514},{"address":"tz2UD7tXJyBrfDBHnFzhnaeL8ZGHxcDZuDa3","delegatedBalance":26867068,"stakedBalance":0,"emptied":false,"currentDelegatedBalance":257,"currentStakedBalance":257,"balance":26867068,"currentBalance":514}],"blockRewardsLiquid":0,"endorsementRewardsLiquid":2265625,"nonceRevelationRewardsLiquid":0,"vdfRevelationRewardsLiquid":0,"revelationRewards":0,"revelationLosses":0,"doublePreendorsingLosses":0,"doubleEndorsingLosses":0,"doubleBakingLosses":0,"endorsementRewards":2265625,"blockRewards":0,"stakingBalance":22928701189,"activeStake":16000000000,"selectedStake":674672000000000,"delegatedBalance":357215732,"numDelegators":2,"ownBlocks":0,"extraBlocks":0,"missedOwnBlocks":0,"missedExtraBlocks":0,"uncoveredOwnBlocks":0,"uncoveredExtraBlocks":0,"uncoveredEndorsements":0,"ownBlockRewards":0,"extraBlockRewards":0,"missedOwnBlockRewards":0,"missedExtraBlockRewards":0,"uncoveredOwnBlockRewards":0,"uncoveredExtraBlockRewards":0,"uncoveredEndorsementRewards":0,"ownBlockFees":0,"extraBlockFees":0,"missedOwnBlockFees":0,"missedExtraBlockFees":0,"uncoveredOwnBlockFees":0,"uncoveredExtraBlockFees":0,"doubleBakingLostDeposits":0,"doubleBakingLostRewards":0,"doubleBakingLostFees":0,"doubleEndorsingLostDeposits":0,"doubleEndorsingLostRewards":0,"doubleEndorsingLostFees":0,"revelationLostRewards":0,"revelationLostFees":0,"futureBlockDeposits":0,"blockDeposits":0,"futureEndorsementDeposits":0,"endorsementDeposits":0}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
       Connection:
       - keep-alive
-      Content-Encoding:
-      - gzip
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 05 Jan 2024 21:23:56 GMT
+      - Sun, 30 Jun 2024 15:06:15 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4873966'
+      - '5941477'
       Tzkt-Level:
-      - '4873966'
+      - '5941477'
       Tzkt-Synced-At:
-      - '2024-01-05T21:23:46Z'
+      - '2024-06-30T15:06:15Z'
       Tzkt-Version:
-      - 1.12.4.0
+      - 1.14.3.0
+      content-length:
+      - '3242'
     status:
       code: 200
       message: OK
@@ -51,35 +51,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - trd-11.0
+      - trd-12.0
     method: GET
     uri: https://api.tzkt.io/v1/head
   response:
     body:
-      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":690,"level":4873966,"hash":"BM6y1Z9vH1DFUkoLA3FFjcfC6r1Y3z8qFX3msCpqUDVASdbnrvn","protocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","nextProtocol":"PtNairobiyssHuh87hEhfVBGCVrK3WnS8Z2FT4ymB5tAa4r1nQf","timestamp":"2024-01-05T21:23:45Z","votingEpoch":55,"votingPeriod":113,"knownLevel":4873966,"lastSync":"2024-01-05T21:23:46Z","synced":true,"quoteLevel":4873966,"quoteBtc":2.112388872844163E-05,"quoteEur":0.844757931418738,"quoteUsd":0.9239466247895785,"quoteCny":6.558727510731311,"quoteJpy":133.75531792698828,"quoteKrw":1214.5877922584375,"quoteEth":0.00041195122882407327,"quoteGbp":0.7265306452572892}'
+      string: '{"chain":"mainnet","chainId":"NetXdQprcVkpaWU","cycle":751,"level":5941477,"hash":"BKvbbsYEaEMUBHAdyfbhdupUdfsEhoQ9vbuqvdnz3wvHj2zjRES","protocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","nextProtocol":"PsParisCZo7KAh1Z1smVd9ZMZ1HHn5gkzbM94V3PLCpknFWhUAi","timestamp":"2024-06-30T15:06:05Z","votingEpoch":61,"votingPeriod":125,"knownLevel":5941477,"lastSync":"2024-06-30T15:06:15Z","synced":true,"quoteLevel":5941477,"quoteBtc":1.262655058094733E-05,"quoteEur":0.7249314645078905,"quoteUsd":0.7767999508243323,"quoteCny":5.64523828262567,"quoteJpy":124.97546008837269,"quoteKrw":1072.978236074634,"quoteEth":0.00022912094122073417,"quoteGbp":0.6139500555336176}'
     headers:
       Access-Control-Allow-Origin:
       - '*'
       Connection:
       - keep-alive
-      Content-Encoding:
-      - gzip
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 05 Jan 2024 21:23:56 GMT
+      - Sun, 30 Jun 2024 15:06:16 GMT
       Server:
       - nginx
       Transfer-Encoding:
       - chunked
       Tzkt-Known-Level:
-      - '4873966'
+      - '5941477'
       Tzkt-Level:
-      - '4873966'
+      - '5941477'
       Tzkt-Synced-At:
-      - '2024-01-05T21:23:46Z'
+      - '2024-06-30T15:06:15Z'
       Tzkt-Version:
-      - 1.12.4.0
+      - 1.14.3.0
+      content-length:
+      - '675'
     status:
       code: 200
       message: OK

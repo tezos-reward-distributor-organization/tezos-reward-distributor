@@ -14,70 +14,6 @@ from src.Constants import (
 from src.util.exit_program import exit_program, ExitCode
 
 
-def load_reward_model(
-    address, cycle, suffix, dir_name="tzkt_data"
-) -> Optional[RewardProviderModel]:
-    path = join(
-        dirname(__file__), f"integration/{dir_name}/{address}_{cycle}_{suffix}.json"
-    )
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            data = json.loads(f.read())
-        return RewardProviderModel(
-            delegate_delegating_balance=data["delegate_delegating_balance"],
-            total_reward_amount=data["total_reward_amount"],
-            rewards_and_fees=data["rewards_and_fees"],
-            equivocation_losses=data["equivocation_losses"],
-            offline_losses=data["offline_losses"],
-            num_baking_rights=data["num_baking_rights"],
-            potential_endorsement_rewards=data["potential_endorsement_rewards"],
-            denunciation_rewards=data["denunciation_rewards"],
-            delegator_balance_dict=data["delegator_balance_dict"],
-            computed_reward_amount=None,
-        )
-    else:
-        return None
-
-
-def store_reward_model(
-    address, cycle, suffix, model: RewardProviderModel, dir_name="tzkt_data"
-):
-    path = join(
-        dirname(__file__), f"integration/{dir_name}/{address}_{cycle}_{suffix}.json"
-    )
-    data = dict(
-        delegate_delegating_balance=model.delegate_delegating_balance,
-        total_reward_amount=model.total_reward_amount,
-        rewards_and_fees=model.rewards_and_fees,
-        equivocation_losses=model.equivocation_losses,
-        offline_losses=model.offline_losses,
-        num_baking_rights=model.num_baking_rights,
-        potential_endorsement_rewards=model.potential_endorsement_rewards,
-        denunciation_rewards=model.denunciation_rewards,
-        delegator_balance_dict={
-            k: {i: v[i] for i in v if i != "current_balance"}
-            for k, v in model.delegator_balance_dict.items()
-            if v["delegating_balance"] > 0
-        },
-        computed_reward_amount=model.computed_reward_amount,
-    )
-    try:
-        with open(path, "w+") as f:
-            f.write(json.dumps(data, indent=2))
-    except Exception as e:
-        import errno
-
-        print("Exception during write operation invoked: {}".format(e))
-        if e.errno == errno.ENOSPC:
-            error_msg = "Exception during write operation invoked: {}. Not enough space on device.".format(
-                e
-            )
-            exit_program(ExitCode.NO_SPACE, error_msg)
-        else:
-            error_msg = "Exception during write operation invoked: {}".format(e)
-            exit_program(ExitCode.GENERAL_ERROR, error_msg)
-
-
 class Args:
     """This is a dummy class representing any --arguments passed
     on the command line. You can instantiate this class and then
@@ -139,19 +75,19 @@ def make_config(
     delegator_pays_ra_fee: true
     delegator_pays_xfer_fee: true
     founders_map:
-        tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7: 0.25
-        tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace: 0.75
+        tz3ipHZQpBBFuxv7eKoFgGnTaU3RBhnS93yY: 0.25
+        tz3dKooaL9Av4UY15AUx9uRGL5H6YyqoGSPV: 0.75
     min_delegation_amt: {:d}
     min_payment_amt: {:d}
     owners_map:
-        tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk: 1.0
+        tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD: 1.0
     payment_address: {:s}
     reactivate_zeroed: true
     rewards_type: actual
     pay_denunciation_rewards: false
     rules_map:
         tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP: tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs
-        tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: TOB
+        tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD: TOB
         mindelegation: TOB
     service_fee: {:f}
     specials_map: {{}}
@@ -200,7 +136,7 @@ def mock_request_get(url, timeout, **kwargs):
                 "delegating_balance": "191368330803",
                 "delegated_contracts": [
                     "tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ",
-                    "tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT",
+                    "tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD",
                     "tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7",
                     "tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace",
                     "tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk",
@@ -220,12 +156,12 @@ def mock_request_get(url, timeout, **kwargs):
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "25689884573")
     if path in [
-        "/chains/main/blocks/250000/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
-        "/chains/main/blocks/191232/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
-        "/chains/main/blocks/head/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
-        "/chains/main/blocks/2034432/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
-        "/chains/main/blocks/195328/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
-        "/chains/main/blocks/2035713/context/contracts/tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT/balance",
+        "/chains/main/blocks/250000/context/contracts/tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD/balance",
+        "/chains/main/blocks/191232/context/contracts/tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD/balance",
+        "/chains/main/blocks/head/context/contracts/tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD/balance",
+        "/chains/main/blocks/2034432/context/contracts/tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD/balance",
+        "/chains/main/blocks/195328/context/contracts/tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD/balance",
+        "/chains/main/blocks/2035713/context/contracts/tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD/balance",
     ]:
         return MagicMock(status_code=HTTPStatus.OK, json=lambda: "62657825729")
     if path in [

@@ -80,18 +80,21 @@ def test_get_rewards_for_cycle_map(
     )
 
     # Check delegator_balance_dict
+    assert len(rewards_tzkt.delegator_balance_dict) == 35
+    total_delegated_balance = 0
     for (
         tzkt_delegator_adress,
         tzkt_balance_dict,
     ) in rewards_tzkt.delegator_balance_dict.items():
-        if MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT == tzkt_delegator_adress:
-            continue
+        assert tzkt_balance_dict["current_balance"] == 257  # the same for each delegate
+        total_delegated_balance += tzkt_balance_dict["delegated_balance"]
+    assert total_delegated_balance == rewards_tzkt.external_delegated_balance
 
-        assert tzkt_balance_dict["current_balance"] == 0
-        assert tzkt_balance_dict["delegating_balance"] == 257
+    # Own delegate balance
+    assert rewards_tzkt.own_delegated_balance == 5_099_724_843
 
     # Check num_baking_rights
-    assert rewards_tzkt.num_baking_rights == 0
+    assert rewards_tzkt.num_baking_rights == 1
 
     # Check denunciation_rewards
     assert rewards_tzkt.denunciation_rewards == 0
@@ -103,9 +106,10 @@ def test_get_rewards_for_cycle_map(
     assert rewards_tzkt.offline_losses == 0
     # Check potential_endorsement_rewards
     # TODO: tzpro total_active_stake does not match rpc and tzkt exactly thus the approximation
-    assert rewards_tzkt.potential_endorsement_rewards == 0
+    assert rewards_tzkt.potential_endorsement_rewards == 20_203_344
+
     # Check rewards_and_fees
-    assert rewards_tzkt.rewards_and_fees == 0
+    assert rewards_tzkt.rewards_and_fees == 23_846_700
 
     # Check computed_reward_amount
-    assert rewards_tzkt.computed_reward_amount == 0
+    assert rewards_tzkt.computed_reward_amount is None
