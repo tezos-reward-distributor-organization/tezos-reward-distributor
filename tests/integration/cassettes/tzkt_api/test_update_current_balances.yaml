@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - trd-11.0
+      - trd-12.0
     method: GET
     uri: https://api.tzkt.io/v1/accounts/KT1Np1h72jGkRkfxNHLXNNJLHNbj9doPz4bR
   response:
@@ -25,17 +25,17 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 05 Jan 2024 21:23:07 GMT
+      - Sun, 30 Jun 2024 14:33:33 GMT
       Server:
       - nginx
       Tzkt-Known-Level:
-      - '4873963'
+      - '5941289'
       Tzkt-Level:
-      - '4873963'
+      - '5941289'
       Tzkt-Synced-At:
-      - '2024-01-05T21:23:01Z'
+      - '2024-06-30T14:33:31Z'
       Tzkt-Version:
-      - 1.12.4.0
+      - 1.14.3.0
     status:
       code: 200
       message: OK

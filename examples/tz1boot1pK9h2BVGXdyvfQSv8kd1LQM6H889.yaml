@@ -3,7 +3,6 @@ baking_address: tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889
 payment_address: KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS
 rewards_type: actual
 service_fee: 4.5
-tzpro_api_key: XXXXXXXX
 founders_map:
   {'tz1boot1pK9h2BVGXdyvfQSv8kd1LQM6H889' : 0.3,
    'KT1KLQbYFtFZ5mAEnfEMZaWYuNtCsGuP5cLS' : 0.7}

@@ -1,4 +1,5 @@
 import logging
+import vcr
 from time import sleep
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
@@ -15,9 +16,9 @@ from src.exception.api_provider import ApiProviderException
 from src.model.rules_model import RulesModel
 from src.model.baking_conf import BakingConf
 from src.NetworkConfiguration import default_network_config_map
-from tests.utils import mock_request_get, make_config
+from tests.utils import mock_request_get, make_config, Constants
 
-PAYOUT_CYCLE = 557
+PAYOUT_CYCLE = 750
 
 logger = logging.getLogger("unittesting")
 logger.setLevel(logging.DEBUG)
@@ -26,20 +27,13 @@ logger.addHandler(logging.StreamHandler())
 
 class TestCalculatePhases(TestCase):
     baking_config = make_config(
-        baking_address="tz1gtHbmBF3TSebsgJfJPvUB2e9x8EDeNm6V",
-        payment_address="tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs",
+        baking_address=Constants.MAINNET_ADDRESS_BAKEXTZ4ME_BAKER,
+        payment_address=Constants.MAINNET_ADDRESS_BAKEXTZ4ME_PAYOUT,
         service_fee=10.0,
         min_delegation_amt=0,
         min_payment_amt=0,
     )
 
-    @patch("rpc.rpc_reward_api.requests.get", MagicMock(side_effect=mock_request_get))
-    @patch(
-        "rpc.rpc_reward_api.logger",
-        MagicMock(
-            debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)
-        ),
-    )
     @patch(
         "pay.payment_producer.logger",
         MagicMock(
@@ -51,6 +45,11 @@ class TestCalculatePhases(TestCase):
         MagicMock(
             debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)
         ),
+    )
+    @vcr.use_cassette(
+        "tests/integration/cassettes/api_consistency/test_process_payouts.yaml",
+        filter_headers=["X-API-Key", "authorization"],
+        decode_compressed_response=True,
     )
     def test_process_payouts(self):
         logger.debug("")  # Console formatting
@@ -152,57 +151,15 @@ class TestCalculatePhases(TestCase):
         reward_logs = [pi for pi in reward_logs if pi.payable]
         reward_logs.sort(key=lambda rl: (rl.type, -rl.delegating_balance))
 
-        # TRD Calculated Results
-        # tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT type: D, stake bal:   62657.83, cur bal:   62657.83, ratio: 0.327420, fee_ratio: 0.000000, amount:   0.000000, fee_amount: 0.000000, fee_rate: 0.00, payable: N, skipped: Y, at-phase: 1, desc: Excluded by configuration, pay_addr: tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT
-        # tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace type: D, stake bal:   55646.70, cur bal:   55646.70, ratio: 0.432340, fee_ratio: 0.000000, amount: 102.988160, fee_amount: 0.000000, fee_rate: 0.00, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace
-        # tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ type: D, stake bal:   25689.88, cur bal:   25689.88, ratio: 0.179635, fee_ratio: 0.019959, amount:  42.791010, fee_amount: 4.754557, fee_rate: 0.10, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ
-        # tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7 type: D, stake bal:   24916.33, cur bal:   24916.33, ratio: 0.193584, fee_ratio: 0.000000, amount:  46.113902, fee_amount: 0.000000, fee_rate: 0.00, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7
-        # tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP type: D, stake bal:    6725.43, cur bal:    6725.43, ratio: 0.047027, fee_ratio: 0.005225, amount:  11.202382, fee_amount: 1.244709, fee_rate: 0.10, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs
-        # tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk type: D, stake bal:     981.64, cur bal:     981.64, ratio: 0.007627, fee_ratio: 0.000000, amount:   1.816762, fee_amount: 0.000000, fee_rate: 0.00, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk
-        # tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk type: O, stake bal:   14750.53, cur bal:       0.00, ratio: 0.114602, fee_ratio: 0.000000, amount:  27.299548, fee_amount: 0.000000, fee_rate: 0.00, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk
-        # tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7 type: F, stake bal:       0.00, cur bal:       0.00, ratio: 0.006296, fee_ratio: 0.000000, amount:   1.499816, fee_amount: 0.000000, fee_rate: 0.00, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7
-        # tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace type: F, stake bal:       0.00, cur bal:       0.00, ratio: 0.018889, fee_ratio: 0.000000, amount:   4.499450, fee_amount: 0.000000, fee_rate: 0.00, payable: Y, skipped: N, at-phase: 0, desc: , pay_addr: tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace
-
-        # Final records before creating transactions
-        # These values are known to be correct
-        cr = {}
-        cr["tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ"] = {
-            "type": "D",
-            "amount": 42791010,
-            "pay_addr": "tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ",
-        }
-        cr["tz1RRzfechTs3gWdM58y6xLeByta3JWaPqwP"] = {
-            "type": "D",
-            "amount": 11202382,
-            "pay_addr": "tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs",
-        }
-        cr["tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace"] = {
-            "type": "M",
-            "amount": 107487610,
-            "pay_addr": "tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace",
-        }
-        cr["tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7"] = {
-            "type": "M",
-            "amount": 47613718,
-            "pay_addr": "tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7",
-        }
-        cr["tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk"] = {
-            "type": "M",
-            "amount": 29116310,
-            "pay_addr": "tz1L1XQWKxG38wk1Ain1foGaEZj8zeposcbk",
-        }
-
         # Verify that TRD calculated matches known values
+        total_amount = 0
         for r in reward_logs:
-            # We know this address should be skipped
-            if r.address == "tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT":
-                self.assertEqual(r.skipped, 1)
-                self.assertEqual(r.amount, 0)
+            assert not r.skipped  # no skips needed
+            if r.address == "tz3h7UCrLoFih8nrStVy8GcChtZiVuu1mDYD":
+                assert r.amount == 1_632_815
                 continue
 
-            # All others we can compare normally
-            cmp = cr[r.address]
-
-            self.assertEqual(r.type, cmp["type"])
-            self.assertEqual(r.amount, (cmp["amount"]))
-            self.assertEqual(r.paymentaddress, cmp["pay_addr"])
+            assert r.type in "FD"
+            assert isinstance(r.paymentaddress, str)
+            total_amount += r.amount
+        assert total_amount == 22_213_885

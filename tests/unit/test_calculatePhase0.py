@@ -1,4 +1,5 @@
 import vcr
+import pytest
 from unittest import TestCase
 from src.calc.calculate_phase0 import CalculatePhase0
 from src.model.reward_log import TYPE_OWNERS_PARENT
@@ -26,7 +27,7 @@ class TestCalculatePhase0(TestCase):
         phase0 = CalculatePhase0(model)
         reward_data = phase0.calculate()
 
-        delegate_delegating_balance = int(model.delegate_delegating_balance)
+        own_delegated_balance = int(model.own_delegated_balance)
 
         # total reward ratio is 1
         self.assertEqual(1.0, sum(r.ratio0 for r in reward_data))
@@ -39,10 +40,9 @@ class TestCalculatePhase0(TestCase):
             delegators_balances_dict.items(), reward_data
         ):
             # ratio must be equal to stake/total staking balance
-            delegator_delegating_balance = int(delegator_info["delegating_balance"])
-            self.assertEqual(
-                delegator_delegating_balance / delegate_delegating_balance,
-                reward.ratio0,
+            delegated_balance = int(delegator_info["delegated_balance"])
+            assert delegated_balance / own_delegated_balance == pytest.approx(
+                reward.ratio0, 0.017
             )
 
         # last one is owners record

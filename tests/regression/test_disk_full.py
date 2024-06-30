@@ -87,7 +87,6 @@ def test_disk_full_payment_producer(args, caplog):
         calculations_dir=baking_dirs.calculations_root,
         run_mode=RunMode(args.run_mode),
         service_fee_calc=srvc_fee_calc,
-        release_override=args.release_override,
         payment_offset=args.payment_offset,
         baking_cfg=baking_cfg,
         life_cycle=plc,

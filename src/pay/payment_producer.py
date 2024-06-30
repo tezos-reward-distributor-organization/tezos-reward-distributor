@@ -50,6 +50,24 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
         retry_injected=False,
     ):
         super(PaymentProducer, self).__init__()
+        self.exiting = False
+        self.nw_config = network_config
+        self.payments_root = payments_dir
+        self.calculations_dir = calculations_dir
+        self.run_mode = run_mode
+
+        self.payment_offset = payment_offset
+        self.payments_queue = payments_queue
+        self.life_cycle = life_cycle
+        self.dry_run = dry_run
+        self.consumer_failure = False
+
+        self.retry_fail_thread = threading.Thread(
+            target=self.retry_fail_run, name=self.name + "_retry_fail"
+        )
+        self.retry_fail_event = threading.Event()
+        self.retry_injected = retry_injected
+
         self.event = threading.Event()
         self.rules_model = RulesModel(
             baking_cfg.get_excluded_set_tob(),
@@ -72,20 +90,17 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.node_url = node_url
         self.client_manager = client_manager
-        self.tzpro_api_key = baking_cfg.get_tzpro_api_key()
         self.reward_api = self.provider_factory.newRewardApi(
             network_config,
             self.baking_address,
             self.node_url,
             node_url_public,
             api_base_url,
-            self.tzpro_api_key,
         )
         self.block_api = self.provider_factory.newBlockApi(
             network_config,
             self.node_url,
             api_base_url,
-            self.tzpro_api_key,
         )
 
         dexter_contracts_set = baking_cfg.get_contracts_set()
@@ -109,18 +124,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         logger.info("Initial cycle set to {}".format(self.initial_payment_cycle))
 
-        self.nw_config = network_config
-        self.payments_root = payments_dir
-        self.calculations_dir = calculations_dir
-        self.run_mode = run_mode
-        self.exiting = False
-
-        self.payment_offset = payment_offset
-        self.payments_queue = payments_queue
-        self.life_cycle = life_cycle
-        self.dry_run = dry_run
-        self.consumer_failure = False
-
         self.payment_calc = PhasedPaymentCalculator(
             self.founders_map,
             self.owners_map,
@@ -130,12 +133,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             self.rules_model,
             self.reward_api,
         )
-
-        self.retry_fail_thread = threading.Thread(
-            target=self.retry_fail_run, name=self.name + "_retry_fail"
-        )
-        self.retry_fail_event = threading.Event()
-        self.retry_injected = retry_injected
 
         self.retry_producer = RetryProducer(
             self.payments_queue,

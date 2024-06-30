@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from datetime import datetime
 from src.main import start_application
 from tests.utils import Args, make_config
-from src.Constants import TZKT_PUBLIC_API_URL, PUBLIC_NODE_URL
+from src.Constants import TZKT_PUBLIC_API_URL
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def args():
         api_base_url=TZKT_PUBLIC_API_URL["MAINNET"],
     )
     args.network = "MAINNET"
-    args.node_endpoint = PUBLIC_NODE_URL["MAINNET"]
+    args.node_endpoint = TZKT_PUBLIC_API_URL["MAINNET"]
     args.docker = True
     args.dry_run = True
     args.syslog = False

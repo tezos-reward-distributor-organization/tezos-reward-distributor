@@ -18,9 +18,6 @@ def test_application_aborts_if_requirements_missing():
     assert start_application() == 1
 
 
-@pytest.mark.skip(
-    "Python 3.12 throws error when prompting user for input thus skipping this for now."
-)
 def test_requirements_installed():
     assert requirements_installed() is True
 

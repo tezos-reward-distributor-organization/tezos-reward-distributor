@@ -20,12 +20,6 @@ TRD supports complex payments, pays in batches, and supports three backends for 
 
 **Provider notes:**
 
-### Blockwatch: TZPRO
-
-The [terms and conditions](https://tzpro.io/terms) of TZPRO note that an account and API key are needed for the use of the API. Please review the [pricing](https://tzpro.io/#pricing) information. For further help contact hello@blockwatch.cc for more information.
-
-In order to use your API key in the application add it to your configuration like tzpro_api_key: XXXXXXXXXX.
-
 ### TzKT
 
 The [terms of use](https://api.tzkt.io/#section/Terms-of-Use) of TzKT API allow for commercial and non-commercial use.
