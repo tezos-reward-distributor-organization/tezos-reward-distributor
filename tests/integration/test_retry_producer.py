@@ -2,7 +2,6 @@ import os
 import queue
 import shutil
 from http import HTTPStatus
-from distutils.dir_util import copy_tree
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 from src.Constants import PaymentStatus, RewardsType, TEMP_TEST_DATA_DIR
@@ -77,7 +76,9 @@ def request_url_post(cmd, json_params, timeout=None):
 class TestRetryProducerBeforeInitialCycle(TestCase):
     def setUp(self):
         try:
-            copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
+            if os.path.exists(TEST_REPORT_TEMP_DIR):
+                shutil.rmtree(TEST_REPORT_TEMP_DIR)
+            shutil.copytree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
             if not os.path.exists(os.path.join(TEST_REPORT_TEMP_DIR, "done")):
                 os.makedirs(os.path.join(TEST_REPORT_TEMP_DIR, "done"))
         except OSError:
@@ -130,7 +131,9 @@ class TestRetryProducerBeforeInitialCycle(TestCase):
 class TestRetryProducer(TestCase):
     def setUp(self):
         try:
-            copy_tree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
+            if os.path.exists(TEST_REPORT_TEMP_DIR):
+                shutil.rmtree(TEST_REPORT_TEMP_DIR)
+            shutil.copytree(TEST_REPORT_DIR, TEST_REPORT_TEMP_DIR)
             if not os.path.exists(os.path.join(TEST_REPORT_TEMP_DIR, "done")):
                 os.makedirs(os.path.join(TEST_REPORT_TEMP_DIR, "done"))
         except OSError:
