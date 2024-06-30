@@ -33,13 +33,6 @@ class TestCalculatePhases(TestCase):
         min_payment_amt=0,
     )
 
-    @patch("rpc.rpc_reward_api.requests.get", MagicMock(side_effect=mock_request_get))
-    @patch(
-        "rpc.rpc_reward_api.logger",
-        MagicMock(
-            debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)
-        ),
-    )
     @patch(
         "pay.payment_producer.logger",
         MagicMock(

@@ -4,7 +4,7 @@ from os.path import dirname, join, normpath
 from urllib.parse import urlparse
 from unittest.mock import MagicMock
 from http import HTTPStatus
-from src.blockwatch.tzpro_reward_api import RewardProviderModel
+from model.reward_provider_model import RewardProviderModel
 from typing import Optional
 from src.Constants import (
     CONFIG_DIR,
@@ -94,7 +94,6 @@ class Args:
         self.initial_cycle = initial_cycle
         self.run_mode = 3
         self.adjusted_early_payouts = False
-        self.release_override = 0
         self.payment_offset = 0
         self.network = None
         self.node_endpoint = ""
@@ -122,7 +121,6 @@ def make_config(
     service_fee,
     min_delegation_amt,
     min_payment_amt,
-    tzpro_api_key="",
 ):
     """This helper function creates a YAML bakers config
 
@@ -158,7 +156,6 @@ def make_config(
     service_fee: {:f}
     specials_map: {{}}
     supporters_set: !!set {{}}
-    tzpro_api_key: {:s}
     plugins:
         enabled:
     """.format(
@@ -167,7 +164,6 @@ def make_config(
         min_payment_amt,
         payment_address,
         service_fee,
-        tzpro_api_key,
     )
 
 
