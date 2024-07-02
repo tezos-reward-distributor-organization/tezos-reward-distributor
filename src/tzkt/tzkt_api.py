@@ -212,7 +212,7 @@ class TzKTApi:
                 assert isinstance(res, dict) and "delegators" in res
                 res["delegators"].extend(page["delegators"])
 
-            if not fetch_delegators or len(res["delegators"]) == res["numDelegators"]:
+            if not fetch_delegators or len(page["delegators"]) < limit:
                 return res
             else:
                 offset += limit
