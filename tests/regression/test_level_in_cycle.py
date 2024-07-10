@@ -15,10 +15,8 @@ def test_levels_in_cycle():
     # map is based on current mainnet values
 
     level_positions = [
-        [1589249, 0],  # Granada activation level
-        [3000000, 1727],
-        [3268609, 0],  # Mumbai activation level
-        [3333796, 16035],
+        [5726209, 0],  # Paris activation level
+        [5898888, 647],
     ]
 
     block = DummyApiImpl()

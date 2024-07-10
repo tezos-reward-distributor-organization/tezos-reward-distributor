@@ -17,7 +17,6 @@ from src.util.parser import (
     add_argument_mode,
     add_argument_base_directory,
     add_argument_node_addr_public,
-    add_argument_adjusted_early_payouts,
     add_argument_payment_offset,
     add_argument_network,
     add_argument_node_endpoint,
@@ -30,10 +29,6 @@ from src.util.parser import (
     [
         (add_argument_cycle, argparse.Namespace(initial_cycle=-1)),
         (add_argument_mode, argparse.Namespace(run_mode=1)),
-        (
-            add_argument_adjusted_early_payouts,
-            argparse.Namespace(adjusted_early_payouts=False),
-        ),
         (add_argument_payment_offset, argparse.Namespace(payment_offset=0)),
         (add_argument_network, argparse.Namespace(network="MAINNET")),
         (
@@ -78,7 +73,6 @@ def test_build_parser():
     assert value.parse_known_args()[0] == argparse.Namespace(
         initial_cycle=-1,
         run_mode=1,
-        adjusted_early_payouts=False,
         payment_offset=0,
         network="MAINNET",
         node_endpoint="http://127.0.0.1:8732",

@@ -106,31 +106,12 @@ class ArgsValidator:
                 )
             return True
 
-    def _adjusted_early_payouts_validator(self):
-        try:
-            self._args.adjusted_early_payouts
-        except AttributeError:
-            logger.warn(
-                "args: adjusted_early_payouts argument does not exist. Default setting to False."
-            )
-            self._args.adjusted_early_payouts = False
-        else:
-            tmp = self._args.adjusted_early_payouts
-            if not (isinstance(tmp, bool) or tmp == "True" or tmp == "False"):
-                self._parser.error(
-                    "adjusted_early_payouts must be True or False. Its default value is False if not provided as argument."
-                )
-        if tmp is True:
-            self._parser.error("adjusted_early_payouts is deprecated")
-        return True
-
     def run_validation(self):
         self._reward_data_provider_validator()
         self._network_validator()
         self._base_directory_validator()
         self._payment_offset_validator()
         self._initial_cycle_validator()
-        self._adjusted_early_payouts_validator()
         return self._args
 
 

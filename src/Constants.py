@@ -81,6 +81,7 @@ DEFAULT_NETWORK_CONFIG_MAP = {
     "MAINNET": {
         # General
         "NAME": "MAINNET",
+        "MINIMAL_BLOCK_DELAY": 10,
         "BLOCKS_PER_CYCLE": 24576,
     },
     CURRENT_TESTNET: {
