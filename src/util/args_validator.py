@@ -16,7 +16,6 @@ class ArgsValidator:
         self._parser = parser
         self._args = parser.parse_known_args()[0]
         self._blocks_per_cycle = 0
-        self._preserved_cycles = 0
 
     def _reward_data_provider_validator(self):
         try:
@@ -44,9 +43,6 @@ class ArgsValidator:
             if self._args.network in default_network_config_map:
                 self._blocks_per_cycle = default_network_config_map[self._args.network][
                     "BLOCKS_PER_CYCLE"
-                ]
-                self._preserved_cycle = default_network_config_map[self._args.network][
-                    "PRESERVED_CYCLES"
                 ]
             return True
 

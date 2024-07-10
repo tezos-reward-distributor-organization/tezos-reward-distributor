@@ -71,24 +71,6 @@ def get_network_config_from_public_node(network_name):
 
 def parse_constants(constants):
     network_config_map = {}
-    network_config_map["PRESERVED_CYCLES"] = int(constants["preserved_cycles"])
     network_config_map["MINIMAL_BLOCK_DELAY"] = int(constants["minimal_block_delay"])
     network_config_map["BLOCKS_PER_CYCLE"] = int(constants["blocks_per_cycle"])
-    network_config_map["BLOCKS_PER_STAKE_SNAPSHOT"] = int(
-        constants["blocks_per_stake_snapshot"]
-    )
-    network_config_map["BLOCK_REWARD"] = int(
-        int(constants["baking_reward_fixed_portion"])
-        + (
-            int(constants["baking_reward_bonus_per_slot"])
-            * int(constants["consensus_committee_size"])
-            / 3
-        )
-    )
-    network_config_map["CONSENSUS_COMMITTEE_SIZE"] = int(
-        constants["consensus_committee_size"]
-    )
-    network_config_map["ENDORSING_REWARD_PER_SLOT"] = int(
-        constants["endorsing_reward_per_slot"]
-    )
     return network_config_map

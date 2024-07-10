@@ -21,7 +21,6 @@ def build_parser():
     argparser = argparse.ArgumentParser(prog="TRD")
     add_argument_cycle(argparser)
     add_argument_mode(argparser)
-    add_argument_adjusted_early_payouts(argparser)
     add_argument_payment_offset(argparser)
     add_argument_network(argparser)
     add_argument_node_endpoint(argparser)
@@ -66,16 +65,6 @@ def add_argument_mode(argparser):
         choices=[1, 2, 3, 4],
         default=1,
         type=int,
-    )
-
-
-def add_argument_adjusted_early_payouts(argparser):
-    argparser.add_argument(
-        "--adjusted_early_payouts",
-        help="Overrides last released cycle (current_cycle - 1). Payment cycle will be "
-        "(current_cycle - 1 + (preserved_cycles + 1)). Suitable for future payments later adjusted to reward_types actual or ideal. "
-        "Add argument to trigger future payments. Its default value is False if not provided as argument.",
-        action="store_true",
     )
 
 
