@@ -1,10 +1,11 @@
 import os
 import sys
-import pkg_resources
 import subprocess
 
 from time import sleep
 from datetime import date
+from importlib.metadata import version, PackageNotFoundError
+from packaging.version import parse
 
 from Constants import (
     PYTHON_MAJOR,
@@ -31,7 +32,7 @@ def python_version_ok(args=None):
         )
     else:
         print(
-            "... installed Python version {}.{} is greater then minimum required version {}.{}. OK!\n".format(
+            "... installed Python version {}.{} is greater than the minimum required version {}.{}. OK!\n".format(
                 major,
                 minor,
                 PYTHON_MAJOR,
@@ -81,7 +82,7 @@ def new_protocol_not_live(args=None):
             (
                 "Protocol {} could be live now. If it is live there are risks using this branch.\n"
                 "It is suggested to reach out to the community to confirm, and switch to the new test branch \n"
-                "or accept of the risks of using this branch".format(NEW_PROTOCOL_NAME)
+                "or accept the risks of using this branch".format(NEW_PROTOCOL_NAME)
             )
         )
         return True
@@ -109,10 +110,29 @@ def requirements_installed(requirement_path=REQUIREMENTS_FILE_PATH):
     try:
         with open(requirement_path, "r") as requirements:
             for requirement in requirements:
+                requirement = requirement.strip()
+                if not requirement or requirement.startswith("#"):
+                    continue
                 try:
-                    pkg_resources.require(requirement)
-                except Exception as e:
-                    requirement = requirement.replace("\n", "")
+                    if ">=" in requirement:
+                        package_name, package_version = requirement.split(">=")
+                    elif "==" in requirement:
+                        package_name, package_version = requirement.split("==")
+                    else:
+                        package_name = requirement
+                        package_version = None
+
+                    installed_version = version(package_name)
+                    if package_version and not parse(installed_version) >= parse(
+                        package_version
+                    ):
+                        missing_requirements.append(requirement)
+                        print(
+                            "... requirement {} was not met: installed version {}\n".format(
+                                requirement, installed_version
+                            )
+                        )
+                except (PackageNotFoundError, ValueError) as e:
                     missing_requirements.append(requirement)
                     print(
                         "... requirement {} was not found: {}\n".format(requirement, e)

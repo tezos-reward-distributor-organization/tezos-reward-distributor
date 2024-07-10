@@ -57,12 +57,6 @@ PUBLIC_NODE_URL = {
     CURRENT_TESTNET: "https://testnet.smartpy.io",
 }
 
-# TzPro
-TZPRO_API_URL = {
-    "MAINNET": "https://api.tzpro.io",
-    CURRENT_TESTNET: "https://api.{}.tzpro.io".format(TESTNET_PREFIX.lower()),
-}
-
 # TzKT
 TZKT_PUBLIC_API_URL = {
     "MAINNET": "https://api.tzkt.io/v1",

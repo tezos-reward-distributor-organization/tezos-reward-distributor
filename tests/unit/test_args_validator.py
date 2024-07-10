@@ -167,7 +167,6 @@ def test_validate():
     assert SUT == argparse.Namespace(
         initial_cycle=-1,
         run_mode=1,
-        release_override=0,
         adjusted_early_payouts=False,
         payment_offset=0,
         network="MAINNET",

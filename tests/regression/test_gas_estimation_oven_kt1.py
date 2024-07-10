@@ -44,10 +44,6 @@ forge = "0" * (TX_FEES["TZ1_TO_ALLOCATED_TZ1"]["FEE"])
 
 @patch("src.cli.client_manager.ClientManager.sign", MagicMock(return_value=forge))
 @patch(
-    "src.rpc.rpc_reward_api.logger",
-    MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)),
-)
-@patch(
     "src.pay.payment_producer.logger",
     MagicMock(debug=MagicMock(side_effect=print), info=MagicMock(side_effect=print)),
 )
