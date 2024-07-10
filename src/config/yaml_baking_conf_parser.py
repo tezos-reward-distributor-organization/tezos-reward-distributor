@@ -56,6 +56,12 @@ class BakingYamlConfParser(YamlConfParser):
         super().__init__(yaml_text)
         self.clnt_mngr = clnt_mngr
         self.network_config = network_config
+        if block_api is None:
+            block_api = provider_factory.newBlockApi(
+                network_config,
+                node_url,
+                api_base_url=api_base_url,
+            )
         self.block_api = block_api
         self.dry_run = dry_run
         self.address_validator = AddressValidator()
