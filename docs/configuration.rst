@@ -4,7 +4,6 @@ How to configure TRD?
 Fee Setup
 -----------
 
-| The file *fee.in* has been deprecated.
 | **Advanced user**: You can change the values at *src/pay/batch_payer.py*
 
 Baker Configuration:
@@ -71,7 +70,7 @@ Available configuration parameters are:
     service_fee: 10
 
 **founders_map**
-  A dictionary of PKH and ratio (decimal in the range [0-1]) pairs. Each item in this dictionary represents PKH of each founder and his ratio of the shares coming from the service fee. Implicit or originated addresses are accepted. It is important that the sum of all ratios equals to 1. This map is optional if founders do not want to be paid from service fees, in this case, service fee remains in baking balance.
+  A dictionary of PKH and ratio (decimal in the range [0-1]) pairs. Each item in this dictionary represents PKH of each founder and their ratio of the shares coming from the service fee. Implicit or originated addresses are accepted. It is important that the sum of all ratios equals to 1. This map is optional if founders do not want to be paid from service fees, in this case, service fee remains in baking balance.
   
   Example::
 
@@ -153,14 +152,14 @@ Available configuration parameters are:
     Note: This option does also apply to the burn fee needed to payout to kt accounts.
 
 **pay_denunciation_rewards**
-  True/False - Baker may get rewarded for denunciating another baker's equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker's account, allowing the baker to reimburse the party at fault if they desire. Must be set to True when using RPC backend as RPC is not able to itemize rewards.
+  True/False - Baker may get rewarded for denunciating another baker's equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker's account, allowing the baker to reimburse the party at fault if they desire.
 
   Example::
 
     pay_denunciation_rewards: True
 
 **rules_map**
-  The rules_map is needed to redirect payments. A pre-defined source (left side) is mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.
+  The rules_map is needed to redirect payments. A pre-defined source (left side) is mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are PKHs.
 
   Example::
 
@@ -168,7 +167,6 @@ Available configuration parameters are:
        tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ: TOF                                         #(redirects payment from tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ to founders)
        tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace: TOB                                         #(payment to tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace will remain in the bakers balance)
        tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT: tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7        #(redirects payment from tz1V9S... to tz1fgX...)
-       tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs: Dexter                                      #(indicates address is a dexter pool; TRD will send rewards to pool members)
        mindelegation: TOE                                                                #(mindelegation will be shared with everyone)
 
 **plugins**

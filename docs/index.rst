@@ -10,14 +10,16 @@ PRIVACY : TEZOS REWARD DISTRIBUTOR COLLECTS ANONYMOUS STATISTICS. PLEASE READ OU
 What's TRD?
 ------------------------------------------------
 
-TRD is an open-source software for distributing staking rewards from bakers to delegators introduced in detail in this Medium article_. This is not a python script but a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether minimum delegation threshold, or special fees for some delegators - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches. It uses TzKT_ API as backend. TRD is developed and tested extensively by the community and the source code which can be found in the following Github_ repo.
+TRD is an open-source software for distributing delegation rewards from bakers to delegators. This is a full scale application which can continuously run in the background as a Linux service. However it does not have to be used as a service, but it can also be used interactively. The tool convinces with its simplicity and yet leaves no configuration wish unfulfilled. Whether minimum delegation threshold, or special fees for some delegators - the TRD covers just about all possible constellations. Furthermore, the tool supports complex payments, pays in batches. It uses TzKT_ API as backend. TRD is developed and tested extensively by the community and the source code which can be found in the following Github_ repo.
 
-Tezos offers two kind of rewards: delegating rewards and staking rewards. TRD pays out delegation rewards. Staking rewards are paid by the protocol, and TRD does not concern itself with them.
+**Since 2024, Tezos offers two kind of rewards: delegating rewards and [staking rewards](https://news.tezoscommons.org/stake-and-l-earn-a-beginners-guide-to-the-new-tezos-staker-role-7ff1cf2fc8ce). TRD pays out delegation rewards.** Staking rewards are paid by the protocol, and TRD does not concern itself with them.
 
 Who needs TRD?
 ------------------------------------------------
 
-The TRD is needed by bakers. There are a few payout tools available in the Tezos ecosystem. However, the TRD is probably the most used open source payout tool by bakers. It ranges from small bakers with a couple of delegators to large bakers with more than thousand delegators. The maintainers strive to keep up with the growing Tezos ecosystem. This in turn enables TRD users to participate in the exploration of new business areas like baking for liquidity pools or DAOs.
+The TRD is needed by bakers who want to pay delegation rewards. There are a few payout tools available in the Tezos ecosystem. However, the TRD is probably the most used open source payout tool by bakers. It ranges from small bakers with a couple of delegators to large bakers with more than thousand delegators. The maintainers strive to keep up with the growing Tezos ecosystem. This in turn enables TRD users to participate in the exploration of new business areas like baking for liquidity pools or DAOs.
+
+In 2024, another popular payout distribution software is [TezPay](https://github.com/tez-capital/tezpay).
 
 What else do you need for TRD?
 ------------------------------------------------
@@ -28,8 +30,6 @@ There are currently the following options to run TRD:
     b. If you don't want to inject your own transactions, only the Tezos signer is needed.
 
 However, for all options the Tezos signer is needed.
-
-**Provider notes:**
 
 TzKT
 -----------
@@ -86,7 +86,6 @@ This Github Repo_ contains logo images. If you are using TRD and want to let eve
    tezossigner
    run
    rundocker
-   payouttiming
    plugins
    linuxservice
    state_machine

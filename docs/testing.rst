@@ -1,6 +1,5 @@
 Tests
 ========
-In order to run test which rely on the TZPRO API you have to copy the `.env.example` file to `.env` and add your personal TZPRO API Key.
 
 Test Execution
 ---------------
