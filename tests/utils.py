@@ -29,7 +29,6 @@ class Args:
     ):
         self.initial_cycle = initial_cycle
         self.run_mode = 3
-        self.adjusted_early_payouts = False
         self.payment_offset = 0
         self.network = None
         self.node_endpoint = ""
