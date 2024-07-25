@@ -89,9 +89,7 @@
 <span id="id1"></span><h1>Payout timing<a class="headerlink" href="#payout-timing" title="Permalink to this headline">¶</a></h1>
 <p>Tezos rewards are paid out by the protocol at the end of a given cycle.</p>
 <p>By default, TRD then distributes these rewards at the beginning of the next cycle.</p>
-<p>TRD behavior is to pay out the last released payment cycle. Last
-released payment cycle will be calculated based on the formula:
-<code class="docutils literal notranslate"><span class="pre">current_cycle</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">+</span> <span class="pre">[if</span> <span class="pre">--adjusted_payout_timing</span> <span class="pre">is</span> <span class="pre">provided:</span> <span class="pre">(preserved_cycles</span> <span class="pre">+</span> <span class="pre">1)]</span></code>.</p>
+<p>TRD behavior is to pay out the last released payment cycle.</p>
 <p>A cycle on mainnet lists 3 days.</p>
 <p>Delegation takes 2 cycles to take effect. This is unlike staking, which is instantaneous.</p>
 </div>
