@@ -1,9 +1,7 @@
 TRD State Machines
 ====================
 
-TRD is designed as a state machine to make sure it's reliable.
-
-In the future TRD will be `formally verified`_ to avoid undetected bugs.
+TRD is designed as a state machine for reliability.
 
 Launch state machine diagram
 --------------------------------
@@ -18,5 +16,3 @@ Configuration state machine diagram
 .. image:: fsm/graphviz/config_cycle_state_diagram.png
   :width: 800
   :alt: Configuration State Diagram
-
-.. _formally verified: https://en.wikipedia.org/wiki/Formal_verification
