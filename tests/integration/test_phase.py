@@ -87,7 +87,6 @@ class TestCalculatePhases(TestCase):
         )
         payment_calc = PhasedPaymentCalculator(
             founders_map=baking_cfg.get_founders_map(),
-            owners_map=baking_cfg.get_owners_map(),
             service_fee_calculator=srvc_fee_calc,
             min_delegation_amount=int(
                 baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ
