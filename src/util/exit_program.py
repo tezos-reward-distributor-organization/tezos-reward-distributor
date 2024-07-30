@@ -13,6 +13,7 @@ class ExitCode(Enum):
     INSUFFICIENT_FUNDS = 6
     RETRY_FAILED = 7
     PROVIDER_ERROR = 8
+    PROVIDER_BUSY = 9
 
 
 def exit_program(exit_code: ExitCode = ExitCode.SUCCESS, exit_message="Success!"):

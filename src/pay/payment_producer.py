@@ -25,6 +25,7 @@ from util.exit_program import exit_program, ExitCode
 logger = main_logger.getChild("payment_producer")
 
 BOOTSTRAP_SLEEP = 4
+EXIT_CODE_FILE = "/tmp/trd_producer_exit_code"
 
 
 class PaymentProducer(threading.Thread, PaymentProducerABC):
@@ -117,7 +118,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             logger.error(
                 "Only 'ACTUAL' rewards type is supported as of Paris protocol. Please fix your configuration."
             )
-            self.exit(ExitCode.PROVIDER_ERROR)
+            self.exit(ExitCode.GENERAL_ERROR)
         self.pay_denunciation_rewards = baking_cfg.get_pay_denunciation_rewards()
         self.fee_calc = service_fee_calc
         self.initial_payment_cycle = initial_payment_cycle
@@ -161,6 +162,9 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     # This will propagate the exit status to main process on linux.
                     abnormal_signal = signal.SIGUSR2
                     normal_signal = signal.SIGUSR1
+                # write the exit code to file, so the main process can exit with the same code
+                with open(EXIT_CODE_FILE, "w") as f:
+                    f.write(str(exit_code.value))
                 if self.consumer_failure:
                     os.kill(os.getpid(), abnormal_signal)
                     logger.debug(
@@ -226,7 +230,7 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                     str(self.provider_factory.provider), str(a)
                 )
             )
-            self.exit(ExitCode.PROVIDER_ERROR)
+            self.exit(ExitCode.PROVIDER_BUSY)
             return
 
         # if initial_payment_cycle has the default value of -1 resulting in the last released cycle
@@ -292,7 +296,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
                 # payments should not pass beyond last released reward cycle
                 if pymnt_cycle <= current_cycle - 1:
                     if not self.payments_queue.full():
-
                         # If user wants to offset payments within a cycle, check here
                         if level_in_cycle < self.payment_offset:
                             wait_offset_blocks = self.payment_offset - level_in_cycle
