@@ -107,12 +107,8 @@ def add_argument_provider(argparser):
     argparser.add_argument(
         "-P",
         "--reward_data_provider",
-        help="Source of reward data. The default is 'tzkt' (TzKT API). "
-        "Set to 'rpc' to use your own local node defined with the -A flag, "
-        "(it must be an ARCHIVE node in this case). "
-        "Set to 'prpc' to use a public RPC node defined with the -Ap flag. "
-        "An alternative for providing reward data is 'tzpro', but an API key associated with your account needs to be provided in your configuration!",
-        choices=["rpc", "prpc", "tzpro", "tzkt"],
+        help="Source of reward data. The only choice is 'tzkt' (TzKT API).",
+        choices=["tzkt"],
         default="tzkt",
     )
 
