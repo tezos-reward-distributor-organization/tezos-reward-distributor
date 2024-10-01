@@ -54,7 +54,6 @@
 <li class="toctree-l1"><a class="reference internal" href="tezossigner.html">How to use the Tezos Signer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">How to run TRD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rundocker.html">How to run TRD in Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="payouttiming.html">Payout timing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
@@ -94,7 +93,6 @@
 <div class="section" id="fee-setup">
 <h2>Fee Setup<a class="headerlink" href="#fee-setup" title="Permalink to this headline">¶</a></h2>
 <div class="line-block">
-<div class="line">The file <em>fee.in</em> has been deprecated.</div>
 <div class="line"><strong>Advanced user</strong>: You can change the values at <em>src/pay/batch_payer.py</em></div>
 </div>
 </div>
@@ -156,7 +154,7 @@ If you want to use with a decimal operator within your config, please use a deci
 </pre></div>
 </div>
 </dd>
-<dt><strong>founders_map</strong></dt><dd><p>A dictionary of PKH and ratio (decimal in the range [0-1]) pairs. Each item in this dictionary represents PKH of each founder and his ratio of the shares coming from the service fee. Implicit or originated addresses are accepted. It is important that the sum of all ratios equals to 1. This map is optional if founders do not want to be paid from service fees, in this case, service fee remains in baking balance.</p>
+<dt><strong>founders_map</strong></dt><dd><p>A dictionary of PKH and ratio (decimal in the range [0-1]) pairs. Each item in this dictionary represents PKH of each founder and their ratio of the shares coming from the service fee. Implicit or originated addresses are accepted. It is important that the sum of all ratios equals to 1. This map is optional if founders do not want to be paid from service fees, in this case, service fee remains in baking balance.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">founders_map</span><span class="p">:</span>
     <span class="p">{</span><span class="s1">&#39;tz3VxS7ff4YnZRs8b4mMP4WaMVpoQjuo1rjf&#39;</span> <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
@@ -227,19 +225,18 @@ The baker address is technically a delegator to itself. Its share of rewards are
 </pre></div>
 </div>
 </dd>
-<dt><strong>pay_denunciation_rewards</strong></dt><dd><p>True/False - Baker may get rewarded for denunciating another baker’s equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker’s account, allowing the baker to reimburse the party at fault if they desire. Must be set to True when using RPC backend as RPC is not able to itemize rewards.</p>
+<dt><strong>pay_denunciation_rewards</strong></dt><dd><p>True/False - Baker may get rewarded for denunciating another baker’s equivocation (double baking or double endorsing). The protocol rewards the baker including the denunciation. When True, these rewards will be distributed. When False, they will remain in the baker’s account, allowing the baker to reimburse the party at fault if they desire.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pay_denunciation_rewards</span><span class="p">:</span> <span class="kc">True</span>
 </pre></div>
 </div>
 </dd>
-<dt><strong>rules_map</strong></dt><dd><p>The rules_map is needed to redirect payments. A pre-defined source (left side) is mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are PKHs. New since v8.0 PKH: Dexter enables payouts to Dexter liquidity pools.</p>
+<dt><strong>rules_map</strong></dt><dd><p>The rules_map is needed to redirect payments. A pre-defined source (left side) is mindelegation. Pre-defined destinations (right side) are: TOF = to founders balance, TOB = to bakers balance, and TOE = to everyone. Variable sources and destinations are PKHs.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rules_map</span><span class="p">:</span>
   <span class="n">tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ</span><span class="p">:</span> <span class="n">TOF</span>                                         <span class="c1">#(redirects payment from tz1T5woJN3r7SV5v2HGDyA5kurhbD9Y8ZKHZ to founders)</span>
   <span class="n">tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace</span><span class="p">:</span> <span class="n">TOB</span>                                         <span class="c1">#(payment to tz1YTMY7Zewx6AMM2h9eCwc8TyXJ5wgn9ace will remain in the bakers balance)</span>
   <span class="n">tz1V9SpwXaGFiYdDfGJtWjA61EumAH3DwSyT</span><span class="p">:</span> <span class="n">tz1fgX6oRWQb4HYHUT6eRjW8diNFrqjEfgq7</span>        <span class="c1">#(redirects payment from tz1V9S... to tz1fgX...)</span>
-  <span class="n">tz1RMmSzPSWPSSaKU193Voh4PosWSZx1C7Hs</span><span class="p">:</span> <span class="n">Dexter</span>                                      <span class="c1">#(indicates address is a dexter pool; TRD will send rewards to pool members)</span>
   <span class="n">mindelegation</span><span class="p">:</span> <span class="n">TOE</span>                                                                <span class="c1">#(mindelegation will be shared with everyone)</span>
 </pre></div>
 </div>

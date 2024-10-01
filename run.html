@@ -55,7 +55,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rundocker.html">How to run TRD in Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="payouttiming.html">Payout timing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="linuxservice.html">Run as Linux Service (WIP)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_machine.html">TRD State Machines</a></li>
@@ -122,7 +121,7 @@
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-A</span> <span class="pre">--node_endpoint</span> <span class="pre">&lt;node_url:port&gt;</span></code></dt><dd><p>Node potentially with protocol prefix especially if TLS encryption is used. Default value: <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8732</span></code>. This is the main Tezos node used by the client for RPC queries and operation injections.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">-P</span> <span class="pre">--reward_data_provider</span> <span class="pre">&lt;rpc|prpc|tzpro|tzkt&gt;</span></code></dt><dd><p>Source that provides all needed data for reward calculations. Default value: <code class="docutils literal notranslate"><span class="pre">tzkt</span></code> (TzKT API). Set to <code class="docutils literal notranslate"><span class="pre">rpc</span></code> to use your own local node defined with the <code class="docutils literal notranslate"><span class="pre">-A</span></code> flag, (it must be an ARCHIVE node in this case). Set to <code class="docutils literal notranslate"><span class="pre">prpc</span></code> to use a public RPC node defined with the <code class="docutils literal notranslate"><span class="pre">-Ap</span></code> flag. An alternative for providing reward data is <code class="docutils literal notranslate"><span class="pre">tzpro</span></code>, but an API key associated with your account needs to be provided in the .env file!</p>
+<dt><code class="docutils literal notranslate"><span class="pre">-P</span> <span class="pre">--reward_data_provider</span> <span class="pre">&lt;tzkt&gt;</span></code></dt><dd><p>Source that provides all needed data for reward calculations. Default and only value: <code class="docutils literal notranslate"><span class="pre">tzkt</span></code> (TzKT API).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">-Ap</span> <span class="pre">--node_addr_public</span> <span class="pre">&lt;url&gt;</span></code></dt><dd><p>Public node base URL. Default is <code class="docutils literal notranslate"><span class="pre">https://mainnet.smartpy.io</span></code>. This argument will only be used in case the reward provider is set to <code class="docutils literal notranslate"><span class="pre">prpc</span></code>. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.</p>
 </dd>
@@ -176,20 +175,8 @@ The directory contains the following folders:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">2</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
-<p>Run in dry-run mode on GRANADANET, make payouts for cycle 300 and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">N</span> <span class="n">GRANADANET</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span>
-</pre></div>
-</div>
-<p>Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by local Tezos node RPC interface:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">rpc</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">V</span>
-</pre></div>
-</div>
-<p>Run in dry-run mode on MAINNET, make payouts only for cycle 300, for calculations use data provided by the public node RPC:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">prpc</span> <span class="o">-</span><span class="n">Ap</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mainnet</span><span class="o">.</span><span class="n">smartpy</span><span class="o">.</span><span class="n">io</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span> <span class="o">-</span><span class="n">D</span>
-</pre></div>
-</div>
-<p>Run in dry-run mode on MAINNET, retry failed payouts only for cycle 300, for calculations use data provided by the TZPRO API:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">P</span> <span class="n">tzpro</span> <span class="o">-</span><span class="n">M</span> <span class="mi">4</span> <span class="o">-</span><span class="n">V</span> <span class="o">-</span><span class="n">D</span>
+<p>Run in dry-run mode on GHOSTNET, make payouts for cycle 300 and exit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">D</span> <span class="o">-</span><span class="n">N</span> <span class="n">GHOSTNET</span> <span class="o">-</span><span class="n">C</span> <span class="mi">300</span> <span class="o">-</span><span class="n">M</span> <span class="mi">3</span> <span class="o">-</span><span class="n">V</span>
 </pre></div>
 </div>
 <p>For help, run:</p>
