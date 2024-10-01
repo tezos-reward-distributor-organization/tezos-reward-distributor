@@ -38,8 +38,8 @@ Options
 ``-A --node_endpoint <node_url:port>``
     Node potentially with protocol prefix especially if TLS encryption is used. Default value: ``http://127.0.0.1:8732``. This is the main Tezos node used by the client for RPC queries and operation injections.
 
-``-P --reward_data_provider <rpc|prpc|tzpro|tzkt>``
-    Source that provides all needed data for reward calculations. Default value: ``tzkt`` (TzKT API). Set to ``rpc`` to use your own local node defined with the ``-A`` flag, (it must be an ARCHIVE node in this case). Set to ``prpc`` to use a public RPC node defined with the ``-Ap`` flag. An alternative for providing reward data is ``tzpro``, but an API key associated with your account needs to be provided in the .env file!
+``-P --reward_data_provider <tzkt>``
+    Source that provides all needed data for reward calculations. Default and only value: ``tzkt`` (TzKT API).
 
 ``-Ap --node_addr_public <url>``
     Public node base URL. Default is ``https://mainnet.smartpy.io``. This argument will only be used in case the reward provider is set to ``prpc``. This node will only be used to query reward data and delegator list. It must be an ARCHIVE node.
@@ -112,29 +112,11 @@ Make pending payouts beginning from a cycle and exit:
 
     python3 src/main.py -C 300 -M 2 -V
 
-Run in dry-run mode on GRANADANET, make payouts for cycle 300 and exit:
+Run in dry-run mode on GHOSTNET, make payouts for cycle 300 and exit:
 
 ::
 
-    python3 src/main.py -D -N GRANADANET -C 300 -M 3 -V
-
-Run in dry-run mode on MAINNET, make payouts from cycle 300 onwards, for calculations use data provided by local Tezos node RPC interface:
-
-::
-
-    python3 src/main.py -C 300 -P rpc -D -V
-
-Run in dry-run mode on MAINNET, make payouts only for cycle 300, for calculations use data provided by the public node RPC:
-
-::
-
-    python3 src/main.py -C 300 -P prpc -Ap https://mainnet.smartpy.io -M 3 -V -D
-
-Run in dry-run mode on MAINNET, retry failed payouts only for cycle 300, for calculations use data provided by the TZPRO API:
-
-::
-
-    python3 src/main.py -C 300 -P tzpro -M 4 -V -D
+    python3 src/main.py -D -N GHOSTNET -C 300 -M 3 -V
 
 For help, run:
 
