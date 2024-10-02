@@ -33,7 +33,6 @@ from model.baking_conf import (
     PAYMENT_ADDRESS,
     SERVICE_FEE,
     FOUNDERS_MAP,
-    OWNERS_MAP,
     MIN_DELEGATION_AMT,
     MIN_PAYMENT_AMT,
     RULES_MAP,
@@ -63,7 +62,6 @@ messages = {
     "servicefee": "Specify bakery fee, valid range is between 0 and 100",
     "rewardstype": "Specify if baker pays 'ideal' or 'actual' rewards (Be sure to read the documentation to understand the difference). Press enter for 'actual'",
     "foundersmap": "Specify FOUNDERS in form 'tz-address':share1,'tz-address':share2,... (Mind quotes, sum must equal 1, e.g: 'tz1a...':0.3, 'tz1b..':0.7) Press enter to leave empty",
-    "ownersmap": "Specify OWNERS in form 'tz-address':share1,'tz-address':share2,... (Mind quotes, sum must equal 1, e.g: 'tz1a...':0.3, 'tz1b..':0.7) Press enter to leave empty",
     "mindelegation": "Specify minimum delegation amount in tez. Press enter for 0",
     "mindelegationtarget": "Specify where the reward for delegators failing to satisfy minimum delegation amount go. {}: leave at balance, {}: to founders, {}: to everybody, press enter for {}".format(
         TOB, TOF, TOE, TOB
@@ -167,19 +165,6 @@ def onfoundersmap(input):
         parser.validate_share_map(parser.get_conf_obj(), FOUNDERS_MAP)
     except Exception:
         printe("Invalid founders input: " + traceback.format_exc())
-        return
-
-    fsm.go()
-
-
-def onownersmap(input):
-    try:
-        global parser
-        dict = ast.literal_eval("{" + input + "}")
-        parser.set(OWNERS_MAP, dict)
-        parser.validate_share_map(parser.get_conf_obj(), OWNERS_MAP)
-    except Exception:
-        printe("Invalid owners input: " + traceback.format_exc())
         return
 
     fsm.go()
@@ -371,7 +356,6 @@ callbacks = {
     "servicefee": onservicefee,
     "rewardstype": onrewardstype,
     "foundersmap": onfoundersmap,
-    "ownersmap": onownersmap,
     "mindelegation": onmindelegation,
     "mindelegationtarget": onmindelegationtarget,
     "minpayment": onminpayment,
@@ -396,8 +380,7 @@ fsm = Fysom(
             {"name": "go", "src": "paymentaddress", "dst": "servicefee"},
             {"name": "go", "src": "servicefee", "dst": "rewardstype"},
             {"name": "go", "src": "rewardstype", "dst": "foundersmap"},
-            {"name": "go", "src": "foundersmap", "dst": "ownersmap"},
-            {"name": "go", "src": "ownersmap", "dst": "mindelegation"},
+            {"name": "go", "src": "foundersmap", "dst": "mindelegation"},
             {"name": "go", "src": "mindelegation", "dst": "mindelegationtarget"},
             {"name": "go", "src": "mindelegationtarget", "dst": "minpayment"},
             {"name": "go", "src": "minpayment", "dst": "exclude"},

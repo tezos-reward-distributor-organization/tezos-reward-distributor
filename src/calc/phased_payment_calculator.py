@@ -32,7 +32,6 @@ class PhasedPaymentCalculator:
     def __init__(
         self,
         founders_map,
-        owners_map,
         service_fee_calculator,
         min_delegation_amount,
         min_payment_amount,
@@ -40,7 +39,6 @@ class PhasedPaymentCalculator:
         reward_api,
     ):
         self.rules_model = rules_model
-        self.owners_map = owners_map
         self.founders_map = founders_map
         self.fee_calc = service_fee_calculator
         self.min_delegation_amnt = min_delegation_amount
@@ -50,9 +48,9 @@ class PhasedPaymentCalculator:
     #
     # calculation details
     #
-    # total reward = delegators reward + owners reward = delegators payment + delegators fee + owners payment
+    # total reward = delegators reward + owner reward = delegators payment + delegators fee + owner payment
     # delegators reward = delegators payment + delegators fee
-    # owners reward = owners payment = total reward - delegators reward
+    # owner reward = owner payment = total reward - delegators reward
     # founders reward = delegators fee = total reward - delegators reward
     ####
     def calculate(self, reward_provider_model, adjustments=None, rerun=False):
@@ -138,7 +136,7 @@ class PhasedPaymentCalculator:
         # *************
         # ** phase 4 **
         # *************
-        phase4 = CalculatePhase4(self.founders_map, self.owners_map, self.reward_api)
+        phase4 = CalculatePhase4(self.founders_map, self.reward_api)
         rwrd_logs, total_rwrd_amnt = phase4.calculate(rwrd_logs, total_rwrd_amnt)
 
         # *****************
