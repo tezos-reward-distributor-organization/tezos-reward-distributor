@@ -34,7 +34,6 @@ TOF = "TOF"
 TOB = "TOB"
 TOE = "TOE"
 MIN_DELEGATION_KEY = "mindelegation"
-DEXTER = "dexter"
 
 # Unique object to signify that no default value has been provided
 _NO_DEFAULT = object()
