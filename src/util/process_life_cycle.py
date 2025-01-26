@@ -397,7 +397,6 @@ class ProcessLifeCycle:
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_ERROR)
         exit_code = ExitCode.GENERAL_ERROR
         if os.path.exists(EXIT_CODE_FILE):
-            logger.info("NOCHEM exit code file exists")
             try:
                 with open(EXIT_CODE_FILE, "r") as f:
                     exit_code_value = int(f.read().strip())
