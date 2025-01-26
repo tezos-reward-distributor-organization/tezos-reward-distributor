@@ -3,6 +3,7 @@ import logging
 import queue
 import signal
 import platform
+import os
 from signal import SIGABRT, SIGILL, SIGSEGV, SIGTERM
 
 if platform.system() != "Windows":
@@ -19,7 +20,7 @@ from launch_common import print_banner
 from util.parser import parse_arguments
 from model.baking_dirs import BakingDirs
 from pay.payment_consumer import PaymentConsumer
-from pay.payment_producer import PaymentProducer
+from pay.payment_producer import EXIT_CODE_FILE, PaymentProducer
 from util.config_life_cycle import ConfigLifeCycle
 from util.lock_file import LockFile
 from log_config import main_logger, init, verbose_logger
@@ -394,6 +395,26 @@ class ProcessLifeCycle:
 
     def shut_down_on_error(self):
         self.fsm.trigger_event(TrdEvent.SHUT_DOWN_ON_ERROR)
+        exit_code = ExitCode.GENERAL_ERROR
+        if os.path.exists(EXIT_CODE_FILE):
+            try:
+                with open(EXIT_CODE_FILE, "r") as f:
+                    exit_code_value = int(f.read().strip())
+                    exit_code = next(
+                        (code for code in ExitCode if code.value == exit_code_value),
+                        ExitCode.GENERAL_ERROR,
+                    )
+                os.remove(EXIT_CODE_FILE)
+                exit_program(exit_code, "Shutdown initiated by producer.")
+            except Exception:
+                logger.debug(
+                    "Error reading exit code file. Using default exit code GENERAL_ERROR."
+                )
+        else:
+            logger.debug(
+                "Exit code file not found. Using default exit code GENERAL_ERROR."
+            )
+
         exit_program(ExitCode.GENERAL_ERROR, "Shutdown due to error!")
 
     def shut_down_on_demand(self):
