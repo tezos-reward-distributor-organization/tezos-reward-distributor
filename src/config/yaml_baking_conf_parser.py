@@ -7,7 +7,6 @@ from exception.configuration import ConfigurationException
 from log_config import main_logger
 from model.baking_conf import (
     FOUNDERS_MAP,
-    OWNERS_MAP,
     BAKING_ADDRESS,
     SUPPORTERS_SET,
     SERVICE_FEE,
@@ -75,7 +74,6 @@ class BakingYamlConfParser(YamlConfParser):
         self.validate_baking_address(conf_obj)
         self.validate_payment_address(conf_obj)
         self.validate_share_map(conf_obj, FOUNDERS_MAP)
-        self.validate_share_map(conf_obj, OWNERS_MAP)
         self.validate_service_fee(conf_obj)
         self.validate_min_delegation_amt(conf_obj)
         self.validate_min_payment_amt(conf_obj)
@@ -97,7 +95,6 @@ class BakingYamlConfParser(YamlConfParser):
         conf_obj[FULL_SUPPORTERS_SET] = set(
             conf_obj[SUPPORTERS_SET]
             | set(conf_obj[FOUNDERS_MAP].keys())
-            | set(conf_obj[OWNERS_MAP].keys())
         )
 
         conf_obj[EXCLUDED_DELEGATORS_SET_TOE] = set(

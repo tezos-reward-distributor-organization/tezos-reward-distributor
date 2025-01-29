@@ -77,7 +77,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
             baking_cfg.get_dest_map(),
         )
         self.baking_address = baking_cfg.get_baking_address()
-        self.owners_map = baking_cfg.get_owners_map()
         self.founders_map = baking_cfg.get_founders_map()
         self.min_delegation_amt_in_mutez = int(
             baking_cfg.get_min_delegation_amount() * MUTEZ_PER_TEZ
@@ -127,7 +126,6 @@ class PaymentProducer(threading.Thread, PaymentProducerABC):
 
         self.payment_calc = PhasedPaymentCalculator(
             self.founders_map,
-            self.owners_map,
             self.fee_calc,
             self.min_delegation_amt_in_mutez,
             self.min_payment_amt_in_mutez,
