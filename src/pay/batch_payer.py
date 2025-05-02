@@ -81,18 +81,18 @@ COMM_WAIT = "/chains/main/blocks/%BLOCK_HASH%/operation_hashes"
 TX_FEES = {
     "TZ1_TO_ALLOCATED_TZ1": {
         "FEE": 298,
-        "GAS_LIMIT": 1400,
+        "GAS_LIMIT": 3400,
         "STORAGE_LIMIT": 0,  # 65 mutez before
     },
     "TZ1_TO_NON_ALLOCATED_TZ1": {
         "FEE": 397,
-        "GAS_LIMIT": 1421,
+        "GAS_LIMIT": 3421,
         "STORAGE_LIMIT": 277,
         "BURN_FEE": None,  # 0.257 tez before
     },
     "TZ1_REVEAL": {
         "FEE": 357,
-        "GAS_LIMIT": 1400,
+        "GAS_LIMIT": 3400,
         "STORAGE_LIMIT": 0,
     },
 }
