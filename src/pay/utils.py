@@ -10,7 +10,7 @@ MUTEZ_PER_GAS_UNIT = 0.1
 MUTEZ_PER_BYTE = 1
 RUNOPS_JSON = '{"branch": "%BRANCH%","contents":[%CONTENT%], "signature":"edsigtXomBKi5CTRf5cjATJWSyaRvhfYNHqSUGrn4SdbYRcGwQrUGjzEfQDTuqHhuA8b2d8NarZjz8TRf65WkpQmo423BtomS8Q"}'
 JSON_WRAP = '{"operation": %JSON%,"chain_id":"%chain_id%"}'
-MAX_TX_PER_BLOCK_TZ = 550
+MAX_TX_PER_BLOCK_TZ = 200
 MAX_TX_PER_BLOCK_KT = 25
 
 
